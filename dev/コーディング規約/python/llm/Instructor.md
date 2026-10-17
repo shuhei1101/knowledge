@@ -2,7 +2,7 @@
 
 LLM 出力を Pydantic モデルとして受け取るには Instructor を使う（スキーマ検証 + リトライ内蔵）。
 
-- クライアントは `instructor.from_openai(raw, mode=instructor.Mode.TOOLS)` / `from_anthropic(raw, mode=Mode.ANTHROPIC_TOOLS)` でラップ
+- クライアントは `instructor.from_provider("{provider}/{model}")` で作る（非同期は `async_client=True`）
 - `client.chat.completions.create(response_model=MySchema, max_retries=3, ...)` で
   - JSON 受信 → Pydantic 検証 → 失敗時は LLM に修正させて再試行
 - スキーマの `Field(description=...)` が抽出精度に効くので書く。固定選択肢は `Literal`、ネスト・`list[...]` も可

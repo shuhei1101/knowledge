@@ -6,8 +6,8 @@ URL に置く / 置かないの基準と hook 実装（nuqs / 自前）は `fron
 
 ## 読み取り
 
-- Server Component: `const sp = await props.searchParams`（Next.js 16 で Promise 化）
-- Client Component: `useSearchParams()`（URL 変更で re-render される）
+- Server Component: `const sp = await props.searchParams`
+- Client Component: `useSearchParams()`
 - 配列は `searchParams.getAll("tag")`
 
 ## 書き込み
@@ -18,9 +18,8 @@ URL に置く / 置かないの基準と hook 実装（nuqs / 自前）は `fron
 
 ## バリデーション
 
-URL クエリは外部入力なので Zod で検証する:
-`z.enum([...]).default(...)` / `z.coerce.number().int().min(1).default(1)` で parse し、ガベージ URL から守りつつ型付きデフォルトを与える。
+URL クエリは外部入力なので Zod で parse し、不正な値は既定値に落とす。
 
 ## Tab 連携
 
-shadcn `<Tabs value={tab} onValueChange={setTab}>` に URL state を渡すだけで `?tab=xxx` がシェア可・履歴対応になる。
+shadcn `<Tabs>` の `value` / `onValueChange` に URL state を渡す。

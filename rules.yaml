@@ -797,13 +797,6 @@ rules:
     paths:
       - "**/server/error_handlers.py*"
       - "**/shared/errors.py*"
-  - rule: dev/コーディング規約/python/shared/シークレットと環境変数.md
-    paths:
-      - "**/config/settings.yaml*"
-      - "**/shared/constants.py*"
-      - "**/shared/settings.py*"
-      - "**/.env"
-      - "**/.env.sample"
   - rule: dev/コーディング規約/python/shared/ロガー.md
     paths:
       - "**/shared/logger.py*"
@@ -816,6 +809,9 @@ rules:
   - rule: dev/コーディング規約/python/shared/設定.md
     paths:
       - "**/config/settings.yaml*"
+      - "**/config/defaults.yaml*"
+      - "**/settings.local.yaml*"
+      - "**/settings.sample.yaml*"
       - "**/shared/settings.py*"
   - rule: dev/コーディング規約/python/testing/pytest.md
     paths:

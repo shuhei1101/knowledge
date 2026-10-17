@@ -14,10 +14,10 @@
 ## 必須テンプレ
 
 ```ts
-import { eq, and } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import type { Db } from "@/drizzle/db"
 import { resources, type ResourceInsert, type ResourceUpdate } from "@/drizzle/schema"
-import { DatabaseError, VersionConflictError } from "@/app/(shared)/errors/appError"
+import { DatabaseError } from "@/app/(shared)/errors/appError"
 
 /** リソースを挿入 */
 export const insertResource = async ({ db, record }: { db: Db; record: ResourceInsert }) => {
@@ -49,25 +49,4 @@ export const deleteResource = async ({ db, id }: { db: Db; id: string }) => {
 
 ## バルク操作
 
-```ts
-export const insertResourceTags = async ({ db, resourceId, tags }: {
-  db: Db
-  resourceId: string
-  tags: { name: string }[]
-}) => {
-  try {
-    const records = tags.map((t) => ({ resourceId, name: t.name }))
-    await db.insert(resourceTags).values(records)
-  } catch (e) {
-    throw new DatabaseError("タグの登録に失敗しました。", { cause: e })
-  }
-}
-
-export const deleteResourceTags = async ({ db, resourceId }: { db: Db; resourceId: string }) => {
-  try {
-    await db.delete(resourceTags).where(eq(resourceTags.resourceId, resourceId))
-  } catch (e) {
-    throw new DatabaseError("タグの削除に失敗しました。", { cause: e })
-  }
-}
-```
+複数行の INSERT は `values(配列)` の 1 文にする。

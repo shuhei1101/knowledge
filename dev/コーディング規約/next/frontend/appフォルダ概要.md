@@ -1,10 +1,8 @@
 # app/ — フォルダ全体図
 
 Next.js App Router プロジェクトの `app/` 配下の構成。モノレポ前提で通常は `packages/web/app/`。
-- モノレポ前提（`packages/web/` 配下）
-- Route Group は `(authenticated)` `(auth)` `(shared)` の 3 つに統一
 - API ルートは `/api/v{N}/` 配下（バージョニング）
-- `proxy.ts` はプロジェクト直下（Next.js 16 で `middleware.ts` から rename）
+- `proxy.ts` はプロジェクト直下
 - 共通要素は `app/(shared)/` 配下
 
 ## トップレベル
@@ -27,11 +25,11 @@ packages/web/app/
 
 ```
 packages/web/
-├── proxy.ts           # Next.js 16: 旧 middleware.ts
+├── proxy.ts           # リクエスト前処理
 ├── drizzle/           # DB スキーマ
 ├── tests/             # E2E / Unit テスト
 ├── config/
-│   └── settings.yaml  # YAML 構造化設定
+│   └── defaults.yaml  # YAML 構造化設定の既定値
 └── stories/           # Storybook 用（任意）
 ```
 

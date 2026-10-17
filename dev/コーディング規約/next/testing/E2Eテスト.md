@@ -5,6 +5,7 @@
 - `testDir: "./tests/e2e"`、`fullyParallel: true`、CI は `retries: 2` + `workers: 1`
 - `trace: "on-first-retry"`、`screenshot: "only-on-failure"`
 - projects に `storageState: "tests/e2e/.auth/user.json"` を設定（chromium / webkit / mobile）
+- `global.setup.ts` / `global.teardown.ts` は setup project の `dependencies` / `teardown` で繋ぐ（`globalSetup` 設定は使わない）
 - `webServer` で dev server 自動起動、`reuseExistingServer: !process.env.CI`
 
 ## フォルダ構成と責務
@@ -35,18 +36,13 @@ tests/
 - ロケータは role / label / placeholder ベース。`data-testid` は最後の手段
 - ログインは global.setup の Storage State で 1 回だけ（各 test で繰り返さない）。`.auth/` は gitignore
 - DB シードは helpers で直接 insert（API 経由より高速・確実）
-- DB 状態を共有するテストは `test.serial` で直列化
-- CUJ（クリティカルパス）は必ず E2E でカバー
-- 視覚回帰は `toHaveScreenshot`（`tests/e2e/snapshots/` に保存）
+- DB 状態を共有するテストは、データをテストごとに分けて独立させる（`serial` で直列化しない）
+- 視覚回帰は `toHaveScreenshot`（`snapshotPathTemplate` で `tests/e2e/snapshots/` に保存。ベースラインは比較する環境と同じ OS で生成）
 - a11y は `@axe-core/playwright` の AxeBuilder で violations ゼロを確認
-
-## デバッグ
-
-`--ui`（対話実行）/ `--debug`（DevTools）/ `show-trace`
 
 ## メイン dev server 起動中の E2E 実行
 
 - Next.js は同一ディレクトリで dev server 1 つだけの制約があり、別ポートでも 2 つ目は起動エラーになる
 - worktree（別ディレクトリ）に E2E 専用環境を作って実行する
-  - worktree 作成 → `npm install` → `playwright install chromium`（初回のみ）→ 実行
+  - worktree 作成 → `pnpm install` → `playwright install chromium`（初回のみ）→ 実行
   - E2E にはメインと被らない専用ポートを割り当てる

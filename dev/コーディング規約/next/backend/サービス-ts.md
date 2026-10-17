@@ -14,9 +14,6 @@
 
 ## トランザクションの書き方
 
-- 例外を投げればロールバック（自動）
-- `await db.transaction(...)` は try の外に書き、catch で `AppError` はそのまま再 throw、それ以外を `DatabaseError` でラップ
-
 ```ts
 export const registerResource = async ({ db, userId, form }) => {
   return await db.transaction(async (tx) => {

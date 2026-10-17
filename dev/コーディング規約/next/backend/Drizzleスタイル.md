@@ -1,6 +1,5 @@
 # Drizzle — SQL Builder vs Relational Queries
 
-- Drizzle は SQL Builder（低レベル） と Relational Queries（高レベル） の 2 つの API を持つ。
 - 標準は **SQL Builder**
 - Relational Query は「単体取得 + 1 階層 with」のみ採用
 - 複雑な JOIN は **alias + groupBy + Promise.all** を駆使

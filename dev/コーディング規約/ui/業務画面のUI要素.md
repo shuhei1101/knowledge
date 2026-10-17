@@ -13,7 +13,7 @@
 
 | 要素 | 置き方 | 出どころ |
 | --- | --- | --- |
-| 上タブ | 画面の切り替えに使う。トップバーの直下に追従させて並べ、収まらないときはその帯の中で横スクロールする（トップバーの中では横スクロールさせない） | - |
+| 上タブ | 画面の切り替えに使う。トップバーの直下に追従させて並べ（外部規約『[画面デザインの原則](./画面デザインの原則.md)』のヘッダーの容量）、収まらないときはその帯の中で横スクロールする | - |
 | 横タブ | 画面内のサブナビに使う。本文の横に立て、幅が足りなければ本文の上へ寝かせる | [claude-balancer eb9be7a](https://github.com/shuhei1101/claude-balancer/commit/eb9be7a) |
 | 検索 | トップバーから開き、見出しなどの単位で絞り込んでその位置へ移る | - |
 
@@ -31,12 +31,12 @@
 | 絞り込みの件数 | 絞り込み中は全体の件数と残った件数を出す | [NN/g: Data Tables](https://www.nngroup.com/articles/data-tables/) |
 | 列の絞り込み | 列の見出しから値を選んで絞る。適用中の条件を表の上にチップで並べ、個別解除と全解除を置く。選択肢に該当件数を出す | [Pencil & Paper: Filter UX](https://www.pencilandpaper.io/articles/ux-pattern-analysis-enterprise-filtering) |
 | 全体の検索 | 表の絞り込みとは別の入口にし、表に出していない範囲（過去の期間 等）まで引く。結果から行の詳細を開ける | - |
-| 列のピン留め | 列見出しにピン留めボタンを置き、押した列とその左の列を横スクロールで固定する。固定は左から順に積む。もう一度押すと解除し、解除専用のボタンは置かない。固定中のボタンは押された見た目にする | - |
+| 列のピン留め | 列見出しにピン留めボタンを置き、押した列とその左の列を横スクロールで固定する。固定は左から順に積む。もう一度押すと解除する（外部規約『[画面デザインの原則](./画面デザインの原則.md)』の状態の可視化） | - |
 | 見出し行の固定 | 表が画面内にある間、見出し行を画面の上端（追従するヘッダーの直下）に留める | - |
 | 固定の影 | 見出し行や列を固定している間は、固定した側の境に影を付け、流れる行や列の上に浮いていることを示す | [NN/g: Data Tables](https://www.nngroup.com/articles/data-tables/) |
 | 列の表示切り替え | 列の一覧から表示を切り替える。行の識別子の列は外せない。既定に戻す操作を置く | [NN/g: Data Tables](https://www.nngroup.com/articles/data-tables/)・[Pencil & Paper: Data Table Design](https://www.pencilandpaper.io/articles/ux-pattern-analysis-enterprise-data-tables)・[DataTables: colvis](https://datatables.net/reference/button/colvis) |
 | 既定に戻す | 列の表示・並べ替え・固定を変えられる表には、既定に戻す操作を置く | [Pencil & Paper: Data Table Design](https://www.pencilandpaper.io/articles/ux-pattern-analysis-enterprise-data-tables) |
-| 保存ビュー | 絞り込み・並べ替え・列の組に名前を付けて保存し、呼び出せるようにする。保存先はサーバー（画面が書き込みの経路を持たないときはブラウザの保存（localStorage）） | [Shopify Polaris: Index filters](https://polaris-react.shopify.com/components/selection-and-input/index-filters) |
+| 保存ビュー | 絞り込み・並べ替え・列の組に名前を付けて保存し、呼び出せるようにする。保存先は外部規約『[入力と文言](./入力と文言.md)』の `## 状態の保持` | [Shopify Polaris: Index filters](https://polaris-react.shopify.com/components/selection-and-input/index-filters) |
 | 行の詳細 | 行の押下で外部のサイトへ飛ばさず、画面の中で詳細を開く。開き方は、隣の行と見比べられる非モーダルのサイドパネルを候補に入れて決める。外部のサイトへのリンクは詳細の中に置く。表に入れると 3 次元以上になる項目（行の項目が入れ子の表を持つ）は、行の開閉を既定にし、次の行に入れ子の表を開く。開閉で隠すのは 1 段だけにする。中身が大きいときは先頭だけを出し、全体はサイドの詳細で見せる | [NN/g: Data Tables](https://www.nngroup.com/articles/data-tables/) |
 | 表以外の一覧 | ガントなど表以外の一覧でも、行の見出しを列に分け、表と同じピン留めで固定できるようにする | - |
 | 狭い幅の表 | 列数の多い表は、狭い幅では後ろの列を畳み、行の押下で開く | - |
@@ -69,14 +69,8 @@
 
 | 要素 | 置き方 | 出どころ |
 | --- | --- | --- |
-| PC 幅とスマホ幅の確認 | 画面を作ったら PC 幅とスマホ幅の両方でスクリーンショットを撮って確かめる（必須）。スマホ幅は窓の幅だけでなく、端末の定義（幅・画素密度・タッチ・UA）ごと再現して撮る。狭い端末での見切れは最も狭い端末（iPhone SE の 320 x 568）で見る | - |
+| PC 幅とスマホ幅の確認 | 画面を作ったら PC 幅とスマホ幅の両方でスクリーンショットを撮って確かめる。スマホ幅は窓の幅だけでなく、端末の定義（幅・画素密度・タッチ・UA）ごと再現して撮る。狭い端末での見切れは幅 320 px で見る | [WCAG 2.2: Reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html) |
 
 Playwright では端末の定義をそのままコンテキストへ渡す。
-
-```python
-with sync_playwright() as playwright:
-    browser = playwright.chromium.launch()
-    context = browser.new_context(**playwright.devices["iPhone 14 Pro"])
-```
 
 chromium で開くと、幅・画素密度・タッチ・UA は同じ値になり、描画だけが実機の Safari と違う。

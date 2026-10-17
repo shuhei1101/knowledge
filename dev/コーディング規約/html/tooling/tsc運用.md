@@ -2,7 +2,6 @@
 
 - ブラウザに出すのは `tsc` が生成した `.js`。
   - バンドラは使わない（`html/core/ビルドレス原則.md`）。
-  - `.ts` を著作し、`tsc` がトランスパイル 1 段だけ挟む。
 - 生成 `.js` は `.ts` と同じ階層に出す。`screen.ts` → 同じフォルダに `screen.js`。
 - 以下の `frontend/` は画面のスクリプトの置き場所を指す。`static/`・`assets/` などに置く構成では、そのフォルダに読み替える。
 
@@ -16,7 +15,7 @@
 | `tsconfig.build.json` | 生成用。`tsconfig.json` を継承し `noEmit:false` + 同階層 emit。include は `frontend/**/*.ts` のみ |
 | `tsconfig.plan.json` | 型チェック用。トップレベルの宣言が重なる従来のスクリプト（`import` / `export` の無い `.ts`）を、`tsconfig.json` と別のプログラムにする。`tsconfig.json` を継承し include だけを変える |
 | `tsconfig.plan.build.json` | 生成用。`tsconfig.plan.json` を継承し、`tsconfig.build.json` と同じ形で出す |
-| `eslint.config.mjs`   | flat config。`typescript-eslint` で `.ts` を lint。Next/React 設定は使わない。`@typescript-eslint/no-deprecated` を有効にし、型情報つきの設定（`parserOptions.projectService`）で動かす |
+| `eslint.config.mjs`   | flat config。`typescript-eslint` で `.ts` を lint。`@typescript-eslint/no-deprecated` を有効にし、型情報つきの設定（`parserOptions.projectService`）で動かす |
 | `package.json`        | dev ツールの devDependencies と scripts（`type: module`）                                         |
 
 <!-- /table -->
@@ -29,7 +28,7 @@ importmap の別名（`shared/`）は `tsconfig.json` の `paths` で `./fronten
 
 | script      | 中身                                 | 用途                                                     |
 | ----------- | ------------------------------------ | -------------------------------------------------------- |
-| `dev`       | `tsc -p tsconfig.build.json --watch` | 開発中。保存ごとに変更分だけ再生成（数百 ms）            |
+| `dev`       | `tsc -p tsconfig.build.json --watch` | 開発中。保存ごとに変更分だけ再生成            |
 | `build`     | `tsc -p tsconfig.build.json`         | 全 `.ts` を一括生成                                      |
 | `typecheck` | `tsc -p tsconfig.json --noEmit`      | CI / pre-commit。型崩れ検知                              |
 | `lint`      | `eslint frontend`                    | flat config                                              |

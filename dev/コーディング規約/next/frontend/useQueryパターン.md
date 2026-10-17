@@ -6,14 +6,6 @@
 - `initialData` に Server Component 値を流して hydrate
 - View / Edit で同じ API なら `[id]/hooks/useResource.ts` に共通化
 
-## queryKey
-
-```ts
-queryKey: ["resources", filter, sort, page, pageSize]
-```
-
-invalidation は prefix マッチ: `queryClient.invalidateQueries({ queryKey: ["resources"] })`
-
 ## 命名
 
 | Pattern | Purpose |

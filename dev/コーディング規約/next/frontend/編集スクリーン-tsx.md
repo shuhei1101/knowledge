@@ -17,5 +17,4 @@ shadcn `<Form>` + react-hook-form + Zod + Server Action。
 
 ## ルール
 
-- dirty 判定は `formState.isDirty`（`JSON.stringify` 比較しない）
 - 保存ボタンは `disabled={!form.formState.isDirty || isPending}`

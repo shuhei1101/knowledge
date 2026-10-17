@@ -2,7 +2,7 @@
 
 ## manifest
 
-- `app/manifest.ts` で `MetadataRoute.Manifest` を返す（`<link rel="manifest">` は Next.js が自動付与）
+- `app/manifest.ts` で `MetadataRoute.Manifest` を返す
 - 必須項目: name / short_name / start_url / scope / `display: "standalone"` / theme_color / icons（192・512・maskable の 3 種）
 
 ## Apple 対応
@@ -12,7 +12,4 @@
 
 ## Service Worker
 
-Next.js は SW を直接サポートしないので `@serwist/next` を使う:
-- next.config.ts を `withSerwistInit({ swSrc: "app/sw.ts", swDest: "public/sw.js" })` で wrap
-- `app/sw.ts` で `new Serwist({ precacheEntries: self.__SW_MANIFEST, skipWaiting: true, clientsClaim: true, runtimeCaching: defaultCache })` + `addEventListeners()`
-- 動作確認は DevTools の Application タブ
+Next.js は SW を直接サポートしないので Serwist を使う。Next.js 16 の既定の bundler は Turbopack のため `@serwist/turbopack` を使う（`@serwist/next` は webpack 用）。導入手順は [Serwist の Turbopack ガイド](https://serwist.pages.dev/docs/next/turbo)。
