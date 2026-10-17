@@ -9,7 +9,7 @@
 | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | title | タイトル | string | 必須 | - | pattern: ^ER 図: .+$ | `ER 図: {分類名}`。 | - |
-| lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
+| lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。<br>初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。<br>対象そのものが変わったときだけ書き換える。 | - |
 | overview | 概要 | string | - | - | - | 索引の設計書だけが持つ。データストアの種別と版・物理名の命名規則・全テーブルの共通カラム。 | - |
 | er | ER 図 | object | - | - | - | 当該分類のテーブル間の関連。他の分類のテーブルは名前だけで置く。テーブルが 2 つ以上あるときに持つ。 | - |
 | er.entities | 実体 | array | 必須 | - | - | - | - |
@@ -35,7 +35,7 @@
 | tables[].retention | 保持期間 | string | - | - | - | - | - |
 | tables[].deletion | 削除の方針 | string | - | - | - | 物理削除か論理削除か。 | - |
 | tables[].access | アクセス方式 | string | - | - | - | JSON / YAML のとき、全件か キーで引くか。 | - |
-| tables[].description | 説明 | string | - | - | - | Markdown で書く本文。 | - |
+| tables[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
 | tables[].columns | カラム | array | 必須 | - | minItems: 1 | - | - |
 | tables[].columns[].name | 物理名 | string | 必須 | - | - | - | - |
 | tables[].columns[].title | 論理名 | string | 必須 | - | - | - | - |
@@ -63,15 +63,15 @@
 | tables[].refs | 関連 | array | - | - | - | - | - |
 | tables[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
 | tables[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
-| tables[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。 | - |
+| tables[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
 | tables[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
 | tables[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
 | tables[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
 | tables[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
 | tables[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
-| tables[].notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+| tables[].notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。<br>同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
 | refs | 関連 | array | - | - | - | - | - |
-| notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+| notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。<br>同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
 
 <!-- /table -->
 

@@ -9,7 +9,7 @@
 | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | title | タイトル | string | 必須 | - | - | API 名。ファイル名に合わせる。 | - |
-| lead | 冒頭リード | string | - | - | - | API が何をするものかを 1〜3 行で要約する。自プロジェクトでの用途は書かない。 | - |
+| lead | 冒頭リード | string | - | - | - | API が何をするものかを 1〜3 行で要約する。自プロジェクトでの用途は書かない。<br>初回に書いた内容のまま保ち、後から情報を足さない。 | - |
 | used_in | 使用箇所 | array | - | - | - | 呼び出す境界層のパス（リポジトリの直下から）。 | - |
 | verification | 動作確認 | object | - | - | - | 動かして確かめたか。 | - |
 | verification.state | 状態 | string | 必須 | 済 / 未確認 | - | - | - |
@@ -43,8 +43,8 @@
 | pricing[].price | 単価 | string | 必須 | - | - | - | - |
 | pricing[].notes | 補足 | string | - | - | - | - | - |
 | pricing_url | 課金の公式ページ | string | - | - | - | 課金単価を書くときは必ず持つ。 | - |
-| error_format | エラー応答の形式 | string | - | - | - | Markdown で書く本文。 | - |
-| pagination | ページングの方式 | string | - | - | - | Markdown で書く本文。 | - |
+| error_format | エラー応答の形式 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+| pagination | ページングの方式 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
 | timeout | タイムアウト | string | - | - | - | - | - |
 | endpoints | エンドポイント | array | 必須 | - | minItems: 1 | このプロジェクトで使うエンドポイント。 | - |
 | endpoints[].name | 名前 | string | 必須 | - | - | `{METHOD} {パス}`。パスはベース URL からの相対。 | - |
@@ -55,7 +55,7 @@
 | endpoints[].tags | 分類タグ | array | - | - | - | - | - |
 | endpoints[].permissions | 必要な権限 | string | - | - | - | - | - |
 | endpoints[].idempotent | 冪等 | boolean | - | - | - | - | - |
-| endpoints[].description | 説明 | string | - | - | - | Markdown で書く本文。 | - |
+| endpoints[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
 | endpoints[].request | リクエスト | array | - | - | - | - | - |
 | endpoints[].request[].name | パラメータ | string | 必須 | - | - | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child`。 | - |
 | endpoints[].request[].type | 型 | string | 必須 | - | - | 取りうる値が限られるときは列挙し、各値の意味は補足に書く。 | - |
@@ -89,13 +89,13 @@
 | endpoints[].refs | 関連 | array | - | - | - | - | - |
 | endpoints[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
 | endpoints[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
-| endpoints[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。 | - |
+| endpoints[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
 | endpoints[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
 | endpoints[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
 | endpoints[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
 | endpoints[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
 | endpoints[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
-| endpoints[].notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+| endpoints[].notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。<br>同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
 | issues | 不具合一覧 | array | - | - | - | 仕様どおりに使っても期待どおり動かない事象。こちらの使い方の誤りだったものは書かない。解消を確かめたら消す。 | - |
 | issues[].title | タイトル | string | 必須 | - | - | - | - |
 | issues[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で事象を要約する。 | - |
@@ -110,9 +110,9 @@
 | issues[].upstream_issue | 上流の Issue | string | - | - | - | 上流の Issue の URL。 | - |
 | issues[].fixed_in | 解消版 | string | - | - | - | 解消した版。達したら回避策を外す候補になる。 | - |
 | issues[].refs | 関連 | array | - | - | - | - | - |
-| issues[].notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+| issues[].notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。<br>同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
 | refs | 関連 | array | - | - | - | - | - |
-| notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+| notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。<br>同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
 
 <!-- /table -->
 
@@ -137,11 +137,10 @@ official_url: https://openai.com/api/
 docs_url: https://platform.openai.com/docs/api-reference
 auth:
   method: Bearer トークン（API キー）
-  steps: '1. https://platform.openai.com/api-keys を開く
-
+  steps: |-
+    1. https://platform.openai.com/api-keys を開く
     2. `Create new secret key` で API キーを作る
-
-    3. 作ったキーを控える（再表示できない）'
+    3. 作ったキーを控える（再表示できない）
   env_vars:
   - OPENAI_API_KEY
 rate_limits:
@@ -181,11 +180,10 @@ endpoints:
     location: body
     description: 応答のばらつき
     constraints: 0〜2
-  request_example: '```json
-
+  request_example: |-
+    ```json
     {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello"}]}
-
-    ```'
+    ```
   response:
   - name: choices[].message.content
     type: string
