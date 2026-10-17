@@ -1,0 +1,1 @@
+# ai-monitor から、AI Monitor が無くても使える規約とテンプレートを移す
