@@ -20,13 +20,12 @@
 
 ## 定数管理ルール
 
-- スキル・エージェントとそこから呼ぶ Bash のコマンドが使う定数を持つプラグインは、必ず `{CLAUDE_PLUGIN_ROOT}/scripts/constants.sh` を用意する
+- スキル・エージェントとそこから呼ぶ Bash のコマンドが使う定数を持つプラグインは、`{CLAUDE_PLUGIN_ROOT}/scripts/constants.sh` を用意する
 - `constants.sh` には以下のルールを適用すること
   - `#!/usr/bin/env bash` で始める
   - 定数名にはプラグイン名をアッパースネークケースで付与する（例: `GH_KIT_LABEL_WIP`）
   - 各変数は `echo "export VAR=VALUE" >> "$CLAUDE_ENV_FILE"` で `$CLAUDE_ENV_FILE` に追記する
-    - **`export VAR=VALUE` だけでは不可**: サブシェルで実行されるため、親プロセス（Claude Code）に環境変数が伝わらない
-    - `$CLAUDE_ENV_FILE` への追記により Claude Code がセッション開始時に環境変数として読み込む
+    - `$CLAUDE_ENV_FILE` は Claude Code が各 Bash コマンドの前に実行する
 - `hooks/hooks.json` の `SessionStart` フックで `constants.sh` を自動実行する
 
 ```json
@@ -50,7 +49,7 @@
 }
 ```
 
-- スキル・エージェントファイル内では手動 `source` を呼ばない（Session Start で展開済みのため不要）
+- スキル・エージェントファイル内では手動 `source` を呼ばない
 - フックが自分で読む設定は `constants.sh` に置かない
   - プラグインと一緒に配る値はプラグイン内のファイルに置き、フックが `${CLAUDE_PLUGIN_ROOT}` を起点に読む
   - 利用者の環境ごとに変わる値は、Claude Code の設定 `env` から環境変数で受け取る
@@ -58,8 +57,6 @@
 ## version を置かない規約
 
 `.claude-plugin/marketplace.json` に載るプラグインは、`plugins[].version` と `plugin.json` の `version` のどちらにも version を置かない。
-どちらにも無いと登録したクローンの commit SHA が version になり、commit を積むたびに version が変わる。
-version を置くと、上げ忘れた変更が `claude plugin update` で `already at the latest version` のまま届かない。
 
 ## 反映を叩くタイミング
 

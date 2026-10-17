@@ -8,8 +8,4 @@
 
 ## TanStack Query との連携
 
-view/edit 共通の hook がある場合は `initialData` に props を渡して hydrate:
-
-```ts
-const { data } = useResource({ resourceId, initialData: resource })
-```
+view/edit 共通の hook がある場合は `initialData` に props を渡して hydrate する。
