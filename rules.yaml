@@ -668,6 +668,10 @@ rules:
       - "**/tests/unit/**/*.test.ts*"
       - "**/tests/unit/**/*.test.tsx*"
       - "**/vitest.config.ts*"
+  - rule: dev/コーディング規約/prompt/プロンプトファイル.md
+    paths:
+      - "**/prompts/**"
+      - "**/prompt/**"
   - rule: dev/コーディング規約/python/architecture/TypeScriptスタイル適用.md
     paths:
       - "**/*.py*"
@@ -754,13 +758,6 @@ rules:
   - rule: dev/コーディング規約/python/llm/プロンプトローダー.md
     paths:
       - "**/integrations/llm/prompts/**/*.py*"
-      - "**/content/prompts/index.yaml"
-  - rule: dev/コーディング規約/python/llm/プロンプト執筆.md
-    paths:
-      - "**/integrations/llm/prompts/**/*.py*"
-      - "**/content/prompts/**/*.j2"
-      - "**/content/prompts/**/*.md"
-      - "**/content/prompts/index.yaml"
   - rule: dev/コーディング規約/python/llm/例外とリトライ.md
     paths:
       - "**/integrations/llm/**/*.py*"
