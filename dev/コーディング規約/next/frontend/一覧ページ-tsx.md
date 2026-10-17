@@ -4,6 +4,4 @@
 
 ## SEO
 
-```tsx
-export const metadata: Metadata = { title: "...", description: "..." }
-```
+`frontend/SEO.md`

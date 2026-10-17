@@ -3,8 +3,7 @@
 - `screen.ts` は画面の UI 層エントリ。
   - DOM 取得・イベント登録・描画・URL 同期を担う。
 
-- `.ts` で著作する（`// @ts-check` は不要。`.ts` は常に型検査される）。
-  - import は bare specifier（`shared/...`）で共通層を参照する。
+- import は bare specifier（`shared/...`）で共通層を参照する。
 - 起動は `init()` を即時呼び出し（`DOMContentLoaded` は待たない。描画済み DOM が返る）。
 - DOM 参照は `getElementById`。型は `as HTMLInputElement` 等で必要なときだけ明示する。
 - 描画は innerHTML が基本。値は `esc()` を通してから入れる（XSS 対策）。
@@ -26,9 +25,4 @@
 
 <!-- /table -->
 
-複雑画面は層を分ける（`html/共通化の判断.md` の前に、まずファイル分割）:
-
-| ファイル   | 入れる                                            | 入れない     |
-| ---------- | ------------------------------------------------- | ------------ |
-| `api.ts`   | `apiFetch` 呼び出し・クエリ組み立て・レスポンス型 | DOM・描画    |
-| `state.ts` | 定数・型・派生計算・フィルタ（純関数で export）   | DOM・`fetch` |
+複雑画面は `html/pages/画面の作り方.md` の構成でファイルを分ける（`html/共通化の判断.md` の前に、まずファイル分割）。

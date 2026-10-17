@@ -8,19 +8,8 @@
 
 ## 型エイリアス DI（基本パターン）
 
-外部依存（LLM / TTS / HTTP / DB）は関数の型エイリアスで抽象化し、キーワード引数で注入する:
-
-```python
-# types.py
-type AsyncChatFn = Callable[[ChatRequest], Awaitable[ChatResponse]]
-
-# service.py — 型で受ける。実装は注入
-async def generate_response(user_input: str, *, chat: AsyncChatFn) -> str:
-    ...
-
-# main.py — partial で配線。テストでは mock 関数を注入するだけ
-wired = partial(generate_response, chat=chat_with_openai)
-```
+外部依存（LLM / TTS / HTTP / DB）は関数の型エイリアスで抽象化し、キーワード引数で注入する。
+型は `types.py` に置き、`service.py` は型で受け、`main.py` で `partial` で配線する。テストでは mock 関数を注入するだけ。
 
 - 実装（`openai_client.py` / `mock_client.py` 等）はベンダーごとに別ファイルの関数
 - 注入する関数を切り替えるだけで本物 / モックが切り替わる
@@ -33,8 +22,6 @@ wired = partial(generate_response, chat=chat_with_openai)
 | 2    | `Protocol`                                            | 複数メソッド / 属性をまとめる（継承宣言不要） |
 | 3    | `@overload`                                           | 戻り値が引数型で分岐（稀）                    |
 
-Protocol は `@runtime_checkable` を付ければ `isinstance` も可能。
-
 ## DTO の使い分け
 
 <!-- table: data -->
@@ -42,7 +29,7 @@ Protocol は `@runtime_checkable` を付ければ `isinstance` も可能。
 | 用途                              | 推奨                                                |
 | --------------------------------- | --------------------------------------------------- |
 | 外部 HTTP リクエスト / レスポンス | `pydantic.BaseModel`                                |
-| 設定（.env / YAML）               | `pydantic_settings.BaseSettings`                    |
+| 設定（YAML / 環境変数）           | `pydantic_settings.BaseSettings`                    |
 | LLM 構造化出力（Instructor）      | `pydantic.BaseModel`                                |
 | CLI 引数の構造体                  | `pydantic.BaseModel` |
 | 関数間の内部 DTO                  | `@dataclass(frozen=True, slots=True, kw_only=True)` |
@@ -52,8 +39,3 @@ Protocol は `@runtime_checkable` を付ければ `isinstance` も可能。
 <!-- /table -->
 
 - Pydantic は検証ありでやや重い → 外部境界に。dataclass は軽量 → 内部に
-- TypedDict は実体が dict なので `json.dumps` がそのまま使える。メソッドは生やせない
-
-## Pick / Omit 相当
-
-規約化しない。必要時に Pydantic の `model_dump(exclude=...)`・継承、または別型を手書き。その都度判断でよい。

@@ -6,8 +6,8 @@
 - 共通コンポーネント（`app/(shared)/components/`）の `.stories.tsx` を 同じディレクトリ に置く
 - フィーチャ固有のコンポーネントは story 不要（E2E でカバー）
 - 状態のあるコンポーネント（Dialog 等）は `play` 関数で操作
+- `next/navigation` を使うコンポーネントは `parameters.nextjs.appDirectory: true` を付ける
 
-Vitest と統合して CI で自動実行できる。
 `addon-a11y` を入れると、各 Story で axe-core によるチェックが走り、違反が UI に表示される。
 `addon-themes` で全 Story にテーマ切替トグルを追加する。
 `@chromatic-com/storybook` で各 Story を Chromatic にアップし、視覚回帰テストにする。

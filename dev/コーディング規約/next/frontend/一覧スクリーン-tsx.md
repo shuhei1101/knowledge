@@ -1,7 +1,7 @@
 # {Feature}ListScreen.tsx — 一覧 Client Component
 
 - `'use client'` 必須
-- Server から `initial` データを受け取る（クライアント初回 fetch は FOUC が出るので禁止）
+- Server から `initial` データを受け取る（クライアント初回 fetch は禁止）
 - URL state hook と data hook を並列呼び
 - フィルタ / ソート / ページは `useState` 禁止 → URL state
 

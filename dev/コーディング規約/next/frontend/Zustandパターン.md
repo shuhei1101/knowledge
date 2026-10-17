@@ -8,6 +8,6 @@ Context で不十分なときに使う:
 ## ルール
 
 - 配置: `app/(shared)/stores/use{Name}Store.ts`
-- selector で部分購読（`useStore((s) => s.xxx)`）
-- 永続化は `persist` ミドルウェア（`localStorage`）
+- selector で部分購読
+- 永続化は `persist` ミドルウェア
 - サーバーデータ / フォーム値は入れない

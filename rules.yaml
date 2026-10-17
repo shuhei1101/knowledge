@@ -67,6 +67,11 @@ rules:
   - rule: dev/規約/共通コンポーネント.md
     paths:
       - "**/dev/mock/components/**"
+  - rule: dev/判定フローチャート/設定値の置き場所.md
+    paths:
+      - "**/config/defaults.yaml*"
+      - "**/settings.local.yaml*"
+      - "**/settings.sample.yaml*"
   - rule: dev/コーディング規約/claude/Claude Code Tool活用.md
     paths:
       - "*"
@@ -668,6 +673,10 @@ rules:
       - "**/tests/unit/**/*.test.ts*"
       - "**/tests/unit/**/*.test.tsx*"
       - "**/vitest.config.ts*"
+  - rule: dev/コーディング規約/prompt/プロンプトファイル.md
+    paths:
+      - "**/prompts/**"
+      - "**/prompt/**"
   - rule: dev/コーディング規約/python/architecture/TypeScriptスタイル適用.md
     paths:
       - "**/*.py*"
@@ -754,13 +763,6 @@ rules:
   - rule: dev/コーディング規約/python/llm/プロンプトローダー.md
     paths:
       - "**/integrations/llm/prompts/**/*.py*"
-      - "**/content/prompts/index.yaml"
-  - rule: dev/コーディング規約/python/llm/プロンプト執筆.md
-    paths:
-      - "**/integrations/llm/prompts/**/*.py*"
-      - "**/content/prompts/**/*.j2"
-      - "**/content/prompts/**/*.md"
-      - "**/content/prompts/index.yaml"
   - rule: dev/コーディング規約/python/llm/例外とリトライ.md
     paths:
       - "**/integrations/llm/**/*.py*"
@@ -800,13 +802,6 @@ rules:
     paths:
       - "**/server/error_handlers.py*"
       - "**/shared/errors.py*"
-  - rule: dev/コーディング規約/python/shared/シークレットと環境変数.md
-    paths:
-      - "**/config/settings.yaml*"
-      - "**/shared/constants.py*"
-      - "**/shared/settings.py*"
-      - "**/.env"
-      - "**/.env.sample"
   - rule: dev/コーディング規約/python/shared/ロガー.md
     paths:
       - "**/shared/logger.py*"

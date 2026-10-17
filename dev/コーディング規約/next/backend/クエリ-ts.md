@@ -24,9 +24,3 @@
 - `exists{Feature}` — boolean
 - Schema: `{Feature}FilterSchema`, `{Feature}SortSchema`, `{Feature}SearchParamsSchema`
 - 戻り値型: `{Feature}Detail`, `{Feature}WithChildren` 等
-
-## なぜ query.ts に集約
-
-- CQRS パターン: 
-  - 読み取りと書き込みを別ファイルにすると、複雑な JOIN 系のロジックが db.ts と混ざらず読みやすい。
-  - フックトリガーで「query.ts 編集中」を検出して reference を inject しやすい。

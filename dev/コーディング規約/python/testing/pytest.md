@@ -19,9 +19,9 @@
 
 ## fixtures
 
-- 共通 fixture は `conftest.py`（ディレクトリ階層単位で自動ロード。`tests/conftest.py` は全体、`tests/features/conftest.py` は配下のみ）
+- 共通 fixture は `conftest.py` に置く
 - テスト用 `Settings` は fixture で env を上書きして生成
-- 時刻固定は `monkeypatch.setattr` で `now_utc` を差し替え
+- 時刻固定は `NowFn` に固定時刻関数を渡す（`testing/モック.md`）
 - Mock 関数（成功 / rate-limited 等）も fixture 化して注入
 
 ## parametrize
@@ -33,10 +33,6 @@
 `pytest.raises` は例外の型を絞り、`match` でメッセージも確かめる。
 ブロックの中には例外を起こす 1 文だけを置く。
 
-## 非同期
-
-`asyncio_mode = "auto"` なら `@pytest.mark.asyncio` 省略可。
-
 ## FastAPI ルート
 
 `build_fastapi()` → `app.state.handlers` にテスト用 Handlers（Mock 注入済み）をセット → `TestClient` で叩く。
@@ -45,7 +41,3 @@
 
 - ファイル全体は `pytestmark = pytest.mark.external`、関数単位は `@pytest.mark.slow` 等
 - 選択実行は `pytest -m "not external"`
-
-## デバッグ
-
-`-v`（詳細）/ `-s`（print 表示）/ `--pdb`（失敗時デバッガ）/ `-x`（最初の失敗で停止）/ `path::test_name` で 1 つだけ実行。
