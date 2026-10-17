@@ -63,7 +63,7 @@
 | 行ごとの操作 | 3 つ未満なら行の中にアイコンボタンで出し、3 つ以上はメニューにまとめる | [Carbon: Data table](https://carbondesignsystem.com/components/data-table/usage/) |
 | FAB | 主アクションがある画面にだけ置く（外部規約『[画面デザインの原則](./画面デザインの原則.md)』の主アクションのボタン）。トップへ戻るボタンの上に積む | [claude-balancer eb9be7a](https://github.com/shuhei1101/claude-balancer/commit/eb9be7a) |
 | トップへ戻る | 画面の隅に留め、スクロールした後に出す | - |
-| テーマ切替 | ライト / ダークを切り替えるボタンをトップバーに置く | - |
+| テーマ切替 | デザイン方針の明暗が両方のとき、ライト / ダークを切り替えるボタンをトップバーに置く | - |
 
 ## PC 幅とスマホ幅の確認
 
