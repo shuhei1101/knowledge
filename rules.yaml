@@ -67,6 +67,11 @@ rules:
   - rule: dev/規約/共通コンポーネント.md
     paths:
       - "**/dev/mock/components/**"
+  - rule: dev/判定フローチャート/設定値の置き場所.md
+    paths:
+      - "**/config/defaults.yaml*"
+      - "**/settings.local.yaml*"
+      - "**/settings.sample.yaml*"
   - rule: dev/コーディング規約/claude/Claude Code Tool活用.md
     paths:
       - "*"
@@ -809,9 +814,6 @@ rules:
   - rule: dev/コーディング規約/python/shared/設定.md
     paths:
       - "**/config/settings.yaml*"
-      - "**/config/defaults.yaml*"
-      - "**/settings.local.yaml*"
-      - "**/settings.sample.yaml*"
       - "**/shared/settings.py*"
   - rule: dev/コーディング規約/python/testing/pytest.md
     paths:

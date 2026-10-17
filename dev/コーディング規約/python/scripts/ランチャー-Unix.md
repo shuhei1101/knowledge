@@ -40,5 +40,5 @@ exit "$EXIT_CODE"
 
 - uv プロジェクトなら `uv run python script.py "$@"` 推奨
 - HOST / PORT 等は `"${HOST:-127.0.0.1}"` で環境変数上書き可能に
-- 出力メッセージは英語（bat ランチャーと揃える）
+- 出力メッセージは英語基本（UTF-8 標準なので日本語も可、プロジェクトで揃える）
 - `chmod +x` を忘れずに（git は `git update-index --chmod=+x`）
