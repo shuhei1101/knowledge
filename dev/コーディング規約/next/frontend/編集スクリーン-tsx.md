@@ -1,6 +1,6 @@
 # {Feature}EditScreen.tsx / {Feature}NewScreen.tsx
 
-shadcn `<Form>` + react-hook-form + Zod + Server Action。
+`<Controller>` + `<Field>` + react-hook-form + Zod + Server Action。
 
 - `'use client'` 必須
 - `useTransition` で `isPending` 管理
