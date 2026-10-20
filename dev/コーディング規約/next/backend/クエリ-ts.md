@@ -18,7 +18,7 @@
 ## 命名
 
 - `fetch{Feature}` — 単体取得
-- `fetch{Feature}s` / `fetch{Feature}List` — 一覧
+- `fetch{Feature}List` — 一覧
 - `fetch{Feature}By{Key}` — 特定キーでの取得
 - `count{Feature}` — 件数だけ
 - `exists{Feature}` — boolean

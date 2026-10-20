@@ -11,5 +11,5 @@
 | Pattern | Purpose |
 |---|---|
 | `use{Feature}` | 単体 |
-| `use{Feature}s` / `use{Feature}List` | 一覧 |
+| `use{Feature}List` | 一覧 |
 | `use{Feature}By{Key}` | キー指定 |
