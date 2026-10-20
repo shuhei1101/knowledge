@@ -17,4 +17,4 @@
 ## hook の依存
 
 - `use{Feature}UrlState` — URL state（`frontend/useUrlStateパターン.md`）
-- `use{Feature}s` — TanStack Query（`frontend/useQueryパターン.md`）
+- `use{Feature}List` — TanStack Query（`frontend/useQueryパターン.md`）

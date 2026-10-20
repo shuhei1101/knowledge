@@ -14,7 +14,7 @@
 ## 命名
 
 - `getXxx` — 単体取得
-- `getXxxs` / `getXxxList` — 一覧
+- `getXxxList` — 一覧
 - `postXxx` — 作成
 - `patchXxx` — 部分更新
 - `putXxx` — 全置換（使う場合）

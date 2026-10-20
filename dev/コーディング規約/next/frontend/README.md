@@ -45,7 +45,7 @@ next/frontend の規約
 | [状態管理判断基準](./状態管理判断基準.md) | State の置き場所 |
 | [確認ダイアログ](./確認ダイアログ.md) | `window.confirm` の代わりに使う確認ダイアログ |
 | [空状態](./空状態.md) | 一覧が空のときの表示 |
-| [編集スクリーン-tsx](./編集スクリーン-tsx.md) | shadcn `<Form>` + react-hook-form + Zod + Server Action。 |
+| [編集スクリーン-tsx](./編集スクリーン-tsx.md) | `<Controller>` + `<Field>` + react-hook-form + Zod + Server Action。 |
 | [編集ページ-tsx](./編集ページ-tsx.md) | 編集画面の `page.tsx` の書き方 |
 | [自動保存](./自動保存.md) | Autosave パターン |
 | [自動保存インジケーター](./自動保存インジケーター.md) | 自動保存の状態を出すインジケーター |
