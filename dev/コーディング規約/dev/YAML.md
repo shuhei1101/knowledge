@@ -55,6 +55,8 @@ path = main_repo_root() / "config" / "settings.yaml"
 ## スキーマ
 
 YAML の形は、種類ごとにスキーマの YAML で定義する。
+プロジェクトが形を決めてアプリが読み込む YAML（データの正本・`content/` の YAML・プロンプト）に当てる。
+外部のツールが形を決める YAML（CI・compose など）と、`pydantic-settings` で読む設定（[設定](../python/shared/設定.md)）には当てない。
 
 - JSON Schema 2020-12 で書く
 - ファイル名は `{種類}.schema.yaml`（例 `プロンプト.schema.yaml`）にする
@@ -64,20 +66,25 @@ YAML の形は、種類ごとにスキーマの YAML で定義する。
 
 ## 検査
 
-読み込むとき（起動の事前確認など）に、全ての YAML をスキーマに通す。
+読み込むとき（起動の事前確認など）に、`## スキーマ` を当てる全ての YAML をスキーマに通す。
 
 - 違反は `{ファイル}: {キーのパス}: {理由}` の行で全て並べる
 - ファイルを書き換えずに違反を並べるだけの検査のツールを置く
 
-## MCP からの書き込み
+## 書き込み
 
-MCP の口があるプロジェクトでは、YAML を直接編集せず MCP から書き込む。
-MCP は次を守る。
+プログラム（MCP・アプリの UI / API・ローカルの開発 DB など）が YAML を書くときは、次を守る。
 
 - 書き込む前に、変更を当てた後の中身を `## 検査` に通し、1 件でも違反があれば何も書き換えずにエラーを返す
 - 一時ファイルに書いてから置き換える
 - 複数のファイルを書く途中で失敗したら、置き換えた分を元に戻す
 - 読み込み・検査・書き込みを排他ロックの中で行う
+
+## MCP からの書き込み
+
+YAML を書き込む MCP のツールがあるプロジェクトでは、YAML を直接編集せず MCP から書き込む。
+
+- 書き込みは `## 書き込み` に従う
 - 書き込むツールの説明（入力の名前・型・必須・書くべき中身）は、スキーマの `title`・`description`・必須から組み立てる
 
 ## MCP からの読み取り
@@ -86,13 +93,14 @@ MCP は次を守る。
 YAML では次を足す。
 
 - タグの一覧（名前と説明）を YAML に登録し、登録外のタグを書き込みで弾く
-- 登録したタグを返すタグの一覧のツールを置く。そのタグを持つ YAML の数が 0 のタグも返す
+- タグの一覧のツールを置き、登録したタグごとに名前・説明・そのタグを持つ項目の数・使っている種類を返す。数が 0 のタグも返す
+- 検索のタグは複数を渡せ、既定は全てを持つ項目（AND）に絞る。どれかを持つ項目（OR）は別の引数（`any_tags`）で渡す
 - 登録外のタグで検索したら、近い候補を添えたエラーにする
-- 読み取りのツールの説明も、スキーマから組み立てる
+- 読み取りのツールの説明も、スキーマから組み立てる。使える絞り込みと、先にタグの一覧のツールを呼ぶことを書く
 
 ## 出典
 
-- [Anthropic: Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)（`search` 系への統合・`response_format`・切り詰めたときの案内・入出力の説明）
-- [MCP 仕様: Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools)（`inputSchema` / `outputSchema`・`tools/list` のページネーション）
+- [Anthropic: Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)（入出力の説明）
+- [MCP 仕様: Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools)（`inputSchema` / `outputSchema`）
 - [JSON Schema 2020-12: Core](https://json-schema.org/draft/2020-12/json-schema-core)（`$ref`・`$defs`）
 - [JSON Schema 2020-12: Validation](https://json-schema.org/draft/2020-12/json-schema-validation)（`title`・`description`）
