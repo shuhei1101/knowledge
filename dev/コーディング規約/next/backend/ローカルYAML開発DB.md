@@ -15,7 +15,7 @@ query.ts / db.ts  ← env で実装を切り替え
 
 - 関数の型（`FetchResource` 等）を `types.ts` に定義し、両実装が同じ型を満たす
 - `USE_YAML_DB=true` を `.env.local` に設定するだけで切り替わる
-- トランザクション維持：本番は Drizzle の `db.transaction`、ローカルは YAML スナップショット/ロールバック + ロック
+- トランザクション維持：本番は Drizzle の `db.transaction`、ローカルは YAML スナップショット/ロールバック + ロック（ロックとロールバックの決まりは [YAML](../../dev/YAML.md) の `## 書き込み`）
 - YAML ファイルはスキーマと同じフィールドを持つ → 移行コストなし
 
 ```
