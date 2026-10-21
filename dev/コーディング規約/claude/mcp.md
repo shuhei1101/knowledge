@@ -46,6 +46,16 @@
 
 - 戻り値は `{success: bool, output: str}` 形式の共通モデルを基本とする
 
+## 読み取りのツール
+
+- 種類ごとの `list_*` を作らず、絞り込みの引数を持つ `search` 1 つにまとめる
+- 既定の `limit` を持ち、絞り込みに当たった総数 `total` を返す。続きがあるときは `next_cursor` を返す。どちらも共通モデルに項目を追加して返す
+- `response_format`（`concise` / `detailed`）で返す量を選べるようにする。既定は `concise`
+- `search` が既定で返すのは ID・題名・タグだけにし、中身は ID で 1 件を取るツールで返す
+- 切り詰めたときは、`total` と返した件数に加えて、絞り込める引数を案内する
+
+出典: [Anthropic: Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)、[MCP 仕様: Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools)（`tools/list` の `cursor` / `nextCursor`）
+
 ## 登録
 
 - プロジェクト用: ルートの `.mcp.json`（バージョン管理でチーム共有）
