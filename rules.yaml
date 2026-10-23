@@ -147,6 +147,7 @@ rules:
     exclude:
       - "**/docs/_layouts/**"
       - "**/docs/_includes/**"
+      - "**/*.md"
   - rule: dev/コーディング規約/html/core/サーバー描画.md
     paths:
       - "**/templates/**/*.html*"
@@ -310,6 +311,7 @@ rules:
     exclude:
       - "**/docs/_layouts/**"
       - "**/docs/_includes/**"
+      - "**/*.md"
   - rule: dev/コーディング規約/html/共通化の判断.md
     paths:
       - "**/frontend/**"
@@ -849,11 +851,19 @@ rules:
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
+    exclude:
+      - "**/*.md"
+  - rule: dev/コーディング規約/ui/画面の分け方.md
+    paths:
       - "**/設計書/画面設計/**"
   - rule: dev/コーディング規約/ui/業務画面のUI要素.md
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
+    exclude:
+      - "**/*.md"
+  - rule: dev/コーディング規約/ui/業務画面のUI要素.md
+    paths:
       - "**/設計書/画面設計/**"
   - rule: dev/コーディング規約/ui/ドキュメントの部品.md
     paths:
@@ -864,29 +874,53 @@ rules:
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
+    exclude:
+      - "**/*.md"
+  - rule: dev/コーディング規約/ui/画面デザインの原則.md
+    paths:
       - "**/設計書/画面設計/**"
   - rule: dev/コーディング規約/ui/情報の階層と見た目.md
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
+    exclude:
+      - "**/*.md"
+  - rule: dev/コーディング規約/ui/情報の階層と見た目.md
+    paths:
       - "**/設計書/画面設計/**"
   - rule: dev/コーディング規約/ui/操作とアクセシビリティ.md
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
+    exclude:
+      - "**/*.md"
+  - rule: dev/コーディング規約/ui/操作とアクセシビリティ.md
+    paths:
       - "**/設計書/画面設計/**"
   - rule: dev/コーディング規約/ui/入力と文言.md
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
+    exclude:
+      - "**/*.md"
+  - rule: dev/コーディング規約/ui/入力と文言.md
+    paths:
       - "**/設計書/画面設計/**"
   - rule: dev/コーディング規約/ui/表示の安定.md
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
+    exclude:
+      - "**/*.md"
+  - rule: dev/コーディング規約/ui/表示の安定.md
+    paths:
       - "**/設計書/画面設計/**"
   - rule: dev/コーディング規約/ui/対応ブラウザ.md
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
+    exclude:
+      - "**/*.md"
+  - rule: dev/コーディング規約/ui/対応ブラウザ.md
+    paths:
       - "**/設計書/画面設計/**"
