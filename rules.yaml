@@ -143,6 +143,10 @@ rules:
   - rule: dev/コーディング規約/html/core/iframe禁止.md
     paths:
       - "**/frontend/**/*.{css,html,ts,js}*"
+      - "**/*.html*"
+    exclude:
+      - "**/docs/_layouts/**"
+      - "**/docs/_includes/**"
   - rule: dev/コーディング規約/html/core/ビルドレス原則.md
     paths:
       - "**/frontend/**/*.css*"
@@ -150,6 +154,10 @@ rules:
       - "**/frontend/**/*.{ts,js}*"
       - "**/static/**/*.{ts,js}*"
       - "**/assets/**/*.{ts,js}*"
+  - rule: dev/コーディング規約/html/core/サーバー描画.md
+    paths:
+      - "**/templates/**/*.html*"
+      - "**/frontend/pages/**/index.html*"
   - rule: dev/コーディング規約/html/css/コメント.md
     paths:
       - "**/*.css*"
@@ -200,9 +208,10 @@ rules:
   - rule: dev/コーディング規約/html/layout/画面テンプレート.md
     paths:
       - "**/frontend/pages/**/*.html*"
+      - "**/templates/**/*.html*"
   - rule: dev/コーディング規約/html/naming/cssクラス.md
     paths:
-      - "**/frontend/**/*.css*"
+      - "**/*.css*"
   - rule: dev/コーディング規約/html/naming/カスタムエレメント.md
     paths:
       - "**/components/**/*.{ts,js}*"
@@ -297,6 +306,11 @@ rules:
       - "**/frontend/pages/**/screen.ts*"
       - "**/frontend/shared/css/**"
       - "**/frontend/shared/components/**"
+      - "**/*.html*"
+      - "**/*.css*"
+    exclude:
+      - "**/docs/_layouts/**"
+      - "**/docs/_includes/**"
   - rule: dev/コーディング規約/html/共通化の判断.md
     paths:
       - "**/frontend/**"
