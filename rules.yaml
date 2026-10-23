@@ -147,6 +147,10 @@ rules:
     exclude:
       - "**/docs/_layouts/**"
       - "**/docs/_includes/**"
+  - rule: dev/コーディング規約/html/core/サーバー描画.md
+    paths:
+      - "**/templates/**/*.html*"
+      - "**/frontend/pages/**/index.html*"
   - rule: dev/コーディング規約/html/core/ビルドレス原則.md
     paths:
       - "**/frontend/**/*.css*"
@@ -154,10 +158,6 @@ rules:
       - "**/frontend/**/*.{ts,js}*"
       - "**/static/**/*.{ts,js}*"
       - "**/assets/**/*.{ts,js}*"
-  - rule: dev/コーディング規約/html/core/サーバー描画.md
-    paths:
-      - "**/templates/**/*.html*"
-      - "**/frontend/pages/**/index.html*"
   - rule: dev/コーディング規約/html/css/コメント.md
     paths:
       - "**/*.css*"
@@ -205,6 +205,7 @@ rules:
     paths:
       - "**/layout.css*"
       - "**/app-shell*"
+      - "**/templates/**/*.html*"
   - rule: dev/コーディング規約/html/layout/画面テンプレート.md
     paths:
       - "**/frontend/pages/**/*.html*"
@@ -301,8 +302,6 @@ rules:
       - "**/frontend/**"
   - rule: dev/コーディング規約/html/モバイル対応.md
     paths:
-      - "**/frontend/pages/**/index.html*"
-      - "**/frontend/pages/**/screen.css*"
       - "**/frontend/pages/**/screen.ts*"
       - "**/frontend/shared/css/**"
       - "**/frontend/shared/components/**"
