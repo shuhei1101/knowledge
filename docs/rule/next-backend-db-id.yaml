@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-db-id
+kind: rule
+name: drizzle/schema.ts — 主キー（ID）設計
+description: drizzle/schema.ts の主キー（ID）に UUID を使う設計の決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: drizzle-schema-id-01
+    group: drizzle/schema.ts — 主キー（ID）設計
+    name: UUID は gen_random_uuid
+    body: |-
+      - UUID は `sql\`gen_random_uuid()\`` をデフォルトに使う（Postgres ネイティブ）
+  - id: drizzle-schema-id-02
+    group: drizzle/schema.ts — 主キー（ID）設計
+    name: identity は不変
+    body: |-
+      - `generatedAlwaysAsIdentity()` は 不変（外部から指定不可）
+  - id: drizzle-schema-id-03
+    group: drizzle/schema.ts — 主キー（ID）設計
+    name: bigint は個別検討
+    body: |-
+      - 主キーを `bigint` にする必要があるテーブル（数十億行）が出てきたら個別検討
+  - id: drizzle-schema-id-04
+    group: drizzle/schema.ts — 主キー（ID）設計
+    name: 独自 ID は使わない
+    body: |-
+      - ULID / NanoID 等の独自 ID は 特別な理由がない限り使わない

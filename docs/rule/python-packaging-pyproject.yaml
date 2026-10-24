@@ -1,0 +1,86 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-packaging-pyproject
+kind: rule
+name: pyproject.toml 標準テンプレート
+description: pyproject.toml の標準テンプレートで守るポイントを定める。
+tags:
+  - name: scope:python
+  - name: topic:packaging
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      ruff / mypy / pyright の設定値は [core/スタイル](id:python-core-style) を参照（重複定義しない）。
+
+      ```toml
+      [project]
+      name = "mypkg"
+      version = "0.1.0"
+      description = "短い説明（1 行）"
+      readme = "README.md"
+      requires-python = ">=3.12"
+      license = "MIT"
+
+      dependencies = [
+          "pydantic",
+          "pydantic-settings[yaml]",
+          "httpx",
+      ]
+
+      [dependency-groups]
+      dev = [
+          "pytest",
+          "pytest-asyncio",
+          "pytest-cov",
+          "mypy",
+          "ruff",
+      ]
+
+      [project.scripts]
+      mypkg = "mypkg.__main__:main"
+
+      [build-system]
+      requires = ["hatchling"]
+      build-backend = "hatchling.build"
+
+      [tool.hatch.build.targets.wheel]
+      packages = ["src/mypkg"]
+
+      [tool.pytest.ini_options]
+      testpaths = ["tests"]
+      asyncio_mode = "auto"
+      addopts = ["-ra", "--import-mode=importlib", "--strict-markers", "--strict-config", "-W", "error"]
+      markers = [
+          "external: real external-service connectivity tests (requires --run-external)",
+      ]
+      ```
+  - id: points-01
+    group: ポイント
+    name: src レイアウト
+    body: |-
+      - src レイアウト（`src/mypkg/`）
+  - id: points-02
+    group: ポイント
+    name: テストツールの分離
+    body: |-
+      - テストツールは `[dependency-groups]` の `dev` に分離
+  - id: points-03
+    group: ポイント
+    name: build backend は hatchling
+    body: |-
+      - build backend は `hatchling`
+  - id: points-04
+    group: ポイント
+    name: 依存の追加方法の参照
+    body: |-
+      - 依存の追加方法・実行は [packaging/依存パッケージ管理](id:python-packaging-dependency)
+  - id: points-05
+    group: ポイント
+    name: .gitignore の内容
+    body: |-
+      - `.gitignore` には `.venv/` `.env` `__pycache__/` 各種キャッシュ `dist/` を入れる

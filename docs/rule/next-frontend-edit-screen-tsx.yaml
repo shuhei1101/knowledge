@@ -1,0 +1,68 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-edit-screen-tsx
+kind: rule
+name: "{Feature}EditScreen.tsx / {Feature}NewScreen.tsx"
+description: 編集・新規の Client Component の構成と、送信フロー、保存ボタンの活性条件を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      `<Controller>` + `<Field>` + react-hook-form + Zod + Server Action。
+  - id: edit-screen-01
+    group: "{Feature}EditScreen.tsx / {Feature}NewScreen.tsx"
+    name: use client は必須
+    body: |-
+      - `'use client'` 必須
+  - id: edit-screen-02
+    group: "{Feature}EditScreen.tsx / {Feature}NewScreen.tsx"
+    name: useTransition で isPending 管理
+    body: |-
+      - `useTransition` で `isPending` 管理
+  - id: edit-screen-03
+    group: "{Feature}EditScreen.tsx / {Feature}NewScreen.tsx"
+    name: defaultValues に Server の値
+    body: |-
+      - `defaultValues` に Server から受け取った値を流す
+  - id: edit-screen-04
+    group: "{Feature}EditScreen.tsx / {Feature}NewScreen.tsx"
+    name: mutation は Server Action
+    body: |-
+      - mutation は Server Action（`useMutation` ではない）
+  - id: submit-flow-01
+    group: 送信フロー
+    name: handleSubmit から startTransition
+    body: |-
+      1. `form.handleSubmit(onSubmit)` → `startTransition(async () => { ... })`
+  - id: submit-flow-02
+    group: 送信フロー
+    name: result.ok の判定
+    body: |-
+      2. Server Action の戻り値 `result.ok` を判定
+  - id: submit-flow-03
+    group: 送信フロー
+    name: 失敗時のエラー表示
+    body: |-
+      3. 失敗: `error.field` があれば `form.setError`、なければ `toast.error`
+  - id: submit-flow-04
+    group: 送信フロー
+    name: 編集成功時の処理
+    body: |-
+      4. 成功（edit）: `toast.success` + `form.reset(data)`
+  - id: submit-flow-05
+    group: 送信フロー
+    name: 新規成功時の処理
+    body: |-
+      5. 成功（new）: `toast.success` + `router.push(RESOURCE_URL.view(id))`
+  - id: rules-01
+    group: ルール
+    name: 保存ボタンの活性条件
+    body: |-
+      - 保存ボタンは `disabled={!form.formState.isDirty || isPending}`

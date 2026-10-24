@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-action-ts
+kind: rule
+name: app/(authenticated)/{feature}/actions.ts
+description: Server Action 群を置く actions.ts の入力検証・認証・戻り値・配置・命名の決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: actions-ts-01
+    group: app/(authenticated)/{feature}/actions.ts
+    name: Server Action 群
+    body: |-
+      - Server Action 群。mutation の第一選択。
+  - id: actions-ts-02
+    group: app/(authenticated)/{feature}/actions.ts
+    name: use server の記載
+    body: |-
+      - ファイル先頭に `'use server'`
+  - id: actions-ts-03
+    group: app/(authenticated)/{feature}/actions.ts
+    name: 戻り値は ActionResult
+    body: |-
+      - 戻り値は `ActionResult<T>` 形式に統一
+  - id: actions-ts-04
+    group: app/(authenticated)/{feature}/actions.ts
+    name: 入力は Zod で parse
+    body: |-
+      - 入力は 必ず Zod で `.parse`（クライアント信用しない）
+  - id: actions-ts-05
+    group: app/(authenticated)/{feature}/actions.ts
+    name: 認証は getAuthContext
+    body: |-
+      - 認証は `getAuthContext()`（呼ばないとセキュリティ違反）。対象リソースへの権限（所有者・ロール）も確認する
+  - id: actions-ts-06
+    group: app/(authenticated)/{feature}/actions.ts
+    name: 業務処理は service 経由
+    body: |-
+      - 業務処理は `service.ts` 経由（DB 操作を直接書かない）
+  - id: actions-ts-07
+    group: app/(authenticated)/{feature}/actions.ts
+    name: 戻り値は UI の項目だけ
+    body: |-
+      - 戻り値には UI が使う項目だけを入れる（DB の行をそのまま返さない）
+  - id: actions-ts-08
+    group: app/(authenticated)/{feature}/actions.ts
+    name: キャッシュ無効化の参照
+    body: |-
+      - キャッシュの無効化と `refresh()` は [キャッシュ](id:next-backend-cache) に従う
+  - id: file-placement-01
+    group: ファイル配置
+    name: フィーチャ固有の配置
+    body: |-
+      - `app/(authenticated)/{feature}/actions.ts` — フィーチャ固有
+  - id: file-placement-02
+    group: ファイル配置
+    name: 共通 action の配置
+    body: |-
+      - `app/(shared)/actions/{name}.ts` — 複数フィーチャ共通（auth 等）
+  - id: naming-01
+    group: 命名
+    name: Action の命名
+    body: |-
+      - `{verb}{Feature}Action` プレフィックス（`registerResourceAction`, `updateResourceAction`, `deleteResourceAction`）
+  - id: naming-02
+    group: 命名
+    name: 動詞の種類
+    body: |-
+      - 動詞は `register` / `update` / `delete` / `activate` / `archive` / `publish` 等

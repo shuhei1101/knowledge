@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-auth-context
+kind: rule
+name: app/(shared)/auth/index.ts — getAuthContext()
+description: すべての route・Server Action・Server Component が認証を取得する getAuthContext の使い方を定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      すべての `route.ts` / Server Action / Server Component が認証を取る統一エントリポイント。
+  - id: auth-context-01
+    group: app/(shared)/auth/index.ts — getAuthContext()
+    name: 認証はこの関数経由
+    body: |-
+      - 常にこのファイルの関数経由で認証を取る（`getSession()` を route / Server Action から直接呼ばない）
+  - id: auth-context-02
+    group: app/(shared)/auth/index.ts — getAuthContext()
+    name: DB クライアントも返す
+    body: |-
+      - DB クライアントもここで返す（呼び出し側で個別 import 不要）
+  - id: auth-context-03
+    group: app/(shared)/auth/index.ts — getAuthContext()
+    name: 認証失敗は ClientAuthError
+    body: |-
+      - 認証失敗は `ClientAuthError` を投げる（`withRouteErrorHandling` / `handleActionError` が catch）
+  - id: auth-context-04
+    group: app/(shared)/auth/index.ts — getAuthContext()
+    name: プロバイダ差し替えは provider.ts だけ
+    body: |-
+      - プロバイダ差し替え時は `provider.ts` だけ書き換える（呼び出し側に影響なし）
+  - id: usage-example-01
+    group: 使い方の例
+    name: 使い方の例
+    body: |-
+      ```ts
+      // route.ts / Server Action / Server Component とも同じ
+      const { db, userId } = await getAuthContext()
+
+      // 認証任意（ログイン画面、トップページ等）
+      const ctx = await getOptionalAuthContext()
+      if (ctx) redirect("/home")
+      ```

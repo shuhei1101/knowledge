@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-webhook
+kind: rule
+name: Next.js App Router — Webhook Receiver
+description: Webhook を受信する Route Handler の配置と、署名検証・raw body・冪等性・レスポンス時間・リトライの決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: flowchart-config-location
+    type: requires
+    when: Webhook の署名シークレットの置き場所を決めるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      > **対象**: Stripe / GitHub / Slack 等の Webhook を受信するパターン。
+  - id: layout-01
+    group: 配置
+    name: 配置のツリー
+    body: |-
+      ```
+      app/api/v{N}/webhooks/{provider}/route.ts
+      ```
+  - id: layout-02
+    group: 配置
+    name: 配置の例
+    body: |-
+      例: `app/api/v{N}/webhooks/stripe/route.ts`
+  - id: webhook-signature-01
+    group: 重要ポイント > 1. 署名検証
+    name: 署名検証は公式ライブラリ
+    body: |-
+      Stripe / GitHub / Slack それぞれの公式ライブラリで検証する。
+  - id: webhook-signature-02
+    group: 重要ポイント > 1. 署名検証
+    name: 検証関数の表
+    body: |-
+      | プロバイダ | 関数                                                      |
+      | ---------- | --------------------------------------------------------- |
+      | Stripe     | `stripe.webhooks.constructEvent(body, signature, secret)` |
+      | GitHub     | HMAC-SHA256 + secret で `X-Hub-Signature-256` 検証        |
+      | Slack      | HMAC-SHA256 + signing secret で `X-Slack-Signature` 検証  |
+  - id: webhook-signature-03
+    group: 重要ポイント > 1. 署名検証
+    name: 自前検証のリプレイ対策
+    body: |-
+      自前で検証するときは、署名を定数時間で比較し、タイムスタンプが古いリクエストは拒否する（リプレイ対策）。
+  - id: webhook-raw-body-01
+    group: 重要ポイント > 2. raw body
+    name: raw body で検証
+    body: |-
+      署名検証には raw body が必要。`await request.text()` で生文字列を取得（`request.json()` だと検証に失敗）。
+  - id: webhook-idempotency-01
+    group: 重要ポイント > 3. Idempotency
+    name: 冪等性の確保
+    body: |-
+      同じイベントが複数回届き、到着順も保証されない。`event.id` を `processed_events` テーブルに保存して二重処理を防ぐ（詳細パターンは [冪等性](id:next-backend-idempotency)）。順序や処理済みの判断にイベントの `created` を使わない。
+  - id: webhook-response-time-01
+    group: 重要ポイント > 4. レスポンス時間
+    name: 素早く 2xx を返す
+    body: |-
+      Webhook は素早く 2xx を返すべき。重い処理は、短ければ `after()`（`next/server`）で応答後に回し、長ければジョブキューに積んで、即時 200 を返す。
+  - id: webhook-retry-policy-01
+    group: 重要ポイント > 5. リトライポリシー
+    name: リトライポリシー
+    body: |-
+      再送の有無はプロバイダごとに違う（Stripe は 2xx 以外で再送、GitHub は自動再送しない）。再送してほしい失敗だけ 5xx を返す。
+  - id: webhook-others-01
+    group: 重要ポイント > 6. その他
+    name: 署名シークレットの置き場所
+    body: |-
+      - 署名シークレットの置き場所は [設定値の置き場所](id:flowchart-config-location) と [shared/環境変数](id:next-shared-env-var) に従う
+  - id: webhook-others-02
+    group: 重要ポイント > 6. その他
+    name: ロガーに記録する項目
+    body: |-
+      - ロガーにはイベント ID・type・処理結果を記録

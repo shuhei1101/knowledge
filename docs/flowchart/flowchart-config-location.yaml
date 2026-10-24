@@ -1,0 +1,159 @@
+# yaml-language-server: $schema=../../schemas/flowchart.schema.yaml
+id: flowchart-config-location
+kind: flowchart
+name: 設定値の置き場所 判定フローチャート
+description: 設定値・秘匿値・定数を、リポジトリのどこに置くか、リポジトリの外のどこに置くかを判定
+tags:
+  - name: scope:判定フローチャート
+    main: true
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: dev-content-location
+    type: requires
+    when: プロンプト・キャラクターの定義・素材の一覧・評価のケース・カタログの置き場所を決めるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      設定値・秘匿値・定数を、リポジトリのどこに置くか、リポジトリの外のどこに置くかを判定
+
+      プロンプト・キャラクターなどの定義・素材の一覧・評価のケース・カタログはこの判定の対象外で、[コンテンツの置き場所](id:dev-content-location) に従う。
+  - id: config-location-flow-01
+    group: 設定値の置き場所 判定フローチャート
+    name: 判定フロー
+    body: |-
+      ```mermaid
+      flowchart TD
+        START([置き場所を決めたい値がある])
+        Q0{秘匿値か? ※1}
+        Q1{本番・共有の環境で使うか?}
+        Q2{実装の枠組みが .env.local を読むか?}
+        Q3{実行中に書き換わる状態か?}
+        Q4{人・マシン・環境ごとに変わる値か? ※2}
+        Q5{この checkout だけ値を変えたいか? ※3}
+        Q6{ブランチでコードとバージョンを揃えたい値か? ※4}
+        Q7{言語をまたいで使うか?}
+        Q8{同じ言語の複数のファイルで使うか?}
+        Q9{同じファイルの複数箇所で使うか?}
+
+        R1([secret manager])
+        R2([ホーム配下の秘匿ファイル])
+        R3([.env.local])
+        R4([データ（data/ 履歴・キャッシュ。git の外）])
+        R5([ホームの設定])
+        R6([checkout の上書き])
+        R7([コミットする既定値])
+        R8([コミットする定数の YAML ※5])
+        R9([定数モジュール])
+        R10([ファイル先頭の定数])
+        R11([その場の名前付き変数 ※6])
+
+        START --> Q0
+        Q0 -->|YES| Q1
+        Q0 -->|NO| Q3
+        Q1 -->|YES| R1
+        Q1 -->|NO| Q2
+        Q2 -->|YES| R3
+        Q2 -->|NO| R2
+        Q3 -->|YES| R4
+        Q3 -->|NO| Q4
+        Q4 -->|YES| Q5
+        Q4 -->|NO| Q6
+        Q5 -->|YES| R6
+        Q5 -->|NO| R5
+        Q6 -->|NO| Q7
+        Q6 -->|YES| R7
+        Q7 -->|YES| R8
+        Q7 -->|NO| Q8
+        Q8 -->|NO| Q9
+        Q8 -->|YES| R9
+        Q9 -->|YES| R10
+        Q9 -->|NO| R11
+      ```
+  - id: config-location-flow-02
+    group: 設定値の置き場所 判定フローチャート
+    name: ※1 秘匿値
+    body: |-
+      - **※1 秘匿値**: API キー・パスワード・トークン・秘密鍵など、漏れると悪用される値。git 管理下にもログにも置かない
+  - id: config-location-flow-03
+    group: 設定値の置き場所 判定フローチャート
+    name: ※2 環境の値
+    body: |-
+      - **※2 環境の値**: 接続先・費用の上限・マシンごとのパスなど、構造はほぼ変わらず値だけが人・マシン・環境で変わる値
+  - id: config-location-flow-04
+    group: 設定値の置き場所 判定フローチャート
+    name: ※3 checkout の上書き
+    body: |-
+      - **※3 checkout の上書き**: ブランチで試したい値など、その clone だけで変える値。リポジトリ直下の `settings.local.yaml`（git の外）に書く
+  - id: config-location-flow-05
+    group: 設定値の置き場所 判定フローチャート
+    name: ※4 既定値
+    body: |-
+      - **※4 既定値**: 項目の一覧・辞書と既定値（retry・timeout・機能フラグなど、コードを変えずに調整する値。最大長のようにコードの前提になる値は含めない）。項目の構造の正本で、ブランチのコードと同じバージョンで読めるようリポジトリにコミットする
+  - id: config-location-flow-06
+    group: 設定値の置き場所 判定フローチャート
+    name: ※5 定数の YAML
+    body: |-
+      - **※5 定数の YAML**: ラベル名のように、コードと文書が言語をまたいで共有する定数の正本（`config/constants.yaml` 等）。設定の 3 レイヤーに入れず、環境の値や checkout の上書きで上書きされない
+  - id: config-location-flow-07
+    group: 設定値の置き場所 判定フローチャート
+    name: ※6 その場の名前付き変数
+    body: |-
+      - **※6 その場の名前付き変数**: 使う 1 か所の近くで値に名前を付ける。値だけでは意味が読み取れないときも、その場で名前を付ける
+  - id: three-layers-01
+    group: 設定の 3 レイヤー
+    name: 3 レイヤーの案内
+    body: |-
+      設定は次の 3 レイヤーに置き、後のレイヤーが勝つ。
+  - id: three-layers-02
+    group: 設定の 3 レイヤー
+    name: 3 レイヤーの表
+    body: |-
+      | レイヤー | 置き場所 | git | 持つ値 |
+      | --- | --- | --- | --- |
+      | 既定値 | リポジトリの `config/defaults.yaml` | 管理する | 項目の一覧と既定値 |
+      | 環境の値 | `~/.config/{project}/settings.yaml`（秘匿値だけ分けるときは `~/.config/{project}/secrets/`） | 管理外（ホーム配下） | 接続先・秘匿値・費用の上限など |
+      | checkout の上書き | リポジトリ直下の `settings.local.yaml` | 管理外（`.gitignore`） | その checkout だけの値 |
+  - id: three-layers-03
+    group: 設定の 3 レイヤー
+    name: 読む順
+    body: |-
+      - 読む順は 既定値 → 環境の値 → checkout の上書き。checkout の上書きは無ければ飛ばし、在るのに読めなければ既定値と同じくエラーにする
+  - id: three-layers-04
+    group: 設定の 3 レイヤー
+    name: 既定値が読めないときはエラー
+    body: |-
+      - 既定値が読めないときはエラーにする
+  - id: three-layers-05
+    group: 設定の 3 レイヤー
+    name: その実行だけ値を変えるとき
+    body: |-
+      - その実行だけ値を変えるときは、環境変数・引数で上書きする（3 レイヤーのどれよりも優先する）
+  - id: three-layers-06
+    group: 設定の 3 レイヤー
+    name: 追加・改名があっても他のブランチを動かせる
+    body: |-
+      - ブランチで既定値へ移した項目を追加・改名しても、ホームの設定を書き換えずに他のブランチの checkout を動かせる
+  - id: three-layers-07
+    group: 設定の 3 レイヤー
+    name: サンプルファイルの用意
+    body: |-
+      - 環境の値と秘匿値のファイルには、実値を入れないサンプル（`settings.sample.yaml`、`.env.local` を使うときは `.env.sample`）を対でコミットし、必要なキーの一覧にする
+  - id: sources-01
+    group: 出典
+    name: 出典の表
+    body: |-
+      <!-- table: data -->
+
+      | 出典 | 取り込んだ要素 |
+      | --- | --- |
+      | [The Twelve-Factor App: Config](https://12factor.net/config) | 環境ごとに変わる値はコードの外に置く |
+      | [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir/latest/) | ユーザーごとの設定は `~/.config`（`$XDG_CONFIG_HOME`）の下に置く |
+      | [Microsoft: ASP.NET Core での開発時のアプリのシークレット](https://learn.microsoft.com/aspnet/core/security/app-secrets) | 開発時の秘匿値はプロジェクトのツリーの外（ユーザーのプロファイル）に置く |
+      | [OWASP Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html) | 本番の秘匿値は secret manager に集め、コードにもログにも出さない |
+      | [Claude Code: Settings](https://code.claude.com/docs/en/settings) | ユーザー → プロジェクト（コミット）→ ローカル（git の外）の順に重ね、後のものが勝つ |
+      | [Vite: Env Variables and Modes](https://vite.dev/guide/env-and-mode) | `.env.local` は git の外に置き、その checkout だけの値を持つ |
+
+      <!-- /table -->

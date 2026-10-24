@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-db-helper-ts
+kind: rule
+name: app/api/v{N}/{resource}/dbHelper.ts
+description: リソース内で共通利用する dbHelper.ts に置くものと置かないものを定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: db-helper-ts-01
+    group: app/api/v{N}/{resource}/dbHelper.ts
+    name: リソース内の共通ヘルパー
+    body: |-
+      - リソース内で複数の `query.ts` / `db.ts` 関数から共通利用するヘルパー。
+  - id: db-helper-ts-02
+    group: app/api/v{N}/{resource}/dbHelper.ts
+    name: リソース内に閉じる処理だけ
+    body: |-
+      - リソース内に閉じる共通処理だけを置く
+  - id: db-helper-ts-03
+    group: app/api/v{N}/{resource}/dbHelper.ts
+    name: 横断利用は shared に格上げ
+    body: |-
+      - 複数リソース横断で使うものは `app/(shared)/lib/` に格上げ（`app/(shared)/lib/pagination.ts` 等）
+  - id: db-helper-ts-04
+    group: app/api/v{N}/{resource}/dbHelper.ts
+    name: 純粋関数を優先
+    body: |-
+      - 純粋関数を優先（テストしやすい）
+  - id: db-helper-ts-05
+    group: app/api/v{N}/{resource}/dbHelper.ts
+    name: DB 接続を取らない
+    body: |-
+      - DB 接続を取らない（受け取る側で扱う）

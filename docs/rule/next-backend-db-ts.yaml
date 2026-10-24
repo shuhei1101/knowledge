@@ -1,0 +1,111 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-db-ts
+kind: rule
+name: app/api/v{N}/{resource}/db.ts
+description: app/api/v{N}/{resource}/db.ts を書き込み専用にする決まりと、必須テンプレート・命名・バルク操作を定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: db-ts-01
+    group: app/api/v{N}/{resource}/db.ts
+    name: 書き込み専用ファイル
+    body: |-
+      - 書き込み（INSERT / UPDATE / DELETE）専用ファイル。`service.ts` から呼ばれる。
+  - id: db-ts-02
+    group: app/api/v{N}/{resource}/db.ts
+    name: 1 関数 1 SQL 文
+    body: |-
+      - 1 関数 = 1 SQL 文（複数文の組み合わせは `service.ts` で）
+  - id: db-ts-03
+    group: app/api/v{N}/{resource}/db.ts
+    name: 引数はオブジェクトで受ける
+    body: |-
+      - 引数は オブジェクト で受ける（`{ db, id, record }`）
+  - id: db-ts-04
+    group: app/api/v{N}/{resource}/db.ts
+    name: db 引数は Db 型
+    body: |-
+      - `db` 引数は `Db` 型（`tx` も同じ型なのでトランザクション内でも使える）
+  - id: db-ts-05
+    group: app/api/v{N}/{resource}/db.ts
+    name: 失敗は DatabaseError で包む
+    body: |-
+      - 失敗は 必ず `DatabaseError` で包む（生の Drizzle error を投げない）
+  - id: db-ts-06
+    group: app/api/v{N}/{resource}/db.ts
+    name: 楽観的ロックの参照
+    body: |-
+      - update の楽観的ロック実装は [DB楽観的ロック](id:next-backend-db-optimistic-lock)
+  - id: db-ts-07
+    group: app/api/v{N}/{resource}/db.ts
+    name: 戻り値
+    body: |-
+      - 戻り値:
+        - `insertXxx` → `returning()` で row を返す
+        - `updateXxx` → `returning()` で row を返す（呼び出し側が利用）
+        - `deleteXxx` → void
+  - id: required-template-01
+    group: 必須テンプレ
+    name: db.ts の必須テンプレート
+    body: |-
+      ```ts
+      import { eq } from "drizzle-orm"
+      import type { Db } from "@/drizzle/db"
+      import { resources, type ResourceInsert, type ResourceUpdate } from "@/drizzle/schema"
+      import { DatabaseError } from "@/app/(shared)/errors/appError"
+
+      /** リソースを挿入 */
+      export const insertResource = async ({ db, record }: { db: Db; record: ResourceInsert }) => {
+        try {
+          const [row] = await db.insert(resources).values(record).returning()
+          return row
+        } catch (e) {
+          throw new DatabaseError("リソースの登録に失敗しました。", { cause: e })
+        }
+      }
+
+      /** リソースを削除（ハードデリート） */
+      export const deleteResource = async ({ db, id }: { db: Db; id: string }) => {
+        try {
+          await db.delete(resources).where(eq(resources.id, id))
+        } catch (e) {
+          throw new DatabaseError("リソースの削除に失敗しました。", { cause: e })
+        }
+      }
+      ```
+  - id: naming-01
+    group: 命名
+    name: insert の命名
+    body: |-
+      - `insert{Feature}` — INSERT
+  - id: naming-02
+    group: 命名
+    name: update の命名
+    body: |-
+      - `update{Feature}` — UPDATE
+  - id: naming-03
+    group: 命名
+    name: delete の命名
+    body: |-
+      - `delete{Feature}` — DELETE
+  - id: naming-04
+    group: 命名
+    name: upsert の命名
+    body: |-
+      - `upsert{Feature}` — INSERT ON CONFLICT
+  - id: naming-05
+    group: 命名
+    name: 関連テーブル操作の命名
+    body: |-
+      - `insert{Feature}Tags` — 関連テーブル操作
+  - id: bulk-operation-01
+    group: バルク操作
+    name: バルク INSERT
+    body: |-
+      複数行の INSERT は `values(配列)` の 1 文にする。

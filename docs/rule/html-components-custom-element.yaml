@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-components-custom-element
+kind: rule
+name: カスタムエレメント
+description: 共通 UI を Light DOM の autonomous custom element で作る決まりを定める。
+tags:
+  - name: scope:html
+  - name: topic:components
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: custom-element-01
+    group: カスタムエレメント
+    name: Light DOM の custom element
+    body: |-
+      - 共通 UI は Light DOM の autonomous custom element で作る。
+        - Shadow DOM は使わない（既存のグローバル CSS とデザイントークンをそのまま効かせるため）。
+        - セットアップは `connectedCallback` で（constructor ではなく）。移動で再度呼ばれるため、中身は 1 回だけ組む。
+        - 中身は `innerHTML` か `<template>` のクローンで組む。
+        - 属性で見た目・状態を切り替え、`attributeChangedCallback` で反映（`observedAttributes` に列挙）。

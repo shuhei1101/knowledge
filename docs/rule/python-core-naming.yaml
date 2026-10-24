@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-core-naming
+kind: rule
+name: 命名規約
+description: 内部専用の名前・Protocol・TypeVar・関数名の動詞接頭辞・公開 API の命名の決まりを定める。
+tags:
+  - name: scope:python
+  - name: topic:core
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      基本は [PEP 8](https://peps.python.org/pep-0008/#naming-conventions) に従う（`snake_case` / `UpperCamel` / `UPPER_SNAKE_CASE`）。
+  - id: naming-rules-01
+    group: 命名規約
+    name: 命名規則の表
+    body: |-
+      <!-- table: data -->
+
+      | 対象                      | 規則                                   | 例                               |
+      | ------------------------- | -------------------------------------- | -------------------------------- |
+      | 内部専用関数 / モジュール | 先頭 `_`                               | `_validate_input`, `_helpers.py` |
+      | Protocol                  | `UpperCamel`（`I` プレフィックス禁止） | `UserFinder`                     |
+      | TypeVar                   | 1 文字大文字 or `UpperCamel + T`       | `T`, `UserT`                     |
+
+      <!-- /table -->
+  - id: naming-rules-02
+    group: 命名規約
+    name: 関数の型エイリアスの命名
+    body: |-
+      - 関数の型エイリアスは動詞ベース可（`AsyncChatFn`, `SaveUser`）
+  - id: naming-rules-03
+    group: 命名規約
+    name: 識別子型エイリアスの命名
+    body: |-
+      - 識別子型エイリアス（`UserId` 等）は名詞で揃える
+  - id: feature-file-names-01
+    group: feature フォルダ内の標準ファイル名
+    name: feature 内の標準ファイル名
+    body: |-
+      [architecture/レイアウト](id:python-architecture-layout) の feature フォルダに従う。
+  - id: verb-prefix-01
+    group: 関数名の動詞接頭辞
+    name: 動詞接頭辞の表
+    body: |-
+      <!-- table: data -->
+
+      | プレフィックス | 用途                         | 戻り値                       |
+      | -------------- | ---------------------------- | ---------------------------- |
+      | `create_*`     | 新規作成                     | 作ったエンティティ           |
+      | `update_*`     | 更新                         | 更新後エンティティ or `None` |
+      | `delete_*`     | 削除                         | `None`                       |
+      | `find_*`       | 1 件検索                     | `Entity \| None`             |
+      | `get_*`        | 1 件取得（必ず存在する想定） | `Entity`（無ければ raise）   |
+      | `list_*`       | 複数取得                     | `list[Entity]`               |
+      | `search_*`     | 条件検索                     | `list[Entity]`               |
+
+      <!-- /table -->
+  - id: public-api-01
+    group: 公開 API
+    name: __all__ で公開を明示
+    body: |-
+      - 各 feature は `__init__.py` + `__all__` で公開シンボルを明示
+  - id: public-api-02
+    group: 公開 API
+    name: 内部シンボルを import させない
+    body: |-
+      - 外部から内部モジュールの `_` 付きシンボルを直接 import させない

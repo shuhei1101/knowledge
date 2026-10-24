@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: ui-obs-browser-source
+kind: rule
+name: OBSのブラウザソース
+description: OBS のブラウザソースで取り込む画面の前提のブラウザと、OBS 側・ページ側の作法を定める。
+tags:
+  - name: scope:ui
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      OBS のブラウザソースで取り込む画面の前提のブラウザと、OBS 側・ページ側の作法。
+  - id: assumed-browser-01
+    group: 前提のブラウザ
+    name: 前提のブラウザ
+    body: |-
+      | 要素 | 決まり |
+      | --- | --- |
+      | 前提のブラウザ | OBS 同梱の Chromium。それより新しいブラウザの API は、機能の有無を確かめてから使う |
+      | バージョンの確かめ先 | OBS のバージョンと同梱の Chromium のバージョンの対応は書かない。[OBS のリリースノート](https://github.com/obsproject/obs-studio/releases)と、[obs-browser](https://github.com/obsproject/obs-browser) の CEF のバージョンで確かめる |
+  - id: obs-side-setting-01
+    group: OBS 側の設定
+    name: OBS 側の設定
+    body: |-
+      | 要素 | 決まり |
+      | --- | --- |
+      | ハードウェアアクセラレーション | ブラウザソースのハードウェアアクセラレーションを有効にする |
+      | フレームレート | カスタムフレームレートはオフにし、OBS の出力のフレームレートに合わせる。ハードウェアアクセラレーションが効かない構成では、カスタムフレームレートを出力のフレームレートと同じ値にする |
+      | 非表示の間 | 「表示されていないときにソースをシャットダウン」をオフにする |
+  - id: page-side-01
+    group: ページ側
+    name: ページ側の作法
+    body: |-
+      | 要素 | 決まり |
+      | --- | --- |
+      | 背景 | `html` と `body` に不透明な背景を付けない（OBS が透過して重ねる） |
+      | 非表示の間 | `obsSourceVisibleChanged` を受け取り、非表示の間は演出のキューを止める |
+      | アニメーション | `transform` と `opacity` を基本にする |
+  - id: sources-01
+    group: 出典
+    name: "出典: obs-browser"
+    body: |-
+      - [obs-browser](https://github.com/obsproject/obs-browser)
+  - id: sources-02
+    group: 出典
+    name: "出典: OBS の Browser Source の KB"
+    body: |-
+      - [OBS の Browser Source の KB](https://obsproject.com/kb/browser-source)
+  - id: sources-03
+    group: 出典
+    name: "出典: Compositor-Only Properties"
+    body: |-
+      - [Stick to Compositor-Only Properties and Manage Layer Count](https://web.dev/articles/stick-to-compositor-only-properties-and-manage-layer-count)

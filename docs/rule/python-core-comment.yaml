@@ -1,0 +1,80 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-core-comment
+kind: rule
+name: コメントルール
+description: Python のコメントと docstring の量・形式と、条件分岐のコメントの記載方法を定める。
+tags:
+  - name: scope:python
+  - name: topic:core
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      言語・履歴コメント禁止などの共通原則は [dev/コーディング全般](id:dev-coding-general)。本ファイルは Python 固有の詳細。
+  - id: comment-rules-01
+    group: コメントルール
+    name: コメントは多めに記載
+    body: |-
+      - AI と共同で書く前提なので多めに書く
+  - id: comment-rules-02
+    group: コメントルール
+    name: 量は非自明さに従う
+    body: |-
+      - コメント量はコードの非自明さに従う。レイヤーで分けない（サービスもヘルパーも同じ濃度）
+  - id: required-matrix-01
+    group: 必須 / 推奨マトリクス
+    name: 必須と推奨のマトリクス
+    body: |-
+      <!-- table: data -->
+
+      | 対象                               | 要否      | 形式                                           |
+      | ---------------------------------- | --------- | ---------------------------------------------- |
+      | export する関数 / 型、public 関数  | ✅ 必須   | 1 行 docstring                                 |
+      | 内部関数（`_` 始まり）             | ⚠️ 推奨 | 複雑なら必須                                   |
+      | 設計上重要なフィールド             | ✅ 必須   | `Field(description=...)` or インラインコメント |
+      | 自明なフィールド                   | ❌ 不要   |                                                |
+      | 複数ステップを持つ関数の各ステップ | ✅ 必須   | `#` で各ステップの意図                         |
+      | 条件分岐                           | ✅ 必須   | 分岐ごとに「条件の意味 + 何をするか」          |
+      | 自明な 1 行・`logger.*` の行       | ❌ 不要   |                                                |
+
+      <!-- /table -->
+  - id: required-matrix-02
+    group: 必須 / 推奨マトリクス
+    name: 重要なフィールドの定義
+    body: |-
+      「設計上重要なフィールド」= 外部キー / ステータス enum / 業務フラグ / 楽観ロック / 監査カラム / 業務的に複雑な意味を持つもの。
+  - id: docstring-01
+    group: docstring
+    name: docstring は 1 行で目的のみ
+    body: |-
+      - 1 行で目的だけ書く（型は signature が持つので `@param` / `@returns` は書かない）
+  - id: docstring-02
+    group: docstring
+    name: 複数行の docstring
+    body: |-
+      - 複数行が必要なら 1 行目に要約、空行、詳細
+  - id: branch-comment-01
+    group: 条件分岐の書き方
+    name: 条件分岐のコメント
+    body: |-
+      読み手がコメントだけで判断ツリーを追えるようにする:
+
+      ```python
+      # 在庫が残っているか
+      if stock.remaining > 0:
+          # あり: 通常購入フロー
+          order = _place_order(stock, qty)
+      elif stock.restock_eta is not None:
+          # 切れているが再入荷予定あり: 予約として受け付ける
+          order = _reserve(stock, qty)
+      else:
+          # 完全な在庫切れ: 購入不可エラー
+          raise OutOfStockError(stock.id)
+      ```
+
+      自明な分岐（`if x is None: return`）だけ省略してよい。

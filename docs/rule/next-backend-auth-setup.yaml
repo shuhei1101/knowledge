@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-auth-setup
+kind: rule
+name: lib/auth.ts — Better Auth セットアップ
+description: 採用する認証プロバイダ Better Auth のセットアップの決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: flowchart-config-location
+    type: requires
+    when: 認証のシークレットの置き場所を決めるとき
+items:
+  - id: overview
+    name: 概要
+    body: |2-
+       採用認証プロバイダ: Better Auth（DB 非依存・TypeScript ファースト）。
+  - id: auth-setup-01
+    group: lib/auth.ts — Better Auth セットアップ
+    name: lib/auth.ts は 1 つだけ
+    body: |-
+      - `lib/auth.ts` は 1 つだけ（複数 instance NG）
+  - id: auth-setup-02
+    group: lib/auth.ts — Better Auth セットアップ
+    name: セッション期限
+    body: |-
+      - セッション期限は 30 日 + sliding renewal
+  - id: auth-setup-03
+    group: lib/auth.ts — Better Auth セットアップ
+    name: cookieCache の有効化
+    body: |-
+      - `cookieCache` を有効化（DB クエリ削減）。失効が他端末に反映されるまで最大 `maxAge` かかるため、機微な操作は `disableCookieCache: true` で DB を引く
+  - id: auth-setup-04
+    group: lib/auth.ts — Better Auth セットアップ
+    name: cookie を設定する呼び出しの扱い
+    body: |-
+      - Server Action で cookie を設定する認証呼び出し（`signInEmail` 等）のため、`nextCookies()` プラグインを `plugins` の最後に置く
+  - id: auth-setup-05
+    group: lib/auth.ts — Better Auth セットアップ
+    name: シークレットの置き場所
+    body: |-
+      - シークレットの置き場所は [設定値の置き場所](id:flowchart-config-location) と [shared/環境変数](id:next-shared-env-var) に従う

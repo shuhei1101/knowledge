@@ -1,0 +1,11 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: 変更履歴
+description: リリースごとに入った PR の一覧。
+allOf:
+  - $ref: common.schema.yaml#/$defs/metadata
+properties:
+  kind:
+    title: 種類
+    description: 文書の種類。この種類では `changelog` に固定する。
+    const: changelog
+unevaluatedProperties: false

@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-zustand-pattern
+kind: rule
+name: Zustand — クロスルート state
+description: Context で不十分なときに使う Zustand のクロスルート state の使いどころと、配置・selector・永続化のルールを定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      Context で不十分なときに使う:
+  - id: zustand-01
+    group: Zustand — クロスルート state
+    name: 頻繁更新で Context が不向き
+    body: |-
+      - 頻繁更新で Context だと全 consumer が re-render する
+  - id: zustand-02
+    group: Zustand — クロスルート state
+    name: React tree 外から参照
+    body: |-
+      - React tree 外からも参照したい
+  - id: zustand-03
+    group: Zustand — クロスルート state
+    name: selector で部分購読
+    body: |-
+      - selector で部分購読したい
+  - id: rules-01
+    group: ルール
+    name: store の配置
+    body: |-
+      - 配置: `app/(shared)/stores/use{Name}Store.ts`
+  - id: rules-02
+    group: ルール
+    name: selector で部分購読する
+    body: |-
+      - selector で部分購読
+  - id: rules-03
+    group: ルール
+    name: 永続化は persist
+    body: |-
+      - 永続化は `persist` ミドルウェア
+  - id: rules-04
+    group: ルール
+    name: サーバーデータとフォーム値は入れない
+    body: |-
+      - サーバーデータ / フォーム値は入れない

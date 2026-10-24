@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-devtools-storybook
+kind: rule
+name: Next.js App Router — Storybook
+description: shadcn/ui 拡張コンポーネントのカタログを Storybook で可視化する決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:devtools
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      > **目的**: shadcn/ui 拡張コンポーネントのカタログを可視化し、デザイン確認・テスト・ドキュメント化を一元化。
+      > **Stack**: Storybook + `@storybook/nextjs-vite` + Vitest 統合（バージョンは [Storybook のドキュメント](https://storybook.js.org/docs)）。
+  - id: storybook-01
+    group: Next.js App Router — Storybook
+    name: 共通コンポーネントの story
+    body: |-
+      - 共通コンポーネント（`app/(shared)/components/`）の `.stories.tsx` を 同じディレクトリ に置く
+  - id: storybook-02
+    group: Next.js App Router — Storybook
+    name: フィーチャ固有は story 不要
+    body: |-
+      - フィーチャ固有のコンポーネントは story 不要（E2E でカバー）
+  - id: storybook-03
+    group: Next.js App Router — Storybook
+    name: 状態のある部品は play 関数
+    body: |-
+      - 状態のあるコンポーネント（Dialog 等）は `play` 関数で操作
+  - id: storybook-04
+    group: Next.js App Router — Storybook
+    name: next/navigation を使う部品
+    body: |-
+      - `next/navigation` を使うコンポーネントは `parameters.nextjs.appDirectory: true` を付ける
+  - id: storybook-05
+    group: Next.js App Router — Storybook
+    name: addon-a11y の導入
+    body: |-
+      `addon-a11y` を入れると、各 Story で axe-core によるチェックが走り、違反が UI に表示される。
+      `addon-themes` で全 Story にテーマ切替トグルを追加する。
+      `@chromatic-com/storybook` で各 Story を Chromatic にアップし、視覚回帰テストにする。
+  - id: storybook-06
+    group: Next.js App Router — Storybook
+    name: Category の表
+    body: |-
+      | Category      | 用途                                                       |
+      | ------------- | ---------------------------------------------------------- |
+      | `Shared`      | `app/(shared)/components/` のカスタム                      |
+      | `Shared / UI` | `app/(shared)/components/ui/` の shadcn コピー（必要なら） |
+      | `Patterns`    | パターン例（List 画面風、Edit 画面風）                     |
+      | `Forms`       | フォーム例                                                 |
+      | `Pages`       | ページ全体のスタブ（任意）                                 |

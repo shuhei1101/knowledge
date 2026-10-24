@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-html-native-elements
+kind: rule
+name: ネイティブ要素を第一選択にする
+description: JS で作る前にネイティブ要素で済ませる決まりを定める。
+tags:
+  - name: scope:html
+  - name: topic:html
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      JS で作る前に標準要素で済むか確認する。
+  - id: native-elements-first-01
+    group: ネイティブ要素を第一選択にする
+    name: 用途別のネイティブ要素の表
+    body: |-
+      | 用途                       | 要素                      |
+      | -------------------------- | ------------------------- |
+      | モーダル                   | `<dialog>`                |
+      | アコーディオン / 開閉      | `<details>` / `<summary>` |
+      | 日付・色・範囲・ファイル等 | `<input type="...">`      |
+      | 非モーダルの浮遊 UI（メニュー・トースト等） | `popover` 属性 |
+  - id: native-elements-first-02
+    group: ネイティブ要素を第一選択にする
+    name: 操作は button、移動は a
+    body: |-
+      操作はボタン（`<button>`）、移動はリンク（`<a href>`）の要素で作る。

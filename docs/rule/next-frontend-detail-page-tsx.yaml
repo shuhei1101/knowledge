@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-detail-page-tsx
+kind: rule
+name: "{feature}/[id]/page.tsx — View Server Component"
+description: 詳細（View）の Server Component の構成と、該当なしの扱い、generateMetadata の参照先を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      `[id]/page.tsx` が View 本体（`view/` サブルートは作らない）。
+  - id: view-page-01
+    group: "{feature}/[id]/page.tsx — View Server Component"
+    name: 該当なしは notFound
+    body: |-
+      - 該当なし → `notFound()`
+  - id: generate-metadata-01
+    group: generateMetadata
+    name: generateMetadata の参照
+    body: |-
+      詳細: [frontend/SEO](id:next-frontend-seo)

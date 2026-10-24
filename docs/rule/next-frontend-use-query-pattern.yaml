@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-use-query-pattern
+kind: rule
+name: useQuery パターン
+description: useQuery の hook の構成、queryKey、initialData、命名の決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: use-query-01
+    group: useQuery パターン
+    name: 1 hook 1 ファイル
+    body: |-
+      - 1 hook = 1 ファイル、先頭 `'use client'`
+  - id: use-query-02
+    group: useQuery パターン
+    name: 戻り値はオブジェクト
+    body: |-
+      - 戻り値はオブジェクト（タプル禁止）
+  - id: use-query-03
+    group: useQuery パターン
+    name: queryKey に全パラメータ
+    body: |-
+      - `queryKey` に結果を変える全パラメータを含める（filter/sort/page/pageSize 等）
+  - id: use-query-04
+    group: useQuery パターン
+    name: initialData で hydrate
+    body: |-
+      - `initialData` に Server Component 値を流して hydrate
+  - id: use-query-05
+    group: useQuery パターン
+    name: View と Edit で hook を共有
+    body: |-
+      - View / Edit で同じ API なら `[id]/hooks/useResource.ts` に共通化
+  - id: naming-01
+    group: 命名
+    name: 命名の表
+    body: |-
+      | Pattern | Purpose |
+      |---|---|
+      | `use{Feature}` | 単体 |
+      | `use{Feature}List` | 一覧 |
+      | `use{Feature}By{Key}` | キー指定 |

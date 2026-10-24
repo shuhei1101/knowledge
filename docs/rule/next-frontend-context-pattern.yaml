@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-context-pattern
+kind: rule
+name: React Context パターン
+description: 複数ルートで共有する UI state を React Context で持つときのルールを定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      使い所: 複数ルート / コンポーネントで共有する UI state（prop drilling 3+ レベル）
+  - id: rules-01
+    group: ルール
+    name: 1 Context は 1 責務
+    body: |-
+      - 1 Context = 1 責務
+  - id: rules-02
+    group: ルール
+    name: Provider の配置
+    body: |-
+      - Provider: `app/(shared)/providers/`
+  - id: rules-03
+    group: ルール
+    name: カスタム hook 経由でアクセス
+    body: |-
+      - カスタム hook（`use{Name}`）経由でアクセス（`useContext` 直呼び禁止）
+  - id: rules-04
+    group: ルール
+    name: 頻繁更新は Zustand に切り替え
+    body: |-
+      - 頻繁更新・selector 必要なら Zustand に切り替え

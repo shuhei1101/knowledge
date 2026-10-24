@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-pages-screen-css
+kind: rule
+name: screen.css の作り方
+description: 画面固有の screen.css を @layer の中に記載し、トークンを参照する決まりを定める。
+tags:
+  - name: scope:html
+  - name: topic:pages
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: screen-css-creation-01
+    group: screen.css の作り方
+    name: 画面だけのスタイル
+    body: |-
+      - その画面だけのスタイル。
+        - 共通で足りるなら作らない。
+  - id: screen-css-creation-02
+    group: screen.css の作り方
+    name: "@layer の中に入れる"
+    body: |-
+      - 画面固有スタイルも必ず `@layer` の中に入れる。
+        - 画面ローカル部品は `components`、微調整は `utilities` レイヤー。
+          - 順序は `shared/css/layers.css` 宣言済みなので再宣言しない。
+  - id: screen-css-creation-03
+    group: screen.css の作り方
+    name: 色・間隔・角丸はトークン参照
+    body: |-
+      - 色・間隔・角丸は `var(--token)` 参照。
+        - 共通に無い画面ローカル値は `.page { --local-x: ... }` に集約してから参照する。

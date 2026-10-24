@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: claude-hook
+kind: rule
+name: フック作成ガイド
+description: フックをスクリプトとして作る決まりと、Bash コマンドを一度だけ止めるワンタイムトークンの使い方を定める。
+tags:
+  - name: scope:claude
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: claude-mcp
+    type: requires
+    when: フックで文脈を注入するとき
+items:
+  - id: rules-01
+    group: ルール
+    name: settings.json に直接記載しない
+    body: |-
+      - settings.json内にインラインで書かないでください。
+        - pythonファイルは`.claude/hooks/*.py`: スクリプト名はフックイベントと同じにしてください。
+          - 例: `user_prompt_submit.py`
+        - プロンプトファイルは`.claude/hooks/*.md`
+          - 変数を埋め込みたい場合は`.claude/hooks/*.j2`にする
+  - id: rules-02
+    group: ルール
+    name: additionalContext の上限
+    body: |-
+      - hooksの`additionalContext`でコンテキストを注入する場合の文字数の上限は公式の hooks リファレンス（`https://code.claude.com/docs/en/hooks`）に従う
+  - id: rules-03
+    group: ルール
+    name: 1 セッション 1 回の決まり
+    body: |-
+      - 文脈を注入するときは、[MCP サーバー作成ルール](id:claude-mcp) の 1 セッション 1 回の決まりに従う
+  - id: one-time-token-block-01
+    group: ワンタイムトークン付き条件ブロック
+    name: ワンタイムトークンの用途
+    body: |-
+      - PreToolUseなどで特定のBashコマンドを一度だけ防ぐときの方法
+  - id: one-time-token-block-02
+    group: ワンタイムトークン付き条件ブロック
+    name: ワンタイムトークンの使いどころ
+    body: |-
+      - 例えば、Push時に一度だけ確認させたい場合等に使う
+        - 「確認 → 通過 → 確認 → 通過」を交互に繰り返す。
+        - トークンなし時 → トークン作成 → ブロック（確認表示）
+        - トークンあり時 → トークン削除（消費）→ 通過
+  - id: one-time-token-block-03
+    group: ワンタイムトークン付き条件ブロック
+    name: トークン命名規約
+    body: |-
+      - トークン命名規約:
+        - フックごとに一意のトークンファイル名を使う。
+        - トークン名に `session_id` を含める。

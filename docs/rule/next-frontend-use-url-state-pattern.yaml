@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-use-url-state-pattern
+kind: rule
+name: use{Feature}UrlState.ts — URL クエリ state hook
+description: nuqs を使った URL クエリ state の hook の配置・リセット・history・URL に出す値を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: use-url-state-hook-01
+    group: use{Feature}UrlState.ts — URL クエリ state hook
+    name: nuqs を推奨
+    body: |-
+      - nuqs 推奨
+  - id: use-url-state-hook-02
+    group: use{Feature}UrlState.ts — URL クエリ state hook
+    name: NuqsAdapter の配置
+    body: |-
+      - `app/layout.tsx` に `<NuqsAdapter>` が必要
+  - id: use-url-state-hook-03
+    group: use{Feature}UrlState.ts — URL クエリ state hook
+    name: hook の配置
+    body: |-
+      - 配置: `{feature}/hooks/use{Feature}UrlState.ts`
+  - id: rules-01
+    group: ルール
+    name: 変更時はページ 1 にリセット
+    body: |-
+      - フィルタ / ソート変更時は ページ 1 にリセット必須
+  - id: rules-02
+    group: ルール
+    name: history の既定は replace
+    body: |-
+      - nuqs の `history` は既定が `replace`。フィルタ / ソート変更は `history: "push"` を指定する。debounced search 等は `replace` のまま
+  - id: rules-03
+    group: ルール
+    name: URL に出す値
+    body: |-
+      - URL に出す: タブ / フィルタ / ソート / ページ / 選択中 ID
+  - id: rules-04
+    group: ルール
+    name: URL に出さない値
+    body: |-
+      - URL に出さない: PII / フォーム入力中の値 / Loading or Error UI

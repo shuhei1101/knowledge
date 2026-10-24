@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-pages-screen-ts
+kind: rule
+name: screen.ts の作り方
+description: 画面の UI 層エントリである screen.ts の import・起動・DOM 参照・描画・ファイル内の並びを定める。
+tags:
+  - name: scope:html
+  - name: topic:pages
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: screen-ts-creation-01
+    group: screen.ts の作り方
+    name: UI 層のエントリ
+    body: |-
+      - `screen.ts` は画面の UI 層エントリ。
+        - DOM 取得・イベント登録・描画・URL 同期を担う。
+  - id: screen-ts-creation-02
+    group: screen.ts の作り方
+    name: bare specifier で共通層を参照
+    body: |-
+      - import は bare specifier（`shared/...`）で共通層を参照する。
+  - id: screen-ts-creation-03
+    group: screen.ts の作り方
+    name: init を即時呼び出し
+    body: |-
+      - 起動は `init()` を即時呼び出し（`DOMContentLoaded` は待たない。描画済み DOM が返る）。
+  - id: screen-ts-creation-04
+    group: screen.ts の作り方
+    name: getElementById での DOM 参照
+    body: |-
+      - DOM 参照は `getElementById`。型は `as HTMLInputElement` 等で必要なときだけ明示する。
+  - id: screen-ts-creation-05
+    group: screen.ts の作り方
+    name: innerHTML 描画と esc
+    body: |-
+      - 描画は innerHTML が基本。値は `esc()` を通してから入れる（XSS 対策）。
+  - id: screen-ts-creation-06
+    group: screen.ts の作り方
+    name: ファイル内の並び順
+    body: |-
+      ファイル内は次の順で並べ、`// ─── 名前 ───` で仕切る:
+
+      <!-- table: data -->
+
+      | No  | セクション     | 中身                                              |
+      | --- | -------------- | ------------------------------------------------- |
+      | 1   | 定数           | モジュールレベルの定数・ラベル辞書                |
+      | 2   | 型             | この画面ローカルの `type`（export 不要）          |
+      | 3   | DOM refs       | `getElementById` を集約                           |
+      | 4   | 状態           | モジュール変数（URL クエリが SoT ならその旨明記） |
+      | 5   | 起動           | `init()`                                          |
+      | 6   | 描画           | `render*()`                                       |
+      | 7   | イベント       | `addEventListener` 登録                           |
+      | 8   | ユーティリティ | 小関数                                            |
+
+      <!-- /table -->
+
+      複雑画面は [html/pages/画面の作り方](id:html-pages-screen-creation) の構成でファイルを分ける（[html/共通化の判断](id:html-commonization) の前に、まずファイル分割）。

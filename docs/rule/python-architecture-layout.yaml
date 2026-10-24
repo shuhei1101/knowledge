@@ -1,0 +1,130 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-architecture-layout
+kind: rule
+name: トップレベルレイアウト + feature 内構造
+description: トップレベルと feature 内のフォルダ構成、shared・integrations・server・tests の置き方を定める。
+tags:
+  - name: scope:python
+  - name: topic:architecture
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: dev-content-location
+    type: requires
+    when: プロンプトファイルなどのコンテンツを置くとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      標準は機能フォルダ型レイアウト（純 DDD の domain / application / infrastructure / interface は廃止）。
+  - id: top-level-01
+    group: トップレベル構成
+    name: トップレベルの構成例
+    body: |-
+      ```
+      src/{pkg}/
+      ├── __init__.py
+      ├── __main__.py                   # 任意: python -m {pkg} で起動
+      ├── main.py                       # composition root（必須）
+      ├── shared/                       # 横断インフラ（必須）
+      ├── features/                     # ビジネス機能（任意）
+      ├── integrations/                 # 外部サービス連携（任意）
+      ├── runtime/                      # 実行時インフラ（任意: queue / workflow / state）
+      └── server/                       # HTTP/WS サーバ（任意: FastAPI 使用時）
+      ```
+  - id: top-level-02
+    group: トップレベル構成
+    name: 任意フォルダの扱い
+    body: |-
+      任意フォルダはプロジェクトで使う場合のみ作る。
+  - id: feature-folder-01
+    group: feature フォルダ
+    name: feature フォルダの構成例
+    body: |-
+      ```
+      {pkg}/features/{feature}/
+      ├── __init__.py             # 公開 API（必須。公開シンボルの再エクスポート）
+      ├── types.py                # DTO + 型エイリアス + Protocol
+      ├── query.py                # 読み取り関数（find_* / list_* / get_*）
+      ├── service.py              # ビジネスロジック関数（create_* / update_* / delete_*）
+      ├── route.py                # HTTP ハンドラ（Web 公開する場合のみ）
+      ├── client.py               # 外部 API 呼び出し（主に integrations/）
+      ├── db.py                   # 永続化（DB 使う場合のみ）
+      └── _helpers.py             # 内部専用ヘルパー
+      ```
+  - id: feature-folder-02
+    group: feature フォルダ
+    name: 小さい feature の構成
+    body: |-
+      - 小さい feature は `__init__.py` + `types.py` + `service.py` だけで可
+  - id: feature-folder-03
+    group: feature フォルダ
+    name: サブフィーチャの切り方
+    body: |-
+      - 機能が大きくなったら同じ構造でサブフィーチャのサブフォルダを切る
+  - id: shared-folder-01
+    group: shared/
+    name: shared の構成例
+    body: |-
+      ```
+      {pkg}/shared/
+      ├── logger.py               # JSONL logger
+      ├── settings.py             # Pydantic Settings
+      ├── errors.py               # 例外階層
+      ├── types.py                # 共通型エイリアス
+      ├── constants.py            # 計算済みパス（PROJECT_ROOT, LOG_DIR）
+      └── utils.py                # 業務横断ヘルパー
+      ```
+  - id: shared-folder-02
+    group: shared/
+    name: core フォルダは作らない
+    body: |-
+      `core/` フォルダは作らない（shared/ に統合）。
+  - id: integrations-folder-01
+    group: integrations/
+    name: integrations の構成例
+    body: |-
+      ```
+      {pkg}/integrations/
+      └── llm/                    # サービス種別ごとにサブフォルダ
+          ├── types.py            # 関数の型エイリアス（AsyncChatFn 等）と DTO
+          ├── openai_client.py    # ベンダー実装（ファイル単位）
+          ├── claude_client.py
+          └── mock_client.py      # テスト用 Mock も同じフォルダ
+      ```
+  - id: integrations-folder-02
+    group: integrations/
+    name: プロンプトファイルの置き場所
+    body: |-
+      プロンプトファイルは `content/prompts/` に置く（`integrations/llm/` にはローダーと provider 実装のみ）。
+      置き場所は [コンテンツの置き場所](id:dev-content-location) に従う。
+  - id: server-folder-01
+    group: server/（FastAPI 使用時）
+    name: server の構成例
+    body: |-
+      ```
+      {pkg}/server/
+      ├── app.py                  # build_fastapi() -> FastAPI
+      ├── lifespan.py             # startup / shutdown
+      ├── middleware.py           # CORS / 認証 / ログ
+      ├── routes/
+      └── ws/
+      ```
+  - id: server-folder-02
+    group: server/（FastAPI 使用時）
+    name: route の置き場所
+    body: |-
+      route の置き場所は `features/{feature}/route.py` を基本にする（feature 内で完結）。`server/app.py` から `include_router` で集約。
+  - id: tests-folder-01
+    group: tests/
+    name: tests の構成
+    body: |-
+      `tests/` の構成は [testing/テスト戦略](id:python-testing-strategy#file-placement-01) のファイル配置。
+  - id: single-file-script-01
+    group: 単一ファイルスクリプト
+    name: 単一ファイルスクリプト
+    body: |-
+      pyproject.toml を作らない簡易スクリプトは `script.py` + `log/` + `run.bat` の 3 点構成（[scripts/Pythonスクリプト](id:python-scripts-python-script)）。

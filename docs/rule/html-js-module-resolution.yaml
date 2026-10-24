@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-js-module-resolution
+kind: rule
+name: モジュール解決
+description: import maps でモジュールを解決する決まりを定める。
+tags:
+  - name: scope:html
+  - name: topic:js
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      import maps でモジュールを解決する（バンドルしない）。
+  - id: module-resolution-01
+    group: モジュール解決
+    name: 1 ドキュメント 1 importmap
+    body: |-
+      - 1 ドキュメント 1 importmap。`<head>` 先頭、最初の `type="module"` より前。
+        - 共通 partial で管理。
+  - id: module-resolution-02
+    group: モジュール解決
+    name: bare specifier のマップ
+    body: |-
+      - bare specifier はディレクトリ単位でマップ（`shared/`）。
+        - 画面コードは相対パスでなく bare 名で参照する。
+  - id: module-resolution-03
+    group: モジュール解決
+    name: ts の記載と tsc 生成の js
+    body: |-
+      - 著作は `.ts` だがブラウザが読むのは `tsc` 生成の `.js`。
+        - importmap・`<script src>` は生成 `.js` の拡張子（`.js`）で書く。
+          - 同階層 emit のためパスは `.ts` と同じ（[html/tooling/tsc運用](id:html-tooling-tsc)）。
+  - id: module-resolution-04
+    group: モジュール解決
+    name: modulepreload の付け方
+    body: |-
+      `<link rel="modulepreload">` はエントリ + 重要依存のみ絞って付ける。

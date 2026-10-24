@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: claude-json
+kind: rule
+name: Claude Code Jsonファイル作成時のルール
+description: Claude Code の設定の JSON にコメントを記載する方法と、フックの説明の置き方を定める。
+tags:
+  - name: scope:claude
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: comment-format-01
+    group: コメントの書き方
+    name: コメントの記載方法
+    body: |-
+      - Jsonはコメントを書けないが、以下方法でコメントを記載すること
+  - id: comment-format-02
+    group: コメントの書き方
+    name: オブジェクトのコメントは不要
+    body: |-
+      - オブジェクト自体のコメントは不要（以下例の `permissions` にコメントがないように）
+  - id: comment-format-03
+    group: コメントの書き方
+    name: キーの間に空行を置く
+    body: |-
+      - 各キーは一行の間を空けること
+        - ただし、最上部のキーやコメントがないキーは除く。つまり、コメントがないキーどうしが並ぶ場合は空行不要
+
+      ```json
+      {
+        "permissions": {
+          "_defaultMode": "権限モードの初期値。bypassPermissionsで毎回の確認をスキップ",
+          "defaultMode": "bypassPermissions"
+        },
+
+        "_effortLevel": "推論にかける労力のレベル。highで高品質寄り",
+        "effortLevel": "high",
+        
+        "_autoUpdatesChannel": "自動アップデートの取得チャンネル。latestで最新版を追従",
+        "autoUpdatesChannel": "latest",
+        
+        "_autoMemoryEnabled": "自動メモリ機能の有効/無効。falseで無効",
+        "autoMemoryEnabled": false
+      }
+      ```
+  - id: hook-comment-01
+    group: コメントの書き方 > フックコメント
+    name: フックの _description
+    body: |-
+      - フックのみ特殊でフック内のキーに`_description`を設置し、そこに説明を載せる
+
+      ```json
+      {
+        "hooks": {
+          "PreToolUse": [
+            {
+              "matcher": "Edit|Write|Read",
+              "hooks": [
+                {
+                  "type": "command",
+                  "_description": "本フックの説明を記載する",
+                  "command": "python",
+                  "args": [
+                    "${CLAUDE_PROJECT_DIR}/hooks/sample.py"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+      ```

@@ -2,40 +2,44 @@
 # rule: 索引ファイルからの相対パス / paths: 当てるファイルの glob（クォート必須）
 default_on: [write, mcp]
 rules:
-  - rule: dev/テンプレート/コンテナ構成.md
+  - rule: docs/template/template-container.yaml
     paths:
       - "**/dev/設計書/コンテナ構成/**/*.md"
-  - rule: dev/テンプレート/テストフィクスチャ.md
+  - rule: docs/template/template-test-fixture.yaml
     paths:
       - "**/dev/設計書/テストフィクスチャ.md"
-  - rule: dev/テンプレート/デザイン方針.md
+  - rule: docs/template/template-design-policy.yaml
     paths:
       - "**/dev/設計書/デザイン方針.md"
-  - rule: dev/テンプレート/チェックシート.md
+  - rule: docs/template/template-checksheet.yaml
     paths:
       - "**/dev/**/チェックシート/**/*.md"
-  - rule: dev/テンプレート/判定フローチャート.md
+  - rule: docs/template/template-flowchart.yaml
     paths:
       - "**/dev/エージェント運用/判定フローチャート/**/*.md"
       - "**/dev/判定フローチャート/**/*.md"
-  - rule: dev/テンプレート/セットアップ手順.md
+      - "**/docs/flowchart/*.yaml"
+  - rule: docs/template/template-setup-procedure.yaml
     paths:
       - "**/docs/使い方/セットアップ手順/*.md"
       - "**/docs/使い方/プロジェクトの立ち上げ/*.md"
-  - rule: dev/テンプレート/はじめに.md
+      - "**/docs/guide/*.yaml"
+  - rule: docs/template/template-getting-started.yaml
     paths:
       - "**/docs/はじめに/概要.md"
       - "**/docs/はじめに/クイックスタート.md"
-  - rule: dev/テンプレート/リファレンス.md
+  - rule: docs/template/template-reference.yaml
     paths:
       - "**/docs/リファレンス/API.md"
       - "**/docs/リファレンス/コマンド.md"
-  - rule: dev/テンプレート/テンプレート.md
+  - rule: docs/template/template-template.yaml
     paths:
       - "**/dev/テンプレート/**/*.md"
-  - rule: dev/規約/文章の書き方.md
+      - "**/docs/template/*.yaml"
+  - rule: docs/rule/convention-writing-style.yaml
     paths:
       - "**/*.md"
+      - "**/docs/**/*.yaml"
     tools:
       - "mcp__*__comment"
       - "mcp__*__reply_comment"
@@ -49,7 +53,7 @@ rules:
       - "mcp__*__update_body"
       - "mcp__*__update_body_if_unchanged"
       - "mcp__*__create_draft_pr"
-  - rule: dev/規約/論点の提示.md
+  - rule: docs/rule/convention-issue-presentation.yaml
     paths:
       - "**/dev/pr/**/*.md"
     tools:
@@ -58,28 +62,28 @@ rules:
       - "mcp__*__create_file_comment"
       - "mcp__*__reply_comment"
       - "mcp__*__reply_review_thread"
-  - rule: dev/規約/既存文章の維持.md
+  - rule: docs/rule/convention-keep-existing-text.yaml
     paths:
       - "**/*"
-  - rule: dev/規約/デザインスタイル.md
+  - rule: docs/rule/convention-design-style.yaml
     paths:
       - "**/dev/mock/styles/**"
-  - rule: dev/規約/共通コンポーネント.md
+  - rule: docs/rule/convention-common-components.yaml
     paths:
       - "**/dev/mock/components/**"
-  - rule: dev/判定フローチャート/設定値の置き場所.md
+  - rule: docs/flowchart/flowchart-config-location.yaml
     paths:
       - "**/config/defaults.yaml*"
       - "**/settings.local.yaml*"
       - "**/settings.sample.yaml*"
-  - rule: dev/コーディング規約/claude/Claude Code Tool活用.md
+  - rule: docs/rule/claude-code-tool-usage.yaml
     paths:
       - "*"
-  - rule: dev/コーディング規約/claude/Claude_Json.md
+  - rule: docs/rule/claude-json.yaml
     paths:
       - "**/hooks/**"
       - "**/settings.json"
-  - rule: dev/コーディング規約/claude/Claude共通.md
+  - rule: docs/rule/claude-common.yaml
     paths:
       - "**/skills/**/SKILL.md"
       - "**/rules/**/*.md"
@@ -89,70 +93,71 @@ rules:
       - "**/mcp_server.py*"
       - "**/.mcp.json"
       - "**/agents/**/*.md"
-  - rule: dev/コーディング規約/claude/claudeプラグイン.md
+  - rule: docs/rule/claude-plugin.yaml
     paths:
       - "**/plugins/**"
       - "**/.claude-plugin/**"
-  - rule: dev/コーディング規約/claude/mcp.md
+  - rule: docs/rule/claude-mcp.yaml
     paths:
       - "**/mcp/**"
       - "**/mcp_server.py*"
       - "**/.mcp.json"
-  - rule: dev/コーディング規約/claude/skills活用.md
+  - rule: docs/rule/claude-skills-usage.yaml
     paths:
       - "**/skills/*.md"
-  - rule: dev/コーディング規約/claude/サブエージェント.md
+  - rule: docs/rule/claude-subagent.yaml
     paths:
       - "**/agents/**/*.md"
-  - rule: dev/コーディング規約/claude/フック.md
+  - rule: docs/rule/claude-hook.yaml
     paths:
       - "**/.claude/hooks/**"
       - "**/settings.json"
-  - rule: dev/コーディング規約/claude/ルール記載.md
+  - rule: docs/rule/claude-rule-writing.yaml
     paths:
       - "**/.claude/rules/**/*.md"
-  - rule: dev/コーディング規約/dev/YAML.md
+  - rule: docs/rule/dev-yaml.yaml
     paths:
       - "**/*.{py,html,js,css,j2,ts,tsx,yaml,yml}*"
-  - rule: dev/コーディング規約/dev/ルール索引への登録.md
+  - rule: docs/rule/dev-rule-index-registration.yaml
     paths:
       - "**/docs/**/*.md"
       - "**/rules*.yaml"
-  - rule: dev/コーディング規約/dev/ドキュメント管理.md
+      - "**/docs/**/*.yaml"
+  - rule: docs/rule/dev-document-management.yaml
     paths:
       - "**/docs/**/*.yaml"
       - "**/schemas/*.schema.yaml"
-  - rule: dev/判定フローチャート/YAML ファイルの単位.md
+  - rule: docs/flowchart/flowchart-yaml-file-unit.yaml
     paths:
       - "**/docs/**/*.yaml"
-  - rule: dev/コーディング規約/dev/タグと用語の登録.md
+  - rule: docs/rule/dev-tag-term-registration.yaml
     paths:
       - "**/tags.yaml"
       - "**/terms.yaml"
-  - rule: dev/コーディング規約/dev/コーディング全般.md
+  - rule: docs/rule/dev-coding-general.yaml
     paths:
       - "**/*.{py,html,js,css,j2,ts,tsx,yaml,yml}*"
-  - rule: dev/コーディング規約/dev/事前確認.md
+  - rule: docs/rule/dev-precheck.yaml
     paths:
       - "**/*.{py,js,ts,tsx}*"
       - "**/dev/設計書/アーキテクチャ図.md"
       - "**/dev/設計書/非機能要件.md"
       - "**/dev/設計書/インターフェース定義/**"
-  - rule: dev/コーディング規約/dev/コンテンツの置き場所.md
+  - rule: docs/rule/dev-content-location.yaml
     paths:
       - "**/content/**"
-  - rule: dev/コーディング規約/html/components/カスタムエレメント.md
+  - rule: docs/rule/html-components-custom-element.yaml
     paths:
       - "**/components/**/*.{ts,js}*"
       - "**/_shared/**/*.{ts,js}*"
-  - rule: dev/コーディング規約/html/components/先読みカタログ.md
+  - rule: docs/rule/html-components-prefetch-catalog.yaml
     paths:
       - "**/frontend/pages/**"
       - "**/components/**"
-  - rule: dev/コーディング規約/html/components/共通シェル.md
+  - rule: docs/rule/html-components-common-shell.yaml
     paths:
       - "**/app-shell*"
-  - rule: dev/コーディング規約/html/core/iframe禁止.md
+  - rule: docs/rule/html-core-no-iframe.yaml
     paths:
       - "**/frontend/**/*.{css,html,ts,js}*"
       - "**/*.html*"
@@ -160,138 +165,138 @@ rules:
       - "**/docs/_layouts/**"
       - "**/docs/_includes/**"
       - "**/*.md"
-  - rule: dev/コーディング規約/html/core/サーバー描画.md
+  - rule: docs/rule/html-core-server-rendering.yaml
     paths:
       - "**/templates/**/*.html*"
       - "**/frontend/pages/**/index.html*"
-  - rule: dev/コーディング規約/html/core/ビルドレス原則.md
+  - rule: docs/rule/html-core-buildless.yaml
     paths:
       - "**/frontend/**/*.css*"
       - "**/frontend/**/*.html*"
       - "**/frontend/**/*.{ts,js}*"
       - "**/static/**/*.{ts,js}*"
       - "**/assets/**/*.{ts,js}*"
-  - rule: dev/コーディング規約/html/css/コメント.md
+  - rule: docs/rule/html-css-comment.yaml
     paths:
       - "**/*.css*"
-  - rule: dev/コーディング規約/html/css/トークン.md
+  - rule: docs/rule/html-css-token.yaml
     paths:
       - "**/css/tokens.css*"
       - "**/tokens.css*"
-  - rule: dev/コーディング規約/html/css/ネスト.md
+  - rule: docs/rule/html-css-nesting.yaml
     paths:
       - "**/*.css*"
-  - rule: dev/コーディング規約/html/css/レイヤー構成.md
+  - rule: docs/rule/html-css-layers.yaml
     paths:
       - "**/frontend/**/*.css*"
-  - rule: dev/コーディング規約/html/html/コメント.md
+  - rule: docs/rule/html-html-comment.yaml
     paths:
       - "**/*.html*"
-  - rule: dev/コーディング規約/html/html/ネイティブ要素.md
+  - rule: docs/rule/html-html-native-elements.yaml
     paths:
       - "**/*.html*"
-  - rule: dev/コーディング規約/html/js/api層.md
+  - rule: docs/rule/html-js-api-layer.yaml
     paths:
       - "**/frontend/**/api*.{ts,js}*"
-  - rule: dev/コーディング規約/html/js/websocket.md
+  - rule: docs/rule/html-js-websocket.yaml
     paths:
       - "**/ws/**/*.{ts,js}*"
-  - rule: dev/コーディング規約/html/js/エンドポイント.md
+  - rule: docs/rule/html-js-endpoint.yaml
     paths:
       - "**/frontend/**/*.ts*"
-  - rule: dev/コーディング規約/html/js/バニラTS方針.md
+  - rule: docs/rule/html-js-vanilla-ts.yaml
     paths:
       - "**/frontend/**/*.ts*"
       - "**/static/**/*.{ts,js}*"
       - "**/assets/**/*.{ts,js}*"
-  - rule: dev/コーディング規約/html/js/モジュール解決.md
+  - rule: docs/rule/html-js-module-resolution.yaml
     paths:
       - "**/frontend/**/*.{ts,js}*"
       - "**/frontend/**/*.html*"
-  - rule: dev/コーディング規約/html/js/レイヤー分離.md
+  - rule: docs/rule/html-js-layer-separation.yaml
     paths:
       - "**/frontend/**/*.{ts,js}*"
-  - rule: dev/コーディング規約/html/js/状態管理.md
+  - rule: docs/rule/html-js-state-management.yaml
     paths:
       - "**/frontend/**/*.{ts,js}*"
-  - rule: dev/コーディング規約/html/layout/レイアウトパターン.md
+  - rule: docs/rule/html-layout-patterns.yaml
     paths:
       - "**/layout.css*"
       - "**/app-shell*"
       - "**/templates/**/*.html*"
-  - rule: dev/コーディング規約/html/layout/画面テンプレート.md
+  - rule: docs/rule/html-layout-screen-template.yaml
     paths:
       - "**/frontend/pages/**/*.html*"
       - "**/templates/**/*.html*"
-  - rule: dev/コーディング規約/html/naming/cssクラス.md
+  - rule: docs/rule/html-naming-css-class.yaml
     paths:
       - "**/*.css*"
-  - rule: dev/コーディング規約/html/naming/カスタムエレメント.md
+  - rule: docs/rule/html-naming-custom-element.yaml
     paths:
       - "**/components/**/*.{ts,js}*"
       - "**/_shared/**/*.{ts,js}*"
-  - rule: dev/コーディング規約/html/naming/ファイル名.md
+  - rule: docs/rule/html-naming-file-name.yaml
     paths:
       - "**/frontend/**/*.css*"
       - "**/frontend/**/*.html*"
       - "**/frontend/**/*.{ts,js}*"
-  - rule: dev/コーディング規約/html/pages/_shared.md
+  - rule: docs/rule/html-pages-shared.yaml
     paths:
       - "**/frontend/pages/**/_shared/**"
-  - rule: dev/コーディング規約/html/pages/index-html.md
+  - rule: docs/rule/html-pages-index-html.yaml
     paths:
       - "**/frontend/pages/**/index.html*"
-  - rule: dev/コーディング規約/html/pages/screen-css.md
+  - rule: docs/rule/html-pages-screen-css.yaml
     paths:
       - "**/frontend/pages/**/screen.css*"
-  - rule: dev/コーディング規約/html/pages/screen-ts.md
+  - rule: docs/rule/html-pages-screen-ts.yaml
     paths:
       - "**/frontend/pages/**/screen.ts*"
       - "**/frontend/pages/**/api.ts*"
       - "**/frontend/pages/**/state.ts*"
-  - rule: dev/コーディング規約/html/pages/画面の作り方.md
+  - rule: docs/rule/html-pages-screen-creation.yaml
     paths:
       - "**/frontend/pages/**"
-  - rule: dev/コーディング規約/html/shared/components.md
+  - rule: docs/rule/html-shared-components.yaml
     paths:
       - "**/frontend/shared/components/**"
-  - rule: dev/コーディング規約/html/shared/core.md
+  - rule: docs/rule/html-shared-core.yaml
     paths:
       - "**/frontend/shared/core/**"
-  - rule: dev/コーディング規約/html/shared/css.md
+  - rule: docs/rule/html-shared-css.yaml
     paths:
       - "**/shared/css/**"
-  - rule: dev/コーディング規約/html/shared/fmt.md
+  - rule: docs/rule/html-shared-fmt.yaml
     paths:
       - "**/frontend/shared/lib/fmt.{ts,js}*"
-  - rule: dev/コーディング規約/html/shared/lib.md
+  - rule: docs/rule/html-shared-lib.yaml
     paths:
       - "**/shared/lib/**"
-  - rule: dev/コーディング規約/html/shared/logger.md
+  - rule: docs/rule/html-shared-logger.yaml
     paths:
       - "**/frontend/shared/lib/logger.{ts,js}*"
-  - rule: dev/コーディング規約/html/shared/vendor.md
+  - rule: docs/rule/html-shared-vendor.yaml
     paths:
       - "**/shared/vendor/**"
-  - rule: dev/コーディング規約/html/testing/e2eテスト.md
+  - rule: docs/rule/html-testing-e2e.yaml
     paths:
       - "**/frontend/tests/e2e/**/*.spec.{ts,js}*"
       - "**/playwright.config.{ts,js}"
-  - rule: dev/コーディング規約/html/testing/テスト戦略.md
+  - rule: docs/rule/html-testing-strategy.yaml
     paths:
       - "**/frontend/**/*.test.{ts,js}*"
       - "**/frontend/tests/e2e/**/*.spec.{ts,js}*"
       - "**/vitest.config.{ts,js}"
       - "**/playwright.config.{ts,js}"
-  - rule: dev/コーディング規約/html/testing/フィクスチャー.md
+  - rule: docs/rule/html-testing-fixture.yaml
     paths:
       - "**/frontend/tests/e2e/**/*.spec.{ts,js}*"
       - "**/playwright.config.{ts,js}"
-  - rule: dev/コーディング規約/html/testing/ユニットテスト.md
+  - rule: docs/rule/html-testing-unit.yaml
     paths:
       - "**/frontend/**/*.test.{ts,js}*"
       - "**/vitest.config.{ts,js}"
-  - rule: dev/コーディング規約/html/tooling/tsc運用.md
+  - rule: docs/rule/html-tooling-tsc.yaml
     paths:
       - "**/frontend/**/*.ts*"
       - "**/static/**/*.{ts,js}*"
@@ -301,19 +306,19 @@ rules:
       - "**/package.json"
       - "**/vitest.config.*"
       - "**/playwright.config.*"
-  - rule: dev/コーディング規約/html/typescript/コメント.md
+  - rule: docs/rule/html-typescript-comment.yaml
     paths:
       - "**/*.{ts,tsx}*"
-  - rule: dev/コーディング規約/html/typescript/型システム.md
+  - rule: docs/rule/html-typescript-type-system.yaml
     paths:
       - "**/*.{ts,tsx}*"
-  - rule: dev/コーディング規約/html/typescript/関数とオブジェクト引数.md
+  - rule: docs/rule/html-typescript-function-object-args.yaml
     paths:
       - "**/*.{ts,tsx}*"
-  - rule: dev/コーディング規約/html/フォルダ構成.md
+  - rule: docs/rule/html-folder-structure.yaml
     paths:
       - "**/frontend/**"
-  - rule: dev/コーディング規約/html/モバイル対応.md
+  - rule: docs/rule/html-mobile.yaml
     paths:
       - "**/frontend/pages/**/screen.ts*"
       - "**/frontend/shared/css/**"
@@ -324,106 +329,109 @@ rules:
       - "**/docs/_layouts/**"
       - "**/docs/_includes/**"
       - "**/*.md"
-  - rule: dev/コーディング規約/html/共通化の判断.md
+  - rule: docs/rule/html-commonization.yaml
     paths:
       - "**/frontend/**"
-  - rule: dev/コーディング規約/markdown/マークダウン編集.md
+  - rule: docs/rule/markdown-editing.yaml
     paths:
       - "**/*.md"
-  - rule: dev/コーディング規約/markdown/マーメイド.md
+      - "**/docs/**/*.yaml"
+  - rule: docs/rule/markdown-mermaid.yaml
     paths:
       - "**/*.md"
-  - rule: dev/コーディング規約/markdown/判定フローチャート.md
+      - "**/docs/**/*.yaml"
+  - rule: docs/rule/markdown-flowchart.yaml
     paths:
       - "**/*.md"
-  - rule: dev/コーディング規約/next/backend/APIフォルダ概要.md
+      - "**/docs/**/*.yaml"
+  - rule: docs/rule/next-backend-api-folder.yaml
     paths:
       - "**/app/api/**/route.ts*"
-  - rule: dev/コーディング規約/next/backend/DB Enum.md
+  - rule: docs/rule/next-backend-db-enum.yaml
     paths:
       - "**/drizzle/schema.ts*"
-  - rule: dev/コーディング規約/next/backend/DB-ID設計.md
+  - rule: docs/rule/next-backend-db-id.yaml
     paths:
       - "**/drizzle/db.ts*"
       - "**/drizzle/schema.ts*"
-  - rule: dev/コーディング規約/next/backend/DB-ts.md
+  - rule: docs/rule/next-backend-db-ts.yaml
     paths:
       - "**/app/api/**/db.ts*"
-  - rule: dev/コーディング規約/next/backend/DBタイムスタンプ.md
+  - rule: docs/rule/next-backend-db-timestamp.yaml
     paths:
       - "**/drizzle/schema.ts*"
-  - rule: dev/コーディング規約/next/backend/DBヘルパー-ts.md
+  - rule: docs/rule/next-backend-db-helper-ts.yaml
     paths:
       - "**/app/api/**/dbHelper.ts*"
-  - rule: dev/コーディング規約/next/backend/DBマイグレーション.md
+  - rule: docs/rule/next-backend-db-migration.yaml
     paths:
       - "**/drizzle.config.ts"
       - "**/drizzle/migrations/**/*.sql"
-  - rule: dev/コーディング規約/next/backend/DBリレーション.md
+  - rule: docs/rule/next-backend-db-relation.yaml
     paths:
       - "**/drizzle/schema.ts*"
-  - rule: dev/コーディング規約/next/backend/DB変更履歴.md
+  - rule: docs/rule/next-backend-db-history.yaml
     paths:
       - "**/app/api/**/service.ts*"
-  - rule: dev/コーディング規約/next/backend/DB楽観的ロック.md
+  - rule: docs/rule/next-backend-db-optimistic-lock.yaml
     paths:
       - "**/app/(authenticated)/**/*EditScreen.tsx*"
       - "**/app/api/**/db.ts*"
       - "**/app/api/**/service.ts*"
-  - rule: dev/コーディング規約/next/backend/Drizzleスタイル.md
+  - rule: docs/rule/next-backend-drizzle-style.yaml
     paths:
       - "**/app/api/**/db.ts*"
       - "**/app/api/**/query.ts*"
-  - rule: dev/コーディング規約/next/backend/アクション-ts.md
+  - rule: docs/rule/next-backend-action-ts.yaml
     paths:
       - "**/app/(authenticated)/**/*EditScreen.tsx*"
       - "**/app/(authenticated)/**/actions.ts*"
       - "**/app/(shared)/actions/**/*.ts*"
       - "**/app/(shared)/actions/auth.ts*"
       - "**/app/(shared)/actions/types.ts*"
-  - rule: dev/コーディング規約/next/backend/ウェブフック.md
+  - rule: docs/rule/next-backend-webhook.yaml
     paths:
       - "**/app/api/**/webhooks/**/route.ts*"
-  - rule: dev/コーディング規約/next/backend/キャッシュ.md
+  - rule: docs/rule/next-backend-cache.yaml
     paths:
       - "**/app/(authenticated)/**/actions.ts*"
       - "**/next.config.js"
       - "**/next.config.ts"
-  - rule: dev/コーディング規約/next/backend/クエリ-ts.md
+  - rule: docs/rule/next-backend-query-ts.yaml
     paths:
       - "**/app/api/**/query.ts*"
-  - rule: dev/コーディング規約/next/backend/クライアント-ts.md
+  - rule: docs/rule/next-backend-client-ts.yaml
     paths:
       - "**/app/api/**/client.ts*"
-  - rule: dev/コーディング規約/next/backend/サービス-ts.md
+  - rule: docs/rule/next-backend-service-ts.yaml
     paths:
       - "**/app/(authenticated)/**/actions.ts*"
       - "**/app/api/**/service.ts*"
-  - rule: dev/コーディング規約/next/backend/プロキシ.md
+  - rule: docs/rule/next-backend-proxy.yaml
     paths:
       - "**/middleware.ts*"
       - "**/proxy.ts*"
-  - rule: dev/コーディング規約/next/backend/ルート-ts.md
+  - rule: docs/rule/next-backend-route-ts.yaml
     paths:
       - "**/app/api/**/route.ts*"
       - "**/app/api/**/auth/**/route.ts*"
       - "**/app/api/**/cron/**/route.ts*"
-  - rule: dev/コーディング規約/next/backend/レートリミット.md
+  - rule: docs/rule/next-backend-rate-limit.yaml
     paths:
       - "**/proxy.ts*"
-  - rule: dev/コーディング規約/next/backend/ローカルYAML開発DB.md
+  - rule: docs/rule/next-backend-local-yaml-dev-db.yaml
     paths:
       - "**/app/**/*.{ts,tsx}*"
-  - rule: dev/コーディング規約/next/backend/冪等性.md
+  - rule: docs/rule/next-backend-idempotency.yaml
     paths:
       - "**/app/api/v*/webhooks/**/route.ts*"
-  - rule: dev/コーディング規約/next/backend/認証アクション.md
+  - rule: docs/rule/next-backend-auth-action.yaml
     paths:
       - "**/app/(shared)/actions/auth.ts*"
-  - rule: dev/コーディング規約/next/backend/認証クライアント.md
+  - rule: docs/rule/next-backend-auth-client.yaml
     paths:
       - "**/app/(shared)/auth/client.ts*"
-  - rule: dev/コーディング規約/next/backend/認証コンテキスト.md
+  - rule: docs/rule/next-backend-auth-context.yaml
     paths:
       - "**/app/(authenticated)/**/actions.ts*"
       - "**/app/(authenticated)/*/[id]/edit/page.tsx*"
@@ -431,50 +439,50 @@ rules:
       - "**/app/(shared)/auth/provider.ts*"
       - "**/app/api/**/route.ts*"
       - "**/proxy.ts*"
-  - rule: dev/コーディング規約/next/backend/認証スキーマ.md
+  - rule: docs/rule/next-backend-auth-schema.yaml
     paths:
       - "**/drizzle/schema.ts*"
       - "**/lib/auth.ts*"
-  - rule: dev/コーディング規約/next/backend/認証セットアップ.md
+  - rule: docs/rule/next-backend-auth-setup.yaml
     paths:
       - "**/app/(shared)/auth/provider.ts*"
       - "**/app/api/**/auth/**/route.ts*"
       - "**/lib/auth.ts*"
-  - rule: dev/コーディング規約/next/devops/デプロイ.md
+  - rule: docs/rule/next-devops-deploy.yaml
     paths:
       - "**/Dockerfile"
       - "**/vercel.json"
-  - rule: dev/コーディング規約/next/devtools/Storybook.md
+  - rule: docs/rule/next-devtools-storybook.yaml
     paths:
       - "**/*.stories.ts*"
       - "**/*.stories.tsx*"
       - "**/.storybook/main.ts"
       - "**/.storybook/preview.ts"
-  - rule: dev/コーディング規約/next/devtools/モック.md
+  - rule: docs/rule/next-devtools-mock.yaml
     paths:
       - "**/mocks/browser.ts"
       - "**/mocks/handlers.ts"
       - "**/mocks/server.ts"
-  - rule: dev/コーディング規約/next/devtools/リントとフォーマット.md
+  - rule: docs/rule/next-devtools-lint-format.yaml
     paths:
       - "**/.prettierrc"
       - "**/prettier.config.{js,ts,mjs}"
       - "**/next.config.{js,ts,mjs}"
-  - rule: dev/コーディング規約/next/frontend/404-tsx.md
+  - rule: docs/rule/next-frontend-404-tsx.yaml
     paths:
       - "**/app/(authenticated)/*/[id]/edit/page.tsx*"
       - "**/app/(authenticated)/*/[id]/page.tsx*"
       - "**/app/**/not-found.tsx*"
-  - rule: dev/コーディング規約/next/frontend/IDルーティング.md
+  - rule: docs/rule/next-frontend-id-routing.yaml
     paths:
       - "**/app/(authenticated)/*/[id]/edit/page.tsx*"
       - "**/app/(authenticated)/*/[id]/page.tsx*"
-  - rule: dev/コーディング規約/next/frontend/PWA.md
+  - rule: docs/rule/next-frontend-pwa.yaml
     paths:
       - "**/app/manifest.ts*"
       - "**/app/sw.ts*"
       - "**/public/sw.js"
-  - rule: dev/コーディング規約/next/frontend/SEO.md
+  - rule: docs/rule/next-frontend-seo.yaml
     paths:
       - "**/app/(authenticated)/*/[id]/page.tsx*"
       - "**/app/(authenticated)/*/page.tsx*"
@@ -484,167 +492,167 @@ rules:
       - "**/app/**/sitemap.ts*"
       - "**/app/**/twitter-image.tsx*"
       - "**/app/manifest.ts*"
-  - rule: dev/コーディング規約/next/frontend/Zustandパターン.md
+  - rule: docs/rule/next-frontend-zustand-pattern.yaml
     paths:
       - "**/app/**/*.{ts,tsx}*"
-  - rule: dev/コーディング規約/next/frontend/appフォルダ概要.md
+  - rule: docs/rule/next-frontend-app-folder.yaml
     paths:
       - "**/app/**/*.{ts,tsx}*"
-  - rule: dev/コーディング規約/next/frontend/ルートファイル規約.md
+  - rule: docs/rule/next-frontend-route-file.yaml
     paths:
       - "**/app/**/default.tsx*"
       - "**/app/**/layout.tsx*"
       - "**/app/**/loading.tsx*"
       - "**/app/**/template.tsx*"
-  - rule: dev/コーディング規約/next/frontend/命名規約.md
+  - rule: docs/rule/next-frontend-naming.yaml
     paths:
       - "**/app/**/*.{ts,tsx}*"
-  - rule: dev/コーディング規約/next/frontend/型規約.md
+  - rule: docs/rule/next-frontend-type.yaml
     paths:
       - "**/app/**/*.{ts,tsx}*"
       - "**/app/(authenticated)/**/form.ts*"
-  - rule: dev/コーディング規約/next/frontend/url-state.md
+  - rule: docs/rule/next-frontend-url-state.yaml
     paths:
       - "**/hooks/use*UrlState.ts*"
-  - rule: dev/コーディング規約/next/frontend/useActionState.md
+  - rule: docs/rule/next-frontend-use-action-state.yaml
     paths:
       - "**/app/(authenticated)/**/*EditScreen.tsx*"
       - "**/app/(authenticated)/**/*NewScreen.tsx*"
-  - rule: dev/コーディング規約/next/frontend/useFormパターン.md
+  - rule: docs/rule/next-frontend-use-form-pattern.yaml
     paths:
       - "**/hooks/use*Form.ts*"
-  - rule: dev/コーディング規約/next/frontend/useMutationパターン.md
+  - rule: docs/rule/next-frontend-use-mutation-pattern.yaml
     paths:
       - "**/hooks/use*.ts*"
-  - rule: dev/コーディング規約/next/frontend/useQueryパターン.md
+  - rule: docs/rule/next-frontend-use-query-pattern.yaml
     paths:
       - "**/app/(authenticated)/**/*ListScreen.tsx*"
       - "**/hooks/use*.ts*"
-  - rule: dev/コーディング規約/next/frontend/useUrlStateパターン.md
+  - rule: docs/rule/next-frontend-use-url-state-pattern.yaml
     paths:
       - "**/app/(authenticated)/**/*ListScreen.tsx*"
       - "**/hooks/use*UrlState.ts*"
-  - rule: dev/コーディング規約/next/frontend/アセット.md
+  - rule: docs/rule/next-frontend-asset.yaml
     paths:
       - "**/next.config.js"
       - "**/next.config.ts"
-  - rule: dev/コーディング規約/next/frontend/エラー-tsx.md
+  - rule: docs/rule/next-frontend-error-tsx.yaml
     paths:
       - "**/app/**/error.tsx*"
       - "**/app/global-error.tsx*"
-  - rule: dev/コーディング規約/next/frontend/エンドポイント.md
+  - rule: docs/rule/next-frontend-endpoint.yaml
     paths:
       - "**/app/(shared)/endpoints.ts*"
       - "**/app/api/**/client.ts*"
-  - rule: dev/コーディング規約/next/frontend/クエリクライアントセットアップ.md
+  - rule: docs/rule/next-frontend-query-client-setup.yaml
     paths:
       - "**/app/(shared)/providers/QueryProvider.tsx*"
-  - rule: dev/コーディング規約/next/frontend/コンテキストパターン.md
+  - rule: docs/rule/next-frontend-context-pattern.yaml
     paths:
       - "**/app/**/*.{ts,tsx}*"
-  - rule: dev/コーディング規約/next/frontend/コンポーネントカタログ.md
+  - rule: docs/rule/next-frontend-component-catalog.yaml
     paths:
       - "**/*.stories.tsx*"
       - "**/app/(shared)/components/**/*.tsx*"
-  - rule: dev/コーディング規約/next/frontend/スクリーンラッパー.md
+  - rule: docs/rule/next-frontend-screen-wrapper.yaml
     paths:
       - "**/app/(authenticated)/**/*EditScreen.tsx*"
       - "**/app/(authenticated)/**/*ListScreen.tsx*"
       - "**/app/(authenticated)/**/*NewScreen.tsx*"
       - "**/app/(authenticated)/**/*ViewScreen.tsx*"
       - "**/app/(shared)/components/ScreenWrapper.tsx*"
-  - rule: dev/コーディング規約/next/frontend/ストリーミング.md
+  - rule: docs/rule/next-frontend-streaming.yaml
     paths:
       - "**/app/**/*.{ts,tsx}*"
-  - rule: dev/コーディング規約/next/frontend/タグ入力.md
+  - rule: docs/rule/next-frontend-tag-input.yaml
     paths:
       - "**/app/(shared)/components/TagInput.tsx*"
-  - rule: dev/コーディング規約/next/frontend/ダイアログ.md
+  - rule: docs/rule/next-frontend-dialog.yaml
     paths:
       - "**/*AlertDialog.tsx*"
       - "**/*Dialog.tsx*"
       - "**/*Drawer.tsx*"
       - "**/*Popover.tsx*"
       - "**/*Sheet.tsx*"
-  - rule: dev/コーディング規約/next/frontend/フィーチャーフォルダ.md
+  - rule: docs/rule/next-frontend-feature-folder.yaml
     paths:
       - "**/app/(authenticated)/**/*.tsx*"
       - "**/app/(authenticated)/*/new/page.tsx*"
       - "**/app/(authenticated)/*/page.tsx*"
-  - rule: dev/コーディング規約/next/frontend/フォーム-ts.md
+  - rule: docs/rule/next-frontend-form-ts.yaml
     paths:
       - "**/app/(authenticated)/**/form.ts*"
       - "**/hooks/use*Form.ts*"
-  - rule: dev/コーディング規約/next/frontend/フォームコンポーネント.md
+  - rule: docs/rule/next-frontend-form-component.yaml
     paths:
       - "**/app/(authenticated)/**/*EditScreen.tsx*"
       - "**/app/(authenticated)/**/*NewScreen.tsx*"
       - "**/hooks/use*Form.ts*"
-  - rule: dev/コーディング規約/next/frontend/ページヘッダー.md
+  - rule: docs/rule/next-frontend-page-header.yaml
     paths:
       - "**/app/(authenticated)/**/*ListScreen.tsx*"
       - "**/app/(authenticated)/**/*ViewScreen.tsx*"
       - "**/app/(shared)/components/PageHeader.tsx*"
-  - rule: dev/コーディング規約/next/frontend/ルートグループ.md
+  - rule: docs/rule/next-frontend-route-group.yaml
     paths:
       - "**/app/(auth)/**/*.tsx*"
       - "**/app/**/layout.tsx*"
-  - rule: dev/コーディング規約/next/frontend/ローディングボタン.md
+  - rule: docs/rule/next-frontend-loading-button.yaml
     paths:
       - "**/app/(shared)/components/LoadingButton.tsx*"
-  - rule: dev/コーディング規約/next/frontend/一覧スクリーン-tsx.md
+  - rule: docs/rule/next-frontend-list-screen-tsx.yaml
     paths:
       - "**/app/(authenticated)/**/*ListScreen.tsx*"
-  - rule: dev/コーディング規約/next/frontend/一覧ページ-tsx.md
+  - rule: docs/rule/next-frontend-list-page-tsx.yaml
     paths:
       - "**/app/(authenticated)/*/page.tsx*"
-  - rule: dev/コーディング規約/next/frontend/必須マーク.md
+  - rule: docs/rule/next-frontend-required-mark.yaml
     paths:
       - "**/app/(shared)/components/RequiredMark.tsx*"
-  - rule: dev/コーディング規約/next/frontend/状態管理判断基準.md
+  - rule: docs/rule/next-frontend-state-management-criteria.yaml
     paths:
       - "**/app/**/*.{ts,tsx}*"
-  - rule: dev/コーディング規約/next/frontend/確認ダイアログ.md
+  - rule: docs/rule/next-frontend-confirm-dialog.yaml
     paths:
       - "**/app/(authenticated)/**/*EditScreen.tsx*"
       - "**/app/(shared)/hooks/useConfirmDialog.ts*"
       - "**/app/(shared)/providers/ConfirmDialogProvider.tsx*"
-  - rule: dev/コーディング規約/next/frontend/空状態.md
+  - rule: docs/rule/next-frontend-empty-state.yaml
     paths:
       - "**/app/(authenticated)/**/*ListScreen.tsx*"
       - "**/app/(shared)/components/EmptyState.tsx*"
-  - rule: dev/コーディング規約/next/frontend/編集スクリーン-tsx.md
+  - rule: docs/rule/next-frontend-edit-screen-tsx.yaml
     paths:
       - "**/app/(authenticated)/**/*EditScreen.tsx*"
       - "**/app/(authenticated)/**/*NewScreen.tsx*"
-  - rule: dev/コーディング規約/next/frontend/編集ページ-tsx.md
+  - rule: docs/rule/next-frontend-edit-page-tsx.yaml
     paths:
       - "**/app/(authenticated)/*/[id]/edit/page.tsx*"
       - "**/app/(authenticated)/*/new/page.tsx*"
-  - rule: dev/コーディング規約/next/frontend/自動保存.md
+  - rule: docs/rule/next-frontend-autosave.yaml
     paths:
       - "**/hooks/useAutosave.ts*"
       - "**/useBeforeUnload.ts*"
-  - rule: dev/コーディング規約/next/frontend/自動保存インジケーター.md
+  - rule: docs/rule/next-frontend-autosave-indicator.yaml
     paths:
       - "**/app/(shared)/components/AutosaveIndicator.tsx*"
       - "**/hooks/useAutosave.ts*"
-  - rule: dev/コーディング規約/next/frontend/詳細スクリーン-tsx.md
+  - rule: docs/rule/next-frontend-detail-screen-tsx.yaml
     paths:
       - "**/app/(authenticated)/**/*ViewScreen.tsx*"
-  - rule: dev/コーディング規約/next/frontend/詳細ページ-tsx.md
+  - rule: docs/rule/next-frontend-detail-page-tsx.yaml
     paths:
       - "**/app/(authenticated)/*/[id]/page.tsx*"
-  - rule: dev/コーディング規約/next/shared/エラーアクションハンドラー.md
+  - rule: docs/rule/next-shared-error-action-handler.yaml
     paths:
       - "**/app/(authenticated)/**/actions.ts*"
       - "**/app/(shared)/actions/**/*.ts*"
       - "**/app/(shared)/actions/types.ts*"
       - "**/app/(shared)/errors/handler/action.ts*"
-  - rule: dev/コーディング規約/next/shared/エラークライアントハンドラー.md
+  - rule: docs/rule/next-shared-error-client-handler.yaml
     paths:
       - "**/app/(shared)/errors/handler/client.ts*"
-  - rule: dev/コーディング規約/next/shared/エラークラス.md
+  - rule: docs/rule/next-shared-error-class.yaml
     paths:
       - "**/app/(shared)/errors/appError.ts*"
       - "**/app/(shared)/errors/handler/action.ts*"
@@ -655,284 +663,284 @@ rules:
       - "**/app/api/**/db.ts*"
       - "**/app/api/**/query.ts*"
       - "**/app/api/**/service.ts*"
-  - rule: dev/コーディング規約/next/shared/エラールートハンドラー.md
+  - rule: docs/rule/next-shared-error-route-handler.yaml
     paths:
       - "**/app/(shared)/errors/handler/server.ts*"
       - "**/app/api/**/route.ts*"
-  - rule: dev/コーディング規約/next/shared/セキュリティ.md
+  - rule: docs/rule/next-shared-security.yaml
     paths:
       - "**/next.config.js"
       - "**/next.config.ts"
       - "**/.env"
       - "**/.env.local"
-  - rule: dev/コーディング規約/next/shared/ロガータグ.md
+  - rule: docs/rule/next-shared-logger-tag.yaml
     paths:
       - "**/app/(shared)/logger.ts*"
       - "**/app/api/**/route.ts*"
-  - rule: dev/コーディング規約/next/shared/ロガー実装.md
+  - rule: docs/rule/next-shared-logger-implementation.yaml
     paths:
       - "**/app/(shared)/logger.ts*"
       - "**/app/api/**/route.ts*"
       - "**/app/api/**/webhooks/**/route.ts*"
-  - rule: dev/コーディング規約/next/shared/環境変数.md
+  - rule: docs/rule/next-shared-env-var.yaml
     paths:
       - "**/app/(shared)/config.ts*"
       - "**/app/**/env.ts*"
       - "**/.env.example"
       - "**/.env.local"
       - "**/.env.sample"
-  - rule: dev/コーディング規約/next/testing/E2Eテスト.md
+  - rule: docs/rule/next-testing-e2e.yaml
     paths:
       - "**/playwright.config.ts*"
       - "**/tests/e2e/**/*.spec.ts*"
       - "**/tests/pages/**/*.ts*"
-  - rule: dev/コーディング規約/next/testing/テスト戦略.md
+  - rule: docs/rule/next-testing-strategy.yaml
     paths:
       - "**/tests/e2e/**/*.spec.ts*"
       - "**/tests/unit/**/*.test.ts*"
-  - rule: dev/コーディング規約/next/testing/フィクスチャー.md
+  - rule: docs/rule/next-testing-fixture.yaml
     paths:
       - "**/tests/e2e/**/*.spec.ts*"
       - "**/tests/fixtures/**/*.ts*"
-  - rule: dev/コーディング規約/next/testing/ユニットテスト.md
+  - rule: docs/rule/next-testing-unit.yaml
     paths:
       - "**/tests/components/**/*.test.tsx*"
       - "**/tests/unit/**/*.test.ts*"
       - "**/tests/unit/**/*.test.tsx*"
       - "**/vitest.config.ts*"
-  - rule: dev/コーディング規約/prompt/プロンプトファイル.md
+  - rule: docs/rule/prompt-file.yaml
     paths:
       - "**/prompts/**"
       - "**/prompt/**"
-  - rule: dev/コーディング規約/python/architecture/TypeScriptスタイル適用.md
+  - rule: docs/rule/python-architecture-typescript-style.yaml
     paths:
       - "**/*.py*"
-  - rule: dev/コーディング規約/python/architecture/コンポジションルート.md
+  - rule: docs/rule/python-architecture-composition-root.yaml
     paths:
       - "**/*.py*"
-  - rule: dev/コーディング規約/python/architecture/リファクタリング判断.md
+  - rule: docs/rule/python-architecture-refactoring-criteria.yaml
     paths:
       - "**/features/**/service.py*"
-  - rule: dev/コーディング規約/python/architecture/レイアウト.md
+  - rule: docs/rule/python-architecture-layout.yaml
     paths:
       - "**/features/**/types.py*"
       - "**/main.py*"
-  - rule: dev/コーディング規約/python/architecture/依存関係管理.md
+  - rule: docs/rule/python-architecture-dependency-management.yaml
     paths:
       - "**/features/**/service.py*"
       - "**/integrations/**/client.py*"
       - "**/main.py*"
-  - rule: dev/コーディング規約/python/architecture/設計原則.md
+  - rule: docs/rule/python-architecture-design-principles.yaml
     paths:
       - "**/*.py*"
-  - rule: dev/コーディング規約/python/concurrency/並列処理.md
+  - rule: docs/rule/python-concurrency-parallel.yaml
     paths:
       - "**/runtime/**/*.py*"
-  - rule: dev/コーディング規約/python/concurrency/非同期処理.md
+  - rule: docs/rule/python-concurrency-async.yaml
     paths:
       - "**/runtime/**/*.py*"
-  - rule: dev/コーディング規約/python/core/コメント.md
+  - rule: docs/rule/python-core-comment.yaml
     paths:
       - "**/*.py*"
-  - rule: dev/コーディング規約/python/core/スタイル.md
+  - rule: docs/rule/python-core-style.yaml
     paths:
       - "**/*.py*"
       - "**/pyproject.toml"
-  - rule: dev/コーディング規約/python/core/デコレーター.md
+  - rule: docs/rule/python-core-decorator.yaml
     paths:
       - "**/_decorators.py*"
       - "**/features/**/service.py*"
       - "**/integrations/**/client.py*"
       - "**/integrations/llm/**/*.py*"
       - "**/shared/decorators.py*"
-  - rule: dev/コーディング規約/python/core/命名規則.md
+  - rule: docs/rule/python-core-naming.yaml
     paths:
       - "**/*.py*"
-  - rule: dev/コーディング規約/python/core/型ヒント.md
+  - rule: docs/rule/python-core-type-hint.yaml
     paths:
       - "**/*.py*"
       - "**/features/**/types.py*"
       - "**/shared/types.py*"
-  - rule: dev/コーディング規約/python/core/言語ルール.md
+  - rule: docs/rule/python-core-language-rules.yaml
     paths:
       - "**/*.py*"
-  - rule: dev/コーディング規約/python/fastapi/アプリケーション.md
+  - rule: docs/rule/python-fastapi-application.yaml
     paths:
       - "**/server/app.py*"
       - "**/server/ws/**/*.py*"
-  - rule: dev/コーディング規約/python/fastapi/スキーマ.md
+  - rule: docs/rule/python-fastapi-schema.yaml
     paths:
       - "**/features/**/route.py*"
       - "**/server/routes/**/*.py*"
-  - rule: dev/コーディング規約/python/fastapi/ヘルスチェック.md
+  - rule: docs/rule/python-fastapi-health-check.yaml
     paths:
       - "**/healthz.py*"
       - "**/server/routes/**/health*.py*"
       - "**/server/routes/health*.py*"
-  - rule: dev/コーディング規約/python/fastapi/ルート定義.md
+  - rule: docs/rule/python-fastapi-route.yaml
     paths:
       - "**/features/**/route.py*"
       - "**/server/routes/**/*.py*"
-  - rule: dev/コーディング規約/python/fastapi/認証とエラー.md
+  - rule: docs/rule/python-fastapi-auth-error.yaml
     paths:
       - "**/features/**/route.py*"
       - "**/server/error_handlers.py*"
       - "**/server/routes/**/*.py*"
-  - rule: dev/コーディング規約/python/llm/Instructor.md
+  - rule: docs/rule/python-llm-instructor.yaml
     paths:
       - "**/integrations/llm/**/*.py*"
-  - rule: dev/コーディング規約/python/llm/コストとキャッシュ.md
+  - rule: docs/rule/python-llm-cost-cache.yaml
     paths:
       - "**/integrations/llm/**/*.py*"
-  - rule: dev/コーディング規約/python/llm/プロバイダー.md
+  - rule: docs/rule/python-llm-provider.yaml
     paths:
       - "**/integrations/llm/**/*.py*"
-  - rule: dev/コーディング規約/python/llm/プロンプトローダー.md
+  - rule: docs/rule/python-llm-prompt-loader.yaml
     paths:
       - "**/integrations/llm/prompts/**/*.py*"
-  - rule: dev/コーディング規約/python/llm/例外とリトライ.md
+  - rule: docs/rule/python-llm-exception-retry.yaml
     paths:
       - "**/integrations/llm/**/*.py*"
-  - rule: dev/コーディング規約/python/packaging/Pythonバージョン.md
+  - rule: docs/rule/python-packaging-python-version.yaml
     paths:
       - "**/pyproject.toml"
-  - rule: dev/コーディング規約/python/packaging/pyproject設定.md
+  - rule: docs/rule/python-packaging-pyproject.yaml
     paths:
       - "**/pyproject.toml"
-  - rule: dev/コーディング規約/python/packaging/依存パッケージ管理.md
+  - rule: docs/rule/python-packaging-dependency.yaml
     paths:
       - "**/pyproject.toml"
-  - rule: dev/コーディング規約/python/packaging/配布設定.md
+  - rule: docs/rule/python-packaging-distribution.yaml
     paths:
       - "**/pyproject.toml"
-  - rule: dev/コーディング規約/python/performance/パフォーマンスチートシート.md
+  - rule: docs/rule/python-performance-cheatsheet.yaml
     paths:
       - "**/benchmarks/**/*.py*"
       - "**/perf/**/*.py*"
       - "**/profile_*.py*"
-  - rule: dev/コーディング規約/python/scripts/Pythonスクリプト.md
+  - rule: docs/rule/python-scripts-python-script.yaml
     paths:
       - "**/{tool,tools,script,scripts}/**/*.py*"
       - "**/hooks/**/*.py*"
-  - rule: dev/コーディング規約/python/scripts/Tkinter.md
+  - rule: docs/rule/python-scripts-tkinter.yaml
     paths:
       - "**/*_gui.py*"
       - "**/gui.py*"
       - "**/gui/**/*.py*"
-  - rule: dev/コーディング規約/python/scripts/launchers-windows.md
+  - rule: docs/rule/python-scripts-launcher-windows.yaml
     paths:
       - "**/*.bat*"
-  - rule: dev/コーディング規約/python/scripts/ランチャー-Unix.md
+  - rule: docs/rule/python-scripts-launcher-unix.yaml
     paths:
       - "**/*.sh*"
-  - rule: dev/コーディング規約/python/shared/エラー定義.md
+  - rule: docs/rule/python-shared-error-definition.yaml
     paths:
       - "**/server/error_handlers.py*"
       - "**/shared/errors.py*"
-  - rule: dev/コーディング規約/python/shared/ロガー.md
+  - rule: docs/rule/python-shared-logger.yaml
     paths:
       - "**/shared/logger.py*"
-  - rule: dev/コーディング規約/python/shared/型定義.md
+  - rule: docs/rule/python-shared-type-definition.yaml
     paths:
       - "**/shared/types.py*"
-  - rule: dev/コーディング規約/python/shared/定数.md
+  - rule: docs/rule/python-shared-constant.yaml
     paths:
       - "**/shared/constants.py*"
-  - rule: dev/コーディング規約/python/shared/設定.md
+  - rule: docs/rule/python-shared-settings.yaml
     paths:
       - "**/config/settings.yaml*"
       - "**/shared/settings.py*"
-  - rule: dev/コーディング規約/python/testing/pytest.md
+  - rule: docs/rule/python-testing-pytest.yaml
     paths:
       - "**/benchmarks/**/*.py*"
       - "**/tests/**/test_*.py*"
       - "**/tests/conftest.py*"
-  - rule: dev/コーディング規約/python/testing/テスト戦略.md
+  - rule: docs/rule/python-testing-strategy.yaml
     paths:
       - "**/tests/**/test_*.py*"
-  - rule: dev/コーディング規約/python/testing/フィクスチャー.md
+  - rule: docs/rule/python-testing-fixture.yaml
     paths:
       - "**/benchmarks/**/*.py*"
       - "**/tests/**/test_*.py*"
       - "**/tests/conftest.py*"
-  - rule: dev/コーディング規約/python/testing/モック.md
+  - rule: docs/rule/python-testing-mock.yaml
     paths:
       - "**/tests/**/test_*.py*"
       - "**/tests/conftest.py*"
-  - rule: dev/コーディング規約/ui/画面の分け方.md
+  - rule: docs/rule/ui-screen-division.yaml
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
     exclude:
       - "**/*.md"
-  - rule: dev/コーディング規約/ui/画面の分け方.md
+  - rule: docs/rule/ui-screen-division.yaml
     paths:
       - "**/設計書/画面設計/**"
-  - rule: dev/コーディング規約/ui/業務画面のUI要素.md
+  - rule: docs/rule/ui-business-screen-elements.yaml
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
     exclude:
       - "**/*.md"
-  - rule: dev/コーディング規約/ui/業務画面のUI要素.md
+  - rule: docs/rule/ui-business-screen-elements.yaml
     paths:
       - "**/設計書/画面設計/**"
-  - rule: dev/コーディング規約/ui/ドキュメントの部品.md
+  - rule: docs/rule/ui-document-parts.yaml
     paths:
       - "**/dev/**/*.md"
       - "**/docs/README.md"
       - "**/docs/{はじめに,使い方,リファレンス}/**/*.md"
-  - rule: dev/コーディング規約/ui/画面デザインの原則.md
+  - rule: docs/rule/ui-screen-design-principles.yaml
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
     exclude:
       - "**/*.md"
-  - rule: dev/コーディング規約/ui/画面デザインの原則.md
+  - rule: docs/rule/ui-screen-design-principles.yaml
     paths:
       - "**/設計書/画面設計/**"
-  - rule: dev/コーディング規約/ui/情報の階層と見た目.md
+  - rule: docs/rule/ui-information-hierarchy.yaml
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
     exclude:
       - "**/*.md"
-  - rule: dev/コーディング規約/ui/情報の階層と見た目.md
+  - rule: docs/rule/ui-information-hierarchy.yaml
     paths:
       - "**/設計書/画面設計/**"
-  - rule: dev/コーディング規約/ui/操作とアクセシビリティ.md
+  - rule: docs/rule/ui-operation-accessibility.yaml
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
     exclude:
       - "**/*.md"
-  - rule: dev/コーディング規約/ui/操作とアクセシビリティ.md
+  - rule: docs/rule/ui-operation-accessibility.yaml
     paths:
       - "**/設計書/画面設計/**"
-  - rule: dev/コーディング規約/ui/入力と文言.md
+  - rule: docs/rule/ui-input-wording.yaml
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
     exclude:
       - "**/*.md"
-  - rule: dev/コーディング規約/ui/入力と文言.md
+  - rule: docs/rule/ui-input-wording.yaml
     paths:
       - "**/設計書/画面設計/**"
-  - rule: dev/コーディング規約/ui/表示の安定.md
+  - rule: docs/rule/ui-display-stability.yaml
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
     exclude:
       - "**/*.md"
-  - rule: dev/コーディング規約/ui/表示の安定.md
+  - rule: docs/rule/ui-display-stability.yaml
     paths:
       - "**/設計書/画面設計/**"
-  - rule: dev/コーディング規約/ui/対応ブラウザ.md
+  - rule: docs/rule/ui-supported-browser.yaml
     paths:
       - "**/*.html*"
       - "**/*.{tsx,jsx,vue,svelte}*"
     exclude:
       - "**/*.md"
-  - rule: dev/コーディング規約/ui/対応ブラウザ.md
+  - rule: docs/rule/ui-supported-browser.yaml
     paths:
       - "**/設計書/画面設計/**"

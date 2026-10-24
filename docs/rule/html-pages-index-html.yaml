@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-pages-index-html
+kind: rule
+name: index.html の作り方
+description: 各画面の index.html が _layout.html を継承する作り方と、ブロックの使い分けを定める。
+tags:
+  - name: scope:html
+  - name: topic:pages
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: index-html-creation-01
+    group: index.html の作り方
+    name: _layout.html を継承する
+    body: |-
+      - 各画面の `index.html` は `_layout.html` を継承し、`<app-shell>` の中に画面の中身だけを書く。
+  - id: index-html-creation-02
+    group: index.html の作り方
+    name: ブロックの使い分け
+    body: |-
+      ブロックの使い分け:
+
+      | ブロック  | 入れるもの                                                                                                                                        |
+      | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+      | `title`   | `画面名 — アプリ名` で統一                                                                                                                        |
+      | `head`    | 画面固有 CSS の link。`screen.css` が無ければ省く                                                                                                 |
+      | `body`    | `<app-shell>` を 1 つ。その中に画面コンテンツ                                                                                                     |
+      | `scripts` | `screen.js` を読む `<script type="module">` 1 つだけ（`tsc` が生成した `.js` を指す） |
+  - id: index-html-creation-03
+    group: index.html の作り方
+    name: インライン script と onclick は使わない
+    body: |-
+      - インライン `<script>` ブロックや `onclick=` 属性は使わない（外部 `screen.js` + `addEventListener`）
+  - id: index-html-creation-04
+    group: index.html の作り方
+    name: importmap の参照先
+    body: |-
+      - importmap / `modulepreload` の規約は [html/js/モジュール解決](id:html-js-module-resolution)

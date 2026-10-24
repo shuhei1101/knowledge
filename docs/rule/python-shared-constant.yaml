@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-shared-constant
+kind: rule
+name: shared/constants.py — 計算済み定数
+description: shared/constants.py に置く計算済み定数の範囲と書き方、固定の選択肢の表し方を定める。
+tags:
+  - name: scope:python
+  - name: topic:shared
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: flowchart-config-location
+    type: requires
+    when: 定数と設定値の置き場所を判断するとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      計算済みの不変値だけを置く。env で切り替える値は [shared/設定](id:python-shared-settings)。
+      置き場所の判断は [設定値の置き場所](id:flowchart-config-location) に従う。
+
+      `constants.py` には、構造から計算されるパス（`PROJECT_ROOT` / `LOG_DIR`）と業務固定値（`MAX_TAGS_PER_POST` / `DEFAULT_PAGE_SIZE`）を置く。feature 専用の定数・業務 Enum は feature の `types.py` に置く。
+  - id: writing-01
+    group: 書き方
+    name: 定数の命名と型注釈
+    body: |-
+      - `UPPER_SNAKE_CASE` + 型注釈必須 + 説明 docstring
+  - id: writing-02
+    group: 書き方
+    name: PROJECT_ROOT の定義
+    body: |-
+      - `PROJECT_ROOT: Path = Path(__file__).resolve().parents[2]` のように 1 度だけ計算（カレントディレクトリ非依存、同じパス計算を散在させない）
+  - id: writing-03
+    group: 書き方
+    name: 巨大な dict は定数にしない
+    body: |-
+      - 巨大な dict（プロンプト等）は constants でなくファイル / config に
+  - id: fixed-choices-01
+    group: 固定の選択肢
+    name: 固定の選択肢は Literal
+    body: |-
+      `Literal` を基本に（`type Status = Literal["draft", "published", "archived"]`）。`StrEnum` はライブラリが要求するときだけ。

@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-css-nesting
+kind: rule
+name: ネスト
+description: ネイティブ CSS Nesting を使う範囲を定める。
+tags:
+  - name: scope:html
+  - name: topic:css
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: nesting-01
+    group: ネスト
+    name: ネイティブ Nesting を使う
+    body: |-
+      - ネイティブ CSS Nesting を使ってよい。
+        - `&__title` のような文字列連結は無効なので、要素クラスはフル記述する。
+  - id: nesting-02
+    group: ネスト
+    name: ネストの範囲
+    body: |-
+      ネストは状態（`&:hover`）・擬似クラス・子孫の入れ子に限る。深くしすぎない。

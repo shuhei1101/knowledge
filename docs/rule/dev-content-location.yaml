@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-content-location
+kind: rule
+name: コンテンツの置き場所
+description: リポジトリ直下の content/ に置く、コードではない正本と、置かない値を定める。
+tags:
+  - name: scope:dev
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: flowchart-config-location
+    type: requires
+    when: content/ に置かない値の置き場所を決めるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      リポジトリ直下の `content/` に、Git で差分を見たい、コードではない正本を置く。
+
+      `content/` に置くのは、アプリが素材・定義として読む本体で、設定の 3 レイヤー（既定値・環境の値・checkout の上書き）で上書きしないもの。
+  - id: put-items-01
+    group: 置くもの
+    name: プロンプト
+    body: |-
+      - プロンプト（`content/prompts/`）
+  - id: put-items-02
+    group: 置くもの
+    name: キャラクターなどの定義
+    body: |-
+      - キャラクターなどの定義
+  - id: put-items-03
+    group: 置くもの
+    name: 素材の一覧と説明文
+    body: |-
+      - 素材の一覧と説明文
+  - id: put-items-04
+    group: 置くもの
+    name: 評価のケース
+    body: |-
+      - 評価のケース
+  - id: put-items-05
+    group: 置くもの
+    name: 禁止語などのカタログ
+    body: |-
+      - 禁止語などのカタログ
+  - id: put-items-06
+    group: 置くもの
+    name: モデルと単価の一覧
+    body: |-
+      - モデルと単価の一覧
+  - id: not-put-items-01
+    group: 置かないもの
+    name: content/ に置かない値
+    body: |-
+      次の値は `content/` に置かず、[設定値の置き場所](id:flowchart-config-location) が決めた場所に置く。
+  - id: not-put-items-02
+    group: 置かないもの
+    name: 値ごとの置き場所
+    body: |-
+      | 値 | 置き場所 |
+      | --- | --- |
+      | 設定の既定値 | `config/defaults.yaml` |
+      | 定数の YAML | `config/constants.yaml` |
+      | ランタイムの状態 | `data/` |

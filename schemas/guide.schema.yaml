@@ -1,0 +1,13 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: 手順
+description: 利用者向けの使い方の手順。
+allOf:
+  - $ref: common.schema.yaml#/$defs/metadata
+properties:
+  kind:
+    title: 種類
+    description: 文書の種類。この種類では `guide` に固定する。
+    const: guide
+required:
+  - last_reviewed
+unevaluatedProperties: false

@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-list-page-tsx
+kind: rule
+name: "{feature}/page.tsx — 一覧 Server Component"
+description: 一覧の Server Component の URL クエリの検証と SEO の参照先を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: list-page-01
+    group: "{feature}/page.tsx — 一覧 Server Component"
+    name: URL クエリを Zod で parse
+    body: |-
+      - URL クエリは `ResourceSearchParamsSchema.parse(sp)` で Zod パース
+  - id: seo-01
+    group: SEO
+    name: SEO の参照
+    body: |-
+      [frontend/SEO](id:next-frontend-seo)

@@ -1,0 +1,91 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-rule-index-registration
+kind: rule
+name: ルール索引への登録
+description: docs 配下のドキュメントを rules.yaml に載せるかの判断と、載せるときの記載を定める。
+tags:
+  - name: scope:dev
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      `docs/` 配下のドキュメントを新規作成・移動・リネームしたときは、プロジェクトの直下の `rules.yaml`（rule-inject の索引）に載せるかどうかを判断する。
+      索引に載せたドキュメントは、`paths` の glob に一致するファイルを扱うとき、または `tools` の glob に一致する MCP ツールを呼ぶときに本文が自動で注入される。
+      既存ドキュメントを編集したときも、索引に載っているかと `paths` / `tools` が今の内容と合っているかを確認する。
+  - id: index-decision-01
+    group: 載せるかの判断
+    name: ファイル種別の規約は載せる
+    body: |-
+      - 特定のファイル種別・ディレクトリを扱うときに毎回従ってほしい規約・書式 → 載せる
+  - id: index-decision-02
+    group: 載せるかの判断
+    name: MCP ツールの規約は載せる
+    body: |-
+      - 特定の MCP ツールを呼ぶときに毎回従ってほしい規約・書式 → 載せる
+  - id: index-decision-03
+    group: 載せるかの判断
+    name: 参照資料は載せない
+    body: |-
+      - 必要になったときに取りに行く参照資料（調査メモ・一覧・議事録）→ 載せない
+  - id: index-decision-04
+    group: 載せるかの判断
+    name: 検査で判定できる決まり
+    body: |-
+      - 検査のコードで判定できる決まり → 載せずに検査に記載する
+  - id: index-writing-01
+    group: 載せるときの書き方
+    name: rule と paths・tools の追加
+    body: |-
+      - 索引に `rule`（索引ファイルからの相対パス）と `paths` / `tools` の 1 エントリを追加する
+  - id: index-writing-02
+    group: 載せるときの書き方
+    name: paths の記載
+    body: |-
+      - `paths` には「そのドキュメントに従ってほしい対象ファイル」の glob を書く
+        - 対象が実装言語なら拡張子で引く（例: `**/*.py*`）
+        - 対象がドキュメント種別ならそのフォルダで引く（例: `**/dev/設計書/シナリオ/**`）
+        - 照合は絶対パスに当てるため、`**/` か `*` で始め、`~` を使わない
+        - 波括弧は候補を 2 つ以上並べるときだけ使う（例: `**/*.{ts,tsx}`）
+  - id: index-writing-03
+    group: 載せるときの書き方
+    name: exclude の指定
+    body: |-
+      - `paths` の範囲から外したいファイル・フォルダは、同じエントリの `exclude` に `paths` と同じ書き方の glob で書く（例: `paths: ["**/*.html*"]` に `exclude: ["**/docs/_layouts/**"]`）
+        - 外れるのはそのエントリだけで、同じ `rule` の別のエントリが当たればそのルールは案内される
+  - id: index-writing-04
+    group: 載せるときの書き方
+    name: tools の記載
+    body: |-
+      - `tools` には「そのドキュメントに従ってほしい MCP ツール」の完全名に当てる glob を書く（サーバー名は `*` で受ける。例: `mcp__*__create_review_comment`）
+  - id: index-writing-05
+    group: 載せるときの書き方
+    name: on の指定
+    body: |-
+      - `on` には「そのルールへの追従が必須になる操作種別」（`read` / `write` / `mcp` の組み合わせ）を書く。省略時は索引の `default_on`（無ければ `["read", "write", "mcp"]`）に従う
+  - id: index-writing-06
+    group: 載せるときの書き方
+    name: MCP 書き込み文書の規約
+    body: |-
+      - MCP のツールで書き込む文書の規約は、書き込みのツールを `tools` に記載し、`on` に `mcp` を含める
+        止めずに案内すると、案内はツールの実行後に読まれる
+  - id: index-writing-07
+    group: 載せるときの書き方
+    name: paths と tools の照合
+    body: |-
+      - `paths` と `tools` は別々に照合され、書かなかった方は当たらない
+  - id: index-writing-08
+    group: 載せるときの書き方
+    name: 既存エントリとの重複
+    body: |-
+      - 既存エントリの `paths` と対象が重なってよい（一致したルールはすべて注入される）
+        - 同じ `rule` のエントリが複数当たったときは 1 つにまとめて案内し、どれかの `on` に含まれる操作種別を必須とする（範囲ごとに `on` を変えたいときは、同じ `rule` を `paths` を分けて複数のエントリに書く）
+  - id: index-writing-09
+    group: 載せるときの書き方
+    name: 複数の索引がある場合
+    body: |-
+      - 索引が複数ある場合は、そのドキュメントを置いたリポジトリの索引に載せる

@@ -1,0 +1,278 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-yaml
+kind: rule
+name: YAML
+description: YAML の正本の持ち方、スキーマの定義、検査、書き込み、MCP からの書き込みと読み取りの決まりを定める。
+tags:
+  - name: scope:dev
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: claude-mcp
+    type: requires
+    when: YAML を読み取る MCP のツールを作るとき
+  - to: dev-content-location
+    type: requires
+    when: content/ に置く正本の置き場所を決めるとき
+  - to: dev-tag-term-registration
+    type: requires
+    when: YAML のタグを登録するとき
+  - to: flowchart-config-location
+    type: requires
+    when: アプリの設定値の置き場所を決めるとき
+  - to: python-shared-settings
+    type: references
+    when: pydantic-settings で読む設定を扱うとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      YAML を扱う決まり。
+      データの正本の持ち方、スキーマの書き方、検査、書き込み、MCP からの書き込みと読み取りを定める。
+  - id: data-source-01
+    group: データの正本
+    name: データの正本の適用範囲
+    body: |-
+      データの正本を DB に持たないプロジェクトに適用する。
+  - id: data-source-overview-01
+    group: データの正本 > 概要
+    name: YAML を SoT にする
+    body: |-
+      - 新規ドメインのデータ管理は YAML を SoT として持ち、`index.yaml` + `settings.yaml` の 2 レイヤー構成を使う ことを必須化する。
+  - id: data-source-overview-02
+    group: データの正本 > 概要
+    name: 目的は一元把握
+    body: |-
+      - frontend / backend が同じ YAML を見て同じ識別子で実装できることと、Claude Code がデータの全貌を 1 箇所で把握できる
+        - 散らばらない ことが目的。
+  - id: two-layer-01
+    group: データの正本 > 必須化する 2 レイヤー構成
+    name: 必須の 2 レイヤー構成
+    body: |-
+      | ファイル                  | 役割                                                | git        | 編集経路              |
+      | ------------------------- | --------------------------------------------------- | ---------- | --------------------- |
+      | `**/index.yaml`           | キー本体 — 環境非依存 / 構造定義 / 一覧性が要るもの | committed  | 手編集                |
+      | `**/settings.yaml`        | 付随メタデータ — 画面から更新する / 環境別 / 個人差 | gitignored | UI または手編集       |
+      | `**/settings.sample.yaml` | `settings.yaml` の committed template               | committed  | 手編集 (新キー追加時) |
+  - id: two-layer-choice-01
+    group: データの正本 > 必須化する 2 レイヤー構成 > どちらに書くかの判断
+    name: 画面から変えるなら settings.yaml
+    body: |-
+      - 利用者が画面から変える → `settings.yaml`
+  - id: two-layer-choice-02
+    group: データの正本 > 必須化する 2 レイヤー構成 > どちらに書くかの判断
+    name: 本質的なキーは index.yaml
+    body: |-
+      - ファイル追加と同時に増える本質的なキー → `index.yaml`
+  - id: two-layer-choice-03
+    group: データの正本 > 必須化する 2 レイヤー構成 > どちらに書くかの判断
+    name: 全員で揃える値の置き場所
+    body: |-
+      - git で全員揃ってほしい値 → `index.yaml` または `settings.sample.yaml`
+  - id: two-layer-choice-04
+    group: データの正本 > 必須化する 2 レイヤー構成 > どちらに書くかの判断
+    name: 単独 YAML でよい場合
+    body: |-
+      「画面更新もなく環境依存もない」単独 YAML (例: `content/banned_words.yaml`) は 2 レイヤーにせず単独 YAML で OK。
+      2 レイヤーが必須になるのは「画面から更新」or「環境別」が発生するとき。
+
+      アプリの設定値（接続先・環境ごとの値・ブランチで試す値）の置き場所は [設定値の置き場所](id:flowchart-config-location) が決め、既定値 → 環境の値 → checkout の上書き の 3 レイヤーに重ねる。
+      このセクションの `settings.yaml` は画面から更新するデータのファイルで、3 レイヤーの環境の値（`~/.config/{project}/settings.yaml`）とは別。
+      `content/` に置く、形式を問わない正本の置き場所は [コンテンツの置き場所](id:dev-content-location) が決める。
+  - id: shared-yaml-01
+    group: データの正本 > frontend / backend は同じ YAML を読む
+    name: frontend と backend で同じ YAML
+    body: |-
+      - 物理 ID と論理名 を YAML 1 箇所で定義し、Python / JS の両方が YAML を返す API 経由で同じ値を取る
+  - id: shared-yaml-02
+    group: データの正本 > frontend / backend は同じ YAML を読む
+    name: ハードコードの禁止
+    body: |-
+      - コード内ハードコード禁止 — YAML に未登録のキーが必要になったら YAML を先に更新する
+  - id: shared-yaml-03
+    group: データの正本 > frontend / backend は同じ YAML を読む
+    name: 表記の乖離を防ぐ
+    body: |-
+      - 表記が乖離する事故を構造的に潰すのが目的
+  - id: worktree-safe-01
+    group: データの正本 > worktree-safe な runtime YAML
+    name: worktree-safe な runtime YAML
+    body: |-
+      `settings.yaml` 等、実行時に UI / API から書き込まれる YAML は、どの worktree から書いても main repo の同一ファイル に着地させる。
+      worktree 削除でユーザーデータが消える事故 を防ぐため。
+
+      以下例では (`main_repo_root()` ヘルパ) を採用:
+
+      ```python
+      from {pkg}.shared.paths import main_repo_root
+      path = main_repo_root() / "config" / "settings.yaml"
+      ```
+  - id: schema-01
+    group: スキーマ
+    name: スキーマの定義方法
+    body: |-
+      YAML の構造は、種類ごとにスキーマの YAML で定義する。
+      プロジェクトが構造を決めてアプリが読み込む YAML（データの正本・`content/` の YAML・プロンプト）に当てる。
+      外部のツールが構造を決める YAML（CI・compose など）と、`pydantic-settings` で読む設定（[設定](id:python-shared-settings)）には当てない。
+  - id: schema-02
+    group: スキーマ
+    name: JSON Schema 2020-12
+    body: |-
+      - JSON Schema 2020-12 で書く
+  - id: schema-03
+    group: スキーマ
+    name: スキーマのファイル名
+    body: |-
+      - ファイル名は `{種類}.schema.yaml`（例 `プロンプト.schema.yaml`）にする
+  - id: schema-04
+    group: スキーマ
+    name: title と description の付与
+    body: |-
+      - 各項目に `title`・`description` を付け、スキーマを読めば各項目に何を書くかが分かるようにする
+  - id: schema-05
+    group: スキーマ
+    name: 共通の型の $defs
+    body: |-
+      - 種類をまたぐ型は `共通.schema.yaml` の `$defs` に置き、各スキーマから `$ref` で指す
+  - id: schema-06
+    group: スキーマ
+    name: ブロック形式で記載
+    body: |-
+      - フロー形式（`{type: string, ...}`）を使わず、ブロック形式で書く
+  - id: inspection-01
+    group: 検査
+    name: 検査の対象と時点
+    body: |-
+      読み込むとき（起動の事前確認など）に、`## スキーマ` を当てる全ての YAML をスキーマに通す。
+  - id: inspection-02
+    group: 検査
+    name: 違反の出力形式
+    body: |-
+      - 違反は `{ファイル}: {キーのパス}: {理由}` の行で全て並べる
+  - id: inspection-03
+    group: 検査
+    name: 書き換えない検査のツール
+    body: |-
+      - ファイルを書き換えずに違反を並べるだけの検査のツールを置く
+  - id: inspection-04
+    group: 検査
+    name: 独自の検査
+    body: |-
+      - スキーマで見られない決まり（ID の重複・参照の実在・mermaid の文法など）は独自の検査に記載し、スキーマの検査と 1 つの検査のツールにまとめる
+  - id: inspection-05
+    group: 検査
+    name: mermaid の検査
+    body: |-
+      - mermaid は `@probelabs/maid` で検査する
+        自動修正（`--fix`）は意味を変えることがあるので使わない
+  - id: writing-01
+    group: 書き込み
+    name: 書き込みの原則
+    body: |-
+      プログラム（MCP・アプリの UI / API・ローカルの開発 DB など）が YAML を書くときは、次を守る。
+  - id: writing-02
+    group: 書き込み
+    name: 書き込み前の検査
+    body: |-
+      - 書き込む前に、変更を当てた後の中身を `## 検査` に通し、1 件でも違反があれば何も書き換えずにエラーを返す
+  - id: writing-03
+    group: 書き込み
+    name: 一時ファイルから置き換え
+    body: |-
+      - 一時ファイルに書いてから置き換える
+  - id: writing-04
+    group: 書き込み
+    name: 失敗時の巻き戻し
+    body: |-
+      - 複数のファイルを書く途中で失敗したら、置き換えた分を元に戻す
+  - id: writing-05
+    group: 書き込み
+    name: 排他ロック
+    body: |-
+      - 読み込み・検査・書き込みを排他ロックの中で行う
+  - id: mcp-write-01
+    group: MCP からの書き込み
+    name: MCP から書き込む
+    body: |-
+      YAML を書き込む MCP のツールがあるプロジェクトでは、YAML を直接編集せず MCP から書き込む。
+  - id: mcp-write-02
+    group: MCP からの書き込み
+    name: 書き込みの従う先
+    body: |-
+      - 書き込みは `## 書き込み` に従う
+  - id: mcp-write-03
+    group: MCP からの書き込み
+    name: ツール説明の組み立て
+    body: |-
+      - 書き込むツールの説明（入力の名前・型・必須・書くべき中身）は、スキーマの `title`・`description`・必須から組み立てる
+  - id: mcp-write-04
+    group: MCP からの書き込み
+    name: expected_version の必須化
+    body: |-
+      - 書き込みに項目の `expected_version`（`rev`）を必須にし、合わなければ書かずに、再読み込みして再度呼び出すよう返す
+        バージョンはファイルではなく項目ごとに持つ
+  - id: mcp-write-05
+    group: MCP からの書き込み
+    name: 違反は isError で返す
+    body: |-
+      - 違反のエラーは `isError` で返す
+        `dry_run` で書かずに検査と差分だけを返せるようにする
+  - id: mcp-write-06
+    group: MCP からの書き込み
+    name: 返り値は差分と結果のみ
+    body: |-
+      - 返り値は新しいバージョン・短い差分・検査の結果にし、全文を返さない
+  - id: mcp-read-01
+    group: MCP からの読み取り
+    name: 読み取りのツールの作り方
+    body: |-
+      読み取りのツールの作り方は [MCP サーバー作成ルール](id:claude-mcp) の `## 読み取りのツール` に従う。
+      YAML では次を追加する。
+  - id: mcp-read-02
+    group: MCP からの読み取り
+    name: タグの一覧を登録
+    body: |-
+      - タグの一覧を YAML に登録する。登録外のタグは弾かずに未登録の候補として受け付け、検査で警告する（[タグと用語の登録](id:dev-tag-term-registration)）
+  - id: mcp-read-03
+    group: MCP からの読み取り
+    name: タグ一覧のツール
+    body: |-
+      - タグの一覧のツールを置き、登録したタグごとに名前・説明・そのタグを持つ項目の数・使っている種類を返す。数が 0 のタグも返す。`query` を受け、正規化した名前・`aliases`・説明に一致するタグを上位から返す
+  - id: mcp-read-04
+    group: MCP からの読み取り
+    name: AND と OR の絞り込み
+    body: |-
+      - 検索のタグは複数を渡せ、既定は全てを持つ項目（AND）に絞る。どれかを持つ項目（OR）は別の引数（`any_tags`）で渡す
+  - id: mcp-read-05
+    group: MCP からの読み取り
+    name: 登録外タグの検索
+    body: |-
+      - 登録外のタグで検索したら、近い候補を添えたエラーにする
+  - id: mcp-read-06
+    group: MCP からの読み取り
+    name: ツール説明をスキーマから作る
+    body: |-
+      - 読み取りのツールの説明も、スキーマから組み立てる。使える絞り込みと、タグの一覧のツールは語彙が多いときに呼ぶこと（引数なしの `search` がタグごとの件数を返す）を記載する
+  - id: sources-01
+    group: 出典
+    name: "出典: ツールの設計"
+    body: |-
+      - [Anthropic: Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)（入出力の説明）
+  - id: sources-02
+    group: 出典
+    name: "出典: MCP 仕様"
+    body: |-
+      - [MCP 仕様: Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools)（`inputSchema` / `outputSchema`）
+  - id: sources-03
+    group: 出典
+    name: "出典: JSON Schema Core"
+    body: |-
+      - [JSON Schema 2020-12: Core](https://json-schema.org/draft/2020-12/json-schema-core)（`$ref`・`$defs`）
+  - id: sources-04
+    group: 出典
+    name: "出典: JSON Schema Validation"
+    body: |-
+      - [JSON Schema 2020-12: Validation](https://json-schema.org/draft/2020-12/json-schema-validation)（`title`・`description`）

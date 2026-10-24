@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-shared-fmt
+kind: rule
+name: fmt.ts
+description: 日付・数値・通貨などの整形関数を fmt.ts に集約する決まりを定める。
+tags:
+  - name: scope:html
+  - name: topic:shared
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: fmt-ts-01
+    group: fmt.ts
+    name: 整形関数を集約
+    body: |-
+      - 日付・数値・通貨などの整形関数を集約する。
+        - 画面ごとに整形関数を再定義しない。
+  - id: fmt-ts-02
+    group: fmt.ts
+    name: 純関数で DOM を触らない
+    body: |-
+      - 純関数。DOM を触らない。

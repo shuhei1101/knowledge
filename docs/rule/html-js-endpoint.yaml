@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-js-endpoint
+kind: rule
+name: エンドポイント（URL 定数）
+description: エンドポイントの URL を定数に集約する決まりと、置き場所・2 つの形式を定める。
+tags:
+  - name: scope:html
+  - name: topic:js
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: endpoint-constant-01
+    group: エンドポイント（URL 定数）
+    name: URL をハードコードしない
+    body: |-
+      - URL 文字列を画面・api 層にハードコードしない。
+        - 定数に集約し、そこだけ見れば全 URL が分かる状態にする。
+  - id: endpoint-constant-02
+    group: エンドポイント（URL 定数）
+    name: 置き場所は使う範囲に従う
+    body: |-
+      - 置き場所は使う範囲に従う（[html/共通化の判断](id:html-commonization)）。
+        - 画面ローカルなら `state.ts`
+        - ドメイン共有なら `pages/{domain}/_shared/`
+        - 全画面共有なら `shared/core/` の `.ts`
+  - id: two-formats-01
+    group: 2 つの形式
+    name: 単発 URL とパラメータ付き URL の形式
+    body: |-
+      単発 URL は flat const。
+
+      ```ts
+      export const HOME_URL = "/home"
+      ```
+
+      関連 URL は機能ごとにオブジェクトでまとめる。ID 付きは関数形式。
+
+      ```ts
+      const COST = "/api/cost"
+
+      export const COST_API_URL = {
+        summary: COST,
+        detail: (id: string) => `${COST}/${id}`,
+      }
+      ```
+
+      ベース URL（`COST`）は export しない private const にして合成だけに使う。

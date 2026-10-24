@@ -1,0 +1,106 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-component-catalog
+kind: rule
+name: app/(shared)/components/ — 共通コンポーネントカタログ
+description: app/(shared)/components/ の共通コンポーネントを用途別に一覧し、新規作成前の確認手順を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: own-wrapper-01
+    group: 自前ラッパー
+    name: 自前ラッパーの一覧
+    body: |-
+      <!-- table: data -->
+
+      | Component | 詳細 |
+      |---|---|
+      | `ScreenWrapper` | [frontend/スクリーンラッパー](id:next-frontend-screen-wrapper) |
+      | `PageHeader` | [frontend/ページヘッダー](id:next-frontend-page-header) |
+      | `LoadingButton` | [frontend/ローディングボタン](id:next-frontend-loading-button) |
+      | `EmptyState` | [frontend/空状態](id:next-frontend-empty-state) |
+      | `RequiredMark` | [frontend/必須マーク](id:next-frontend-required-mark) |
+      | `TagInput` | [frontend/タグ入力](id:next-frontend-tag-input) |
+      | `AutosaveIndicator` | [frontend/自動保存インジケーター](id:next-frontend-autosave-indicator) |
+      | `Pagination` | shadcn `<Pagination>` ラッパー |
+      | `ConfirmDialog` provider | [frontend/確認ダイアログ](id:next-frontend-confirm-dialog) |
+
+      <!-- /table -->
+  - id: shadcn-ui-01
+    group: shadcn/ui (`app/(shared)/components/ui/`)
+    name: shadcn/ui の追加方法
+    body: |-
+      `pnpm dlx shadcn@latest add {name}` で追加。
+  - id: usage-button-01
+    group: 用途別 > ボタン
+    name: ボタン系の一覧
+    body: |-
+      | 用途 | コンポーネント |
+      |---|---|
+      | 通常 | shadcn `<Button>` |
+      | 非同期処理 | `<LoadingButton>` |
+      | リンク遷移 | `<Button asChild><Link>` |
+  - id: usage-form-input-01
+    group: 用途別 > フォーム入力
+    name: フォーム入力系の一覧
+    body: |-
+      <!-- table: data -->
+
+      | 用途 | コンポーネント |
+      |---|---|
+      | 基本ラベル+エラー構造 | `<Controller>` + `<Field>` + `<FieldLabel>` + `<FieldError>` |
+      | Text | `<Input>` |
+      | Select | `<Select>` |
+      | Multi-select | `<Command>` + `<Popover>` |
+      | Tag | `<TagInput>` |
+      | Toggle | `<Switch>` |
+      | Date | `<Calendar>` + `<Popover>` |
+
+      <!-- /table -->
+  - id: usage-feedback-01
+    group: 用途別 > フィードバック
+    name: フィードバック系の一覧
+    body: |-
+      | 用途 | コンポーネント |
+      |---|---|
+      | Loading | `<Skeleton>` / `loading.tsx` |
+      | Toast | `toast.success` / `toast.error` (sonner) |
+      | 確認 dialog | `useConfirmDialog()` |
+      | 空状態 | `<EmptyState>` |
+      | Autosave 状態 | `<AutosaveIndicator>` |
+  - id: usage-dialog-01
+    group: 用途別 > ダイアログ系
+    name: ダイアログ系の一覧
+    body: |-
+      | 用途 | コンポーネント |
+      |---|---|
+      | コンテンツ dialog | shadcn `<Dialog>` |
+      | 確認 dialog | `useConfirmDialog()` |
+      | サイドパネル | shadcn `<Sheet>` |
+      | モバイル下シート | shadcn `<Drawer>` |
+      | Popover | shadcn `<Popover>` |
+  - id: before-new-component-01
+    group: 新規コンポーネントを作る前
+    name: カタログを確認する
+    body: |-
+      1. 本カタログをチェック
+  - id: before-new-component-02
+    group: 新規コンポーネントを作る前
+    name: shadcn primitive を確認する
+    body: |-
+      2. shadcn primitive をチェック（`shadcn add` で取れるか）
+  - id: before-new-component-03
+    group: 新規コンポーネントを作る前
+    name: Radix UI を直接使う
+    body: |-
+      3. Radix UI を直接使う
+  - id: before-new-component-04
+    group: 新規コンポーネントを作る前
+    name: 3 回目で共通化する
+    body: |-
+      4. 3 回目に同じものを書きそうになったら `app/(shared)/components/` に追加

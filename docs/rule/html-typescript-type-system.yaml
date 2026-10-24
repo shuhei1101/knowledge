@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-typescript-type-system
+kind: rule
+name: 型システム（汎用 TypeScript）
+description: any を避け、型エイリアス・union リテラル・関数型・導出・import type を使う汎用 TypeScript の型の決まりを定める。
+tags:
+  - name: scope:html
+  - name: topic:typescript
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: typescript-type-system-01
+    group: 型システム（汎用 TypeScript）
+    name: any を避け unknown を使う
+    body: |-
+      - TypeScript を使う全プロジェクト共通の型の書き方。`any` を避け、不明なら `unknown` で受けて絞る。
+        - 公開 API（export する関数・型）には型を付ける。局所変数は推論に任せてよい。
+  - id: typescript-type-system-02
+    group: 型システム（汎用 TypeScript）
+    name: 型エイリアスは type
+    body: |-
+      - 型エイリアスは `type` を使う。
+        - `interface` はライブラリ拡張・declaration merging が必要なときだけ。
+  - id: typescript-type-system-03
+    group: 型システム（汎用 TypeScript）
+    name: 状態は union リテラル
+    body: |-
+      - 状態や種別は union リテラルで表し、文字列のべた書きを型で縛る。
+  - id: typescript-type-system-04
+    group: 型システム（汎用 TypeScript）
+    name: 契約は関数型エイリアス
+    body: |-
+      - コールバック・依存の契約は関数型エイリアスにして名前を付ける。
+  - id: typescript-type-system-05
+    group: 型システム（汎用 TypeScript）
+    name: generics は汎用ユーティリティだけ
+    body: |-
+      - 汎用ユーティリティだけ generics を使う。
+        - 制約（`extends`）を付けて緩すぎる型を避ける。
+  - id: typescript-type-system-06
+    group: 型システム（汎用 TypeScript）
+    name: 戻り値は導出する
+    body: |-
+      - 内部関数の戻り値を別の場所で使うときは手書きせず導出する。
+        - シグネチャ変更に型が追従する。
+  - id: typescript-type-system-07
+    group: 型システム（汎用 TypeScript）
+    name: 型だけの import
+    body: |-
+      - 型だけの import は `import type`。
+        - ランタイム import と混ぜない。
+  - id: typescript-type-system-08
+    group: 型システム（汎用 TypeScript）
+    name: types.d.ts に集約しない
+    body: |-
+      - グローバルな `types.d.ts` に集約しない。
+        - 型はそれを所有するコードの近くに置く。
+        - 狭い範囲なら同じファイル内（export 不要）、複数で使うなら一段上の共有層で export する
+        - 範囲の判断は各スタックの配置ルールに従う。

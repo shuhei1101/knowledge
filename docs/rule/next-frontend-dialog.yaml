@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-dialog
+kind: rule
+name: Dialog / Modal / Popup
+description: Dialog・Modal・Popup のコンポーネント選択、配置、Props、確認ダイアログ、Draft 確定方式を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: component-choice-01
+    group: コンポーネント選択
+    name: コンポーネント選択の表
+    body: |-
+      | Suffix | 用途 |
+      |---|---|
+      | `*Dialog` | コンテンツ（フォーム・詳細表示） |
+      | `*AlertDialog` | 確認系（破壊的アクション） |
+      | `*Sheet` | 横 / 縦スライドパネル |
+      | `*Drawer` | モバイル下から出るシート |
+      | `*Popover` | 小フローティングコンテンツ |
+  - id: layout-01
+    group: 配置
+    name: 配置の表
+    body: |-
+      | Scope | Location |
+      |---|---|
+      | 1 画面専用 | `{feature}/components/` |
+      | 複数画面共通 | `app/(shared)/components/` |
+      | view/edit 共通 | `{feature}/[id]/components/` |
+  - id: props-01
+    group: Props
+    name: open と onOpenChange
+    body: |-
+      - `open: boolean`, `onOpenChange: (open: boolean) => void`（親が制御、内部管理しない）
+  - id: props-02
+    group: Props
+    name: Dialog ごとに useState
+    body: |-
+      - 複数 Dialog は各 Dialog ごとに `useState` を持つ
+  - id: confirm-dialog-01
+    group: 確認ダイアログ
+    name: 確認ダイアログの参照
+    body: |-
+      `useConfirmDialog()` を使う（`window.confirm` 禁止）。詳細: [frontend/確認ダイアログ](id:next-frontend-confirm-dialog)
+  - id: draft-commit-01
+    group: Draft 確定方式
+    name: Draft 確定方式の表
+    body: |-
+      | パターン | 使いどき |
+      |---|---|
+      | 内部 draft state → `onConfirm` で親へ | 複数値・複雑な選択 |
+      | 操作ごとに即 onChange | 単純な選択 |
+  - id: when-not-to-use-01
+    group: 使わない場合
+    name: Dialog を使わない場合
+    body: |-
+      | 用途 | 代替 |
+      |---|---|
+      | 一覧→詳細 | 別ルート遷移 |
+      | 一時的メッセージ | `toast.info()` |
+      | 検索 / コマンド | `<Command>` |

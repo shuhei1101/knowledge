@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-use-action-state
+kind: rule
+name: Server Action をクライアントから呼ぶ — useTransition / useActionState / useFormStatus
+description: Server Action をクライアントから呼ぶ useTransition・useActionState・useFormStatus の使い分けと通知の決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: server-action-client-call-01
+    group: Server Action をクライアントから呼ぶ — useTransition / useActionState / useFormStatus
+    name: mutation は Server Action 直接呼び
+    body: |-
+      - mutation の第一選択は Server Action 直接呼び。単純なフォームは `useTransition` + 自前ハンドラ
+  - id: server-action-client-call-02
+    group: Server Action をクライアントから呼ぶ — useTransition / useActionState / useFormStatus
+    name: 失敗と成功は必ず通知
+    body: |-
+      - 失敗 / 成功は 必ず通知（失敗は toast or フィールドエラー）
+  - id: server-action-client-call-03
+    group: Server Action をクライアントから呼ぶ — useTransition / useActionState / useFormStatus
+    name: ケース別の推奨表
+    body: |-
+      | ケース                             | 推奨                                    |
+      | ---------------------------------- | --------------------------------------- |
+      | フォーム送信（リッチ UI）          | `useTransition` + 自前ハンドラ          |
+      | プログレッシブエンハンスメント必要 | `useActionState` + `<form action>`      |
+      | `<form>` 内のサブミットボタン      | `useFormStatus`                         |
+      | 楽観 UI                            | `useOptimistic` (+ useTransition)       |
+      | 複雑な楽観更新 / キャンセル        | useMutation（[useMutationパターン](id:next-frontend-use-mutation-pattern)） |

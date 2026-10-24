@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-detail-screen-tsx
+kind: rule
+name: "{Feature}ViewScreen.tsx — View Client Component"
+description: 詳細（View）の Client Component の構成と、編集ボタンの出し分け、TanStack Query との連携を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: view-screen-01
+    group: "{Feature}ViewScreen.tsx — View Client Component"
+    name: use client は必須
+    body: |-
+      - `'use client'` 必須
+  - id: view-screen-02
+    group: "{Feature}ViewScreen.tsx — View Client Component"
+    name: resource を props で受け取る
+    body: |-
+      - Server Component から `resource` props を受け取る（fetch しない）
+  - id: view-screen-03
+    group: "{Feature}ViewScreen.tsx — View Client Component"
+    name: 読み取り専用
+    body: |-
+      - 読み取り専用（`useMutation` / `<form>` なし）
+  - id: view-screen-04
+    group: "{Feature}ViewScreen.tsx — View Client Component"
+    name: canEdit で編集ボタンを出し分け
+    body: |-
+      - `resource.canEdit` で編集ボタン出し分け
+  - id: view-screen-05
+    group: "{Feature}ViewScreen.tsx — View Client Component"
+    name: 編集遷移は URL 定数
+    body: |-
+      - 編集遷移は `RESOURCE_URL.edit(id)` で URL 定数経由
+  - id: tanstack-query-integration-01
+    group: TanStack Query との連携
+    name: initialData に props を渡す
+    body: |-
+      view/edit 共通の hook がある場合は `initialData` に props を渡して hydrate する。

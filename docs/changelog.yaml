@@ -1,0 +1,121 @@
+# yaml-language-server: $schema=../schemas/changelog.schema.yaml
+id: changelog
+kind: changelog
+name: 変更履歴
+description: リリースのバージョンごとに、入った PR とその変更内容を一覧する。
+tags:
+  - name: scope:はじめに
+    main: true
+status: current
+visibility: public
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      リリースごとに入った PR の一覧。
+  - id: v0-1-5-01
+    group: v0.1.5
+    name: 文書の MCP のプラグイン名
+    body: |-
+      [#61](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/61/README.md) MCP の規約に、文書の MCP のプラグインの名前と、mdmark と YAML の正本・MCP の役割の分担を追加する
+  - id: v0-1-5-02
+    group: v0.1.5
+    name: プラグイン設定の置き場所
+    body: |-
+      [#60](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/60/README.md) プラグインの設定は env に設定ファイルのパスだけを置き、本体を ~/.config の YAML（global・projects）に書くと規約に書く
+  - id: v0-1-5-03
+    group: v0.1.5
+    name: MCP の読み取りと差分
+    body: |-
+      [#57](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/57/README.md) MCP の規約に、format・会話キーの引数・1 セッション 1 回の注入・区間の差分のツール・プラグインでの配り方を追加する
+  - id: v0-1-5-04
+    group: v0.1.5
+    name: knowledge の語の修正
+    body: |-
+      [#55](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/55/README.md) knowledge の文書の語を、語の選び方の規約に合わせて修正する
+  - id: v0-1-5-05
+    group: v0.1.5
+    name: MCP の HTTP 常駐への統一
+    body: |-
+      [#54](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/54/README.md) MCP サーバーを HTTP の常駐サーバーに統一して stdio を禁止し、既定のポートの台帳と環境変数での上書きを規約に書く
+  - id: v0-1-5-06
+    group: v0.1.5
+    name: 文章の書き方への改名
+    body: |-
+      [#52](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/52/README.md) 規約『文章の追記』を『文章の書き方』に改名し、語の選び方の決まりを追加する
+  - id: v0-1-5-07
+    group: v0.1.5
+    name: 判定フローチャートの補足修正
+    body: |-
+      [#49](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/49/README.md) 判定フローチャートのテンプレートの補足を、実在する README.md の目次に合わせる
+  - id: v0-1-5-08
+    group: v0.1.5
+    name: 文書管理と MCP の方針
+    body: |-
+      [#48](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/48/README.md) AI エージェント向けの文書管理と MCP の方針を規約に入れ、mcp.md・YAML.md の食い違いを直す
+  - id: v0-1-4-01
+    group: v0.1.4
+    name: 画面規約の索引の修正
+    body: |-
+      [#39](https://github.com/shuhei1101/knowledge/blob/v0.1.4/dev/pr/39/README.md) 画面の実装の規約の索引のエントリが設計書の Markdown に当たらないようにする
+  - id: v0-1-4-02
+    group: v0.1.4
+    name: サーバー描画の規約
+    body: |-
+      [#37](https://github.com/shuhei1101/knowledge/blob/v0.1.4/dev/pr/37/README.md) サーバー側で描画する画面の規約を足し、置き場所によらない Web の規約の当たる範囲を広げる
+  - id: v0-1-3-01
+    group: v0.1.3
+    name: YAML の規約の統合
+    body: |-
+      [#31](https://github.com/shuhei1101/knowledge/blob/v0.1.3/dev/pr/31/README.md) YAML の規約を 1 つにまとめ、スキーマの書き方・検査・MCP からの読み書きの決まりを足す
+  - id: v0-1-2-01
+    group: v0.1.2
+    name: 一覧読み取りの命名
+    body: |-
+      [#28](https://github.com/shuhei1101/knowledge/blob/v0.1.2/dev/pr/28/README.md) Next.js の一覧読み取りの命名を 1 つにそろえる
+  - id: v0-1-2-02
+    group: v0.1.2
+    name: ミラーのキーを text.ja に
+    body: |-
+      [#27](https://github.com/shuhei1101/knowledge/blob/v0.1.2/dev/pr/27/README.md) 規約『プロンプトファイル』の日本語のミラーのキーを text.jp から text.ja にする
+  - id: v0-1-2-03
+    group: v0.1.2
+    name: フォームの規約の見直し
+    body: |-
+      [#25](https://github.com/shuhei1101/knowledge/blob/v0.1.2/dev/pr/25/README.md) Next.js のフォームの規約を shadcn/ui の Field + Controller へ移すかを決めて規約を合わせる
+  - id: v0-1-2-04
+    group: v0.1.2
+    name: 「ダーク」の扱いの統一
+    body: |-
+      [#24](https://github.com/shuhei1101/knowledge/blob/v0.1.2/dev/pr/24/README.md) 「ダーク」の扱いを規約・テンプレートでそろえる
+  - id: v0-1-2-05
+    group: v0.1.2
+    name: 出典列の略号の定義
+    body: |-
+      [#22](https://github.com/shuhei1101/knowledge/blob/v0.1.2/dev/pr/22/README.md) 規約『文章の追記』の出典列の略号に定義を持たせる
+  - id: v0-1-1-01
+    group: v0.1.1
+    name: 規約の見直し
+    body: |-
+      [#16](https://github.com/shuhei1101/knowledge/blob/v0.1.1/dev/pr/16/README.md) 規約を分野ごとにベストプラクティスと突き合わせて直す
+  - id: v0-1-1-02
+    group: v0.1.1
+    name: プロンプトファイルの規約
+    body: |-
+      [#13](https://github.com/shuhei1101/knowledge/blob/v0.1.1/dev/pr/13/README.md) プロンプトのファイルを触るときの規約を作る（1 ノード 1 枚の YAML・英日をキーで持つ）
+  - id: v0-1-0-01
+    group: v0.1.0
+    name: テンプレートの組み立て
+    body: |-
+      [#11](https://github.com/shuhei1101/knowledge/blob/v0.1.0/dev/pr/11/README.md) 設計書テンプレートのスキーマから Markdown のテンプレートを組み立てて置く
+  - id: v0-1-0-02
+    group: v0.1.0
+    name: 規約とテンプレートの移行
+    body: |-
+      [#10](https://github.com/shuhei1101/knowledge/blob/v0.1.0/dev/pr/10/README.md) ai-monitor から、AI Monitor が無くても使える規約とテンプレートを移す
+  - id: v0-1-0-03
+    group: v0.1.0
+    name: プロジェクトの立ち上げ
+    body: |-
+      [#6](https://github.com/shuhei1101/knowledge/blob/v0.1.0/dev/pr/6/README.md) プロジェクトを立ち上げる

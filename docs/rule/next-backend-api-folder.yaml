@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-api-folder
+kind: rule
+name: app/api/v{N}/{resource}/ — フォルダ構成
+description: app/api/v{N}/{resource}/ 配下の 6 ファイルの責務分離（CQRS）と、呼び出し階層、Server Actions との使い分けを定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      `app/api/v{N}/{resource}/` 配下の 6 ファイルの責務分離（CQRS）。
+
+      ```
+      app/api/v{N}/{resource}/
+      ├── route.ts        # HTTP ハンドラ
+      ├── client.ts       # クライアント側 fetch ヘルパー
+      ├── service.ts      # ビジネスロジック（トランザクション境界）
+      ├── db.ts           # 書き込み（INSERT / UPDATE / DELETE）
+      ├── query.ts        # 読み取り（SELECT 系全部 + フィルタ Zod + 戻り値型）
+      └── dbHelper.ts     # 共通ヘルパー（任意）
+      ```
+  - id: call-hierarchy-01
+    group: 呼び出し階層
+    name: 呼び出し階層の図
+    body: |-
+      ```
+      route.ts ─→ service.ts ─→ db.ts / query.ts
+      client.ts ─→ route.ts（型のみ import）
+      client.ts ─→ query.ts（フィルタ型のみ import）
+      ```
+  - id: call-hierarchy-02
+    group: 呼び出し階層
+    name: route から db・query を直接呼ばない
+    body: |-
+      `route.ts` から `db.ts` / `query.ts` を直接呼ぶのは禁止（必ず `service.ts` 経由）。
+      例外: 単純な読み取りは `route.ts` から `query.ts` を直接呼んでも OK。
+  - id: server-actions-usage-01
+    group: Server Actions との使い分け
+    name: mutation は Server Actions が第一選択
+    body: |-
+      mutation の第一選択は **Server Actions**
+      `route.ts` は以下の場合に限定:
+  - id: server-actions-usage-02
+    group: Server Actions との使い分け
+    name: 外部公開する場合
+    body: |-
+      - 外部公開する（モバイル・外部システム）
+  - id: server-actions-usage-03
+    group: Server Actions との使い分け
+    name: 複雑なクエリ・並列処理
+    body: |-
+      - 複雑なクエリ・並列処理・条件付きヘッダ
+  - id: server-actions-usage-04
+    group: Server Actions との使い分け
+    name: ストリーミング・Webhook・SSE
+    body: |-
+      - ストリーミング、Webhook、SSE

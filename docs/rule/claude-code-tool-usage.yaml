@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: claude-code-tool-usage
+kind: rule
+name: Claude Code tools活用法
+description: Claude Code の Write ツールでファイルを作るときの手順を定める。
+tags:
+  - name: scope:claude
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: write-tool-caution-01
+    group: Writeツール使用時の注意点
+    name: Write の空ファイル作成
+    body: |-
+      - Writeツールを使用するときはいきなり本文をいれないこと
+        - まず、空のファイルを作成
+          - →ルールが注入される
+        - その後、Editツールを使用し、編集する

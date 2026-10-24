@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: ui-supported-browser
+kind: rule
+name: 対応ブラウザ
+description: 画面が動くことを保証するブラウザの既定値を定める。
+tags:
+  - name: scope:ui
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: ui-obs-browser-source
+    type: requires
+    when: OBS のブラウザソースで取り込む画面を作るとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      画面が動くことを保証するブラウザの既定値。
+      プロジェクトの非機能要件にカテゴリ `動作環境` の決定値がある項目は、その値に従う。
+  - id: supported-browser-01
+    group: 対応ブラウザ
+    name: 対応ブラウザの表
+    body: |-
+      | 対象 | 扱い |
+      | --- | --- |
+      | PC | Chrome と Edge で全ての操作を完了できる |
+      | スマホ | 閲覧できれば足りる。Safari 固有の代替の実装は入れない |
+      | 新しい機能 | 効かないブラウザでも操作が詰まらないよう、明示的な手段（閉じるボタン 等）を残す |
+      | OBS のブラウザソース | 外部規約『[OBSのブラウザソース](id:ui-obs-browser-source)』に従う |

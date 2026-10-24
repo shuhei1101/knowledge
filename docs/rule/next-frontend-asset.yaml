@@ -1,0 +1,68 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-asset
+kind: rule
+name: Assets (Image / Font / Static)
+description: next/image・next/font・SVG・CDN の使い方の決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: next-image-01
+    group: next/image
+    name: remotePatterns を使う
+    body: |-
+      - `images.domains` は非推奨 → `remotePatterns` を使う
+  - id: next-image-02
+    group: next/image
+    name: LCP 画像は preload
+    body: |-
+      - LCP 画像は `preload` を指定する（`priority` は非推奨。指定の仕方は [Next.js の Image のドキュメント](https://nextjs.org/docs/app/api-reference/components/image)）
+  - id: next-image-03
+    group: next/image
+    name: sizes を必ず指定
+    body: |-
+      - `sizes` を必ず指定（srcset 最適化）
+  - id: next-image-04
+    group: next/image
+    name: fill は親を relative にする
+    body: |-
+      - `fill` 使用時は親を `relative` + `aspect-*` に
+  - id: next-font-01
+    group: next/font
+    name: next/font の使用
+    body: |-
+      - `next/font/google` / `next/font/local` を使う
+  - id: next-font-02
+    group: next/font
+    name: CSS variable で Tailwind に渡す
+    body: |-
+      - CSS variable で Tailwind に渡す（`--font-xxx`）
+  - id: next-font-03
+    group: next/font
+    name: html への適用
+    body: |-
+      - `app/layout.tsx` の `<html className={...}>` に適用
+  - id: svg-01
+    group: SVG
+    name: SVG の扱いの表
+    body: |-
+      | 種類 | 方法 |
+      |---|---|
+      | インラインアイコン | `lucide-react` |
+      | ロゴ・装飾 | `next/image` |
+      | 動的カラー変更 | インラインコンポーネント |
+  - id: cdn-01
+    group: CDN
+    name: CDN 配信の表
+    body: |-
+      | アセット | 配信 |
+      |---|---|
+      | `public/` 静的画像 | Vercel CDN 自動 |
+      | ユーザーアップロード | Supabase Storage / Vercel Blob / S3 |
+      | OG image（動的） | `opengraph-image.tsx` + `next/og` |
+      | 動画 | Mux / Vercel Blob |

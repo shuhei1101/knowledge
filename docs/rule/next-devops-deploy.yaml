@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-devops-deploy
+kind: rule
+name: Next.js App Router — Deploy
+description: Next.js App Router プロジェクトのデプロイ先を Vercel 標準としてプロジェクト種別ごとに選ぶ決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:devops
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: deploy-target-01
+    group: デプロイ先の選択
+    name: デプロイ先の選択表
+    body: |-
+      | プロジェクト種別                                | 推奨                                                             |
+      | ----------------------------------------------- | ---------------------------------------------------------------- |
+      | Web サービス（フロント + API）                  | Vercel                                                       |
+      | ローカル動作のみ（デスクトップツール等）        | デプロイなし（`pnpm dev` で起動）                                |
+      | セルフホストしたい                              | Node.js サーバー（`pnpm build && pnpm start`）+ リバースプロキシ |
+      | 完全静的サイト                                  | Vercel / Cloudflare Pages / Netlify                              |
+      | エッジに寄せたい                                | Cloudflare Workers + OpenNext                                    |
+  - id: deploy-target-02
+    group: デプロイ先の選択
+    name: Vercel を標準とする
+    body: |-
+      Vercel を標準とする。
+
+      セルフホストの設定（複数台の暗号鍵・キャッシュ・`after`）は公式の [Self-hosting](https://nextjs.org/docs/app/guides/self-hosting) に従う。

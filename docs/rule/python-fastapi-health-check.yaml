@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-fastapi-health-check
+kind: rule
+name: ヘルスチェック
+description: ヘルスチェックのエンドポイントの中身と、liveness・readiness を分ける場合、依存先の診断の扱いを定める。
+tags:
+  - name: scope:python
+  - name: topic:fastapi
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: health-check-01
+    group: ヘルスチェック
+    name: /healthz は生存判定のみ
+    body: |-
+      - `/healthz` は `{"status": "ok"}` を返すだけ（プロセス生存判定）
+  - id: health-check-02
+    group: ヘルスチェック
+    name: 疎通確認を入れない
+    body: |-
+      - DB / 外部 API への疎通確認を入れない
+  - id: liveness-readiness-01
+    group: liveness / readiness を分ける場合
+    name: liveness と readiness の表
+    body: |-
+      | 用途      | エンドポイント | 中身                                         |
+      | --------- | -------------- | -------------------------------------------- |
+      | liveness  | `/healthz`     | 200 を返すだけ                               |
+      | readiness | `/readyz`      | `app.state.ready` フラグ確認、未起動なら 503 |
+  - id: liveness-readiness-02
+    group: liveness / readiness を分ける場合
+    name: ready フラグの設定
+    body: |-
+      lifespan の startup 完了時に `app.state.ready = True`。
+  - id: dependency-status-01
+    group: 依存先の状態を見たい場合
+    name: 依存先の診断用エンドポイント
+    body: |-
+      `/healthz/deep` のような診断用エンドポイントを別に作る。認証必須にし、load balancer の probe には使わない（監視・運用向け）。

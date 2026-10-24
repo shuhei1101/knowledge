@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-fastapi-schema
+kind: rule
+name: 入出力 Pydantic スキーマ
+description: FastAPI の入出力に使う Pydantic スキーマの分離・配置・Field・camelCase 対応・response_model の決まりを定める。
+tags:
+  - name: scope:python
+  - name: topic:fastapi
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: io-pydantic-schema-01
+    group: 入出力 Pydantic スキーマ
+    name: 内部 DTO とスキーマの分離
+    body: |-
+      - リクエスト / レスポンスは Pydantic、内部 DTO（`@dataclass`）とは分離
+  - id: io-pydantic-schema-02
+    group: 入出力 Pydantic スキーマ
+    name: スキーマの配置
+    body: |-
+      - 配置は `features/{feature}/schemas.py`（小規模なら `types.py` にまとめても可）
+  - id: io-pydantic-schema-03
+    group: 入出力 Pydantic スキーマ
+    name: 変換メソッドをスキーマ側に持つ
+    body: |-
+      - 変換メソッドをスキーマ側に持たせて route をワンライナーにする
+        - リクエスト側に `to_domain(self) -> DomainXxx`
+        - レスポンス側に `@classmethod from_domain(cls, result) -> Self`
+  - id: field-01
+    group: Field
+    name: 固定選択肢は Literal
+    body: |-
+      - 固定選択肢は `Literal[...]`（OpenAPI に enum として出る）
+  - id: camelcase-01
+    group: camelCase 対応
+    name: camelCase の扱い
+    body: |-
+      フロントが snake_case を受け入れられるならそのままが一番楽。必要なら `ConfigDict(populate_by_name=True, alias_generator=...)` + `Field(alias=...)`。
+  - id: response-model-01
+    group: response_model
+    name: レスポンスは戻り値の型注釈
+    body: |-
+      レスポンススキーマは戻り値の型注釈（`-> Response`）で指定する。`from_domain` で明示変換して返すのを基本にし、返す型と宣言したい型が合わないときだけ `response_model=` を使う。

@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-testing-fixture
+kind: rule
+name: Test Fixtures（Data Factory）
+description: テストの Data Factory である fixture の構成・命名・cleanup 戦略・E2E 専用 seed API を定める。
+tags:
+  - name: scope:next
+  - name: topic:testing
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: test-fixtures-01
+    group: Test Fixtures（Data Factory）
+    name: 1 リソース 1 fixture ファイル
+    body: |-
+      - 1 リソース = 1 fixture ファイル、`tests/fixtures/index.ts` でまとめて export
+  - id: test-fixtures-02
+    group: Test Fixtures（Data Factory）
+    name: 4 点セットで提供
+    body: |-
+      - 各 fixture は 4 点セットで提供
+        - `build{Resource}(overrides?)` — デフォルト値 + overrides を返す（DB 保存なし）
+        - `seed{Resource}(overrides?)` — 1 件 INSERT して row を返す
+        - `seed{Resource}s(count)` — n 件 INSERT
+        - `clean{Resource}s()` — 全削除
+  - id: test-fixtures-03
+    group: Test Fixtures（Data Factory）
+    name: 関連データの連鎖生成
+    body: |-
+      - 関連データは既存 fixture を組み合わせて連鎖生成（`seedResourceWithTags` 等）
+  - id: test-fixtures-04
+    group: Test Fixtures（Data Factory）
+    name: 名前は nanoid で一意化
+    body: |-
+      - 名前は `nanoid(6)` suffix で一意化（並列実行の衝突防止）
+  - id: test-fixtures-05
+    group: Test Fixtures（Data Factory）
+    name: 固定値は const
+    body: |-
+      - 固定値は const（`TEST_USER_ID`、`fixedDate`）
+  - id: test-fixtures-06
+    group: Test Fixtures（Data Factory）
+    name: enum 網羅ヘルパー
+    body: |-
+      - enum 網羅ヘルパー（`ALL_RESOURCE_STATUSES` 等）を `as const` で
+  - id: db-cleanup-01
+    group: DB cleanup 戦略
+    name: DB cleanup の順序
+    body: |-
+      Vitest の結合テストは、truncate を外部キーがあるテーブルから順に delete。`beforeEach` で truncate + 基本 seed。
+      E2E（Playwright）は truncate せず、`nanoid` の接尾辞で分けたデータを各テストで作り、作った分だけを片付ける。
+  - id: e2e-seed-api-01
+    group: E2E 専用 seed API
+    name: E2E 専用 seed route
+    body: |-
+      E2E から DB を直接触れない場合はテスト専用 route を用意。`NODE_ENV === "test"` 以外は 403 で防御。
