@@ -5,18 +5,11 @@
 - 公式 MCP Python SDK（pip の `mcp` パッケージ）の `MCPServer` を使う
   - `from mcp.server.mcpserver import MCPServer`
   - 旧名の `FastMCP`（`mcp.server.fastmcp`）は v2 で削除された。サードパーティの「FastMCP」（pip の `fastmcp`）とも別物
-
-トランスポートは、同時に走るセッション数で選ぶ。
-
-| トランスポート | 選ぶ条件 | 起動のされ方 |
-| --- | --- | --- |
-| stdio | 単一セッションから使う。手元で 1 つずつ動かす道具 | セッションごとに子プロセスが起動する（`mcp.run()`） |
-| HTTP（Streamable HTTP） | 複数セッションが同時に叩く。常駐プロセスに相乗りできる | 常駐サーバへ接続するだけ（`mcp.streamable_http_app()`） |
-
-- stdio は **セッションごとに 1 プロセス**が立つ。5 セッション並べれば同じサーバが 5 個起動し、依存解決も 5 回走る
+- MCP サーバーは HTTP（Streamable HTTP）の常駐サーバーにする（`mcp.streamable_http_app()`）。stdio（`mcp.run()`）は禁止する
+- stdio は **セッションごとに 1 プロセス**が立つ。5 セッション並べれば同じサーバが 5 個起動し、依存解決も 5 回走る。並行で起動するセッションの数だけプロセスが増えるため、使わない
 - Claude Code の MCP 起動は既定でノンブロッキング。接続中のサーバーのツールが要るときは、Claude が接続完了を待つ
-- 毎ターン使うツールを持つサーバーだけ `.mcp.json` に `"alwaysLoad": true` を付ける。ツール検索を介さず最初のプロンプトから載り、起動がツールの確定まで待つ（上限は `MCP_CONNECT_TIMEOUT_MS`）。上限に収まらないなら HTTP へ移す
-- HTTP を選ぶときは常駐サーバをどう起動するかもセットで決める。既に常駐しているプロセス（アプリ本体・compose のサービス）に相乗りさせると、起動するものが増えない
+- 毎ターン使うツールを持つサーバーだけ `.mcp.json` に `"alwaysLoad": true` を付ける。ツール検索を介さず最初のプロンプトから載り、起動がツールの確定まで待つ（上限は `MCP_CONNECT_TIMEOUT_MS`）
+- 常駐サーバをどう起動するかを決める。既に常駐しているプロセス（アプリ本体・compose のサービス）に相乗りさせると、起動するものが増えない
 - HTTP は 1 プロセスを複数セッションが共有するため、ツール関数はモジュール変数に状態を持たせない
 
 ## 構成
@@ -26,8 +19,8 @@
     subprocess を挟むと起動コストと引数の受け渡しが増えるだけで得るものがない
   - 分岐・状態管理を伴う処理は `scripts/` や `tools/` の単体実行可能な CLI に切り出し、サーバーはそれを呼ぶだけにする。
     CLI 単体でデバッグでき、ロジックが MCP に縛られない
-- stdio のサーバープロセスの環境には `CLAUDE_PROJECT_DIR`（プロジェクトルート）と `CLAUDE_CODE_SESSION_ID` が渡される
-  - 作業ディレクトリに依存せず `CLAUDE_PROJECT_DIR` を基準にパス解決する
+- 常駐サーバーには、セッションの作業ディレクトリと環境変数（`CLAUDE_PROJECT_DIR`・`CLAUDE_CODE_SESSION_ID`）が渡らない
+  - 作業ディレクトリに依存せず、起動時に設定したルートを基準にパス解決する
 
 ## サーバーとツールの単位
 
@@ -112,27 +105,14 @@
 - プロジェクト用: ルートの `.mcp.json`（バージョン管理でチーム共有）
 - プラグイン用: プラグインルートの `.mcp.json` + `${CLAUDE_PLUGIN_ROOT}` でパス解決
 
-stdio の場合は起動コマンドを書く。
-
-```json
-{
-  "mcpServers": {
-    "my-tools": {
-      "command": "uv",
-      "args": ["run", "--with", "mcp", "python", "${CLAUDE_PLUGIN_ROOT}/mcp/server.py"]
-    }
-  }
-}
-```
-
-HTTP の場合は接続先を書く。
+接続先を書く。
 
 ```json
 {
   "mcpServers": {
     "my-tools": {
       "type": "http",
-      "url": "http://localhost:8766/mcp",
+      "url": "http://127.0.0.1:${KNOWLEDGE_PORT:-8781}/mcp",
       "alwaysLoad": true
     }
   }
@@ -140,6 +120,24 @@ HTTP の場合は接続先を書く。
 ```
 
 - `url` を書くときは `type` を添える。`type` の無いエントリは stdio として読まれ、サーバーごとスキップされる
+- `url` は `http://127.0.0.1:${{リポジトリ}_PORT:-{既定のポート}}/mcp` の形で書く。`{リポジトリ}_PORT` と `{既定のポート}` は次の台帳の環境変数と既定のポート
+- ポートがぶつかるときだけ、`~/.claude/settings.json` の `env` に `{リポジトリ}_PORT` を書いて上書きする
+
+既定のポートの台帳は次のとおり。
+
+<!-- table: data -->
+
+| リポジトリ | 環境変数 | 既定のポート |
+| --- | --- | --- |
+| observability | `OBSERVABILITY_PORT` | 8766 |
+| ai-monitor | `AI_MONITOR_PORT` | 8767 |
+| claude-balancer | `CLAUDE_BALANCER_PORT` | 8770 |
+| knowledge | `KNOWLEDGE_PORT` | 8781 |
+| mdmark | `MDMARK_PORT` | 8782 |
+| rule-inject | `RULE_INJECT_PORT` | 8783 |
+| MindStella | `MINDSTELLA_PORT` | 8784 |
+
+<!-- /table -->
 
 ## 動作確認
 
