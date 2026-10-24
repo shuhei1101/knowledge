@@ -29,6 +29,15 @@
 - stdio のサーバープロセスの環境には `CLAUDE_PROJECT_DIR`（プロジェクトルート）と `CLAUDE_CODE_SESSION_ID` が渡される
   - 作業ディレクトリに依存せず `CLAUDE_PROJECT_DIR` を基準にパス解決する
 
+## サーバーとツールの単位
+
+- 文書の置き場所（リポジトリ）ごとにサーバーを 1 つにする
+  分けるのは、置き場所・権限・リリースの単位が違うときだけ
+- ツールは操作（検索・取得・書き込み・差分・タグの一覧・スキーマの取得）で分け、文書の種類は `kind` の enum 引数で指す
+  種類ごとのツールを作らない
+- 種類ごとの違い（スキーマ・独自の検査・返す形式・読み書きの場所）は、サーバーの中で `kind` ごとのハンドラーに振り分ける
+- 操作の意味が種類に固有のものと、削除など rule-inject や権限で止めたい操作だけ、別のツールにする
+
 ## ツール定義のスキーマ
 
 <!-- table: data -->
@@ -39,22 +48,64 @@
 | title | `@mcp.tool(title="日本語タイトル")` |
 | 引数の説明 | `Annotated[型, Field(description=...)]` |
 | 引数の選択肢制限 | `Literal[...]` → enum としてスキーマに反映 |
-| 出力スキーマ | 戻り値を Pydantic モデルにする → outputSchema 自動生成。各フィールドに `Field(description=...)` |
+| 出力スキーマ | 型付きで返すツールだけ、戻り値を Pydantic モデルにする → outputSchema 自動生成。各フィールドに `Field(description=...)` |
 | ツールの性質 | `ToolAnnotations(readOnlyHint=..., destructiveHint=...)` |
 
 <!-- /table -->
 
-- 戻り値は `{success: bool, output: str}` 形式の共通モデルを基本とする
+- 型付きで返すツールの戻り値は `{success: bool, output: str}` 形式の共通モデルを基本とする
+- Markdown・YAML を見せるツールは `str` を返し、outputSchema を出さない
+  Claude Code は structuredContent があると text を読まない
+- 型付きで返すツールは、structuredContent と text に同じ内容を入れる
 
 ## 読み取りのツール
 
 - 種類ごとの `list_*` を作らず、絞り込みの引数を持つ `search` 1 つにまとめる
-- 既定の `limit` を持ち、絞り込みに当たった総数 `total` を返す。続きがあるときは `next_cursor` を返す。どちらも共通モデルに項目を追加して返す
-- `response_format`（`concise` / `detailed`）で返す量を選べるようにする。既定は `concise`
-- `search` が既定で返すのは ID・題名・タグだけにし、中身は ID で 1 件を取るツールで返す
+- 既定の `limit` を持ち、絞り込みに当たった総数 `total` を返す。続きがあるときは `next_cursor` を返す。型付きで返すツールは、どちらも共通モデルに項目を追加して返す
+- `view`（`brief` / `standard` / `full`）で返す量を選べ、`include` / `exclude`（項目名の enum の配列）で足し引きできるようにする。既定は `search` が `brief`、1 件を取るツールが `standard`。省いた項目は `omitted` で返し、取り方を添える
+- `search` の `brief` は各行に ID・名前・概要文・タグ・文字数・バージョンを返し、中身は ID で取るツールで返す。結果の先頭に総件数と、当たった全件の合計文字数を返す
 - 切り詰めたときは、`total` と返した件数に加えて、絞り込める引数を案内する
+- 引数なしの `search` は、既定件数の先頭ページ・`brief`・タグごとの件数・総件数・`next_cursor` を返す
+- `search` に任意の `count_only` を持たせ、一覧を返さずに総件数・合計文字数・タグごとの件数だけを返せるようにする
+  手順で先に呼ぶことは強制せず、エージェントがヒットの多さを見て絞り込むときに使う
+- タグの絞り込みは、主題のタグ（`main`）が一致した文書を上に並べる
+- 1 件を取るツールは `ids` の配列で複数を受け、渡した順に返す
+  合計が 50,000 文字を超えるときは 1 件も返さず、分けて呼ぶよう返す（Claude Code は 50,000 文字を超える結果をファイルに退避する）
+  見つからない ID があれば全体を失敗にし、近い ID を添える
+- 長い文書は、セクションごとの行範囲・文字数・ハッシュを返すツールを置き、セクションを指定して取得させる
+- 一覧は Markdown の表（各行に ID と名前）、1 件の本文は Markdown（複数なら `<document>` で包む）、YAML が正本の項目は YAML のまま返す
+  参照は ID と名前・概要文まで結合し、相手の本文は結合しない
+- 本文に出る用語・エイリアスは、本文を変えずに末尾に一覧（語と ID）を付ける
+  語の名前と概要文を引くツールを置く
+- 読み取りのツールに `readOnlyHint` を付ける（Claude Code が並列に実行する）
+- 同じ会話で既に返した概要文・関連は省く
+  PreToolUse フックが会話キー（`session_id` と `agent_id`）を引数に入れ、サーバーは返した内容のハッシュを記録して、同じなら目印だけ返す
+  `repeat_seen` で取り直せるようにし、`/clear`・圧縮の後はフックで記録を捨てる
 
-出典: [Anthropic: Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)、[MCP 仕様: Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools)（`tools/list` の `cursor` / `nextCursor`）
+出典: [Anthropic: Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)、[MCP 仕様: Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools)（`tools/list` の `cursor` / `nextCursor`）、[Google AIP-157](https://google.aip.dev/157)（view）、[anthropics/claude-code #9962](https://github.com/anthropics/claude-code/issues/9962)（structuredContent を優先し text を捨てる）、[MCP 仕様 2026-07-28: Changelog](https://modelcontextprotocol.io/specification/2026-07-28/changelog)（接続を会話とみなさない）
+
+## 差分のツール
+
+- サーバーがエージェントの既読時点を記録し、`changes_since_read` で前回から変わった項目・キー・変更前の値を返す
+  エージェントにバージョンを持たせない
+- MCP の変更通知（resources の購読）には頼らない
+  Claude Code は購読せず、通知はモデルに届かない
+
+## 検索の手段
+
+- 検索はタグ・メタデータ・キーワード（正規化と `aliases`）を基本にする
+  ベクトル検索は必須にせず、ライブラリも指定しない
+- 言い換えや関連の探索は、安いモデルのサブエージェントに検索のツールを使わせる
+- ベクトル検索を追加するときは DB サーバーを立てず、埋め込みはメモリか Git の外のキャッシュに置く
+  YAML と Git には入れない
+
+## 関連と影響範囲のツール
+
+- 全文書の ID・種類・概要文を返す骨組みのツールを置く
+- ID を起点に関連・コード参照をたどり、影響する文書を理由つきで返すツールを置く
+- 関連の候補は、同じコミットでの変更・同じ会話での編集・同じ会話での閲覧を分けて記録し、上位 3 件を概要文つきで出す
+  採用されたものだけ文書の関連に記載する
+- Issue の対応範囲は、骨組み → 用語集で言い換えたキーワードの検索 → 関連・コード参照のたどり → 変更の種類ごとのチェックリスト → 人の確認、の順で決める
 
 ## 登録
 
@@ -92,5 +143,5 @@ HTTP の場合は接続先を書く。
 
 ## 動作確認
 
-- `mcp.list_tools()` を非同期実行し、全ツールの title・引数説明・enum・outputSchema・annotations が生成されることを確認する
+- `mcp.list_tools()` を非同期実行し、全ツールの title・引数説明・enum・annotations が生成されることと、型付きで返すツールの outputSchema が生成されることを確認する
 - 設定が変わらないプラグイン MCP サーバーは `/reload-plugins` で再接続されないので、反映にはセッション再起動が必要。`/mcp` で接続状態を確認する
