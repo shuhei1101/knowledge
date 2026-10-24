@@ -33,7 +33,7 @@ rules:
   - rule: dev/テンプレート/テンプレート.md
     paths:
       - "**/dev/テンプレート/**/*.md"
-  - rule: dev/規約/文章の追記.md
+  - rule: dev/規約/文章の書き方.md
     paths:
       - "**/*.md"
     tools:
@@ -92,6 +92,7 @@ rules:
   - rule: dev/コーディング規約/claude/claudeプラグイン.md
     paths:
       - "**/plugins/**"
+      - "**/.claude-plugin/**"
   - rule: dev/コーディング規約/claude/mcp.md
     paths:
       - "**/mcp/**"
@@ -117,6 +118,17 @@ rules:
     paths:
       - "**/docs/**/*.md"
       - "**/rules*.yaml"
+  - rule: dev/コーディング規約/dev/ドキュメント管理.md
+    paths:
+      - "**/docs/**/*.yaml"
+      - "**/schemas/*.schema.yaml"
+  - rule: dev/判定フローチャート/YAML ファイルの単位.md
+    paths:
+      - "**/docs/**/*.yaml"
+  - rule: dev/コーディング規約/dev/タグと用語の登録.md
+    paths:
+      - "**/tags.yaml"
+      - "**/terms.yaml"
   - rule: dev/コーディング規約/dev/コーディング全般.md
     paths:
       - "**/*.{py,html,js,css,j2,ts,tsx,yaml,yml}*"

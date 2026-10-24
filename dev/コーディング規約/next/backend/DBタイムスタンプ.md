@@ -1,7 +1,7 @@
 # drizzle/schema.ts — 共通カラム（timestamps / auditFields）
 
 - 全テーブル共通の `createdAt` / `updatedAt` と、機密データ向けの `createdBy` / `updatedBy`。
-- `timestamp` は `mode: "string"` で持つ。値は DB サーバーのタイムゾーンの Postgres 形式の文字列で返り、`toISOString()` の形とは限らない
+- `timestamp` は `mode: "string"` で持つ。値は DB サーバーのタイムゾーンの Postgres 形式の文字列で返り、`toISOString()` の形式とは限らない
 
 ```ts
 // drizzle/_helpers.ts（または schema.ts 冒頭）

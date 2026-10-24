@@ -10,4 +10,4 @@ HTTP ハンドラ（GET / POST / PATCH / DELETE）。`withRouteErrorHandling` �
 - 成功 (mutation) は `204 No Content` を返す（body なし）
 - HTTP メソッド: 新規 = POST、部分更新 = PATCH、全置換 = PUT、削除 = DELETE
 - 件数が増えうる一覧は最初からページに分け、次のページを取る手がかり（URL か cursor）を返す
-- 時間のかかる処理は、受け付けた時点で 202 と状態を問い合わせる先を返し、完了まで待たせない
+- 時間のかかる処理は、受け付けた時点で 202 と状態を照会する先を返し、完了まで待たせない

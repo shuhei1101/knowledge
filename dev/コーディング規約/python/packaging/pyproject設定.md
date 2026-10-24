@@ -50,5 +50,5 @@ markers = [
 - src レイアウト（`src/mypkg/`）
 - テストツールは `[dependency-groups]` の `dev` に分離
 - build backend は `hatchling`
-- 依存の足し方・実行は `packaging/依存パッケージ管理.md`
+- 依存の追加方法・実行は `packaging/依存パッケージ管理.md`
 - `.gitignore` には `.venv/` `.env` `__pycache__/` 各種キャッシュ `dist/` を入れる
