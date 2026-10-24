@@ -61,7 +61,7 @@ items:
     group: その他
     name: /healthz に外部依存を持たせない
     body: |-
-      - ヘルスチェック `/healthz` は DB 等の外部依存を持たせない（`fastapi/ヘルスチェック.md`）
+      - ヘルスチェック `/healthz` は DB 等の外部依存を持たせない（[fastapi/ヘルスチェック](id:python-fastapi-health-check)）
   - id: others-02
     group: その他
     name: OpenAPI のメタデータ
@@ -71,4 +71,4 @@ items:
     group: その他
     name: 例外ハンドラの一括登録
     body: |-
-      - 例外ハンドラは `register_exception_handlers(app)` で一括登録（`fastapi/認証とエラー.md`）
+      - 例外ハンドラは `register_exception_handlers(app)` で一括登録（[fastapi/認証とエラー](id:python-fastapi-auth-error)）

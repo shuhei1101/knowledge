@@ -31,17 +31,17 @@ items:
     group: DRY
     name: 共通化の回数の参照
     body: |-
-      - 同じロジック・データ・構造を何回書いたら共通化するかは `architecture/リファクタリング判断.md` の回数に従う
+      - 同じロジック・データ・構造を何回書いたら共通化するかは [architecture/リファクタリング判断](id:python-architecture-refactoring-criteria) の回数に従う
   - id: dry-02
     group: DRY
     name: 過剰抽象化をしない
     body: |-
-      - ただし 3 箇所目以降のための過剰抽象化はしない（閾値は `architecture/リファクタリング判断.md`）
+      - ただし 3 箇所目以降のための過剰抽象化はしない（閾値は [architecture/リファクタリング判断](id:python-architecture-refactoring-criteria)）
   - id: dry-03
     group: DRY
     name: テスト関数には当てない
     body: |-
-      - テスト関数の本文には当てない（`testing/テスト戦略.md` の「テスト関数の書式」）
+      - テスト関数の本文には当てない（[testing/テスト戦略](id:python-testing-strategy#test-function-format-01) の「テスト関数の書式」）
   - id: solid-01
     group: SOLID
     name: SOLID の適用表
@@ -67,7 +67,7 @@ items:
     group: クラスと関数
     name: 関数ファースト
     body: |-
-      関数ファースト。クラスを使ってよいものは `architecture/TypeScriptスタイル適用.md`。
+      関数ファースト。クラスを使ってよいものは [architecture/TypeScriptスタイル適用](id:python-architecture-typescript-style)。
 
       サービス / Repository / Provider / Validator 等は関数で書く。
   - id: class-and-function-02

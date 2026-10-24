@@ -18,12 +18,12 @@ items:
     body: |-
       - 関数指向で書く。
         - アロー関数 + クロージャで組み、状態はモジュールスコープ変数かクロージャで持つ。
-        - クラスを作るのは Custom Element・`EventTarget` 継承の `WsClient`（`html/js/websocket.md`）・外部ライブラリの仕様で必要な時のみ。
+        - クラスを作るのは Custom Element・`EventTarget` 継承の `WsClient`（[html/js/websocket](id:html-js-websocket)）・外部ライブラリの仕様で必要な時のみ。
   - id: no-runtime-library-01
     group: ランタイムライブラリを追加しない
     name: ブラウザの依存を増やさない
     body: |-
       - ブラウザに出す依存を増やさない。
         - フレームワーク（React/Vue）・状態管理ライブラリ・UI ライブラリは使わない。
-        - 外部依存がどうしても必要なときだけ vendoring する（`html/shared/vendor.md`）。
-        - dev ツール（tsc / eslint / vitest 等）は別（`html/tooling/tsc運用.md`）。
+        - 外部依存がどうしても必要なときだけ vendoring する（[html/shared/vendor](id:html-shared-vendor)）。
+        - dev ツール（tsc / eslint / vitest 等）は別（[html/tooling/tsc運用](id:html-tooling-tsc)）。

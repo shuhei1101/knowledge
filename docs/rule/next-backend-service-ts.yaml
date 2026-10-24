@@ -40,12 +40,12 @@ items:
     group: ルール
     name: 削除時の履歴退避の順序
     body: |-
-      - 削除時は `recordHistory` で履歴退避 → `deleteXxx` ハードデリート の順（`DB変更履歴.md` 参照）
+      - 削除時は `recordHistory` で履歴退避 → `deleteXxx` ハードデリート の順（[DB変更履歴](id:next-backend-db-history) 参照）
   - id: rules-06
     group: ルール
     name: updatedAt は呼び出し側から受け取る
     body: |-
-      - 楽観的ロックの `updatedAt` は呼び出し側から受け取り `updateXxx` に渡す（`DB楽観的ロック.md`）
+      - 楽観的ロックの `updatedAt` は呼び出し側から受け取り `updateXxx` に渡す（[DB楽観的ロック](id:next-backend-db-optimistic-lock)）
   - id: rules-07
     group: ルール
     name: 監査対象の createdBy・updatedBy

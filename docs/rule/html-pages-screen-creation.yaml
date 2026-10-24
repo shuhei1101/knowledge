@@ -24,9 +24,9 @@ items:
     body: |-
       | ファイル     | 役割                                                                                                     | 必須 |
       | ------------ | -------------------------------------------------------------------------------------------------------- | ---- |
-      | `index.html` | Jinja2 で `_layout.html` を継承し、`<app-shell>` 内に画面の中身を書く。詳細は `html/pages/index-html.md` | 必須 |
-      | `screen.ts`  | 画面ロジックのエントリ（UI 層）。DOM・イベント・描画・URL 同期。詳細は `html/pages/screen-ts.md`         | 必須 |
-      | `screen.css` | 画面固有スタイル。詳細は `html/pages/screen-css.md`                            | 任意 |
+      | `index.html` | Jinja2 で `_layout.html` を継承し、`<app-shell>` 内に画面の中身を書く。詳細は [html/pages/index-html](id:html-pages-index-html) | 必須 |
+      | `screen.ts`  | 画面ロジックのエントリ（UI 層）。DOM・イベント・描画・URL 同期。詳細は [html/pages/screen-ts](id:html-pages-screen-ts)         | 必須 |
+      | `screen.css` | 画面固有スタイル。詳細は [html/pages/screen-css](id:html-pages-screen-css)                            | 任意 |
       | `api.ts`     | 通信層。`apiFetch` ラッパー。複雑画面のみ分離                                                            | 任意 |
       | `state.ts`   | 純ロジック層（状態・派生計算・定数）。DOM/API を触らない。複雑画面のみ分離                               | 任意 |
   - id: simple-complex-split-01

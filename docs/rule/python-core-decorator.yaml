@@ -41,7 +41,7 @@ items:
       | --------------------------------------- | --------------------------------------------------------------- |
       | `@catch_and_log(*exc_types, level=...)` | 指定例外をログに出して再送出する                                |
       | `@catch_and_map(SrcError, to=DstError)` | 例外型を変換（vendor 例外 → ドメイン例外）。`raise from` で連鎖 |
-      | `@with_retry(retries=3, on=(...))`      | 指数バックオフでリトライ（引数は `llm/例外とリトライ.md`）      |
+      | `@with_retry(retries=3, on=(...))`      | 指数バックオフでリトライ（引数は [llm/例外とリトライ](id:python-llm-exception-retry)）      |
       | `@with_timeout(seconds=60)`             | `asyncio.timeout` ラッパー。超過で `IntegrationTimeoutError`    |
       | `@measure_time(metric="...")`           | 実行時間メトリクス                                              |
   - id: composition-01

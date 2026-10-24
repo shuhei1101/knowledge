@@ -60,7 +60,7 @@ items:
     group: 重要ポイント > 3. Idempotency
     name: 冪等性の確保
     body: |-
-      同じイベントが複数回届き、到着順も保証されない。`event.id` を `processed_events` テーブルに保存して二重処理を防ぐ（詳細パターンは `冪等性.md`）。順序や処理済みの判断にイベントの `created` を使わない。
+      同じイベントが複数回届き、到着順も保証されない。`event.id` を `processed_events` テーブルに保存して二重処理を防ぐ（詳細パターンは [冪等性](id:next-backend-idempotency)）。順序や処理済みの判断にイベントの `created` を使わない。
   - id: webhook-response-time-01
     group: 重要ポイント > 4. レスポンス時間
     name: 素早く 2xx を返す
@@ -75,7 +75,7 @@ items:
     group: 重要ポイント > 6. その他
     name: 署名シークレットの置き場所
     body: |-
-      - 署名シークレットの置き場所は [設定値の置き場所](id:flowchart-config-location) と `shared/環境変数.md` に従う
+      - 署名シークレットの置き場所は [設定値の置き場所](id:flowchart-config-location) と [shared/環境変数](id:next-shared-env-var) に従う
   - id: webhook-others-02
     group: 重要ポイント > 6. その他
     name: ロガーに記録する項目
