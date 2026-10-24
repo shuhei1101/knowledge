@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: claude-rule-writing
+kind: rule
+name: ユーザ配下ルール記載時の規約
+description: ユーザー配下のルールを記載するときに、特定のプロジェクトに特化した内容を入れない決まりを定める。
+tags:
+  - name: scope:claude
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: user-rule-writing-01
+    group: ユーザ配下ルール記載時の規約
+    name: プロジェクト特化の内容は不可
+    body: |-
+      - 特定のプロジェクトに特化した内容は書かない
+        - NG例: 「AITuberプロジェクトに適用するルール」←特定のプロジェクトに特化している

@@ -1,0 +1,601 @@
+# yaml-language-server: $schema=../../schemas/template.schema.yaml
+id: template-module
+kind: template
+name: "テンプレート: モジュール構成"
+description: サブシステム × 分類 1 つ分の構成要素を記載するモジュール構成のテンプレート。
+tags:
+  - name: scope:テンプレート
+    main: true
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      サブシステム × 分類 1 つ分の構成要素（データモデル / クラス / 関数 / 関数型 / 定数 / 画面・コンポーネント / フック / ストア / スタイル）。
+      1 ファイル = 分類 1 つ。分類は業務ドメインの軸で切り、プロセスの入口は専用の分類に切り出す。
+      分類を細分化したフォルダは、細分類のページどうしのつながりの図とフォルダ全体の決まりを、束ねの設計書 `全体.yaml`（`diagrams` と `notes`）に置く。
+  - id: item-list-01
+    name: 項目
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- |
+      | title | タイトル | string | 必須 | - | pattern: ^.+ / .+$ | `{サブシステム名} / {分類名}`（細分化した分類は `{サブシステム名} / {分類名} / {細分類名}`）。フォルダとファイル名に合わせる。 | - |
+      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。<br>初回に書いた内容のまま保ち、後から情報を追加しない（仕様は各項目に書く）。<br>対象そのものが変わったときだけ書き換える。 | - |
+      | test_files | 対応テストファイル | array | - | - | - | 属する物理ファイルごとの単体テストのファイル（1 物理ファイル = 1 テストファイル）。<br>テストのレビューを終えたときに記入する（設計の時点では空でよい）。 | - |
+      | external_test_files | 対応疎通テストファイル | array | - | - | - | 疎通テスト（`connectivity_tests`）を持つ関数の、外部疎通テストのファイル（`tests/external/` の下）。<br>疎通テストのレビューを終えたときに記入する（設計の時点では空でよい）。 | - |
+      | directory | ディレクトリ構成 | string | - | - | - | 属するファイルのツリー（コードブロック）。各ファイルの右に主な中身を 1 行で書く。 | - |
+      | diagrams | 構成図 | array | - | - | - | 矢印で繋がる塊 1 つ = 1 枚。1 枚のノードが 15 を超えるときは観点で分ける。載せる要素が無いときは持たない。 | - |
+      | diagrams[].name | 塊の論理名 | string | 必須 | - | - | 図が 1 枚なら `全体`。 | - |
+      | diagrams[].diagram | 図 | string | 必須 | - | - | Mermaid の `classDiagram`（次の行に `direction`）。図の中の名前は論理名で書く。<br>定数・先頭 `_` の要素と、他の要素と矢印で繋がらない要素は載せない。 | - |
+      | data_models | データモデル | array | - | - | - | プロパティ主体の型（dataclass・BaseModel・TypedDict・TS の type 等）。 | - |
+      | data_models[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | - |
+      | data_models[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | - |
+      | data_models[].container | コンテナ | string | 必須 | - | - | 所属ファイル（例 `oauth/service.ts`）。 | - |
+      | data_models[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | - |
+      | data_models[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | - |
+      | data_models[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で何を担うか。 | - |
+      | data_models[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | data_models[].inherits | 継承元 | string | - | - | - | - | - |
+      | data_models[].properties | プロパティ | array | - | - | - | - | - |
+      | data_models[].properties[].name | プロパティ名 | string | 必須 | - | - | - | - |
+      | data_models[].properties[].title | 論理名 | string | - | - | - | - | - |
+      | data_models[].properties[].type | 型 | string | 必須 | - | - | 取りうる値が有限の文字列はリテラル型で列挙する。 | - |
+      | data_models[].properties[].access | 可視性 | string | - | - | - | `public` / `protected` / `private`。可視性の無い言語は `公開` / `内部 (_)` / `非公開 (__)`。 | - |
+      | data_models[].properties[].default | デフォルト | string | - | - | - | 生成時の値。無いときは書かない。 | - |
+      | data_models[].properties[].description | 説明 | string | 必須 | - | - | - | - |
+      | data_models[].properties[].example | 例 | string | - | - | - | - | - |
+      | data_models[].properties[].notes | 補足 | string | - | - | - | - | - |
+      | data_models[].methods | メソッド | array | - | - | - | - | - |
+      | data_models[].methods[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | - |
+      | data_models[].methods[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | - |
+      | data_models[].methods[].container | コンテナ | string | - | - | - | 所属ファイル（例 `oauth/service.ts`）。 | - |
+      | data_models[].methods[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | - |
+      | data_models[].methods[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | - |
+      | data_models[].methods[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で何を担うか。 | - |
+      | data_models[].methods[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | data_models[].methods[].kind | 種別 | string | 必須 | 関数 / メソッド / フック | - | - | - |
+      | data_models[].methods[].inherits | 継承元 | string | - | - | - | 実装する関数型・インタフェースの論理名（別の設計書なら参照）。 | - |
+      | data_models[].methods[].scope | 公開範囲 | string | - | public / internal | - | `public`（外から呼ぶ）/ `internal`（先頭 `_` などの内部の関数）。 | - |
+      | data_models[].methods[].is_async | 非同期 | boolean | - | - | - | 非同期関数か。 | - |
+      | data_models[].methods[].thread_safe | 並行で呼べる | boolean | - | - | - | 並行で呼んでよいか。 | - |
+      | data_models[].methods[].side_effects | 副作用 | string | - | - | - | 引数の書き換え・外への書き込み。 | - |
+      | data_models[].methods[].args | 引数 | array | - | - | - | 引数の表。引数の無い関数は持たない。 | - |
+      | data_models[].methods[].args[].name | 引数名 | string | 必須 | - | - | コード上の引数名。 | - |
+      | data_models[].methods[].args[].title | 論理名 | string | - | - | - | - | - |
+      | data_models[].methods[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で書く。 | - |
+      | data_models[].methods[].args[].required | 必須 | boolean | - | - | - | - | - |
+      | data_models[].methods[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には書かない。 | - |
+      | data_models[].methods[].args[].passing | 渡し方 | string | - | positional / keyword / injected | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | - |
+      | data_models[].methods[].args[].description | 説明 | string | 必須 | - | - | - | - |
+      | data_models[].methods[].args[].notes | 補足 | string | - | - | - | - | - |
+      | data_models[].methods[].args_example | 引数例 | string | - | - | - | 呼び出しのコード 1〜数行（コードブロック）。 | - |
+      | data_models[].methods[].returns | 戻り値 | object | - | - | - | - | - |
+      | data_models[].methods[].returns.type | 型 | string | 必須 | - | - | void / None も書く。 | - |
+      | data_models[].methods[].returns.description | 説明 | string | 必須 | - | - | - | - |
+      | data_models[].methods[].returns.notes | 補足 | string | - | - | - | - | - |
+      | data_models[].methods[].returns_example | 戻り値例 | string | - | - | - | 返り値の実形（コードブロック）。void / None は持たない。 | - |
+      | data_models[].methods[].process | 処理 | string | - | - | - | 番号付きのステップ。1 ステップ = 意味のある処理の単位。<br>呼び出す関数は文末の括弧内に論理名で添える。<br>択一の分岐は 1 つの番号の下に `- {条件}の場合、{内容}` で並べる。<br>ログは配下に `- `[{レベル}]` {出力する事実}（{値}）` で書く。 | - |
+      | data_models[].methods[].exceptions | 例外 | array | - | - | - | 送出する例外。送出しない関数は持たない。 | - |
+      | data_models[].methods[].exceptions[].name | 例外名 | string | 必須 | - | - | 送出する例外のクラス名。 | - |
+      | data_models[].methods[].exceptions[].condition | 発生条件 | string | 必須 | - | - | 送出する条件。同じ例外を複数の箇所から送出するときは箇所ごとに別の要素にする。 | - |
+      | data_models[].methods[].exceptions[].message | メッセージ | string | - | - | - | - | - |
+      | data_models[].methods[].exceptions[].notes | 補足 | string | - | - | - | - | - |
+      | data_models[].methods[].test_setup | セットアップ | array | - | - | - | 複数のテストが共有する準備。 | - |
+      | data_models[].methods[].test_setup[].name | セットアップ | string | 必須 | - | - | - | - |
+      | data_models[].methods[].test_setup[].description | 説明 | string | 必須 | - | - | - | - |
+      | data_models[].methods[].test_setup[].notes | 補足 | string | - | - | - | fixture の物理名など。 | - |
+      | data_models[].methods[].unit_tests | 単体テスト | array | - | - | - | 条件分岐の単位で 1 行以上。自関数で送出する例外は異常の行にする。<br>キャッチせずに伝播する例外には行を置かない。 | - |
+      | data_models[].methods[].unit_tests[].name | テスト名 | string | 必須 | - | pattern: ^test_[a-z0-9_]+$ | テスト関数の名前。`test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）。<br>期待値は名前に入れない。先頭が `_` の関数は `_` を外す。 | - |
+      | data_models[].methods[].unit_tests[].case | 正常/異常 | string | 必須 | 正常 / 異常 | - | - | - |
+      | data_models[].methods[].unit_tests[].summary | 概要 | string | 必須 | - | - | - | - |
+      | data_models[].methods[].unit_tests[].condition | 条件 | string | 必須 | - | - | テストの条件。Mock の応答の設定もここに書く。 | - |
+      | data_models[].methods[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外の依存だけ。差し替えないときも `なし` と書く。 | - |
+      | data_models[].methods[].unit_tests[].expected | 期待値 | string | 必須 | - | - | 戻り値・送出する例外と、Mock に渡った引数・呼び出しの有無。 | - |
+      | data_models[].methods[].unit_tests[].exception | 対応する例外 | string | - | - | - | 自関数で送出する例外を確かめる行のとき、対応する例外の行の発生条件の要旨。 | - |
+      | data_models[].methods[].unit_tests[].notes | 補足 | string | - | - | - | - | - |
+      | data_models[].methods[].connectivity_tests | 疎通テスト | array | - | - | - | 実 API を呼ぶラッパーの関数だけが持つ。使うパラメータの値の組を 1 組 = 1 テストで並べる。 | - |
+      | data_models[].methods[].connectivity_tests[].name | テスト名 | string | 必須 | - | pattern: ^test_ext_[a-z0-9_]+$ | `test_ext_{関数の物理名}_when_{パラメータ値}`。 | - |
+      | data_models[].methods[].connectivity_tests[].api | 対象 API | string | 必須 | - | - | - | - |
+      | data_models[].methods[].connectivity_tests[].summary | 概要 | string | 必須 | - | - | - | - |
+      | data_models[].methods[].connectivity_tests[].checks | 確認内容 | string | 必須 | - | - | 認証・エンドポイント・使うパラメータの値・応答の構造など。 | - |
+      | data_models[].methods[].connectivity_tests[].cost | 料金・副作用 | string | 必須 | - | - | 1 回あたりの料金と副作用。無いときも `なし` と書く。 | - |
+      | data_models[].methods[].connectivity_tests[].notes | 補足 | string | - | - | - | - | - |
+      | data_models[].methods[].callers | 呼び出し元 | array | - | - | - | - | - |
+      | data_models[].methods[].callees | 呼び出し先 | array | - | - | - | - | - |
+      | data_models[].methods[].refs | 関連 | array | - | - | - | - | - |
+      | data_models[].methods[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
+      | data_models[].methods[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | data_models[].methods[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | data_models[].methods[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | data_models[].methods[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
+      | data_models[].methods[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | data_models[].methods[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
+      | data_models[].methods[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
+      | data_models[].methods[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | data_models[].refs | 関連 | array | - | - | - | - | - |
+      | data_models[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
+      | data_models[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | data_models[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | data_models[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | data_models[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
+      | data_models[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | data_models[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
+      | data_models[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
+      | data_models[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | enums | Enum | array | - | - | - | 取りうる値の列挙。`Literal` の型エイリアスも含む。 | - |
+      | enums[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | - |
+      | enums[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | - |
+      | enums[].container | コンテナ | string | 必須 | - | - | 所属ファイル（例 `oauth/service.ts`）。 | - |
+      | enums[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | - |
+      | enums[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | - |
+      | enums[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で何を担うか。 | - |
+      | enums[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | enums[].values | 値一覧 | array | - | - | minItems: 1 | - | - |
+      | enums[].values[].value | 値 | string | 必須 | - | - | 実際に持つ値。 | - |
+      | enums[].values[].member | メンバー名 | string | - | - | - | コード上の識別子。`Literal` のように無いときは書かない。 | - |
+      | enums[].values[].title | 論理名 | string | 必須 | - | - | - | - |
+      | enums[].values[].description | 説明 | string | 必須 | - | - | - | - |
+      | enums[].values[].notes | 補足 | string | - | - | - | - | - |
+      | enums[].refs | 関連 | array | - | - | - | - | - |
+      | enums[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
+      | enums[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | enums[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | enums[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | enums[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
+      | enums[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | enums[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
+      | enums[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
+      | enums[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | classes | クラス | array | - | - | - | 振る舞いを持つクラス・抽象クラス・インタフェース。 | - |
+      | classes[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | - |
+      | classes[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | - |
+      | classes[].container | コンテナ | string | 必須 | - | - | 所属ファイル（例 `oauth/service.ts`）。 | - |
+      | classes[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | - |
+      | classes[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | - |
+      | classes[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で何を担うか。 | - |
+      | classes[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | classes[].kind | 種別 | string | - | クラス / 抽象クラス / インタフェース | - | - | - |
+      | classes[].inherits | 継承元 | string | - | - | - | - | - |
+      | classes[].properties | プロパティ | array | - | - | - | - | - |
+      | classes[].properties[].name | プロパティ名 | string | 必須 | - | - | - | - |
+      | classes[].properties[].title | 論理名 | string | - | - | - | - | - |
+      | classes[].properties[].type | 型 | string | 必須 | - | - | 取りうる値が有限の文字列はリテラル型で列挙する。 | - |
+      | classes[].properties[].access | 可視性 | string | - | - | - | `public` / `protected` / `private`。可視性の無い言語は `公開` / `内部 (_)` / `非公開 (__)`。 | - |
+      | classes[].properties[].default | デフォルト | string | - | - | - | 生成時の値。無いときは書かない。 | - |
+      | classes[].properties[].description | 説明 | string | 必須 | - | - | - | - |
+      | classes[].properties[].example | 例 | string | - | - | - | - | - |
+      | classes[].properties[].notes | 補足 | string | - | - | - | - | - |
+      | classes[].methods | メソッド | array | - | - | - | インタフェース・抽象クラスの契約のメソッドは引数と戻り値だけを持つ。 | - |
+      | classes[].methods[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | - |
+      | classes[].methods[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | - |
+      | classes[].methods[].container | コンテナ | string | - | - | - | 所属ファイル（例 `oauth/service.ts`）。 | - |
+      | classes[].methods[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | - |
+      | classes[].methods[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | - |
+      | classes[].methods[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で何を担うか。 | - |
+      | classes[].methods[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | classes[].methods[].kind | 種別 | string | 必須 | 関数 / メソッド / フック | - | - | - |
+      | classes[].methods[].inherits | 継承元 | string | - | - | - | 実装する関数型・インタフェースの論理名（別の設計書なら参照）。 | - |
+      | classes[].methods[].scope | 公開範囲 | string | - | public / internal | - | `public`（外から呼ぶ）/ `internal`（先頭 `_` などの内部の関数）。 | - |
+      | classes[].methods[].is_async | 非同期 | boolean | - | - | - | 非同期関数か。 | - |
+      | classes[].methods[].thread_safe | 並行で呼べる | boolean | - | - | - | 並行で呼んでよいか。 | - |
+      | classes[].methods[].side_effects | 副作用 | string | - | - | - | 引数の書き換え・外への書き込み。 | - |
+      | classes[].methods[].args | 引数 | array | - | - | - | 引数の表。引数の無い関数は持たない。 | - |
+      | classes[].methods[].args[].name | 引数名 | string | 必須 | - | - | コード上の引数名。 | - |
+      | classes[].methods[].args[].title | 論理名 | string | - | - | - | - | - |
+      | classes[].methods[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で書く。 | - |
+      | classes[].methods[].args[].required | 必須 | boolean | - | - | - | - | - |
+      | classes[].methods[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には書かない。 | - |
+      | classes[].methods[].args[].passing | 渡し方 | string | - | positional / keyword / injected | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | - |
+      | classes[].methods[].args[].description | 説明 | string | 必須 | - | - | - | - |
+      | classes[].methods[].args[].notes | 補足 | string | - | - | - | - | - |
+      | classes[].methods[].args_example | 引数例 | string | - | - | - | 呼び出しのコード 1〜数行（コードブロック）。 | - |
+      | classes[].methods[].returns | 戻り値 | object | - | - | - | - | - |
+      | classes[].methods[].returns.type | 型 | string | 必須 | - | - | void / None も書く。 | - |
+      | classes[].methods[].returns.description | 説明 | string | 必須 | - | - | - | - |
+      | classes[].methods[].returns.notes | 補足 | string | - | - | - | - | - |
+      | classes[].methods[].returns_example | 戻り値例 | string | - | - | - | 返り値の実形（コードブロック）。void / None は持たない。 | - |
+      | classes[].methods[].process | 処理 | string | - | - | - | 番号付きのステップ。1 ステップ = 意味のある処理の単位。<br>呼び出す関数は文末の括弧内に論理名で添える。<br>択一の分岐は 1 つの番号の下に `- {条件}の場合、{内容}` で並べる。<br>ログは配下に `- `[{レベル}]` {出力する事実}（{値}）` で書く。 | - |
+      | classes[].methods[].exceptions | 例外 | array | - | - | - | 送出する例外。送出しない関数は持たない。 | - |
+      | classes[].methods[].exceptions[].name | 例外名 | string | 必須 | - | - | 送出する例外のクラス名。 | - |
+      | classes[].methods[].exceptions[].condition | 発生条件 | string | 必須 | - | - | 送出する条件。同じ例外を複数の箇所から送出するときは箇所ごとに別の要素にする。 | - |
+      | classes[].methods[].exceptions[].message | メッセージ | string | - | - | - | - | - |
+      | classes[].methods[].exceptions[].notes | 補足 | string | - | - | - | - | - |
+      | classes[].methods[].test_setup | セットアップ | array | - | - | - | 複数のテストが共有する準備。 | - |
+      | classes[].methods[].test_setup[].name | セットアップ | string | 必須 | - | - | - | - |
+      | classes[].methods[].test_setup[].description | 説明 | string | 必須 | - | - | - | - |
+      | classes[].methods[].test_setup[].notes | 補足 | string | - | - | - | fixture の物理名など。 | - |
+      | classes[].methods[].unit_tests | 単体テスト | array | - | - | - | 条件分岐の単位で 1 行以上。自関数で送出する例外は異常の行にする。<br>キャッチせずに伝播する例外には行を置かない。 | - |
+      | classes[].methods[].unit_tests[].name | テスト名 | string | 必須 | - | pattern: ^test_[a-z0-9_]+$ | テスト関数の名前。`test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）。<br>期待値は名前に入れない。先頭が `_` の関数は `_` を外す。 | - |
+      | classes[].methods[].unit_tests[].case | 正常/異常 | string | 必須 | 正常 / 異常 | - | - | - |
+      | classes[].methods[].unit_tests[].summary | 概要 | string | 必須 | - | - | - | - |
+      | classes[].methods[].unit_tests[].condition | 条件 | string | 必須 | - | - | テストの条件。Mock の応答の設定もここに書く。 | - |
+      | classes[].methods[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外の依存だけ。差し替えないときも `なし` と書く。 | - |
+      | classes[].methods[].unit_tests[].expected | 期待値 | string | 必須 | - | - | 戻り値・送出する例外と、Mock に渡った引数・呼び出しの有無。 | - |
+      | classes[].methods[].unit_tests[].exception | 対応する例外 | string | - | - | - | 自関数で送出する例外を確かめる行のとき、対応する例外の行の発生条件の要旨。 | - |
+      | classes[].methods[].unit_tests[].notes | 補足 | string | - | - | - | - | - |
+      | classes[].methods[].connectivity_tests | 疎通テスト | array | - | - | - | 実 API を呼ぶラッパーの関数だけが持つ。使うパラメータの値の組を 1 組 = 1 テストで並べる。 | - |
+      | classes[].methods[].connectivity_tests[].name | テスト名 | string | 必須 | - | pattern: ^test_ext_[a-z0-9_]+$ | `test_ext_{関数の物理名}_when_{パラメータ値}`。 | - |
+      | classes[].methods[].connectivity_tests[].api | 対象 API | string | 必須 | - | - | - | - |
+      | classes[].methods[].connectivity_tests[].summary | 概要 | string | 必須 | - | - | - | - |
+      | classes[].methods[].connectivity_tests[].checks | 確認内容 | string | 必須 | - | - | 認証・エンドポイント・使うパラメータの値・応答の構造など。 | - |
+      | classes[].methods[].connectivity_tests[].cost | 料金・副作用 | string | 必須 | - | - | 1 回あたりの料金と副作用。無いときも `なし` と書く。 | - |
+      | classes[].methods[].connectivity_tests[].notes | 補足 | string | - | - | - | - | - |
+      | classes[].methods[].callers | 呼び出し元 | array | - | - | - | - | - |
+      | classes[].methods[].callees | 呼び出し先 | array | - | - | - | - | - |
+      | classes[].methods[].refs | 関連 | array | - | - | - | - | - |
+      | classes[].methods[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
+      | classes[].methods[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | classes[].methods[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | classes[].methods[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | classes[].methods[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
+      | classes[].methods[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | classes[].methods[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
+      | classes[].methods[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
+      | classes[].methods[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | classes[].implementations | 実装 | array | - | - | - | インタフェース・抽象クラスだけが持つ。この契約を満たすクラス。 | - |
+      | classes[].implementations[].target | 実装 | string | 必須 | - | - | この契約を満たす実装の論理名（別の設計書なら参照）。 | - |
+      | classes[].implementations[].notes | 補足 | string | - | - | - | どの条件で使われるか。 | - |
+      | classes[].refs | 関連 | array | - | - | - | - | - |
+      | classes[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
+      | classes[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | classes[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | classes[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | classes[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
+      | classes[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | classes[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
+      | classes[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
+      | classes[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | constants | 定数 | array | - | - | - | 定数。単純な即値は `value` だけを持ち、辞書・配列は `entries` を持つ。設定値はここではなく設計書『設定』に書く。 | - |
+      | constants[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | - |
+      | constants[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | - |
+      | constants[].container | コンテナ | string | 必須 | - | - | 所属ファイル（例 `oauth/service.ts`）。 | - |
+      | constants[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | - |
+      | constants[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | - |
+      | constants[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で何を担うか。 | - |
+      | constants[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | constants[].value | 値 | string | - | - | - | 単純な即値。 | - |
+      | constants[].entries | 値 | array | - | - | - | - | - |
+      | constants[].entries[].key | キー | string | 必須 | - | - | 配列は添字。 | - |
+      | constants[].entries[].value | 値 | string | 必須 | - | - | - | - |
+      | constants[].entries[].description | 説明 | string | - | - | - | - | - |
+      | constants[].entries[].notes | 補足 | string | - | - | - | - | - |
+      | constants[].refs | 関連 | array | - | - | - | - | - |
+      | constants[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
+      | constants[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | constants[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | constants[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | constants[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
+      | constants[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | constants[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
+      | constants[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
+      | constants[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | functions | 関数 | array | - | - | - | 関数・フック。1 関数 = 1 要素で、`container` に所属ファイルを書く。 | - |
+      | functions[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | - |
+      | functions[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | - |
+      | functions[].container | コンテナ | string | - | - | - | 所属ファイル（例 `oauth/service.ts`）。 | - |
+      | functions[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | - |
+      | functions[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | - |
+      | functions[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で何を担うか。 | - |
+      | functions[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | functions[].kind | 種別 | string | 必須 | 関数 / メソッド / フック | - | - | - |
+      | functions[].inherits | 継承元 | string | - | - | - | 実装する関数型・インタフェースの論理名（別の設計書なら参照）。 | - |
+      | functions[].scope | 公開範囲 | string | - | public / internal | - | `public`（外から呼ぶ）/ `internal`（先頭 `_` などの内部の関数）。 | - |
+      | functions[].is_async | 非同期 | boolean | - | - | - | 非同期関数か。 | - |
+      | functions[].thread_safe | 並行で呼べる | boolean | - | - | - | 並行で呼んでよいか。 | - |
+      | functions[].side_effects | 副作用 | string | - | - | - | 引数の書き換え・外への書き込み。 | - |
+      | functions[].args | 引数 | array | - | - | - | 引数の表。引数の無い関数は持たない。 | - |
+      | functions[].args[].name | 引数名 | string | 必須 | - | - | コード上の引数名。 | - |
+      | functions[].args[].title | 論理名 | string | - | - | - | - | - |
+      | functions[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で書く。 | - |
+      | functions[].args[].required | 必須 | boolean | - | - | - | - | - |
+      | functions[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には書かない。 | - |
+      | functions[].args[].passing | 渡し方 | string | - | positional / keyword / injected | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | - |
+      | functions[].args[].description | 説明 | string | 必須 | - | - | - | - |
+      | functions[].args[].notes | 補足 | string | - | - | - | - | - |
+      | functions[].args_example | 引数例 | string | - | - | - | 呼び出しのコード 1〜数行（コードブロック）。 | - |
+      | functions[].returns | 戻り値 | object | - | - | - | - | - |
+      | functions[].returns.type | 型 | string | 必須 | - | - | void / None も書く。 | - |
+      | functions[].returns.description | 説明 | string | 必須 | - | - | - | - |
+      | functions[].returns.notes | 補足 | string | - | - | - | - | - |
+      | functions[].returns_example | 戻り値例 | string | - | - | - | 返り値の実形（コードブロック）。void / None は持たない。 | - |
+      | functions[].process | 処理 | string | - | - | - | 番号付きのステップ。1 ステップ = 意味のある処理の単位。<br>呼び出す関数は文末の括弧内に論理名で添える。<br>択一の分岐は 1 つの番号の下に `- {条件}の場合、{内容}` で並べる。<br>ログは配下に `- `[{レベル}]` {出力する事実}（{値}）` で書く。 | - |
+      | functions[].exceptions | 例外 | array | - | - | - | 送出する例外。送出しない関数は持たない。 | - |
+      | functions[].exceptions[].name | 例外名 | string | 必須 | - | - | 送出する例外のクラス名。 | - |
+      | functions[].exceptions[].condition | 発生条件 | string | 必須 | - | - | 送出する条件。同じ例外を複数の箇所から送出するときは箇所ごとに別の要素にする。 | - |
+      | functions[].exceptions[].message | メッセージ | string | - | - | - | - | - |
+      | functions[].exceptions[].notes | 補足 | string | - | - | - | - | - |
+      | functions[].test_setup | セットアップ | array | - | - | - | 複数のテストが共有する準備。 | - |
+      | functions[].test_setup[].name | セットアップ | string | 必須 | - | - | - | - |
+      | functions[].test_setup[].description | 説明 | string | 必須 | - | - | - | - |
+      | functions[].test_setup[].notes | 補足 | string | - | - | - | fixture の物理名など。 | - |
+      | functions[].unit_tests | 単体テスト | array | - | - | - | 条件分岐の単位で 1 行以上。自関数で送出する例外は異常の行にする。<br>キャッチせずに伝播する例外には行を置かない。 | - |
+      | functions[].unit_tests[].name | テスト名 | string | 必須 | - | pattern: ^test_[a-z0-9_]+$ | テスト関数の名前。`test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）。<br>期待値は名前に入れない。先頭が `_` の関数は `_` を外す。 | - |
+      | functions[].unit_tests[].case | 正常/異常 | string | 必須 | 正常 / 異常 | - | - | - |
+      | functions[].unit_tests[].summary | 概要 | string | 必須 | - | - | - | - |
+      | functions[].unit_tests[].condition | 条件 | string | 必須 | - | - | テストの条件。Mock の応答の設定もここに書く。 | - |
+      | functions[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外の依存だけ。差し替えないときも `なし` と書く。 | - |
+      | functions[].unit_tests[].expected | 期待値 | string | 必須 | - | - | 戻り値・送出する例外と、Mock に渡った引数・呼び出しの有無。 | - |
+      | functions[].unit_tests[].exception | 対応する例外 | string | - | - | - | 自関数で送出する例外を確かめる行のとき、対応する例外の行の発生条件の要旨。 | - |
+      | functions[].unit_tests[].notes | 補足 | string | - | - | - | - | - |
+      | functions[].connectivity_tests | 疎通テスト | array | - | - | - | 実 API を呼ぶラッパーの関数だけが持つ。使うパラメータの値の組を 1 組 = 1 テストで並べる。 | - |
+      | functions[].connectivity_tests[].name | テスト名 | string | 必須 | - | pattern: ^test_ext_[a-z0-9_]+$ | `test_ext_{関数の物理名}_when_{パラメータ値}`。 | - |
+      | functions[].connectivity_tests[].api | 対象 API | string | 必須 | - | - | - | - |
+      | functions[].connectivity_tests[].summary | 概要 | string | 必須 | - | - | - | - |
+      | functions[].connectivity_tests[].checks | 確認内容 | string | 必須 | - | - | 認証・エンドポイント・使うパラメータの値・応答の構造など。 | - |
+      | functions[].connectivity_tests[].cost | 料金・副作用 | string | 必須 | - | - | 1 回あたりの料金と副作用。無いときも `なし` と書く。 | - |
+      | functions[].connectivity_tests[].notes | 補足 | string | - | - | - | - | - |
+      | functions[].callers | 呼び出し元 | array | - | - | - | - | - |
+      | functions[].callees | 呼び出し先 | array | - | - | - | - | - |
+      | functions[].refs | 関連 | array | - | - | - | - | - |
+      | functions[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
+      | functions[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | functions[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | functions[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | functions[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
+      | functions[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | functions[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
+      | functions[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
+      | functions[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | function_types | 関数型 | array | - | - | - | 関数のシグネチャの型（DI・Mock の差し替え用）。処理・例外・単体テストは実装の側が持つ。 | - |
+      | function_types[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | - |
+      | function_types[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | - |
+      | function_types[].container | コンテナ | string | 必須 | - | - | 所属ファイル（例 `oauth/service.ts`）。 | - |
+      | function_types[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | - |
+      | function_types[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | - |
+      | function_types[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で何を担うか。 | - |
+      | function_types[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | function_types[].args | 引数 | array | - | - | - | - | - |
+      | function_types[].args[].name | 引数名 | string | 必須 | - | - | コード上の引数名。 | - |
+      | function_types[].args[].title | 論理名 | string | - | - | - | - | - |
+      | function_types[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で書く。 | - |
+      | function_types[].args[].required | 必須 | boolean | - | - | - | - | - |
+      | function_types[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には書かない。 | - |
+      | function_types[].args[].passing | 渡し方 | string | - | positional / keyword / injected | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | - |
+      | function_types[].args[].description | 説明 | string | 必須 | - | - | - | - |
+      | function_types[].args[].notes | 補足 | string | - | - | - | - | - |
+      | function_types[].returns | 戻り値 | object | - | - | - | - | - |
+      | function_types[].returns.type | 型 | string | 必須 | - | - | - | - |
+      | function_types[].returns.description | 説明 | string | 必須 | - | - | - | - |
+      | function_types[].returns.notes | 補足 | string | - | - | - | - | - |
+      | function_types[].implementations | 実装 | array | - | - | - | - | - |
+      | function_types[].implementations[].target | 実装 | string | 必須 | - | - | この契約を満たす実装の論理名（別の設計書なら参照）。 | - |
+      | function_types[].implementations[].notes | 補足 | string | - | - | - | どの条件で使われるか。 | - |
+      | function_types[].refs | 関連 | array | - | - | - | - | - |
+      | function_types[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
+      | function_types[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | function_types[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | function_types[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | function_types[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
+      | function_types[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | function_types[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
+      | function_types[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
+      | function_types[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | components | 画面・コンポーネント | array | - | - | - | 画面とコンポーネント（1 定義 = 1 ファイル）。Custom Element は `props` の代わりに `attributes` / `properties` / `events` を持つ。 | - |
+      | components[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | - |
+      | components[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | - |
+      | components[].container | コンテナ | string | 必須 | - | - | 所属ファイル（例 `oauth/service.ts`）。 | - |
+      | components[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | - |
+      | components[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | - |
+      | components[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で何を担うか。 | - |
+      | components[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | components[].kind | 種別 | string | - | 画面 / コンポーネント | - | - | - |
+      | components[].props | props | array | - | - | - | - | - |
+      | components[].props[].name | プロパティ名 | string | 必須 | - | - | - | - |
+      | components[].props[].title | 論理名 | string | - | - | - | - | - |
+      | components[].props[].type | 型 | string | 必須 | - | - | - | - |
+      | components[].props[].required | 必須 | boolean | - | - | - | - | - |
+      | components[].props[].default | デフォルト | string | - | - | - | - | - |
+      | components[].props[].description | 説明 | string | 必須 | - | - | - | - |
+      | components[].props[].notes | 補足 | string | - | - | - | - | - |
+      | components[].attributes | attributes | array | - | - | - | - | - |
+      | components[].attributes[].name | 属性名 | string | 必須 | - | - | - | - |
+      | components[].attributes[].title | 論理名 | string | - | - | - | - | - |
+      | components[].attributes[].type | 型 | string | - | - | - | - | - |
+      | components[].attributes[].description | 説明 | string | 必須 | - | - | - | - |
+      | components[].attributes[].notes | 補足 | string | - | - | - | - | - |
+      | components[].properties | properties | array | - | - | - | - | - |
+      | components[].properties[].name | プロパティ名 | string | 必須 | - | - | - | - |
+      | components[].properties[].title | 論理名 | string | - | - | - | - | - |
+      | components[].properties[].type | 型 | string | - | - | - | - | - |
+      | components[].properties[].description | 説明 | string | 必須 | - | - | - | - |
+      | components[].properties[].notes | 補足 | string | - | - | - | - | - |
+      | components[].events | events | array | - | - | - | - | - |
+      | components[].events[].name | イベント名 | string | 必須 | - | - | - | - |
+      | components[].events[].title | 論理名 | string | - | - | - | - | - |
+      | components[].events[].detail | detail の型 | string | - | - | - | - | - |
+      | components[].events[].description | 説明 | string | 必須 | - | - | - | - |
+      | components[].events[].notes | 補足 | string | - | - | - | - | - |
+      | components[].state | state | array | - | - | - | ローカルの状態を持たないときは持たない。 | - |
+      | components[].state[].name | 状態名 | string | 必須 | - | - | - | - |
+      | components[].state[].title | 論理名 | string | - | - | - | - | - |
+      | components[].state[].type | 型 | string | 必須 | - | - | - | - |
+      | components[].state[].initial | 初期値 | string | - | - | - | - | - |
+      | components[].state[].description | 説明 | string | 必須 | - | - | - | - |
+      | components[].state[].notes | 補足 | string | - | - | - | 表現手段（`useState` / `useForm` 等）。 | - |
+      | components[].unit_tests | 単体テスト | array | - | - | - | - | - |
+      | components[].unit_tests[].name | テスト名 | string | 必須 | - | pattern: ^test_[a-z0-9_]+$ | テスト関数の名前。`test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）。<br>期待値は名前に入れない。先頭が `_` の関数は `_` を外す。 | - |
+      | components[].unit_tests[].case | 正常/異常 | string | 必須 | 正常 / 異常 | - | - | - |
+      | components[].unit_tests[].summary | 概要 | string | 必須 | - | - | - | - |
+      | components[].unit_tests[].condition | 条件 | string | 必須 | - | - | テストの条件。Mock の応答の設定もここに書く。 | - |
+      | components[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外の依存だけ。差し替えないときも `なし` と書く。 | - |
+      | components[].unit_tests[].expected | 期待値 | string | 必須 | - | - | 戻り値・送出する例外と、Mock に渡った引数・呼び出しの有無。 | - |
+      | components[].unit_tests[].exception | 対応する例外 | string | - | - | - | 自関数で送出する例外を確かめる行のとき、対応する例外の行の発生条件の要旨。 | - |
+      | components[].unit_tests[].notes | 補足 | string | - | - | - | - | - |
+      | components[].refs | 関連 | array | - | - | - | - | - |
+      | components[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
+      | components[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | components[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | components[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | components[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
+      | components[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | components[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
+      | components[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
+      | components[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | stores | ストア | array | - | - | - | 状態管理のオブジェクト（Zustand / Redux 等）。 | - |
+      | stores[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | - |
+      | stores[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | - |
+      | stores[].container | コンテナ | string | 必須 | - | - | 所属ファイル（例 `oauth/service.ts`）。 | - |
+      | stores[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | - |
+      | stores[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | - |
+      | stores[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で何を担うか。 | - |
+      | stores[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | stores[].state | state | array | - | - | - | - | - |
+      | stores[].state[].name | フィールド名 | string | 必須 | - | - | - | - |
+      | stores[].state[].title | 論理名 | string | - | - | - | - | - |
+      | stores[].state[].type | 型 | string | 必須 | - | - | - | - |
+      | stores[].state[].initial | 初期値 | string | - | - | - | - | - |
+      | stores[].state[].description | 説明 | string | 必須 | - | - | - | - |
+      | stores[].state[].notes | 補足 | string | - | - | - | - | - |
+      | stores[].actions | action | array | - | - | - | - | - |
+      | stores[].actions[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | - |
+      | stores[].actions[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | - |
+      | stores[].actions[].container | コンテナ | string | - | - | - | 所属ファイル（例 `oauth/service.ts`）。 | - |
+      | stores[].actions[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | - |
+      | stores[].actions[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | - |
+      | stores[].actions[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で何を担うか。 | - |
+      | stores[].actions[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | stores[].actions[].kind | 種別 | string | 必須 | 関数 / メソッド / フック | - | - | - |
+      | stores[].actions[].inherits | 継承元 | string | - | - | - | 実装する関数型・インタフェースの論理名（別の設計書なら参照）。 | - |
+      | stores[].actions[].scope | 公開範囲 | string | - | public / internal | - | `public`（外から呼ぶ）/ `internal`（先頭 `_` などの内部の関数）。 | - |
+      | stores[].actions[].is_async | 非同期 | boolean | - | - | - | 非同期関数か。 | - |
+      | stores[].actions[].thread_safe | 並行で呼べる | boolean | - | - | - | 並行で呼んでよいか。 | - |
+      | stores[].actions[].side_effects | 副作用 | string | - | - | - | 引数の書き換え・外への書き込み。 | - |
+      | stores[].actions[].args | 引数 | array | - | - | - | 引数の表。引数の無い関数は持たない。 | - |
+      | stores[].actions[].args[].name | 引数名 | string | 必須 | - | - | コード上の引数名。 | - |
+      | stores[].actions[].args[].title | 論理名 | string | - | - | - | - | - |
+      | stores[].actions[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で書く。 | - |
+      | stores[].actions[].args[].required | 必須 | boolean | - | - | - | - | - |
+      | stores[].actions[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には書かない。 | - |
+      | stores[].actions[].args[].passing | 渡し方 | string | - | positional / keyword / injected | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | - |
+      | stores[].actions[].args[].description | 説明 | string | 必須 | - | - | - | - |
+      | stores[].actions[].args[].notes | 補足 | string | - | - | - | - | - |
+      | stores[].actions[].args_example | 引数例 | string | - | - | - | 呼び出しのコード 1〜数行（コードブロック）。 | - |
+      | stores[].actions[].returns | 戻り値 | object | - | - | - | - | - |
+      | stores[].actions[].returns.type | 型 | string | 必須 | - | - | void / None も書く。 | - |
+      | stores[].actions[].returns.description | 説明 | string | 必須 | - | - | - | - |
+      | stores[].actions[].returns.notes | 補足 | string | - | - | - | - | - |
+      | stores[].actions[].returns_example | 戻り値例 | string | - | - | - | 返り値の実形（コードブロック）。void / None は持たない。 | - |
+      | stores[].actions[].process | 処理 | string | - | - | - | 番号付きのステップ。1 ステップ = 意味のある処理の単位。<br>呼び出す関数は文末の括弧内に論理名で添える。<br>択一の分岐は 1 つの番号の下に `- {条件}の場合、{内容}` で並べる。<br>ログは配下に `- `[{レベル}]` {出力する事実}（{値}）` で書く。 | - |
+      | stores[].actions[].exceptions | 例外 | array | - | - | - | 送出する例外。送出しない関数は持たない。 | - |
+      | stores[].actions[].exceptions[].name | 例外名 | string | 必須 | - | - | 送出する例外のクラス名。 | - |
+      | stores[].actions[].exceptions[].condition | 発生条件 | string | 必須 | - | - | 送出する条件。同じ例外を複数の箇所から送出するときは箇所ごとに別の要素にする。 | - |
+      | stores[].actions[].exceptions[].message | メッセージ | string | - | - | - | - | - |
+      | stores[].actions[].exceptions[].notes | 補足 | string | - | - | - | - | - |
+      | stores[].actions[].test_setup | セットアップ | array | - | - | - | 複数のテストが共有する準備。 | - |
+      | stores[].actions[].test_setup[].name | セットアップ | string | 必須 | - | - | - | - |
+      | stores[].actions[].test_setup[].description | 説明 | string | 必須 | - | - | - | - |
+      | stores[].actions[].test_setup[].notes | 補足 | string | - | - | - | fixture の物理名など。 | - |
+      | stores[].actions[].unit_tests | 単体テスト | array | - | - | - | 条件分岐の単位で 1 行以上。自関数で送出する例外は異常の行にする。<br>キャッチせずに伝播する例外には行を置かない。 | - |
+      | stores[].actions[].unit_tests[].name | テスト名 | string | 必須 | - | pattern: ^test_[a-z0-9_]+$ | テスト関数の名前。`test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）。<br>期待値は名前に入れない。先頭が `_` の関数は `_` を外す。 | - |
+      | stores[].actions[].unit_tests[].case | 正常/異常 | string | 必須 | 正常 / 異常 | - | - | - |
+      | stores[].actions[].unit_tests[].summary | 概要 | string | 必須 | - | - | - | - |
+      | stores[].actions[].unit_tests[].condition | 条件 | string | 必須 | - | - | テストの条件。Mock の応答の設定もここに書く。 | - |
+      | stores[].actions[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外の依存だけ。差し替えないときも `なし` と書く。 | - |
+      | stores[].actions[].unit_tests[].expected | 期待値 | string | 必須 | - | - | 戻り値・送出する例外と、Mock に渡った引数・呼び出しの有無。 | - |
+      | stores[].actions[].unit_tests[].exception | 対応する例外 | string | - | - | - | 自関数で送出する例外を確かめる行のとき、対応する例外の行の発生条件の要旨。 | - |
+      | stores[].actions[].unit_tests[].notes | 補足 | string | - | - | - | - | - |
+      | stores[].actions[].connectivity_tests | 疎通テスト | array | - | - | - | 実 API を呼ぶラッパーの関数だけが持つ。使うパラメータの値の組を 1 組 = 1 テストで並べる。 | - |
+      | stores[].actions[].connectivity_tests[].name | テスト名 | string | 必須 | - | pattern: ^test_ext_[a-z0-9_]+$ | `test_ext_{関数の物理名}_when_{パラメータ値}`。 | - |
+      | stores[].actions[].connectivity_tests[].api | 対象 API | string | 必須 | - | - | - | - |
+      | stores[].actions[].connectivity_tests[].summary | 概要 | string | 必須 | - | - | - | - |
+      | stores[].actions[].connectivity_tests[].checks | 確認内容 | string | 必須 | - | - | 認証・エンドポイント・使うパラメータの値・応答の構造など。 | - |
+      | stores[].actions[].connectivity_tests[].cost | 料金・副作用 | string | 必須 | - | - | 1 回あたりの料金と副作用。無いときも `なし` と書く。 | - |
+      | stores[].actions[].connectivity_tests[].notes | 補足 | string | - | - | - | - | - |
+      | stores[].actions[].callers | 呼び出し元 | array | - | - | - | - | - |
+      | stores[].actions[].callees | 呼び出し先 | array | - | - | - | - | - |
+      | stores[].actions[].refs | 関連 | array | - | - | - | - | - |
+      | stores[].actions[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
+      | stores[].actions[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | stores[].actions[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | stores[].actions[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | stores[].actions[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
+      | stores[].actions[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | stores[].actions[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
+      | stores[].actions[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
+      | stores[].actions[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | stores[].refs | 関連 | array | - | - | - | - | - |
+      | stores[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
+      | stores[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | stores[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | stores[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | stores[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
+      | stores[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | stores[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
+      | stores[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
+      | stores[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | styles | スタイル | array | - | - | - | CSS のクラス群 1 まとまり。 | - |
+      | styles[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | - |
+      | styles[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | - |
+      | styles[].container | コンテナ | string | 必須 | - | - | 所属ファイル（例 `oauth/service.ts`）。 | - |
+      | styles[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | - |
+      | styles[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | - |
+      | styles[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行で何を担うか。 | - |
+      | styles[].description | 説明 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | styles[].values | 値 | array | - | - | - | - | - |
+      | styles[].values[].class_name | クラス名 | string | 必須 | - | - | - | - |
+      | styles[].values[].target | 適用対象 | string | 必須 | - | - | - | - |
+      | styles[].values[].value | 値 | string | 必須 | - | - | - | - |
+      | styles[].values[].notes | 補足 | string | - | - | - | - | - |
+      | styles[].refs | 関連 | array | - | - | - | - | - |
+      | styles[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
+      | styles[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | styles[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | styles[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | styles[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
+      | styles[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | styles[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
+      | styles[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
+      | styles[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | refs | 関連 | array | - | - | - | - | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+
+      <!-- /table -->
+  - id: example-sample-01
+    name: 記載例
+    body: |-
+      ```yaml
+      title: 設定 / 設定ファイルの読み込み
+      lead: 設定ファイルを読み込み、名前ごとの中身を持つ。
+      test_files:
+      - tests/unit/config/test_loader.py
+      functions:
+      - name: read_config_files
+        title: 設定ファイルの読み込み
+        kind: 関数
+        container: config/loader.py
+        usecase: 共通
+        role: 読み込み
+        summary: 作業ツリーの設定ファイルを名前 → 中身で読む
+        args:
+        - name: root
+          title: リポジトリの直下
+          type: Path
+          required: true
+          description: 設定ファイルを持つリポジトリの直下
+        returns:
+          type: dict[str, str]
+          description: ファイル名 → 中身
+        process: 1. `{root}/{CONFIG_DIR}` の直下の `*{CONFIG_SUFFIX}` をファイル名の順に UTF-8 で読んで返す
+        exceptions:
+        - name: FileNotFoundError
+          condition: '`{root}/{CONFIG_DIR}` が無い'
+          message: 標準のメッセージ
+        unit_tests:
+        - name: test_read_config_files
+          case: 正常
+          summary: 直下の設定ファイルだけを読む
+          condition: 直下に設定ファイル 2 つと md 1 つ、下のフォルダに設定ファイル 1 つ
+          mock: なし（一時ディレクトリ）
+          expected: 直下の設定ファイル 2 つだけ
+        - name: test_read_config_files_when_missing
+          case: 異常
+          summary: フォルダが無い
+          condition: '`config` の無い一時ディレクトリ'
+          mock: なし（一時ディレクトリ）
+          expected: '`FileNotFoundError`'
+          exception: フォルダが無い
+      ```

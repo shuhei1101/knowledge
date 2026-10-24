@@ -1,0 +1,68 @@
+# yaml-language-server: $schema=../../schemas/guide.schema.yaml
+id: guide-setup-import-rule-changes
+kind: guide
+name: 規約の変更を取り込む
+description: 手元の規約を最新にするために master の変更を取り込む手順と、反映・確認・元に戻す方法を示す。
+tags:
+  - name: scope:使い方
+  - name: topic:セットアップ手順
+    main: true
+status: current
+visibility: public
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: guide-setup-apply-rule-index
+    type: requires
+    when: 規約の変更を取り込む前に、規約の索引を当てていないとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      手元の規約を最新にしたいときに実行する。
+  - id: prerequisite-01
+    group: 前提
+    name: "前提: 規約の索引を当てる"
+    body: |-
+      - [規約の索引を当てる](id:guide-setup-apply-rule-index)
+  - id: step-pull-master-01
+    group: 手順 > master の最新を取り込む
+    name: master の最新を取り込むコマンド
+    body: |-
+      ```bash
+      git -C {clone した先} pull
+      ```
+  - id: step-pull-master-02
+    group: 手順 > master の最新を取り込む
+    name: 変更を知らせる仕組みは無い
+    body: |-
+      変更を知らせる仕組みは無く、取り込まない限り古い規約が案内され続ける。
+  - id: reflection-01
+    group: 反映
+    name: 反映は即時
+    body: |-
+      `即時`（rule-inject は索引を呼ばれるたびに再読み込みする）。
+      そのセッションで既に読んだ規約は案内されないため、変わった本文を読ませるときは新しいセッションを開く。
+  - id: check-up-to-date-01
+    group: 確認 > 手元が master の最新に揃っている
+    name: 確認のコマンド
+    body: |-
+      ```bash
+      git -C {clone した先} status -sb
+      ```
+  - id: check-up-to-date-02
+    group: 確認 > 手元が master の最新に揃っている
+    name: 確認の結果
+    body: |-
+      1 行目に `[behind` が出ない。
+  - id: rollback-01
+    group: 元に戻す
+    name: 元に戻す
+    body: |-
+      pull の直後に、取り込む前の commit へ戻す。
+
+      ```bash
+      git -C {clone した先} reset --hard ORIG_HEAD
+      ```
+
+      次に pull すると、戻した変更もまた取り込まれる。

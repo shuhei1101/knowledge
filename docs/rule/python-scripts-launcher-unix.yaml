@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-scripts-launcher-unix
+kind: rule
+name: sh ランチャー
+description: UNIX 系で Python スクリプトを起動する sh ランチャーの標準テンプレートと必須要素を定める。
+tags:
+  - name: scope:python
+  - name: topic:scripts
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      UNIX 系（Linux / macOS / WSL）で Python スクリプトを起動する `.sh` の規約。
+  - id: standard-template-01
+    group: 標準テンプレート
+    name: sh の標準テンプレート
+    body: |-
+      ```bash
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      cd "$(dirname "$0")"
+
+      if [ -f .venv/bin/activate ]; then
+          # shellcheck disable=SC1091
+          source .venv/bin/activate
+      fi
+
+      mkdir -p log
+      TS=$(date +%Y%m%d-%H%M%S)
+      LOG="log/script-${TS}.log"
+
+      python script.py "$@" 2>&1 | tee "$LOG"
+      EXIT_CODE=${PIPESTATUS[0]}
+
+      echo
+      echo "(log: $LOG)"
+      echo "(exit: $EXIT_CODE)"
+      exit "$EXIT_CODE"
+      ```
+  - id: required-elements-01
+    group: 必須要素
+    name: 必須要素の表
+    body: |-
+      | 要素                              | 理由                                                                                          |
+      | --------------------------------- | --------------------------------------------------------------------------------------------- |
+      | `#!/usr/bin/env bash`             | dash 環境を避けて bash 明示                                                                   |
+      | `set -euo pipefail`               | 失敗即停止・未定義変数検出・pipe 途中失敗を拾う（pipefail なしだと tee 成功で exit 0 になる） |
+      | `cd "$(dirname "$0")"`            | スクリプトの場所を基準に                                                                      |
+      | `"$@"`                            | クォート付き引数転送（`$@` / `$*` は空白入り引数で壊れる）                                    |
+      | `tee "$LOG"` + `${PIPESTATUS[0]}` | 画面 + ファイル同時出力、python 側の終了コード取得                                            |
+  - id: required-elements-02
+    group: 必須要素
+    name: uv プロジェクトの起動
+    body: |-
+      - uv プロジェクトなら `uv run python script.py "$@"` 推奨
+  - id: required-elements-03
+    group: 必須要素
+    name: 環境変数で上書き可能にする
+    body: |-
+      - HOST / PORT 等は `"${HOST:-127.0.0.1}"` で環境変数上書き可能に
+  - id: required-elements-04
+    group: 必須要素
+    name: 出力メッセージの言語
+    body: |-
+      - 出力メッセージは英語基本（UTF-8 標準なので日本語も可、プロジェクトで揃える）
+  - id: required-elements-05
+    group: 必須要素
+    name: 実行権限の付与
+    body: |-
+      - `chmod +x` を忘れずに（git は `git update-index --chmod=+x`）

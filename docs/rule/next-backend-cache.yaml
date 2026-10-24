@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-cache
+kind: rule
+name: Caching（Next.js 16）
+description: Next.js 16 の cacheComponents・use cache・cacheLife・cacheTag の使い方と、invalidate API の使い分けを定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      `cacheComponents: true` を有効化（PPR が標準動作: 静的部分はプリレンダ、`cookies()` / `headers()` / `<Suspense>` 内はリクエスト時レンダ + ストリーム）。
+  - id: use-cache-01
+    group: "\"use cache\" + cacheLife + cacheTag"
+    name: データ取得関数に use cache
+    body: |-
+      - データ取得関数の先頭に `"use cache"` を置き、`cacheLife` を併記する
+  - id: use-cache-02
+    group: "\"use cache\" + cacheLife + cacheTag"
+    name: cacheTag を付ける
+    body: |-
+      - invalidate の対象にするデータには `cacheTag` を付ける
+  - id: use-cache-03
+    group: "\"use cache\" + cacheLife + cacheTag"
+    name: cacheLife の参照
+    body: |-
+      - `cacheLife` のプロファイルは公式の `cacheLife` を参照する
+  - id: invalidate-api-01
+    group: invalidate API の使い分け
+    name: invalidate API の表
+    body: |-
+      | API | 挙動 | 用途 |
+      | --- | --- | --- |
+      | `revalidateTag(tag, profile)` | stale マーク → 次の閲覧者は古いデータを見つつ背後で再生成 | 遅延 OK な更新（一覧・カタログ）。第 2 引数必須（Next.js 16） |
+      | `updateTag(tag)` | 即時 expire + 同リクエスト内で再フェッチ（read-your-writes） | フォーム保存・設定変更（Server Action 内のみ） |
+      | `refresh()` | client router の RSC payload を更新（`router.refresh()` のサーバー用） | mutation 後に画面を最新化 |
+  - id: invalidate-api-02
+    group: invalidate API の使い分け
+    name: Route Handler からの即時削除
+    body: |-
+      `updateTag` が使えない Route Handler・Webhook から即時に削除するときは `revalidateTag(tag, { expire: 0 })`。
+
+      Server Action での典型: 自分が見る単体は `updateTag(`resource:${id}`)`、他人の一覧は `revalidateTag("resources", "max")`、最後に `refresh()`。
+  - id: decision-flow-01
+    group: 決定フロー
+    name: キャッシュの決定フロー
+    body: |-
+      ```
+      ユーザーごとに違うデータ? → キャッシュしない
+      どれくらい古くていい? → 即時=なし / 数分=minutes / 数時間=hours / 1ヶ月+=max
+      mutation 後に即時反映必要? → Yes: updateTag + refresh / No: revalidateTag(tag, "max")
+      ```
+  - id: decision-flow-02
+    group: 決定フロー
+    name: マスター系のキャッシュ
+    body: |-
+      マスター系（カテゴリ・アイコン等）は `cacheLife("max")` + 管理画面更新時に `revalidateTag`。

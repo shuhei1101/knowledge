@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-layout-patterns
+kind: rule
+name: レイアウトパターン
+description: 開発ツール画面の標準骨格であるサイドバー + メインの構成と、ヘッダー・サイドバー・メインの役割を定める。
+tags:
+  - name: scope:html
+  - name: topic:layout
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      開発ツール画面の標準骨格はサイドバー + メイン。
+  - id: layout-pattern-01
+    group: レイアウトパターン
+    name: ヘッダーの配置
+    body: |-
+      - ヘッダー 上部固定・フル幅。左にタイトル、右にグローバルアクション。
+  - id: layout-pattern-02
+    group: レイアウトパターン
+    name: サイドバーの配置
+    body: |-
+      - サイドバー 左固定・常時表示。セクション見出しでグルーピング。アクティブ項目を視覚的に区別。
+  - id: layout-pattern-03
+    group: レイアウトパターン
+    name: メインの配置
+    body: |-
+      - メイン 残り領域。
+  - id: layout-pattern-04
+    group: レイアウトパターン
+    name: PC とスマホの両対応
+    body: |-
+      PC とスマホの両対応を既定にする（スマホ幅の規則は `html/モバイル対応.md`）。

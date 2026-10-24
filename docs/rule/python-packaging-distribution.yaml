@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-packaging-distribution
+kind: rule
+name: 配布
+description: パッケージのビルド・公開、バージョニング、CLI エントリポイント、非 .py ファイルの同梱、自動公開を定める。
+tags:
+  - name: scope:python
+  - name: topic:packaging
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: distribution-01
+    group: 配布
+    name: uv build と uv publish
+    body: |-
+      - ビルドは `uv build`（`dist/` に sdist + wheel）、公開は `uv publish`（Test PyPI は `--publish-url`）
+  - id: distribution-02
+    group: 配布
+    name: SemVer でバージョン管理
+    body: |-
+      - バージョンは SemVer（PATCH=バグ修正 / MINOR=機能追加 / MAJOR=破壊的変更）。`0.x` の間は MINOR を破壊的変更扱いにできる
+  - id: distribution-03
+    group: 配布
+    name: CHANGELOG の維持
+    body: |-
+      - `CHANGELOG.md` を Keep a Changelog 形式で維持
+  - id: cli-entrypoint-01
+    group: CLI エントリポイント
+    name: project.scripts の登録
+    body: |-
+      - `[project.scripts]` に `mypkg = "mypkg.__main__:main"`
+  - id: cli-entrypoint-02
+    group: CLI エントリポイント
+    name: main は int を返す
+    body: |-
+      - `main() -> int` を返す関数、`__main__.py` で `sys.exit(main())`
+  - id: cli-entrypoint-03
+    group: CLI エントリポイント
+    name: サブコマンドは argparse
+    body: |-
+      - サブコマンドは argparse の `add_subparsers(dest="cmd", required=True)`
+  - id: non-py-files-01
+    group: 非 .py ファイルの同梱
+    name: 非 .py ファイルの同梱
+    body: |-
+      プロンプト / YAML 等は `[tool.hatch.build]` の `include` で指定。
+  - id: github-actions-publish-01
+    group: GitHub Actions 自動公開
+    name: GitHub Actions での自動公開
+    body: |-
+      `on: push: tags: ["v*"]` で `uv build` → `pypa/gh-action-pypi-publish`（`id-token: write` で trusted publishing）。`git tag v0.2.0 && git push --tags` で発火。

@@ -1,0 +1,114 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-naming
+kind: rule
+name: Next.js App Router — Naming Conventions
+description: ファイル・フォルダ・Screen・Layout・Card・hook・Zod schema の命名規約を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: file-folder-naming-01
+    group: File and folder naming
+    name: ファイルとフォルダの命名表
+    body: |-
+      <!-- table: data -->
+
+      | Target                    | Convention                                 | Example                                 |
+      | ------------------------- | ------------------------------------------ | --------------------------------------- |
+      | Folder                    | kebab-case                                 | `resources/`, `family-members/`         |
+      | Hook folder               | `hooks/`                                   | `hooks/`                                |
+      | Component folder          | `components/`                              | `components/`                           |
+      | List screen file          | PascalCase + `ListScreen` 接尾辞           | `ResourceListScreen.tsx`                |
+      | New screen file           | PascalCase + `NewScreen` 接尾辞            | `ResourceNewScreen.tsx`                 |
+      | View screen file          | PascalCase + `ViewScreen` 接尾辞           | `ResourceViewScreen.tsx`                |
+      | Edit screen file          | PascalCase + `EditScreen` 接尾辞           | `ResourceEditScreen.tsx`                |
+      | Layout component          | PascalCase + `Layout` 接尾辞               | `ResourceEditLayout.tsx`                |
+      | Sub-component             | PascalCase                                 | `ResourceCard.tsx`                      |
+      | Hook file                 | camelCase + `use` プレフィックス           | `useResource.ts`                        |
+      | Form schema file          | `form.ts`（小文字固定）                    | `form.ts`                               |
+      | Util / config / endpoints | camelCase                                  | `endpoints.ts`, `logger.ts`, `utils.ts` |
+      | Dynamic segment           | `[id]`, `[slug]`, `[childId]`              | `[id]/`                                 |
+      | Route Group               | `(name)` 小文字                            | `(authenticated)`, `(auth)`, `(shared)` |
+
+      <!-- /table -->
+  - id: screen-layout-card-01
+    group: Screen / Layout / Card
+    name: Screen・Layout・Card の命名表
+    body: |-
+      <!-- table: data -->
+
+      | 接尾辞             | 役割                               | When to use                                 |
+      | ------------------ | ---------------------------------- | ------------------------------------------- |
+      | `ListScreen`       | 一覧画面                           | `/{feature}/page.tsx` から render           |
+      | `NewScreen`        | 新規作成画面                       | `/{feature}/new/page.tsx` から render       |
+      | `ViewScreen`       | 読み取り画面                       | `/{feature}/[id]/page.tsx` から render      |
+      | `EditScreen`       | 編集画面                           | `/{feature}/[id]/edit/page.tsx` から render |
+      | `Layout`           | Screen 内で使う再利用シェル        | header + content + actions の構成体         |
+      | `Card`             | 一覧内の 1 アイテム                | `*ListScreen.tsx` の中で使用                |
+      | `Item`             | フィードの 1 エントリ              | infinite-scroll feed 内                     |
+      | `Settings`         | edit フォームのタブ                | `*EditScreen.tsx` 内のタブパネル            |
+      | `Dialog` / `Sheet` | shadcn/ui のモーダル系             | `ダイアログ.md` 参照                        |
+      | `Form`             | フォーム部分コンポーネント         | 入力グループの再利用ブロック                |
+      | `Provider`         | Context Provider                   | `app/(shared)/providers/` 配下              |
+      | `Wrapper`          | スタイリングシェル with `children` | `ScreenWrapper` 等                          |
+
+      <!-- /table -->
+  - id: hook-naming-01
+    group: Hook naming
+    name: hook の命名表
+    body: |-
+      <!-- table: data -->
+
+      | Pattern                | Purpose                       | Example                   |
+      | ---------------------- | ----------------------------- | ------------------------- |
+      | `use{Feature}`         | 単体読み取り                  | `useResource`             |
+      | `use{Feature}List`     | 一覧読み取り                  | `useResourceList`         |
+      | `use{Feature}View`     | View 専用フィールドがある場合 | `useResourceView`         |
+      | `use{Feature}Form`     | フォーム state + 初期ロード   | `useResourceForm`         |
+      | `useRegister{Feature}` | 作成 mutation                 | `useRegisterResource`     |
+      | `useUpdate{Feature}`   | 更新 mutation                 | `useUpdateResource`       |
+      | `useDelete{Feature}`   | 削除 mutation                 | `useDeleteResource`       |
+      | `use{Feature}UrlState` | URL クエリ state              | `useResourceListUrlState` |
+
+      <!-- /table -->
+  - id: hook-naming-02
+    group: Hook naming
+    name: hook のルール
+    body: |-
+      ルール:
+  - id: hook-naming-03
+    group: Hook naming
+    name: 1 hook 1 ファイル
+    body: |-
+      - 1 hook = 1 file、ファイル名 = export 名
+  - id: hook-naming-04
+    group: Hook naming
+    name: 1 動詞 1 ファイル
+    body: |-
+      - 1 動詞（Register / Update / Delete）= 1 ファイル
+  - id: zod-schema-naming-01
+    group: Zod schema naming
+    name: Zod schema の命名表
+    body: |-
+      <!-- table: data -->
+
+      | Pattern                   | Example                     | Notes                                   |
+      | ------------------------- | --------------------------- | --------------------------------------- |
+      | `{Feature}FormSchema`     | `ResourceFormSchema`        | Zod object                              |
+      | `{Feature}FormType`       | `ResourceFormType`          | `z.infer<>` で導出                      |
+      | `{Feature}FilterSchema`   | `ResourceFilterSchema`      | フィルタ用 Zod                          |
+      | `{Feature}Filter` (type)  | `ResourceFilter`            | 同上の型                                |
+      | `{Feature}RequestSchema`  | `PostResourceRequestSchema` | API リクエストボディ用（`route.ts` 内） |
+      | `{Feature}Request` (type) | `PostResourceRequest`       | 同上の型                                |
+
+      <!-- /table -->
+  - id: zod-schema-naming-02
+    group: Zod schema naming
+    name: Schema と Scheme
+    body: |-
+      新規コードは `Schema`（`Scheme` ではない）を使う。既存コードの `Scheme` は触る際にリネーム。

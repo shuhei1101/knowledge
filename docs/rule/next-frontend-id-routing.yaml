@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-id-routing
+kind: rule
+name: "[id]/ — レコード単位のルーティング"
+description: レコード単位の [id]/ ルーティングの構成、権限ガード、View がない画面の扱いを定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: id-routing-01
+    group: "[id]/ — レコード単位のルーティング"
+    name: View と Edit の配置
+    body: |-
+      - `[id]/page.tsx` が View 画面そのもの、編集は `[id]/edit/page.tsx`
+  - id: id-routing-02
+    group: "[id]/ — レコード単位のルーティング"
+    name: フォルダ構成の参照
+    body: |-
+      - フォルダ構成は `frontend/フィーチャーフォルダ.md`
+  - id: id-routing-03
+    group: "[id]/ — レコード単位のルーティング"
+    name: View 専用フック
+    body: |-
+      - View 専用フィールド（`viewCount` 等）が要るときだけ View 専用フックを別途作る（共通に混ぜない）
+  - id: permission-guard-01
+    group: 権限ガード
+    name: 権限ガードの前提
+    body: |-
+      編集権限なしで `/edit` 直アクセスされた場合:
+  - id: permission-guard-02
+    group: 権限ガード
+    name: Edit の page で canEdit を確認
+    body: |-
+      - 推奨: Edit の page.tsx で `fetchResource` の `canEdit` を見て `redirect(RESOURCE_URL.view(id))`
+  - id: permission-guard-03
+    group: 権限ガード
+    name: 軽量チェックは proxy.ts
+    body: |-
+      - 軽量チェックなら proxy.ts でブロック（`backend/プロキシ.md`）
+  - id: no-view-screen-01
+    group: View がない画面
+    name: View がない画面
+    body: |-
+      設定画面など Edit のみのフィーチャは `settings/page.tsx` に直接 EditScreen を render する（`[id]/` パターンに無理に当てはめない）。

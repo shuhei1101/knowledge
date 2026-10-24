@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-testing-pytest
+kind: rule
+name: pytest 規約
+description: pytest のテストの命名・fixture・parametrize・例外の検証・FastAPI ルートのテスト・マーカーの書き方を定める。
+tags:
+  - name: scope:python
+  - name: topic:testing
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      設定値（testpaths / asyncio_mode / addopts / markers）は `packaging/pyproject設定.md` の `[tool.pytest.ini_options]` を参照。
+  - id: naming-01
+    group: 命名
+    name: テストファイルと関数の命名
+    body: |-
+      - ファイル `test_*.py`、関数 `test_*()`。クラスは使わず関数で書く
+  - id: naming-02
+    group: 命名
+    name: 単体テストの命名
+    body: |-
+      - 単体テストは `test_{関数名}_when_{条件}`。
+        条件分岐のない唯一のケースは `test_{関数名}` のみ。
+        先頭が `_` の関数は `_` を外す（例: `_get_client` → `test_get_client_when_settings_missing`）
+  - id: naming-03
+    group: 命名
+    name: 期待値を名前に入れない
+    body: |-
+      - 期待値（returns_x / raises_y 等）は名前に入れない。
+        期待値が変わるたびに関数名まで変わるため、期待値は docstring とアサートに書く
+  - id: naming-04
+    group: 命名
+    name: 結合・E2E の命名
+    body: |-
+      - 結合 / E2E はフロー・シナリオ見出しと機械対応させる。
+        `正常系` → `test_normal` / `正常系（{条件}）` → `test_normal_when_{条件}` / `異常系（{条件}）` → `test_error_when_{条件}`
+        `{条件}` は英訳（ASCII）で書く（見出しは日本語のまま）。
+        見出しを変えたら、対応するテスト関数名も揃える
+  - id: naming-05
+    group: 命名
+    name: 外部疎通テストの命名
+    body: |-
+      - 外部疎通は `test_ext_{関数名}_when_{パラメータ値}`。
+        バリエーションが 1 つだけなら `test_ext_{関数名}` のみ
+  - id: fixtures-01
+    group: fixtures
+    name: 共通 fixture の置き場所
+    body: |-
+      - 共通 fixture は `conftest.py` に置く
+  - id: fixtures-02
+    group: fixtures
+    name: テスト用 Settings の生成
+    body: |-
+      - テスト用 `Settings` は fixture で env を上書きして生成
+  - id: fixtures-03
+    group: fixtures
+    name: 時刻の固定
+    body: |-
+      - 時刻固定は `NowFn` に固定時刻関数を渡す（`testing/モック.md`）
+  - id: fixtures-04
+    group: fixtures
+    name: Mock 関数の fixture 化
+    body: |-
+      - Mock 関数（成功 / rate-limited 等）も fixture 化して注入
+  - id: parametrize-01
+    group: parametrize
+    name: parametrize のケース名
+    body: |-
+      複数パターンは `@pytest.mark.parametrize`、ケース名は `pytest.param(..., id="empty")` で明示。
+  - id: exception-assertion-01
+    group: 例外の検証
+    name: pytest.raises の絞り込み
+    body: |-
+      `pytest.raises` は例外の型を絞り、`match` でメッセージも確かめる。
+      ブロックの中には例外を起こす 1 文だけを置く。
+  - id: fastapi-route-01
+    group: FastAPI ルート
+    name: FastAPI ルートのテスト
+    body: |-
+      `build_fastapi()` → `app.state.handlers` にテスト用 Handlers（Mock 注入済み）をセット → `TestClient` で叩く。
+  - id: marker-01
+    group: マーカー
+    name: マーカーの付け方
+    body: |-
+      - ファイル全体は `pytestmark = pytest.mark.external`、関数単位は `@pytest.mark.slow` 等
+  - id: marker-02
+    group: マーカー
+    name: マーカーによる選択実行
+    body: |-
+      - 選択実行は `pytest -m "not external"`

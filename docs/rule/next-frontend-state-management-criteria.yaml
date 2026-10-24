@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-state-management-criteria
+kind: rule
+name: State の置き場所
+description: State をどこに置くかの決定フローと用途別の早見表を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: decision-flow-01
+    group: 決定フロー
+    name: state の決定フロー
+    body: |-
+      ```
+      サーバーから来るデータ？ → TanStack Query（Server Component で初期取得）
+      URL に保持したい？ → URL クエリ（nuqs）
+      複数コンポーネントで共有？ → Context（更新少）/ Zustand（頻繁更新・selector 必要）
+      prop drilling 3+ レベル？ → Context または hook 抽出
+      それ以外 → useState
+      ```
+  - id: usage-cheatsheet-01
+    group: 用途別早見表
+    name: 用途別の早見表
+    body: |-
+      <!-- table: data -->
+
+      | 状態 | 置き場所 |
+      |---|---|
+      | 取得データ（一覧・詳細） | TanStack Query |
+      | フィルタ / ソート / ページ / タブ | URL クエリ |
+      | Modal 開閉（deep link 不要） | useState |
+      | Modal 開閉（deep link したい） | URL クエリ |
+      | Sidebar 開閉（永続） | Zustand / Context |
+      | 編集中のフォーム値 | react-hook-form |
+      | 確認ダイアログ | `useConfirmDialog`（Zustand） |
+      | Toast | sonner |
+
+      <!-- /table -->

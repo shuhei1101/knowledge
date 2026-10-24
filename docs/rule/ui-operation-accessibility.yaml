@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: ui-operation-accessibility
+kind: rule
+name: 操作とアクセシビリティ
+description: キーボード・支援技術・色覚の違いによらず操作を完了できるようにする決まりを定める。
+tags:
+  - name: scope:ui
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      キーボード・支援技術・色覚の違いによらず操作を完了できるようにする。
+      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、W = WCAG 2.2（リンクは `## 出典`）。
+  - id: operation-accessibility-01
+    group: 操作とアクセシビリティ
+    name: 操作とアクセシビリティの決まり
+    body: |-
+      <!-- table: data -->
+
+      | 要素 | 出典 |
+      | --- | --- |
+      | アイコンだけのボタンには読み上げ用の名前を付ける。飾りのアイコンは読み上げから外す | V |
+      | フォーカスの表示を非表示にしない。固定ヘッダーでフォーカス中の要素を隠さない | V |
+      | 主な操作をキーボードだけで完了できる。重なる画面はフォーカスを閉じ込め、閉じたら元の位置へ戻す | V / I |
+      | 色だけで意味を伝えない。コントラストは本文 4.5:1、大きな文字と部品・フォーカス表示は 3:1 以上 | I |
+      | 見出しの階層を飛ばさない。画面の拡大を禁止しない。動きを減らす設定に従う | V / I |
+      | 非同期で変わる通知や検証結果は、支援技術にも伝える | V |
+      | 押す部品は 24 x 24 CSS px 以上にする。小さい部品は、周りの押す部品との間を空ける | W |
+
+      <!-- /table -->
+  - id: sources-01
+    group: 出典
+    name: "出典 I: impeccable"
+    body: |-
+      - I: [pbakaus/impeccable](https://github.com/pbakaus/impeccable)
+  - id: sources-02
+    group: 出典
+    name: "出典 V: Web Interface Guidelines"
+    body: |-
+      - V: [Web Interface Guidelines](https://vercel.com/design/guidelines)
+  - id: sources-03
+    group: 出典
+    name: "出典 W: Target Size (Minimum)"
+    body: |-
+      - W: [Target Size (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html)

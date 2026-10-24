@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-autosave
+kind: rule
+name: Autosave パターン
+description: useAutosave による自動保存のステータス・debounce・retry・離脱検知のルールを定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: use-autosave-01
+    group: useAutosave
+    name: useAutosave の呼び出し例
+    body: |-
+      ```ts
+      const { status, lastSavedAt, retry } = useAutosave({ values, save, debounceMs })
+      ```
+  - id: use-autosave-02
+    group: useAutosave
+    name: status の種類
+    body: |-
+      - `status`: `"idle" | "saving" | "saved" | "error"`
+  - id: use-autosave-03
+    group: useAutosave
+    name: debounce 保存
+    body: |-
+      - 値変更後 `debounceMs`（デフォルト 1000ms）で debounce 保存
+  - id: use-autosave-04
+    group: useAutosave
+    name: 同じ値は保存しない
+    body: |-
+      - 前回保存値と同じなら保存しない
+  - id: use-autosave-05
+    group: useAutosave
+    name: 古いリクエストの結果は無視
+    body: |-
+      - 古いリクエストの結果は無視（inflight ref で判定）
+  - id: use-autosave-06
+    group: useAutosave
+    name: online で自動 retry
+    body: |-
+      - online イベントで error 状態なら自動 retry
+  - id: use-autosave-07
+    group: useAutosave
+    name: isValid で保存対象を絞る
+    body: |-
+      - `isValid` で保存対象を絞れる
+  - id: rules-01
+    group: ルール
+    name: refresh は呼ばない
+    body: |-
+      - Server Action の `refresh()` は呼ばない
+  - id: rules-02
+    group: ルール
+    name: 離脱検知は error 状態のみ
+    body: |-
+      - 離脱検知（`useBeforeUnload`）は error 状態のみ
+  - id: rules-03
+    group: ルール
+    name: form.watch と onChange
+    body: |-
+      - `form.watch()` を `values` に渡す、`mode: "onChange"` を忘れずに

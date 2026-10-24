@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-url-state
+kind: rule
+name: URL-Based Screen State — 原則
+description: 画面で見ているものに影響する state を URL クエリで持つ原則と、読み取り・書き込み・検証・タブ連携を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      ユーザーが画面で見ているものに影響する state（タブ・フィルタ・ソート・ページ・選択中 ID）は URL クエリに置く。シェア可能・戻る / 進むが正しく動く・リフレッシュ復元・deep link が機能する。
+
+      URL に置く / 置かないの基準と hook 実装（nuqs / 自前）は `frontend/useUrlStateパターン.md`。
+  - id: reading-01
+    group: 読み取り
+    name: Server Component での読み取り
+    body: |-
+      - Server Component: `const sp = await props.searchParams`
+  - id: reading-02
+    group: 読み取り
+    name: Client Component での読み取り
+    body: |-
+      - Client Component: `useSearchParams()`
+  - id: reading-03
+    group: 読み取り
+    name: 配列の読み取り
+    body: |-
+      - 配列は `searchParams.getAll("tag")`
+  - id: writing-01
+    group: 書き込み
+    name: URLSearchParams での書き込み
+    body: |-
+      - `URLSearchParams` を組み立てて `router.push(`${pathname}?${params}`)`
+  - id: writing-02
+    group: 書き込み
+    name: null と空文字の扱い
+    body: |-
+      - `null` / 空文字はキーを delete、配列は delete してから append
+  - id: writing-03
+    group: 書き込み
+    name: hook 経由でアクセス
+    body: |-
+      - Screen は hook 経由でアクセスし `useRouter` を直接触らない
+  - id: validation-01
+    group: バリデーション
+    name: Zod で検証
+    body: |-
+      URL クエリは外部入力なので Zod で parse し、不正な値は既定値に落とす。
+  - id: tab-integration-01
+    group: Tab 連携
+    name: Tabs との連携
+    body: |-
+      shadcn `<Tabs>` の `value` / `onValueChange` に URL state を渡す。

@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-auth-schema
+kind: rule
+name: drizzle/schema.ts — 認証関連テーブル
+description: Better Auth が要求する認証関連テーブルの定義と、ID・リレーション・タイムスタンプの決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: drizzle-schema-auth-01
+    group: drizzle/schema.ts — 認証関連テーブル
+    name: Better Auth の 4 テーブル
+    body: |-
+      - Better Auth が要求する 4 テーブル（user / session / account / verification）+ アプリ固有の profile。
+  - id: drizzle-schema-auth-02
+    group: drizzle/schema.ts — 認証関連テーブル
+    name: onDelete は cascade
+    body: |-
+      - `onDelete: "cascade"`: user 削除で session / account も削除
+  - id: drizzle-schema-auth-03
+    group: drizzle/schema.ts — 認証関連テーブル
+    name: アプリ固有データは profiles に分離
+    body: |-
+      - アプリ固有データは `profiles` テーブルに分離（user テーブルを汚さない）
+  - id: drizzle-schema-auth-04
+    group: drizzle/schema.ts — 認証関連テーブル
+    name: relations で双方向に定義
+    body: |-
+      - `relations()` で双方向リレーション定義
+  - id: drizzle-schema-auth-05
+    group: drizzle/schema.ts — 認証関連テーブル
+    name: ID は text 型
+    body: |-
+      - ID は `text` 型（Better Auth デフォルト、変更しない）
+  - id: drizzle-schema-auth-06
+    group: drizzle/schema.ts — 認証関連テーブル
+    name: timestamps は共通ヘルパー
+    body: |-
+      - timestamps は共通ヘルパー（`DBタイムスタンプ.md`）

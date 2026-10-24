@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-layout-screen-template
+kind: rule
+name: 画面テンプレート
+description: 画面型ごとの標準構成を定める。
+tags:
+  - name: scope:html
+  - name: topic:layout
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      画面型ごとの標準構成。関連画面はドメイン配下にまとめる（`pages/{domain}/{list,view,edit}`）。
+  - id: screen-template-01
+    group: 画面テンプレート
+    name: 画面型ごとの構成表
+    body: |-
+      | 画面型 | 構成の要点 |
+      | --- | --- |
+      | 一覧 | タイトル + 主アクション（新規作成）右上、テーブル / カード一覧 |
+      | 詳細 | タイトル + 編集アクション、読み取り表示 |
+      | 設定 | セクション分け、保存アクションの位置を固定 |

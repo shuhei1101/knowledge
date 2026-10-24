@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-folder-structure
+kind: rule
+name: フォルダ構成
+description: frontend 配下のフォルダ構成を示す。
+tags:
+  - name: scope:html
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      `frontend/` 配下は以下の構成に従う。
+
+      ```
+      frontend/
+      ├── shared/                     全画面横断の共有資産（言語混在 OK・拡張子で区別）
+      │   ├── css/                    コンポーネントに属さない基盤スタイル
+      │   │   ├── layers.css          @layer 順序宣言 + @import で集約（エントリポイント）
+      │   │   ├── reset.css
+      │   │   ├── tokens.css          デザイントークン（:root 変数・@property）
+      │   │   ├── base.css            要素デフォルト・タイポグラフィ
+      │   │   ├── layout.css          ページ骨格・グリッド
+      │   │   └── utilities.css       単一目的ユーティリティ・バッジ等
+      │   ├── components/             共通 Custom Elements（.ts + .css をセットで配置）
+      │   │   ├── app-shell.ts
+      │   │   ├── app-shell.css
+      │   │   ├── button.css
+      │   │   └── ...
+      │   ├── core/                   定数・環境・ルーティング等のコアユーティリティ
+      │   │   ├── env.ts
+      │   │   └── constants.ts
+      │   ├── lib/                    汎用ユーティリティ（fmt・logger・WebSocket 等）
+      │   │   ├── fmt.ts
+      │   │   ├── logger.ts
+      │   │   └── ws/
+      │   │       └── WsClient.ts
+      │   ├── api/                    fetch ラッパー + 生成型（.d.ts）
+      │   │   └── apiFetch.ts
+      │   └── vendor/                 外部依存の vendoring（mermaid 等）
+      ├── pages/                      画面（ドメイン別に階層化）
+      │   └── {domain}/               ドメインフォルダ
+      │       ├── _shared/            このドメイン内だけで使う部品（_ 接頭辞）
+      │       └── {screen}/           画面フォルダ
+      │           ├── index.html      画面テンプレート（Jinja2 で _layout.html を継承）
+      │           ├── screen.ts       画面ロジック（著作。tsc が screen.js を生成）
+      │           └── screen.css      画面固有スタイル（あれば）
+      └── templates/                  Jinja2 共通 partial
+          └── _layout.html            head・importmap・app-shell の骨格
+      ```

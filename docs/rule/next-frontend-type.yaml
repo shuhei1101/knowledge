@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-type
+kind: rule
+name: 型定義の置き場所と表現
+description: 型定義の置き場所と、Zod・Drizzle・API・Next.js 16 から型を導出する決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: placement-01
+    group: 置き場所
+    name: 型の置き場所の表
+    body: |-
+      <!-- table: data -->
+
+      | 型 | Location |
+      | --- | --- |
+      | フォームスキーマ + 型 | `{feature}/form.ts` |
+      | 共通スキーマプリミティブ | `app/(shared)/schema.ts` |
+      | API リクエスト型 | `app/api/v{N}/{resource}/route.ts`（export） |
+      | API クエリ / 読み取り戻り値型 | `app/api/v{N}/{resource}/query.ts` |
+      | Server Action 入出力型 | `form.ts` の型を再利用 |
+      | DB row 型 | `drizzle/schema.ts`（`$inferSelect` / `$inferInsert`） |
+      | Component Props | コンポーネントファイル内（export 不要） |
+      | Hook の引数 / 戻り値型 | hook ファイル内 |
+      | 複数フィーチャ共通の domain 型 | `app/(shared)/types.ts`（3+ ファイルで使うもの） |
+
+      <!-- /table -->
+  - id: placement-02
+    group: 置き場所
+    name: グローバル types.d.ts は使わない
+    body: |-
+      グローバル `types.d.ts` は使わない。型は所有するコードの近くに置く。
+  - id: zod-type-inference-01
+    group: Zod schema → 型推論
+    name: Zod schema からの型推論
+    body: |-
+      - 型は必ず `z.infer<>` で導出
+  - id: drizzle-type-derivation-01
+    group: Drizzle 型の導出
+    name: Insert 型の導出
+    body: |-
+      - Insert は自動管理カラムを `Omit<..., "id" | "createdAt" | "updatedAt">`
+  - id: drizzle-type-derivation-02
+    group: Drizzle 型の導出
+    name: Update 型の導出
+    body: |-
+      - Update は `Partial<Insert>` から不変フィールドを Omit
+  - id: drizzle-type-derivation-03
+    group: Drizzle 型の導出
+    name: 複合戻り値の型
+    body: |-
+      - 複合戻り値は `{ resource, children, tags }` のような object 型を定義
+  - id: api-request-response-type-01
+    group: API リクエスト / レスポンス型
+    name: リクエスト schema の置き場所
+    body: |-
+      - リクエスト schema は route.ts で定義し export、client.ts は `import type` で参照
+  - id: api-request-response-type-02
+    group: API リクエスト / レスポンス型
+    name: レスポンス型の導出
+    body: |-
+      - レスポンス型は `Awaited<ReturnType<typeof fetchResource>>` で query.ts の戻り値から導出
+  - id: next16-type-helper-01
+    group: Next.js 16 型ヘルパー
+    name: Next.js 16 の型ヘルパー
+    body: |-
+      `params` / `searchParams` は Promise 化済み。`next typegen` 生成の `PageProps<'/path'>` / `LayoutProps<...>` / `RouteContext<'/api/...'>` を使い、`await props.params` で取り出す。

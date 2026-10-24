@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-autosave-indicator
+kind: rule
+name: "`<AutosaveIndicator>` — 自動保存状態表示"
+description: 自動保存の状態を表示する AutosaveIndicator の Props と 4 状態を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: autosave-indicator-01
+    group: "`<AutosaveIndicator>` — 自動保存状態表示"
+    name: Props
+    body: |-
+      - Props: `status`, `lastSavedAt: Date | null`, `onRetry: () => void`
+  - id: autosave-indicator-02
+    group: "`<AutosaveIndicator>` — 自動保存状態表示"
+    name: 4 状態の表示
+    body: |-
+      - 4 状態: `idle`（lastSavedAt があれば「N 分前に保存」）/ `saving` / `saved` / `error`（retry ボタン）
+  - id: autosave-indicator-03
+    group: "`<AutosaveIndicator>` — 自動保存状態表示"
+    name: saved から idle への遷移
+    body: |-
+      - `saved` → `idle` への遷移は hook 側（数秒後）

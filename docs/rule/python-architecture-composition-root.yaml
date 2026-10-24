@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-architecture-composition-root
+kind: rule
+name: composition root — 関数の配線
+description: main.py で関数の依存を配線する composition root の基本パターンと、FastAPI・CLI・テストでの扱いを定める。
+tags:
+  - name: scope:python
+  - name: topic:architecture
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      `main.py` で関数依存を組み立てる。クラスベース DI コンテナは使わない。
+  - id: basic-pattern-01
+    group: 基本パターン
+    name: Handlers の組み立て例
+    body: |-
+      ```python
+      @dataclass(frozen=True, slots=True)
+      class Handlers:
+          """配線済み関数の束。"""
+          generate_response: Callable[[str], Awaitable[str]]
+          create_user: Callable[[CreateUserInput], User]
+
+      def build_handlers(settings: Settings) -> Handlers:
+          chat = partial(chat_with_openai, api_key=settings.openai_api_key.get_secret_value())
+          return Handlers(
+              generate_response=partial(generate_response, chat=chat),
+              create_user=partial(create_user, save=save_user, generate_id=generate_uuid_v7),
+          )
+      ```
+  - id: basic-pattern-02
+    group: 基本パターン
+    name: Handlers は dataclass
+    body: |-
+      - `Handlers` は dict でなく dataclass にする
+  - id: basic-pattern-03
+    group: 基本パターン
+    name: 肥大化したら分割
+    body: |-
+      - 肥大化したら `_build_llm_handlers(settings)` 等カテゴリ別に分割（必要になってからで OK）
+  - id: fastapi-combination-01
+    group: FastAPI との組み合わせ
+    name: FastAPI との組み合わせ
+    body: |-
+      `lifespan` で `app.state.handlers = build_handlers(settings)` をセットする（`fastapi/アプリケーション.md`）。
+  - id: cli-combination-01
+    group: CLI との組み合わせ
+    name: CLI との組み合わせ
+    body: |-
+      `__main__.py` で argparse → `Settings()` → `build_handlers` → 実行 → `sys.exit(main())`。
+  - id: test-replacement-01
+    group: テストでの差し替え
+    name: テストでの差し替え
+    body: |-
+      `build_test_handlers()` を conftest に作り、mock 関数を partial で注入。build 系は外部依存をすべて引数で受けるテスト前提の設計にする。
+  - id: library-classes-01
+    group: ライブラリ標準クラスはそのまま使う
+    name: ライブラリ標準クラスはそのまま
+    body: |-
+      FastAPI（`APIRouter` / Middleware）、Pydantic（`BaseModel` / `BaseSettings` 継承）、typer / click の Command、asyncio の Task / Queue 等、公式がクラスを推奨するものは無理に関数化しない。

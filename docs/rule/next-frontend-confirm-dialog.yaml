@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-confirm-dialog
+kind: rule
+name: "`useConfirmDialog()` — 確認ダイアログ"
+description: window.confirm の代替である useConfirmDialog の使い方と Options を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      `window.confirm` の代替。`await confirm({ ... })` で `boolean` を返す。
+  - id: use-confirm-dialog-01
+    group: "`useConfirmDialog()` — 確認ダイアログ"
+    name: ConfirmDialogProvider で wrap
+    body: |-
+      - `app/layout.tsx` で `<ConfirmDialogProvider>` wrap が必要
+  - id: use-confirm-dialog-02
+    group: "`useConfirmDialog()` — 確認ダイアログ"
+    name: 削除は確認必須
+    body: |-
+      - 削除は確認必須、登録・更新は不要
+  - id: use-confirm-dialog-03
+    group: "`useConfirmDialog()` — 確認ダイアログ"
+    name: 破壊的アクションは destructive
+    body: |-
+      - 破壊的アクションは `variant: "destructive"`
+  - id: options-01
+    group: Options
+    name: Options の項目
+    body: |-
+      `title`, `description?`, `confirmText?`, `cancelText?`, `variant?: "default" | "destructive"`

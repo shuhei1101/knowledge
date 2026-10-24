@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-db-optimistic-lock
+kind: rule
+name: Drizzle — 楽観的ロック
+description: updatedAt 比較による楽観的ロックの標準パターンと、API ごとの比較方法を定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: drizzle-optimistic-lock-01
+    group: Drizzle — 楽観的ロック
+    name: updatedAt 比較で検知
+    body: |-
+      - `updatedAt` 比較で「他のユーザーによる先行更新」を検知する標準パターン。
+        - 全 update に `updatedAt` 比較必須（楽観ロックなしの update 禁止）
+        - `WHERE id = ? AND updatedAt = ?` の 両方一致 が条件
+  - id: drizzle-optimistic-lock-02
+    group: Drizzle — 楽観的ロック
+    name: 不一致なら VersionConflictError
+    body: |-
+      - 一致しない（`returning()` が空）→ `VersionConflictError` を投げる
+  - id: drizzle-optimistic-lock-03
+    group: Drizzle — 楽観的ロック
+    name: 更新時に updatedAt を書き換える
+    body: |-
+      - 更新時に `updatedAt` を 新しい時刻に書き換える（次の更新の基準に）
+  - id: drizzle-optimistic-lock-04
+    group: Drizzle — 楽観的ロック
+    name: string のまま比較
+    body: |-
+      - `mode: "string"` の値をそのまま比較に使う（`Date` に変換すると精度が落ちる）
+  - id: drizzle-optimistic-lock-05
+    group: Drizzle — 楽観的ロック
+    name: 例外の扱い
+    body: |-
+      - 例外は `VersionConflictError` をそのまま投げ、それ以外を `DatabaseError` で包む
+  - id: drizzle-optimistic-lock-06
+    group: Drizzle — 楽観的ロック
+    name: updatedAt の精度
+    body: |-
+      - `updatedAt` の精度（Postgres はマイクロ秒、JS の `Date` はミリ秒）で比較が食い違う場合は、`version: integer` 列を併用して比べる
+  - id: drizzle-optimistic-lock-07
+    group: Drizzle — 楽観的ロック
+    name: 外部公開 API は ETag
+    body: |-
+      - 外部公開 API は `ETag` ヘッダ + `If-Match` で比べる（不一致は 412、`If-Match` が無い更新は 428）
+  - id: drizzle-optimistic-lock-08
+    group: Drizzle — 楽観的ロック
+    name: internal API は body に含める
+    body: |-
+      - internal API は `updatedAt` を JSON body に含めて送信する

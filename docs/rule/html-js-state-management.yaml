@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-js-state-management
+kind: rule
+name: 状態管理
+description: リアクティブ更新を必須にしない状態管理の方針と、画面切替の状態を URL に反映する決まりを定める。
+tags:
+  - name: scope:html
+  - name: topic:js
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: state-management-01
+    group: 状態管理
+    name: リアクティブ更新を必須にしない
+    body: |-
+      - リアクティブ更新を必須にしない。
+        - 実装が複雑になるなら素直な手続き的更新（イベントごとに再取得・再描画）でよい。
+        - 判断基準はメンテナンス性。
+  - id: state-management-02
+    group: 状態管理
+    name: 画面切替の状態は URL に反映
+    body: |-
+      - 画面切替の状態（タブ・選択 ID・フィルタ等）は URL クエリに反映するのを推奨する。
+  - id: state-management-03
+    group: 状態管理
+    name: Proxy と EventTarget の使いどころ
+    body: |-
+      - 凝った仕組みが要る時だけ薄い Proxy + EventTarget を使う。
+        - 深いネスト・Map/Set・private field を Proxy で包まない。
+        - 仕組みが膨らんだら設計を見直す合図。

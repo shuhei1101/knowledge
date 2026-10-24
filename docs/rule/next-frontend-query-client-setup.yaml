@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-query-client-setup
+kind: rule
+name: QueryProvider — TanStack Query 設定
+description: TanStack Query の QueryProvider と defaultOptions の設定を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: query-provider-01
+    group: QueryProvider — TanStack Query 設定
+    name: getQueryClient で作る
+    body: |-
+      - QueryClient は `getQueryClient()` で作る（サーバーはリクエストごとに新規、ブラウザは 1 つを使い回す）。`useState` で初期化しない
+  - id: query-provider-02
+    group: QueryProvider — TanStack Query 設定
+    name: layout.tsx で wrap
+    body: |-
+      - `app/layout.tsx` で wrap
+  - id: default-options-01
+    group: defaultOptions
+    name: defaultOptions の表
+    body: |-
+      | Option | 値 | 理由 |
+      |---|---|---|
+      | `staleTime` | `60 * 1000` | SSR 直後の即時再取得を避ける |
+      | `refetchOnWindowFocus` | `false` | |
+      | `retry` | `false` | 即エラー表示（個別 hook で override 可） |

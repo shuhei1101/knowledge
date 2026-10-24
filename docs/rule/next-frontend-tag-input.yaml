@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-tag-input
+kind: rule
+name: "`<TagInput>` — IME 対応タグ入力"
+description: IME に対応したタグ入力 TagInput の挙動と Props、Controller での使い方を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: tag-input-01
+    group: "`<TagInput>` — IME 対応タグ入力"
+    name: Enter と onBlur で確定
+    body: |-
+      - Enter でタグ確定、onBlur でも確定（モバイル対応）
+  - id: tag-input-02
+    group: "`<TagInput>` — IME 対応タグ入力"
+    name: IME 入力中の Enter を無視
+    body: |-
+      - IME 入力中の Enter は無視（`composing` フラグ）
+  - id: tag-input-03
+    group: "`<TagInput>` — IME 対応タグ入力"
+    name: 重複と空文字は追加しない
+    body: |-
+      - 重複・空文字（trim後）は追加しない
+  - id: tag-input-04
+    group: "`<TagInput>` — IME 対応タグ入力"
+    name: Props
+    body: |-
+      - Props: `value: string[]`, `onChange`, `placeholder?`
+  - id: tag-input-05
+    group: "`<TagInput>` — IME 対応タグ入力"
+    name: Controller の render での渡し方
+    body: |-
+      - `<Controller>` の `render` では `value={field.value} onChange={field.onChange}`

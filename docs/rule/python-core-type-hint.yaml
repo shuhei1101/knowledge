@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-core-type-hint
+kind: rule
+name: 型ヒント
+description: 型ヒントを PEP 695 で記載する決まりと、NewType と type 文の使い分け、使う typing 機能を定める。
+tags:
+  - name: scope:python
+  - name: topic:core
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      Python 3.12+ 必須。PEP 695 で書く。
+  - id: basic-01
+    group: 基本
+    name: future annotations
+    body: |-
+      - `from __future__ import annotations` を全ファイル冒頭に置く
+  - id: basic-02
+    group: 基本
+    name: 型注釈は必須
+    body: |-
+      - 関数 / メソッドの引数と返り値には必ず型注釈。クラス属性 / モジュール変数にも
+  - id: basic-03
+    group: 基本
+    name: Any は最終手段
+    body: |-
+      - `Any` は最終手段（理由をコメントで残す）
+  - id: pep695-01
+    group: PEP 695
+    name: type 文による型エイリアス
+    body: |-
+      - 型エイリアスは `type X = ...` 文（`TypeAlias` import は使わない）
+        - 識別子型: `type UserId = str`
+        - 関数型: `type AsyncChatFn = Callable[[ChatMessages], Awaitable[str]]`
+  - id: pep695-02
+    group: PEP 695
+    name: ジェネリクスの記法
+    body: |-
+      - ジェネリクスは `def first[T](xs: list[T]) -> T | None` / `class Pair[K, V]` 形式
+  - id: pep695-03
+    group: PEP 695
+    name: 制約付きジェネリクス
+    body: |-
+      - 制約付きは `def parse[T: BaseModel](raw: str, schema: type[T]) -> T`
+  - id: newtype-vs-type-01
+    group: NewType vs type 文
+    name: NewType と type 文の比較表
+    body: |-
+      | 用途                                   | 推奨                     |
+      | -------------------------------------- | ------------------------ |
+      | 読み手のための別名（`str` と区別されない） | `type UserId = str`      |
+      | 型チェッカーで厳密に分離（明示キャスト必須） | `NewType("UserId", str)` |
+  - id: newtype-vs-type-02
+    group: NewType vs type 文
+    name: どちらかに統一する
+    body: |-
+      プロジェクト内でどちらかに統一する（混在しない）。
+  - id: typing-features-01
+    group: 使うべき typing 機能
+    name: typing 機能の使いどき表
+    body: |-
+      | 機能                       | 使いどき                                                 |
+      | -------------------------- | -------------------------------------------------------- |
+      | `Self`                     | 自分自身の型を返すメソッド                               |
+      | `@override`                | スーパークラスのメソッド上書き（タイポ検出）             |
+      | `Annotated`                | Pydantic Field / FastAPI Depends・Query のメタデータ付与 |
+      | `TYPE_CHECKING`            | 重いモジュールの型のみ import / 循環 import 回避         |
+      | `Literal` + `assert_never` | match 文の網羅性チェック（値追加を型エラーで検知）       |
+  - id: typing-features-02
+    group: 使うべき typing 機能
+    name: TYPE_CHECKING の制限
+    body: |-
+      - Pydantic のモデルのフィールドと FastAPI のルートの引数・戻り値が使う型は `TYPE_CHECKING` の中で import しない（実行時に型を解決する）
+  - id: typing-features-03
+    group: 使うべき typing 機能
+    name: DTO 使い分けの参照
+    body: |-
+      - DTO 使い分け（Pydantic / dataclass / TypedDict / Protocol）は `architecture/TypeScriptスタイル適用.md`
+  - id: typing-features-04
+    group: 使うべき typing 機能
+    name: デコレータと overload の参照
+    body: |-
+      - デコレータ・`@overload` は `core/デコレーター.md`

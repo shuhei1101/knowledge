@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-devtools-lint-format
+kind: rule
+name: Next.js App Router — ESLint, Prettier, TypeScript Config
+description: Next.js 16 の ESLint・Prettier・tsconfig.json の設定の決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:devtools
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      > Next.js 16 の変更: `next lint` 廃止、ESLint CLI を直接呼ぶ。設定は Flat Config（`eslint.config.mjs`）。
+  - id: tsconfig-01
+    group: tsconfig.json
+    name: tsconfig の土台
+    body: |-
+      `create-next-app` が生成した値を土台にし、次を追加する。
+  - id: tsconfig-02
+    group: tsconfig.json
+    name: strict に加える項目
+    body: |-
+      - `strict: true` に加えて `noUncheckedIndexedAccess` / `noUnusedLocals` / `noUnusedParameters` / `noFallthroughCasesInSwitch` / `noImplicitOverride` / `forceConsistentCasingInFileNames`
+  - id: tsconfig-03
+    group: tsconfig.json
+    name: target と allowJs
+    body: |-
+      - `target: ES2022` / `allowJs: false`
+  - id: tsconfig-04
+    group: tsconfig.json
+    name: paths の別名
+    body: |-
+      - `paths` で `@/*` → `./*`
+  - id: eslint-01
+    group: ESLint
+    name: eslint-config-next
+    body: |-
+      - `eslint-config-next`（`core-web-vitals` と `typescript`）を Flat Config で読む
+  - id: eslint-02
+    group: ESLint
+    name: Prettier との競合回避
+    body: |-
+      - `eslint-config-prettier/flat` が Prettier と競合する ESLint ルールを無効化する
+  - id: eslint-03
+    group: ESLint
+    name: no-deprecated の有効化
+    body: |-
+      - `@typescript-eslint/no-deprecated` を有効にし、型情報つきの設定（`parserOptions.projectService`）で動かす

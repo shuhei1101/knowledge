@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-client-ts
+kind: rule
+name: app/api/v{N}/{resource}/client.ts
+description: クライアント側の fetch ヘルパー client.ts の型の取り込み・URL・エラー処理・命名を定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      クライアント側 fetch ヘルパー。フロントエンドの hook / Server Component から呼ぶ。
+  - id: rules-01
+    group: ルール
+    name: リクエスト型は route から import
+    body: |-
+      - リクエスト型は `route.ts` から `import type`（重複定義禁止）
+  - id: rules-02
+    group: ルール
+    name: フィルタ型・戻り値型は query から import
+    body: |-
+      - フィルタ型・戻り値型は `query.ts` から `import type`
+  - id: rules-03
+    group: ルール
+    name: URL は endpoints.ts の定数
+    body: |-
+      - URL は `app/(shared)/endpoints.ts` の定数経由（ハードコード禁止）
+  - id: rules-04
+    group: ルール
+    name: 非 OK は AppError.fromResponse
+    body: |-
+      - 非 OK レスポンスは `AppError.fromResponse(json, status)` で投げる
+  - id: rules-05
+    group: ルール
+    name: 封筒の data を unwrap
+    body: |-
+      - 戻り値は 封筒の `data` を unwrap して返す（呼び出し側で `.data` を書かなくていい）
+  - id: rules-06
+    group: ルール
+    name: 送信前の Zod パースは不要
+    body: |-
+      - `JSON.stringify(req)` で送信する前に Zod パースする必要はない（route.ts 側が parse する）
+  - id: naming-01
+    group: 命名
+    name: get の命名
+    body: |-
+      - `getXxx` — 単体取得
+  - id: naming-02
+    group: 命名
+    name: getList の命名
+    body: |-
+      - `getXxxList` — 一覧
+  - id: naming-03
+    group: 命名
+    name: post の命名
+    body: |-
+      - `postXxx` — 作成
+  - id: naming-04
+    group: 命名
+    name: patch の命名
+    body: |-
+      - `patchXxx` — 部分更新
+  - id: naming-05
+    group: 命名
+    name: put の命名
+    body: |-
+      - `putXxx` — 全置換（使う場合）
+  - id: naming-06
+    group: 命名
+    name: delete の命名
+    body: |-
+      - `deleteXxx` — 削除

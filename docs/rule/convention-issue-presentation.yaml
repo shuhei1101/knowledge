@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: convention-issue-presentation
+kind: rule
+name: 論点の提示
+description: 判断の分かれる論点を Issue・PR のコメントやドキュメント本文で出すときの表の書式を定める。
+tags:
+  - name: scope:規約
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      判断の分かれる論点を出すときの書式。
+      Issue / PR のコメントでもドキュメント本文でも同じ書式で書く。
+  - id: presentation-format-01
+    group: 書式
+    name: 書式の例
+    body: |-
+      ```
+      | 案 | 内容 | メリット | デメリット | 備考 |
+      | --- | --- | --- | --- | --- |
+      | A | 先に PoC を挟む | 核心機構の成立を早期に確認できる | 着手が 1 サイクル遅れる | - |
+      | B | PoC なしで実装に入る | 最短で着手できる | 成立しなければ手戻りが大きい | 既存技術の組み合わせ |
+
+      推奨: A
+
+      同期の性能が成立条件になっており、実装を進めてから成立しないと分かると設計ごと再作成になる。
+      ```
+  - id: presentation-format-02
+    group: 書式
+    name: 列ごとの書き方の表
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 書き方 |
+      | --- | --- |
+      | 第 1 列 | 記号（A / B / C ...）だけを入れる。列見出しは `案` |
+      | 内容列 | その案が何をするかを書く |
+      | メリット / デメリット | 対で書く。書けない論点では両方とも置かない |
+      | 備考 | 任意 |
+      | 使わない列 | 列ごと落とす（全行が空の列を並べない） |
+      | 推奨 | 表の下に記号だけを書き、理由は空行を挟んだ次の段落に書く |
+
+      <!-- /table -->

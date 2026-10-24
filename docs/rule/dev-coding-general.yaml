@@ -1,0 +1,138 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-coding-general
+kind: rule
+name: コーディング全般における規約
+description: 例外・フォールバック・定数・識別子・コメント・コードの品質・外部入力・タイムスタンプについて、言語を問わず守るコーディングの決まりを定める。
+tags:
+  - name: scope:dev
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: flowchart-config-location
+    type: requires
+    when: 定数の置き場所を決めるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      <!-- ただし、各言語で固有のルールがある場合は、それを優先すること -->
+  - id: exception-handling-01
+    group: 例外ハンドル・エラーは握りつぶさない
+    name: 例外ハンドルは必要な場面のみ
+    body: |-
+      - 例外ハンドル try-exceptなどはオーバーに実装しすぎないこと
+        - 必要のある場面のみ例外は実装すること
+  - id: exception-handling-02
+    group: 例外ハンドル・エラーは握りつぶさない
+    name: 例外を握りつぶさない
+    body: |-
+      - 例外をもし実装する場合、握りつぶさないこと（エラーで画面が落ちてよい）
+  - id: exception-handling-03
+    group: 例外ハンドル・エラーは握りつぶさない
+    name: try の範囲は最小
+    body: |-
+      - try の範囲と捕まえる例外の型は最小にする
+        - ログを出して再送出するための捕捉はOK
+  - id: fallback-01
+    group: フォールバック仕様
+    name: フォールバック値を設けない
+    body: |-
+      - 特定の読み込みが失敗したときのフォールバック値などは極力設けない。
+        - 読み込まれない=ソースコードや環境の不具合のため気づけるようにエラーとすべき
+  - id: constant-01
+    group: 定数関連
+    name: 定数は外だしする
+    body: |-
+      - 定数はハードコードせず、置き場所を [設定値の置き場所](id:flowchart-config-location) で決めて外だしする
+  - id: identifier-language-01
+    group: 識別子の言語
+    name: 識別子は英語
+    body: |-
+      - コードの識別子・Enum の値・定数は英語で書く
+        - 日本語にすると、周りのコードや依存先の識別子と言語が揃わない
+        - NG例: `status = "完了"`、OK例: `status = "done"`
+  - id: source-comment-01
+    group: ソースコード内コメント
+    name: コメントに履歴を記載しない
+    body: |-
+      - コメントに履歴・経緯・背景は書かない
+        - NG例: `PRXXXで編集`、`ISSUE-Nで修正`、`旧 xxx～`、`QAxxxで...`、`以前は xxx だったが yyy の理由で変更`、`〜という経緯でこの実装にしている`
+        - 基本的にその時点でスナップショットとなるコメントを記載する（コードにはコードの現在の動作だけを書く）
+  - id: source-comment-02
+    group: ソースコード内コメント
+    name: 設計書への参照を記載しない
+    body: |-
+      - 設計書・ドキュメントへの参照は書かない
+        - NG例: `仕様は dev/設計書/xxx.md を参照`、`SoT は xxx.md`
+        - 実装から仕様を探すときは関数名・論理名の grep で設計書側から逆引きする
+  - id: source-comment-03
+    group: ソースコード内コメント
+    name: コメントは日本語
+    body: |-
+      - コメントは 日本語 で書く
+        - ただし、特殊な環境（windowsの .bat とか）は日本語だとバグるので注意。
+  - id: source-comment-04
+    group: ソースコード内コメント
+    name: 関数の 1 行 docstring
+    body: |-
+      - 関数には 1 行 docstring を書く
+  - id: source-comment-05
+    group: ソースコード内コメント
+    name: 深いインデントのコメント
+    body: |-
+      - 関数内のforやif文などインデントが深くなるとこはインラインコメントを残す
+  - id: source-comment-06
+    group: ソースコード内コメント
+    name: 複雑な処理のコメント
+    body: |-
+      - 複雑な処理はインラインコメントを残す
+        - インラインコメントは該当行の上に書く（短いものは横でもよい）
+  - id: dirty-code-01
+    group: 汚いコード禁止
+    name: デッドコード禁止
+    body: |-
+      - デッドコードは禁止です
+        - ファイル編集時にデッドコードは削除してください。
+  - id: dirty-code-02
+    group: 汚いコード禁止
+    name: マジックナンバー禁止
+    body: |-
+      - マジックナンバー禁止
+  - id: external-input-01
+    group: 外部コマンド・パス・データの読み込み
+    name: 外部コマンドの呼び方
+    body: |-
+      - 外部コマンドは、ライブラリで済むなら呼ばない。呼ぶときは引数を配列で渡し、シェルを通さない
+  - id: external-input-02
+    group: 外部コマンド・パス・データの読み込み
+    name: "-- の後ろに置く"
+    body: |-
+      - 外部から来た値をコマンドの引数にするときは、オプションと読まれないよう `--` の後ろに置く（コマンドが対応している場合）
+  - id: external-input-03
+    group: 外部コマンド・パス・データの読み込み
+    name: 外部名からのパスの検証
+    body: |-
+      - 外部から受け取った名前でファイルのパスを組むときは、解決した後に基準のフォルダの配下にあることを確かめる
+  - id: external-input-04
+    group: 外部コマンド・パス・データの読み込み
+    name: 実行されるデータの読み込み
+    body: |-
+      - 外部から来たデータを、読み込むだけでコードが動く形式・関数で読まない（Python なら `pickle` と `yaml.load` を使わず `yaml.safe_load`）
+  - id: timestamp-01
+    group: タイムスタンプ
+    name: JST 統一
+    body: |-
+      - タイムスタンプ表示は JST (Asia/Tokyo) 統一。
+  - id: timestamp-02
+    group: タイムスタンプ
+    name: 場所別のタイムスタンプ規約
+    body: |-
+      | 場所                                                                  | 規約                                                                        |
+      | --------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+      | **ストレージ** (`*.jsonl` / `*.yaml` / DB)                            | UTC タイムゾーン付き ISO8601 (`2026-05-24T05:18:02+00:00`) |
+      | **UI 表示** (HTML / dev 画面)                                         | **JST に変換** (`05/24 14:18:02 JST` 形式)                                  |
+      | **CLI / バッチログ** (ユーザーが目で見るログ)                         | JST タイムゾーン付き or UTC でも `+00:00` 明示                              |
+      | **コミット message / PR タイトル / コメント** | **JST 日付** で表現 (例: 「2026-05-24 に発生した障害」)                     |

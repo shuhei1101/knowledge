@@ -1,0 +1,80 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-architecture-typescript-style
+kind: rule
+name: TypeScript 風 Python — 関数ファースト設計
+description: 関数ファースト・型エイリアス・DTO・Protocol で構成する TypeScript 風の Python の設計を定める。
+tags:
+  - name: scope:python
+  - name: topic:architecture
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      中心ドキュメント。関数ファースト + 型エイリアス + DTO + Protocol で書く。
+  - id: ts-style-python-01
+    group: TypeScript 風 Python — 関数ファースト設計
+    name: 振る舞いは関数、データは DTO
+    body: |-
+      - 振る舞いはモジュールレベルの関数、データは DTO
+  - id: ts-style-python-02
+    group: TypeScript 風 Python — 関数ファースト設計
+    name: クラスを書いてよい場合
+    body: |-
+      - クラスを書いてよいのは: DTO / ライブラリ要求（Middleware・BaseModel 継承・Enum 等）/ 長期保持のランタイム状態 のみ
+  - id: ts-style-python-03
+    group: TypeScript 風 Python — 関数ファースト設計
+    name: 継承による差し替えをしない
+    body: |-
+      - 「クラスを継承させて差し替え」はやらない（duck typing で済ます）
+  - id: type-alias-di-01
+    group: 型エイリアス DI（基本パターン）
+    name: 型エイリアス DI の方針
+    body: |-
+      外部依存（LLM / TTS / HTTP / DB）は関数の型エイリアスで抽象化し、キーワード引数で注入する。
+      型は `types.py` に置き、`service.py` は型で受け、`main.py` で `partial` で配線する。テストでは mock 関数を注入するだけ。
+  - id: type-alias-di-02
+    group: 型エイリアス DI（基本パターン）
+    name: 実装はベンダーごとに別ファイル
+    body: |-
+      - 実装（`openai_client.py` / `mock_client.py` 等）はベンダーごとに別ファイルの関数
+  - id: type-alias-di-03
+    group: 型エイリアス DI（基本パターン）
+    name: 関数の切り替えで差し替え
+    body: |-
+      - 注入する関数を切り替えるだけで本物 / モックが切り替わる
+  - id: abstraction-levels-01
+    group: インターフェース抽象化の 3 段階
+    name: 抽象化の 3 段階の表
+    body: |-
+      | 段階 | パターン                                              | 用途                                          |
+      | ---- | ----------------------------------------------------- | --------------------------------------------- |
+      | 1    | 関数の型エイリアス（`type FindUser = Callable[...]`） | 1 機能の差し替え                              |
+      | 2    | `Protocol`                                            | 複数メソッド / 属性をまとめる（継承宣言不要） |
+      | 3    | `@overload`                                           | 戻り値が引数型で分岐（稀）                    |
+  - id: dto-usage-01
+    group: DTO の使い分け
+    name: DTO の使い分け表
+    body: |-
+      <!-- table: data -->
+
+      | 用途                              | 推奨                                                |
+      | --------------------------------- | --------------------------------------------------- |
+      | 外部 HTTP リクエスト / レスポンス | `pydantic.BaseModel`                                |
+      | 設定（YAML / 環境変数）           | `pydantic_settings.BaseSettings`                    |
+      | LLM 構造化出力（Instructor）      | `pydantic.BaseModel`                                |
+      | CLI 引数の構造体                  | `pydantic.BaseModel` |
+      | 関数間の内部 DTO                  | `@dataclass(frozen=True, slots=True, kw_only=True)` |
+      | JSON 由来の dict をそのまま扱う   | `TypedDict`（`NotRequired` でオプション）           |
+      | 構造的型付け                      | `Protocol`                                          |
+
+      <!-- /table -->
+  - id: dto-usage-02
+    group: DTO の使い分け
+    name: Pydantic と dataclass の使い分け
+    body: |-
+      - Pydantic は検証ありでやや重い → 外部境界に。dataclass は軽量 → 内部に

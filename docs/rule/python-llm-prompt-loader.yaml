@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-llm-prompt-loader
+kind: rule
+name: プロンプトローダー実装
+description: プロンプトのローダーとビルダーの構成と、守るルールを定める。
+tags:
+  - name: scope:python
+  - name: topic:llm
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: prompt-file
+    type: requires
+    when: プロンプトのローダーを実装するとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      `prompts/{id}.yaml` を読み、`when` に当たる部品の `text.en` を Jinja2 でレンダリングして 1 つのプロンプトに組み立てる。書き方は [プロンプトファイル](id:prompt-file)。
+  - id: structure-01
+    group: 構成
+    name: ローダーのファイル構成
+    body: |-
+      ```
+      src/{pkg}/integrations/llm/prompts/
+      ├── node_loader.py        # prompts/{id}.yaml の読み込みとキャッシュ
+      ├── builder.py            # when の評価 + 部品結合 + Jinja2 レンダリング
+      └── types.py              # PromptFile / PromptPart 等の DTO
+      ```
+  - id: structure-02
+    group: 構成
+    name: プロンプト本体の置き場所
+    body: |-
+      プロンプト本体はリポジトリ直下の `content/prompts/`、ローダーは `src/` 配下。場所は `shared/constants.py` の `PROJECT_ROOT` から解決。
+  - id: node-loader-01
+    group: node_loader.py
+    name: id ごとに 1 回だけ読む
+    body: |-
+      - `@cache` で id ごとに 1 プロセス 1 回だけ読む（ホットリロードは `cache_clear()`）
+  - id: node-loader-02
+    group: node_loader.py
+    name: 戻り値は TypedDict
+    body: |-
+      - 戻り値は TypedDict（`PromptFile`: id / node / tags / vars / output / parts）
+  - id: builder-01
+    group: builder.py
+    name: StrictUndefined の Environment
+    body: |-
+      - Jinja2 `Environment` は `StrictUndefined`（未定義変数で即例外）
+  - id: builder-02
+    group: builder.py
+    name: build_prompt の検証
+    body: |-
+      - `build_prompt(prompt_id, **vars)`: `vars` の必須が渡されているかを確かめ、渡されていない必須でない変数を `None` で補い、`parts` を順に見て `when` が真の部品の `text.en` をレンダリングし `"\n\n".join`
+  - id: builder-03
+    group: builder.py
+    name: role 別の build_bundle
+    body: |-
+      - role 別に分けたいときは `build_bundle` で `PromptBundle(system, user)` を返す
+        - Anthropic の `system=` 引数と分離でき、system 全体を 1 つの `cache_control` ブロックに包める
+  - id: rules-01
+    group: ルール
+    name: ローダーは pure な変換のみ
+    body: |-
+      - ローダーは pure な変換に限る（外部 API を叩かない）
+  - id: rules-02
+    group: ルール
+    name: 部品の並びは YAML が SoT
+    body: |-
+      - 部品の並びをコードに持たない（`prompts/{id}.yaml` の `parts` が SoT）
+  - id: rules-03
+    group: ルール
+    name: プロンプトをグローバルに持たない
+    body: |-
+      - プロンプトをグローバル変数に持たない（vars が変わると不整合）
+  - id: rules-04
+    group: ルール
+    name: 結合テストは実 LLM を呼ばない
+    body: |-
+      - 結合テストは実 LLM を呼ばず `build_prompt` の結果文字列だけ検証（未定義変数で例外が出ることも確認）

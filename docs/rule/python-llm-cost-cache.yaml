@@ -1,0 +1,86 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-llm-cost-cache
+kind: rule
+name: トークン管理とコスト最適化
+description: LLM のトークン管理、max_tokens の絞り方、プロンプトキャッシュの設計、その他のコスト最適化の定石を定める。
+tags:
+  - name: scope:python
+  - name: topic:llm
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: token-cost-01
+    group: トークン管理とコスト最適化
+    name: 最適化前に計測する
+    body: |-
+      - 最適化前にまず計測: 呼び出しごとに provider / model / input_tokens / output_tokens を構造化ログ → JSON Lines 集計で日次コスト
+  - id: max-tokens-01
+    group: max_tokens
+    name: max_tokens を絞る
+    body: |-
+      無制限だと冗長な前置きで使い切るので用途に応じて絞る:
+
+      | 用途         | 目安      |
+      | ------------ | --------- |
+      | Yes/No 判定  | 50        |
+      | 短い分類タグ | 100       |
+      | 1 段落の要約 | 300       |
+      | 構造化抽出   | 800〜1024 |
+      | 長文生成     | 2048+     |
+  - id: prompt-cache-01
+    group: プロンプトキャッシュの設計（最重要）
+    name: 先頭の共通プレフィックス
+    body: |-
+      キャッシュは「先頭から共通したプレフィックス」だけに効く。固定値は上、動的値は下:
+
+      | 位置       | 内容                                                 |
+      | ---------- | ---------------------------------------------------- |
+      | 上（先頭） | 不変のキャラ設定 / 役割 / 出力スキーマ / few-shot 例 |
+      | 中         | セッション単位で固定（要約・ペルソナ）               |
+      | 下（末尾） | リクエストごとに変わる値（直近履歴・ユーザー入力）   |
+  - id: prompt-cache-02
+    group: プロンプトキャッシュの設計（最重要）
+    name: system に動的値を入れない
+    body: |-
+      - system に timestamp 等の動的値を埋め込まない（1 文字の差で以降全部ミス）
+  - id: prompt-cache-03
+    group: プロンプトキャッシュの設計（最重要）
+    name: messages の順序を保つ
+    body: |-
+      - messages は古い履歴ほど上、順序を入れ替えない
+  - id: prompt-cache-04
+    group: プロンプトキャッシュの設計（最重要）
+    name: プロバイダ別のキャッシュ表
+    body: |-
+      | Provider  | 仕組み                                                 | 条件（最小長・割引率・保持時間）                                                                  |
+      | --------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+      | Anthropic | `cache_control: {"type": "ephemeral"}` を指定（リクエスト直下なら自動、ブロック単位でも可） | [公式ドキュメント](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)          |
+      | OpenAI    | 自動（同一プレフィックスで効く、コード変更不要）       | [公式ドキュメント](https://platform.openai.com/docs/guides/prompt-caching)                        |
+  - id: prompt-cache-05
+    group: プロンプトキャッシュの設計（最重要）
+    name: 1 回きりの用途では効かない
+    body: |-
+      - 1 回しか呼ばない用途では効かない（Anthropic はキャッシュの書き込みが通常の入力より割高）
+  - id: prompt-cache-06
+    group: プロンプトキャッシュの設計（最重要）
+    name: キャッシュ使用量の確認
+    body: |-
+      - 使用量は `cache_read_input_tokens`（Anthropic）/ `prompt_tokens_details.cached_tokens`（OpenAI）をログ
+  - id: other-practices-01
+    group: その他の定石
+    name: モデルは小さい方から選ぶ
+    body: |-
+      - モデル選定: 最小モデルで通せないか試してから上げる（分類 → 小さいモデル、複雑な推論 → 上位モデル）
+  - id: other-practices-02
+    group: その他の定石
+    name: Batch API
+    body: |-
+      - Batch API: リアルタイム不要な大量処理は割り引かれる（割引率と処理期限は各社の公式ドキュメント）
+  - id: other-practices-03
+    group: その他の定石
+    name: 履歴の刈り取り
+    body: |-
+      - 履歴の刈り取り: 直近 N 件 + 古い履歴は要約（要約は小さいモデルで）

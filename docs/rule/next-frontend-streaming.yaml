@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-streaming
+kind: rule
+name: Streaming / Suspense
+description: Suspense 境界と loading.tsx、View Transitions の使い方を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: suspense-boundary-01
+    group: Suspense 境界
+    name: loading.tsx は全体の fallback
+    body: |-
+      - `loading.tsx`: ページ全体の fallback（ナビゲーション中）
+  - id: suspense-boundary-02
+    group: Suspense 境界
+    name: Suspense は部分の fallback
+    body: |-
+      - `<Suspense>`: ページ内部分の fallback
+  - id: suspense-boundary-03
+    group: Suspense 境界
+    name: fallback は同じ高さの Skeleton
+    body: |-
+      - fallback は CLS が出ないよう同じ高さの `<Skeleton>` を使う
+  - id: suspense-boundary-04
+    group: Suspense 境界
+    name: 動的 API を読むコンポーネント
+    body: |-
+      - `cookies()` / `headers()` / `searchParams` を読むコンポーネントは `<Suspense>` で囲む
+  - id: suspense-boundary-05
+    group: Suspense 境界
+    name: キャッシュ API の参照
+    body: |-
+      キャッシュ API（`"use cache"` / cacheLife / PPR の有効化）は `backend/キャッシュ.md`。
+  - id: view-transitions-01
+    group: View Transitions
+    name: ViewTransition
+    body: |-
+      - `<ViewTransition>` でナビゲーション間アニメーション

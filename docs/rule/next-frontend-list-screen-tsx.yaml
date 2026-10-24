@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-list-screen-tsx
+kind: rule
+name: "{Feature}ListScreen.tsx — 一覧 Client Component"
+description: 一覧の Client Component の必須要素と、hook の依存、URL state の扱いを定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: list-screen-01
+    group: "{Feature}ListScreen.tsx — 一覧 Client Component"
+    name: use client は必須
+    body: |-
+      - `'use client'` 必須
+  - id: list-screen-02
+    group: "{Feature}ListScreen.tsx — 一覧 Client Component"
+    name: initial データを Server から受け取る
+    body: |-
+      - Server から `initial` データを受け取る（クライアント初回 fetch は禁止）
+  - id: list-screen-03
+    group: "{Feature}ListScreen.tsx — 一覧 Client Component"
+    name: URL state hook と data hook を並列呼び
+    body: |-
+      - URL state hook と data hook を並列呼び
+  - id: list-screen-04
+    group: "{Feature}ListScreen.tsx — 一覧 Client Component"
+    name: フィルタ・ソート・ページは URL state
+    body: |-
+      - フィルタ / ソート / ページは `useState` 禁止 → URL state
+  - id: required-elements-01
+    group: 必須要素
+    name: ScreenWrapper で外殻
+    body: |-
+      - `<ScreenWrapper>` で外殻
+  - id: required-elements-02
+    group: 必須要素
+    name: PageHeader でタイトル
+    body: |-
+      - `<PageHeader>` でタイトル
+  - id: required-elements-03
+    group: 必須要素
+    name: フィルタ・ソート UI
+    body: |-
+      - フィルタ / ソート UI
+  - id: required-elements-04
+    group: 必須要素
+    name: loading は Skeleton
+    body: |-
+      - loading: `<Skeleton>`
+  - id: required-elements-05
+    group: 必須要素
+    name: 空は EmptyState
+    body: |-
+      - 空: `<EmptyState>`（必須、白画面禁止）
+  - id: required-elements-06
+    group: 必須要素
+    name: Pagination
+    body: |-
+      - `<Pagination>`
+  - id: hook-dependency-01
+    group: hook の依存
+    name: URL state の hook
+    body: |-
+      - `use{Feature}UrlState` — URL state（`frontend/useUrlStateパターン.md`）
+  - id: hook-dependency-02
+    group: hook の依存
+    name: TanStack Query の hook
+    body: |-
+      - `use{Feature}List` — TanStack Query（`frontend/useQueryパターン.md`）

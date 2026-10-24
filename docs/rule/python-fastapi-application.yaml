@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-fastapi-application
+kind: rule
+name: FastAPI アプリ構成
+description: FastAPI アプリの組み立て、lifespan、CORS、ミドルウェア、例外ハンドラの登録の決まりを定める。
+tags:
+  - name: scope:python
+  - name: topic:fastapi
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: fastapi-app-structure-01
+    group: FastAPI アプリ構成
+    name: build_fastapi で組み立てる
+    body: |-
+      - `server/app.py` の `build_fastapi() -> FastAPI` で組み立て、`uvicorn {pkg}.server.app:build_fastapi --factory` で起動
+  - id: fastapi-app-structure-02
+    group: FastAPI アプリ構成
+    name: 依存配線は build_handlers から
+    body: |-
+      - 依存配線は `main.py` の `build_handlers(settings)` から流す
+  - id: lifespan-01
+    group: lifespan
+    name: lifespan の startup と shutdown
+    body: |-
+      - `@asynccontextmanager` の lifespan で startup / shutdown（`on_event` は非推奨）
+  - id: lifespan-02
+    group: lifespan
+    name: startup で Settings と handlers を保持
+    body: |-
+      - startup で `Settings()` を読み `app.state.settings` / `app.state.handlers` にセット
+  - id: lifespan-03
+    group: lifespan
+    name: settings をグローバルに持たない
+    body: |-
+      - settings をグローバル変数で持たない（モジュールロード時に env が読まれてテストしづらい）
+  - id: route-reference-01
+    group: ルートからの参照
+    name: ルートからの handlers の参照
+    body: |-
+      - `request.app.state.handlers` で直接、または `server/deps.py` に `get_handlers` を作り `Annotated[Handlers, Depends(get_handlers)]` でラップ
+  - id: cors-01
+    group: CORS
+    name: CORS の origins をハードコードしない
+    body: |-
+      - `allow_origins=["*"]` のハードコード禁止。Settings の `cors_origins: list[str]` + `cors_origin_regex: str` で管理
+  - id: cors-02
+    group: CORS
+    name: 開発と本番の CORS 設定
+    body: |-
+      - 開発は regex（`http://localhost:3[0-9]{3}$`）、本番は origins にドメイン列挙
+  - id: custom-middleware-01
+    group: カスタム middleware
+    name: pure ASGI ミドルウェア
+    body: |-
+      pure ASGI ミドルウェア（`__call__(self, scope, receive, send)` を持つクラス）が標準。`BaseHTTPMiddleware` は ContextVar の変更が上位へ伝わらないので使わない。例: X-Request-Id の付与。
+  - id: others-01
+    group: その他
+    name: /healthz に外部依存を持たせない
+    body: |-
+      - ヘルスチェック `/healthz` は DB 等の外部依存を持たせない（`fastapi/ヘルスチェック.md`）
+  - id: others-02
+    group: その他
+    name: OpenAPI のメタデータ
+    body: |-
+      - OpenAPI メタデータは `FastAPI(title=, version=, openapi_tags=)`、ルーター側の `tags` でグループ化
+  - id: others-03
+    group: その他
+    name: 例外ハンドラの一括登録
+    body: |-
+      - 例外ハンドラは `register_exception_handlers(app)` で一括登録（`fastapi/認証とエラー.md`）

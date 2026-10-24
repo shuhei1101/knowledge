@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-shared-error-definition
+kind: rule
+name: 例外階層
+description: ドメイン例外を AppError 継承の単一階層にする設計原則と、例外を処理する場所を定める。
+tags:
+  - name: scope:python
+  - name: topic:shared
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      すべてのドメイン例外は `AppError` を継承する単一階層（`shared/errors.py`）。docstring のみのシンプルなクラス定義。
+  - id: exception-hierarchy-01
+    group: 例外階層
+    name: 例外階層の表
+    body: |-
+      <!-- table: data -->
+
+      | クラス                    | 親               | 意味                             |
+      | ------------------------- | ---------------- | -------------------------------- |
+      | `AppError`                | Exception        | 基底                             |
+      | `ValidationError`         | AppError         | 入力検証エラー                   |
+      | `NotFoundError`           | AppError | 対象が見つからない               |
+      | `ConflictError`           | AppError | 状態競合（重複・楽観ロック失敗） |
+      | `ForbiddenError`          | AppError | 権限不足                         |
+      | `UnauthorizedError`       | AppError | 未認証 / 認証失敗                |
+      | `IntegrationError`        | AppError | 外部サービス連携                 |
+      | `IntegrationTimeoutError` | IntegrationError | 外部タイムアウト                 |
+      | `LlmError`                | IntegrationError | LLM API 由来                     |
+      | `LlmRateLimitError`       | LlmError         | レート制限                       |
+      | `LlmServerError`          | LlmError | 5xx                              |
+      | `LlmBadRequestError`      | LlmError | 4xx                              |
+      | `LlmAuthError`            | LlmError | 401 / 403                        |
+      | `LlmContentFilterError`   | LlmError | フィルタ拒否                     |
+
+      <!-- /table -->
+  - id: design-principle-01
+    group: 設計原則
+    name: AppError で全業務例外を捕まえる
+    body: |-
+      - 最上位で `except AppError:` 1 つで全業務例外を捕まえられる
+  - id: design-principle-02
+    group: 設計原則
+    name: vendor 例外は境界でラップ
+    body: |-
+      - vendor 例外（openai / anthropic / httpx）は境界でラップして外に流さない
+        - features / server は `LlmError` 系だけ知ればよく、vendor 入れ替えで変わらない
+        - リトライ判定が型で書ける
+  - id: design-principle-03
+    group: 設計原則
+    name: メッセージと原因連鎖
+    body: |-
+      - メッセージは日本語 1 行、`raise X from e` で原因連鎖必須
+  - id: design-principle-04
+    group: 設計原則
+    name: str の raise と広い except の禁止
+    body: |-
+      - str を raise しない、広い `except Exception` で握りつぶさない
+  - id: handling-place-01
+    group: 処理する場所
+    name: FastAPI での処理
+    body: |-
+      - FastAPI: `register_exception_handlers(app)` で HTTP マップ（`fastapi/認証とエラー.md`）
+  - id: handling-place-02
+    group: 処理する場所
+    name: CLI での終了コード
+    body: |-
+      - CLI: `main()` で `ValidationError` → 2、`AppError` → 1、その他 → 99 のような終了コード分け
+  - id: handling-place-03
+    group: 処理する場所
+    name: 横断処理のハンドラーデコレータ
+    body: |-
+      - 横断処理は `@catch_and_map` 等のハンドラーデコレータ（`core/デコレーター.md`）

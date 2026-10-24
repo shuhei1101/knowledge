@@ -1,0 +1,181 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-document-management
+kind: rule
+name: ドキュメント管理
+description: AI エージェントが読み書きする文書の置き方・フォルダ・メタデータ・関連・配信の決まりを定める。
+tags:
+  - name: scope:dev
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: claude-mcp
+    type: references
+    when: メタデータを返す読み取りのツールを作るとき
+  - to: dev-tag-term-registration
+    type: requires
+    when: 文書にタグを付けるとき
+  - to: flowchart-yaml-file-unit
+    type: requires
+    when: YAML ファイルを分ける単位を決めるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      AI エージェントが読み書きする文書の置き方・メタデータ・関連・配信の決まり。
+  - id: placement-01
+    group: 置き方
+    name: 文書の正本は YAML
+    body: |-
+      - 文書の正本は YAML にする
+        markdown にするのは、道具が markdown を前提にするファイル（README・CLAUDE.md・AGENTS.md・SKILL.md・PR の本文など）だけ
+  - id: placement-02
+    group: 置き方
+    name: 大きな文書は項目に分ける
+    body: |-
+      - 大きな文書は項目ごとに分け、長い自由記述は項目の本文のキーに入れる
+  - id: placement-03
+    group: 置き方
+    name: YAML ファイルの単位
+    body: |-
+      - YAML ファイルを分ける単位は [YAML ファイルの単位](id:flowchart-yaml-file-unit) で決める
+  - id: placement-04
+    group: 置き方
+    name: フロントマターの扱い
+    body: |-
+      - 道具がフロントマターを要求するファイル（SKILL.md など）のほかは、フロントマターを使わない
+  - id: folder-01
+    group: フォルダ
+    name: 文書は docs/ 1 つに置く
+    body: |-
+      - 文書は `docs/` 1 つに置き、その下は種類だけをフォルダにする
+        種類のフォルダの中はフラットにする
+  - id: folder-02
+    group: フォルダ
+    name: 分類はメタデータで持つ
+    body: |-
+      - 公開範囲・分類・トピック・言語はメタデータで持ち、フォルダにしない
+  - id: folder-03
+    group: フォルダ
+    name: ファイル名は ID
+    body: |-
+      - ファイル名は ID か変わりにくいスラッグにする
+  - id: folder-04
+    group: フォルダ
+    name: 参照は ID で記載
+    body: |-
+      - 文書どうしの参照は ID で記載し、パスで記載しない
+  - id: folder-05
+    group: フォルダ
+    name: スキーマの置き場所
+    body: |-
+      - 種類ごとのスキーマは `schemas/{種類}.schema.yaml` に置く
+
+      ```text
+      repo/
+      ├── README.md
+      ├── CLAUDE.md
+      ├── schemas/
+      └── docs/
+          ├── scenario/
+          │   └── SC-12.yaml
+          ├── rule/
+          │   └── python-testing.yaml
+          └── terms.yaml
+      ```
+  - id: metadata-01
+    group: メタデータ
+    name: メタデータのキー一覧
+    body: |-
+      <!-- table: data -->
+
+      | キー | 中身 | 必須 |
+      | --- | --- | --- |
+      | `id` | 変わらない ID | 必須 |
+      | `kind` | 文書の種類（英語の定数） | 必須 |
+      | `name` | タイトル | 必須 |
+      | `description` | 本文を読まずに中身が分かる 1〜2 文 | 必須 |
+      | `tags` | タグ（[タグと用語の登録](id:dev-tag-term-registration)）。各要素は `name` と、主題なら `main: true` | 必須 |
+      | `status` | 状態（英語の定数） | 必須 |
+      | `visibility` | 公開範囲（`public` / `internal`） | 必須 |
+      | `rev` | 変更ごとに増えるバージョン。書き込みのツールが付ける | 必須 |
+      | `aliases` | 本文や会話でこの文書を呼ぶ別の名前 | 任意 |
+      | `related` | 関連（`## 関連`） | 任意 |
+      | `code_refs` | 対応するコードのパスとシンボル | 任意 |
+      | `interfaces` | 定義している公開インターフェース | 任意 |
+      | `last_reviewed` | 最後に内容を確かめた日 | 手順書・規約など鮮度を見たい種類だけ。種類のスキーマで決める |
+
+      <!-- /table -->
+  - id: metadata-02
+    group: メタデータ
+    name: 作成・更新日時は持たない
+    body: |-
+      - 作成日時・更新日時は持たない
+        要るときは git から取る
+  - id: metadata-03
+    group: メタデータ
+    name: メタデータは多めに持つ
+    body: |-
+      - 紐付けに使えるメタデータは多めに持たせ、返す量は読み取りのツールで絞る（[MCP サーバー作成ルール](id:claude-mcp)）
+  - id: related-01
+    group: 関連
+    name: 関連の要素
+    body: |-
+      - 各要素に `to`（相手の ID）・`type`（関係の種類）・`when`（いつ読むか、1 文）を持たせる
+        機械で判定できるときだけ `paths`（glob）を併記する
+  - id: related-02
+    group: 関連
+    name: 関連の type
+    body: |-
+      - `type` は `requires`・`references`・`replaces`・`part_of`・`change_together` から選ぶ
+  - id: related-03
+    group: 関連
+    name: 関連は片側だけ記載
+    body: |-
+      - 片側だけ記載し、逆向きはツールで出す
+        `change_together` だけは両側に記載し、修正し忘れの検査に使う
+  - id: related-04
+    group: 関連
+    name: when を記載できない関連
+    body: |-
+      - `when` を記載できない関連は張らない
+        本文でリンクしている相手は重ねない
+        件数の上限は種類のスキーマで決める
+  - id: related-05
+    group: 関連
+    name: 参照切れは CI で止める
+    body: |-
+      - 規約・手順のように従う必要がある文書への参照が切れたら、CI で止める
+  - id: delivery-01
+    group: 配信
+    name: 開発ドキュメントサーバーの配信
+    body: |-
+      - 開発ドキュメントサーバーは develop ブランチの全件を配信する
+  - id: delivery-02
+    group: 配信
+    name: GitHub Pages の配信
+    body: |-
+      - GitHub Pages は、master へのマージで動く GitHub Actions のワークフローで、`visibility: public` の文書だけを HTML にして配信する
+        YAML の原本は成果物に入れない
+  - id: delivery-03
+    group: 配信
+    name: ブランチ配信の方式は使わない
+    body: |-
+      - ブランチのフォルダをそのまま配信する Pages の方式は使わない
+  - id: sources-01
+    group: 出典
+    name: "出典: Anthropic"
+    body: |-
+      - [Anthropic: Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)（軽い識別子を持たせて本文は必要なときに読む）
+  - id: sources-02
+    group: 出典
+    name: "出典: Backstage"
+    body: |-
+      - [Backstage: Descriptor Format](https://backstage.io/docs/features/software-catalog/descriptor-format)（参照は名前、関係は片側だけ記載する）
+  - id: sources-03
+    group: 出典
+    name: "出典: Doorstop"
+    body: |-
+      - [Doorstop: Item](https://doorstop.readthedocs.io/en/latest/reference/item.html)（1 項目 1 ファイル、ファイル名が UID）

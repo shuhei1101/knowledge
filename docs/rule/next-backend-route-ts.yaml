@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-route-ts
+kind: rule
+name: app/api/v{N}/{resource}/route.ts
+description: HTTP ハンドラ route.ts のエラーハンドリング・認証・入力検証・レスポンス封筒・HTTP メソッドの決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      HTTP ハンドラ（GET / POST / PATCH / DELETE）。`withRouteErrorHandling` でラップし、認証 → Zod パース → `service.ts` 呼び出しの順に書く。
+  - id: rules-01
+    group: ルール
+    name: withRouteErrorHandling でラップ
+    body: |-
+      - すべての handler を `withRouteErrorHandling` でラップ（try/catch は書かない）
+  - id: rules-02
+    group: ルール
+    name: 認証必須なら getAuthContext
+    body: |-
+      - 認証必須なら `getAuthContext()` を最初に呼ぶ
+  - id: rules-03
+    group: ルール
+    name: 入力は Zod で parse
+    body: |-
+      - リクエストボディ・クエリは Zod で `.parse`（投げると 400）
+  - id: rules-04
+    group: ルール
+    name: レスポンス封筒
+    body: |-
+      - レスポンス封筒: `{ data, meta? }` / `{ error: { code, message, field? } }`
+  - id: rules-05
+    group: ルール
+    name: mutation は 204 を返す
+    body: |-
+      - 成功 (mutation) は `204 No Content` を返す（body なし）
+  - id: rules-06
+    group: ルール
+    name: HTTP メソッドの使い分け
+    body: |-
+      - HTTP メソッド: 新規 = POST、部分更新 = PATCH、全置換 = PUT、削除 = DELETE
+  - id: rules-07
+    group: ルール
+    name: 一覧はページに分ける
+    body: |-
+      - 件数が増えうる一覧は最初からページに分け、次のページを取る手がかり（URL か cursor）を返す
+  - id: rules-08
+    group: ルール
+    name: 長い処理は 202 を返す
+    body: |-
+      - 時間のかかる処理は、受け付けた時点で 202 と状態を照会する先を返し、完了まで待たせない

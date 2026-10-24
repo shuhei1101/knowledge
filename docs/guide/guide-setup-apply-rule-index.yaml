@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=../../schemas/guide.schema.yaml
+id: guide-setup-apply-rule-index
+kind: guide
+name: 規約の索引を当てる
+description: この規約を使う環境を新しく用意したときに、rule-inject の索引を当てる手順と、反映・確認・元に戻す方法を示す。
+tags:
+  - name: scope:使い方
+  - name: topic:セットアップ手順
+    main: true
+status: current
+visibility: public
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      この規約を使う環境を新しく用意したときに実行する。
+  - id: prerequisite-01
+    group: 前提
+    name: "前提: rule-inject の導入"
+    body: |-
+      - rule-inject のプラグインを Claude Code に入れてある（[rule-inject のセットアップ](https://github.com/shuhei1101/rule-inject/blob/master/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97.md)）
+  - id: step-clone-01
+    group: 手順 > このリポジトリを clone する
+    name: リポジトリの clone
+    body: |-
+      ```bash
+      git clone https://github.com/shuhei1101/knowledge.git {clone する先}
+      ```
+  - id: step-clone-02
+    group: 手順 > このリポジトリを clone する
+    name: clone 先のパスを使う
+    body: |-
+      clone した先の絶対パスを次の手順で使う。
+  - id: step-env-var-01
+    group: 手順 > 索引のパスを環境変数に書く
+    name: 索引のパスを環境変数に記載
+    body: |-
+      `~/.claude/settings.json` の `env` に書く。
+
+      ```json
+      {
+        "env": {
+          "RULE_INJECT_INDEXES_USER": "{clone した先の絶対パス}/rules.yaml"
+        }
+      }
+      ```
+
+      ほかの索引も使うときは、カンマで区切って並べる。
+      絶対パスか `~` で始まるパスで書かないと索引が読まれず、規約が案内されない。
+  - id: reflection-01
+    group: 反映
+    name: 反映は再起動
+    body: |-
+      `再起動`（Claude Code を再起動する）。
+  - id: check-guided-01
+    group: 確認 > 規約が案内される
+    name: 規約が案内されることを確認
+    body: |-
+      索引の `paths` に当たるファイルを Claude Code で触ると、当たる規約の場所が案内される。
+  - id: rollback-01
+    group: 元に戻す
+    name: 元に戻す
+    body: |-
+      `~/.claude/settings.json` の `RULE_INJECT_INDEXES_USER` からこの索引のパスを削除し、Claude Code を再起動する。
+      clone した先は残るので、要らなければ削除する。

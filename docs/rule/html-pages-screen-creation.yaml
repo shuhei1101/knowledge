@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-pages-screen-creation
+kind: rule
+name: 画面の作り方（pages/ 共通）
+description: pages 配下の全画面が同じファイル構成になる決まりと、単純画面・複雑画面の分割基準を定める。
+tags:
+  - name: scope:html
+  - name: topic:pages
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: screen-creation-common-01
+    group: 画面の作り方（pages/ 共通）
+    name: 全画面で同じファイル構成
+    body: |-
+      - `frontend/pages/{domain}/{screen}/` 配下は全画面が同じファイル構成に統一されている。
+        - ファイル名が同じ＝役割が同じ。新規作成も既存編集も、この構成と各ファイルの定型に従う。
+  - id: file-structure-role-01
+    group: ファイル構成と役割
+    name: ファイル構成と役割の表
+    body: |-
+      | ファイル     | 役割                                                                                                     | 必須 |
+      | ------------ | -------------------------------------------------------------------------------------------------------- | ---- |
+      | `index.html` | Jinja2 で `_layout.html` を継承し、`<app-shell>` 内に画面の中身を書く。詳細は `html/pages/index-html.md` | 必須 |
+      | `screen.ts`  | 画面ロジックのエントリ（UI 層）。DOM・イベント・描画・URL 同期。詳細は `html/pages/screen-ts.md`         | 必須 |
+      | `screen.css` | 画面固有スタイル。詳細は `html/pages/screen-css.md`                            | 任意 |
+      | `api.ts`     | 通信層。`apiFetch` ラッパー。複雑画面のみ分離                                                            | 任意 |
+      | `state.ts`   | 純ロジック層（状態・派生計算・定数）。DOM/API を触らない。複雑画面のみ分離                               | 任意 |
+  - id: simple-complex-split-01
+    group: 単純画面 / 複雑画面の分割基準
+    name: 画面規模ごとの構成表
+    body: |-
+      | 規模                                   | 構成                                                                     |
+      | -------------------------------------- | ------------------------------------------------------------------------ |
+      | 単純（おおむね 500 行以内・API 少数）  | `screen.ts` 単独に詰める。                                               |
+      | 複雑（複数 API・多段選択・ペイン分割） | `screen.ts`（UI）+ `api.ts`（通信）+ `state.ts`（純ロジック）に 3 分割。 |

@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-service-ts
+kind: rule
+name: app/api/v{N}/{resource}/service.ts
+description: トランザクション境界を持つ service.ts のルールと、トランザクションの書き方、命名を定める。
+tags:
+  - name: scope:next
+  - name: topic:backend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      ビジネスロジック層。**トランザクション境界** を持ち、複数の `query.ts` / `db.ts` 関数を組み合わせて 1 つの業務ユニットを実行する。
+  - id: rules-01
+    group: ルール
+    name: db.transaction でラップ
+    body: |-
+      - `db.transaction(async (tx) => { ... })` でラップ（トランザクション境界）
+  - id: rules-02
+    group: ルール
+    name: 中の関数に tx を渡す
+    body: |-
+      - 中の関数（`insertXxx` 等）には `tx` を渡す（呼び出し元がトランザクションを決める）
+  - id: rules-03
+    group: ルール
+    name: AppError 派生はそのまま投げる
+    body: |-
+      - `AppError` 派生（`ClientValueError`, `ClientAuthError`, `VersionConflictError` 等）はそのまま投げる
+  - id: rules-04
+    group: ルール
+    name: それ以外は DatabaseError でラップ
+    body: |-
+      - それ以外を `DatabaseError` でラップして再投
+  - id: rules-05
+    group: ルール
+    name: 削除時の履歴退避の順序
+    body: |-
+      - 削除時は `recordHistory` で履歴退避 → `deleteXxx` ハードデリート の順（`DB変更履歴.md` 参照）
+  - id: rules-06
+    group: ルール
+    name: updatedAt は呼び出し側から受け取る
+    body: |-
+      - 楽観的ロックの `updatedAt` は呼び出し側から受け取り `updateXxx` に渡す（`DB楽観的ロック.md`）
+  - id: rules-07
+    group: ルール
+    name: 監査対象の createdBy・updatedBy
+    body: |-
+      - 監査が必要なテーブルでは `createdBy` / `updatedBy` を record に含める
+  - id: transaction-writing-01
+    group: トランザクションの書き方
+    name: トランザクションの書き方の例
+    body: |-
+      ```ts
+      export const registerResource = async ({ db, userId, form }) => {
+        return await db.transaction(async (tx) => {
+          const { id } = await insertResource({ db: tx, record: ... })
+          await insertResourceTags({ db: tx, resourceId: id, tags: form.tags })
+          return { id }
+        })
+      }
+      ```
+  - id: naming-01
+    group: 命名
+    name: 動詞 + 名詞の命名
+    body: |-
+      - 動詞 + 名詞（`registerResource`, `editResource`, `removeResource`, `activatePublicQuest`）
+  - id: naming-02
+    group: 命名
+    name: HTTP メソッドと 1:1 にしない
+    body: |-
+      - HTTP メソッドと 1:1 ではない（業務ユニット名で命名）

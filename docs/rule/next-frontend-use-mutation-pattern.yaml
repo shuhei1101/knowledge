@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-use-mutation-pattern
+kind: rule
+name: useMutation パターン
+description: useMutation を使うケースと、楽観更新の許可リスト、命名を定める。
+tags:
+  - name: scope:next
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      第一選択は Server Action 直接呼び（`useTransition` + `actions.ts`）。
+      以下が必要なときのみ `useMutation` を使う:
+  - id: use-mutation-01
+    group: useMutation パターン
+    name: 楽観更新
+    body: |-
+      - 楽観更新
+  - id: use-mutation-02
+    group: useMutation パターン
+    name: mutation のキャンセル
+    body: |-
+      - mutation のキャンセル
+  - id: use-mutation-03
+    group: useMutation パターン
+    name: 並列 mutation の管理
+    body: |-
+      - 並列 mutation 管理
+  - id: use-mutation-04
+    group: useMutation パターン
+    name: リトライとバックオフ
+    body: |-
+      - 細かいリトライ / バックオフ
+  - id: optimistic-allow-list-01
+    group: 楽観更新の許可リスト
+    name: 楽観更新の許可リスト
+    body: |-
+      ✅ いいね / お気に入り / ブックマーク / フォロー / リアクション / トグル状態  
+      ❌ 課金 / フォーム保存 / 重要なデータ作成・削除
+  - id: naming-01
+    group: 命名
+    name: 命名
+    body: |-
+      `use{Verb}{Feature}` — `useToggleResourceFavorite`, `useArchiveResource`

@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-concurrency-async
+kind: rule
+name: asyncio 規約
+description: asyncio の API の使い分けと、キャンセル・ストリーミング・キュー・排他・CPU バウンド処理の扱いを定める。
+tags:
+  - name: scope:python
+  - name: topic:concurrency
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      Python 3.12+ の asyncio 機能を前提に書く。
+  - id: asyncio-rules-01
+    group: asyncio 規約
+    name: asyncio の API 表
+    body: |-
+      | やりたいこと                       | 使う API                                     | 使わない API               |
+      | ---------------------------------- | -------------------------------------------- | -------------------------- |
+      | 並行実行                           | `asyncio.TaskGroup`                          | `asyncio.gather`           |
+      | タイムアウト                       | `async with asyncio.timeout(N)`              | `asyncio.wait_for`         |
+      | sync ブロッキングを async から呼ぶ | `asyncio.to_thread`                          | 直接呼び（ループが止まる） |
+      | async を sync から呼ぶ             | `asyncio.run`（エントリポイントで 1 度だけ） | ネスト呼び出し             |
+      | コンテキストマネージャ             | `@asynccontextmanager` 関数                  | `__aenter__` クラス自作    |
+  - id: asyncio-rules-02
+    group: asyncio 規約
+    name: CancelledError は再 raise
+    body: |-
+      - `CancelledError` は catch してもクリーンアップ後に必ず再 raise（キャンセル伝播を止めない）
+  - id: asyncio-rules-03
+    group: asyncio 規約
+    name: ストリーミングは async generator
+    body: |-
+      - ストリーミング（LLM 応答等）は `AsyncIterator[str]` を返す async generator
+  - id: asyncio-rules-04
+    group: asyncio 規約
+    name: Producer と Consumer
+    body: |-
+      - Producer / Consumer は `asyncio.Queue`（終了は `None` センチネル）
+  - id: asyncio-rules-05
+    group: asyncio 規約
+    name: 排他と同時実行数の制限
+    body: |-
+      - 排他は `asyncio.Lock`、同時実行数制限は `asyncio.Semaphore(N)`
+  - id: asyncio-rules-06
+    group: asyncio 規約
+    name: CPU バウンドを直書きしない
+    body: |-
+      - CPU バウンドを async 関数内に直書きしない（`to_thread` か `concurrency/並列処理.md` へ）

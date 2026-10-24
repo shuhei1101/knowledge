@@ -1,0 +1,103 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-fastapi-route
+kind: rule
+name: ルーター実装パターン
+description: ルーターを薄く保つ責務、配置、記載方法、エラー処理の決まりを定める。
+tags:
+  - name: scope:python
+  - name: topic:fastapi
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      ルーターは薄く。責務は 4 つだけ:
+  - id: router-pattern-01
+    group: ルーター実装パターン
+    name: 入力パース
+    body: |-
+      1. 入力パース（Pydantic）
+  - id: router-pattern-02
+    group: ルーター実装パターン
+    name: 認証
+    body: |-
+      2. 認証（Depends）
+  - id: router-pattern-03
+    group: ルーター実装パターン
+    name: service 関数の呼び出し
+    body: |-
+      3. service 関数呼び出し
+  - id: router-pattern-04
+    group: ルーター実装パターン
+    name: レスポンス変換
+    body: |-
+      4. レスポンス変換
+  - id: layout-01
+    group: 配置
+    name: route.py を基本の配置にする
+    body: |-
+      - 基本は `features/{feature}/route.py`（feature 単位で完結）
+  - id: layout-02
+    group: 配置
+    name: 横断は server/routes
+    body: |-
+      - 複数 feature のオーケストレーションだけ `server/routes/`
+  - id: writing-01
+    group: 書き方
+    name: APIRouter の設定
+    body: |-
+      - `APIRouter(prefix=, tags=)` を router 側で設定（`include_router` には付けない）
+  - id: writing-02
+    group: 書き方
+    name: 引数は Annotated
+    body: |-
+      - 引数は `Annotated[T, Path/Query/Header/Depends(...)]` パターン
+  - id: writing-03
+    group: 書き方
+    name: Depends の型エイリアス化
+    body: |-
+      - 共通ロジック（認証等）は `Depends` を型エイリアス化（`CurrentUser = Annotated[User, Depends(get_current_user)]`）
+  - id: writing-04
+    group: 書き方
+    name: レスポンススキーマの指定
+    body: |-
+      - レスポンススキーマは戻り値の型注釈で指定（返す型と合わないときだけ `response_model=`。`fastapi/スキーマ.md`）、作成系は `status_code=201` を明示、`responses={...}` で OpenAPI に反映
+  - id: writing-05
+    group: 書き方
+    name: SSE のストリーミング
+    body: |-
+      - ストリーミング（SSE）は `response_class=EventSourceResponse`（`fastapi.sse`）で `ServerSentEvent` を yield し、終端は `ServerSentEvent(raw_data="[DONE]")`
+  - id: writing-06
+    group: 書き方
+    name: body は Pydantic で受ける
+    body: |-
+      - body を `dict` / `list` で受けない（必ず Pydantic）
+  - id: writing-07
+    group: 書き方
+    name: route から外部を叩かない
+    body: |-
+      - route 内で直接 DB / 外部 API を叩かない（service.py へ）
+  - id: writing-08
+    group: 書き方
+    name: 画面の HTML のテンプレート
+    body: |-
+      - 画面の HTML はテンプレートで組み立て、`html/core/サーバー描画.md` に従う
+  - id: writing-09
+    group: 書き方
+    name: 一覧はページに分ける
+    body: |-
+      - 件数が増えうる一覧は最初からページに分け、次のページを取る手がかり（URL か cursor）を返す
+  - id: writing-10
+    group: 書き方
+    name: 長い処理は 202 を返す
+    body: |-
+      - 時間のかかる処理は、受け付けた時点で 202 と状態を照会する先を返し、完了まで待たせない
+  - id: error-handling-01
+    group: エラー処理
+    name: HTTPException を直接 raise しない
+    body: |-
+      route 内で `HTTPException` を直接 raise しない。`NotFoundError` 等の AppError 系を raise し、exception_handler に HTTP 変換させる。

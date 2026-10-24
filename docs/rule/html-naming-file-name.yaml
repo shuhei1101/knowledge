@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-naming-file-name
+kind: rule
+name: ファイル名
+description: ファイル名を kebab-case にそろえる決まりを定める。
+tags:
+  - name: scope:html
+  - name: topic:naming
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: file-name-01
+    group: ファイル名
+    name: kebab-case に統一
+    body: |-
+      - kebab-case で統一する（`task-card.ts`, `tuning.css`）。
+        - クラスを書くファイルだけ例外で PascalCase でもよい（`WsClient.ts` 等の既存に合わせる）。
+  - id: file-name-02
+    group: ファイル名
+    name: 画面の slug に複数概念を詰めない
+    body: |-
+      - 画面の slug に複数概念をハイフンで詰め込まない。
+        - 概念の区切りはフォルダで分ける（`pages/prompt/tuning/` であって `pages/prompt-tuning/` ではない）。
+        - 詳細は `html/フォルダ構成.md` のドメイン階層を参照。
+        - 複合語（`personal-chat` 等・1 概念）はハイフンのまま 1 セグメントにする。

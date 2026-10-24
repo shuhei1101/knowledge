@@ -1,0 +1,158 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: prompt-file
+kind: rule
+name: プロンプトファイル
+description: プロンプトを 1 ノード 1 枚の YAML に記載するときの配置・構造・本文・検査・更新の決まりを定める。
+tags:
+  - name: scope:prompt
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+related:
+  - to: dev-content-location
+    type: requires
+    when: プロンプトファイルの置き場所を決めるとき
+  - to: python-llm-cost-cache
+    type: references
+    when: プロンプトの部品の並びとキャッシュ境界の関係を確かめるとき
+  - to: dev-yaml
+    type: requires
+    when: プロンプトのスキーマ・検査・更新を扱うとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      プロンプトは 1 ノード 1 枚の YAML に書き、英語の本体と日本語のミラーをキーで持つ。
+  - id: layout-01
+    group: 配置
+    name: 1 ノード 1 枚の YAML
+    body: |-
+      - 1 ノード（LLM の呼び出し 1 種類）に YAML 1 枚を置く
+  - id: layout-02
+    group: 配置
+    name: prompts/{id}.yaml の配置
+    body: |-
+      - `prompts/{id}.yaml` を平らに並べる
+  - id: layout-03
+    group: 配置
+    name: content/prompts/ に置く
+    body: |-
+      - 置き場所はリポジトリ直下の `content/prompts/`（[コンテンツの置き場所](id:dev-content-location)）
+  - id: structure-01
+    group: 構造
+    name: 1 枚の構造
+    body: |-
+      1 枚の中に、メタデータと部品の配列 `parts` を持つ。
+  - id: structure-02
+    group: 構造
+    name: トップレベルのキー表
+    body: |-
+      | キー | 内容 |
+      | --- | --- |
+      | `id` | プロンプトの識別子（ファイル名の `{id}` と同じ） |
+      | `node` | 人が読むノードの名前 |
+      | `tags` | 分類のタグ |
+      | `vars` | 本文で使う変数の型と必須。必須でない変数は、渡されなければ `None` として渡す |
+      | `output` | 出力の形式 |
+      | `parts` | 部品の配列。並びが積み順になる |
+  - id: structure-03
+    group: 構造
+    name: 部品のキー
+    body: |-
+      部品は次のキーを持つ。
+  - id: structure-04
+    group: 構造
+    name: 部品のキー表
+    body: |-
+      | キー | 内容 |
+      | --- | --- |
+      | `id` | 部品の識別子 |
+      | `role` | `system` / `user` など、積む先 |
+      | `when` | 使う条件。`vars` を使う Jinja2 の式で、無い部品は常に使う |
+      | `text.en` | 英語の本体 |
+      | `text.ja` | 日本語のミラー |
+
+      ```yaml
+      id: reply
+      node: 返答生成ノード
+      tags: [chat]
+      vars:
+        max_chars: {type: int, required: true}
+      parts:
+        - id: rules
+          role: system
+          text:
+            en: |
+              Reply within {{ max_chars }} characters.
+            ja: |
+              {{ max_chars }} 文字以内で返答する。
+      ```
+  - id: body-text-01
+    group: 本文
+    name: 本文はブロックスカラー
+    body: |-
+      - 本文は YAML のブロックスカラー（`|`）に Jinja2 で書き、未定義の変数はエラーにする（StrictUndefined）
+  - id: body-text-02
+    group: 本文
+    name: 実行時は text.en
+    body: |-
+      - 実行時に読むのは `text.en` だけで、`text.ja` は人が読むためのミラー
+  - id: body-text-03
+    group: 本文
+    name: text.ja の同期
+    body: |-
+      - `text.en` を修正したら同じ変更で `text.ja` も修正する
+  - id: body-text-04
+    group: 本文
+    name: 値は変数で渡す
+    body: |-
+      - 字数・件数などの値は本文に書かず、変数で渡す
+  - id: body-text-05
+    group: 本文
+    name: 日本語固有の中身
+    body: |-
+      - 日本語でしか書けない中身（キャラクターの語尾・話し方）は入力の値として渡す
+  - id: body-text-06
+    group: 本文
+    name: 部品の並び順
+    body: |-
+      - 変数を含まない部品を上、含む部品を下に並べる（[コストとキャッシュ](id:python-llm-cost-cache) のキャッシュ境界）
+  - id: inspection-01
+    group: 検査
+    name: 検査の対象
+    body: |-
+      構造はスキーマの YAML で定義し、各プロジェクトが書く。
+      スキーマにはこのページのキーを持たせ、次を検査する。
+  - id: inspection-02
+    group: 検査
+    name: vars 外の変数の禁止
+    body: |-
+      - `vars` に無い変数を本文で使っていない
+  - id: inspection-03
+    group: 検査
+    name: text.en と text.ja の整合
+    body: |-
+      - `text.en` と `text.ja` がそろっている
+  - id: inspection-04
+    group: 検査
+    name: スキーマと検査の参照先
+    body: |-
+      スキーマの書き方と検査の通し方は [YAML](id:dev-yaml) の `## スキーマ` と `## 検査` に従う。
+      スキーマには、`when` の式の書き方・`vars.*.type` に書ける型・`output` の意味を書く。
+  - id: update-01
+    group: 更新
+    name: 更新は MCP の書き込み
+    body: |-
+      更新は [YAML](id:dev-yaml) の `## MCP からの書き込み` に従う。
+  - id: rejected-structure-01
+    group: 採らない構成
+    name: "採らない構成: 外付けメタデータ"
+    body: |-
+      - Markdown を残して YAML でメタデータを外付けする構成
+  - id: rejected-structure-02
+    group: 採らない構成
+    name: "採らない構成: 1 枚にまとめる"
+    body: |-
+      - 全ノードを 1 枚の YAML にまとめる構成

@@ -1,0 +1,150 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-testing-strategy
+kind: rule
+name: テスト戦略
+description: Vitest と Playwright を使うテストレベル、フォルダ構成、テスト関数の書式、カバレッジ、CUJ、保守性の決まりを定める。
+tags:
+  - name: scope:next
+  - name: topic:testing
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      Stack: Vitest（Unit / Component）+ Playwright（E2E）+ Testing Library + MSW（任意）。
+      ピラミッド構造: ユニットで網羅し、E2E はクリティカルパスのみ。
+      テストの対応関係は設計書（モジュール構成 / 結合 / シナリオ）のテスト表が SoT で、テストは表と 1:1 で実装する。
+  - id: test-level-01
+    group: テストレベル
+    name: テストレベルの表
+    body: |-
+      | Level       | Tool                     | 対象                                          | 比率 |
+      | ----------- | ------------------------ | --------------------------------------------- | ---- |
+      | Unit        | Vitest                   | 純粋関数・schema・util                        | 多   |
+      | Component   | Vitest + Testing Library | コンポーネント描画・操作                      | 中   |
+      | Integration | Vitest                   | service / db / API（実 DB or testcontainers） | 中   |
+      | E2E         | Playwright               | ブラウザでの重要フロー                        | 少   |
+      | External    | Vitest                   | 外部 API ラッパーの実接続（実際に使うパラメータ値の網羅） | 少   |
+  - id: test-level-02
+    group: テストレベル
+    name: Unit の単位
+    body: |-
+      - Unit / Component の単位 = 1 ファイル。
+        同一ファイル内のヘルパーは実物のまま、ファイル外 / プロセス外の依存は Mock する
+  - id: test-level-03
+    group: テストレベル
+    name: 分岐カバレッジ
+    body: |-
+      - Unit は分岐ごとに 1 テスト以上置き、分岐カバレッジを極力 100% にする
+  - id: test-level-04
+    group: テストレベル
+    name: External は CI で実行しない
+    body: |-
+      - External は CI では実行しない。
+        AI は、副作用が発生するか、見積もりが規約『開発時の従量課金APIの実行』の閾値を超える課金が発生するときは、ユーザーが実行を許可したときだけ実行する
+  - id: folder-structure-01
+    group: フォルダ構成
+    name: フォルダ構成
+    body: |-
+      ```
+      tests/
+      ├── unit/                  # 単体テスト
+      │   ├── schema/
+      │   ├── service/
+      │   └── utils/
+      ├── components/            # コンポーネントテスト
+      ├── integration/           # 結合（service / route・1 ユースケース = 1 ファイル）
+      ├── external/              # 外部疎通（実 API）
+      ├── e2e/                   # E2E（画面単位フォルダ + ユースケース別ファイル）
+      │   ├── resources/
+      │   │   ├── list.spec.ts
+      │   │   ├── create.spec.ts
+      │   │   ├── edit.spec.ts
+      │   │   └── delete.spec.ts
+      │   ├── auth/
+      │   └── usecases/          # 横断ユースケース
+      ├── pages/                 # Page Object Model
+      ├── fixtures/              # テストデータ Factory
+      └── helpers/
+          ├── db.ts              # DB シード・クリーンアップ
+          ├── auth.ts            # ログイン済み状態を作る
+          └── server.ts          # MSW handlers
+      ```
+  - id: test-function-format-01
+    group: テスト関数の書式
+    name: テスト名の書式
+    body: |-
+      - テスト名（`test` / `it` の説明文字列）は `{関数名}_when_{条件}` とし、期待値は名前に入れない（期待値が変わるたびに名前が変わるため）。
+        条件分岐のない唯一のケースは `{関数名}` のみ
+  - id: test-function-format-02
+    group: テスト関数の書式
+    name: 確認内容はコメントに記載
+    body: |-
+      - 何を確認するか（設計書テスト表の概要 + 正常系 / 異常系）はテスト直前のコメントに書く
+  - id: test-function-format-03
+    group: テスト関数の書式
+    name: 準備・実行・検証の区切り
+    body: |-
+      - 関数内を `// 準備` → `// 実行` → `// 検証` の順のコメントで区切る。
+        例外検証のように実行と検証が一体になる場合は `// 実行・検証` にまとめる
+
+      ```ts
+      // 19 歳は未成年と判定する（正常系）
+      test("is_minor_when_age_19", () => {
+        // 準備
+        const user = new User({ age: 19 });
+        // 実行
+        const result = user.isMinor();
+        // 検証
+        expect(result).toBe(true);
+      });
+      ```
+  - id: coverage-01
+    group: カバレッジ
+    name: 結合・E2E はカバレッジで縛らない
+    body: |-
+      - 結合・E2E はカバレッジ率で縛らない（CUJ・重要ユースケースが通っているかを定性判断）
+  - id: cuj-01
+    group: CUJ（必ず E2E でカバーするフロー）
+    name: 新規登録からログイン
+    body: |-
+      - 新規登録 → ログイン
+  - id: cuj-02
+    group: CUJ（必ず E2E でカバーするフロー）
+    name: CRUD 一巡
+    body: |-
+      - CRUD 一巡（作成 → 一覧 → 詳細 → 編集 → 削除）
+  - id: cuj-03
+    group: CUJ（必ず E2E でカバーするフロー）
+    name: 検索・フィルタ・ソート
+    body: |-
+      - 検索・フィルタ・ソート
+  - id: cuj-04
+    group: CUJ（必ず E2E でカバーするフロー）
+    name: 権限ガード
+    body: |-
+      - 権限ガード（権限なしで編集 URL 直アクセス → 弾かれる）
+  - id: cuj-05
+    group: CUJ（必ず E2E でカバーするフロー）
+    name: エラーハンドリング
+    body: |-
+      - エラーハンドリング（ネットワーク失敗時の UI）
+  - id: maintainability-01
+    group: 保守性
+    name: Page Object と Fixtures
+    body: |-
+      - セレクタは Page Object に、データ生成は Fixtures に集約
+  - id: maintainability-02
+    group: 保守性
+    name: mock は最小限
+    body: |-
+      - mock は最小限。mock しすぎて振る舞いを検証できないなら integration に切り替える
+  - id: maintainability-03
+    group: 保守性
+    name: E2E でユニット検証をしない
+    body: |-
+      - E2E でユニットレベルの検証をしない（unit に降ろす）

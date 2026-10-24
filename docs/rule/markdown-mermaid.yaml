@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: markdown-mermaid
+kind: rule
+name: markdown マーメイド
+description: Markdown でフローチャートを作るときにマーメイドを使う決まりを定める。
+tags:
+  - name: scope:markdown
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-24'
+items:
+  - id: markdown-mermaid-01
+    group: markdown マーメイド
+    name: マーメイドで作成
+    body: |-
+      - フローチャートを作成する際はマーメイドを用いてください。
+        - 画面遷移図ならLR
+        - フローチャートならTD
