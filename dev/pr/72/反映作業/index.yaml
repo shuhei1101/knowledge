@@ -1,0 +1,28 @@
+knowledge の登録:
+  説明: この端末の dev-docs の端末の設定 ~/.config/dev-docs/settings.yaml の projects[] に knowledge の dev-docs.yaml の絶対パスを追加し、管理の MCP の reload で読み直させる
+  タグ: [端末の設定]
+  実行者: tester
+  時期: master へ入った後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 管理の MCP の check_project の誤りを確かめて 1 回やり直し、2 回連続で失敗したら依頼元へ返す
+  確認方法: 管理の MCP の status に knowledge が配信中で載り、http://127.0.0.1:8781/knowledge/ が HTTP 200 を返す
+  状態: "-"
+knowledge-docs の導入:
+  説明: この端末の Claude Code に、このリポジトリのマーケットプレイスを登録し、knowledge-docs をユーザースコープで入れる
+  タグ: [プラグインの導入]
+  実行者: tester
+  時期: master へ入った後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 導入のコマンドを 1 回やり直し、2 回連続で失敗したら依頼元へ返す
+  確認方法: claude plugin list の出力に knowledge-docs が有効で載り、新しいセッションの /mcp で knowledge-docs が接続済みになる
+  状態: "-"
