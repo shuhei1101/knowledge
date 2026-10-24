@@ -24,7 +24,7 @@ items:
   - id: config-usage-01
     name: 設定 との使い分け
     body: |-
-      - 環境変数で上書きされる値（`DB_HOST` / `LOG_LEVEL` 等）→ `テンプレート/設定.md`
+      - 環境変数で上書きされる値（`DB_HOST` / `LOG_LEVEL` 等）→ [テンプレート/設定](id:template-config)
       - 実行時に変わらない業務ロジック上の即値（`エンドポイント一覧` / `テーマトークン` 等）→ 本テンプレ
   - id: layout-01
     name: 配置
@@ -154,7 +154,7 @@ items:
   - id: table-rule-01
     name: 表のルール（全テンプレ共通）
     body: |-
-      `dev/テンプレート/テンプレート.md` の「表のルール」に従う。
+      [dev/テンプレート/テンプレート](id:template-template#table-rule-common-01) の「表のルール」に従う。
       - 補足列: 最右に必須
       - 連続同値: 省略せず実値を書く
       - 該当なし: `-`
