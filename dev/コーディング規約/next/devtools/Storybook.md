@@ -1,7 +1,7 @@
 # Next.js App Router — Storybook
 
 > **目的**: shadcn/ui 拡張コンポーネントのカタログを可視化し、デザイン確認・テスト・ドキュメント化を一元化。
-> **Stack**: Storybook + `@storybook/nextjs-vite` + Vitest 統合（版は [Storybook のドキュメント](https://storybook.js.org/docs)）。
+> **Stack**: Storybook + `@storybook/nextjs-vite` + Vitest 統合（バージョンは [Storybook のドキュメント](https://storybook.js.org/docs)）。
 
 - 共通コンポーネント（`app/(shared)/components/`）の `.stories.tsx` を 同じディレクトリ に置く
 - フィーチャ固有のコンポーネントは story 不要（E2E でカバー）

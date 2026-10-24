@@ -7,7 +7,7 @@ OBS のブラウザソースで取り込む画面の前提のブラウザと、O
 | 要素 | 決まり |
 | --- | --- |
 | 前提のブラウザ | OBS 同梱の Chromium。それより新しいブラウザの API は、機能の有無を確かめてから使う |
-| 版の確かめ先 | OBS の版と同梱の Chromium の版の対応は書かない。[OBS のリリースノート](https://github.com/obsproject/obs-studio/releases)と、[obs-browser](https://github.com/obsproject/obs-browser) の CEF の版で確かめる |
+| バージョンの確かめ先 | OBS のバージョンと同梱の Chromium のバージョンの対応は書かない。[OBS のリリースノート](https://github.com/obsproject/obs-studio/releases)と、[obs-browser](https://github.com/obsproject/obs-browser) の CEF のバージョンで確かめる |
 
 ## OBS 側の設定
 

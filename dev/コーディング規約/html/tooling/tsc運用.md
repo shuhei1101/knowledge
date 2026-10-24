@@ -14,7 +14,7 @@
 | `tsconfig.json`       | 型チェック用。`noEmit`。`frontend/**/*.ts`（移行期は `.js` も）を include                         |
 | `tsconfig.build.json` | 生成用。`tsconfig.json` を継承し `noEmit:false` + 同階層 emit。include は `frontend/**/*.ts` のみ |
 | `tsconfig.plan.json` | 型チェック用。トップレベルの宣言が重なる従来のスクリプト（`import` / `export` の無い `.ts`）を、`tsconfig.json` と別のプログラムにする。`tsconfig.json` を継承し include だけを変える |
-| `tsconfig.plan.build.json` | 生成用。`tsconfig.plan.json` を継承し、`tsconfig.build.json` と同じ形で出す |
+| `tsconfig.plan.build.json` | 生成用。`tsconfig.plan.json` を継承し、`tsconfig.build.json` と同じ構成で出す |
 | `eslint.config.mjs`   | flat config。`typescript-eslint` で `.ts` を lint。`@typescript-eslint/no-deprecated` を有効にし、型情報つきの設定（`parserOptions.projectService`）で動かす |
 | `package.json`        | dev ツールの devDependencies と scripts（`type: module`）                                         |
 
