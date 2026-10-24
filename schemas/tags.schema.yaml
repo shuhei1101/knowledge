@@ -1,0 +1,86 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: タグの語彙
+description: 文書に付けるタグの語彙。`name` を文書の `tags[].name` が指す。
+type: object
+additionalProperties: false
+required:
+  - id
+  - kind
+  - name
+  - description
+  - status
+  - visibility
+  - rev
+  - tags
+properties:
+  id:
+    title: 文書の ID
+    description: 変わらない ID。
+    const: tags
+  kind:
+    title: 種類
+    description: 文書の種類。この種類では `tags` に固定する。
+    const: tags
+  name:
+    title: タイトル
+    description: タグの語彙のタイトル。
+    type: string
+  description:
+    title: 概要文
+    description: 本文を読まずに中身が分かる 1〜2 文。
+    type: string
+  status:
+    title: 状態
+    description: 文書の状態。
+    enum:
+      - current
+      - deprecated
+  visibility:
+    title: 公開範囲
+    description: 公開範囲。
+    enum:
+      - public
+      - internal
+  rev:
+    title: バージョン
+    description: 変更ごとに増えるバージョン。
+    type: integer
+    minimum: 1
+  tags:
+    title: タグの一覧
+    description: 登録したタグ。
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - group
+        - description
+      properties:
+        name:
+          title: タグ名
+          description: '`{グループ}:{名前}` 形式のタグ名。'
+          type: string
+          pattern: ^[a-z]+:.+$
+        group:
+          title: グループ
+          description: タグのグループ（`scope`・`topic` など）。`name` の `:` より前と同じ。
+          type: string
+          pattern: ^[a-z]+$
+        description:
+          title: 説明
+          description: '「含める / 含めない / 例」の 3 点で記載する。'
+          type: string
+          minLength: 1
+        aliases:
+          title: 別名
+          description: 同じタグを指す別の名前。
+          type: array
+          items:
+            type: string
+        deprecated:
+          title: 振り替え先
+          description: 廃止したタグの振り替え先のタグ名。
+          type: string

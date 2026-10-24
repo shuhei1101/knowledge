@@ -1,0 +1,13 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: 規約
+description: 言語・フレームワーク・進め方の規約。rule-inject が注入する 1 トピック。
+allOf:
+  - $ref: common.schema.yaml#/$defs/metadata
+properties:
+  kind:
+    title: 種類
+    description: 文書の種類。この種類では `rule` に固定する。
+    const: rule
+required:
+  - last_reviewed
+unevaluatedProperties: false
