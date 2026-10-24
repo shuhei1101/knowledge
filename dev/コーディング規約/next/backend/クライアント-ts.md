@@ -9,7 +9,7 @@
 - URL は `app/(shared)/endpoints.ts` の定数経由（ハードコード禁止）
 - 非 OK レスポンスは `AppError.fromResponse(json, status)` で投げる
 - 戻り値は 封筒の `data` を unwrap して返す（呼び出し側で `.data` を書かなくていい）
-- `JSON.stringify(req)` で送る前に Zod パースする必要はない（route.ts 側が parse する）
+- `JSON.stringify(req)` で送信する前に Zod パースする必要はない（route.ts 側が parse する）
 
 ## 命名
 

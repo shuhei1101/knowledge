@@ -9,4 +9,4 @@
 - 例外は `VersionConflictError` をそのまま投げ、それ以外を `DatabaseError` で包む
 - `updatedAt` の精度（Postgres はマイクロ秒、JS の `Date` はミリ秒）で比較が食い違う場合は、`version: integer` 列を併用して比べる
 - 外部公開 API は `ETag` ヘッダ + `If-Match` で比べる（不一致は 412、`If-Match` が無い更新は 428）
-- internal API は `updatedAt` を JSON body に含めて送る
+- internal API は `updatedAt` を JSON body に含めて送信する

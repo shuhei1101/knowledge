@@ -61,6 +61,6 @@
 ## 反映を叩くタイミング
 
 稼働中のワークツリーへ入った `plugins/` 配下とリポジトリの直下の `.claude-plugin/` 配下の変更は、モニターが `update_plugins` と同じ更新を済ませてから再起動するので、手では叩かない。
-自動で効かないとき（`local` で作業ツリーを直したとき 等）は、設定 `rule_inject.source` によらず、変更の commit を載せた後に MCP ツール `update_plugins` を叩いて認証領域へ届ける。
-どちらの出所でも実体は認証領域の cache（`{認証領域}/plugins/cache/{マーケットプレース名}/{名前}/{version}`）の複製で、直した作業ツリーがそのまま読まれることはない。
+自動で効かないとき（`local` で作業ツリーを修正したとき 等）は、設定 `rule_inject.source` によらず、変更の commit を載せた後に MCP ツール `update_plugins` を実行して認証領域へ反映する。
+どちらの出所でも実体は認証領域の cache（`{認証領域}/plugins/cache/{マーケットプレース名}/{名前}/{version}`）の複製で、修正した作業ツリーがそのまま読まれることはない。
 `update_plugins` は Claude 種別のアカウントの認証領域ごとに `claude plugin marketplace update` → `claude plugin update` の順で実行する。

@@ -37,7 +37,7 @@
 | 列の表示切り替え | 列の一覧から表示を切り替える。行の識別子の列は外せない。既定に戻す操作を置く | [NN/g: Data Tables](https://www.nngroup.com/articles/data-tables/)・[Pencil & Paper: Data Table Design](https://www.pencilandpaper.io/articles/ux-pattern-analysis-enterprise-data-tables)・[DataTables: colvis](https://datatables.net/reference/button/colvis) |
 | 既定に戻す | 列の表示・並べ替え・固定を変えられる表には、既定に戻す操作を置く | [Pencil & Paper: Data Table Design](https://www.pencilandpaper.io/articles/ux-pattern-analysis-enterprise-data-tables) |
 | 保存ビュー | 絞り込み・並べ替え・列の組に名前を付けて保存し、呼び出せるようにする。保存先は外部規約『[入力と文言](./入力と文言.md)』の `## 状態の保持` | [Shopify Polaris: Index filters](https://polaris-react.shopify.com/components/selection-and-input/index-filters) |
-| 行の詳細 | 行の押下で外部のサイトへ飛ばさず、画面の中で詳細を開く。開き方は、隣の行と見比べられる非モーダルのサイドパネルを候補に入れて決める。外部のサイトへのリンクは詳細の中に置く。表に入れると 3 次元以上になる項目（行の項目が入れ子の表を持つ）は、行の開閉を既定にし、次の行に入れ子の表を開く。開閉で隠すのは 1 段だけにする。中身が大きいときは先頭だけを出し、全体はサイドの詳細で見せる | [NN/g: Data Tables](https://www.nngroup.com/articles/data-tables/) |
+| 行の詳細 | 行の押下で外部のサイトへ飛ばさず、画面の中で詳細を開く。開き方は、隣の行と見比べられる非モーダルのサイドパネルを候補に入れて決める。外部のサイトへのリンクは詳細の中に置く。表に入れると 3 次元以上になる項目（行の項目が入れ子の表を持つ）は、行の開閉を既定にし、次の行に入れ子の表を開く。開閉で隠すのは 1 階層だけにする。中身が大きいときは先頭だけを出し、全体はサイドの詳細で見せる | [NN/g: Data Tables](https://www.nngroup.com/articles/data-tables/) |
 | 表以外の一覧 | ガントなど表以外の一覧でも、行の見出しを列に分け、表と同じピン留めで固定できるようにする | - |
 | 狭い幅の表 | 列数の多い表は、狭い幅では後ろの列を畳み、行の押下で開く | - |
 | 一覧のまとめて選ぶ操作 | 表を含む一覧の項目をまとめて選ぶ操作は、「全て選ぶ」「全て外す」の 2 つのボタンにせず、一覧の先頭に 1 つのチェックボックスで置く。全て選んでいれば選んだ状態、一部なら途中の状態（indeterminate）、1 つも選んでいなければ外した状態で出す。押すと、全て選んでいないときは全て選び、全て選んでいるときは全て外す | - |
