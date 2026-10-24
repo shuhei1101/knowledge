@@ -1,0 +1,1 @@
+# knowledge の文書を、道具が markdown を前提にするファイルを除いて YAML に移す
