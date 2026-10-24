@@ -2,23 +2,23 @@
 
 ## 概要
 
-利用者が、knowledge を clone して開発ドキュメントサーバーを起動し、文書の MCP のプラグイン `knowledge-docs` を入れると、どの端末・プロジェクトからでも規約を MCP で検索・取得・書き込みできるようになる。
+利用者が、dev-docs に knowledge を登録して文書の MCP のプラグイン `knowledge-docs` を入れると、どの端末・プロジェクトからでも規約を画面で読み、MCP で検索・取得・書き込みできるようになる。
 
 ## 背景
 
 [Issue #51](https://github.com/shuhei1101/knowledge/issues/51) の要望。
 今は clone して `RULE_INJECT_INDEXES_USER` に `rules.yaml` を書くだけで使い、knowledge のプラグイン・MCP・開発ドキュメントサーバーは無い。
 [#64](https://github.com/shuhei1101/knowledge/pull/64)（[#44](https://github.com/shuhei1101/knowledge/issues/44)）で文書を YAML に移した後も、タグやメタデータで規約を引く手段が無い。
-MCP を HTTP に統一する規約と既定のポートは [#50](https://github.com/shuhei1101/knowledge/issues/50) で入っている。
-スキーマ・参照の検査のツールと CI は、#64 のレビューでこの Issue に含めると決まった（[コメント](https://github.com/shuhei1101/knowledge/pull/64#discussion_r4367269018)）。
-knowledge のワークスペース `tmp/mcpベストプラクティス検討` の D-59〜D-61・D-82〜D-85 と、ドキュメント用 MCP のインターフェース定義 A-14 で決めた。
+スキーマ・参照の検査と CI は、#64 のレビューでこの Issue に含めると決まった（[コメント](https://github.com/shuhei1101/knowledge/pull/64#discussion_r4367269018)）。
+開発ドキュメントサーバーと文書の MCP は各リポジトリが作らず、汎用の dev-docs を使うと決まった（[ユーザーの追記](https://github.com/shuhei1101/knowledge/issues/51#issuecomment-6386949622)、D-96〜D-115）。
+dev-docs の本体は [shuhei1101/dev-docs#3](https://github.com/shuhei1101/dev-docs/issues/3)・[shuhei1101/dev-docs#4](https://github.com/shuhei1101/dev-docs/issues/4)、規約は [#73](https://github.com/shuhei1101/knowledge/issues/73) が受け持つ。
 
 ## 計画書
 
 | ファイル | 中身 |
 | --- | --- |
 | [要件](./要件.md) | 要望の整理と影響する UC 一覧 |
-| [反映作業](./反映作業/index.yaml) | この端末でのサーバーの起動とプラグインの導入 |
+| [反映作業](./反映作業/index.yaml) | この端末での knowledge の登録とプラグインの導入 |
 
 対象システムごとの計画書は、初期構築でアーキテクチャ図のサブシステムを決めた後に追加する。
 
@@ -27,15 +27,15 @@ knowledge のワークスペース `tmp/mcpベストプラクティス検討` �
 - [ ] 初期構築（アーキテクチャ図・非機能要件・設計書の置き場所。コードを持つのはこの PR が初めて）
 - [x] ~~リバースエンジニアリング~~（設計書も実装も無く、起こす対象が無い）
 - [x] ~~方針決め~~（方針決めを依頼する Issue ではない）
-- [x] ~~PoC 検証~~（未検証の技術機構に依存しない。会話キーを入れるフックは rule-inject の `session_id_injection` で、HTTP の MCP のプラグインは ai-monitor・observability で動いている）
+- [x] ~~PoC 検証~~（未検証の技術機構に依存しない。knowledge が持つのは dev-docs が読む設定・スクリプト・プラグインの定義だけ）
 - [ ] 複合ユースケース設計
-- [x] ~~デザインスタイル選定~~（画面は mdmark の共通スタイルで描くと決まっている（D-85））
-- [ ] 画面一覧・画面遷移
+- [x] ~~デザインスタイル選定~~（画面は dev-docs が持ち、mdmark の共通スタイルで描く（D-85・D-96））
+- [x] ~~画面一覧・画面遷移~~（画面と画面遷移は dev-docs が持ち、knowledge は `nav` でタブとサイドバーの並びを書くだけ）
 - [ ] 単一ユースケース設計
-- [ ] モック作成
+- [x] ~~モック作成~~（画面は dev-docs が持ち、knowledge は画面を作らない）
 - [ ] インターフェース定義設計
-- [ ] 部品設計
-- [ ] 画面設計
+- [x] ~~部品設計~~（画面の部品は dev-docs と mdmark が持つ）
+- [x] ~~画面設計~~（画面の UI 項目は dev-docs が持ち、knowledge の変更は画面の UI 項目を増やさない）
 - [ ] モジュール構成設計
 - [ ] ドキュメント修正（要件.md の `## 更新ドキュメント`）
 - [ ] 単体テスト作成
