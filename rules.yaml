@@ -39,6 +39,7 @@ rules:
   - rule: docs/rule/convention-writing-style.yaml
     paths:
       - "**/*.md"
+      - "**/docs/**/*.yaml"
     tools:
       - "mcp__*__comment"
       - "mcp__*__reply_comment"
@@ -334,12 +335,15 @@ rules:
   - rule: docs/rule/markdown-editing.yaml
     paths:
       - "**/*.md"
+      - "**/docs/**/*.yaml"
   - rule: docs/rule/markdown-mermaid.yaml
     paths:
       - "**/*.md"
+      - "**/docs/**/*.yaml"
   - rule: docs/rule/markdown-flowchart.yaml
     paths:
       - "**/*.md"
+      - "**/docs/**/*.yaml"
   - rule: docs/rule/next-backend-api-folder.yaml
     paths:
       - "**/app/api/**/route.ts*"
