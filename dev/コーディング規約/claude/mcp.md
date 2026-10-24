@@ -71,10 +71,22 @@
   参照は ID と名前・概要文まで結合し、相手の本文は結合しない
 - 本文に出る用語・エイリアスは、本文を変えずに末尾に一覧（語と ID）を付ける
   語の名前と概要文を引くツールを置く
+- 用語・エイリアスの照合に使う語の一覧（語・正規化した語・ID・種類・概要・関連する文書）を返すツールを置く
+  指定したバージョンから変わっていなければ、変わっていないことだけを返す
+  mod が使うので、`format` の既定は `json` にする
 - 読み取りのツールに `readOnlyHint` を付ける（Claude Code が並列に実行する）
-- 同じ会話で既に返した概要文・関連は省く
-  PreToolUse フックが会話キー（`session_id` と `agent_id`）を引数に入れ、サーバーは返した内容のハッシュを記録して、同じなら目印だけ返す
+- 読み取りのツールに共通の `format`（`markdown` / `json`、既定 `markdown`）を持たせる
+  `json` のときは structuredContent と text に同じ JSON を入れ、`markdown` のときは structuredContent を返さない
+- 会話キーは `session_id` と `agent_id` の別々の 2 つの引数で受け、PreToolUse フックが入れる
+  エージェントには記載させない
+- 1 つのセッションで同じ内容は 1 回だけ渡す
+  対象は、関連に結合した相手の名前・概要文、1 件を取るツールの末尾の用語の一覧、同じバージョンの文書の本文
+  サーバーは会話キーごとに返した内容のハッシュを記録し、2 回目は返し済みのマーカーだけを返す（用語の一覧は、返した語を省く）
   `repeat_seen` で再取得できるようにし、`/clear`・圧縮の後はフックで記録を捨てる
+  会話キーが無いときは省かない
+  検索結果の各行の概要文は、選ぶために使うので省かない
+- 1 セッション 1 回の決まりは、MCP のツールに限らず、フック・mod で文脈を追加するときにも当てる
+  入力に用語の文脈を追加するときは、そのセッションで初めて出た語だけ、語・ID・説明・関連する文書（ID と名前）を 1 回だけ追加する
 
 出典: [Anthropic: Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)、[MCP 仕様: Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools)（`tools/list` の `cursor` / `nextCursor`）、[Google AIP-157](https://google.aip.dev/157)（view）、[anthropics/claude-code #9962](https://github.com/anthropics/claude-code/issues/9962)（structuredContent を優先し text を捨てる）、[MCP 仕様 2026-07-28: Changelog](https://modelcontextprotocol.io/specification/2026-07-28/changelog)（接続を会話とみなさない）
 
@@ -82,6 +94,15 @@
 
 - サーバーがエージェントの既読時点を記録し、`changes_since_read` で前回から変わった項目・キー・変更前の値を返す
   エージェントにバージョンを持たせない
+- 区間（`from`・`to`）で追加・変更・削除された文書の一覧を返すツールを置く
+  区間を自分で指すときは、`changes_since_read` ではなくこのツールを使う
+  `include_diff` で文書ごとの差分も返す
+- `from`・`to` は git の commit・日時・ブランチ・タグのどれでも受け、サーバーが commit に解決する
+  日時はその時点の最後の commit にする
+  解決した commit と日時を結果の先頭に返す
+- 1 件を取るツールに差分モード（`diff_from`・`diff_to`・`context_lines`、既定 3）を持たせ、git と同じ `+`・`-` の行で返す
+  `rev` だけの変化は出さず、参照の ID には名前を添える
+  `format: json` のときは、変わったキーごとの変更前後の値と、本文の変わった行の配列を返す
 - MCP の変更通知（resources の購読）には頼らない
   Claude Code は購読せず、通知はモデルに届かない
 
@@ -103,8 +124,11 @@
 
 ## 登録
 
-- プロジェクト用: ルートの `.mcp.json`（バージョン管理でチーム共有）
+- プロジェクト用: ルートの `.mcp.json`（バージョン管理でチーム共有）。開発ドキュメントサーバーにつなぐ MCP は対象外
 - プラグイン用: プラグインルートの `.mcp.json`
+- 開発ドキュメントサーバーにつなぐ MCP は、各リポジトリを Claude Code のマーケットプレイスにし、プラグインで配る
+  利用者は、どのプロジェクトでも使うならユーザースコープ、特定のプロジェクトだけならプロジェクトスコープで入れる
+- 文書の MCP のプラグインは、文書を持つリポジトリごとに 1 つにし、ほかのプラグインと分ける
 
 接続先を書く。
 
