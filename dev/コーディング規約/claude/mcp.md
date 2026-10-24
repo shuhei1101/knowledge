@@ -74,7 +74,7 @@
 - 読み取りのツールに `readOnlyHint` を付ける（Claude Code が並列に実行する）
 - 同じ会話で既に返した概要文・関連は省く
   PreToolUse フックが会話キー（`session_id` と `agent_id`）を引数に入れ、サーバーは返した内容のハッシュを記録して、同じなら目印だけ返す
-  `repeat_seen` で取り直せるようにし、`/clear`・圧縮の後はフックで記録を捨てる
+  `repeat_seen` で再取得できるようにし、`/clear`・圧縮の後はフックで記録を捨てる
 
 出典: [Anthropic: Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)、[MCP 仕様: Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools)（`tools/list` の `cursor` / `nextCursor`）、[Google AIP-157](https://google.aip.dev/157)（view）、[anthropics/claude-code #9962](https://github.com/anthropics/claude-code/issues/9962)（structuredContent を優先し text を捨てる）、[MCP 仕様 2026-07-28: Changelog](https://modelcontextprotocol.io/specification/2026-07-28/changelog)（接続を会話とみなさない）
 
