@@ -1,0 +1,1 @@
+# プラグインの設定は env に設定ファイルのパスだけを置き、本体を ~/.config の YAML（global・projects）に書くと規約に書く
