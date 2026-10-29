@@ -8,8 +8,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 related:
   - to: claude-mcp
     type: requires
@@ -19,7 +19,7 @@ related:
     when: content/ に置く正本の置き場所を決めるとき
   - to: dev-tag-term-registration
     type: requires
-    when: YAML のタグを登録するとき
+    when: YAML のタグを付けるとき
   - to: flowchart-config-location
     type: requires
     when: アプリの設定値の置き場所を決めるとき
@@ -274,29 +274,24 @@ items:
       YAML では次を追加する。
   - id: mcp-read-02
     group: MCP からの読み取り
-    name: タグの一覧を登録
+    name: タグは正規化して比べる
     body: |-
-      - タグの一覧を YAML に登録する。登録外のタグは弾かずに未登録の候補として受け付け、検査で警告する（[タグと用語の登録](id:dev-tag-term-registration)）
+      - タグは自由な文字列で、一致の前に正規化（NFKC・大文字小文字）する（[タグと用語の登録](id:dev-tag-term-registration)）
   - id: mcp-read-03
     group: MCP からの読み取り
-    name: タグ一覧のツール
+    name: 使われているタグの集計
     body: |-
-      - タグの一覧のツールを置き、登録したタグごとに名前・説明・そのタグを持つ項目の数・使っている種類を返す。数が 0 のタグも返す。`query` を受け、正規化した名前・`aliases`・説明に一致するタグを上位から返す
+      - 使われているタグは、検索の集計（`group_by: tags`）でタグごとの件数を返す
   - id: mcp-read-04
     group: MCP からの読み取り
     name: AND と OR の絞り込み
     body: |-
       - 検索のタグは複数を渡せ、既定は全てを持つ項目（AND）に絞る。どれかを持つ項目（OR）は別の引数（`any_tags`）で渡す
-  - id: mcp-read-05
-    group: MCP からの読み取り
-    name: 登録外タグの検索
-    body: |-
-      - 登録外のタグで検索したら、近い候補を添えたエラーにする
   - id: mcp-read-06
     group: MCP からの読み取り
     name: ツール説明をスキーマから作る
     body: |-
-      - 読み取りのツールの説明も、スキーマから組み立てる。使える絞り込みと、タグの一覧のツールは語彙が多いときに呼ぶこと（引数なしの `search` がタグごとの件数を返す）を記載する
+      - 読み取りのツールの説明も、スキーマから組み立てる。使える絞り込みと、タグで絞る前に `group_by: tags` で使われているタグを引くこと（引数なしの `search` がタグごとの件数を返す）を記載する
   - id: config-file-01
     group: 設定ファイル
     name: 設定の YAML はテーブルの構造にする
