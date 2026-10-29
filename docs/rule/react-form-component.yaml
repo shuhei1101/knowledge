@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-form-component
+kind: rule
+name: Controller + Field
+description: React Hook Form・Zod・shadcn/ui で Controller と Field を組み合わせる標準の書き方を定める。
+tags:
+  - name: scope:react
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      React Hook Form + Zod + shadcn/ui の標準の組み合わせ。
+  - id: structure-01
+    group: 構造
+    name: form の構造
+    body: |-
+      `<form onSubmit={form.handleSubmit(onSubmit)}>` → `<Controller>` の `render` → `<Field>` → `<FieldLabel>` + 入力部品 + `<FieldError>`
+  - id: structure-02
+    group: 構造
+    name: register を直接使わない
+    body: |-
+      - `register` を直接使わず、`<Controller render={({ field, fieldState }) => ...}>` を使う。
+  - id: structure-03
+    group: 構造
+    name: エラー状態は fieldState.invalid
+    body: |-
+      - エラーの状態は、`fieldState.invalid` を `<Field>` の `data-invalid` と入力部品の `aria-invalid` へ渡して出す。
+  - id: structure-04
+    group: 構造
+    name: htmlFor と id を揃える
+    body: |-
+      - `<FieldLabel>` の `htmlFor` と入力部品の `id` を揃える。
+  - id: structure-05
+    group: 構造
+    name: watch の代わりに useWatch を使う
+    body: |-
+      - `watch` を使わず、`useWatch` を使う（`watch` は React Compiler と非互換）。
+  - id: input-type-points-01
+    group: 入力タイプ別ポイント
+    name: 入力タイプ別ポイントの表
+    body: |-
+      <!-- table: data -->
+
+      | 型 | ポイント |
+      | --- | --- |
+      | Text / Textarea | `{...field}` でそのまま渡す |
+      | Number | `onChange` で `Number()` に変換し、空文字は `null` にする |
+      | Select | `value` を `toString()` にし、`onValueChange` で `Number()` に変換する |
+      | Switch | `checked={field.value} onCheckedChange={field.onChange}` |
+      | Tag | `<TagInput value={field.value} onChange={field.onChange}>` |
+      | Date | `<Calendar>` + `<Popover>` を組み合わせる |
+
+      <!-- /table -->
+  - id: rules-01
+    group: ルール
+    name: 必須フィールドの RequiredMark
+    body: |-
+      - 必須のフィールドには、`<FieldLabel>` の中に `<RequiredMark />` を置く（[RequiredMark](id:react-component-required-mark)）。

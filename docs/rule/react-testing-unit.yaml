@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-testing-unit
+kind: rule
+name: Unit / Component テスト（Vitest + Testing Library）
+description: Vitest と Testing Library による React の Unit・Component テストの設定と、何をどうテストするかを定める。
+tags:
+  - name: scope:react
+  - name: topic:testing
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+related:
+  - to: testing-core-strategy
+    type: requires
+    when: テスト関数の書式・単体の単位を確かめるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      単体の単位と分岐カバレッジは [テスト戦略](id:testing-core-strategy) に従う。
+  - id: vitest-config-01
+    group: vitest.config.ts の要点
+    name: vitest の environment
+    body: |-
+      - `environment: "jsdom"`、`globals: true`、`setupFiles: ["./frontend/src/testing/setup-tests.ts"]`（jest-dom の読み込み）にする。
+  - id: vitest-config-02
+    group: vitest.config.ts の要点
+    name: coverage の対象
+    body: |-
+      - coverage は `frontend/src/**` を include し、`routes/` と生成物（`shared/api/generated/`）を exclude する。
+  - id: what-to-test-01
+    group: 何をどうテストするか
+    name: テスト対象別の方針の表
+    body: |-
+      <!-- table: data -->
+
+      | 対象 | 方法 |
+      | --- | --- |
+      | Zod schema | `safeParse` で、有効な値と各バリデーションエラーを網羅する |
+      | 純粋関数 | 入出力だけを検証する |
+      | コンポーネント | Testing Library + userEvent で振る舞いを検証する |
+      | カスタム hook | `renderHook` + `waitFor` で検証する |
+      | 画面 | `src/testing/render.tsx`（Provider・ルーターつき）で描画し、API は MSW で差し替える |
+      | API のモック | MSW（setupServer。setup で listen・resetHandlers・close を呼ぶ） |
+
+      <!-- /table -->

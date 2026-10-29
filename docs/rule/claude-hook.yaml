@@ -34,6 +34,11 @@ items:
     name: 1 セッション 1 回の決まり
     body: |-
       - 文脈を注入するときは、[MCP サーバー作成ルール](id:claude-mcp) の 1 セッション 1 回の決まりに従う
+  - id: rules-04
+    group: ルール
+    name: MCP に届かないときは何も追加しない
+    body: |-
+      - 文脈を追加するために MCP を呼んで届かないときは、何も追加せず、入力をそのまま渡す。
   - id: one-time-token-block-01
     group: ワンタイムトークン付き条件ブロック
     name: ワンタイムトークンの用途

@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-devtools-lint-format
+kind: rule
+name: ESLint・Prettier・tsconfig
+description: React のフロントエンドの ESLint・Prettier・tsconfig.json の設定と、規約の規則と ESLint の規則の対応を定める。
+tags:
+  - name: scope:react
+  - name: topic:devtools
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+related:
+  - to: dev-design-principles
+    type: references
+    when: 複雑さの lint の強さを決めるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      機械で判定できる規則は ESLint で止め、規約には規則だけを書く。
+      lint の設定は、各リポジトリの React 移行で入れる。
+  - id: tsconfig-01
+    group: tsconfig.json
+    name: strict に加える項目
+    body: |-
+      - `strict: true` に加えて、`noUncheckedIndexedAccess`・`noUnusedLocals`・`noUnusedParameters`・`noFallthroughCasesInSwitch`・`noImplicitOverride`・`forceConsistentCasingInFileNames` を有効にする。
+  - id: tsconfig-02
+    group: tsconfig.json
+    name: target と allowJs
+    body: |-
+      - `target: ES2022`、`allowJs: false` にする。
+  - id: tsconfig-03
+    group: tsconfig.json
+    name: paths の別名
+    body: |-
+      - `paths` で `@/*` を `frontend/src/*` に向ける。
+  - id: eslint-01
+    group: ESLint
+    name: Flat Config で読む
+    body: |-
+      - ESLint は Flat Config（`eslint.config.js`）で書き、typescript-eslint を使う。
+  - id: eslint-02
+    group: ESLint
+    name: Prettier との競合の回避
+    body: |-
+      - `eslint-config-prettier` で、Prettier と競合する ESLint の規則を無効にする。
+  - id: eslint-03
+    group: ESLint
+    name: no-deprecated の有効化
+    body: |-
+      - `@typescript-eslint/no-deprecated` を有効にし、型情報つきの設定（`parserOptions.projectService`）で動かす。
+  - id: rule-map-01
+    group: 規則と ESLint の対応
+    name: 規則と ESLint の対応表
+    body: |-
+      <!-- table: data -->
+
+      | 規則 | ESLint |
+      | --- | --- |
+      | フックの規則・React Compiler の規則 | `eslint-plugin-react-hooks`（`recommended-latest`） |
+      | アクセシビリティ | `eslint-plugin-jsx-a11y`（`tabindex-no-positive`・`no-noninteractive-tabindex`・`interactive-supports-focus`・`click-events-have-key-events`・`no-autofocus`） |
+      | import の向き | `eslint-plugin-boundaries` |
+      | Tailwind の任意値の禁止 | `eslint-plugin-better-tailwindcss` |
+      | const のアロー関数 | `func-style` |
+      | 型は `type` | `@typescript-eslint/consistent-type-definitions` |
+      | `enum` の禁止 | `no-restricted-syntax` |
+      | 名前付き export | `import/no-default-export` |
+      | 非 null の断定の禁止 | `@typescript-eslint/no-non-null-assertion` |
+      | cognitive complexity | `sonarjs/cognitive-complexity`（[設計原則](id:dev-design-principles)） |
+
+      <!-- /table -->
