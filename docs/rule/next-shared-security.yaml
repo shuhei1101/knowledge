@@ -28,16 +28,6 @@ items:
     name: route.ts の CSRF 対策
     body: |-
       - route.ts の mutation は Origin ヘッダ検証、または SameSite=strict cookie で防御
-  - id: xss-01
-    group: XSS
-    name: dangerouslySetInnerHTML の sanitize
-    body: |-
-      - `dangerouslySetInnerHTML` は DOMPurify で sanitize したものだけ渡す
-  - id: xss-02
-    group: XSS
-    name: ユーザー入力 URL の protocol
-    body: |-
-      - ユーザー入力 URL を `<a href>` に流すときは protocol を http/https に限定
   - id: sql-injection-01
     group: SQL Injection
     name: sql.raw に値を渡さない
@@ -78,11 +68,6 @@ items:
     name: secret の置き場所
     body: |-
       - secret は env / Vercel ダッシュボードのみ。`NEXT_PUBLIC_` を付けない。定期ローテーション
-  - id: others-03
-    group: その他
-    name: 依存の監査
-    body: |-
-      - CI で `pnpm audit --prod`
   - id: others-04
     group: その他
     name: 認証 API とフォームの対策

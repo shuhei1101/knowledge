@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-core-build
+kind: rule
+name: ビルド構成
+description: React のフロントエンドのビルド（Vite・tsc・React Compiler）、SPA の配り方、package.json と Vite の root の置き場所を定める。
+tags:
+  - name: scope:react
+  - name: topic:core
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+  - id: build-01
+    group: ビルド
+    name: Vite でビルドし tsc は型チェックだけ
+    body: |-
+      - Vite（React + TS）でビルドする。
+        tsc は型チェック（`--noEmit`）だけに使う。
+  - id: build-02
+    group: ビルド
+    name: React Compiler を入れる
+    body: |-
+      - React Compiler を入れる。
+        新しいコードで `useMemo`・`useCallback` を書かない。
+        細かく制御したいときだけ、escape hatch として使う。
+  - id: build-03
+    group: ビルド
+    name: 推測で memo を入れない
+    body: |-
+      - 計測せずに、推測で memo・キャッシュを追加しない。
+  - id: spa-01
+    group: SPA
+    name: 1 つの SPA にしてルーターで切り替える
+    body: |-
+      - 画面は 1 つの SPA にし、ルーターで切り替える。
+        画面ごとに HTML のファイルを作らない。
+  - id: spa-02
+    group: SPA
+    name: FastAPI はビルドした index.html と API を配る
+    body: |-
+      - FastAPI は、ビルドした `index.html` と API を配る。
+  - id: spa-03
+    group: SPA
+    name: Provider と QueryClient は 1 つ
+    body: |-
+      - Provider と QueryClient は 1 つにして `app/` で組む。
+  - id: root-01
+    group: package.json と Vite の root
+    name: package.json はリポジトリの直下
+    body: |-
+      - `package.json` と各ツールの設定（Vite・tsconfig・ESLint・Vitest・Playwright・Storybook・orval・shadcn）は、リポジトリの直下に置く。
+        Vite の `root` は `frontend/` にする。
+  - id: root-02
+    group: package.json と Vite の root
+    name: tsconfig の別名
+    body: |-
+      - `tsconfig` の `@/*` は `frontend/src/*` を指す。
+        Router・Storybook・shadcn の CLI のパスが直下の設定で解決されることは、導入時に確かめる。
+  - id: sources-01
+    group: 出典
+    name: "出典: React の公式ドキュメント"
+    body: |-
+      - [Build a React app from Scratch](https://react.dev/learn/build-a-react-app-from-scratch)
+      - [React Compiler: Installation](https://react.dev/learn/react-compiler/installation)

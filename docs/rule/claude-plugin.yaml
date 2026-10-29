@@ -164,6 +164,12 @@ items:
           term_sources:
             - docs/terms.md
       ```
+  - id: settings-file-07
+    group: 設定ファイル
+    name: リポジトリの設定ファイルとバージョン
+    body: |-
+      - リポジトリと一緒に変わる設定の置き場所と、設定ファイルの `version`・移し替えは、[YAML](id:dev-yaml) の `## 設定ファイル` に従う。
+        `version` は設定ファイルのもので、プラグインの manifest には当てない（`no-version-01`）。
   - id: no-version-01
     group: version を置かない規約
     name: version を置かない

@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-screen-list
+kind: rule
+name: 一覧画面
+description: 一覧画面の必須の要素と、URL の状態・データ取得との関係を定める。
+tags:
+  - name: scope:react
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+related:
+  - to: react-state-url-state
+    type: requires
+    when: フィルタ・ソート・ページを URL に持つとき
+  - to: react-data-query
+    type: requires
+    when: 一覧のデータを取得するとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      一覧画面は `{screen}-screen.tsx` に置く。
+  - id: list-screen-01
+    group: 一覧画面
+    name: データは loader で先読みして Query で読む
+    body: |-
+      - ルートの loader で一覧のデータを先読みし、画面は TanStack Query の hook で読む。
+  - id: list-screen-02
+    group: 一覧画面
+    name: URL の状態と data の hook を並べて呼ぶ
+    body: |-
+      - 画面は、URL の状態（[URL の状態](id:react-state-url-state)）を読んでから、その値で data の hook（[クエリ](id:react-data-query)）を呼ぶ。
+  - id: list-screen-03
+    group: 一覧画面
+    name: フィルタ・ソート・ページの置き場所
+    body: |-
+      - 共有・戻る・リロードで復元したいフィルタ・ソート・ページは、URL の状態に置く。
+        置き場所は [状態の置き場所](id:flowchart-react-state-placement) で決める。
+  - id: required-elements-01
+    group: 必須の要素
+    name: 必須の要素の一覧
+    body: |-
+      <!-- table: data -->
+
+      | 要素 | 内容 |
+      | --- | --- |
+      | `<ScreenWrapper>` | 外殻 |
+      | `<PageHeader>` | タイトル |
+      | フィルタ・ソートの UI | 検索の条件 |
+      | `<Skeleton>` | 読み込み中 |
+      | `<EmptyState>` | 空のとき（必須。白い画面にしない） |
+      | `<Pagination>` | ページ送り |
+
+      <!-- /table -->

@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-component-error-boundary
+kind: rule
+name: Error Boundary
+description: react-error-boundary でレンダリング中のエラーを受ける決まり（配置・利用者への表示・ログ・再試行）を定める。
+tags:
+  - name: scope:react
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+related:
+  - to: react-shared-error-client-handler
+    type: references
+    when: query・mutation のエラーを処理するとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      レンダリング中のエラーは、`react-error-boundary` の `ErrorBoundary` で受ける。
+  - id: error-boundary-01
+    group: Error Boundary
+    name: アプリの最上位と画面ごとに置く
+    body: |-
+      - `ErrorBoundary` は、アプリの最上位と、画面ごとのルートに置く。
+        画面ごとのルートは、TanStack Router の `errorComponent` で指定する。
+  - id: error-boundary-02
+    group: Error Boundary
+    name: error は unknown で受ける
+    body: |-
+      - fallback の `error` は `unknown` で受け、`instanceof Error` で絞ってから読む。
+  - id: error-boundary-03
+    group: Error Boundary
+    name: 利用者には汎用の文言を出す
+    body: |-
+      - 利用者には汎用の文言を出し、詳細はログに出す。
+        ログは、`ErrorBoundary` の `onError` で出す。
+  - id: error-boundary-04
+    group: Error Boundary
+    name: 再試行のボタンを置く
+    body: |-
+      - 再試行のボタンを必ず置き、`resetErrorBoundary` で再描画する。
+        TanStack Query のエラーは、`QueryErrorResetBoundary` と組み合わせて再取得する。

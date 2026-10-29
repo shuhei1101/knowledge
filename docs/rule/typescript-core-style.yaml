@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: typescript-core-style
+kind: rule
+name: TypeScript のスタイル
+description: TypeScript 全般の関数・型・enum・export・型の断定の書き方を定める。
+tags:
+  - name: scope:typescript
+  - name: topic:typescript
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: TypeScript
+      機械で判定できる規則は ESLint で止める。
+  - id: function-01
+    group: 関数とクラス
+    name: 関数ベースで書く
+    body: |-
+      - 関数ベースで書き、クラスは必要なときだけ使う。
+        クラスを使ってよい場面は、ライブラリが要求するものと、Error の派生クラスだけ。
+  - id: function-02
+    group: 関数とクラス
+    name: const とアロー関数で書く
+    body: |-
+      - 関数は、`function` 宣言ではなく `const` とアロー関数で書く。
+  - id: type-01
+    group: 型
+    name: type を使い interface を使わない
+    body: |-
+      - 型は `type` で書く。
+        `interface` は、ライブラリの拡張と declaration merging のときだけ使う。
+  - id: type-02
+    group: 型
+    name: enum を使わない
+    body: |-
+      - `enum` を使わず、union のリテラルか `as const` のオブジェクトで書く。
+  - id: type-03
+    group: 型
+    name: 対応表は satisfies で確かめる
+    body: |-
+      - 設定や対応表のオブジェクトは、`satisfies` で型を確かめる。
+  - id: type-04
+    group: 型
+    name: 状態の種類は判別できる union にする
+    body: |-
+      - 状態の種類は判別できる union にし、`switch` の最後は `never` で網羅を確かめる。
+  - id: type-05
+    group: 型
+    name: 型の断定は外から来る値だけ
+    body: |-
+      - 非 null の断定（`!`）と `as` の型の断定は、DOM の取得など外から来る値で必要なときだけ使う。
+  - id: export-01
+    group: export
+    name: 名前付き export だけ
+    body: |-
+      - export は、名前付きだけにする。
+        `export default` は、ツールが求めるもの（`*.stories.tsx`・`vite.config.ts` など）だけに使う。

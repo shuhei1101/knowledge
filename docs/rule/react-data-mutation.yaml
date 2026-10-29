@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-data-mutation
+kind: rule
+name: ミューテーション
+description: useMutation を第一選択にする決まりと、楽観更新の許可リスト、成功と失敗の通知、命名を定める。
+tags:
+  - name: scope:react
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      サーバーのデータを書き換える操作は、`useMutation` を第一選択にする。
+  - id: use-mutation-01
+    group: useMutation
+    name: orval の hook を使う
+    body: |-
+      - mutation は、orval が生成した hook を使う。
+        成功したら、`queries.ts` の invalidate で関連する query を更新する。
+  - id: use-mutation-02
+    group: useMutation
+    name: 成功と失敗を必ず通知する
+    body: |-
+      - 成功と失敗は、必ず利用者に通知する。
+        失敗は、toast かフィールドのエラーで出す。
+  - id: optimistic-allow-list-01
+    group: 楽観更新の許可リスト
+    name: 楽観更新の許可リスト
+    body: |-
+      <!-- table: data -->
+
+      | 許可 | 対象 |
+      | --- | --- |
+      | 使ってよい | いいね・お気に入り・ブックマーク・フォロー・リアクション・トグル状態 |
+      | 使わない | 課金・フォームの保存・重要なデータの作成と削除 |
+
+      <!-- /table -->
+  - id: naming-01
+    group: 命名
+    name: 命名
+    body: |-
+      `use{Verb}{Feature}`（例: `useToggleTaskFavorite`・`useArchiveTask`）
