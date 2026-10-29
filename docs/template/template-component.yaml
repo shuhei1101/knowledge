@@ -30,7 +30,7 @@ items:
       | lead | 冒頭リード | string | - | - | - | 部品が何を出すかを 1〜3 行で説明する。<br>初回に書いた内容のまま保ち、後から情報を追加しない（仕様は各項目に書く）。 | - |
       | implementation | 実装 | string | 必須 | - | pattern: ^[^#\s]+(#\S+)?$ | 部品の実装の場所。リポジトリの直下からのファイルのパスに、`#` と部品の名前（コンポーネント）を続ける。 | `frontend/src/features/plan/components/status-badge.tsx#StatusBadge` |
       | story | Storybook | string | 必須 | - | pattern: ^[A-Za-z][A-Za-z0-9]*(/[A-Za-z][A-Za-z0-9]*)+$ | Storybook のストーリーのタイトル（`*.stories.tsx` の `title`。`{分類}/{部品}` を英数字で。例 `Plan/StatusBadge`）。日本語の名前は `title` から追加する。 | `Plan/StatusBadge` |
-      | test_file | 対応テストファイル | string | - | - | pattern: ^.+\.test\.tsx$ | 部品の Component テストのファイル。部品の横に置く。 | `frontend/src/features/plan/components/status-badge.test.tsx` |
+      | test_file | 対応テストファイル | string | - | - | pattern: ^tests/.+ | ストーリーを開いて確かめる結合テストのファイル。 | `tests/integration/storybook/test_計画画面の部品.py` |
       | args | 引数 | array | - | - | - | 部品が受け取る値（props）。引数 1 つ = 1 要素。<br>オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 要素に展開する。<br>引数を持たない部品は持たない。 | - |
       | args[].name | 名前 | string | 必須 | - | pattern: ^[A-Za-z_][A-Za-z0-9_]*(\[\])?(\.[A-Za-z_][A-Za-z0-9_]*(\[\])?)*$ | 実装の引数の名前。 | `status` |
       | args[].type | 型 | string | 必須 | - | - | `文字列` / `整数` / `数値` / `真偽値` / `列挙` / `オブジェクト` / `配列` / `オブジェクトの配列` / `部品`。 | `列挙` |
@@ -87,7 +87,7 @@ items:
       lead: 表の列見出しの中身。見出しの文字（押すと並べ替え）と、絞り込み・固定のボタンを並べる。
       implementation: frontend/src/features/plan/components/header-controls.tsx#HeaderControls
       story: Plan/HeaderControls
-      test_file: frontend/src/features/plan/components/header-controls.test.tsx
+      test_file: tests/integration/storybook/test_計画画面の部品.py
       args:
       - name: key
         type: 文字列
