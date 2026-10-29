@@ -9,8 +9,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -25,7 +25,7 @@ items:
       | クラス                    | 親               | 意味                             |
       | ------------------------- | ---------------- | -------------------------------- |
       | `AppError`                | Exception        | 基底                             |
-      | `ValidationError`         | AppError         | 入力検証エラー                   |
+      | `InvalidInputError`       | AppError         | 入力検証エラー                   |
       | `NotFoundError`           | AppError | 対象が見つからない               |
       | `ConflictError`           | AppError | 状態競合（重複・楽観ロック失敗） |
       | `ForbiddenError`          | AppError | 権限不足                         |
@@ -71,7 +71,7 @@ items:
     group: 処理する場所
     name: CLI での終了コード
     body: |-
-      - CLI: `main()` で `ValidationError` → 2、`AppError` → 1、その他 → 99 のような終了コード分け
+      - CLI: `main()` で `InvalidInputError` → 2、`AppError` → 1、その他 → 99 のような終了コード分け
   - id: handling-place-03
     group: 処理する場所
     name: 横断処理のハンドラーデコレータ

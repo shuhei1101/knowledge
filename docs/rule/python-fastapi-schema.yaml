@@ -9,8 +9,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: io-pydantic-schema-01
     group: 入出力 Pydantic スキーマ
@@ -31,14 +31,15 @@ items:
         - レスポンス側に `@classmethod from_domain(cls, result) -> Self`
   - id: field-01
     group: Field
-    name: 固定選択肢は Literal
+    name: API に出る選択肢は StrEnum
     body: |-
-      - 固定選択肢は `Literal[...]`（OpenAPI に enum として出る）
+      - API に出る選択肢は `StrEnum`（OpenAPI に名前付きのスキーマとして出る）
+        - 内部だけで使う選択肢は `Literal`（[shared/定数](id:python-shared-constant)）
   - id: camelcase-01
     group: camelCase 対応
     name: camelCase の扱い
     body: |-
-      フロントが snake_case を受け入れられるならそのままが一番楽。必要なら `ConfigDict(populate_by_name=True, alias_generator=...)` + `Field(alias=...)`。
+      - API のスキーマの基底クラスに `ConfigDict(alias_generator=to_camel, validate_by_name=True, serialize_by_alias=True)` を置き、JSON のキーを camelCase にする
   - id: response-model-01
     group: response_model
     name: レスポンスは戻り値の型注釈

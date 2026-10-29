@@ -9,8 +9,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: fastapi-app-structure-01
     group: FastAPI アプリ構成
@@ -72,3 +72,8 @@ items:
     name: 例外ハンドラの一括登録
     body: |-
       - 例外ハンドラは `register_exception_handlers(app)` で一括登録（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
+  - id: others-04
+    group: その他
+    name: operationId の生成
+    body: |-
+      - operationId は `FastAPI(generate_unique_id_function=...)` で `{tag}-{関数名}` にする（`tag` は [fastapi/ルート定義](id:python-fastapi-route) の `APIRouter(tags=)`）

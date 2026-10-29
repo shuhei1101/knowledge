@@ -9,8 +9,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -51,6 +51,7 @@ items:
     name: APIRouter の設定
     body: |-
       - `APIRouter(prefix=, tags=)` を router 側で設定（`include_router` には付けない）
+        - `tags` は 1 つ必須（operationId の `{tag}` になる。[fastapi/アプリケーション](id:python-fastapi-application)）
   - id: writing-02
     group: 書き方
     name: 引数は Annotated
@@ -65,7 +66,7 @@ items:
     group: 書き方
     name: レスポンススキーマの指定
     body: |-
-      - レスポンススキーマは戻り値の型注釈で指定（返す型と合わないときだけ `response_model=`。[fastapi/スキーマ](id:python-fastapi-schema)）、作成系は `status_code=201` を明示、`responses={...}` で OpenAPI に反映
+      - レスポンススキーマは戻り値の型注釈で指定（返す型と合わないときだけ `response_model=`。[fastapi/スキーマ](id:python-fastapi-schema)）、作成系は `status_code=201` を明示、エラーレスポンスは 422 を含めて `ProblemDetail` モデルを `APIRouter(responses=...)` で一括宣言して OpenAPI に反映（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
   - id: writing-05
     group: 書き方
     name: SSE のストリーミング
