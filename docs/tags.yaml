@@ -21,13 +21,22 @@ tags:
     description: "含める: Markdown とマーメイド図、判定フローチャートの記述の規約。含めない: 判定フローチャートの本体（scope:判定フローチャート）。例: Markdown 編集規約。"
   - name: scope:next
     group: scope
-    description: "含める: Next.js App Router のバックエンド・フロントエンド・共通・テスト・開発ツール・デプロイの規約。含めない: HTML のバニラ構成の規約（scope:html）。例: useQuery パターン。"
+    description: "含める: Next.js App Router 固有の規約（バックエンド・ルート・ページ・Server Action・キャッシュ・SEO・PWA・エラーハンドラ・環境変数・セキュリティ・テスト・デプロイ）。含めない: React 一般の規約（scope:react）、言語共通の規約（scope:typescript・scope:testing）、HTML のバニラ構成の規約（scope:html）。例: Route Files。"
   - name: scope:prompt
     group: scope
     description: "含める: プロンプトを YAML のファイルで持つときの規約。含めない: プロンプトを組み立てる Python の実装（scope:python の topic:llm）。例: プロンプトファイル。"
   - name: scope:python
     group: scope
     description: "含める: Python の設計・コア・並列処理・FastAPI・LLM・パッケージ・スクリプト・共通・テストの規約。含めない: Next.js・HTML の規約。例: 型ヒント。"
+  - name: scope:react
+    group: scope
+    description: "含める: React（Vite の SPA）のビルド・フォルダ構成・命名・状態・データ・フォーム・コンポーネント・スタイル・キーボード操作・開発ツール・テストの規約。含めない: Next.js 固有の規約（scope:next）、バニラ TS の規約（scope:html）、言語共通の規約（scope:typescript・scope:testing）。例: useEffect。"
+  - name: scope:testing
+    group: scope
+    description: "含める: 言語・フレームワークをまたぐテストの規約（テスト戦略・E2E・フィクスチャー）。含めない: Python 固有のテストの規約（scope:python）、React 固有のテストの規約（scope:react）。例: テスト戦略。"
+  - name: scope:typescript
+    group: scope
+    description: "含める: 言語共通の TypeScript の規約（関数・型・export・型の置き場所）。含めない: React 固有の規約（scope:react）、HTML のバニラ構成の規約（scope:html）。例: TypeScript のスタイル。"
   - name: scope:ui
     group: scope
     description: "含める: 画面の分け方・情報の階層・文言・操作・表示の安定など、実装言語によらない画面デザインの規約。含めない: デザインスタイルの材料集（scope:規約）。例: 入力と文言。"
@@ -63,22 +72,22 @@ tags:
     description: "含める: Python の並列処理と非同期処理。含めない: 性能の計測（topic:performance）。例: asyncio 規約。"
   - name: topic:core
     group: topic
-    description: "含める: 言語・フレームワークの土台になる共通の規約（Python のコメント・スタイル・命名・型ヒント・言語ルール・デコレーター、HTML のビルドレス・iFrame 禁止・サーバー描画）。含めない: 機能ごとの設計（topic:architecture）。例: 型ヒント。"
+    description: "含める: 言語・フレームワークの土台になる共通の規約（Python のコメント・スタイル・命名・型ヒント・言語ルール・デコレーター、HTML のビルドレス・iFrame 禁止・サーバー描画、React のビルド・フォルダ構成・ライブラリ・コンポーネントの書き方）。含めない: 機能ごとの設計（topic:architecture）。例: 型ヒント。"
   - name: topic:css
     group: topic
-    description: "含める: HTML 構成の CSS のコメント・デザイントークン・ネスト・レイヤー構成。含めない: CSS クラスの命名（topic:naming）。例: デザイントークン。"
+    description: "含める: HTML 構成の CSS のコメント・デザイントークン・ネスト・レイヤー構成と、React の Tailwind。含めない: CSS クラスの命名（topic:naming）。例: デザイントークン。"
   - name: topic:devops
     group: topic
     description: "含める: Next.js のデプロイ先の選択。含めない: ビルドや品質の道具（topic:devtools）。例: デプロイ。"
   - name: topic:devtools
     group: topic
-    description: "含める: Next.js の開発の道具（Storybook・MSW のモック・ESLint・Prettier・tsconfig）。含めない: デプロイ（topic:devops）。例: Storybook。"
+    description: "含める: React の開発の道具（Storybook・MSW のモック・ESLint・Prettier・tsconfig・MCP とプラグイン）。含めない: デプロイ（topic:devops）。例: Storybook。"
   - name: topic:fastapi
     group: topic
     description: "含める: Python の FastAPI のアプリ構成・ルーター・スキーマ・認証と例外ハンドラ・ヘルスチェック。含めない: Next.js の API ルート（topic:backend）。例: ルーター実装パターン。"
   - name: topic:frontend
     group: topic
-    description: "含める: Next.js の画面（ページ・Screen・hook・フォーム・ダイアログ・命名・型・URL 定数）。含めない: API ルートと DB（topic:backend）。例: useQuery パターン。"
+    description: "含める: React の画面（状態・データ取得・フォーム・ダイアログ・画面・キー操作）と、Next.js のページ・ルート。含めない: API ルートと DB（topic:backend）。例: クエリ。"
   - name: topic:html
     group: topic
     description: "含める: HTML のコメントとネイティブ要素の使い方。含めない: HTML 構成の画面ごとのファイル（topic:pages）。例: ネイティブ要素を第一選択にする。"
@@ -93,7 +102,7 @@ tags:
     description: "含める: Python で LLM を扱う規約（プロバイダ・Instructor・プロンプトローダー・コストとキャッシュ・例外とリトライ）。含めない: プロンプトのファイルの規約（scope:prompt）。例: プロバイダ。"
   - name: topic:naming
     group: topic
-    description: "含める: HTML 構成の CSS クラス・カスタムエレメント・ファイル名の命名。含めない: Next.js の命名規約。例: ファイル名。"
+    description: "含める: React の命名と、HTML 構成の CSS クラス・カスタムエレメント・ファイル名の命名。含めない: 型の置き場所（topic:typescript）。例: ファイル名。"
   - name: topic:packaging
     group: topic
     description: "含める: Python のパッケージの設定・バージョン・依存管理・配布。含めない: 実行用のスクリプト（topic:scripts）。例: pyproject 設定。"
@@ -108,7 +117,7 @@ tags:
     description: "含める: Python の単一ファイルスクリプト・tkinter・bat と sh のランチャー。含めない: パッケージとして配布するコード（topic:packaging）。例: 単一ファイルスクリプト。"
   - name: topic:shared
     group: topic
-    description: "含める: 複数の画面や機能が使う共通層の規約（HTML の shared/、Next.js のエラー・ロガー・環境変数・セキュリティ、Python の例外・ロガー・型・定数・設定）。含めない: 特定の機能や画面だけの規約。例: ロガー。"
+    description: "含める: 複数の画面や機能が使う共通層の規約（HTML の shared/、React・Next.js のエラー・ロガー・環境変数・セキュリティ、Python の例外・ロガー・型・定数・設定）。含めない: 特定の機能や画面だけの規約。例: ロガー。"
   - name: topic:testing
     group: topic
     description: "含める: テストの戦略・単体テスト・E2E テスト・フィクスチャー・モック。含めない: 本番コードの設計。例: テスト戦略。"
@@ -117,7 +126,7 @@ tags:
     description: "含める: HTML 構成の tsc の運用。含めない: Next.js の開発の道具（topic:devtools）。例: tsc 運用。"
   - name: topic:typescript
     group: topic
-    description: "含める: 汎用の TypeScript のコメント・型システム・関数とオブジェクト引数。含めない: HTML 構成の JavaScript の規約（topic:js）。例: 型システム。"
+    description: "含める: 汎用の TypeScript のコメント・型システム・関数とオブジェクト引数・スタイル・型の置き場所。含めない: HTML 構成の JavaScript の規約（topic:js）。例: 型システム。"
   - name: topic:セットアップ手順
     group: topic
     description: "含める: 1 条件 = 1 ページの個別手順。含めない: 概要や規約の中身。例: 規約の索引を当てる。"

@@ -2,7 +2,7 @@
 id: dev-yaml
 kind: rule
 name: YAML
-description: YAML の正本の持ち方、スキーマの定義、検査、書き込み、MCP からの書き込みと読み取りの決まりを定める。
+description: YAML の正本の持ち方、スキーマの定義、検査、書き込み、MCP からの書き込みと読み取り、設定ファイルの決まりを定める。
 tags:
   - name: scope:dev
     main: true
@@ -23,6 +23,9 @@ related:
   - to: flowchart-config-location
     type: requires
     when: アプリの設定値の置き場所を決めるとき
+  - to: claude-plugin
+    type: references
+    when: プラグインが読む設定ファイルの置き場所を決めるとき
   - to: python-shared-settings
     type: references
     when: pydantic-settings で読む設定を扱うとき
@@ -31,7 +34,7 @@ items:
     name: 概要
     body: |-
       YAML を扱う決まり。
-      データの正本の持ち方、スキーマの書き方、検査、書き込み、MCP からの書き込みと読み取りを定める。
+      データの正本の持ち方、スキーマの書き方、検査、書き込み、MCP からの書き込みと読み取り、設定ファイルを定める。
   - id: data-source-01
     group: データの正本
     name: データの正本の適用範囲
@@ -142,6 +145,22 @@ items:
     name: ブロック形式で記載
     body: |-
       - フロー形式（`{type: string, ...}`）を使わず、ブロック形式で書く
+  - id: schema-07
+    group: スキーマ
+    name: 共有するスキーマの正本
+    body: |-
+      - 複数のリポジトリが読む YAML のスキーマは、1 つのリポジトリが `schemas/{種類}.schema.yaml` を正本として持つ。
+  - id: schema-08
+    group: スキーマ
+    name: 正本のスキーマの取り込み
+    body: |-
+      - 正本以外のリポジトリは、そのスキーマだけに依存し（コードに依存しない）、正本のリポジトリのタグを指定して取り込み、取り込んだバージョンを記録する。
+  - id: schema-09
+    group: スキーマ
+    name: スキーマを変えるときの手順
+    body: |-
+      - スキーマを変えるときは、正本のリポジトリに Issue を立てる。
+        正本以外のリポジトリは、取り込むバージョンを上げる。
   - id: inspection-01
     group: 検査
     name: 検査の対象と時点
@@ -226,6 +245,27 @@ items:
     name: 返り値は差分と結果のみ
     body: |-
       - 返り値は新しいバージョン・短い差分・検査の結果にし、全文を返さない
+  - id: mcp-write-07
+    group: MCP からの書き込み
+    name: 作業ツリーを書き換えるだけで commit しない
+    body: |-
+      - 書き込みのツールは、呼んだセッションの作業ツリー（PreToolUse フックが引数に入れる。[MCP サーバー作成ルール](id:claude-mcp) の常駐サーバーの決まり）のファイルを書き換えるだけにし、commit しない。
+  - id: mcp-write-08
+    group: MCP からの書き込み
+    name: 他のリポジトリへの書き込みは権限で決める
+    body: |-
+      - 他のリポジトリへ書き込めるかは、端末の設定の作業場所ごとの権限（読める・書ける作業場所の glob）で決める。
+  - id: mcp-write-09
+    group: MCP からの書き込み
+    name: Git のリポジトリはクローンか worktree で作業中のときだけ
+    body: |-
+      - Git のリポジトリへは、そのクローンか worktree で作業中のときだけ書き、書く先はその作業ツリーにする。
+        作業中でないときは、書かずに断る。
+  - id: mcp-write-10
+    group: MCP からの書き込み
+    name: Git 管理外の書き込み先
+    body: |-
+      - Git 管理外の書き込み先は、権限に当たれば、どの作業場所からも書ける。
   - id: mcp-read-01
     group: MCP からの読み取り
     name: 読み取りのツールの作り方
@@ -257,6 +297,56 @@ items:
     name: ツール説明をスキーマから作る
     body: |-
       - 読み取りのツールの説明も、スキーマから組み立てる。使える絞り込みと、タグの一覧のツールは語彙が多いときに呼ぶこと（引数なしの `search` がタグごとの件数を返す）を記載する
+  - id: config-file-01
+    group: 設定ファイル
+    name: 設定の YAML はテーブルの構造にする
+    body: |-
+      - 設定の YAML は、まとまり（文書・検査・変換など）を配列にし、主キーの `id` でつなぐ。
+  - id: config-file-02
+    group: 設定ファイル
+    name: ファイルの指定は paths に並べる
+    body: |-
+      - ファイルの指定は、`paths[]` にファイルか glob を並べる。
+  - id: config-file-03
+    group: 設定ファイル
+    name: リポジトリの設定ファイル
+    body: |-
+      - リポジトリと一緒に変わる設定は、リポジトリの設定ファイル（Git の中）に置く。
+  - id: config-file-04
+    group: 設定ファイル
+    name: 端末の設定ファイル
+    body: |-
+      - 端末ごとの選択は、`~/.config/{名前}/settings.yaml`（Git の外）に置く。
+        端末の設定は、リポジトリの設定ファイルのパスを指す。
+  - id: config-file-05
+    group: 設定ファイル
+    name: 設定ファイルのバージョン
+    body: |-
+      - 設定ファイル（リポジトリの設定・端末の設定）に、`version`（最後に移し替えたツールのバージョン）を持たせる。
+  - id: config-file-06
+    group: 設定ファイル
+    name: 設定の移し替え
+    body: |-
+      - ツールは、バージョンごとの移し替えの手順（`migrations/{バージョン}/`）を持つ。
+        古い設定は、手順を示して移し替えてから使う。
+  - id: config-file-07
+    group: 設定ファイル
+    name: 設定のほうが新しいとき
+    body: |-
+      - 設定のほうがツールより新しいときは、ツールの更新を案内して止まる。
+  - id: config-file-08
+    group: 設定ファイル
+    name: 既存の決まりとの書き分け
+    body: |-
+      <!-- table: data -->
+
+      | 既存の決まり | 既存の対象 | この規約の対象 |
+      | --- | --- | --- |
+      | `worktree-safe-01` | アプリが実行時に UI / API から書き込む YAML。どの worktree から書いても main repo の同じファイルに着地させる | MCP のツールで文書の正本を書き換えるとき。呼んだセッションの作業ツリーに書く（`mcp-write-07`） |
+      | claude-plugin の `settings-file-01`〜`05`・`two-layer-choice-04`・[設定値の置き場所](id:flowchart-config-location) | プラグイン・アプリの環境の値。`~/.config/{名前}/settings.yaml` に置く | 端末の設定が、リポジトリの設定ファイルのパスを指す（`config-file-03`・`config-file-04`） |
+      | claude-plugin の `no-version-01` | プラグインの manifest に version を置かない | `config-file-05` の `version` は設定ファイルのもの。プラグインの manifest には当てない |
+
+      <!-- /table -->
   - id: sources-01
     group: 出典
     name: "出典: ツールの設計"

@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-shared-security
+kind: rule
+name: セキュリティ
+description: React のフロントエンドの XSS・リダイレクト・外部入力・依存の監査の対策を定める。
+tags:
+  - name: scope:react
+  - name: topic:shared
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+  - id: xss-01
+    group: XSS
+    name: dangerouslySetInnerHTML は sanitize したものだけ
+    body: |-
+      - `dangerouslySetInnerHTML` には、DOMPurify で sanitize したものだけを渡す。
+  - id: xss-02
+    group: XSS
+    name: ユーザー入力の URL は protocol を限定する
+    body: |-
+      - ユーザー入力の URL を `<a href>` に流すときは、protocol を http と https に限定する。
+  - id: open-redirect-01
+    group: Open Redirect
+    name: リダイレクト先を検証する
+    body: |-
+      - `navigate` に、URL の search などの外部入力を直接渡さない。
+        `/` で始まり、`//` で始まらないことを検証してから渡す。
+  - id: input-01
+    group: 外部入力
+    name: 外部入力は Zod で許可したフィールドだけ通す
+    body: |-
+      - 外部入力（URL の search・API のレスポンス・WebSocket のメッセージ）は、許可したフィールドだけを Zod で parse してから使う。
+  - id: secret-01
+    group: 秘匿値
+    name: 秘匿値をバンドルに入れない
+    body: |-
+      - 秘匿値は、フロントエンドのコードにもビルドの環境変数にも置かない。
+  - id: audit-01
+    group: 依存
+    name: CI で依存を監査する
+    body: |-
+      - CI で `pnpm audit --prod` を実行する。

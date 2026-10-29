@@ -1,0 +1,165 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-core-folder-structure
+kind: rule
+name: フォルダ構成
+description: React のフロントエンドのフォルダ構成、ルートと画面の分け方、テストと stories の置き場所、barrel と import の向きを定める。
+tags:
+  - name: scope:react
+  - name: topic:core
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+related:
+  - to: react-core-build
+    type: requires
+    when: package.json・Vite の root の置き場所を決めるとき
+  - to: react-core-naming
+    type: requires
+    when: ファイル・フォルダの名前を決めるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      ビルドの前提は [ビルド構成](id:react-core-build)、名前は [命名](id:react-core-naming) に従う。
+  - id: tree-01
+    group: 構成
+    name: フォルダ構成
+    body: |-
+      ```text
+      {repo}/
+      ├── package.json
+      ├── vite.config.ts
+      ├── orval.config.ts
+      ├── eslint.config.js
+      ├── .storybook/
+      ├── backend/
+      └── frontend/
+          ├── index.html
+          ├── tests/e2e/
+          └── src/
+              ├── main.tsx
+              ├── route-tree.gen.ts
+              ├── app/
+              ├── routes/
+              ├── features/
+              │   └── {domain}/
+              │       ├── shared/
+              │       └── {screen}/
+              │           ├── {screen}-screen.tsx
+              │           ├── {screen}-screen.test.tsx
+              │           ├── {screen}-screen.stories.tsx
+              │           ├── search.ts
+              │           ├── queries.ts
+              │           ├── store.ts
+              │           ├── form.ts
+              │           ├── components/
+              │           └── hooks/
+              ├── shared/
+              │   ├── styles/
+              │   ├── components/ui/
+              │   ├── hooks/
+              │   ├── stores/
+              │   ├── adapters/
+              │   ├── api/generated/
+              │   ├── core/
+              │   └── lib/
+              └── testing/
+      ```
+  - id: roles-01
+    group: 各フォルダの役割
+    name: フォルダの役割の表
+    body: |-
+      <!-- table: data -->
+
+      | 場所 | 役割 |
+      | --- | --- |
+      | `src/app/` | `createRouter`（context に queryClient）・Provider・共通シェル |
+      | `src/routes/` | 薄いルートのファイル（URL・`validateSearch`・loader だけ） |
+      | `features/{domain}/{screen}/` | 1 画面。`search.ts` に URL の Zod、`queries.ts` に queryOptions の合成と invalidate、`store.ts` に画面の store、`form.ts` にフォームの Zod |
+      | `features/{domain}/shared/` | そのドメインの中だけで使う部品 |
+      | `shared/styles/` | トークン・要素の既定。Tailwind の `@theme inline` もここ |
+      | `shared/components/ui/` | shadcn/ui が追加する部品 |
+      | `shared/components/` | ドメインをまたいで使う自前の部品 |
+      | `shared/adapters/` | 外部接続のアダプター（`api-client.ts`・`ws-client.ts`） |
+      | `shared/api/generated/` | orval の生成物だけ |
+      | `shared/stores/` | 画面をまたぐ Zustand の store |
+      | `shared/core/`・`shared/lib/` | 定数・`cn`・整形・ロガー |
+      | `src/testing/` | Provider 込みの render・MSW のハンドラ・テストの setup |
+      | `frontend/tests/e2e/` | Playwright だけ |
+
+      <!-- /table -->
+  - id: feature-01
+    group: features
+    name: 画面は features に置く
+    body: |-
+      - 画面は `features/{domain}/{screen}/` に置く。
+        画面を持たないドメインの部品・query も同じ場所に置く。
+  - id: feature-02
+    group: features
+    name: ドメインの中の共通は shared
+    body: |-
+      - ドメインの中の共通は `features/{domain}/shared/` に置く。
+        `_` を付けない（TanStack Router では `_` が pathless layout の意味になる）。
+  - id: feature-03
+    group: features
+    name: 使う場所の近くに置く
+    body: |-
+      - 部品・hook は、使う場所の近くに置く。
+        使う範囲が広がったら上のフォルダへ移す。
+  - id: route-01
+    group: ルート
+    name: routes は薄く保つ
+    body: |-
+      - `src/routes/` は薄く保ち、`features/{domain}/{screen}/{screen}-screen.tsx` を import する。
+  - id: route-02
+    group: ルート
+    name: 画面は getRouteApi で取る
+    body: |-
+      - 画面は `getRouteApi` で search・params を取る。
+  - id: test-01
+    group: テストと stories
+    name: unit・結合テストと stories は対象の横
+    body: |-
+      - unit・結合テストと stories は、対象の横に置く。
+  - id: test-02
+    group: テストと stories
+    name: e2e だけ tests/e2e
+    body: |-
+      - e2e だけ `frontend/tests/e2e/` に置く。
+        共通の道具は `src/testing/` に置く。
+  - id: barrel-01
+    group: barrel
+    name: barrel を使わない
+    body: |-
+      - barrel（`index.ts`）を使わず、ファイルを直接 import する。
+        公開範囲は import の向きの lint で縛る。
+  - id: import-01
+    group: import の向き
+    name: import の向きを lint で縛る
+    body: |-
+      - eslint-plugin-boundaries v7 で、`app・routes → features → shared` の向きだけを許す。
+  - id: orval-01
+    group: orval
+    name: 生成物の置き場所
+    body: |-
+      - orval の生成物は `shared/api/generated/` に出す。
+        手書きのファイルを置かない。
+  - id: orval-02
+    group: orval
+    name: mutator と queries.ts
+    body: |-
+      - mutator は `shared/adapters/api-client.ts` に置く。
+        `queries.ts` は queryOptions の合成と invalidate だけを持つ。
+  - id: sources-01
+    group: 出典
+    name: "出典: フォルダ構成"
+    body: |-
+      - [Bulletproof React: Project Structure](https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md)
+      - [Feature-Sliced Design: Public API](https://feature-sliced.design/docs/reference/public-api)
+      - [TanStack Router: File Naming Conventions](https://tanstack.com/router/latest/docs/framework/react/routing/file-naming-conventions)
+      - [TanStack Router: Code Splitting](https://tanstack.com/router/latest/docs/framework/react/guide/code-splitting)
+      - [orval: output](https://orval.dev/docs/reference/configuration/output)
+      - [eslint-plugin-boundaries](https://www.jsboundaries.dev/docs/rules/)

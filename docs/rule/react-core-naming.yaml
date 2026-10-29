@@ -1,0 +1,108 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-core-naming
+kind: rule
+name: 命名
+description: React のフロントエンドのファイル・フォルダ・コンポーネント・hook・Zod スキーマの命名を定める。
+tags:
+  - name: scope:react
+  - name: topic:naming
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+  - id: file-01
+    group: ファイルとフォルダ
+    name: ファイル名は kebab-case
+    body: |-
+      - ファイルとフォルダの名前は、すべて kebab-case にする（例: `task-card.tsx`・`family-members/`）。
+  - id: file-02
+    group: ファイルとフォルダ
+    name: TanStack Router の命名は例外
+    body: |-
+      - `__root.tsx`・`$id`・`index.tsx` は、TanStack Router の命名に従う例外とする。
+        生成されるルートのツリーは、設定の `generatedRouteTree` で `route-tree.gen.ts` にする。
+  - id: file-03
+    group: ファイルとフォルダ
+    name: shared に接頭辞を付けない
+    body: |-
+      - ドメインの中の共通フォルダは `shared/` とし、`_` の接頭辞を付けない。
+  - id: component-01
+    group: コンポーネント
+    name: コンポーネント名は PascalCase
+    body: |-
+      - コンポーネント名は PascalCase にする。
+        ファイル名は同じ名前の kebab-case にする（`TaskCard` は `task-card.tsx`）。
+  - id: component-02
+    group: コンポーネント
+    name: 画面のファイルと名前
+    body: |-
+      - 画面は、画面名のフォルダの中に `{screen}-screen.tsx` で置き、コンポーネント名は `{Screen}Screen` にする。
+  - id: component-03
+    group: コンポーネント
+    name: 接尾辞の表
+    body: |-
+      <!-- table: data -->
+
+      | 接尾辞 | 役割 |
+      | --- | --- |
+      | `Screen` | 画面の本体 |
+      | `Layout` | 画面の中で使う再利用のシェル（header + content + actions） |
+      | `Card` | 一覧の中の 1 件 |
+      | `Item` | フィードの 1 件 |
+      | `Dialog`・`Sheet` | shadcn/ui のモーダル系（[ダイアログ](id:react-component-dialog)） |
+      | `Form` | 入力グループの再利用ブロック |
+      | `Provider` | Context の Provider |
+      | `Wrapper` | `children` を包むスタイルのシェル |
+
+      <!-- /table -->
+  - id: hook-01
+    group: hook
+    name: hook のファイル名と export 名
+    body: |-
+      - hook のファイル名は `use-` で始まる kebab-case にし、export 名は `use` で始まる camelCase にする（`use-task-list.ts` は `useTaskList`）。
+  - id: hook-02
+    group: hook
+    name: hook の命名の表
+    body: |-
+      <!-- table: data -->
+
+      | パターン | 役割 | 例 |
+      | --- | --- | --- |
+      | `use{Feature}` | 単体の読み取り | `useTask` |
+      | `use{Feature}List` | 一覧の読み取り | `useTaskList` |
+      | `use{Feature}Form` | フォームの state | `useTaskForm` |
+      | `use{Verb}{Feature}` | mutation | `useArchiveTask` |
+
+      <!-- /table -->
+  - id: zod-01
+    group: Zod スキーマ
+    name: スキーマと型の命名
+    body: |-
+      <!-- table: data -->
+
+      | パターン | 例 | 備考 |
+      | --- | --- | --- |
+      | `{Feature}FormSchema` | `TaskFormSchema` | フォームの Zod |
+      | `{Feature}FormType` | `TaskFormType` | `z.infer` で導出する |
+      | `{Feature}SearchSchema` | `TaskSearchSchema` | URL の search の Zod |
+      | `{Feature}Search` | `TaskSearch` | 同じスキーマの型 |
+
+      <!-- /table -->
+  - id: zod-02
+    group: Zod スキーマ
+    name: Schema を使い Scheme を使わない
+    body: |-
+      - 新しいコードは `Schema` を使い、`Scheme` を使わない。
+        既存コードの `Scheme` は、触るときに `Schema` へ改名する。
+  - id: sources-01
+    group: 出典
+    name: "出典: 命名"
+    body: |-
+      - [TanStack Router: File Naming Conventions](https://tanstack.com/router/latest/docs/framework/react/routing/file-naming-conventions)
+      - [shadcn/ui: components.json](https://ui.shadcn.com/docs/components-json)

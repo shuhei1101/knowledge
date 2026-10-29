@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-testing-specific
+kind: rule
+name: Next.js 固有のテスト
+description: Next.js の Server Component・service.ts のテスト方針と、メインの dev server の起動中に E2E を実行する方法を定める。
+tags:
+  - name: scope:next
+  - name: topic:testing
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+related:
+  - to: react-testing-unit
+    type: requires
+    when: Unit / Component テストの一般の方針を確かめるとき
+  - to: testing-core-e2e
+    type: requires
+    when: Playwright の設定の一般の方針を確かめるとき
+items:
+  - id: what-to-test-01
+    group: 何をどうテストするか
+    name: async Server Component は E2E で確認する
+    body: |-
+      - async Server Component は、Vitest では描画できないため、E2E で確認する。
+  - id: what-to-test-02
+    group: 何をどうテストするか
+    name: service.ts は実 DB で結合テストする
+    body: |-
+      - service.ts は、実 DB（test 用の schema か branch。dev と分離する）で結合テストする。
+  - id: e2e-with-dev-server-01
+    group: メイン dev server 起動中の E2E 実行
+    name: dev server が 1 つだけの制約
+    body: |-
+      - Next.js は同じディレクトリで dev server を 1 つだけ起動できる制約があり、別のポートでも 2 つ目は起動エラーになる。
+  - id: e2e-with-dev-server-02
+    group: メイン dev server 起動中の E2E 実行
+    name: worktree で E2E 専用の環境を作る
+    body: |-
+      - worktree（別のディレクトリ）に、E2E 専用の環境を作って実行する。
+        - worktree の作成 → `pnpm install` → `playwright install chromium`（初回のみ）→ 実行
+        - E2E には、メインと被らない専用のポートを割り当てる

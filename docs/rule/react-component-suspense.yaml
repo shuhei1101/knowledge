@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-component-suspense
+kind: rule
+name: Suspense
+description: Suspense の fallback の決まりを定める。
+tags:
+  - name: scope:react
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+  - id: suspense-01
+    group: Suspense
+    name: Suspense はページ内の部分の fallback
+    body: |-
+      - `<Suspense>` は、ページ内の部分の fallback に使う。
+  - id: suspense-02
+    group: Suspense
+    name: fallback は同じ高さの Skeleton
+    body: |-
+      - fallback には、レイアウトがずれないよう同じ高さの `<Skeleton>` を使う。

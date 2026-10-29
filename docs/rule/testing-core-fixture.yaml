@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: testing-core-fixture
+kind: rule
+name: Test Fixtures（Data Factory）
+description: テストの Data Factory である fixture の構成・命名・cleanup の戦略・E2E 専用の seed API を定める。
+tags:
+  - name: scope:testing
+  - name: topic:testing
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: TypeScript のテスト
+  - id: test-fixtures-01
+    group: Test Fixtures（Data Factory）
+    name: 1 リソース 1 fixture ファイル
+    body: |-
+      - 1 リソースにつき 1 つの fixture ファイルを置き、`index.ts` でまとめて export する。
+  - id: test-fixtures-02
+    group: Test Fixtures（Data Factory）
+    name: 4 点セットで提供する
+    body: |-
+      - 各 fixture は、4 点セットで提供する。
+        - `build{Resource}(overrides?)` — 既定値 + overrides を返す（DB に保存しない）
+        - `seed{Resource}(overrides?)` — 1 件を INSERT して row を返す
+        - `seed{Resource}s(count)` — n 件を INSERT する
+        - `clean{Resource}s()` — 全件を削除する
+  - id: test-fixtures-03
+    group: Test Fixtures（Data Factory）
+    name: 関連データの連鎖生成
+    body: |-
+      - 関連データは、既存の fixture を組み合わせて連鎖して生成する（`seedResourceWithTags` など）。
+  - id: test-fixtures-04
+    group: Test Fixtures（Data Factory）
+    name: 名前は nanoid で一意にする
+    body: |-
+      - 名前は、`nanoid(6)` の接尾辞で一意にする（並列実行の衝突を防ぐ）。
+  - id: test-fixtures-05
+    group: Test Fixtures（Data Factory）
+    name: 固定値は const
+    body: |-
+      - 固定値は const にする（`TEST_USER_ID`・`fixedDate`）。
+  - id: test-fixtures-06
+    group: Test Fixtures（Data Factory）
+    name: enum を網羅するヘルパー
+    body: |-
+      - enum を網羅するヘルパー（`ALL_RESOURCE_STATUSES` など）を、`as const` で作る。
+  - id: db-cleanup-01
+    group: DB の cleanup 戦略
+    name: DB の cleanup の順序
+    body: |-
+      Vitest の結合テストは、外部キーを持つテーブルから順に delete して truncate し、`beforeEach` で truncate + 基本の seed を投入する。
+      E2E（Playwright）は truncate せず、`nanoid` の接尾辞で分けたデータを各テストで作り、作った分だけを片付ける。
+  - id: e2e-seed-api-01
+    group: E2E 専用の seed API
+    name: E2E 専用の seed route
+    body: |-
+      E2E から DB を直接触れないときは、テスト専用の route を用意する。
+      テスト環境以外では 403 を返して防御する。

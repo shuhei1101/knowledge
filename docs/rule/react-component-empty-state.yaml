@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-component-empty-state
+kind: rule
+name: "`<EmptyState>` — 空状態 UI"
+description: 一覧が空のときに表示する EmptyState の描画条件と Props、action の出し分けを定める。
+tags:
+  - name: scope:react
+  - name: topic:frontend
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+  - id: empty-state-01
+    group: "`<EmptyState>` — 空状態 UI"
+    name: 空のときは必ず描画
+    body: |-
+      - `length === 0 && !isFetching` で必ず描画（白画面禁止）
+  - id: empty-state-02
+    group: "`<EmptyState>` — 空状態 UI"
+    name: Props
+    body: |-
+      - Props: `message`, `description?`, `action?`
+  - id: empty-state-03
+    group: "`<EmptyState>` — 空状態 UI"
+    name: action の出し分け
+    body: |-
+      - フィルタあり → 「クリア」action、フィルタなしの空 → 「新規作成」action（action は必須）

@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-shared-logger-implementation
+kind: rule
+name: logger.ts
+description: ブラウザで使う JSON Lines ロガーの仕様と、ctx の書き方を定める。
+tags:
+  - name: scope:react
+  - name: topic:shared
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+related:
+  - to: react-shared-logger-tag
+    type: requires
+    when: logger.create に渡す tag を決めるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+  - id: logger-ts-jsonl-01
+    group: JSON Lines ロガー
+    name: JSON Lines の出力
+    body: |-
+      - 出力は JSON Lines にする（1 行 = 1 つの JSON、装飾なし）。
+        置き場所は `shared/lib/logger.ts` にする。
+  - id: logger-ts-jsonl-02
+    group: JSON Lines ロガー
+    name: レコードの構造
+    body: |-
+      - レコードは `{ ts, level, component?, msg, ctx? }` にする。
+  - id: logger-ts-jsonl-03
+    group: JSON Lines ロガー
+    name: logger と logger.create
+    body: |-
+      - `logger`（既定）と `logger.create("tag")`（component 付き）を使う。
+        `console.log` を使わない。
+  - id: logger-ts-jsonl-04
+    group: JSON Lines ロガー
+    name: ログレベル
+    body: |-
+      - レベルは debug・info・warn・error にする。
+        - `VITE_LOG_LEVEL` で設定し、開発中は `localStorage.setItem("log.level", ...)` で動的に変えられる。
+        - production は、warn 以上に強制的に絞る。
+  - id: ctx-writing-01
+    group: ctx の書き方
+    name: ctx で構造化する
+    body: |-
+      - 文字列を補間せず、`ctx` で構造化する（`log.info("registered", { id })`）。
+  - id: ctx-writing-02
+    group: ctx の書き方
+    name: Error を直接入れない
+    body: |-
+      - Error オブジェクトを直接入れず、`e.message` を取り出して入れる。
+  - id: ctx-writing-03
+    group: ctx の書き方
+    name: ctx に含めてはいけないもの
+    body: |-
+      - パスワード・トークン・API key・セッション ID・メールアドレスの全体・カード番号・個人情報を含めない。
