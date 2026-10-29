@@ -134,6 +134,12 @@ rules:
   - rule: docs/rule/typescript-core-style.yaml
     paths:
       - "**/*.{ts,tsx}"
+  - rule: docs/rule/ui-no-iframe.yaml
+    paths:
+      - "**/*.{tsx,jsx,html}"
+    exclude:
+      - "**/docs/_layouts/**"
+      - "**/docs/_includes/**"
   - rule: docs/rule/dev-precheck.yaml
     paths:
       - "**/*.{py,js,ts,tsx}*"
