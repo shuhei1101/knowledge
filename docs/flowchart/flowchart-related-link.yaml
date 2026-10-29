@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../schemas/flowchart.schema.yaml
+id: flowchart-related-link
+kind: flowchart
+name: 関連の張り方 判定フローチャート
+description: 文書に関連を張るか、type は何か、片側だけに記載するか両側に記載するかを判定
+tags:
+  - name: scope:判定フローチャート
+    main: true
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      文書に関連を張るか、type は何か、片側だけに記載するか両側に記載するかを判定
+  - id: related-link-flow-01
+    group: 関連の張り方 判定フローチャート
+    name: 判定フロー
+    body: |-
+      ```mermaid
+      flowchart TD
+        START([文書に関連を張りたい相手がいる])
+        Q0{いつ読むか（when）を 1 文で記載できるか?}
+        Q1{本文でリンクしている相手か?}
+        Q2{この文書が相手の文書を置き換えるか? ※1}
+        Q3{この文書は相手の文書の一部か? ※2}
+        Q4{一方を修正したらもう一方も修正が要る組か? ※3}
+        Q5{この文書に従う前に相手の文書を読む必要があるか? ※4}
+
+        R1([関連を張らない])
+        R2([この文書の related だけに replaces を記載する])
+        R3([この文書の related だけに part_of を記載する])
+        R4([両方の文書の related に change_together を記載する])
+        R5([この文書の related だけに requires を記載する])
+        R6([この文書の related だけに references を記載する ※5])
+
+        START --> Q0
+        Q0 -->|NO| R1
+        Q0 -->|YES| Q1
+        Q1 -->|NO| Q2
+        Q1 -->|YES| R1
+        Q2 -->|YES| R2
+        Q2 -->|NO| Q3
+        Q3 -->|NO| Q4
+        Q3 -->|YES| R3
+        Q4 -->|YES| R4
+        Q4 -->|NO| Q5
+        Q5 -->|YES| R5
+        Q5 -->|NO| R6
+      ```
+  - id: related-link-flow-02
+    group: 関連の張り方 判定フローチャート
+    name: ※1 replaces
+    body: |-
+      - **※1 replaces**: この文書が相手の文書に取って代わり、相手の文書は古くなる
+  - id: related-link-flow-03
+    group: 関連の張り方 判定フローチャート
+    name: ※2 part_of
+    body: |-
+      - **※2 part_of**: 相手の文書の内容を分けた 1 つがこの文書で、全体は相手の文書にある
+  - id: related-link-flow-04
+    group: 関連の張り方 判定フローチャート
+    name: ※3 change_together
+    body: |-
+      - **※3 change_together**: 一方を修正したらもう一方も同じ変更の対象になり、修正し忘れを検査で見つけたい
+  - id: related-link-flow-05
+    group: 関連の張り方 判定フローチャート
+    name: ※4 requires
+    body: |-
+      - **※4 requires**: 相手の文書を読まずに進めると、この文書の決まりを外す
+  - id: related-link-flow-06
+    group: 関連の張り方 判定フローチャート
+    name: ※5 references
+    body: |-
+      - **※5 references**: 相手の文書を読むと判断の材料が増えるが、読まなくても進められる

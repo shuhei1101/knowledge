@@ -1,0 +1,35 @@
+# コミット: bbca0658898dad13127825e3183f702c2068ce7a
+# 実行日時: 2026-10-30 03:33:03 JST
+
+$ uvx check-jsonschema --schemafile schemas/rule.schema.yaml docs/rule/*.yaml  # 224 ファイル
+ok -- validation done
+exit=0
+
+$ uvx check-jsonschema --schemafile schemas/template.schema.yaml docs/template/*.yaml  # 41 ファイル
+ok -- validation done
+exit=0
+
+$ uvx check-jsonschema --schemafile schemas/flowchart.schema.yaml docs/flowchart/*.yaml  # 6 ファイル
+ok -- validation done
+exit=0
+
+$ uvx check-jsonschema --schemafile schemas/guide.schema.yaml docs/guide/*.yaml  # 2 ファイル
+ok -- validation done
+exit=0
+
+$ uvx check-jsonschema --schemafile schemas/changelog.schema.yaml docs/changelog.yaml
+ok -- validation done
+exit=0
+
+$ uvx check-jsonschema --schemafile schemas/tags.schema.yaml docs/tags.yaml
+ok -- validation done
+exit=0
+
+$ npx @probelabs/maid {mermaid ブロック of docs/flowchart/flowchart-term-registration.yaml}
+Valid
+exit=0
+
+$ npx @probelabs/maid {mermaid ブロック of docs/flowchart/flowchart-related-link.yaml}
+Valid
+exit=0
+
