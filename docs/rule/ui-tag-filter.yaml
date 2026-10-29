@@ -1,0 +1,136 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: ui-tag-filter
+kind: rule
+name: タグの絞り込みと保存ビュー
+description: タグを付けたデータの絞り込み（入れ子の条件・演算子・空の扱い）・保存ビュー・URL の状態・条件ビルダーの決まりを定める。
+tags:
+  - name: scope:ui
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+related:
+  - to: ui-business-screen-elements
+    type: references
+    when: 表の絞り込み・保存ビューの要素の置き方を決めるとき
+  - to: ui-input-wording
+    type: references
+    when: 保存ビューと URL の保存先を決めるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 共通（単体 HTML・React）
+      タグを付けたデータを、条件で絞り込み、名前を付けた保存ビューとして呼び出すときの決まり。
+      タグは、文書の外に保存する所（画面のプリセット・保存ビューの条件）と、画面の絞り込みで使う。
+  - id: tag-01
+    group: タグ
+    name: タグは平らな文字列
+    body: |-
+      - タグは平らな文字列にし、正規化（NFKC・大文字小文字）だけ行う。
+        分類が要るときは、`scope:` のような接頭辞の命名で表す。
+  - id: tag-02
+    group: タグ
+    name: 排他のグループは select にする
+    body: |-
+      - 1 つしか付けられない排他のグループは、タグにせず select のプロパティにする。
+  - id: tag-03
+    group: タグ
+    name: パスの形のタグは必要なアプリだけ
+    body: |-
+      - `a/b` のパスの形のタグは、必要なアプリだけに許す。
+        親で絞ると子孫も当たる。
+  - id: tag-04
+    group: タグ
+    name: タグのマスターを持たない
+    body: |-
+      - タグのマスター（説明・group・aliases・deprecated・未登録のタグの検出）は持たない。
+        使われているタグを件数つきで引き、同じ意味のタグがあれば使い回す。
+  - id: tag-05
+    group: タグ
+    name: 0 件になった条件を警告する
+    body: |-
+      - タグの文字列を文書の外に保存する所（画面のプリセット・保存ビューの条件）は、点検で 0 件になった条件を警告する。
+  - id: filter-tree-01
+    group: 絞り込みの条件
+    name: 入れ子は 3 階層・50 条件まで
+    body: |-
+      - 絞り込みの入れ子は、ルートを含めて 3 階層、条件は合計 50 個までにする。
+        1 つのグループの結合子は、AND か OR の 1 つにする。
+  - id: filter-tree-02
+    group: 絞り込みの条件
+    name: 簡単な絞り込みを既定の入口に残す
+    body: |-
+      - 簡単な絞り込み（列ごとに AND・チップ）を、既定の入口に残す。
+        簡単な絞り込みは、条件ビルダーへ移せるようにする。
+  - id: filter-tree-03
+    group: 絞り込みの条件
+    name: 適用中の条件を常に表示する
+    body: |-
+      - 適用中の条件を常に表示する。
+        値が未入力の条件は適用しない。
+  - id: filter-operator-01
+    group: 絞り込みの条件
+    name: 演算子は値の型ごとに決める
+    body: |-
+      <!-- table: data -->
+
+      | 型 | 演算子 |
+      | --- | --- |
+      | text | `contains`・`not_contains`・`is`・`is_not`・`starts_with`・`is_empty`・`is_not_empty` |
+      | select | `is`・`is_not`・`is_any_of`・`is_none_of`・`is_empty`・`is_not_empty` |
+      | multi-select・タグ | `has_any`・`has_all`・`has_none`・`is_exactly`・`is_empty`・`is_not_empty` |
+      | 数値・日付 | `eq`・`ne`・`lt`・`lte`・`gt`・`gte`・`between`・`is_empty` |
+
+      <!-- /table -->
+  - id: filter-negation-01
+    group: 絞り込みの条件
+    name: 否定の演算子は空の項目を含む
+    body: |-
+      - 否定の演算子（`is_not`・`has_none`）は、空の項目を含める。
+        UI に「空の項目も含みます」と表示する。
+        空を除くときは、`is_not_empty` と組み合わせる。
+        SQL では `OR col IS NULL` を加える。
+  - id: search-01
+    group: 検索
+    name: テキストの検索構文を持たない
+    body: |-
+      - テキストの検索構文（`tag:a -tag:b`）は持たず、条件ビルダーと、全文のキーワード検索の入力欄だけにする。
+        全文のキーワード検索の入力欄は、最初から置く。
+  - id: builder-01
+    group: 条件ビルダー
+    name: react-querybuilder を確かめ、合わなければ自作する
+    body: |-
+      - 条件ビルダーは、react-querybuilder の shadcn registry を Base UI 版のプロジェクトで確かめる。
+        合わなければ、shadcn（Base UI 版）の部品で自作する。
+  - id: builder-02
+    group: 条件ビルダー
+    name: スキーマは相互に変換できる形にする
+    body: |-
+      - 条件のスキーマは、react-querybuilder の `{combinator, rules, not}` と相互に変換できる形にする。
+  - id: saved-view-01
+    group: 保存ビュー
+    name: 個人ビューは自動、共有ビューは明示的に保存する
+    body: |-
+      - 個人ビューは、自動で保存する。
+        共有ビューは、明示的に保存する。
+  - id: saved-view-02
+    group: 保存ビュー
+    name: 未保存は点のマーカーで示す
+    body: |-
+      - 未保存の変更は、ビュー名の点のマーカーで示す。
+        保存先は、規約『[入力と文言](id:ui-input-wording)』の `## 状態の保持` に従う。
+        要素の置き方は、規約『[業務画面のUI要素](id:ui-business-screen-elements)』の「保存ビュー」の行に従う。
+  - id: url-state-01
+    group: URL の状態
+    name: ビューの id と差分だけを載せる
+    body: |-
+      - URL には、ビューの id と、保存ビューとの差分だけを載せる。
+        2,000 文字を超えたら、サーバーに一時保存して短い id にする。
+  - id: url-state-02
+    group: URL の状態
+    name: 一時保存の置き場所が無いアプリ
+    body: |-
+      - 一時保存の置き場所が無い YAML のアプリは、木を JSON のまま URL に載せる。
+        長いときは、保存ビューにするよう案内する。

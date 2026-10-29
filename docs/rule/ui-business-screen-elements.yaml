@@ -11,6 +11,9 @@ visibility: internal
 rev: 1
 last_reviewed: '2026-10-24'
 related:
+  - to: ui-tag-filter
+    type: references
+    when: 保存ビューの未保存の扱いと URL の状態を決めるとき
   - to: ui-input-wording
     type: references
     when: 保存ビューの保存先など、画面の状態の保持を決めるとき
@@ -21,6 +24,7 @@ items:
   - id: overview
     name: 概要
     body: |-
+      対象: 共通（単体 HTML・React）
       業務系・管理画面に置く UI 要素と、その置き方・振る舞い。
   - id: layout-element-01
     group: レイアウト
@@ -28,7 +32,6 @@ items:
     body: |-
       | 要素 | 置き方 | 出どころ |
       | --- | --- | --- |
-      | ドロワー | 左から出す。開閉の起点はトップバーのハンバーガー。背景の押下と Esc で閉じる。スマホ幅では上タブの代わりにドロワーで画面を切り替える | [claude-balancer eb9be7a](https://github.com/shuhei1101/claude-balancer/commit/eb9be7a) |
       | パンくず | 階層を遡れるリンク列にし、現在地はリンクにしない | - |
   - id: navigation-01
     group: ナビゲーション
@@ -37,7 +40,6 @@ items:
       | 要素 | 置き方 | 出どころ |
       | --- | --- | --- |
       | 上タブ | 画面の切り替えに使う。トップバーの直下に追従させて並べ（外部規約『[画面デザインの原則](id:ui-screen-design-principles)』のヘッダーの容量）、収まらないときはその帯の中で横スクロールする | - |
-      | 横タブ | 画面内のサブナビに使う。本文の横に立て、幅が足りなければ本文の上へ寝かせる | [claude-balancer eb9be7a](https://github.com/shuhei1101/claude-balancer/commit/eb9be7a) |
       | 検索 | トップバーから開き、見出しなどの単位で絞り込んでその位置へ移る | - |
   - id: data-display-01
     group: データ表示
@@ -60,7 +62,7 @@ items:
       | 固定の影 | 見出し行や列を固定している間は、固定した側の境に影を付け、流れる行や列の上に浮いていることを示す | [NN/g: Data Tables](https://www.nngroup.com/articles/data-tables/) |
       | 列の表示切り替え | 列の一覧から表示を切り替える。行の識別子の列は外せない。既定に戻す操作を置く | [NN/g: Data Tables](https://www.nngroup.com/articles/data-tables/)・[Pencil & Paper: Data Table Design](https://www.pencilandpaper.io/articles/ux-pattern-analysis-enterprise-data-tables)・[DataTables: colvis](https://datatables.net/reference/button/colvis) |
       | 既定に戻す | 列の表示・並べ替え・固定を変えられる表には、既定に戻す操作を置く | [Pencil & Paper: Data Table Design](https://www.pencilandpaper.io/articles/ux-pattern-analysis-enterprise-data-tables) |
-      | 保存ビュー | 絞り込み・並べ替え・列の組に名前を付けて保存し、呼び出せるようにする。保存先は外部規約『[入力と文言](id:ui-input-wording)』の `## 状態の保持` | [Shopify Polaris: Index filters](https://polaris-react.shopify.com/components/selection-and-input/index-filters) |
+      | 保存ビュー | 絞り込み・並べ替え・列の組に名前を付けて保存し、呼び出せるようにする。保存先は外部規約『[入力と文言](id:ui-input-wording)』の `## 状態の保持`。未保存の扱いと URL の状態は外部規約『[タグの絞り込みと保存ビュー](id:ui-tag-filter)』に従う | [Shopify Polaris: Index filters](https://polaris-react.shopify.com/components/selection-and-input/index-filters) |
       | 行の詳細 | 行の押下で外部のサイトへ飛ばさず、画面の中で詳細を開く。開き方は、隣の行と見比べられる非モーダルのサイドパネルを候補に入れて決める。外部のサイトへのリンクは詳細の中に置く。表に入れると 3 次元以上になる項目（行の項目が入れ子の表を持つ）は、行の開閉を既定にし、次の行に入れ子の表を開く。開閉で隠すのは 1 階層だけにする。中身が大きいときは先頭だけを出し、全体はサイドの詳細で見せる | [NN/g: Data Tables](https://www.nngroup.com/articles/data-tables/) |
       | 表以外の一覧 | ガントなど表以外の一覧でも、行の見出しを列に分け、表と同じピン留めで固定できるようにする | - |
       | 狭い幅の表 | 列数の多い表は、狭い幅では後ろの列を畳み、行の押下で開く | - |
@@ -85,9 +87,7 @@ items:
     body: |-
       | 要素 | 置き方 | 出どころ |
       | --- | --- | --- |
-      | Issue 起票ボタン | 読んでいる画面から起票できるボタンを置く | - |
       | 行ごとの操作 | 3 つ未満なら行の中にアイコンボタンで出し、3 つ以上はメニューにまとめる | [Carbon: Data table](https://carbondesignsystem.com/components/data-table/usage/) |
-      | FAB | 主アクションがある画面にだけ置く（外部規約『[画面デザインの原則](id:ui-screen-design-principles)』の主アクションのボタン）。トップへ戻るボタンの上に積む | [claude-balancer eb9be7a](https://github.com/shuhei1101/claude-balancer/commit/eb9be7a) |
       | トップへ戻る | 画面の隅に留め、スクロールした後に出す | - |
       | テーマ切替 | デザイン方針の明暗が両方のとき、ライト / ダークを切り替えるボタンをトップバーに置く | - |
   - id: pc-mobile-check-01

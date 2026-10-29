@@ -32,6 +32,13 @@ items:
     name: shared に接頭辞を付けない
     body: |-
       - ドメインの中の共通フォルダは `shared/` とし、`_` の接頭辞を付けない。
+  - id: file-04
+    group: ファイルとフォルダ
+    name: 画面の名前に複数の概念を詰めない
+    body: |-
+      - 画面の名前に、複数の概念をハイフンで詰め込まない。
+        概念の区切りは、フォルダで分ける（`features/prompt/tuning/` であって `features/prompt-tuning/` ではない）。
+        複合語（`personal-chat` など 1 概念のもの）は、ハイフンのまま 1 セグメントにする。
   - id: component-01
     group: コンポーネント
     name: コンポーネント名は PascalCase

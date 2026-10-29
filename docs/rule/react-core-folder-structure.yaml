@@ -109,6 +109,19 @@ items:
     body: |-
       - 部品・hook は、使う場所の近くに置く。
         使う範囲が広がったら上のフォルダへ移す。
+  - id: feature-04
+    group: features
+    name: 共通化を先に考える
+    body: |-
+      - 部品・hook・スタイルを書く前に、共通化できるかを先に考える。
+        同じコードを 2 か所に書きそうになったら、共通化の合図にする。
+        画面にロジックやスタイルを重複させない。
+  - id: feature-05
+    group: features
+    name: 呼び出しは UI から通信への一方向
+    body: |-
+      - 呼び出しは、コンポーネント（UI）→ hook・store（状態）→ `shared/adapters/`（通信）の一方向にする。
+        状態と通信は、コンポーネントを import しない。
   - id: route-01
     group: ルート
     name: routes は薄く保つ

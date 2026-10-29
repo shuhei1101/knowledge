@@ -80,6 +80,11 @@ items:
         expect(result).toBe(true);
       });
       ```
+  - id: time-01
+    group: 時刻
+    name: 時刻は固定日時で検証する
+    body: |-
+      - 時刻に関わる処理は、固定日時を渡して JST への変換を検証する。
   - id: coverage-01
     group: カバレッジ
     name: 結合・E2E はカバレッジで縛らない

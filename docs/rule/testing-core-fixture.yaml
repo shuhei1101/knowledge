@@ -50,6 +50,22 @@ items:
     name: enum を網羅するヘルパー
     body: |-
       - enum を網羅するヘルパー（`ALL_RESOURCE_STATUSES` など）を、`as const` で作る。
+  - id: factory-as-fixture-01
+    group: Factory-as-Fixture（Playwright）
+    name: fixture は関数を返す
+    body: |-
+      - Playwright で、複数のインスタンスや引数付きのリソースを作るときは、fixture が関数（factory）を返す構造にする。
+        - 1 fixture = 1 責務にし、`createUser`・`createProfile`・`createTask` を分けて `tests/e2e/fixtures.ts` に並べる
+        - 依存は、テスト本体で引数として明示する（`createProfile(userA)`）
+        - cleanup は fixture の中で作成したものを追跡し、`use()` の後に作成順の逆順で delete する
+        - テストは、必要な factory だけを引数で受ける（Playwright は要求された fixture だけを初期化する）
+  - id: factory-as-fixture-02
+    group: Factory-as-Fixture（Playwright）
+    name: 使わない書き方
+    body: |-
+      - `setupAllScenarioX()` のような god setup で全てのリソースを作らない。
+      - fixture の中で名前をハードコードした値（`userA` など）を返さず、常に factory を返す。
+      - `try/finally` で手動の cleanup を書かず、fixture の `use()` の後に任せる。
   - id: db-cleanup-01
     group: DB の cleanup 戦略
     name: DB の cleanup の順序

@@ -1,10 +1,10 @@
 # yaml-language-server: $schema=../../schemas/rule.schema.yaml
-id: ui-document-parts
+id: doc-parts
 kind: rule
 name: ドキュメントの部品
 description: ドキュメントサイトに置く部品（タブ・ステップ・ファイルツリー・コードの行マーカー・バッジ）と使いどころを定める。
 tags:
-  - name: scope:ui
+  - name: scope:ドキュメント部品
     main: true
 status: current
 visibility: internal
@@ -14,6 +14,7 @@ items:
   - id: overview
     name: 概要
     body: |-
+      対象: 共通（ドキュメントサイト）
       ドキュメントサイトに置く部品（タブ・ステップ・ファイルツリー・コードの行マーカー・バッジ）と使いどころ。
       書き方は規約『ドキュメント管理』の `### タブとステップ` と `### ファイルツリー・コードの行の印・バッジ`。
   - id: parts-usage-01
