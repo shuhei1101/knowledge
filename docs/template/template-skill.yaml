@@ -1,0 +1,181 @@
+# yaml-language-server: $schema=../../schemas/template.schema.yaml
+id: template-skill
+kind: template
+name: "テンプレート: スキル"
+description: スキルの手順を、フローチャートと外部とのやり取りのシーケンス図で記載するスキルの設計書のテンプレート。
+tags:
+  - name: scope:テンプレート
+    main: true
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      スキルの設計書。
+      1 ファイル = 1 スキル。
+  - id: item-list-01
+    name: 項目
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- |
+      | title | タイトル | string | 必須 | - | - | スキルの名前。ファイル名に合わせる。 | - |
+      | skill | スキルの場所 | string | 必須 | - | - | スキルを置くリポジトリとパス。 | - |
+      | issue | 対応 Issue | integer | - | - | - | 起点の Issue の番号。 | - |
+      | primary_actor | 主アクター | string | 必須 | - | - | スキルを起動する人か仕組み。 | - |
+      | trigger | きっかけ | string | 必須 | - | - | 起動のしかた（スラッシュコマンド・発言・フックなど）。 | - |
+      | arguments | 引数 | array | - | - | - | 引数ごとの `name`・`description`・省いたときの動き。 | - |
+      | arguments[].name | 引数名 | string | 必須 | - | - | - | - |
+      | arguments[].description | 説明 | string | 必須 | - | - | - | - |
+      | arguments[].when_omitted | 省いたときの動き | string | - | - | - | - | - |
+      | preconditions | 事前条件 | array | - | - | - | 起動の前に整っている必要があること。 | - |
+      | externals | やり取りする相手 | array | 必須 | - | minItems: 1 | スキルが読み書きする相手（ツール・MCP・ファイル・外部のサービス・利用者）と、何をやり取りするか。 | - |
+      | externals[].name | 相手 | string | 必須 | - | - | - | - |
+      | externals[].exchange | やり取りするもの | string | 必須 | - | - | - | - |
+      | externals[].when_absent | 無いとき | string | - | - | - | 相手が無いときの動き。 | - |
+      | flow | 手順 | string | 必須 | - | - | 手順のフローチャート。上から下へ。分岐はそのまま描く。<br>mdmark の `flow` で記載する。 | - |
+      | sequence | 外部とのやり取り | string | 必須 | - | - | 正常の流れで、相手との呼び出しと返りの順番。<br>mdmark の `sequence` で記載する。 | - |
+      | branches | 分かれる結末 | array | 必須 | - | minItems: 1 | 結末ごとの条件と、終わったときの状態。 | - |
+      | branches[].name | 結末 | string | 必須 | - | pattern: ^(正常\|異常)(（.+）)?$ | `正常`・`正常（{条件}）`・`異常（{条件}）`。 | - |
+      | branches[].when | 条件 | string | 必須 | - | - | - | - |
+      | branches[].result | 終わったときの状態 | string | 必須 | - | - | 外から見える状態。スキルを実装した後に、設計書とスキルの手順を突き合わせる観点になる。 | - |
+      | refs | 関連 | array | - | - | - | 読む規約・他の設計書。 | - |
+
+      <!-- /table -->
+  - id: difference-01
+    name: シナリオのテンプレートとの違い
+    body: |-
+      シナリオのテンプレートにあって、こちらに無い項目は `test_file`・`setup`（Mock）・`test`・`expected`。
+      結果は `branches[].result` に記載し、突き合わせの観点にする。
+      スキルを実装した後に、設計書とスキルの手順を突き合わせて確かめる。
+      モジュール構成とインターフェース定義は記載しない。
+  - id: section-guide-01
+    name: 各セクションの説明
+    body: |-
+      <!-- table: data -->
+
+      | セクション | 記載すること | 記載しないこと | 補足 |
+      | --- | --- | --- | --- |
+      | 基本の項目（`title`〜`preconditions`） | 誰がどう起動し、何を渡すか | スキルを作る理由・冒頭のリード | - |
+      | やり取りする相手 | シーケンス図に出る相手をすべて。相手が無いときの動き（例: dev-docs が無ければファイルを直接読む） | ツールの引数の細部（ツールの説明で分かる） | - |
+      | 手順 | スキルが順にすることと分岐。フローチャートのノード 1 つがスキルの手順の 1 行に当たる | ノードの中の細かい判断（スキルの本文に記載する） | - |
+      | 外部とのやり取り | 正常の流れで、どの相手をどの順に呼び、何が返るか | 分岐（手順のフローチャートに記載する） | - |
+      | 分かれる結末 | 結末ごとの条件と、終わったときに外から見える状態 | Mock・テスト関数 | - |
+
+      <!-- /table -->
+  - id: example-sample-01
+    name: 記載例
+    body: |-
+      ````yaml
+      title: 文章を点検して修正する
+      skill: knowledge リポジトリのスキル
+      primary_actor: 利用者
+      trigger: 利用者がスキルを起動する
+      arguments:
+      - name: 範囲
+        description: ファイルのパス・フォルダのパス（配下をすべて）・Git のコミットか範囲（変わったファイル）のどれでもよい
+      preconditions:
+      - knowledge の規約を dev-docs かファイルで読める
+      externals:
+      - name: 利用者
+        exchange: 範囲を受け取り、サマリーを返す
+      - name: Git
+        exchange: コミットで変わったファイルの一覧
+        when_absent: コミットを渡されなければ呼ばない
+      - name: dev-docs
+        exchange: 文章に関わる規約の本文（タグで引く）
+        when_absent: knowledge の規約のファイルを直接読む
+      - name: 範囲のファイル
+        exchange: 本文を読み、修正した本文を記載する
+      flow: |-
+        <!-- html -->
+
+        ```html
+        <mdmark-flow>
+        {
+          "title": "文章を点検して修正する",
+          "scope": "起動からサマリーまで",
+          "updated": "2026-10-29",
+          "width": 560,
+          "height": 730,
+          "nodes": [
+            { "id": "ask", "kind": "external", "x": 170, "y": 10, "w": 220, "h": 56, "name": "スキルを起動", "sub": "範囲を渡す" },
+            { "id": "range", "kind": "script", "x": 170, "y": 100, "w": 220, "h": 56, "name": "範囲をファイルに展開", "sub": "ファイル・フォルダ・コミット" },
+            { "id": "any", "kind": "dm", "x": 170, "y": 190, "w": 220, "h": 56, "name": "ファイルがあるか" },
+            { "id": "none", "kind": "external", "x": 420, "y": 190, "w": 130, "h": 56, "name": "見つからないと返す" },
+            { "id": "has", "kind": "dm", "x": 170, "y": 280, "w": 220, "h": 56, "name": "dev-docs があるか" },
+            { "id": "viadd", "kind": "mcp", "x": 20, "y": 380, "w": 220, "h": 56, "name": "規約を dev-docs で読む", "sub": "search_docs" },
+            { "id": "direct", "kind": "data", "x": 320, "y": 380, "w": 220, "h": 56, "name": "規約のファイルを読む" },
+            { "id": "scan", "kind": "llm", "x": 170, "y": 480, "w": 220, "h": 56, "name": "すべてを調べる", "sub": "修正する箇所の一覧を作る" },
+            { "id": "fix", "kind": "llm", "x": 170, "y": 570, "w": 220, "h": 56, "name": "まとめて修正する", "sub": "一覧が空なら飛ばす" },
+            { "id": "sum", "kind": "external", "x": 170, "y": 660, "w": 220, "h": 56, "name": "サマリーを出す" }
+          ],
+          "wires": [
+            { "id": "w1", "from": "ask", "to": "range", "line": "flow", "points": [[280, 66], [280, 100]] },
+            { "id": "w2", "from": "range", "to": "any", "line": "flow", "points": [[280, 156], [280, 190]] },
+            { "id": "w3", "from": "any", "to": "none", "line": "flow", "points": [[390, 218], [420, 218]], "label": "無い", "labelAt": [405, 206] },
+            { "id": "w4", "from": "any", "to": "has", "line": "flow", "points": [[280, 246], [280, 280]], "label": "ある", "labelAt": [300, 263] },
+            { "id": "w5", "from": "has", "to": "viadd", "line": "flow", "points": [[260, 336], [260, 358], [130, 358], [130, 380]], "label": "ある", "labelAt": [195, 358] },
+            { "id": "w6", "from": "has", "to": "direct", "line": "flow", "points": [[300, 336], [300, 358], [430, 358], [430, 380]], "label": "無い", "labelAt": [365, 358] },
+            { "id": "w7", "from": "viadd", "to": "scan", "line": "flow", "points": [[130, 436], [130, 458], [250, 458], [250, 480]] },
+            { "id": "w8", "from": "direct", "to": "scan", "line": "flow", "points": [[430, 436], [430, 458], [310, 458], [310, 480]] },
+            { "id": "w9", "from": "scan", "to": "fix", "line": "flow", "points": [[280, 536], [280, 570]] },
+            { "id": "w10", "from": "fix", "to": "sum", "line": "flow", "points": [[280, 626], [280, 660]] }
+          ]
+        }
+        </mdmark-flow>
+        ```
+
+        <!-- /html -->
+      sequence: |-
+        <!-- html -->
+
+        ```html
+        <mdmark-sequence>
+        {
+          "title": "文章を点検して修正する",
+          "scope": "コミットを渡し、dev-docs があるとき",
+          "updated": "2026-10-29",
+          "participants": [
+            { "id": "user", "kind": "external", "name": "利用者" },
+            { "id": "skill", "kind": "llm", "name": "スキル" },
+            { "id": "git", "kind": "script", "name": "Git" },
+            { "id": "dd", "kind": "mcp", "name": "dev-docs" },
+            { "id": "fs", "kind": "data", "name": "範囲のファイル" }
+          ],
+          "steps": [
+            { "from": "user", "to": "skill", "label": "範囲（コミット）" },
+            { "from": "skill", "to": "git", "label": "変わったファイルを取る" },
+            { "from": "git", "to": "skill", "label": "ファイルの一覧", "reply": true },
+            { "from": "skill", "to": "dd", "label": "文章の規約をタグで引く", "tip": "search_docs。配信元は knowledge" },
+            { "from": "dd", "to": "skill", "label": "規約の本文", "reply": true },
+            { "from": "skill", "to": "fs", "label": "本文を読む" },
+            { "from": "fs", "to": "skill", "label": "本文", "reply": true },
+            { "from": "skill", "to": "fs", "label": "修正した本文を記載する" },
+            { "from": "skill", "to": "user", "label": "サマリー", "reply": true }
+          ]
+        }
+        </mdmark-sequence>
+        ```
+
+        <!-- /html -->
+      branches:
+      - name: 正常
+        when: 規約に反する文がある
+        result: 反する文だけが修正され、サマリーにファイルごとの修正した箇所・当てた規約・件数が出る
+      - name: 正常（修正する箇所が無い）
+        when: 反する文が無い
+        result: ファイルは変わらず、サマリーが「直す箇所はありませんでした」になる
+      - name: 異常（範囲にファイルが無い）
+        when: 無いパスか、文章のファイルを含まないコミット
+        result: 規約を読まず、渡した範囲と見つからないことが出る
+      refs:
+      - 規約『文章の書き方』
+      - 規約『既存文章の維持』
+      - 規約『論点の提示』
+      - 規約『ドキュメントの部品』
+      - 規約『ユーザ配下ルール記載時の規約』
+      ````
