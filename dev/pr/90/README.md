@@ -1,0 +1,1 @@
+# Python の FastAPI の規約に operationId・ProblemDetail・camelCase のキー・StrEnum・例外の名前と HTTP へのマップの決まりを記載する
