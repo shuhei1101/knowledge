@@ -1,0 +1,16 @@
+# 回したコードの commit: 47755636f1ff718787bb907323aabbb89e53bacd
+
+$ python3 validate.py .   # docs/**/*.yaml を schemas/*.schema.yaml で検査し、id とファイル名・項目 id の重複・id: 参照・related・タグの登録・rules.yaml の rule の実在と glob の書き出しを確かめる
+文書 272 件、rules.yaml 145 件を検査
+違反 0 件
+exit=0
+
+$ npx @probelabs/maid flowchart-react-state-placement.yaml の mermaid ブロック
+Valid
+exit=0
+
+$ rule-inject の load_indexes で rules.yaml を読む（RULE_INJECT_INDEXES_PROJECT=rules.yaml）
+entries 393 failures 0
+
+$ git diff --check origin/develop...HEAD
+空白の違反なし
