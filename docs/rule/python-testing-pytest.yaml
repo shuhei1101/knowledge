@@ -9,8 +9,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -84,6 +84,11 @@ items:
     name: FastAPI ルートのテスト
     body: |-
       `build_fastapi()` → `app.state.handlers` にテスト用 Handlers（Mock 注入済み）をセット → `TestClient` で叩く。
+  - id: fastapi-route-02
+    group: FastAPI ルート
+    name: openapi.json のスナップショットテスト
+    body: |-
+      - `app.openapi()` の出力をスナップショットのファイルと比べるテストを置き、operationId・パス・スキーマの破壊的変更を検知する
   - id: marker-01
     group: マーカー
     name: マーカーの付け方
