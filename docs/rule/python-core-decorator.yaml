@@ -41,7 +41,7 @@ items:
       | --------------------------------------- | --------------------------------------------------------------- |
       | `@catch_and_log(*exc_types, level=...)` | 指定例外をログに出して再送出する                                |
       | `@catch_and_map(SrcError, to=DstError)` | 例外型を変換（vendor 例外 → ドメイン例外）。`raise from` で連鎖 |
-      | `@stamina.retry(on=(...), attempts=4)`  | 指数バックオフでリトライ（引数は [llm/例外とリトライ](id:python-llm-exception-retry)）      |
+      | `@stamina.retry(on=<フック関数>, attempts=4)` | 指数バックオフでリトライ（引数は [llm/例外とリトライ](id:python-llm-exception-retry)）      |
       | `@with_timeout(seconds=60)`             | `asyncio.timeout` ラッパー。超過で `IntegrationTimeoutError`    |
       | `@measure_time(metric="...")`           | 実行時間メトリクス                                              |
   - id: composition-01
@@ -52,7 +52,7 @@ items:
 
       ```python
       @with_timeout(seconds=60)                                   # 3. 全体 60 秒で打ち切り
-      @stamina.retry(on=(LlmRateLimitError, LlmServerError), attempts=4)  # 2. 3 回までリトライ
+      @stamina.retry(on=retry_on_llm_error, attempts=4)  # 2. 3 回までリトライ（フック関数は llm/例外とリトライ）
       @catch_and_map(openai.APIStatusError, to=LlmServerError)        # 1. vendor 例外を変換
       async def chat(req: ChatRequest) -> ChatResponse: ...
       ```

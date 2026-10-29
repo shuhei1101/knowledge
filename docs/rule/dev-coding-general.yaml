@@ -2,14 +2,14 @@
 id: dev-coding-general
 kind: rule
 name: コーディング全般における規約
-description: 例外・フォールバック・定数・識別子・コメント・コードの品質・外部入力・タイムスタンプについて、言語を問わず守るコーディングの決まりを定める。
+description: 例外・フォールバック・定数・識別子・コメント・コードの品質・外部入力・ログ・タイムスタンプについて、言語を問わず守るコーディングの決まりを定める。
 tags:
   - name: scope:dev
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 related:
   - to: flowchart-config-location
     type: requires
@@ -121,6 +121,11 @@ items:
     name: 実行されるデータの読み込み
     body: |-
       - 外部から来たデータを、読み込むだけでコードが動く形式・関数で読まない（Python なら `pickle` と `yaml.load` を使わず `yaml.safe_load`）
+  - id: log-01
+    group: ログ
+    name: ログに秘匿値を入れない
+    body: |-
+      - ログのメッセージと構造化引数に秘匿値（パスワード・API キー・トークン）を入れない
   - id: timestamp-01
     group: タイムスタンプ
     name: JST 統一
