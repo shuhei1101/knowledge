@@ -25,9 +25,10 @@ items:
       - 共通コンポーネント（`shared/components/`）の `.stories.tsx` は、対象の横に置く。
   - id: storybook-02
     group: Storybook
-    name: フィーチャ固有は story を作らない
+    name: 画面の部品は story を作らない
     body: |-
-      - 画面に固有のコンポーネントは、story を作らない（E2E で確認する）。
+      - 画面の `components/` の部品は、story を作らない（E2E で確認する）。
+        画面の本体の story は任意で、置くときは `{screen}-screen.stories.tsx` にする。
   - id: storybook-03
     group: Storybook
     name: 状態のある部品は play 関数
