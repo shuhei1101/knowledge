@@ -17,21 +17,21 @@ items:
     body: |-
       LLM 出力を Pydantic モデルとして受け取るには、各 SDK の組み込みの構造化出力を使い、`AsyncChatFn` の実装の中に閉じる。
       Instructor は複数プロバイダーが要るリポジトリだけで使う。
+  - id: common-01
+    group: SDK と Instructor に共通
+    name: Field の description と Literal
+    body: |-
+      - スキーマの `Field(description=...)` が抽出精度に効くので書く。固定選択肢は `Literal`、ネスト・`list[...]` も可
+  - id: common-02
+    group: SDK と Instructor に共通
+    name: 検証失敗は例外を伝える
+    body: |-
+      - 検証に失敗したときは、SDK・Instructor が送出する例外を呼び出し側へ伝える（`None` に変えない）
   - id: sdk-01
     group: SDK の組み込み
     name: anthropic は messages.parse
     body: |-
       - anthropic は `client.messages.parse(output_format=MySchema, ...)` で Pydantic モデルとして受け取る
-  - id: sdk-02
-    group: SDK の組み込み
-    name: 検証失敗は例外を伝える
-    body: |-
-      - 検証に失敗したときは SDK が送出する例外を呼び出し側へ伝える（`None` に変えない）
-  - id: sdk-03
-    group: SDK の組み込み
-    name: スキーマの Field と Literal
-    body: |-
-      - スキーマの `Field(description=...)` が抽出精度に効くので書く。固定選択肢は `Literal`、ネスト・`list[...]` も可
   - id: instructor-01
     group: Instructor（複数プロバイダーが要るリポジトリだけ）
     name: from_provider でクライアント作成
@@ -43,16 +43,6 @@ items:
     body: |-
       - `client.chat.completions.create(response_model=MySchema, max_retries=3, ...)` で
         - JSON 受信 → Pydantic 検証 → 失敗時は LLM に修正させて再試行
-  - id: instructor-03
-    group: Instructor（複数プロバイダーが要るリポジトリだけ）
-    name: Field の description と Literal
-    body: |-
-      - スキーマの `Field(description=...)` が抽出精度に効くので書く。固定選択肢は `Literal`、ネスト・`list[...]` も可
-  - id: instructor-04
-    group: Instructor（複数プロバイダーが要るリポジトリだけ）
-    name: 検証失敗は例外を伝える
-    body: |-
-      - 再試行を使い切った検証失敗は、Instructor が送出する例外を呼び出し側へ伝える（`None` に変えない）
   - id: instructor-05
     group: Instructor（複数プロバイダーが要るリポジトリだけ）
     name: create_partial で逐次表示

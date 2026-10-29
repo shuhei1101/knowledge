@@ -68,9 +68,8 @@ items:
       例外から HTTP へのマップはこの表だけに置き、ほかのルールは参照だけにする。
 
       Retry-After は、`retry_after` 属性を持つ `LlmRateLimitError` ではその値を返す。
-      属性を持たない `LlmServerError` では 30 秒を返す。
-      30 秒は [llm/例外とリトライ](id:python-llm-exception-retry#stamina-retry-01) の `LlmServerError` へのリトライの `wait_max`（バックオフの上限）で、上流の 5xx からの回復を待つ間隔の元の値にする。
-      `wait_max` を変えたときは、この値も合わせる。
+      属性を持たない `LlmServerError` では [llm/例外とリトライ](id:python-llm-exception-retry#stamina-retry-01) の `wait_max` の値を返す。
+      上流の 5xx からの回復を待つ間隔として、同じ例外へのリトライのバックオフの上限を使う。
   - id: exception-handler-02
     group: 例外ハンドラ
     name: 500 系はログに出す

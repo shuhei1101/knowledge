@@ -24,7 +24,7 @@ items:
 
       | 例外                      | 意味         | リトライ                                            |
       | ------------------------- | ------------ | --------------------------------------------------- |
-      | `LlmRateLimitError`       | レート制限   | ✅ 指数バックオフ                                   |
+      | `LlmRateLimitError`       | レート制限   | ✅ 指数バックオフ（`retry_after` 属性があれば尊重） |
       | `LlmServerError`          | 5xx          | ✅ 短い待ち                                         |
       | `IntegrationTimeoutError` | タイムアウト | ✅ ジッタ付き                                       |
       | `LlmBadRequestError`      | 4xx          | ❌ プロンプト修正が必要                             |
@@ -49,9 +49,9 @@ items:
       - リトライは stamina の 1 層だけで行い、SDK のクライアントは `max_retries=0` を明示する
   - id: stamina-retry-04
     group: stamina によるリトライ
-    name: retry_after の扱い
+    name: retry_after の優先
     body: |-
-      - `LlmRateLimitError.retry_after`（Retry-After ヘッダから抽出してコンストラクタに渡す）は stamina の待ちには使わず、503 の Retry-After に使う（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
+      - `on` に渡すフック関数は、`LlmRateLimitError.retry_after`（Retry-After ヘッダから抽出してコンストラクタに渡す）があればその秒数（float）を返して待ちに使う。無ければ既定のバックオフ。同じ値を 503 の Retry-After にも使う（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
   - id: stamina-retry-05
     group: stamina によるリトライ
     name: リトライ時のログ
