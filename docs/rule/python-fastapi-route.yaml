@@ -66,7 +66,7 @@ items:
     group: 書き方
     name: レスポンススキーマの指定
     body: |-
-      - レスポンススキーマは戻り値の型注釈で指定（返す型と合わないときだけ `response_model=`。[fastapi/スキーマ](id:python-fastapi-schema)）、作成系は `status_code=201` を明示、エラーレスポンスは `ProblemDetail` モデルを `APIRouter(responses=...)` で一括宣言して OpenAPI に反映（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
+      - レスポンススキーマは戻り値の型注釈で指定（返す型と合わないときだけ `response_model=`。[fastapi/スキーマ](id:python-fastapi-schema)）、作成系は `status_code=201` を明示、エラーレスポンスは 422 を含めて `ProblemDetail` モデルを `APIRouter(responses=...)` で一括宣言して OpenAPI に反映（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
   - id: writing-05
     group: 書き方
     name: SSE のストリーミング
