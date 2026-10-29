@@ -17,6 +17,9 @@ related:
   - to: dev-tag-term-registration
     type: requires
     when: 文書にタグを付けるとき
+  - to: flowchart-related-link
+    type: requires
+    when: 文書に関連を張るか決めるとき
   - to: flowchart-yaml-file-unit
     type: requires
     when: YAML ファイルを分ける単位を決めるとき
@@ -125,17 +128,20 @@ items:
     body: |-
       - 各要素に `to`（相手の ID）・`type`（関係の種類）・`when`（いつ読むか、1 文）を持たせる
         機械で判定できるときだけ `paths`（glob）を併記する
+      - 関連を張る相手と各要素の中身は [関連の張り方](id:flowchart-related-link) で決める
   - id: related-02
     group: 関連
     name: 関連の type
     body: |-
       - `type` は `requires`・`references`・`replaces`・`part_of`・`change_together` から選ぶ
+      - 選ぶ順と各 `type` の定義は [関連の張り方](id:flowchart-related-link) に従う
   - id: related-03
     group: 関連
     name: 関連は片側だけ記載
     body: |-
       - 片側だけ記載し、逆向きはツールで出す
         `change_together` だけは両側に記載し、修正し忘れの検査に使う
+      - どちらに記載するかは [関連の張り方](id:flowchart-related-link) の結果に従う
   - id: related-04
     group: 関連
     name: when を記載できない関連
@@ -143,6 +149,7 @@ items:
       - `when` を記載できない関連は張らない
         本文でリンクしている相手は重ねない
         件数の上限は種類のスキーマで決める
+      - 張るかは [関連の張り方](id:flowchart-related-link) の先頭で当てる
   - id: related-05
     group: 関連
     name: 参照切れは CI で止める
