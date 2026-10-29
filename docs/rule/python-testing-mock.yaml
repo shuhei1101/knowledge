@@ -9,8 +9,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -27,7 +27,7 @@ items:
       | LLM          | `make_chat_mock(*responses)` — 固定文字列を順に返すファクトリ        |
       | 呼び出し検証 | クロージャに `calls` リストを持つ spy 関数（`_chat.calls` で参照）   |
       | エラー注入   | `make_chat_error(LlmRateLimitError("..."))` — raise するだけの関数   |
-      | HTTP         | fetch を型エイリアス化していれば Mock 関数注入。httpx 直なら `respx` |
+      | HTTP         | fetch を型エイリアス化していれば Mock 関数注入。httpx2 直なら `MockTransport` を関数注入（SDK は `http_client=` に渡す） |
       | 時刻         | `NowFn` に固定時刻関数を渡す（freezegun より関数注入がシンプル）     |
       | ID 生成      | `iter(["id-1", ...])` + `next` を返す関数                            |
       | 永続化       | クロージャの dict による in-memory `save` / `find`                   |

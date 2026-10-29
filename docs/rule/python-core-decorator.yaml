@@ -9,8 +9,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: recommended-decorator-01
     group: 推奨デコレータ
@@ -41,7 +41,7 @@ items:
       | --------------------------------------- | --------------------------------------------------------------- |
       | `@catch_and_log(*exc_types, level=...)` | 指定例外をログに出して再送出する                                |
       | `@catch_and_map(SrcError, to=DstError)` | 例外型を変換（vendor 例外 → ドメイン例外）。`raise from` で連鎖 |
-      | `@with_retry(retries=3, on=(...))`      | 指数バックオフでリトライ（引数は [llm/例外とリトライ](id:python-llm-exception-retry)）      |
+      | `@stamina.retry(on=(...), attempts=4)`  | 指数バックオフでリトライ（引数は [llm/例外とリトライ](id:python-llm-exception-retry)）      |
       | `@with_timeout(seconds=60)`             | `asyncio.timeout` ラッパー。超過で `IntegrationTimeoutError`    |
       | `@measure_time(metric="...")`           | 実行時間メトリクス                                              |
   - id: composition-01
@@ -52,7 +52,7 @@ items:
 
       ```python
       @with_timeout(seconds=60)                                   # 3. 全体 60 秒で打ち切り
-      @with_retry(retries=3, on=(LlmRateLimitError, LlmServerError))  # 2. 3 回までリトライ
+      @stamina.retry(on=(LlmRateLimitError, LlmServerError), attempts=4)  # 2. 3 回までリトライ
       @catch_and_map(openai.APIStatusError, to=LlmServerError)        # 1. vendor 例外を変換
       async def chat(req: ChatRequest) -> ChatResponse: ...
       ```

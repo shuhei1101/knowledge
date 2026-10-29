@@ -2,15 +2,15 @@
 id: python-core-language-rules
 kind: rule
 name: 言語ルール
-description: コメント・識別子・出力の言語、文字列フォーマット、import、例外、ロギング、エンコーディングの決まりを定める。
+description: コメント・識別子・出力の言語、文字列フォーマット、import、例外、エンコーディングの決まりを定める。
 tags:
   - name: scope:python
   - name: topic:core
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: language-usage-01
     group: 文字種・言語の使い分け
@@ -33,11 +33,6 @@ items:
     name: f-string を標準にする
     body: |-
       - f-string を標準にする（i18n が必要な場合のみ gettext）
-  - id: string-format-02
-    group: 文字列フォーマット
-    name: logger の引数形式
-    body: |-
-      - logger は検索性重視なら構造化引数（extra）、開発ログは f-string
   - id: import-order-01
     group: import の並び
     name: import の並び
@@ -48,11 +43,6 @@ items:
     name: 例外定義の参照
     body: |-
       - 例外の階層・vendor 例外のラップ・`raise X from e` は [shared/エラー定義](id:python-shared-error-definition)、横断関心事のハンドラーデコレータは [core/デコレーター](id:python-core-decorator)
-  - id: exception-02
-    group: 例外
-    name: 広い except の制限
-    body: |-
-      - 広い `except Exception:` はハンドラーデコレータ / 最上位ハンドラのみ
   - id: exception-03
     group: 例外
     name: Result 型は使わない
@@ -68,18 +58,8 @@ items:
     name: try の範囲
     body: |-
       - `try` に入れるのは失敗しうる行だけにする
-  - id: logging-01
-    group: ロギング
-    name: print ではなく logger
-    body: |-
-      - `print` ではなく `logger`（レベルの使い分けは [shared/ロガー](id:python-shared-logger)）
   - id: encoding-01
     group: エンコーディング
     name: UTF-8・BOM なし
     body: |-
       - すべて UTF-8、BOM なし
-  - id: encoding-02
-    group: エンコーディング
-    name: encoding を明示
-    body: |-
-      - Windows でのファイル読み書きは `encoding="utf-8"` を明示

@@ -126,7 +126,6 @@ rules:
       - "**/docs/**/*.yaml"
   - rule: docs/rule/dev-tag-term-registration.yaml
     paths:
-      - "**/tags.yaml"
       - "**/terms.yaml"
   - rule: docs/rule/dev-coding-general.yaml
     paths:
@@ -195,161 +194,88 @@ rules:
     paths:
       - "**/prompts/**"
       - "**/prompt/**"
-  - rule: docs/rule/python-architecture-typescript-style.yaml
-    paths:
-      - "**/*.py*"
   - rule: docs/rule/python-architecture-composition-root.yaml
     paths:
-      - "**/*.py*"
-  - rule: docs/rule/python-architecture-refactoring-criteria.yaml
-    paths:
-      - "**/features/**/service.py*"
-  - rule: docs/rule/python-architecture-layout.yaml
-    paths:
-      - "**/features/**/types.py*"
-      - "**/main.py*"
-  - rule: docs/rule/python-architecture-dependency-management.yaml
-    paths:
-      - "**/features/**/service.py*"
-      - "**/integrations/**/client.py*"
-      - "**/main.py*"
-  - rule: docs/rule/python-architecture-design-principles.yaml
-    paths:
-      - "**/*.py*"
-  - rule: docs/rule/python-concurrency-parallel.yaml
-    paths:
-      - "**/runtime/**/*.py*"
+      - "**/main.py"
   - rule: docs/rule/python-concurrency-async.yaml
     paths:
-      - "**/runtime/**/*.py*"
+      - "**/runtime/**/*.py"
+      - "**/integrations/**/*.py"
+      - "**/features/**/service.py"
   - rule: docs/rule/python-core-comment.yaml
     paths:
-      - "**/*.py*"
-  - rule: docs/rule/python-core-style.yaml
-    paths:
-      - "**/*.py*"
-      - "**/pyproject.toml"
-  - rule: docs/rule/python-core-decorator.yaml
-    paths:
-      - "**/_decorators.py*"
-      - "**/features/**/service.py*"
-      - "**/integrations/**/client.py*"
-      - "**/integrations/llm/**/*.py*"
-      - "**/shared/decorators.py*"
-  - rule: docs/rule/python-core-naming.yaml
-    paths:
-      - "**/*.py*"
-  - rule: docs/rule/python-core-type-hint.yaml
-    paths:
-      - "**/*.py*"
-      - "**/features/**/types.py*"
-      - "**/shared/types.py*"
-  - rule: docs/rule/python-core-language-rules.yaml
-    paths:
-      - "**/*.py*"
+      - "**/*.py"
   - rule: docs/rule/python-fastapi-application.yaml
     paths:
-      - "**/server/app.py*"
-      - "**/server/ws/**/*.py*"
+      - "**/server/{app,lifespan,middleware}.py"
   - rule: docs/rule/python-fastapi-schema.yaml
     paths:
-      - "**/features/**/route.py*"
-      - "**/server/routes/**/*.py*"
+      - "**/features/**/route.py"
+      - "**/server/routes/**/*.py"
+      - "**/features/**/schemas.py"
   - rule: docs/rule/python-fastapi-health-check.yaml
     paths:
-      - "**/healthz.py*"
-      - "**/server/routes/**/health*.py*"
-      - "**/server/routes/health*.py*"
+      - "**/healthz.py"
+      - "**/server/routes/**/health*.py"
+      - "**/server/routes/health*.py"
   - rule: docs/rule/python-fastapi-route.yaml
     paths:
-      - "**/features/**/route.py*"
-      - "**/server/routes/**/*.py*"
+      - "**/features/**/route.py"
+      - "**/server/routes/**/*.py"
   - rule: docs/rule/python-fastapi-auth-error.yaml
     paths:
-      - "**/features/**/route.py*"
-      - "**/server/error_handlers.py*"
-      - "**/server/routes/**/*.py*"
-  - rule: docs/rule/python-llm-instructor.yaml
-    paths:
-      - "**/integrations/llm/**/*.py*"
-  - rule: docs/rule/python-llm-cost-cache.yaml
-    paths:
-      - "**/integrations/llm/**/*.py*"
+      - "**/server/{error_handlers,auth,deps}.py"
   - rule: docs/rule/python-llm-provider.yaml
     paths:
-      - "**/integrations/llm/**/*.py*"
+      - "**/integrations/llm/**/*.py"
   - rule: docs/rule/python-llm-prompt-loader.yaml
     paths:
-      - "**/integrations/llm/prompts/**/*.py*"
+      - "**/integrations/llm/prompts/**/*.py"
   - rule: docs/rule/python-llm-exception-retry.yaml
     paths:
-      - "**/integrations/llm/**/*.py*"
-  - rule: docs/rule/python-packaging-python-version.yaml
-    paths:
-      - "**/pyproject.toml"
+      - "**/integrations/llm/**/*.py"
   - rule: docs/rule/python-packaging-pyproject.yaml
     paths:
       - "**/pyproject.toml"
-  - rule: docs/rule/python-packaging-dependency.yaml
-    paths:
-      - "**/pyproject.toml"
-  - rule: docs/rule/python-packaging-distribution.yaml
-    paths:
-      - "**/pyproject.toml"
-  - rule: docs/rule/python-performance-cheatsheet.yaml
-    paths:
-      - "**/benchmarks/**/*.py*"
-      - "**/perf/**/*.py*"
-      - "**/profile_*.py*"
   - rule: docs/rule/python-scripts-python-script.yaml
     paths:
-      - "**/{tool,tools,script,scripts}/**/*.py*"
-      - "**/hooks/**/*.py*"
+      - "**/{tool,tools,script,scripts}/*.py"
   - rule: docs/rule/python-scripts-tkinter.yaml
     paths:
-      - "**/*_gui.py*"
-      - "**/gui.py*"
-      - "**/gui/**/*.py*"
+      - "**/*_gui.py"
+      - "**/gui.py"
+      - "**/gui/**/*.py"
   - rule: docs/rule/python-scripts-launcher-windows.yaml
     paths:
-      - "**/*.bat*"
-  - rule: docs/rule/python-scripts-launcher-unix.yaml
-    paths:
-      - "**/*.sh*"
+      - "**/*.bat"
   - rule: docs/rule/python-shared-error-definition.yaml
     paths:
-      - "**/server/error_handlers.py*"
-      - "**/shared/errors.py*"
-  - rule: docs/rule/python-shared-logger.yaml
-    paths:
-      - "**/shared/logger.py*"
+      - "**/server/error_handlers.py"
+      - "**/shared/errors.py"
+      - "**/integrations/**/client.py"
   - rule: docs/rule/python-shared-type-definition.yaml
     paths:
-      - "**/shared/types.py*"
+      - "**/shared/types.py"
   - rule: docs/rule/python-shared-constant.yaml
     paths:
-      - "**/shared/constants.py*"
+      - "**/shared/constants.py"
   - rule: docs/rule/python-shared-settings.yaml
     paths:
-      - "**/config/settings.yaml*"
-      - "**/shared/settings.py*"
+      - "**/config/settings.yaml"
+      - "**/shared/settings.py"
   - rule: docs/rule/python-testing-pytest.yaml
     paths:
-      - "**/benchmarks/**/*.py*"
-      - "**/tests/**/test_*.py*"
-      - "**/tests/conftest.py*"
+      - "**/benchmarks/**/*.py"
+      - "**/tests/**/test_*.py"
+      - "**/tests/conftest.py"
+      - "**/tests/**/conftest.py"
   - rule: docs/rule/python-testing-strategy.yaml
     paths:
-      - "**/tests/**/test_*.py*"
+      - "**/tests/**/test_*.py"
   - rule: docs/rule/python-testing-fixture.yaml
     paths:
-      - "**/benchmarks/**/*.py*"
-      - "**/tests/**/test_*.py*"
-      - "**/tests/conftest.py*"
-  - rule: docs/rule/python-testing-mock.yaml
-    paths:
-      - "**/tests/**/test_*.py*"
-      - "**/tests/conftest.py*"
+      - "**/tests/conftest.py"
+      - "**/tests/**/conftest.py"
   - rule: docs/rule/ui-screen-division.yaml
     paths:
       - "**/設計書/画面設計/**"

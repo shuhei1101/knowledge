@@ -9,8 +9,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -65,22 +65,7 @@ items:
     group: 依存方向チェック
     name: 依存方向チェックの方法
     body: |-
-      import 文の grep で検出できる:
-  - id: dependency-check-02
-    group: 依存方向チェック
-    name: features の import チェック
-    body: |-
-      - features 内に `from {pkg}.features.` がないか
-  - id: dependency-check-03
-    group: 依存方向チェック
-    name: shared の import チェック
-    body: |-
-      - shared 内に shared 以外への `from {pkg}.` がないか
-  - id: dependency-check-04
-    group: 依存方向チェック
-    name: integrations の import チェック
-    body: |-
-      - integrations 内に `from {pkg}.features.` がないか
+      import-linter の layers 契約で検査する（設定は [pyproject.toml 標準テンプレート](id:python-packaging-pyproject)）。
   - id: type-only-import-01
     group: "例外: 型のみインポート"
     name: TYPE_CHECKING の扱い

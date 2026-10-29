@@ -9,13 +9,9 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
-  - id: overview
-    name: 概要
-    body: |-
-      基本は [PEP 8](https://peps.python.org/pep-0008/#naming-conventions) に従う（`snake_case` / `UpperCamel` / `UPPER_SNAKE_CASE`）。
   - id: naming-rules-01
     group: 命名規約
     name: 命名規則の表
@@ -66,8 +62,3 @@ items:
     name: __all__ で公開を明示
     body: |-
       - 各 feature は `__init__.py` + `__all__` で公開シンボルを明示
-  - id: public-api-02
-    group: 公開 API
-    name: 内部シンボルを import させない
-    body: |-
-      - 外部から内部モジュールの `_` 付きシンボルを直接 import させない

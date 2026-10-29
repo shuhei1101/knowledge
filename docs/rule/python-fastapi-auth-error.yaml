@@ -9,7 +9,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 2
+rev: 3
 last_reviewed: '2026-10-30'
 items:
   - id: auth-pattern-01
@@ -66,6 +66,11 @@ items:
       <!-- /table -->
 
       例外から HTTP へのマップはこの表だけに置き、ほかのルールは参照だけにする。
+
+      Retry-After は、`retry_after` 属性を持つ `LlmRateLimitError` ではその値を返す。
+      属性を持たない `LlmServerError` では 30 秒を返す。
+      30 秒は [llm/例外とリトライ](id:python-llm-exception-retry#stamina-retry-01) の `LlmServerError` へのリトライの `wait_max`（バックオフの上限）で、上流の 5xx からの回復を待つ間隔の元の値にする。
+      `wait_max` を変えたときは、この値も合わせる。
   - id: exception-handler-02
     group: 例外ハンドラ
     name: 500 系はログに出す
