@@ -49,6 +49,18 @@ items:
     name: 受けた値は setQueryData に反映する
     body: |-
       - WebSocket は `shared/adapters/ws-client.ts` に置き、受けた値を `queryClient.setQueryData` に反映する。
+  - id: websocket-02
+    group: WebSocket
+    name: WsClient は EventTarget で実装する
+    body: |-
+      - `WsClient` は `EventTarget` を継承して実装し、購読側は `addEventListener` で受ける。
+        コンポーネントからは、hook で包んで使う。
+  - id: websocket-03
+    group: WebSocket
+    name: 再接続はジッター付きの指数バックオフ
+    body: |-
+      - 再接続は、ジッター付きの指数バックオフにする。
+        URL は `createWsUrl()` 経由で組み立て、ハードコードしない。
   - id: sources-01
     group: 出典
     name: "出典: orval"

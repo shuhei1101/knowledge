@@ -92,3 +92,19 @@ items:
     name: a11y の検査
     body: |-
       - a11y は、`@axe-core/playwright` の AxeBuilder で、violations がゼロであることを確認する。
+  - id: rules-07
+    group: ルール
+    name: 外部 I/O はモックに切り替える
+    body: |-
+      - 外部 I/O（LLM・TTS など）は、`playwright.config.ts` の `webServer` の `env` に渡す環境変数で、モックに切り替える。
+        実課金と非決定性に依存させない。
+  - id: rules-08
+    group: ルール
+    name: 検証対象
+    body: |-
+      - 検証対象は、画面が組み上がること・共通シェルが付くこと・主要な操作とバリデーションに絞る。
+  - id: rules-09
+    group: ルール
+    name: 別ポートで起動する
+    body: |-
+      - メインの dev server が動いている間に走らせるときは、worktree から別ポート（`E2E_PORT`）でアプリを起動する。

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: ui-no-iframe
+kind: rule
+name: iframe の禁止
+description: 画面で iframe を使わず、共通コンポーネントで画面を組む決まりを定める。
+tags:
+  - name: scope:ui
+    main: true
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 共通（単体 HTML・React）
+  - id: no-iframe-01
+    group: iframe の禁止
+    name: iframe を使わない
+    body: |-
+      - タブ内の画面やサイドバーを選択したときのコンテンツなど、全てで iframe を使わない。
+        代わりに、共通コンポーネントを作成して各画面に配置する。
