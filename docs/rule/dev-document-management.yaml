@@ -8,7 +8,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 4
+rev: 5
 last_reviewed: '2026-10-30'
 sources:
   - title: "Anthropic: Effective context engineering for AI agents"
@@ -96,7 +96,7 @@ items:
       | `id` | 変わらない ID | 必須 |
       | `kind` | 文書の種類（英語の定数） | 必須 |
       | `name` | タイトル | 必須 |
-      | `description` | 本文を読まずに中身が分かる 1〜2 文 | 必須 |
+      | `description` | 本文を読まずに中身が分かる 1 文。書き方は [タグと用語の登録](id:dev-tag-term-registration) | 必須 |
       | `tags` | タグ（[タグと用語の登録](id:dev-tag-term-registration)）。各要素は `name` と、主題なら `main: true` | 必須 |
       | `status` | 状態（英語の定数） | 必須 |
       | `visibility` | 公開範囲（`public` / `internal`） | 必須 |
@@ -199,6 +199,67 @@ items:
     body: |-
       - Markdown・ソースコードなど YAML でない文書は、検索したいものをすべて、フォルダの直下の管理用の YAML（`files.yaml`）の行に載せる
         行にはパス・タグ・説明を記載する
+  - id: files-yaml-01
+    group: 配信
+    name: files.yaml に載せるファイルの判定
+    body: |-
+      - 除外の条件に当たらないファイルは全て載せ、1 行を 1 ファイルにする
+
+      ```mermaid
+      flowchart TD
+        START([files.yaml に載せるか決めたいファイルがある])
+        Q0{生成物・ロック・バイナリ・ベンダーのコードに当たるか? ※1}
+        Q1{再エクスポートや空の __init__ だけのファイルか?}
+        Q2{テストか?}
+        Q3{対応する設計書があるか?}
+
+        R1([載せない])
+        R2([載せる。related の tests で対象のコードを指す])
+        R3([載せる。related の implements でその設計書を指す])
+        R4([載せる])
+
+        START --> Q0
+        Q0 -->|YES| R1
+        Q0 -->|NO| Q1
+        Q1 -->|NO| Q2
+        Q1 -->|YES| R1
+        Q2 -->|YES| R2
+        Q2 -->|NO| Q3
+        Q3 -->|YES| R3
+        Q3 -->|NO| R4
+      ```
+
+      - **※1 除外の条件の見分け方**: Q0・Q1 の除外の条件は、dev-docs の [文書のメタデータ](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/%E3%82%B3%E3%82%A2%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%97%E3%83%88/%E6%96%87%E6%9B%B8%E3%81%AE%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF.md) の「載せるファイルの判定」に従う
+  - id: files-yaml-02
+    group: 配信
+    name: files.yaml の行の列に入れる値
+    body: |-
+      <!-- table: data -->
+
+      | 列 | 入れる値 | 入れないもの |
+      | --- | --- | --- |
+      | `path` | files.yaml のフォルダからの相対パス。1 行 1 ファイル | glob |
+      | `name` | 何のファイルかを表す日本語の名詞句（例 `タスクのリポジトリ`） | クラス名・ファイル名の繰り返し |
+      | `description` | [タグと用語の登録](id:dev-tag-term-registration) の description の書き方 | 関数の一覧・実装の手順 |
+      | `tags` | [タグと用語の登録](id:dev-tag-term-registration) の `tag-scope-02` のソースコードの行（`topic:`・`tool:`） | `kind:`・`scope:`・状態・評価の語 |
+      | `related` | `implements`・`tests`・`see_also` | import で分かる依存 |
+      | `status` | `deprecated` など検索で外したい状態だけ | - |
+
+      <!-- /table -->
+  - id: files-yaml-03
+    group: 配信
+    name: implements はコード側だけに記載する
+    body: |-
+      - 設計書と 1 対 1 のコードは、コード側の files.yaml の行に `implements` を記載する
+      - 設計書には逆向き（設計書 → コード）を記載しない
+        逆向きは被参照で引く（dev-docs の `trace_related`）
+  - id: files-yaml-04
+    group: 配信
+    name: files.yaml の related の type
+    body: |-
+      - files.yaml の行の `related` の `type` は `implements`・`tests`・`see_also` から選ぶ
+        `implements`（対応する設計書）・`tests`（テストの対象のコード）に当たらず、一緒に読むとよい相手は `see_also` にする
+      - `related-02` の `type`（`requires`・`references`・`replaces`・`part_of`・`change_together`）は YAML の文書に使う
   - id: delivery-09
     group: 配信
     name: 設定のキー
