@@ -2,14 +2,14 @@
 id: next-backend-query-ts
 kind: rule
 name: app/api/v{N}/{resource}/query.ts
-description: 読み取り専用の query.ts に置く SELECT 関数・フィルタ Zod スキーマ・戻り値型のルールと命名を定める。
+description: 読み取り専用の query.ts に置く SELECT 関数・フィルタ Zod スキーマ・戻り値型の決まりと命名を定め、データの取得関数を実装するときに読む。
 tags:
   - name: scope:next
   - name: topic:backend
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-24'
 items:
   - id: overview

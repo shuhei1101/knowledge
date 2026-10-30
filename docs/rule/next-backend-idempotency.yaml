@@ -2,14 +2,14 @@
 id: next-backend-idempotency
 kind: rule
 name: Next.js App Router — Idempotency
-description: 二重実行が致命的な POST に Idempotency-Key を適用するケースと、クリーンアップ、Stripe との連携を定める。
+description: 二重実行が致命的な POST に Idempotency-Key を適用するケースと、クリーンアップ、Stripe との連携を定め、課金や通知送信などの POST を実装するときに読む。
 tags:
   - name: scope:next
   - name: topic:backend
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-24'
 items:
   - id: overview
