@@ -14,7 +14,7 @@ $defs:
     pattern: ^\d{4}-\d{2}-\d{2}$
   tag:
     title: タグの付与
-    description: '文書に付けるタグ。名前は `docs/tags.yaml` に登録したタグの `name`。主題のタグには `main: true` を付ける。'
+    description: '文書に付けるタグ。主題のタグには `main: true` を付ける。'
     type: object
     additionalProperties: false
     required:
@@ -22,16 +22,16 @@ $defs:
     properties:
       name:
         title: タグ名
-        description: '`{グループ}:{名前}` 形式のタグ名（例 `scope:python`）。'
+        description: タグ名（例 `scope:python`）。
         type: string
-        pattern: ^[a-z]+:.+$
+        minLength: 1
       main:
         title: 主題
         description: 文書の主題のタグに `true` を付ける。
         type: boolean
   tags:
     title: タグの一覧
-    description: '文書に付けるタグ。`scope` グループをちょうど 1 つ持ち、主題のタグ（`main: true`）をちょうど 1 つ持つ。'
+    description: '文書に付けるタグ。主題のタグ（`main: true`）をちょうど 1 つ持つ。'
     type: array
     minItems: 1
     items:
@@ -39,22 +39,12 @@ $defs:
     contains:
       type: object
       required:
-        - name
+        - main
       properties:
-        name:
-          pattern: '^scope:'
+        main:
+          const: true
     minContains: 1
     maxContains: 1
-    allOf:
-      - contains:
-          type: object
-          required:
-            - main
-          properties:
-            main:
-              const: true
-        minContains: 1
-        maxContains: 1
   related_item:
     title: 関連
     description: 別の文書への関連。片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。

@@ -9,8 +9,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -63,3 +63,8 @@ items:
     name: ストリーミングの型
     body: |-
       - ストリーミングは `type AsyncChatStreamFn = Callable[[ChatRequest], AsyncIterator[str]]` の async generator
+  - id: implementation-points-06
+    group: 実装の要点
+    name: 構造化出力はファクトリの中に閉じる
+    body: |-
+      - 構造化出力は各 SDK の組み込みの呼び出しを `make_{provider}_chat` の中に閉じる（[llm/構造化出力](id:python-llm-structured-output)）

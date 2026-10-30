@@ -11,13 +11,17 @@ status: current
 visibility: internal
 rev: 1
 last_reviewed: '2026-10-30'
+related:
+  - to: ui-token
+    type: requires
+    when: トークンの名前と段階を決めるとき
 items:
   - id: overview
     name: 概要
     body: |-
       対象: React
       スタイルは Tailwind v4 と shadcn/ui で書く。
-      トークンの名前と段階は ui の規約に従い、この規約には書かない。
+      トークンの名前と段階は規約『[デザイントークン](id:ui-token)』に従い、この規約には書かない。
   - id: token-01
     group: トークン
     name: トークンは :root の 3 ティアで持つ

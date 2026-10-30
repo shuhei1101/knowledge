@@ -14,7 +14,9 @@ items:
   - id: overview
     name: 概要
     body: |-
+      対象: 共通（単体 HTML・React）
       キーボード・支援技術・色覚の違いによらず操作を完了できるようにする。
+      機械で判定できる決まりは、jsx-a11y・Storybook の `addon-a11y`・Playwright の axe に任せ、この規約はその検査で見つからない分を補う。
       出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、W = WCAG 2.2（リンクは `## 出典`）。
   - id: operation-accessibility-01
     group: 操作とアクセシビリティ
@@ -33,6 +35,57 @@ items:
       | 押す部品は 24 x 24 CSS px 以上にする。小さい部品は、周りの押す部品との間を空ける | W |
 
       <!-- /table -->
+  - id: wcag22-01
+    group: WCAG 2.2 AA の新しい達成基準
+    name: WCAG 2.2 AA の新しい達成基準
+    body: |-
+      <!-- table: data -->
+
+      | 要素 | 出典 |
+      | --- | --- |
+      | ドラッグでする操作には、タップやクリックだけでできる代替の手段を用意する（2.5.7 Dragging Movements） | W |
+      | ヘルプへのリンクや連絡先を複数の画面に置くときは、画面をまたいで同じ相対位置に置く（3.2.6 Consistent Help） | W |
+      | 同じ操作の流れの中で、入力済みの内容を再入力させない。自動で入れるか、選べるようにする（3.3.7 Redundant Entry） | W |
+      | 認証で、記憶・転記・計算などの認知機能テストを求めない。貼り付けとパスワードマネージャーを妨げない（3.3.8 Accessible Authentication） | W |
+
+      <!-- /table -->
+  - id: verification-01
+    group: 検証の方法
+    name: 検証は addon-a11y と axe
+    body: |-
+      - アクセシビリティの検証は、部品を Storybook の `addon-a11y`、画面を Playwright の axe（`@axe-core/playwright`）で行う。
+        キーボードで操作できるかは検出されないので、規約『[キーボード操作](id:ui-keyboard)』のキー操作のテストで確かめる。
+  - id: native-elements-01
+    group: ネイティブ要素
+    name: 標準要素で済むか先に確認する
+    body: |-
+      - JS で作る前に、標準要素で済むかを確認する。
+
+      <!-- table: data -->
+
+      | 用途 | 要素 |
+      | --- | --- |
+      | モーダル | `<dialog>` |
+      | アコーディオン / 開閉 | `<details>` / `<summary>` |
+      | 日付・色・範囲・ファイル等 | `<input type="...">` |
+      | 非モーダルの浮遊 UI（メニュー・トースト等） | `popover` 属性 |
+
+      <!-- /table -->
+  - id: native-elements-02
+    group: ネイティブ要素
+    name: 操作は button、移動は a
+    body: |-
+      - 操作はボタン（`<button>`）、移動はリンク（`<a href>`）の要素で作る。
+  - id: inert-01
+    group: 操作できない範囲
+    name: 操作できない範囲には inert を付ける
+    body: |-
+      - 操作できない範囲（閉じたドロワー・モーダルの背面など）には `inert` を付け、見た目でも操作できないと分かるようにする。
+  - id: no-iframe-01
+    group: iframe の禁止
+    name: iframe の禁止は別の規約に従う
+    body: |-
+      - iframe の禁止は、規約『[iframe の禁止](id:ui-no-iframe)』に従う。
   - id: sources-01
     group: 出典
     name: "出典 I: impeccable"
@@ -48,3 +101,8 @@ items:
     name: "出典 W: Target Size (Minimum)"
     body: |-
       - W: [Target Size (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html)
+  - id: sources-04
+    group: 出典
+    name: "出典 W: WCAG 2.2"
+    body: |-
+      - W: [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/WCAG22/)

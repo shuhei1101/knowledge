@@ -8,8 +8,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: sdk-transport-01
     group: SDK とトランスポート
@@ -79,7 +79,7 @@ items:
     group: サーバーとツールの単位
     name: ツールは操作で分ける
     body: |-
-      - ツールは操作（検索・取得・書き込み・差分・タグの一覧・スキーマの取得）で分け、文書の種類は `kind` の enum 引数で指す
+      - ツールは操作（検索・取得・書き込み・差分・スキーマの取得）で分け、文書の種類は `kind` の enum 引数で指す
         種類ごとのツールを作らない
   - id: server-tool-unit-03
     group: サーバーとツールの単位
@@ -294,7 +294,7 @@ items:
     group: 検索の手段
     name: 検索の基本手段
     body: |-
-      - 検索はタグ・メタデータ・キーワード（正規化と `aliases`）を基本にする
+      - 検索はタグ・メタデータ・キーワード（正規化）を基本にする
         ベクトル検索は必須にせず、ライブラリも指定しない
   - id: search-method-02
     group: 検索の手段

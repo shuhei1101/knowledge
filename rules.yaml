@@ -65,12 +65,6 @@ rules:
   - rule: docs/rule/convention-keep-existing-text.yaml
     paths:
       - "**/*"
-  - rule: docs/rule/convention-design-style.yaml
-    paths:
-      - "**/dev/mock/styles/**"
-  - rule: docs/rule/convention-common-components.yaml
-    paths:
-      - "**/dev/mock/components/**"
   - rule: docs/flowchart/flowchart-config-location.yaml
     paths:
       - "**/config/defaults.yaml*"
@@ -132,11 +126,19 @@ rules:
       - "**/docs/**/*.yaml"
   - rule: docs/rule/dev-tag-term-registration.yaml
     paths:
-      - "**/tags.yaml"
       - "**/terms.yaml"
   - rule: docs/rule/dev-coding-general.yaml
     paths:
       - "**/*.{py,html,js,css,j2,ts,tsx,yaml,yml}*"
+  - rule: docs/rule/typescript-core-style.yaml
+    paths:
+      - "**/*.{ts,tsx}"
+  - rule: docs/rule/ui-no-iframe.yaml
+    paths:
+      - "**/*.{tsx,jsx,html}"
+    exclude:
+      - "**/docs/_layouts/**"
+      - "**/docs/_includes/**"
   - rule: docs/rule/dev-precheck.yaml
     paths:
       - "**/*.{py,js,ts,tsx}*"
@@ -146,192 +148,9 @@ rules:
   - rule: docs/rule/dev-content-location.yaml
     paths:
       - "**/content/**"
-  - rule: docs/rule/html-components-custom-element.yaml
-    paths:
-      - "**/components/**/*.{ts,js}*"
-      - "**/_shared/**/*.{ts,js}*"
-  - rule: docs/rule/html-components-prefetch-catalog.yaml
-    paths:
-      - "**/frontend/pages/**"
-      - "**/components/**"
-  - rule: docs/rule/html-components-common-shell.yaml
-    paths:
-      - "**/app-shell*"
-  - rule: docs/rule/html-core-no-iframe.yaml
-    paths:
-      - "**/frontend/**/*.{css,html,ts,js}*"
-      - "**/*.html*"
-    exclude:
-      - "**/docs/_layouts/**"
-      - "**/docs/_includes/**"
-      - "**/*.md"
   - rule: docs/rule/html-core-server-rendering.yaml
     paths:
-      - "**/templates/**/*.html*"
-      - "**/frontend/pages/**/index.html*"
-  - rule: docs/rule/html-core-buildless.yaml
-    paths:
-      - "**/frontend/**/*.css*"
-      - "**/frontend/**/*.html*"
-      - "**/frontend/**/*.{ts,js}*"
-      - "**/static/**/*.{ts,js}*"
-      - "**/assets/**/*.{ts,js}*"
-  - rule: docs/rule/html-css-comment.yaml
-    paths:
-      - "**/*.css*"
-  - rule: docs/rule/html-css-token.yaml
-    paths:
-      - "**/css/tokens.css*"
-      - "**/tokens.css*"
-  - rule: docs/rule/html-css-nesting.yaml
-    paths:
-      - "**/*.css*"
-  - rule: docs/rule/html-css-layers.yaml
-    paths:
-      - "**/frontend/**/*.css*"
-  - rule: docs/rule/html-html-comment.yaml
-    paths:
-      - "**/*.html*"
-  - rule: docs/rule/html-html-native-elements.yaml
-    paths:
-      - "**/*.html*"
-  - rule: docs/rule/html-js-api-layer.yaml
-    paths:
-      - "**/frontend/**/api*.{ts,js}*"
-  - rule: docs/rule/html-js-websocket.yaml
-    paths:
-      - "**/ws/**/*.{ts,js}*"
-  - rule: docs/rule/html-js-endpoint.yaml
-    paths:
-      - "**/frontend/**/*.ts*"
-  - rule: docs/rule/html-js-vanilla-ts.yaml
-    paths:
-      - "**/frontend/**/*.ts*"
-      - "**/static/**/*.{ts,js}*"
-      - "**/assets/**/*.{ts,js}*"
-  - rule: docs/rule/html-js-module-resolution.yaml
-    paths:
-      - "**/frontend/**/*.{ts,js}*"
-      - "**/frontend/**/*.html*"
-  - rule: docs/rule/html-js-layer-separation.yaml
-    paths:
-      - "**/frontend/**/*.{ts,js}*"
-  - rule: docs/rule/html-js-state-management.yaml
-    paths:
-      - "**/frontend/**/*.{ts,js}*"
-  - rule: docs/rule/html-layout-patterns.yaml
-    paths:
-      - "**/layout.css*"
-      - "**/app-shell*"
-      - "**/templates/**/*.html*"
-  - rule: docs/rule/html-layout-screen-template.yaml
-    paths:
-      - "**/frontend/pages/**/*.html*"
-      - "**/templates/**/*.html*"
-  - rule: docs/rule/html-naming-css-class.yaml
-    paths:
-      - "**/*.css*"
-  - rule: docs/rule/html-naming-custom-element.yaml
-    paths:
-      - "**/components/**/*.{ts,js}*"
-      - "**/_shared/**/*.{ts,js}*"
-  - rule: docs/rule/html-naming-file-name.yaml
-    paths:
-      - "**/frontend/**/*.css*"
-      - "**/frontend/**/*.html*"
-      - "**/frontend/**/*.{ts,js}*"
-  - rule: docs/rule/html-pages-shared.yaml
-    paths:
-      - "**/frontend/pages/**/_shared/**"
-  - rule: docs/rule/html-pages-index-html.yaml
-    paths:
-      - "**/frontend/pages/**/index.html*"
-  - rule: docs/rule/html-pages-screen-css.yaml
-    paths:
-      - "**/frontend/pages/**/screen.css*"
-  - rule: docs/rule/html-pages-screen-ts.yaml
-    paths:
-      - "**/frontend/pages/**/screen.ts*"
-      - "**/frontend/pages/**/api.ts*"
-      - "**/frontend/pages/**/state.ts*"
-  - rule: docs/rule/html-pages-screen-creation.yaml
-    paths:
-      - "**/frontend/pages/**"
-  - rule: docs/rule/html-shared-components.yaml
-    paths:
-      - "**/frontend/shared/components/**"
-  - rule: docs/rule/html-shared-core.yaml
-    paths:
-      - "**/frontend/shared/core/**"
-  - rule: docs/rule/html-shared-css.yaml
-    paths:
-      - "**/shared/css/**"
-  - rule: docs/rule/html-shared-fmt.yaml
-    paths:
-      - "**/frontend/shared/lib/fmt.{ts,js}*"
-  - rule: docs/rule/html-shared-lib.yaml
-    paths:
-      - "**/shared/lib/**"
-  - rule: docs/rule/html-shared-logger.yaml
-    paths:
-      - "**/frontend/shared/lib/logger.{ts,js}*"
-  - rule: docs/rule/html-shared-vendor.yaml
-    paths:
-      - "**/shared/vendor/**"
-  - rule: docs/rule/html-testing-e2e.yaml
-    paths:
-      - "**/frontend/tests/e2e/**/*.spec.{ts,js}*"
-      - "**/playwright.config.{ts,js}"
-  - rule: docs/rule/html-testing-strategy.yaml
-    paths:
-      - "**/frontend/**/*.test.{ts,js}*"
-      - "**/frontend/tests/e2e/**/*.spec.{ts,js}*"
-      - "**/vitest.config.{ts,js}"
-      - "**/playwright.config.{ts,js}"
-  - rule: docs/rule/html-testing-fixture.yaml
-    paths:
-      - "**/frontend/tests/e2e/**/*.spec.{ts,js}*"
-      - "**/playwright.config.{ts,js}"
-  - rule: docs/rule/html-testing-unit.yaml
-    paths:
-      - "**/frontend/**/*.test.{ts,js}*"
-      - "**/vitest.config.{ts,js}"
-  - rule: docs/rule/html-tooling-tsc.yaml
-    paths:
-      - "**/frontend/**/*.ts*"
-      - "**/static/**/*.{ts,js}*"
-      - "**/assets/**/*.{ts,js}*"
-      - "**/tsconfig*.json"
-      - "**/eslint.config.*"
-      - "**/package.json"
-      - "**/vitest.config.*"
-      - "**/playwright.config.*"
-  - rule: docs/rule/html-typescript-comment.yaml
-    paths:
-      - "**/*.{ts,tsx}*"
-  - rule: docs/rule/html-typescript-type-system.yaml
-    paths:
-      - "**/*.{ts,tsx}*"
-  - rule: docs/rule/html-typescript-function-object-args.yaml
-    paths:
-      - "**/*.{ts,tsx}*"
-  - rule: docs/rule/html-folder-structure.yaml
-    paths:
-      - "**/frontend/**"
-  - rule: docs/rule/html-mobile.yaml
-    paths:
-      - "**/frontend/pages/**/screen.ts*"
-      - "**/frontend/shared/css/**"
-      - "**/frontend/shared/components/**"
-      - "**/*.html*"
-      - "**/*.css*"
-    exclude:
-      - "**/docs/_layouts/**"
-      - "**/docs/_includes/**"
-      - "**/*.md"
-  - rule: docs/rule/html-commonization.yaml
-    paths:
-      - "**/frontend/**"
+      - "**/templates/**/*.{html,j2}"
   - rule: docs/rule/markdown-editing.yaml
     paths:
       - "**/*.md"
@@ -375,235 +194,91 @@ rules:
     paths:
       - "**/prompts/**"
       - "**/prompt/**"
-  - rule: docs/rule/python-architecture-typescript-style.yaml
-    paths:
-      - "**/*.py*"
   - rule: docs/rule/python-architecture-composition-root.yaml
     paths:
-      - "**/*.py*"
-  - rule: docs/rule/python-architecture-refactoring-criteria.yaml
-    paths:
-      - "**/features/**/service.py*"
-  - rule: docs/rule/python-architecture-layout.yaml
-    paths:
-      - "**/features/**/types.py*"
-      - "**/main.py*"
-  - rule: docs/rule/python-architecture-dependency-management.yaml
-    paths:
-      - "**/features/**/service.py*"
-      - "**/integrations/**/client.py*"
-      - "**/main.py*"
-  - rule: docs/rule/python-architecture-design-principles.yaml
-    paths:
-      - "**/*.py*"
-  - rule: docs/rule/python-concurrency-parallel.yaml
-    paths:
-      - "**/runtime/**/*.py*"
+      - "**/main.py"
   - rule: docs/rule/python-concurrency-async.yaml
     paths:
-      - "**/runtime/**/*.py*"
+      - "**/runtime/**/*.py"
+      - "**/integrations/**/*.py"
+      - "**/features/**/service.py"
   - rule: docs/rule/python-core-comment.yaml
     paths:
-      - "**/*.py*"
-  - rule: docs/rule/python-core-style.yaml
-    paths:
-      - "**/*.py*"
-      - "**/pyproject.toml"
-  - rule: docs/rule/python-core-decorator.yaml
-    paths:
-      - "**/_decorators.py*"
-      - "**/features/**/service.py*"
-      - "**/integrations/**/client.py*"
-      - "**/integrations/llm/**/*.py*"
-      - "**/shared/decorators.py*"
-  - rule: docs/rule/python-core-naming.yaml
-    paths:
-      - "**/*.py*"
-  - rule: docs/rule/python-core-type-hint.yaml
-    paths:
-      - "**/*.py*"
-      - "**/features/**/types.py*"
-      - "**/shared/types.py*"
-  - rule: docs/rule/python-core-language-rules.yaml
-    paths:
-      - "**/*.py*"
+      - "**/*.py"
   - rule: docs/rule/python-fastapi-application.yaml
     paths:
-      - "**/server/app.py*"
-      - "**/server/ws/**/*.py*"
+      - "**/server/{app,lifespan,middleware}.py"
   - rule: docs/rule/python-fastapi-schema.yaml
     paths:
-      - "**/features/**/route.py*"
-      - "**/server/routes/**/*.py*"
+      - "**/features/**/route.py"
+      - "**/server/routes/**/*.py"
+      - "**/features/**/schemas.py"
   - rule: docs/rule/python-fastapi-health-check.yaml
     paths:
-      - "**/healthz.py*"
-      - "**/server/routes/**/health*.py*"
-      - "**/server/routes/health*.py*"
+      - "**/healthz.py"
+      - "**/server/routes/**/health*.py"
+      - "**/server/routes/health*.py"
   - rule: docs/rule/python-fastapi-route.yaml
     paths:
-      - "**/features/**/route.py*"
-      - "**/server/routes/**/*.py*"
+      - "**/features/**/route.py"
+      - "**/server/routes/**/*.py"
   - rule: docs/rule/python-fastapi-auth-error.yaml
     paths:
-      - "**/features/**/route.py*"
-      - "**/server/error_handlers.py*"
-      - "**/server/routes/**/*.py*"
-  - rule: docs/rule/python-llm-instructor.yaml
-    paths:
-      - "**/integrations/llm/**/*.py*"
-  - rule: docs/rule/python-llm-cost-cache.yaml
-    paths:
-      - "**/integrations/llm/**/*.py*"
+      - "**/server/{error_handlers,auth,deps}.py"
   - rule: docs/rule/python-llm-provider.yaml
     paths:
-      - "**/integrations/llm/**/*.py*"
+      - "**/integrations/llm/**/*.py"
   - rule: docs/rule/python-llm-prompt-loader.yaml
     paths:
-      - "**/integrations/llm/prompts/**/*.py*"
+      - "**/integrations/llm/prompts/**/*.py"
   - rule: docs/rule/python-llm-exception-retry.yaml
     paths:
-      - "**/integrations/llm/**/*.py*"
-  - rule: docs/rule/python-packaging-python-version.yaml
-    paths:
-      - "**/pyproject.toml"
+      - "**/integrations/llm/**/*.py"
   - rule: docs/rule/python-packaging-pyproject.yaml
     paths:
       - "**/pyproject.toml"
-  - rule: docs/rule/python-packaging-dependency.yaml
-    paths:
-      - "**/pyproject.toml"
-  - rule: docs/rule/python-packaging-distribution.yaml
-    paths:
-      - "**/pyproject.toml"
-  - rule: docs/rule/python-performance-cheatsheet.yaml
-    paths:
-      - "**/benchmarks/**/*.py*"
-      - "**/perf/**/*.py*"
-      - "**/profile_*.py*"
   - rule: docs/rule/python-scripts-python-script.yaml
     paths:
-      - "**/{tool,tools,script,scripts}/**/*.py*"
-      - "**/hooks/**/*.py*"
+      - "**/{tool,tools,script,scripts}/*.py"
   - rule: docs/rule/python-scripts-tkinter.yaml
     paths:
-      - "**/*_gui.py*"
-      - "**/gui.py*"
-      - "**/gui/**/*.py*"
+      - "**/*_gui.py"
+      - "**/gui.py"
+      - "**/gui/**/*.py"
   - rule: docs/rule/python-scripts-launcher-windows.yaml
     paths:
-      - "**/*.bat*"
-  - rule: docs/rule/python-scripts-launcher-unix.yaml
-    paths:
-      - "**/*.sh*"
+      - "**/*.bat"
   - rule: docs/rule/python-shared-error-definition.yaml
     paths:
-      - "**/server/error_handlers.py*"
-      - "**/shared/errors.py*"
-  - rule: docs/rule/python-shared-logger.yaml
-    paths:
-      - "**/shared/logger.py*"
+      - "**/server/error_handlers.py"
+      - "**/shared/errors.py"
+      - "**/integrations/**/client.py"
   - rule: docs/rule/python-shared-type-definition.yaml
     paths:
-      - "**/shared/types.py*"
+      - "**/shared/types.py"
   - rule: docs/rule/python-shared-constant.yaml
     paths:
-      - "**/shared/constants.py*"
+      - "**/shared/constants.py"
   - rule: docs/rule/python-shared-settings.yaml
     paths:
-      - "**/config/settings.yaml*"
-      - "**/shared/settings.py*"
+      - "**/config/settings.yaml"
+      - "**/shared/settings.py"
   - rule: docs/rule/python-testing-pytest.yaml
     paths:
-      - "**/benchmarks/**/*.py*"
-      - "**/tests/**/test_*.py*"
-      - "**/tests/conftest.py*"
+      - "**/benchmarks/**/*.py"
+      - "**/tests/**/test_*.py"
+      - "**/tests/conftest.py"
+      - "**/tests/**/conftest.py"
   - rule: docs/rule/python-testing-strategy.yaml
     paths:
-      - "**/tests/**/test_*.py*"
+      - "**/tests/**/test_*.py"
   - rule: docs/rule/python-testing-fixture.yaml
     paths:
-      - "**/benchmarks/**/*.py*"
-      - "**/tests/**/test_*.py*"
-      - "**/tests/conftest.py*"
-  - rule: docs/rule/python-testing-mock.yaml
-    paths:
-      - "**/tests/**/test_*.py*"
-      - "**/tests/conftest.py*"
-  - rule: docs/rule/ui-screen-division.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
+      - "**/tests/conftest.py"
+      - "**/tests/**/conftest.py"
   - rule: docs/rule/ui-screen-division.yaml
     paths:
       - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-business-screen-elements.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-business-screen-elements.yaml
-    paths:
-      - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-document-parts.yaml
-    paths:
-      - "**/dev/**/*.md"
-      - "**/docs/README.md"
-      - "**/docs/{はじめに,使い方,リファレンス}/**/*.md"
   - rule: docs/rule/ui-screen-design-principles.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-screen-design-principles.yaml
-    paths:
-      - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-information-hierarchy.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-information-hierarchy.yaml
-    paths:
-      - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-operation-accessibility.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-operation-accessibility.yaml
-    paths:
-      - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-input-wording.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-input-wording.yaml
-    paths:
-      - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-display-stability.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-display-stability.yaml
-    paths:
-      - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-supported-browser.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-supported-browser.yaml
     paths:
       - "**/設計書/画面設計/**"

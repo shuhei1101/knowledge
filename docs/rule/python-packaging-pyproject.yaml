@@ -2,20 +2,20 @@
 id: python-packaging-pyproject
 kind: rule
 name: pyproject.toml 標準テンプレート
-description: pyproject.toml の標準テンプレートで守るポイントを定める。
+description: pyproject.toml の標準テンプレートと、Python バージョン・依存管理・配布・Git フックとタスクの入口の決まりを定める。
 tags:
   - name: scope:python
   - name: topic:packaging
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
     body: |-
-      ruff / mypy / pyright の設定値は [core/スタイル](id:python-core-style) を参照（重複定義しない）。
+      ruff / pyright / import-linter の設定の正本は各リポジトリの `pyproject.toml`。次の雛形を初期値にする（ツール構成は [core/スタイル](id:python-core-style)）。
 
       ```toml
       [project]
@@ -23,13 +23,13 @@ items:
       version = "0.1.0"
       description = "短い説明（1 行）"
       readme = "README.md"
-      requires-python = ">=3.12"
+      requires-python = ">=3.14"
       license = "MIT"
 
       dependencies = [
           "pydantic",
           "pydantic-settings[yaml]",
-          "httpx",
+          "httpx2",
       ]
 
       [dependency-groups]
@@ -37,8 +37,11 @@ items:
           "pytest",
           "pytest-asyncio",
           "pytest-cov",
-          "mypy",
+          "asgi-lifespan",
+          "pyright",
+          "ty",
           "ruff",
+          "import-linter",
       ]
 
       [project.scripts]
@@ -51,13 +54,85 @@ items:
       [tool.hatch.build.targets.wheel]
       packages = ["src/mypkg"]
 
-      [tool.pytest.ini_options]
+      [tool.ruff]
+      line-length = 100
+      target-version = "py314"
+
+      [tool.ruff.lint]
+      select = [
+          "E", "F", "I", "B", "UP", "SIM", "RUF",
+          "N", "PLC2701",   # 命名と、他モジュールの _ 付きシンボルの import
+          "ANN", "TC",      # 型注釈と TYPE_CHECKING
+          "C901", "PLR2004",   # 複雑度とマジックナンバー
+          "G004", "T20", "LOG",   # logger への f-string・print・logging の使い方
+          "BLE001", "TRY002", "TRY400", "EM",   # 例外の捕まえ方・投げ方・出し方
+          "PLW1514",   # encoding の明示
+          "DTZ",   # 保存する日時はタイムゾーン付き
+          "ASYNC",   # async の中でブロックする処理を呼ばない
+          "FAST",   # FastAPI の書き方
+          "S",   # セキュリティ（assert・シェル・pickle・yaml.load など）
+          "PT",   # pytest の書き方
+          "TID251",   # 使わない API（banned-api）
+      ]
+      ignore = [
+          "E501",   # 行長は formatter に任せる
+          "RUF001", "RUF002", "RUF003",   # 日本語の文字列 / docstring / コメントの全角記号を紛らわしい Unicode として指すため外す
+      ]
+
+      [tool.ruff.lint.flake8-tidy-imports.banned-api]
+      "asyncio.gather".msg = "asyncio.TaskGroup を使う"
+      "asyncio.wait_for".msg = "asyncio.timeout を使う"
+      "fastapi.HTTPException".msg = "AppError 系を raise し、error_handlers で HTTP に変換する"
+      "os.environ".msg = "Settings 経由で読む"
+      "starlette.middleware.base.BaseHTTPMiddleware".msg = "pure ASGI ミドルウェアにする"
+
+      [tool.ruff.lint.per-file-ignores]
+      "tests/**" = ["S101", "PLR2004"]   # テストの assert と期待値の数値は許す
+      "**/server/error_handlers.py" = ["TID251"]   # HTTPException を HTTP への変換で使う
+      "**/{tool,tools,script,scripts}/*.py" = ["T20"]   # スクリプトは print で出力する
+
+      [tool.ruff.format]
+      quote-style = "double"
+      indent-style = "space"
+
+      [tool.pyright]
+      typeCheckingMode = "strict"
+      pythonVersion = "3.14"
+
+      [tool.importlinter]
+      root_package = "mypkg"
+
+      [[tool.importlinter.contracts]]
+      name = "依存の向き"
+      type = "layers"
+      layers = [
+          "mypkg.server",
+          "mypkg.features",
+          "mypkg.integrations | mypkg.runtime",
+          "mypkg.shared",
+      ]
+
+      [[tool.importlinter.contracts]]
+      name = "features の独立"
+      type = "independence"
+      modules = ["mypkg.features.*"]
+
+      [[tool.importlinter.contracts]]
+      name = "integrations の独立"
+      type = "independence"
+      modules = ["mypkg.integrations.*"]
+
+      [tool.pytest]
       testpaths = ["tests"]
       asyncio_mode = "auto"
-      addopts = ["-ra", "--import-mode=importlib", "--strict-markers", "--strict-config", "-W", "error"]
+      addopts = ["-ra", "--import-mode=importlib", "-W", "error"]
+      strict = true
       markers = [
           "external: real external-service connectivity tests (requires --run-external)",
       ]
+
+      [tool.coverage.run]
+      branch = true
       ```
   - id: points-01
     group: ポイント
@@ -76,11 +151,138 @@ items:
       - build backend は `hatchling`
   - id: points-04
     group: ポイント
-    name: 依存の追加方法の参照
-    body: |-
-      - 依存の追加方法・実行は [packaging/依存パッケージ管理](id:python-packaging-dependency)
-  - id: points-05
-    group: ポイント
     name: .gitignore の内容
     body: |-
       - `.gitignore` には `.venv/` `.env` `__pycache__/` 各種キャッシュ `dist/` を入れる
+  - id: git-hook-01
+    group: Git フックとタスクの入口
+    name: Git フックは lefthook
+    body: |-
+      - Git フックは lefthook（言語を問わない）で動かす
+  - id: git-hook-02
+    group: Git フックとタスクの入口
+    name: タスクの入口は npm scripts
+    body: |-
+      - タスクの入口はリポジトリ直下の `package.json` の npm scripts。Python のコマンドは `uv run` で呼ぶ（例: `"lint": "uv run ruff check"`）
+  - id: python-version-01
+    group: Python バージョン方針
+    name: 高いバージョンを採用する
+    body: |-
+      - 極力高いバージョンを採用する。新規は最新安定版か 1 つ下（各バージョンの状況は [Python のリリース状況](https://devguide.python.org/versions/)）
+  - id: python-version-02
+    group: Python バージョン方針
+    name: 最低ラインは 3.14
+    body: |-
+      - `requires-python = ">=3.14"` を最低ライン（`from __future__ import annotations` を使わない）
+  - id: python-version-03
+    group: Python バージョン方針
+    name: マルチバージョン対応をしない
+    body: |-
+      - 内製 / 限定配布ならマルチバージョンサポートはしない
+  - id: python-version-04
+    group: Python バージョン方針
+    name: バージョンの固定方法
+    body: |-
+      - 固定は pyproject の `requires-python` + `.python-version`（`uv python pin {バージョン}`）
+  - id: new-feature-adoption-01
+    group: 新機能の採用判断
+    name: 新機能の採用判断
+    body: |-
+      新しいバージョンで入った機能は、そのバージョンの [What's New](https://docs.python.org/3/whatsnew/) で実験的な扱いでないことと、依存ライブラリが対応していることを確かめてから採用する。
+  - id: lower-baseline-01
+    group: 最低ラインを下げる場合
+    name: 最低ラインを下げる条件
+    body: |-
+      レガシー連携が必須の場合のみ下げる。
+  - id: uv-01
+    group: 依存管理 — uv 標準
+    name: uv を標準にする
+    body: |-
+      `uv` を標準とする（pip / poetry は使わない）。高速・venv 管理込み・lockfile・Python バージョン管理を統合。
+  - id: command-cheatsheet-01
+    group: コマンド早見表
+    name: uv のコマンド早見表
+    body: |-
+      <!-- table: data -->
+
+      | 操作                      | コマンド                                       |
+      | ------------------------- | ---------------------------------------------- |
+      | 初期化                    | `uv init mypkg --package`（src レイアウト）    |
+      | Python 固定               | `uv python pin {バージョン}`（`.python-version` 生成） |
+      | 本番依存追加              | `uv add httpx2 "pydantic>=2.6"`                |
+      | dev 依存追加              | `uv add --dev pytest pyright ruff`             |
+      | 削除                      | `uv remove httpx2`                             |
+      | 同期                      | `uv sync`（`--all-extras` / `--no-dev`）       |
+      | 実行                      | `uv run pytest` / `uv run python -m mypkg`     |
+      | requirements.txt から移行 | `uv add -r requirements.txt`                   |
+
+      <!-- /table -->
+  - id: command-cheatsheet-02
+    group: コマンド早見表
+    name: activate は不要
+    body: |-
+      venv の activate は不要（`uv run` が .venv を見る）。`pip install` で venv に直接入れない（uv の状態と乖離）。
+  - id: git-management-01
+    group: Git 管理
+    name: Git 管理の表
+    body: |-
+      | ファイル | 管理 |
+      | --- | --- |
+      | `pyproject.toml` / `.python-version` | Git 管理 |
+      | `uv.lock` | Git 管理（再現性のため必須、手動編集禁止） |
+      | `.venv/` | gitignore |
+  - id: git-management-02
+    group: Git 管理
+    name: CI では locked で検証
+    body: |-
+      CI では `uv sync --locked` でロックとの乖離を検証（`--frozen` は検証せずロックをそのまま使う）。
+  - id: dependency-group-01
+    group: 依存グループ
+    name: optional-dependencies の用途
+    body: |-
+      - `optional-dependencies`: 外部ユーザー向け追加機能（`pip install mypkg[redis]`）
+  - id: dependency-group-02
+    group: 依存グループ
+    name: dependency-groups の用途
+    body: |-
+      - `[dependency-groups]`（PEP 735）: 開発者用作業グループ（dev / docs / benchmark）。`uv sync --group docs`
+  - id: distribution-01
+    group: 配布
+    name: uv build と uv publish
+    body: |-
+      - ビルドは `uv build`（`dist/` に sdist + wheel）、公開は `uv publish`（Test PyPI は `--publish-url`）
+  - id: distribution-02
+    group: 配布
+    name: SemVer でバージョン管理
+    body: |-
+      - バージョンは SemVer（PATCH=バグ修正 / MINOR=機能追加 / MAJOR=破壊的変更）。`0.x` の間は MINOR を破壊的変更扱いにできる
+  - id: distribution-03
+    group: 配布
+    name: CHANGELOG の維持
+    body: |-
+      - `CHANGELOG.md` を Keep a Changelog 形式で維持
+  - id: cli-entrypoint-01
+    group: CLI エントリポイント
+    name: project.scripts の登録
+    body: |-
+      - `[project.scripts]` に `mypkg = "mypkg.__main__:main"`
+  - id: cli-entrypoint-02
+    group: CLI エントリポイント
+    name: main は int を返す
+    body: |-
+      - `main() -> int` を返す関数、`__main__.py` で `sys.exit(main())`
+  - id: cli-entrypoint-03
+    group: CLI エントリポイント
+    name: サブコマンドは argparse
+    body: |-
+      - サブコマンドは argparse の `add_subparsers(dest="cmd", required=True)`
+  - id: non-py-files-01
+    group: 非 .py ファイルの同梱
+    name: 非 .py ファイルの同梱
+    body: |-
+      プロンプト / YAML 等は `[tool.hatch.build]` の `include` で指定。
+  - id: github-actions-publish-01
+    group: GitHub Actions 自動公開
+    name: GitHub Actions での自動公開
+    body: |-
+      `on: push: tags: ["v*"]` で `uv build` → `pypa/gh-action-pypi-publish`（`id-token: write` で trusted publishing）。`git tag v0.2.0 && git push --tags` で発火。
