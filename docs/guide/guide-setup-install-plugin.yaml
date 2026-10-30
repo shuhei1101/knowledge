@@ -9,13 +9,14 @@ tags:
     main: true
 status: current
 visibility: public
-rev: 1
+rev: 2
 last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
     body: |-
       knowledge のスキル（文章を点検して修正する `/knowledge:text-review`）を Claude Code で使いたいときに実行する。
+      入れると、セッションの開始時に、規約『文章の書き方』の語の選び方の要点（原則と、避ける語 → 使う語の対応）がフックで注入される。
   - id: prerequisite-01
     group: 前提
     name: "前提: Claude Code の導入"
@@ -59,6 +60,14 @@ items:
     name: スキルを呼べることを確認
     body: |-
       Claude Code のセッションで `/knowledge:text-review` と入力すると、スキルが候補に出る。
+  - id: check-hook-01
+    group: 確認 > 語の選び方の要点が注入されている
+    name: 語の選び方の要点が注入されたことを確認
+    body: |-
+      Claude Code で新しいセッションを開始し（`/clear` でもよい）、Claude に語の選び方の要点を尋ねる。
+      規約『文章の書き方』の原則と、避ける語 → 使う語の対応が返る。
+
+      再開したセッション（`resume`）には注入されない。
   - id: rollback-01
     group: 元に戻す
     name: 元に戻す
