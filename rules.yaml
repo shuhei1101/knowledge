@@ -13,21 +13,19 @@ rules:
       - "**/dev/設計書/デザイン方針.md"
   - rule: docs/template/template-checksheet.yaml
     paths:
-      - "**/dev/**/チェックシート/**/*.md"
+      - "**/docs/checksheet/*.yaml"
   - rule: docs/template/template-flowchart.yaml
     paths:
       - "**/docs/flowchart/*.yaml"
   - rule: docs/template/template-setup-procedure.yaml
     paths:
-      - "**/docs/guide/*.yaml"
+      - "**/docs/guide/guide-setup-*.yaml"
   - rule: docs/template/template-getting-started.yaml
     paths:
-      - "**/docs/はじめに/概要.md"
-      - "**/docs/はじめに/クイックスタート.md"
+      - "**/docs/guide/guide-getting-started-*.yaml"
   - rule: docs/template/template-reference.yaml
     paths:
-      - "**/docs/リファレンス/API.md"
-      - "**/docs/リファレンス/コマンド.md"
+      - "**/docs/reference/*.yaml"
   - rule: docs/template/template-template.yaml
     paths:
       - "**/docs/template/*.yaml"
