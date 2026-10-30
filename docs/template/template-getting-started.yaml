@@ -13,11 +13,11 @@ items:
   - id: overview
     name: 概要
     body: |-
-      `はじめに` タブのうち、`はじめに/概要.md` と `はじめに/クイックスタート.md` の 2 ページの書式。
+      `docs/guide/` に置く、はじめにの概要とクイックスタートの 2 ページの書式。
       読み手はプロジェクトを初めて使う人。
 
-      配置先は `docs/はじめに/概要.md` と `docs/はじめに/クイックスタート.md`。
-      新規作成時は `docs/はじめに/index.yaml`（目次）の `items` の先頭に 概要 → クイックスタート の順で行を追加し、README を再生成する。
+      配置先は `docs/guide/guide-getting-started-overview.yaml` と `docs/guide/guide-getting-started-quickstart.yaml`（ファイル名は `id`）。
+      タグは `scope:使い方` と、主題の `topic:はじめに`（`main: true`）にする。
   - id: section-list-01
     name: セクション一覧
     body: |-
@@ -83,7 +83,7 @@ items:
         group: 次に読むもの
         name: 次に読むもの
         body: |-
-          - [クイックスタート](id:{クイックスタートの ID}): 手元で動かして最初の 1 周を試す
+          - [クイックスタート](id:guide-getting-started-quickstart): 手元で動かして最初の 1 周を試す
           - [はじめてのセットアップ](id:guide-setup-first-time): セットアップを順に済ませる
       ```
 

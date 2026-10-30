@@ -13,11 +13,10 @@ items:
   - id: overview
     name: 概要
     body: |-
-      `リファレンス` タブのうち、`リファレンス/API.md` と `リファレンス/コマンド.md` の書式。
+      `docs/reference/` に置く、API とコマンドの 2 ページの書式。
       1 ページに一覧と、1 件 1 セクションの詳細を持つ。
 
-      配置先は `docs/リファレンス/API.md`（API を公開するプロジェクトのみ）と `docs/リファレンス/コマンド.md`。
-      新規作成時は `docs/リファレンス/index.yaml`（目次）の `items` に 1 行追加し、README を再生成する。
+      配置先は `docs/reference/reference-api.yaml`（API を公開するプロジェクトのみ）と `docs/reference/reference-command.yaml`（ファイル名は `id`）。
   - id: section-list-01
     name: セクション一覧
     body: |-
@@ -59,8 +58,8 @@ items:
         body: |-
           | 名前 | コマンド | 説明 |
           | --- | --- | --- |
-          | [サーバーを起動する](id:{文書の ID}#command-start-server-01) | `python -m taskflow` | API サーバーを起動する |
-          | [データを移す](id:{文書の ID}#command-migrate-01) | `python -m taskflow.migrate` | 旧形式のデータを新しい保存先へコピーする |
+          | [サーバーを起動する](id:reference-command#command-start-server-01) | `python -m taskflow` | API サーバーを起動する |
+          | [データを移す](id:reference-command#command-migrate-01) | `python -m taskflow.migrate` | 旧形式のデータを新しい保存先へコピーする |
       ```
 
       ### 補足
