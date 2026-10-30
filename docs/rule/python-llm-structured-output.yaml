@@ -1,44 +1,50 @@
 # yaml-language-server: $schema=../../schemas/rule.schema.yaml
-id: python-llm-instructor
+id: python-llm-structured-output
 kind: rule
-name: Instructor — Pydantic で構造化出力
-description: Instructor で LLM 出力を Pydantic モデルとして受け取る方法と、タスク特化の関数・ファイル構成を定める。
+name: 構造化出力 — Pydantic で受け取る
+description: LLM 出力を Pydantic モデルとして受け取る方法（SDK の組み込みを標準にし、Instructor は複数プロバイダーが要るときだけ）と、タスク特化の関数・ファイル構成を定める。
 tags:
   - name: scope:python
   - name: topic:llm
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
     body: |-
-      LLM 出力を Pydantic モデルとして受け取るには Instructor を使う（スキーマ検証 + リトライ内蔵）。
+      LLM 出力を Pydantic モデルとして受け取るには、各 SDK の組み込みの構造化出力を使い、`AsyncChatFn` の実装の中に閉じる。
+      Instructor は複数プロバイダーが要るリポジトリだけで使う。
+  - id: common-01
+    group: SDK と Instructor に共通
+    name: Field の description と Literal
+    body: |-
+      - スキーマの `Field(description=...)` が抽出精度に効くので書く。固定選択肢は `Literal`、ネスト・`list[...]` も可
+  - id: common-02
+    group: SDK と Instructor に共通
+    name: 検証失敗は例外を伝える
+    body: |-
+      - 検証に失敗したときは、SDK・Instructor が送出する例外を呼び出し側へ伝える（`None` に変えない）
+  - id: sdk-01
+    group: SDK の組み込み
+    name: anthropic は messages.parse
+    body: |-
+      - anthropic は `client.messages.parse(output_format=MySchema, ...)` で Pydantic モデルとして受け取る
   - id: instructor-01
-    group: Instructor — Pydantic で構造化出力
+    group: Instructor（複数プロバイダーが要るリポジトリだけ）
     name: from_provider でクライアント作成
     body: |-
       - クライアントは `instructor.from_provider("{provider}/{model}")` で作る（非同期は `async_client=True`）
   - id: instructor-02
-    group: Instructor — Pydantic で構造化出力
+    group: Instructor（複数プロバイダーが要るリポジトリだけ）
     name: response_model で呼び出す
     body: |-
       - `client.chat.completions.create(response_model=MySchema, max_retries=3, ...)` で
         - JSON 受信 → Pydantic 検証 → 失敗時は LLM に修正させて再試行
-  - id: instructor-03
-    group: Instructor — Pydantic で構造化出力
-    name: Field の description と Literal
-    body: |-
-      - スキーマの `Field(description=...)` が抽出精度に効くので書く。固定選択肢は `Literal`、ネスト・`list[...]` も可
-  - id: instructor-04
-    group: Instructor — Pydantic で構造化出力
-    name: 検証失敗は例外を伝える
-    body: |-
-      - 再試行を使い切った検証失敗は、Instructor が送出する例外を呼び出し側へ伝える（`None` に変えない）
   - id: instructor-05
-    group: Instructor — Pydantic で構造化出力
+    group: Instructor（複数プロバイダーが要るリポジトリだけ）
     name: create_partial で逐次表示
     body: |-
       - 逐次表示には `create_partial(...)`（部分的に埋まったオブジェクトが yield される）

@@ -9,7 +9,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 2
+rev: 3
 last_reviewed: '2026-10-30'
 items:
   - id: overview
@@ -97,6 +97,11 @@ items:
     name: 長い処理は 202 を返す
     body: |-
       - 時間のかかる処理は、受け付けた時点で 202 と状態を照会する先を返し、完了まで待たせない
+  - id: writing-11
+    group: 書き方
+    name: handlers は get_handlers で受ける
+    body: |-
+      - 配線済み関数の束は型付きの `get_handlers` を `Annotated[Handlers, Depends(get_handlers)]` で受ける（[fastapi/アプリケーション](id:python-fastapi-application)）
   - id: error-handling-01
     group: エラー処理
     name: HTTPException を直接 raise しない

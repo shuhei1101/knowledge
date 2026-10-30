@@ -9,8 +9,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 2
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -33,7 +33,7 @@ items:
     body: |-
       | やりたいこと                | API                                                                        |
       | --------------------------- | -------------------------------------------------------------------------- |
-      | 多数の HTTP 並列            | `asyncio` + httpx.AsyncClient                                              |
+      | 多数の HTTP 並列            | `asyncio` + httpx2.AsyncClient                                             |
       | 同期 IO の並列（古い lib）  | `ThreadPoolExecutor`（GIL は IO 待ちで解放）                               |
       | 重い計算の並列              | `ProcessPoolExecutor()`（`max_workers` 省略で CPU 数）                      |
       | 既存 sync 関数を async から | `asyncio.to_thread`                                                        |
