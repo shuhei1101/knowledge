@@ -8,14 +8,27 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 3
 related:
-  - to: react-state-effect
-    type: references
-    when: React の外のシステムと同期するとき
   - to: react-state-url-state
     type: references
     when: URL の状態を実装するとき
+sources:
+  - title: Choosing the State Structure
+    url: https://react.dev/learn/choosing-the-state-structure
+    note: 計算できる値は state にしない
+  - title: Sharing State Between Components
+    url: https://react.dev/learn/sharing-state-between-components
+    note: 近い親へ持ち上げる
+  - title: Scaling Up with Reducer and Context
+    url: https://react.dev/learn/scaling-up-with-reducer-and-context
+    note: Context と useReducer の組み合わせ
+  - title: Does TanStack Query replace client state?
+    url: https://tanstack.com/query/latest/docs/framework/react/guides/does-this-replace-client-state
+    note: サーバーのデータは TanStack Query に置く
+  - title: Working with Zustand
+    url: https://tkdodo.eu/blog/working-with-zustand
+    note: store を公開せず、カスタム hook と atomic selector で使う
 items:
   - id: overview
     name: 概要
@@ -84,18 +97,3 @@ items:
     name: ※3 Context の使い方
     body: |-
       - **※3 Context の使い方**: 1 つの Context は 1 つの責務にする。Provider と同じファイルに `use{Name}` を export し、Provider の外で呼んだら throw する。SPA ではルートの上に置いた Provider がページを移っても消えないので、ページをまたぐだけなら Context で足りる
-  - id: sources-01
-    group: 出典
-    name: 出典の表
-    body: |-
-      <!-- table: data -->
-
-      | 出典 | 取り込んだ要素 |
-      | --- | --- |
-      | [Choosing the State Structure](https://react.dev/learn/choosing-the-state-structure) | 計算できる値は state にしない |
-      | [Sharing State Between Components](https://react.dev/learn/sharing-state-between-components) | 近い親へ持ち上げる |
-      | [Scaling Up with Reducer and Context](https://react.dev/learn/scaling-up-with-reducer-and-context) | Context と useReducer の組み合わせ |
-      | [Does TanStack Query replace client state?](https://tanstack.com/query/latest/docs/framework/react/guides/does-this-replace-client-state) | サーバーのデータは TanStack Query に置く |
-      | [Working with Zustand](https://tkdodo.eu/blog/working-with-zustand) | store を公開せず、カスタム hook と atomic selector で使う |
-
-      <!-- /table -->
