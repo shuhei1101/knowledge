@@ -8,7 +8,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 items:
   - id: overview
     name: 概要
@@ -21,13 +21,15 @@ items:
       ```mermaid
       flowchart TD
         START([文書に関連を張りたい相手がいる])
-        Q0{いつ読むか（when）を 1 文で記載できるか?}
-        Q1{本文でリンクしている相手か?}
-        Q2{この文書が相手の文書を置き換えるか? ※1}
-        Q3{この文書は相手の文書の一部か? ※2}
-        Q4{一方を修正したらもう一方も修正が要る組か? ※3}
-        Q5{この文書に従う前に相手の文書を読む必要があるか? ※4}
+        Q0{files.yaml の行の関連か?}
+        Q1{いつ読むか（when）を 1 文で記載できるか?}
+        Q2{本文でリンクしている相手か?}
+        Q3{この文書が相手の文書を置き換えるか? ※1}
+        Q4{この文書は相手の文書の一部か? ※2}
+        Q5{一方を修正したらもう一方も修正が要る組か? ※3}
+        Q6{この文書に従う前に相手の文書を読む必要があるか? ※4}
 
+        R0([ドキュメント管理の files-yaml-04 で type を選ぶ])
         R1([関連を張らない])
         R2([この文書の related だけに replaces を記載する])
         R3([この文書の related だけに part_of を記載する])
@@ -36,18 +38,20 @@ items:
         R6([この文書の related だけに references を記載する ※5])
 
         START --> Q0
-        Q0 -->|NO| R1
-        Q0 -->|YES| Q1
-        Q1 -->|NO| Q2
-        Q1 -->|YES| R1
-        Q2 -->|YES| R2
+        Q0 -->|NO| Q1
+        Q0 -->|YES| R0
+        Q1 -->|NO| R1
+        Q1 -->|YES| Q2
         Q2 -->|NO| Q3
+        Q2 -->|YES| R1
+        Q3 -->|YES| R2
         Q3 -->|NO| Q4
-        Q3 -->|YES| R3
-        Q4 -->|YES| R4
         Q4 -->|NO| Q5
-        Q5 -->|YES| R5
-        Q5 -->|NO| R6
+        Q4 -->|YES| R3
+        Q5 -->|YES| R4
+        Q5 -->|NO| Q6
+        Q6 -->|YES| R5
+        Q6 -->|NO| R6
       ```
   - id: related-link-flow-02
     group: 関連の張り方 判定フローチャート
