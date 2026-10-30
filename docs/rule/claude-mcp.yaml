@@ -8,7 +8,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 4
+rev: 5
 last_reviewed: '2026-10-30'
 sources:
   - title: "Anthropic: Writing effective tools for agents"
@@ -222,8 +222,16 @@ items:
     group: 読み取りのツール
     name: 返却形式
     body: |-
-      - 一覧は Markdown の表（各行に ID と名前）、1 件の本文は Markdown（複数なら `<document>` で包む）、YAML が正本の項目は YAML のまま返す
+      - 一覧は Markdown の表（各行に ID と名前）、1 件の本文は Markdown（文書ごとに `<document>` で包む。`read-tool-19`）、YAML が正本の項目は YAML のまま返す
         参照は ID と名前・概要文まで結合し、相手の本文は結合しない
+  - id: read-tool-19
+    group: 読み取りのツール
+    name: 文書ごとの場所と範囲
+    body: |-
+      - 本文を返すときは、文書ごとに場所（文書のファイルの絶対パスか URL）と範囲（`full`・`section`・`summary`）を載せる
+        - markdown は文書ごとに `<document path="..." scope="...">` で包み、json は各項目に `path`・`scope` を持たせる
+        - `full` は全文を返したときだけ付ける。`section` はセクションを指定した取得（`read-tool-10`）、`summary` は `view` が `brief` など説明だけを返したとき（`read-tool-03`）に付ける
+        - 載せ方の詳細は rule-inject の [MCPの結果の書式](https://github.com/shuhei1101/rule-inject/blob/master/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/MCP%E3%81%AE%E7%B5%90%E6%9E%9C%E3%81%AE%E6%9B%B8%E5%BC%8F.md) に従う
   - id: read-tool-12
     group: 読み取りのツール
     name: 用語・エイリアスの一覧付与
