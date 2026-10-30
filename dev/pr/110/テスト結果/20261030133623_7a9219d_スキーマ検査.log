@@ -1,0 +1,112 @@
+$ git rev-parse --short HEAD
+7a9219d
+
+# 検査の方法: schemas/*.schema.yaml を JSON Schema 2020-12 の検証器（jsonschema 4.26.0）で docs/ の全 YAML（kind を持つもの）に当てる。
+# kind: flowchart は schemas/flowchart.schema.yaml（common.schema.yaml#/$defs/metadata を allOf で読み、unevaluatedProperties: false）に通す。
+$ python3 -I validate.py   # docs/**/*.yaml
+検査 252 件、違反のあるファイル 0 件
+
+$ python3 -I validate.py docs/flowchart/flowchart-config-location.yaml docs/flowchart/flowchart-react-state-placement.yaml   # 更新した 2 件の判定フローチャートだけ
+検査 2 件、違反のあるファイル 0 件
+
+# 移した出典の照合: 移す前（HEAD~1）の sources-01 の表と、移した後の sources を比べる
+$ python3 -I compare_sources.py docs/flowchart/flowchart-config-location.yaml docs/flowchart/flowchart-react-state-placement.yaml
+docs/flowchart/flowchart-config-location.yaml
+  元の出典の表 6 行、sources 6 件、title・url・note が一致: True
+  rev 1 -> 2
+  items に sources-01 が残っている: False
+  sources-01 以外の項目は元と同一: True
+  items を除くメタデータの差分キー: ['rev', 'sources']
+  id を持つ sources 要素: 0 件
+docs/flowchart/flowchart-react-state-placement.yaml
+  元の出典の表 5 行、sources 5 件、title・url・note が一致: True
+  rev 1 -> 2
+  items に sources-01 が残っている: False
+  sources-01 以外の項目は元と同一: True
+  items を除くメタデータの差分キー: ['rev', 'sources']
+  id を持つ sources 要素: 0 件
+
+# 本文に出典の URL が残っていないことの確認（items の body に http を含む項目）
+docs/flowchart/flowchart-config-location.yaml []
+docs/flowchart/flowchart-react-state-placement.yaml []
+
+# 否定の確認: sources の要素に未知のキーを足し、必須の url を消した判定フローチャートは検査に落ちる
+docs/flowchart/bad.yaml: : Unevaluated properties are not allowed ('description', 'id', 'items', 'name', 'related', 'rev', 'sources', 'status', 'tags', 'visibility' were unexpected)
+docs/flowchart/bad.yaml: sources/0: Additional properties are not allowed ('bogus' was unexpected)
+docs/flowchart/bad.yaml: sources/1: 'url' is a required property
+検査 1 件、違反のあるファイル 1 件
+
+# validate.py の中身
+import sys, glob, os, yaml
+from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
+from referencing.jsonschema import DRAFT202012
+
+root = os.getcwd()
+schemas = {}
+reg = Registry()
+for p in glob.glob('schemas/*.schema.yaml'):
+    d = yaml.safe_load(open(p, encoding='utf-8'))
+    schemas[os.path.basename(p)] = d
+    reg = reg.with_resource(os.path.basename(p), Resource.from_contents(d, DRAFT202012))
+    reg = reg.with_resource('file:///' + os.path.basename(p), Resource.from_contents(d, DRAFT202012))
+
+def validate(path):
+    doc = yaml.safe_load(open(path, encoding='utf-8'))
+    kind = doc.get('kind')
+    sch = schemas.get(kind + '.schema.yaml')
+    v = Draft202012Validator(sch, registry=reg)
+    return [f"{path}: {'/'.join(map(str, e.absolute_path))}: {e.message}" for e in sorted(v.iter_errors(doc), key=lambda e: list(map(str, e.absolute_path)))]
+
+targets = sys.argv[1:] or sorted(glob.glob('docs/**/*.yaml', recursive=True))
+bad = 0
+n = 0
+for t in targets:
+    try:
+        doc = yaml.safe_load(open(t, encoding='utf-8'))
+    except Exception as e:
+        print(f'{t}: YAML 読み込み失敗: {e}'); bad += 1; continue
+    if not isinstance(doc, dict) or 'kind' not in doc:
+        continue
+    if doc['kind'] + '.schema.yaml' not in schemas:
+        continue
+    n += 1
+    errs = validate(t)
+    for e in errs: print(e)
+    bad += bool(errs)
+print(f'検査 {n} 件、違反のあるファイル {bad} 件')
+
+# compare_sources.py の中身
+import re, subprocess, sys, yaml
+
+
+def load_old(path):
+    """移す前の文書(HEAD~1)を読む。"""
+    return yaml.safe_load(subprocess.check_output(['git', 'show', f'HEAD~1:{path}'], text=True, encoding='utf-8'))
+
+
+def parse_table(body):
+    """出典の表の各行を title・url・note に分ける。"""
+    rows = []
+    for line in body.splitlines():
+        m = re.match(r'\| \[(.+?)\]\((\S+?)\) \| (.+) \|$', line)
+        if m:
+            rows.append({'title': m.group(1), 'url': m.group(2), 'note': m.group(3)})
+    return rows
+
+
+for path in sys.argv[1:]:
+    old = load_old(path)
+    new = yaml.safe_load(open(path, encoding='utf-8'))
+    rows = parse_table(next(i['body'] for i in old['items'] if i['id'] == 'sources-01'))
+    moved = [{k: s[k] for k in ('title', 'url', 'note')} for s in new['sources']]
+    ids = [i['id'] for i in new['items']]
+    keep_old = [i for i in old['items'] if i['id'] != 'sources-01']
+    meta_diff = sorted(k for k in set(old) | set(new) if k != 'items' and old.get(k) != new.get(k))
+    print(path)
+    print(f'  元の出典の表 {len(rows)} 行、sources {len(moved)} 件、title・url・note が一致: {rows == moved}')
+    print(f'  rev {old["rev"]} -> {new["rev"]}')
+    print(f'  items に sources-01 が残っている: {"sources-01" in ids}')
+    print(f'  sources-01 以外の項目は元と同一: {keep_old == new["items"]}')
+    print(f'  items を除くメタデータの差分キー: {meta_diff}')
+    print(f'  id を持つ sources 要素: {sum(1 for s in new["sources"] if "id" in s)} 件')
