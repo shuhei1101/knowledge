@@ -2,14 +2,14 @@
 id: react-state-url-state
 kind: rule
 name: URL の状態
-description: 画面で見ているものに影響する状態を URL の search で持つ原則と、TanStack Router の validateSearch + Zod での読み取り・書き込み・検証を定める。
+description: 画面で見ているものに影響する状態を URL の search で持つ原則と、TanStack Router の validateSearch + Zod での読み取り・書き込み・検証を定め、タブ・フィルタ・ソート・ページなどの状態を URL に持たせるときに読む。
 tags:
   - name: scope:react
   - name: topic:frontend
     main: true
 status: current
 visibility: internal
-rev: 3
+rev: 4
 last_reviewed: '2026-10-30'
 sources:
   - title: "TanStack Router: Search Params"
