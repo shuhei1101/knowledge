@@ -25,14 +25,14 @@ items:
       ```md
       - ブラウザに出す依存を増やさない。
         - フレームワーク（React/Vue）・状態管理ライブラリ・UI ライブラリは使わない
-        - 外部依存がどうしても必要なときだけ vendoring する（`html/shared/vendor.md`）
-        - dev ツール（tsc / eslint / vitest 等）は別（`html/tooling/tsc運用.md`）
+        - 外部依存がどうしても必要なときだけ vendoring する
+        - dev ツール（tsc / eslint / vitest 等）は別
       ```
 
       悪い例: 横に長い。
 
       ```md
-      ブラウザに出す依存を増やさない。フレームワーク（React/Vue）・状態管理ライブラリ・UI ライブラリは使わない。外部依存がどうしても必要なときだけ vendoring する（`html/shared/vendor.md`）。dev ツール（tsc / eslint / vitest 等）は別（`html/tooling/tsc運用.md`）。
+      ブラウザに出す依存を増やさない。フレームワーク（React/Vue）・状態管理ライブラリ・UI ライブラリは使わない。外部依存がどうしても必要なときだけ vendoring する。dev ツール（tsc / eslint / vitest 等）は別。
       ```
   - id: script-location-01
     group: スクリプトの配置場所
