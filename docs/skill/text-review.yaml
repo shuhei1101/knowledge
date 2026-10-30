@@ -9,7 +9,22 @@ tags:
 status: current
 visibility: internal
 rev: 1
-title: 文章を点検して修正する
+related:
+  - to: convention-writing-style
+    type: requires
+    when: 文章を点検するとき
+  - to: convention-keep-existing-text
+    type: requires
+    when: 反する文を修正するとき
+  - to: convention-issue-presentation
+    type: requires
+    when: 論点の表を点検するとき
+  - to: doc-parts
+    type: requires
+    when: ドキュメントの部品を点検するとき
+  - to: claude-rule-writing
+    type: requires
+    when: 範囲に `.claude/rules/` のファイルがあるとき
 skill: knowledge プラグインの skills/text-review/SKILL.md
 issue: 87
 primary_actor: 利用者
@@ -112,9 +127,3 @@ branches:
   - name: 異常（範囲にファイルが無い）
     when: 無いパスか、文章のファイルを含まないコミット
     result: 規約を読まず、渡した範囲と見つからないことが出る
-refs:
-  - 規約『文章の書き方』
-  - 規約『既存文章の維持』
-  - 規約『論点の提示』
-  - 規約『ドキュメントの部品』
-  - 規約『ユーザ配下ルール記載時の規約』

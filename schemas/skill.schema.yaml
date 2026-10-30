@@ -11,7 +11,6 @@ required:
   - status
   - visibility
   - rev
-  - title
   - skill
   - primary_actor
   - trigger
@@ -44,11 +43,6 @@ properties:
     $ref: common.schema.yaml#/$defs/metadata/properties/last_reviewed
   related:
     $ref: common.schema.yaml#/$defs/metadata/properties/related
-  title:
-    title: タイトル
-    description: スキルの名前。ファイル名に合わせる。
-    type: string
-    minLength: 1
   skill:
     title: スキルの場所
     description: スキルを置くリポジトリとパス。
@@ -167,11 +161,4 @@ properties:
           description: 外から見える状態。スキルを実装した後に、設計書とスキルの手順を突き合わせる観点になる。
           type: string
           minLength: 1
-  refs:
-    title: 関連
-    description: 読む規約・他の設計書。
-    type: array
-    items:
-      type: string
-      minLength: 1
 additionalProperties: false
