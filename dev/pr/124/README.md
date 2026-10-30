@@ -1,0 +1,1 @@
+# knowledge の既存の文書のタグを、規約『タグと用語の登録』の tag-scope-01・tag-scope-02 に沿って付け直す
