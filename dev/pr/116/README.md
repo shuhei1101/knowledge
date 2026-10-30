@@ -1,0 +1,1 @@
+# 規約に、files.yaml に載せるファイルの判定・各列に入れる値・description の観点・設計書との implements を記載する
