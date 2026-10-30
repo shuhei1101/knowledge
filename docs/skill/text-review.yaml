@@ -26,7 +26,7 @@ externals:
     exchange: コミットで変わったファイルの一覧
     when_absent: コミットを渡されなければ呼ばない
   - name: dev-docs
-    exchange: 文章に関わる規約の本文（タグで引く）
+    exchange: 文章に関わる規約の本文（ID で引く）
     when_absent: knowledge の規約のファイルを直接読む
   - name: 範囲のファイル
     exchange: 本文を読み、修正した本文を記載する
@@ -90,7 +90,7 @@ sequence: |-
       { "from": "user", "to": "skill", "label": "範囲（コミット）" },
       { "from": "skill", "to": "git", "label": "変わったファイルを取る" },
       { "from": "git", "to": "skill", "label": "ファイルの一覧", "reply": true },
-      { "from": "skill", "to": "dd", "label": "文章の規約をタグで引く", "tip": "search_docs。配信元は knowledge" },
+      { "from": "skill", "to": "dd", "label": "文章の規約を ID で引く", "tip": "search_docs。配信元は knowledge" },
       { "from": "dd", "to": "skill", "label": "規約の本文", "reply": true },
       { "from": "skill", "to": "fs", "label": "本文を読む" },
       { "from": "fs", "to": "skill", "label": "本文", "reply": true },
