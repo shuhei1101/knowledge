@@ -8,27 +8,12 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 3
+rev: 4
 last_reviewed: '2026-10-30'
 related:
-  - to: claude-mcp
-    type: requires
-    when: YAML を読み取る MCP のツールを作るとき
-  - to: dev-content-location
-    type: requires
-    when: content/ に置く正本の置き場所を決めるとき
-  - to: dev-tag-term-registration
-    type: requires
-    when: YAML のタグを付けるとき
-  - to: flowchart-config-location
-    type: requires
-    when: アプリの設定値の置き場所を決めるとき
   - to: claude-plugin
     type: references
     when: プラグインが読む設定ファイルの置き場所を決めるとき
-  - to: python-shared-settings
-    type: references
-    when: pydantic-settings で読む設定を扱うとき
 sources:
   - title: "Anthropic: Writing effective tools for agents"
     url: https://www.anthropic.com/engineering/writing-tools-for-agents
