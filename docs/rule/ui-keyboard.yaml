@@ -8,7 +8,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-30'
 related:
   - to: ui-operation-accessibility
@@ -20,6 +20,18 @@ related:
   - to: react-keyboard-shortcut
     type: references
     when: React でショートカットを実装するとき
+sources:
+  - id: APG
+    title: "APG: Keyboard Interface"
+    url: https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/
+  - id: APG
+    title: "APG: Dialog (Modal)"
+    url: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/
+  - id: WCAG
+    title: WCAG 2.2
+    url: https://www.w3.org/TR/WCAG22/
+    library: WCAG
+    version: '2.2'
 items:
   - id: overview
     name: 概要
@@ -210,10 +222,3 @@ items:
       - ショートカットを持つ要素には、`aria-keyshortcuts` を付ける。
       - コマンドパレットに、画面の移動とその画面の操作を全て登録する。
       - 設定画面に、「1 文字のショートカットを使う」のオン・オフを置く。
-  - id: sources-01
-    group: 出典
-    name: "出典: APG と WCAG"
-    body: |-
-      - [APG: Keyboard Interface](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/)
-      - [APG: Dialog (Modal)](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)
-      - [WCAG 2.2](https://www.w3.org/TR/WCAG22/)

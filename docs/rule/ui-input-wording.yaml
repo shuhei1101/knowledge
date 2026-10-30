@@ -8,12 +8,52 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-24'
 related:
   - to: convention-writing-style
     type: requires
     when: 語の選び方の一般の決まりを確かめるとき
+sources:
+  - id: I
+    title: pbakaus/impeccable
+    url: https://github.com/pbakaus/impeccable
+  - id: V
+    title: Vercel Web Interface Guidelines
+    url: https://vercel.com/design/guidelines
+  - id: GOV
+    title: "GOV.UK Design System: Validation"
+    url: https://design-system.service.gov.uk/patterns/validation/
+  - id: GOV
+    title: "GOV.UK Design System: Error summary"
+    url: https://design-system.service.gov.uk/components/error-summary/
+  - id: GOV
+    title: "GOV.UK Design System: Button"
+    url: https://design-system.service.gov.uk/components/button/
+  - id: C
+    title: "IBM Carbon Design System: Notification"
+    url: https://carbondesignsystem.com/components/notification/usage/
+  - id: MS
+    title: Microsoft Japanese Localization Style Guide
+    url: https://aka.ms/japanese-styleguide
+  - id: SH
+    title: "SmartHR Design System: 基本的な考え方"
+    url: https://smarthr.design/products/contents/writing-style/
+  - id: SH
+    title: "SmartHR Design System: ステータス"
+    url: https://smarthr.design/products/contents/ui-text/statuslabel/
+  - id: SH
+    title: "SmartHR Design System: 操作を表す用語"
+    url: https://smarthr.design/products/contents/idiomatic-usage/action/
+  - id: SH
+    title: "SmartHR Design System: よくあるテーブル"
+    url: https://smarthr.design/products/design-patterns/smarthr-table/
+  - id: BK
+    title: "文化審議会: 公用文作成の考え方"
+    url: https://www.bunka.go.jp/seisaku/bunkashingikai/kokugo/hokoku/pdf/93651301_01.pdf
+  - id: APG
+    title: "WAI-ARIA Authoring Practices Guide: Button Pattern"
+    url: https://www.w3.org/WAI/ARIA/apg/patterns/button/
 items:
   - id: overview
     name: 概要
@@ -22,7 +62,7 @@ items:
       入力・送信・エラー・通知の振る舞いと、画面に出す言葉。
       画面の状態をどこに保持するか。
       語の対応表は textlint の prh に任せ、この規約の対応表は任意で読む。
-      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、GOV = GOV.UK Design System、C = IBM Carbon Design System、MS = Microsoft Japanese Localization Style Guide、SH = SmartHR Design System、BK = 公用文作成の考え方、APG = WAI-ARIA Authoring Practices Guide（リンクは `## 出典`）。
+      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、GOV = GOV.UK Design System、C = IBM Carbon Design System、MS = Microsoft Japanese Localization Style Guide、SH = SmartHR Design System、BK = 公用文作成の考え方、APG = WAI-ARIA Authoring Practices Guide（リンクはメタデータの `sources`）。
   - id: input-submit-01
     group: 入力と送信
     name: 入力と送信の決まり
@@ -157,43 +197,3 @@ items:
     name: 未保存のまま離れるときの警告
     body: |-
       未保存の入力があるまま画面を離れるときは警告する（V）。
-  - id: sources-01
-    group: 出典
-    name: "出典 I: impeccable"
-    body: |-
-      - I: [pbakaus/impeccable](https://github.com/pbakaus/impeccable)
-  - id: sources-02
-    group: 出典
-    name: "出典 V: Web Interface Guidelines"
-    body: |-
-      - V: [Web Interface Guidelines](https://vercel.com/design/guidelines)
-  - id: sources-03
-    group: 出典
-    name: "出典 GOV: GOV.UK Validation"
-    body: |-
-      - GOV: [Validation](https://design-system.service.gov.uk/patterns/validation/)・[Error summary](https://design-system.service.gov.uk/components/error-summary/)・[Button](https://design-system.service.gov.uk/components/button/)
-  - id: sources-04
-    group: 出典
-    name: "出典 C: Carbon Notification"
-    body: |-
-      - C: [Notification](https://carbondesignsystem.com/components/notification/usage/)
-  - id: sources-05
-    group: 出典
-    name: "出典 MS: Microsoft スタイルガイド"
-    body: |-
-      - MS: [Microsoft Japanese Localization Style Guide](https://aka.ms/japanese-styleguide)
-  - id: sources-06
-    group: 出典
-    name: "出典 SH: SmartHR"
-    body: |-
-      - SH: [基本的な考え方](https://smarthr.design/products/contents/writing-style/)・[ステータス](https://smarthr.design/products/contents/ui-text/statuslabel/)・[操作を表す用語](https://smarthr.design/products/contents/idiomatic-usage/action/)・[よくあるテーブル](https://smarthr.design/products/design-patterns/smarthr-table/)
-  - id: sources-07
-    group: 出典
-    name: "出典 BK: 公用文作成の考え方"
-    body: |-
-      - BK: [文化審議会: 公用文作成の考え方](https://www.bunka.go.jp/seisaku/bunkashingikai/kokugo/hokoku/pdf/93651301_01.pdf)
-  - id: sources-08
-    group: 出典
-    name: "出典 APG: Button Pattern"
-    body: |-
-      - APG: [Button Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/button/)

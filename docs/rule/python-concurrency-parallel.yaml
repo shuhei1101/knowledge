@@ -9,13 +9,16 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 2
+rev: 3
 last_reviewed: '2026-10-30'
+sources:
+  - title: Python のドキュメント
+    url: https://docs.python.org/3/howto/free-threading-python.html
 items:
   - id: overview
     name: 概要
     body: |-
-      GIL 前提で設計する（フリースレッドビルド・subinterpreters を使うときは、[Python のドキュメント](https://docs.python.org/3/howto/free-threading-python.html) と依存ライブラリで対応状況を確かめる）。
+      GIL 前提で設計する（フリースレッドビルド・subinterpreters を使うときは、Python のドキュメントと依存ライブラリで対応状況を確かめる）。
   - id: decision-flow-01
     group: 判断フロー
     name: 並列処理の判断フロー

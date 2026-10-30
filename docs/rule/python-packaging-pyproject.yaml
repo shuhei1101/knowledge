@@ -9,8 +9,13 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 2
+rev: 3
 last_reviewed: '2026-10-30'
+sources:
+  - title: Python のリリース状況
+    url: https://devguide.python.org/versions/
+  - title: "Python: What's New"
+    url: https://docs.python.org/3/whatsnew/
 items:
   - id: overview
     name: 概要
@@ -168,7 +173,7 @@ items:
     group: Python バージョン方針
     name: 高いバージョンを採用する
     body: |-
-      - 極力高いバージョンを採用する。新規は最新安定版か 1 つ下（各バージョンの状況は [Python のリリース状況](https://devguide.python.org/versions/)）
+      - 極力高いバージョンを採用する。新規は最新安定版か 1 つ下（各バージョンの状況は Python のリリース状況）
   - id: python-version-02
     group: Python バージョン方針
     name: 最低ラインは 3.14
@@ -188,7 +193,7 @@ items:
     group: 新機能の採用判断
     name: 新機能の採用判断
     body: |-
-      新しいバージョンで入った機能は、そのバージョンの [What's New](https://docs.python.org/3/whatsnew/) で実験的な扱いでないことと、依存ライブラリが対応していることを確かめてから採用する。
+      新しいバージョンで入った機能は、そのバージョンの What's New で実験的な扱いでないことと、依存ライブラリが対応していることを確かめてから採用する。
   - id: lower-baseline-01
     group: 最低ラインを下げる場合
     name: 最低ラインを下げる条件

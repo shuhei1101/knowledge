@@ -9,7 +9,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-30'
 related:
   - to: ui-keyboard
@@ -18,6 +18,9 @@ related:
   - to: react-keyboard-component
     type: references
     when: 部品・表・フォーカスのキー操作を実装するとき
+sources:
+  - title: "TanStack Hotkeys: Overview"
+    url: https://tanstack.com/hotkeys/latest/docs/overview
 items:
   - id: overview
     name: 概要
@@ -64,8 +67,3 @@ items:
     name: IME の変換中は発火しない
     body: |-
       - `isComposing: true` と `keyCode: 229` の keydown で、ショートカットが発火しないことを単体テストで確かめる。
-  - id: sources-01
-    group: 出典
-    name: "出典: TanStack Hotkeys"
-    body: |-
-      - [TanStack Hotkeys: Overview](https://tanstack.com/hotkeys/latest/docs/overview)

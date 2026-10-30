@@ -9,8 +9,11 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 3
+rev: 4
 last_reviewed: '2026-10-30'
+sources:
+  - title: "RFC 9457: Problem Details for HTTP APIs"
+    url: https://www.rfc-editor.org/rfc/rfc9457.html
 items:
   - id: auth-pattern-01
     group: 認証パターン
@@ -79,7 +82,7 @@ items:
     group: 例外ハンドラ
     name: RFC 9457 形式のレスポンス
     body: |-
-      - レスポンスは [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html) の Problem Details（`application/problem+json`。`type` / `title` / `status` / `detail`、拡張メンバーに `code` / `request_id`）に統一する
+      - レスポンスは RFC 9457 の Problem Details（`application/problem+json`。`type` / `title` / `status` / `detail`、拡張メンバーに `code` / `request_id`）に統一する
   - id: exception-handler-04
     group: 例外ハンドラ
     name: RequestValidationError のカスタム

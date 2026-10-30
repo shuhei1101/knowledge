@@ -9,7 +9,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-30'
 related:
   - to: ui-keyboard
@@ -21,6 +21,13 @@ related:
   - to: react-devtools-lint-format
     type: references
     when: アクセシビリティの lint を設定するとき
+sources:
+  - title: "APG: Keyboard Interface"
+    url: https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/
+  - title: "APG: Dialog (Modal)"
+    url: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/
+  - title: "Base UI: Dialog"
+    url: https://base-ui.com/react/components/dialog
 items:
   - id: overview
     name: 概要
@@ -84,10 +91,3 @@ items:
     body: |-
       - axe（`@axe-core/playwright`・Storybook の `addon-a11y`）は、キーボードで操作できるかまでは検出しない。
         E2E のキー操作の確認と、Tab だけで完了するシナリオの代わりにしない。
-  - id: sources-01
-    group: 出典
-    name: "出典: APG と Base UI"
-    body: |-
-      - [APG: Keyboard Interface](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/)
-      - [APG: Dialog (Modal)](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)
-      - [Base UI: Dialog](https://base-ui.com/react/components/dialog)

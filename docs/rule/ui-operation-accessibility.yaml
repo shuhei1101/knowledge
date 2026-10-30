@@ -8,8 +8,25 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-24'
+sources:
+  - id: I
+    title: pbakaus/impeccable
+    url: https://github.com/pbakaus/impeccable
+  - id: V
+    title: Vercel Web Interface Guidelines
+    url: https://vercel.com/design/guidelines
+  - id: W
+    title: "WCAG 2.2: Target Size (Minimum)"
+    url: https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html
+    library: WCAG
+    version: '2.2'
+  - id: W
+    title: Web Content Accessibility Guidelines (WCAG) 2.2
+    url: https://www.w3.org/TR/WCAG22/
+    library: WCAG
+    version: '2.2'
 items:
   - id: overview
     name: 概要
@@ -17,7 +34,7 @@ items:
       対象: 共通（単体 HTML・React）
       キーボード・支援技術・色覚の違いによらず操作を完了できるようにする。
       機械で判定できる決まりは、jsx-a11y・Storybook の `addon-a11y`・Playwright の axe に任せ、この規約はその検査で見つからない分を補う。
-      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、W = WCAG 2.2（リンクは `## 出典`）。
+      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、W = WCAG 2.2（リンクはメタデータの `sources`）。
   - id: operation-accessibility-01
     group: 操作とアクセシビリティ
     name: 操作とアクセシビリティの決まり
@@ -86,23 +103,3 @@ items:
     name: iframe の禁止は別の規約に従う
     body: |-
       - iframe の禁止は、規約『[iframe の禁止](id:ui-no-iframe)』に従う。
-  - id: sources-01
-    group: 出典
-    name: "出典 I: impeccable"
-    body: |-
-      - I: [pbakaus/impeccable](https://github.com/pbakaus/impeccable)
-  - id: sources-02
-    group: 出典
-    name: "出典 V: Web Interface Guidelines"
-    body: |-
-      - V: [Web Interface Guidelines](https://vercel.com/design/guidelines)
-  - id: sources-03
-    group: 出典
-    name: "出典 W: Target Size (Minimum)"
-    body: |-
-      - W: [Target Size (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html)
-  - id: sources-04
-    group: 出典
-    name: "出典 W: WCAG 2.2"
-    body: |-
-      - W: [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/WCAG22/)

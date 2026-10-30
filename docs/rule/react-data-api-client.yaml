@@ -9,12 +9,15 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-30'
 related:
   - to: react-data-query
     type: references
     when: 生成した hook を画面で使うとき
+sources:
+  - title: "orval: output"
+    url: https://orval.dev/docs/reference/configuration/output
 items:
   - id: overview
     name: 概要
@@ -61,8 +64,3 @@ items:
     body: |-
       - 再接続は、ジッター付きの指数バックオフにする。
         URL は `createWsUrl()` 経由で組み立て、ハードコードしない。
-  - id: sources-01
-    group: 出典
-    name: "出典: orval"
-    body: |-
-      - [orval: output](https://orval.dev/docs/reference/configuration/output)

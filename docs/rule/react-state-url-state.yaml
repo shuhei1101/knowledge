@@ -9,12 +9,18 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-30'
 related:
   - to: flowchart-react-state-placement
     type: requires
     when: 値を URL に置くかを決めるとき
+sources:
+  - title: "TanStack Router: Search Params"
+    url: https://tanstack.com/router/latest/docs/framework/react/guide/search-params
+  - title: "nuqs: Adapters"
+    url: https://nuqs.dev/docs/adapters
+    note: TanStack Router 用のアダプターが実験段階であることを確認した
 items:
   - id: overview
     name: 概要
@@ -67,9 +73,3 @@ items:
     name: Tabs に URL の状態を渡す
     body: |-
       - shadcn の `<Tabs>` の `value`・`onValueChange` に、URL の状態を渡す。
-  - id: sources-01
-    group: 出典
-    name: "出典: TanStack Router と nuqs"
-    body: |-
-      - [TanStack Router: Search Params](https://tanstack.com/router/latest/docs/framework/react/guide/search-params)
-      - [nuqs: Adapters](https://nuqs.dev/docs/adapters)（TanStack Router 用のアダプターが実験段階であることを確認した）

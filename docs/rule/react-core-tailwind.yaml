@@ -9,12 +9,19 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-30'
 related:
   - to: ui-token
     type: requires
     when: トークンの名前と段階を決めるとき
+sources:
+  - title: "Tailwind CSS: Theme variables"
+    url: https://tailwindcss.com/docs/theme
+  - title: "Tailwind CSS: Adding custom styles"
+    url: https://tailwindcss.com/docs/adding-custom-styles
+  - title: "shadcn/ui: Manual installation"
+    url: https://ui.shadcn.com/docs/installation/manual
 items:
   - id: overview
     name: 概要
@@ -44,10 +51,3 @@ items:
     body: |-
       - `w-[321px]` のような任意値と、トークンに無い色を書かない。
         eslint-plugin-better-tailwindcss で禁止する。
-  - id: sources-01
-    group: 出典
-    name: "出典: Tailwind と shadcn/ui"
-    body: |-
-      - [Tailwind CSS: Theme variables](https://tailwindcss.com/docs/theme)
-      - [Tailwind CSS: Adding custom styles](https://tailwindcss.com/docs/adding-custom-styles)
-      - [shadcn/ui: Manual installation](https://ui.shadcn.com/docs/installation/manual)
