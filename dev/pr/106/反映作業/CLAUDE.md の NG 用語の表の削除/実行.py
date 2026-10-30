@@ -1,4 +1,4 @@
-"""プラグインを入れた設定フォルダの CLAUDE.md から `## カタカナ英語縛りしないでください` のセクションを削除する。"""
+"""プラグインを入れた設定フォルダの CLAUDE.md の実体から `## カタカナ英語縛りしないでください` のセクションを削除する（シンボリックリンクはそのまま残す）。"""
 from __future__ import annotations
 
 import difflib
@@ -25,6 +25,11 @@ SECTION_HEADING = "## カタカナ英語縛りしないでください\n"
 PLUGIN_ID = "knowledge@knowledge"
 
 
+def real_targets() -> list[Path]:
+    """TARGETS をシンボリックリンクの先の実体へ解決し、重複を除いて返す。"""
+    return list(dict.fromkeys(target.resolve() for target in TARGETS))
+
+
 def plan(lines: list[str]) -> list[str] | None:
     """セクションを除いた行の並びを返す（セクションが 2 つ以上あれば None）。"""
     count = lines.count(SECTION_HEADING)
@@ -44,11 +49,14 @@ def plan(lines: list[str]) -> list[str] | None:
 
 
 def plugin_installed(target: Path) -> bool:
-    """CLAUDE.md と同じ設定フォルダに knowledge@knowledge が入っているかを返す。"""
-    installed = target.parent / "plugins" / "installed_plugins.json"
-    if not installed.is_file():
-        return False
-    return PLUGIN_ID in json.loads(installed.read_text(encoding="utf-8")).get("plugins", {})
+    """CLAUDE.md の実体を指す全ての設定フォルダに knowledge@knowledge が入っているかを返す。"""
+    for link in (t for t in TARGETS if t.resolve() == target):
+        installed = link.parent / "plugins" / "installed_plugins.json"
+        if not installed.is_file():
+            return False
+        if PLUGIN_ID not in json.loads(installed.read_text(encoding="utf-8")).get("plugins", {}):
+            return False
+    return True
 
 
 def main() -> int:
@@ -57,7 +65,8 @@ def main() -> int:
     if not all(target.is_file() for target in TARGETS):
         print("前提確認: failed")
         return 1
-    contents = {target: target.read_text(encoding="utf-8").splitlines(keepends=True) for target in TARGETS}
+    reals = real_targets()
+    contents = {target: target.read_text(encoding="utf-8").splitlines(keepends=True) for target in reals}
     plans = {target: plan(lines) for target, lines in contents.items()}
     if any(new is None for new in plans.values()):
         print("前提確認: failed")
@@ -65,7 +74,7 @@ def main() -> int:
     print("前提確認: ok")
     # 計画（--dry-run もここを通る）
     changes = {target: new for target, new in plans.items() if new != contents[target]}
-    for target in TARGETS:
+    for target in reals:
         if target in changes:
             sys.stdout.writelines(difflib.unified_diff(contents[target], changes[target], str(target), str(target)))
         else:

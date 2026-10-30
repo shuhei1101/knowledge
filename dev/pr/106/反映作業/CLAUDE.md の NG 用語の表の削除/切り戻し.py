@@ -1,34 +1,22 @@
-"""実行で退避した CLAUDE.md を元へ戻す。"""
+"""実行で退避した CLAUDE.md の実体を元へ戻す。"""
 from __future__ import annotations
 
 import shutil
 from pathlib import Path
 
-TARGETS = [
-    Path.home() / ".claude" / "CLAUDE.md",
-    Path.home() / ".claude-dev" / "CLAUDE.md",
-    Path.home() / ".claude-dev1" / "CLAUDE.md",
-    Path.home() / ".claude-sub" / "CLAUDE.md",
-    Path.home() / ".claude-sub2" / "CLAUDE.md",
-    Path.home() / ".claude-sub3" / "CLAUDE.md",
-    Path.home() / ".claude-sub4" / "CLAUDE.md",
-    Path.home() / ".claude-sub5" / "CLAUDE.md",
-    Path.home() / ".claude-sub6" / "CLAUDE.md",
-    Path.home() / ".claude-sub7" / "CLAUDE.md",
-]
+REAL_TARGET = Path.home() / ".claude" / "CLAUDE.md"
 BACKUP_NAME = "CLAUDE.md.bak-pr106"
 
 
 def main() -> int:
-    """退避したファイルで CLAUDE.md を置き換え、結果を 1 行ずつ出す。"""
-    for target in TARGETS:
-        backup = target.parent / BACKUP_NAME
-        # 退避したファイルが無い: 実行で変えなかった CLAUDE.md
-        if not backup.is_file():
-            print(f"{target} の書き戻し: skipped")
-            continue
-        shutil.copy2(backup, target)
-        print(f"{target} の書き戻し: changed")
+    """退避したファイルで CLAUDE.md の実体を置き換える。"""
+    backup = REAL_TARGET.parent / BACKUP_NAME
+    # 退避したファイルが無い: 戻す元が無い
+    if not backup.is_file():
+        print("退避したファイル: failed")
+        return 1
+    shutil.copy2(backup, REAL_TARGET)
+    print(f"{REAL_TARGET} の書き戻し: changed")
     return 0
 
 
