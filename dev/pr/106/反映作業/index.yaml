@@ -1,0 +1,28 @@
+knowledge のプラグインの導入:
+  説明: NG 用語の表を持つ CLAUDE.md がある Claude Code の設定フォルダ（`~/.claude*/`）の `plugins/` の実体ごとに 1 回、`CLAUDE_CONFIG_DIR` を指してマーケットプレイス `shuhei1101/knowledge` を登録し、プラグイン `knowledge@knowledge` を入れる（登録済みなら更新する）。`plugins/` を共有して `settings.json` だけ別の実体を持つ設定フォルダは、プラグインを有効にする
+  タグ: [プラグインの導入]
+  実行者: tester
+  時期: master へ入った後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: knowledge のプラグインの導入/疎通確認.py
+  実行: knowledge のプラグインの導入/実行.py
+  確認: knowledge のプラグインの導入/確認.py
+  切り戻し: knowledge のプラグインの導入/切り戻し.py
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: 各設定フォルダで `claude plugin list` に `knowledge@knowledge` が `enabled` で並び、入ったプラグインのフックのスクリプトを `source` が `startup` の入力で流すと、`additionalContext` に語の選び方の原則表と対応表が入っている
+  状態: "-"
+CLAUDE.md の NG 用語の表の削除:
+  説明: プラグインを入れた設定フォルダの CLAUDE.md の実体（シンボリックリンクの先）から `## カタカナ英語縛りしないでください` のセクション（NG 用語の表）を削除する。リンクはそのまま残す。削除の前に実体のバックアップ（`CLAUDE.md.bak-pr106`）を同じフォルダへ置き、バックアップから戻せることを確かめる
+  タグ: [ユーザーの設定]
+  実行者: tester
+  時期: master へ入った後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: CLAUDE.md の NG 用語の表の削除/疎通確認.py
+  実行: CLAUDE.md の NG 用語の表の削除/実行.py
+  確認: CLAUDE.md の NG 用語の表の削除/確認.py
+  切り戻し: CLAUDE.md の NG 用語の表の削除/切り戻し.py
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: CLAUDE.md の実体に `NG用語` の文字列が無く、同じフォルダに `NG用語` を含むバックアップがあり、他の設定フォルダの CLAUDE.md が実体へのシンボリックリンクのまま
+  状態: "-"
