@@ -2,7 +2,7 @@
 id: dev-tag-term-registration
 kind: rule
 name: タグと用語の登録
-description: 文書へのタグ・用語・エイリアスの付与と、用語集への登録の条件を定める。
+description: 文書へのタグ・用語・エイリアスの付与と、用語集への登録の条件と、description の書き方を定める。
 tags:
   - name: scope:dev
     main: true
@@ -24,7 +24,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      文書にタグ・用語・エイリアスを付けるときと、用語集に登録するときの決まり。
+      文書にタグ・用語・エイリアスを付けるときと、用語集に登録するとき、description を書くときの決まり。
   - id: tag-form-01
     group: タグの形
     name: タグは自由な文字列
@@ -93,7 +93,7 @@ items:
     name: 1 文で受け持つことと読むときを記載する
     body: |-
       - `description` は文書の種類を問わず 1 文で、「何を受け持つか／何について書いてあるか」と「どんなときに読むか」を記載する
-        例: `タスクの保存と取得を受け持つ。保存先や検索の条件を変えるときに読む`
+        例: `タスクの保存と取得を受け持ち、保存先や検索の条件を変えるときに読む`
   - id: description-02
     group: description の書き方
     name: 書かないもの
