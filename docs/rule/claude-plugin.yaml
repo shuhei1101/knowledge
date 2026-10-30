@@ -8,7 +8,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 3
+rev: 4
 last_reviewed: '2026-10-30'
 items:
   - id: plugin-division-01
@@ -137,8 +137,8 @@ items:
     group: 設定ファイル
     name: 単純な値は env に置く
     body: |-
-      - 単純な値 1 つ（プロジェクトごとに変えない、キーと値で書ける値）だけを受け取るプラグインは、ユーザースコープの `env` で直接受け取ってよい（例: [MCP サーバー作成ルール](id:claude-mcp) の `## 登録` の `{リポジトリ}_PORT`）
-        - 受け取る値が増えたり、プロジェクトごとに変える値ができたりしたら、設定ファイルへ移す
+      - 単純な値 1 つ（プロジェクトごとに変えない、キーと値で書ける値）だけを受け取るプラグインは、ユーザースコープの `env` で直接受け取ってよい
+        - 受け取る値が増えたり、プロジェクトごとに変える値ができたりしたら、設定ファイルへ移す（`settings-file-08` に当たる値は移さない）
 
       ```json
       {
@@ -163,6 +163,13 @@ items:
     body: |-
       - リポジトリと一緒に変わる設定の置き場所と、設定ファイルの `version`・移し替えは、[YAML](id:dev-yaml) の `## 設定ファイル` に従う。
         `version` は設定ファイルのもので、プラグインの manifest には当てない（`no-version-01`）。
+  - id: settings-file-08
+    group: 設定ファイル
+    name: YAML を読めない仕組みも読む値は env に置く
+    body: |-
+      - 設定ファイルを持つプラグインでも、`.mcp.json` など YAML を読めない仕組みも読む値は、ユーザースコープの `env` に置く（例: [MCP サーバー作成ルール](id:claude-mcp) の `## 登録` の `{リポジトリ}_PORT`）
+        - サーバーと `.mcp.json` の両方が同じ `env` を読む
+        - 同じ値を設定ファイルと `env` の 2 か所に記載しない
   - id: no-version-01
     group: version を置かない規約
     name: version を置かない
