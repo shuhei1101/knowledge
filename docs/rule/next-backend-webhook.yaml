@@ -6,7 +6,9 @@ description: Webhook を受信する Route Handler の配置と、署名検証�
 tags:
   - name: scope:next
   - name: topic:backend
+  - name: topic:webhook
     main: true
+  - name: topic:アプリルーター
   - name: topic:サービス
   - name: topic:シークレット
   - name: topic:ツリー
@@ -16,7 +18,10 @@ tags:
   - name: topic:リトライ
   - name: topic:ルート
   - name: topic:ロガー
+  - name: topic:冪等性
+  - name: topic:署名
   - name: topic:関数
+  - name: tool:next-js
   - name: action:受信
   - name: action:検証
   - name: action:確保
