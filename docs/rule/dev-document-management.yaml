@@ -229,7 +229,7 @@ items:
         Q3 -->|NO| R4
       ```
 
-      - **※1 除外の条件の見分け方**: dev-docs の [文書のメタデータ](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/%E3%82%B3%E3%82%A2%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%97%E3%83%88/%E6%96%87%E6%9B%B8%E3%81%AE%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF.md) の「載せるファイルの判定」に従う
+      - **※1 除外の条件の見分け方**: Q0・Q1 の除外の条件は、dev-docs の [文書のメタデータ](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/%E3%82%B3%E3%82%A2%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%97%E3%83%88/%E6%96%87%E6%9B%B8%E3%81%AE%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF.md) の「載せるファイルの判定」に従う
   - id: files-yaml-02
     group: 配信
     name: files.yaml の行の列に入れる値
@@ -250,7 +250,7 @@ items:
     group: 配信
     name: implements はコード側だけに記載する
     body: |-
-      - 設計書と 1 対 1 のコードは、コード側の files.yaml の行に必ず `implements` を記載する
+      - 設計書と 1 対 1 のコードは、コード側の files.yaml の行に `implements` を記載する
       - 設計書には逆向き（設計書 → コード）を記載しない
         逆向きは被参照で引く（dev-docs の `trace_related`）
   - id: files-yaml-04
@@ -258,6 +258,7 @@ items:
     name: files.yaml の related の type
     body: |-
       - files.yaml の行の `related` の `type` は `implements`・`tests`・`see_also` から選ぶ
+        `implements`（対応する設計書）・`tests`（テストの対象のコード）に当たらず、一緒に読むとよい相手は `see_also` にする
       - `related-02` の `type`（`requires`・`references`・`replaces`・`part_of`・`change_together`）は YAML の文書に使う
   - id: delivery-09
     group: 配信
