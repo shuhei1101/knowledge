@@ -1,0 +1,1 @@
+# テンプレートの例に残る mypy と Python 3.12 を pyright strict と Python 3.14 に揃える
