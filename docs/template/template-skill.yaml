@@ -64,7 +64,7 @@ items:
     body: |-
       ````yaml
       title: 文章を点検して修正する
-      skill: knowledge リポジトリのスキル
+      skill: knowledge プラグインの skills/text-review/SKILL.md
       primary_actor: 利用者
       trigger: 利用者がスキルを起動する
       arguments:
@@ -161,7 +161,7 @@ items:
         result: 反する文だけが修正され、サマリーにファイルごとの修正した箇所・当てた規約・件数が出る
       - name: 正常（修正する箇所が無い）
         when: 反する文が無い
-        result: ファイルは変わらず、サマリーが「直す箇所はありませんでした」になる
+        result: ファイルは変わらず、サマリーが「修正する箇所はありませんでした」になる
       - name: 異常（範囲にファイルが無い）
         when: 無いパスか、文章のファイルを含まないコミット
         result: 規約を読まず、渡した範囲と見つからないことが出る

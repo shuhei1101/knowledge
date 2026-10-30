@@ -1,0 +1,177 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: スキルの設計書
+description: スキルの手順を、フローチャートと外部とのやり取りのシーケンス図で記載する設計書。1 ファイル = 1 スキル。
+type: object
+required:
+  - id
+  - kind
+  - name
+  - description
+  - tags
+  - status
+  - visibility
+  - rev
+  - title
+  - skill
+  - primary_actor
+  - trigger
+  - externals
+  - flow
+  - sequence
+  - branches
+properties:
+  id:
+    $ref: common.schema.yaml#/$defs/metadata/properties/id
+  kind:
+    title: 種類
+    description: 文書の種類。この種類では `skill` に固定する。
+    const: skill
+  name:
+    $ref: common.schema.yaml#/$defs/metadata/properties/name
+  description:
+    $ref: common.schema.yaml#/$defs/metadata/properties/description
+  aliases:
+    $ref: common.schema.yaml#/$defs/metadata/properties/aliases
+  tags:
+    $ref: common.schema.yaml#/$defs/metadata/properties/tags
+  status:
+    $ref: common.schema.yaml#/$defs/metadata/properties/status
+  visibility:
+    $ref: common.schema.yaml#/$defs/metadata/properties/visibility
+  rev:
+    $ref: common.schema.yaml#/$defs/metadata/properties/rev
+  last_reviewed:
+    $ref: common.schema.yaml#/$defs/metadata/properties/last_reviewed
+  related:
+    $ref: common.schema.yaml#/$defs/metadata/properties/related
+  title:
+    title: タイトル
+    description: スキルの名前。ファイル名に合わせる。
+    type: string
+    minLength: 1
+  skill:
+    title: スキルの場所
+    description: スキルを置くリポジトリとパス。
+    type: string
+    minLength: 1
+  issue:
+    title: 対応 Issue
+    description: 起点の Issue の番号。
+    type: integer
+    minimum: 1
+  primary_actor:
+    title: 主アクター
+    description: スキルを起動する人か仕組み。
+    type: string
+    minLength: 1
+  trigger:
+    title: きっかけ
+    description: 起動のしかた（スラッシュコマンド・発言・フックなど）。
+    type: string
+    minLength: 1
+  arguments:
+    title: 引数
+    description: 引数ごとの `name`・`description`・省いたときの動き。
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - description
+      properties:
+        name:
+          title: 引数名
+          description: 引数の名前。
+          type: string
+          minLength: 1
+        description:
+          title: 説明
+          description: 引数に渡すものの説明。
+          type: string
+          minLength: 1
+        when_omitted:
+          title: 省いたときの動き
+          description: 引数を省いたときの動き。
+          type: string
+          minLength: 1
+  preconditions:
+    title: 事前条件
+    description: 起動の前に整っている必要があること。
+    type: array
+    items:
+      type: string
+      minLength: 1
+  externals:
+    title: やり取りする相手
+    description: スキルが読み書きする相手（ツール・MCP・ファイル・外部のサービス・利用者）と、何をやり取りするか。
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - exchange
+      properties:
+        name:
+          title: 相手
+          description: やり取りする相手の名前。シーケンス図の参加者に揃える。
+          type: string
+          minLength: 1
+        exchange:
+          title: やり取りするもの
+          description: 相手へ渡すものと、相手から受け取るもの。
+          type: string
+          minLength: 1
+        when_absent:
+          title: 無いとき
+          description: 相手が無いときの動き。
+          type: string
+          minLength: 1
+  flow:
+    title: 手順
+    description: 手順のフローチャート。上から下へ。分岐はそのまま描く。mdmark の `flow` で記載する。
+    type: string
+    minLength: 1
+  sequence:
+    title: 外部とのやり取り
+    description: 正常の流れで、相手との呼び出しと返りの順番。mdmark の `sequence` で記載する。
+    type: string
+    minLength: 1
+  branches:
+    title: 分かれる結末
+    description: 結末ごとの条件と、終わったときの状態。
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - when
+        - result
+      properties:
+        name:
+          title: 結末
+          description: '`正常`・`正常（{条件}）`・`異常（{条件}）` のどれか。'
+          type: string
+          pattern: '^(正常|異常)(（.+）)?$'
+        when:
+          title: 条件
+          description: この結末になる条件。
+          type: string
+          minLength: 1
+        result:
+          title: 終わったときの状態
+          description: 外から見える状態。スキルを実装した後に、設計書とスキルの手順を突き合わせる観点になる。
+          type: string
+          minLength: 1
+  refs:
+    title: 関連
+    description: 読む規約・他の設計書。
+    type: array
+    items:
+      type: string
+      minLength: 1
+additionalProperties: false
