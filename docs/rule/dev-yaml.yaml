@@ -8,7 +8,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 2
+rev: 3
 last_reviewed: '2026-10-30'
 related:
   - to: claude-mcp
@@ -29,6 +29,25 @@ related:
   - to: python-shared-settings
     type: references
     when: pydantic-settings で読む設定を扱うとき
+sources:
+  - title: "Anthropic: Writing effective tools for agents"
+    url: https://www.anthropic.com/engineering/writing-tools-for-agents
+    note: 入出力の説明
+  - title: "MCP 仕様: Tools"
+    url: https://modelcontextprotocol.io/specification/2025-06-18/server/tools
+    note: "`inputSchema` / `outputSchema`"
+    library: MCP
+    version: '2025-06-18'
+  - title: "JSON Schema 2020-12: Core"
+    url: https://json-schema.org/draft/2020-12/json-schema-core
+    note: "`$ref`・`$defs`"
+    library: JSON Schema
+    version: '2020-12'
+  - title: "JSON Schema 2020-12: Validation"
+    url: https://json-schema.org/draft/2020-12/json-schema-validation
+    note: "`title`・`description`"
+    library: JSON Schema
+    version: '2020-12'
 items:
   - id: overview
     name: 概要
@@ -342,23 +361,3 @@ items:
       | claude-plugin の `no-version-01` | プラグインの manifest に version を置かない | `config-file-05` の `version` は設定ファイルのもの。プラグインの manifest には当てない |
 
       <!-- /table -->
-  - id: sources-01
-    group: 出典
-    name: "出典: ツールの設計"
-    body: |-
-      - [Anthropic: Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)（入出力の説明）
-  - id: sources-02
-    group: 出典
-    name: "出典: MCP 仕様"
-    body: |-
-      - [MCP 仕様: Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools)（`inputSchema` / `outputSchema`）
-  - id: sources-03
-    group: 出典
-    name: "出典: JSON Schema Core"
-    body: |-
-      - [JSON Schema 2020-12: Core](https://json-schema.org/draft/2020-12/json-schema-core)（`$ref`・`$defs`）
-  - id: sources-04
-    group: 出典
-    name: "出典: JSON Schema Validation"
-    body: |-
-      - [JSON Schema 2020-12: Validation](https://json-schema.org/draft/2020-12/json-schema-validation)（`title`・`description`）

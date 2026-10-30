@@ -8,7 +8,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-24'
 related:
   - to: claude-mcp
@@ -20,6 +20,16 @@ related:
   - to: flowchart-yaml-file-unit
     type: requires
     when: YAML ファイルを分ける単位を決めるとき
+sources:
+  - title: "Anthropic: Effective context engineering for AI agents"
+    url: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+    note: 軽い識別子を持たせて本文は必要なときに読む
+  - title: "Backstage: Descriptor Format"
+    url: https://backstage.io/docs/features/software-catalog/descriptor-format
+    note: "参照は名前、関係は片側だけ記載する"
+  - title: "Doorstop: Item"
+    url: https://doorstop.readthedocs.io/en/latest/reference/item.html
+    note: "1 項目 1 ファイル、ファイル名が UID"
 items:
   - id: overview
     name: 概要
@@ -103,6 +113,7 @@ items:
       | `rev` | 変更ごとに増えるバージョン。書き込みのツールが付ける | 必須 |
       | `aliases` | 本文や会話でこの文書を呼ぶ別の名前 | 任意 |
       | `related` | 関連（`## 関連`） | 任意 |
+      | `sources` | 参考にした出典（URL・ライブラリとバージョン・確かめた日）。本文には決めたことだけを記載する | 任意 |
       | `code_refs` | 対応するコードのパスとシンボル | 任意 |
       | `interfaces` | 定義している公開インターフェース | 任意 |
       | `last_reviewed` | 最後に内容を確かめた日 | 手順書・規約など鮮度を見たい種類だけ。種類のスキーマで決める |
@@ -168,18 +179,3 @@ items:
     name: ブランチ配信の方式は使わない
     body: |-
       - ブランチのフォルダをそのまま配信する Pages の方式は使わない
-  - id: sources-01
-    group: 出典
-    name: "出典: Anthropic"
-    body: |-
-      - [Anthropic: Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)（軽い識別子を持たせて本文は必要なときに読む）
-  - id: sources-02
-    group: 出典
-    name: "出典: Backstage"
-    body: |-
-      - [Backstage: Descriptor Format](https://backstage.io/docs/features/software-catalog/descriptor-format)（参照は名前、関係は片側だけ記載する）
-  - id: sources-03
-    group: 出典
-    name: "出典: Doorstop"
-    body: |-
-      - [Doorstop: Item](https://doorstop.readthedocs.io/en/latest/reference/item.html)（1 項目 1 ファイル、ファイル名が UID）

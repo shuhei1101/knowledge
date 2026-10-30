@@ -8,12 +8,35 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-24'
 related:
   - to: flowchart-word-choice
     type: requires
     when: 語の選び方で迷ったとき
+sources:
+  - id: A
+    title: "Anthropic: Skill authoring best practices"
+    url: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+  - id: C
+    title: "Claude Code: Best practices"
+    url: https://code.claude.com/docs/en/best-practices
+    note: Write an effective CLAUDE.md
+  - id: P
+    title: "Anthropic: Prompting best practices"
+    url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+  - id: GT
+    title: Google Technical Writing One
+    url: https://developers.google.com/tech-writing/one
+  - id: T
+    title: textlint-rule-preset-ja-technical-writing
+    url: https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing
+  - title: Microsoft Japanese Localization Style Guide
+    url: https://aka.ms/japanese-styleguide
+    note: "`## 語の選び方`"
+  - title: "文化審議会: 公用文作成の考え方"
+    url: https://www.bunka.go.jp/seisaku/bunkashingikai/kokugo/hokoku/pdf/93651301_01.pdf
+    note: "`## 語の選び方`"
 items:
   - id: overview
     name: 概要
@@ -24,7 +47,7 @@ items:
 
       ドキュメント・PR 本文・フェーズ手順に文章を追加したら、書き終えた直後に次を確認して当てはまる行を削除する。
       追加した分は以降の全ターンの起動プロンプトに載り続けるため、削除しないとノイズだけが増える。
-      出典の略号は A = Anthropic Skill authoring best practices、C = Claude Code Best practices、P = Anthropic Prompting best practices、GT = Google Technical Writing One、T = textlint-rule-preset-ja-technical-writing（リンクは `## 出典`）。
+      出典の略号は A = Anthropic Skill authoring best practices、C = Claude Code Best practices、P = Anthropic Prompting best practices、GT = Google Technical Writing One、T = textlint-rule-preset-ja-technical-writing（リンクはメタデータの `sources`）。
   - id: writing-style-check-01
     group: 文章の書き方
     name: 文章を追加した後の確認表
@@ -125,33 +148,3 @@ items:
     name: UI の操作の語の参照
     body: |-
       画面の文言のうち、UI の操作の語は規約『入力と文言』の対応表に従う。
-  - id: sources-01
-    group: 出典
-    name: "出典 A: Skill authoring"
-    body: |-
-      - A: [Anthropic: Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
-  - id: sources-02
-    group: 出典
-    name: "出典 C: Claude Code"
-    body: |-
-      - C: [Claude Code: Best practices](https://code.claude.com/docs/en/best-practices)（Write an effective CLAUDE.md）
-  - id: sources-03
-    group: 出典
-    name: "出典 P: Prompting"
-    body: |-
-      - P: [Anthropic: Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
-  - id: sources-04
-    group: 出典
-    name: "出典 GT: Technical Writing"
-    body: |-
-      - GT: [Google Technical Writing One](https://developers.google.com/tech-writing/one)
-  - id: sources-05
-    group: 出典
-    name: "出典 T: textlint"
-    body: |-
-      - T: [textlint-rule-preset-ja-technical-writing](https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing)
-  - id: sources-06
-    group: 出典
-    name: 出典 語の選び方
-    body: |-
-      - `## 語の選び方`: [Microsoft Japanese Localization Style Guide](https://aka.ms/japanese-styleguide)・[文化審議会: 公用文作成の考え方](https://www.bunka.go.jp/seisaku/bunkashingikai/kokugo/hokoku/pdf/93651301_01.pdf)

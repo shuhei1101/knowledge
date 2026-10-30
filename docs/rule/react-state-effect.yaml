@@ -9,12 +9,17 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-30'
 related:
   - to: flowchart-react-state-placement
     type: requires
     when: 新しい値の置き場所を決めるとき
+sources:
+  - title: "React: You Might Not Need an Effect"
+    url: https://react.dev/learn/you-might-not-need-an-effect
+  - title: "React: Synchronizing with Effects"
+    url: https://react.dev/learn/synchronizing-with-effects
 items:
   - id: overview
     name: 概要
@@ -53,9 +58,3 @@ items:
     name: lint で検査する
     body: |-
       - `eslint-plugin-react-hooks` の `recommended-latest` で検査する。
-  - id: sources-01
-    group: 出典
-    name: "出典: React の公式ドキュメント"
-    body: |-
-      - [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect)
-      - [Synchronizing with Effects](https://react.dev/learn/synchronizing-with-effects)

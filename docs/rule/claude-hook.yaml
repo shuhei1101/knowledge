@@ -8,12 +8,15 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-24'
 related:
   - to: claude-mcp
     type: requires
     when: フックで文脈を注入するとき
+sources:
+  - title: "Claude Code: Hooks reference"
+    url: https://code.claude.com/docs/en/hooks
 items:
   - id: rules-01
     group: ルール
@@ -28,7 +31,7 @@ items:
     group: ルール
     name: additionalContext の上限
     body: |-
-      - hooksの`additionalContext`でコンテキストを注入する場合の文字数の上限は公式の hooks リファレンス（`https://code.claude.com/docs/en/hooks`）に従う
+      - hooksの`additionalContext`でコンテキストを注入する場合の文字数の上限は公式の hooks リファレンスに従う
   - id: rules-03
     group: ルール
     name: 1 セッション 1 回の決まり

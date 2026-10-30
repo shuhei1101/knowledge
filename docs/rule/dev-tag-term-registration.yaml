@@ -8,8 +8,18 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 2
+rev: 3
 last_reviewed: '2026-10-30'
+sources:
+  - title: "W3C: SKOS Reference"
+    url: https://www.w3.org/TR/skos-reference
+    note: prefLabel・altLabel・hiddenLabel
+  - title: "Vale: substitution"
+    url: https://docs.vale.sh/checks/substitution
+    note: やめた言い方の点検と from / to のテスト
+  - title: prh
+    url: https://github.com/prh/prh
+    note: やめた言い方の点検と from / to のテスト
 items:
   - id: overview
     name: 概要
@@ -134,13 +144,3 @@ items:
     body: |-
       - 正規表現は、やめた言い方（`avoid`）の点検だけに使い、from / to のテストを付ける
         自動の紐付け（ツールチップ・検索）には使わない
-  - id: sources-01
-    group: 出典
-    name: "出典: SKOS"
-    body: |-
-      - [W3C: SKOS Reference](https://www.w3.org/TR/skos-reference)（prefLabel・altLabel・hiddenLabel）
-  - id: sources-02
-    group: 出典
-    name: "出典: Vale と prh"
-    body: |-
-      - [Vale: substitution](https://docs.vale.sh/checks/substitution)・[prh](https://github.com/prh/prh)（やめた言い方の点検と from / to のテスト）

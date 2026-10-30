@@ -8,15 +8,28 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-24'
+sources:
+  - id: I
+    title: pbakaus/impeccable
+    url: https://github.com/pbakaus/impeccable
+  - id: V
+    title: Vercel Web Interface Guidelines
+    url: https://vercel.com/design/guidelines
+  - id: "N"
+    title: "Nielsen Norman Group: Progress Indicators Make a Slow System Less Insufferable"
+    url: https://www.nngroup.com/articles/progress-indicators/
+  - id: MW
+    title: GoogleChrome/modern-web-guidance
+    url: https://github.com/GoogleChrome/modern-web-guidance
 items:
   - id: overview
     name: 概要
     body: |-
       対象: 共通（単体 HTML・React）
       読み込み・待ち時間・動きで表示が崩れたり揺れたりしないようにする。
-      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、N = Nielsen Norman Group、MW = modern-web-guidance（リンクは `## 出典`）。
+      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、N = Nielsen Norman Group、MW = modern-web-guidance（リンクはメタデータの `sources`）。
   - id: display-stability-01
     group: 表示の安定
     name: 表示の安定の決まり
@@ -56,23 +69,3 @@ items:
       - 単体 HTML は、`<dialog closedby>`・`popover`・`commandfor` で実装する。
         外側のクリックで閉じないダイアログは、`closedby="closerequest"` にする。
       - React は、Base UI の部品で実装する。
-  - id: sources-01
-    group: 出典
-    name: "出典 I: impeccable"
-    body: |-
-      - I: [pbakaus/impeccable](https://github.com/pbakaus/impeccable)
-  - id: sources-02
-    group: 出典
-    name: "出典 V: Web Interface Guidelines"
-    body: |-
-      - V: [Web Interface Guidelines](https://vercel.com/design/guidelines)
-  - id: sources-03
-    group: 出典
-    name: "出典 N: Progress Indicators"
-    body: |-
-      - N: [Progress Indicators Make a Slow System Less Insufferable](https://www.nngroup.com/articles/progress-indicators/)
-  - id: sources-04
-    group: 出典
-    name: "出典 MW: modern-web-guidance"
-    body: |-
-      - MW: [GoogleChrome/modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance)

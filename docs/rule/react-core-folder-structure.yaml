@@ -9,7 +9,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-10-30'
 related:
   - to: react-core-build
@@ -18,6 +18,19 @@ related:
   - to: react-core-naming
     type: requires
     when: ファイル・フォルダの名前を決めるとき
+sources:
+  - title: "Bulletproof React: Project Structure"
+    url: https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md
+  - title: "Feature-Sliced Design: Public API"
+    url: https://feature-sliced.design/docs/reference/public-api
+  - title: "TanStack Router: File Naming Conventions"
+    url: https://tanstack.com/router/latest/docs/framework/react/routing/file-naming-conventions
+  - title: "TanStack Router: Code Splitting"
+    url: https://tanstack.com/router/latest/docs/framework/react/guide/code-splitting
+  - title: "orval: output"
+    url: https://orval.dev/docs/reference/configuration/output
+  - title: eslint-plugin-boundaries
+    url: https://www.jsboundaries.dev/docs/rules/
 items:
   - id: overview
     name: 概要
@@ -166,13 +179,3 @@ items:
     body: |-
       - mutator は `shared/adapters/api-client.ts` に置く。
         `queries.ts` は queryOptions の合成と invalidate だけを持つ。
-  - id: sources-01
-    group: 出典
-    name: "出典: フォルダ構成"
-    body: |-
-      - [Bulletproof React: Project Structure](https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md)
-      - [Feature-Sliced Design: Public API](https://feature-sliced.design/docs/reference/public-api)
-      - [TanStack Router: File Naming Conventions](https://tanstack.com/router/latest/docs/framework/react/routing/file-naming-conventions)
-      - [TanStack Router: Code Splitting](https://tanstack.com/router/latest/docs/framework/react/guide/code-splitting)
-      - [orval: output](https://orval.dev/docs/reference/configuration/output)
-      - [eslint-plugin-boundaries](https://www.jsboundaries.dev/docs/rules/)
