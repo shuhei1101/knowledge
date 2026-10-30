@@ -8,8 +8,8 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 3
-last_reviewed: '2026-10-24'
+rev: 4
+last_reviewed: '2026-10-30'
 sources:
   - title: "Anthropic: Effective context engineering for AI agents"
     url: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
@@ -169,3 +169,38 @@ items:
     name: ブランチ配信の方式は使わない
     body: |-
       - ブランチのフォルダをそのまま配信する Pages の方式は使わない
+  - id: delivery-04
+    group: 配信
+    name: dev-docs の使用
+    body: |-
+      - 開発ドキュメントサーバーは dev-docs を使う
+      - 各リポジトリは、直下に `dev-docs.yaml`・スキーマ・検査と変換のスクリプトだけを置く
+  - id: delivery-05
+    group: 配信
+    name: dev-docs の立て方
+    body: |-
+      - `/dev-docs:global-setup` で端末を準備し、`/dev-docs:setup {リポジトリ}` で配信元を登録する
+      - 手順の詳細は dev-docs の [dev-docsを入れる](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/dev-docs%E3%82%92%E5%85%A5%E3%82%8C%E3%82%8B.md)・[配信元を配信する](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E9%85%8D%E4%BF%A1%E5%85%83%E3%82%92%E9%85%8D%E4%BF%A1%E3%81%99%E3%82%8B.md) を参照する
+  - id: delivery-06
+    group: 配信
+    name: 読み書きできる範囲
+    body: |-
+      - どの作業場所からどの配信元を読み書きできるかは、端末の設定 `~/.config/dev-docs/settings.yaml` の `sources[]` の `scope.read`・`scope.write` で決める
+  - id: delivery-07
+    group: 配信
+    name: メタデータとエイリアスの対応づけ
+    body: |-
+      - 文書のメタデータとエイリアスは、`dev-docs.yaml` の documents の行の `metadata` で文書の列と対応づける
+        `metadata` は列の対応だけで、`alias_type` は行の属性
+      - エイリアスの共通のスキーマは、alias-inject の [エイリアスのスキーマ](https://github.com/shuhei1101/alias-inject/blob/develop/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/%E3%82%A8%E3%82%A4%E3%83%AA%E3%82%A2%E3%82%B9%E3%81%AE%E3%82%B9%E3%82%AD%E3%83%BC%E3%83%9E.md) を参照する
+  - id: delivery-08
+    group: 配信
+    name: YAML でない文書の files.yaml
+    body: |-
+      - Markdown・ソースコードなど YAML でない文書は、検索したいものをすべて、フォルダの直下の管理用の YAML（`files.yaml`）の行に載せる
+        行にはパス・タグ・説明を記載する
+  - id: delivery-09
+    group: 配信
+    name: 設定のキー
+    body: |-
+      - 設定のキーは、dev-docs の [設定](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/%E8%A8%AD%E5%AE%9A.md) を参照する
