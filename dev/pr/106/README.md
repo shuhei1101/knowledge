@@ -1,0 +1,1 @@
+# 語の選び方の要点を knowledge のプラグインの SessionStart フックで注入する
