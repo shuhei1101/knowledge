@@ -1,0 +1,350 @@
+id: "MOD-72-4"
+title: "検査と変換のスクリプト / scripts / knowledge_checks.py"
+lead: dev-docs の validators の `knowledge-checks`。標準入力の文書 1 件に、項目の ID の重複・`id:` の参照と `related` の `to` の実在・mermaid の文法を当て、違反の配列を返す（IF-72-1）。
+constants:
+  - name: ID_LINK
+    title: 'id: の参照'
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    summary: 本文の `[{名前}](id:{文書の ID})`・`[{名前}](id:{文書の ID}#{項目の ID})` を拾う正規表現
+    value: re.compile(r"\]\(id:([^)#\s]+)(?:#([^)\s]+))?\)")
+  - name: FENCE
+    title: コードブロックの囲み
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    summary: 行頭のバッククォート 3 つ以上と情報文字列を拾う正規表現
+    value: re.compile(r"^ {0,3}(`{3,})\s*(\S*)")
+functions:
+  - name: main
+    title: 文書の違反の検査の入口
+    kind: 関数
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    role: 入口
+    scope: public
+    summary: 標準入力の文書を検査し、違反の配列の JSON を標準出力へ出す
+    args:
+      - name: argv
+        title: 引数
+        type: Sequence[str] | None
+        required: false
+        default: None
+        description: コマンドの引数。`None` は `sys.argv[1:]`。引数は取らない（`--help` だけ）
+      - name: limit_sec
+        title: 処理時間の上限
+        type: float
+        required: false
+        default: LIMIT_SEC
+        passing: keyword
+        description: 起動からの上限（秒）。結合テストが時間切れを起こすときに差し替える
+    returns:
+      type: int
+      description: 終了コード。`0` = 検査を終えた（違反の有無に依らない）、`2` = maid が PATH に無い、`1` = 想定していない例外
+    process: |-
+      1. `time.monotonic() + limit_sec` を締め切りにする
+      2. argparse で引数を読む
+      3. 標準入出力を UTF-8 にする（`sys.stdin.reconfigure(encoding="utf-8")`・`sys.stdout` も同じ）
+      4. maid の在りかを確かめる（maid の在りかの確認）
+         - 引けない場合、標準エラーへ `maid が PATH にありません。開発コマンドの『環境構築（クローン直後）』で maid を入れてください` を出し、標準出力へ何も出さず 2 を返す
+      5. 標準入力を読み、作業ディレクトリを配信元の直下にして検査する（文書の検査）
+      6. 違反の配列を `json.dumps(..., ensure_ascii=False)` で標準出力へ出し、`0` を返す
+         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返す
+    unit_tests:
+      - name: test_main
+        case: 正常
+        summary: 違反の無い文書
+        condition: 標準入力に違反の無い文書。作業ディレクトリは空の `docs/` を持つ一時フォルダ
+        mock: maid の在りかの確認を、正しい図と答えるスクリプトのパスに差し替える
+        expected: '`0` を返し、標準出力が `[]`'
+      - name: test_main_when_maid_missing
+        case: 正常
+        summary: maid が無い
+        condition: 標準入力に文書
+        mock: maid の在りかの確認を `None` に差し替える
+        expected: '`2` を返し、標準出力が空で、標準エラーに `maid` と `環境構築` が出る'
+      - name: test_main_when_unexpected_error
+        case: 正常
+        summary: 想定していない例外
+        condition: 文書の検査が `RuntimeError` を送出する
+        mock: 文書の検査を `RuntimeError` を送出する関数に差し替える
+        expected: '`1` を返し、標準エラーに `Traceback` が出る'
+    callees:
+      - MOD-72-3#functions[find_maid]
+    refs:
+      - IF-72-1#
+  - name: check_document
+    title: 文書の検査
+    kind: 関数
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    role: サービス
+    scope: public
+    summary: 文書 1 件に全ての検査を当て、違反を並べて返す
+    args:
+      - name: text
+        title: 文書の YAML
+        type: str
+        required: true
+        description: 検査する文書 1 件
+      - name: root
+        title: 配信元の直下
+        type: Path
+        required: true
+        description: '`docs/**/*.yaml` を読むリポジトリの直下'
+      - name: executable
+        title: maid の実行ファイル
+        type: str
+        required: true
+        description: '`find_maid` が返したパス'
+      - name: deadline
+        title: 締め切り
+        type: float
+        required: true
+        description: '`time.monotonic()` の時刻'
+      - name: index
+        title: ID の索引
+        type: Mapping[str, frozenset[str]] | None
+        required: false
+        default: None
+        passing: keyword
+        description: 作った ID の索引。`None` ならこの関数で作る。全ての文書の検査が 1 度だけ作って渡す
+    returns:
+      type: list[Violation]
+      description: 項目の ID の重複 → `id:` の参照 → `related` の `to` → mermaid の順の違反
+    process: |-
+      1. 文書を読む（文書の読み込み）
+         - 読めない文書の場合、`path: $`・`{行} 行目: YAML として読めません: {理由}`・`YAML の文法の誤りを修正する` の 1 件を返す
+      2. `index` が `None` なら ID の索引を作る（ID の索引の作成）
+      3. 項目の ID の重複・参照・mermaid を順に検査し、違反をつないで返す（項目の ID の重複の検査・参照の検査・mermaid の検査）
+    unit_tests:
+      - name: test_check_document
+        case: 正常
+        summary: 違反を検査の順に並べる
+        condition: '項目の ID が重なり、`[B](id:missing)` と `related` の `to: missing` と `end` の抜けた subgraph を持つ文書。`index` に `a` だけ'
+        mock: 'maid を、`line: 2` の誤りを返すスクリプトに差し替える'
+        expected: 4 件で、`path` が `items[1].id`・`items[2].body`・`related[0].to`・`items[3].body` の順
+      - name: test_check_document_when_broken
+        case: 正常
+        summary: 読めない YAML
+        condition: '`items:\n  - id: a\n    name: [`'
+        mock: なし
+        expected: '`path` が `$` の 1 件で、`rule` が `行目: YAML として読めません` を含む。索引を作らず maid も呼ばない'
+    callees:
+      - MOD-72-2#functions[load_document]
+  - name: build_id_index
+    title: ID の索引の作成
+    kind: 関数
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    role: 読み込み
+    scope: public
+    summary: 配信元の全ての文書から、文書の ID → 項目の ID の索引を作る
+    args:
+      - name: root
+        title: 配信元の直下
+        type: Path
+        required: true
+        description: '`docs/**/*.yaml` を読むリポジトリの直下'
+    returns:
+      type: dict[str, frozenset[str]]
+      description: 文書の ID → `items[].id` の集合
+    process: |-
+      1. `root.glob("docs/**/*.yaml")` を並列に読む（ファイルの並列の読み込み）
+      2. 各ファイルを読み（文書の読み込み）、最上位の `id` が文字列のものを、`items[]` の文字列の `id` の集合と並べて索引に入れる
+         - 読めないファイル・読めない文書・`id` の無い文書の場合、そのファイルを飛ばす（その文書の誤りはその文書の検査で出る）
+    unit_tests:
+      - name: test_build_id_index
+        case: 正常
+        summary: 文書と項目の ID を集める
+        condition: '`docs/rule/a.yaml`（項目 `x`・`y`）と `docs/guide/b.yaml`（項目なし）'
+        mock: なし（一時ディレクトリ）
+        expected: '`{"a": {"x", "y"}, "b": set()}`'
+      - name: test_build_id_index_when_broken
+        case: 正常
+        summary: 読めない文書を飛ばす
+        condition: '`docs/rule/a.yaml` と、読めない YAML の `docs/rule/c.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: '`a` だけを持つ'
+    callees:
+      - MOD-72-2#functions[read_texts]
+      - MOD-72-2#functions[load_document]
+  - name: check_duplicate_ids
+    title: 項目の ID の重複の検査
+    kind: 関数
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    scope: public
+    summary: '`items[].id` の重複を、後に出た項目の違反にする'
+    args:
+      - name: doc
+        title: 文書
+        type: CommentedMap
+        required: true
+        description: 読んだ文書
+    returns:
+      type: list[Violation]
+      description: 重複した項目ごとの違反
+    process: |-
+      1. `items` が配列でなければ空を返す
+      2. `items[i].id` を順に見て、先に出た ID と同じなら `path: items[{i}].id`・`{行} 行目: 項目の ID `{id}` が items[{先の添字}] と重複しています`・`項目の ID を文書の中で一意にする` にする（行は `items[i].lc.value("id")` + 1）
+    unit_tests:
+      - name: test_check_duplicate_ids
+        case: 正常
+        summary: 後の項目を違反にする
+        condition: '`items` の ID が `a`・`b`・`a`'
+        mock: なし
+        expected: 1 件で、`path` が `items[2].id`、`rule` が `items[0]` を含み、行が 3 つ目の `id:` の行
+      - name: test_check_duplicate_ids_when_unique
+        case: 正常
+        summary: 重複が無い
+        condition: '`items` の ID が `a`・`b`'
+        mock: なし
+        expected: 空
+  - name: check_references
+    title: 参照の検査
+    kind: 関数
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    scope: public
+    summary: 本文の `id:` の参照と `related[].to` が実在する文書・項目を指すかを確かめる
+    args:
+      - name: doc
+        title: 文書
+        type: CommentedMap
+        required: true
+        description: 読んだ文書
+      - name: index
+        title: ID の索引
+        type: Mapping[str, frozenset[str]]
+        required: true
+        description: 文書の ID → 項目の ID
+    returns:
+      type: list[Violation]
+      description: 本文の参照切れ（文書の並び）の後に `related` の参照切れ
+    process: |-
+      1. 文書自身の `id` と `items[].id` で索引を上書きした索引を作る（自分を指す参照は標準入力の内容で確かめる）
+      2. 文字列の項目ごとに `ID_LINK` の一致を見る（文字列の項目の列挙）
+         - 文書が索引に無い場合、`{行} 行目: 参照先の文書 `{文書の ID}` がありません`・`実在する文書の ID を指す` にする
+         - 項目を指し、その項目が無い場合、`{行} 行目: 参照先の項目 `{文書の ID}#{項目の ID}` がありません`・`実在する項目の ID を指す` にする
+         - 行は、本文の 1 行目の行に、一致の前にある改行の数を足した行
+      3. `related[i].to` が索引に無い場合、`path: related[{i}].to`・`{行} 行目: 関連先の文書 `{to}` がありません`・`実在する文書の ID を指す` にする
+    unit_tests:
+      - name: test_check_references
+        case: 正常
+        summary: 実在する参照は通す
+        condition: '本文に `[A](id:a#x)` と自分の項目への `[S](id:self#overview)`、`related` の `to: a`。索引は `{"a": {"x"}}`、文書の ID は `self`'
+        mock: なし
+        expected: 空
+      - name: test_check_references_when_missing
+        case: 正常
+        summary: 文書・項目・関連の参照切れ
+        condition: '`items[0].body` の 3 行目に `[B](id:missing)`、`items[1].body` に `[C](id:a#nope)`、`related[0].to: gone`'
+        mock: なし
+        expected: 3 件で、`path` が `items[0].body`・`items[1].body`・`related[0].to` の順。`items[0].body` の行が本文の 1 行目 + 2
+  - name: mermaid_blocks
+    title: mermaid のブロックの取り出し
+    kind: 関数
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    scope: public
+    summary: 文字列から mermaid のコードブロックを、中身の 1 行目の位置と中身で取り出す
+    args:
+      - name: text
+        title: 文字列
+        type: str
+        required: true
+        description: 文字列の項目の値
+    returns:
+      type: list[tuple[int, str]]
+      description: （中身の 1 行目が `text` の何行目か（0 始まり）、囲みの行を除いた中身）
+    process: |-
+      1. `text` を行ごとに見て、`FENCE` に当たる行で囲みを開く・閉じる（閉じるのは、開いた囲みと同じ数以上のバッククォートで情報文字列の無い行）
+         - 囲みの外で、バッククォートが 3 つで情報文字列が `mermaid` の場合、閉じるまでの行を mermaid のブロックにする
+         - バッククォートが 4 つ以上の囲みの場合、閉じるまでの行を見ない（記述例の中の図を検査しない）
+         - 閉じずに文字列が終わった mermaid のブロックは、末尾までを中身にする
+    unit_tests:
+      - name: test_mermaid_blocks
+        case: 正常
+        summary: mermaid のブロックだけを取り出す
+        condition: 段落・```mermaid のブロック（3 行目から）・```python のブロックを持つ文字列
+        mock: なし
+        expected: 1 件で、位置が 3、中身が囲みの行を含まない
+      - name: test_mermaid_blocks_when_nested_in_example
+        case: 正常
+        summary: 4 つ以上の囲みの中は見ない
+        condition: '````markdown の囲みの中に ```mermaid のブロック'
+        mock: なし
+        expected: 空
+      - name: test_mermaid_blocks_when_unclosed
+        case: 正常
+        summary: 閉じ忘れ
+        condition: '```mermaid の後に閉じの行が無い'
+        mock: なし
+        expected: 1 件で、末尾までが中身
+  - name: check_mermaid
+    title: mermaid の検査
+    kind: 関数
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    scope: public
+    summary: 文書の中の mermaid のブロックを 1 つずつ maid で検査し、誤りと時間切れを違反にする
+    side_effects: maid をブロックの数だけ起動する
+    args:
+      - name: doc
+        title: 文書
+        type: CommentedMap
+        required: true
+        description: 読んだ文書
+      - name: executable
+        title: maid の実行ファイル
+        type: str
+        required: true
+        description: '`find_maid` が返したパス'
+      - name: deadline
+        title: 締め切り
+        type: float
+        required: true
+        description: '`time.monotonic()` の時刻'
+    returns:
+      type: list[Violation]
+      description: ブロックの並びの違反
+    process: |-
+      1. 文字列の項目ごとに mermaid のブロックを取り出す（文字列の項目の列挙・mermaid のブロックの取り出し）。ブロックの文書の行は、本文の 1 行目の行 + 中身の位置
+      2. ブロックごとに、締め切りまでの残り時間を求める
+         - 残りが `MIN_REMAINING_SEC` より短い場合、maid を呼ばずに時間切れの違反（`{ブロックの行} 行目: mermaid: 処理時間の上限に達したため検査していません`・`図の数を減らすか、文書を分ける`）にする
+      3. 残り時間を打ち切りにして maid を呼ぶ（maid の呼び出し）
+         - `subprocess.TimeoutExpired` の場合、時間切れの違反にする
+         - 読めない maid の出力の場合、`{ブロックの行} 行目: mermaid: {理由}`・`開発コマンドの環境構築で入れた maid のバージョンを確かめる` の違反にする
+      4. maid の誤りごとに、`{ブロックの行 + 誤りの line - 1} 行目: mermaid: {message}`・`mermaid の文法の誤りを修正する` の違反にする
+    unit_tests:
+      - name: test_check_mermaid
+        case: 正常
+        summary: 誤りを文書の行に戻す
+        condition: '`items[3].body` の mermaid のブロックの中身が文書の 40 行目から始まる'
+        mock: 'maid を、`line: 3` の誤りを返すスクリプトに差し替える'
+        expected: '1 件で、`path` が `items[3].body`、`rule` が `42 行目: mermaid: ` で始まる'
+      - name: test_check_mermaid_when_no_time_left
+        case: 正常
+        summary: 残り時間が足りない
+        condition: '`deadline` が今から 0.5 秒後'
+        mock: maid を、呼ばれたことを一時ファイルに記録するスクリプトに差し替える
+        expected: 時間切れの 1 件で、maid が呼ばれていない
+      - name: test_check_mermaid_when_timeout
+        case: 正常
+        summary: maid を打ち切った
+        condition: '`deadline` が今から 1.5 秒後'
+        mock: maid を、5 秒待つスクリプトに差し替える
+        expected: 時間切れの 1 件で、2.5 秒以内に戻る
+      - name: test_check_mermaid_when_bad_output
+        case: 正常
+        summary: maid の出力が読めない
+        condition: mermaid のブロック 1 つ
+        mock: maid を、`ok` を出すスクリプトに差し替える
+        expected: 1 件で、`fix` が maid のバージョンを確かめる 1 文
+    callees:
+      - MOD-72-2#functions[iter_strings]
+      - MOD-72-3#functions[run_maid]
+    refs:
+      - MOD-72-3#constants[MIN_REMAINING_SEC]
+notes:
+  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を書き、`_common.py`・`_maid.py` を同じフォルダから import する。

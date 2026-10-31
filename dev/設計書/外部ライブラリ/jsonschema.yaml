@@ -5,6 +5,7 @@ version:
   current: 4.26.0
   checked_on: '2026-10-31'
   pinning: dev-docs 本体と同じ `>=4.26.0`
+  source: '`scripts/check_all.py` の PEP 723 のメタデータと `scripts/check_all.py.lock`'
 catalogs:
   - name: API
     version: 4.26.0
@@ -24,7 +25,7 @@ used_in:
 verification:
   state: 済
   date: '2026-10-31'
-  detail: Python 3.12.13 と jsonschema 4.26.0 で、`Draft202012Validator.iter_errors` が `type`・`contains`・`unevaluatedProperties` の違反を全件、`absolute_path` つきで返すことを確かめた
+  detail: Python 3.14.3 と jsonschema 4.26.0 で、`Draft202012Validator.iter_errors` が `type`・`contains`・`unevaluatedProperties` の違反を全件、`absolute_path` つきで返すことを確かめた
 license: MIT（商用利用可）
 official_url: https://pypi.org/project/jsonschema/
 docs_url: https://python-jsonschema.readthedocs.io/

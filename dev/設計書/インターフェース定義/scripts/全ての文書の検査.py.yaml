@@ -120,5 +120,5 @@ constraints:
     constraint: 「文書の違反の検査」と同じ 20 秒。超えたブロックは時間切れの違反にする
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
   - item: 全体の処理時間
-    constraint: 未確定
+    constraint: CI のジョブの 5 分に収める（スクリプト自身は打ち切らない）
     decided_by: NFR-72-1#requirements[CI の 1 回の所要時間]

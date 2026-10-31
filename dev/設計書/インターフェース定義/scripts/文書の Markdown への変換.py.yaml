@@ -149,6 +149,6 @@ constraints:
   - item: 項目の見出し
     constraint: 項目はファイルの並びどおりに出す。`group` を ` > ` で分けた各段を `##` から 1 つずつ深い見出しにし、直前の項目と同じ段は繰り返さない。項目の `name` はその 1 つ下の見出しにする。`overview` は見出しを付けず、`description` の直後に本文だけを置く
   - item: 出さないキー
-    constraint: '`id`・`kind`・`tags`・`status`・`visibility`・`rev`・`last_reviewed` は本文に出さない（dev-docs の画面がメタデータとして出す）'
+    constraint: '`id`・`kind`・`tags`・`status`・`visibility`・`rev`・`last_reviewed`・`aliases` は本文に出さない（dev-docs の画面がメタデータとして出す）'
   - item: 種類に固有のキー
     constraint: '共通のメタデータ以外のキー（スキルの `arguments` など）は `## {スキーマの title}` の節にし、文字列は段落、文字列の配列は箇条書き、オブジェクトの配列は `<!-- table: data -->` の表で出す'

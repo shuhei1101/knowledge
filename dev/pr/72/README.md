@@ -37,7 +37,7 @@ dev-docs の本体は [shuhei1101/dev-docs#3](https://github.com/shuhei1101/dev-
 - [x] インターフェース定義設計
 - [x] ~~部品設計~~（画面の部品は dev-docs と mdmark が持つ）
 - [x] ~~画面設計~~（画面の UI 項目は dev-docs が持ち、knowledge の変更は画面の UI 項目を増やさない）
-- [ ] モジュール構成設計
+- [x] モジュール構成設計
 - [ ] ドキュメント修正（要件.md の `## 更新ドキュメント`）
 - [ ] 単体テスト作成
 - [ ] 実装

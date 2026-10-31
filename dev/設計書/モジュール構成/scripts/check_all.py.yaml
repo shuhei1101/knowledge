@@ -1,0 +1,326 @@
+id: "MOD-72-6"
+title: "検査と変換のスクリプト / scripts / check_all.py"
+lead: CI と手元から呼ぶ「全ての文書の検査」。`dev-docs.yaml` の `documents[]` が指す全ての文書に、スキーマの検査と文書の違反の検査を当て、終了コードで合否を返す（IF-72-3）。
+data_models:
+  - name: Target
+    title: 検査する文書
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: DTO
+    summary: '`documents[]` の行から引いた文書 1 件と、当てる検査'
+    description: '`dataclass(frozen=True)`。'
+    properties:
+      - name: path
+        type: PurePosixPath
+        description: リポジトリの直下からのパス
+      - name: schema
+        type: str
+        description: 行の `schema`（`schemas/rule.schema.yaml` など）
+      - name: checks
+        type: bool
+        description: 行の `validators` に `knowledge-checks` を持つか
+  - name: ConfigError
+    title: 読めない dev-docs.yaml
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: 例外
+    summary: '`dev-docs.yaml` が無い・読めない・`documents` が配列でない'
+    inherits: Exception
+    properties:
+      - name: message
+        type: str
+        description: 標準エラーへ出す理由の 1 行
+constants:
+  - name: CONFIG
+    title: 配信の設定のファイル
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    summary: リポジトリの直下の dev-docs の配信の設定
+    value: '"dev-docs.yaml"'
+  - name: CHECKS_ID
+    title: 文書の違反の検査の ID
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    summary: '`validators[]` の文書の違反の検査の `id`'
+    value: '"knowledge-checks"'
+functions:
+  - name: main
+    title: 全ての文書の検査の入口
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: 入口
+    scope: public
+    summary: 全ての文書を検査し、違反を 1 件 1 行で出して終了コードで合否を返す
+    args:
+      - name: argv
+        title: 引数
+        type: Sequence[str] | None
+        required: false
+        default: None
+        description: コマンドの引数。`None` は `sys.argv[1:]`。引数は取らない（`--help` だけ）
+    returns:
+      type: int
+      description: 終了コード。`0` = 違反なし、`1` = 違反が 1 件以上か想定していない例外、`2` = 検査を始めなかった
+    process: |-
+      1. argparse で引数を読み、標準出力を UTF-8 にする
+      2. maid の在りかを確かめる（maid の在りかの確認）
+         - 引けない場合、標準エラーへ `maid が PATH にありません。開発コマンドの『環境構築（クローン直後）』で maid を入れてください` を出し `2` を返す
+      3. 作業ディレクトリの `dev-docs.yaml` の `documents[]` を読む（dev-docs.yaml の読み込み）
+         - 読めない dev-docs.yaml の場合、標準エラーへ理由を出し `2` を返す
+      4. 検査する文書を引き（検査する文書の列挙）、並列に読む（ファイルの並列の読み込み）
+      5. スキーマの検査器を作り（スキーマの検査器の作成）、ID の索引を 1 度だけ作る（ID の索引の作成）
+      6. 文書ごとに検査し（文書 1 件の検査）、違反を `{ファイルのパス}:{行}: {項目のパス}: {内容}` の 1 行ずつ、文書のパスの順に標準出力へ出す
+      7. 最後に `{文書の数} 件の文書を検査し、違反は {違反の数} 件でした` を出し、違反があれば `1`、無ければ `0` を返す
+         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返す
+    unit_tests:
+      - name: test_main
+        case: 正常
+        summary: 違反の無いリポジトリ
+        condition: '`dev-docs.yaml`・`schemas/rule.schema.yaml`・違反の無い `docs/rule/` の文書 2 件を持つ一時フォルダ'
+        mock: maid の在りかの確認を、正しい図と答えるスクリプトのパスに差し替える
+        expected: '`0` を返し、標準出力の最後の行が `2 件の文書を検査し、違反は 0 件でした`'
+      - name: test_main_when_violations
+        case: 正常
+        summary: 違反がある
+        condition: '`description` の無い文書と、項目の ID が重複した文書'
+        mock: maid の在りかの確認を差し替える
+        expected: '`1` を返し、2 つの文書の違反が `{パス}:{行}: {項目のパス}: ` で始まる行で出る'
+      - name: test_main_when_maid_missing
+        case: 正常
+        summary: maid が無い
+        condition: 違反の無いリポジトリ
+        mock: maid の在りかの確認を `None` に差し替える
+        expected: '`2` を返し、標準エラーに `maid` が出る'
+      - name: test_main_when_config_missing
+        case: 正常
+        summary: dev-docs.yaml が無い
+        condition: '`dev-docs.yaml` を持たない一時フォルダ'
+        mock: maid の在りかの確認を差し替える
+        expected: '`2` を返し、標準エラーに `dev-docs.yaml` が出る'
+    callees:
+      - MOD-72-3#functions[find_maid]
+      - MOD-72-2#functions[read_texts]
+      - MOD-72-4#functions[build_id_index]
+    refs:
+      - IF-72-3#
+  - name: load_config
+    title: dev-docs.yaml の読み込み
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: 読み込み
+    scope: public
+    summary: '`dev-docs.yaml` の `documents[]` の行を読む'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`dev-docs.yaml` を持つフォルダ'
+    returns:
+      type: list[Mapping[str, Any]]
+      description: '`documents[]` の行'
+    process: |-
+      1. `{root}/dev-docs.yaml` が無い場合、`dev-docs.yaml がありません` の読めない dev-docs.yaml を送出する
+      2. 文書として読む（文書の読み込み）
+         - 読めない文書の場合、`dev-docs.yaml の {行} 行目が読めません: {理由}` の読めない dev-docs.yaml を送出する
+      3. `documents` がマッピングの配列でない場合、`dev-docs.yaml に documents の配列がありません` の読めない dev-docs.yaml を送出する
+      4. `documents` を返す
+    exceptions:
+      - name: ConfigError
+        condition: '`dev-docs.yaml` が無い'
+        message: dev-docs.yaml がありません
+      - name: ConfigError
+        condition: YAML として読めない
+        message: 'dev-docs.yaml の {行} 行目が読めません: {理由}'
+      - name: ConfigError
+        condition: '`documents` がマッピングの配列でない'
+        message: dev-docs.yaml に documents の配列がありません
+    unit_tests:
+      - name: test_load_config
+        case: 正常
+        summary: 行を読む
+        condition: '`documents` に 2 行を持つ `dev-docs.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: 2 行
+      - name: test_load_config_when_missing
+        case: 異常
+        summary: ファイルが無い
+        condition: 空の一時フォルダ
+        mock: なし（一時ディレクトリ）
+        expected: '`ConfigError` で、メッセージに `dev-docs.yaml がありません`'
+        exception: '`dev-docs.yaml` が無い'
+      - name: test_load_config_when_broken
+        case: 異常
+        summary: YAML として読めない
+        condition: 括弧の閉じていない `dev-docs.yaml`
+        mock: なし（一時ディレクトリ）
+        expected: '`ConfigError` で、メッセージに行'
+        exception: YAML として読めない
+      - name: test_load_config_when_no_documents
+        case: 異常
+        summary: documents が無い
+        condition: '`name: knowledge` だけの `dev-docs.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: '`ConfigError`'
+        exception: '`documents` がマッピングの配列でない'
+    callees:
+      - MOD-72-2#functions[load_document]
+  - name: list_targets
+    title: 検査する文書の列挙
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: '`documents[]` の行の `paths`・`exclude` に当たるファイルを、当てる検査と並べて返す'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: glob の起点
+      - name: rows
+        title: documents の行
+        type: Sequence[Mapping[str, Any]]
+        required: true
+        description: '`load_config` が返した行'
+    returns:
+      type: list[Target]
+      description: パスの順の検査する文書。同じファイルは最初に当たった行で 1 件
+    process: |-
+      1. `enabled` が `false` の行と、`schema` を持たない行を飛ばす
+      2. 行の `paths` の各パターンで `root.glob(パターン)` のファイルを引き、ファイル名が `exclude` のどれかに `PurePosixPath.full_match` で当たるものを除く（dev-docs の `DocumentTable.matches` と同じ判定）
+      3. `validators` に `CHECKS_ID` を持つ行の文書は、文書の違反の検査も当てる
+      4. パスの順に並べて返す
+    unit_tests:
+      - name: test_list_targets
+        case: 正常
+        summary: 行のパターンで引く
+        condition: '`docs/rule/*.yaml`（validators に knowledge-checks）の行と `scripts/files.yaml`（validators なし）の行。文書 2 件と files.yaml'
+        mock: なし（一時ディレクトリ）
+        expected: 3 件で、rule の 2 件は `checks` が `True`、files.yaml は `False`
+      - name: test_list_targets_when_excluded
+        case: 正常
+        summary: exclude と無効な行
+        condition: '`exclude: ["index.yaml"]` の行に `index.yaml` と文書 1 件、`enabled: false` の行に文書 1 件'
+        mock: なし（一時ディレクトリ）
+        expected: 文書 1 件だけ
+  - name: build_validators
+    title: スキーマの検査器の作成
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: '`schemas/*.schema.yaml` を互いの `$ref` で引けるようにした、スキーマのパス → 検査器を作る'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`schemas/` を持つフォルダ'
+      - name: schema_paths
+        title: 使うスキーマ
+        type: Iterable[str]
+        required: true
+        description: 検査する文書の `schema` の値
+    returns:
+      type: dict[str, Draft202012Validator | str]
+      description: スキーマのパス → 検査器。読めないスキーマは理由の文字列
+    process: |-
+      1. `schemas/*.schema.yaml` を `YAML(typ="safe")` で読み、ファイル名を URI にした `referencing.Registry` に入れる（`common.schema.yaml#/$defs/...` の `$ref` を解く。LIB-72-2）
+      2. `schema_paths` の各パスについて `Draft202012Validator(スキーマ, registry=...)` を作る
+         - ファイルが無い・読めない・`check_schema` が `SchemaError` を送出した場合、そのパスを理由の文字列にする
+    unit_tests:
+      - name: test_build_validators
+        case: 正常
+        summary: 他のスキーマへの $ref を解く
+        condition: '`rule.schema.yaml` が `common.schema.yaml#/$defs/metadata` を `$ref` で指す一時フォルダ'
+        mock: なし（一時ディレクトリ）
+        expected: 検査器が、`common` の必須のキーの無い文書に誤りを返す
+      - name: test_build_validators_when_missing
+        case: 正常
+        summary: スキーマが無い
+        condition: '`schemas/missing.schema.yaml` を渡す'
+        mock: なし（一時ディレクトリ）
+        expected: 値が理由の文字列
+  - name: check_target
+    title: 文書 1 件の検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: サービス
+    scope: public
+    summary: 文書 1 件にスキーマの検査と文書の違反の検査を当て、（行、項目のパス、内容）で返す
+    args:
+      - name: target
+        title: 検査する文書
+        type: Target
+        required: true
+        description: '`list_targets` が返した 1 件'
+      - name: text
+        title: 中身
+        type: str | None
+        required: true
+        description: '`read_texts` が返した中身。読めなかったときは `None`'
+      - name: validator
+        title: スキーマの検査器
+        type: Draft202012Validator | str
+        required: true
+        description: '`build_validators` の値'
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: 文書の違反の検査へ渡す
+      - name: executable
+        title: maid の実行ファイル
+        type: str
+        required: true
+        description: '`find_maid` が返したパス'
+      - name: index
+        title: ID の索引
+        type: Mapping[str, frozenset[str]]
+        required: true
+        description: '`build_id_index` が 1 度だけ作った索引'
+    returns:
+      type: list[tuple[int, str, str]]
+      description: （文書の行、項目のパス、内容）。スキーマの違反の後に文書の違反
+    process: |-
+      1. `text` が `None` の場合、`(1, "$", "ファイルを UTF-8 で読めません")` だけを返す
+      2. 文書として読む（文書の読み込み）
+         - 読めない文書の場合、`({行}, "$", "YAML として読めません: {理由}")` だけを返す
+      3. `validator` が文字列の場合、`(1, "$", "スキーマ {schema} を使えません: {理由}")` を加える。検査器の場合、`iter_errors` の誤りごとに `(行, 項目のパス, "schema: {message}")` を加える（項目の行の引き当て・項目のパスの組み立て）
+      4. `target.checks` なら、締め切りを今から `LIMIT_SEC` 後にして文書の違反を検査し（文書の検査。`index` を渡す）、各違反の `rule` の先頭の `{行} 行目: ` を行に、残りを内容にして加える
+    unit_tests:
+      - name: test_check_target
+        case: 正常
+        summary: スキーマと文書の違反を並べる
+        condition: '`description` が無く、項目の ID が重複した文書。`checks` が `True`'
+        mock: maid を、正しい図と答えるスクリプトに差し替える
+        expected: '`schema: ` で始まる内容の後に、`items[{添字}].id` の重複が行つきで並ぶ。内容に `行目: ` が残らない'
+      - name: test_check_target_when_no_checks
+        case: 正常
+        summary: 文書の違反の検査を当てない行
+        condition: 項目の ID が重複し、スキーマには合う文書。`checks` が `False`
+        mock: なし
+        expected: 空
+      - name: test_check_target_when_unreadable
+        case: 正常
+        summary: 読めないファイル
+        condition: '`text` が `None`'
+        mock: なし
+        expected: '`(1, "$", ...)` の 1 件'
+      - name: test_check_target_when_broken
+        case: 正常
+        summary: 読めない YAML
+        condition: 括弧の閉じていない YAML
+        mock: なし
+        expected: '`$` の 1 件で、行が読めなかった行'
+    callees:
+      - MOD-72-2#functions[load_document]
+      - MOD-72-2#functions[line_of]
+      - MOD-72-2#functions[format_path]
+      - MOD-72-4#functions[check_document]
+notes:
+  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と `jsonschema>=4.26.0`（LIB-72-2）を書き、`knowledge_checks.py` を同じフォルダから import する。

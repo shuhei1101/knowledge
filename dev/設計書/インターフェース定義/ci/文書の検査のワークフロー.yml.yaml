@@ -17,7 +17,7 @@ flows:
         participant W as 文書の検査のワークフロー
         participant S as 全ての文書の検査
         G->>W: pull_request で起動する
-        W->>W: Python 3.12 と依存と maid を入れる
+        W->>W: Python 3.14 と依存と maid を入れる
         W->>S: リポジトリの直下で起動する
         S-->>W: 終了コード 0
         W-->>G: 成功
@@ -59,7 +59,7 @@ flows:
     expected:
       - ジョブが失敗で終わる
       - ジョブのログに maid が PATH から引けないことが出る
-lead: PR ごとに Python 3.12 と maid を入れ、「全ての文書の検査」を走らせて、その終了コードをジョブの合否にする。
+lead: PR ごとに Python 3.14 と maid を入れ、「全ての文書の検査」を走らせて、その終了コードをジョブの合否にする。
 idempotent: true
 side_effects: 'なし（リポジトリに書き込まない。`permissions` は `contents: read` だけ）'
 callers:
@@ -70,7 +70,7 @@ constraints:
     constraint: '`ubuntu-latest`'
     decided_by: NFR-72-1#requirements[スクリプトが動く OS]
   - item: 所要時間
-    constraint: 未確定（ジョブの `timeout-minutes` に置く）
+    constraint: '5 分（ジョブの `timeout-minutes: 5`）'
     decided_by: NFR-72-1#requirements[CI の 1 回の所要時間]
   - item: maid の入れ方
     constraint: ランナーのグローバル（`npm install -g @probelabs/maid`）。バージョンは開発コマンドの環境構築と同じものに固定する

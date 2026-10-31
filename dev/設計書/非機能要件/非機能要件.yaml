@@ -25,13 +25,26 @@ requirements:
     external_constraint: GitHub Actions の GitHub ホストランナーのジョブは 6 時間で打ち切られる
     source_kind: 実行基盤の制限
     source: https://docs.github.com/ja/actions/administering-github-actions/usage-limits-billing-and-administration
-    value: 未確定
+    value: '5'
     unit: 分
-    rationale: 文書の数と検査のスクリプトの処理時間が決まるモジュール構成設計で決める
+    rationale: 外側の 6 時間は上限で、PR の待ちは内側の所要時間で決める。内側（内訳）の合計 3 分に 50% の余裕を足して切り上げた 5 分をジョブの `timeout-minutes` にする。内側は実測が無いので仮置きで、実装の後に CI の実行で測って見直す
+    breakdown:
+      - part: 環境の用意（checkout・uv と Python 3.14・依存・`npm install -g` の maid）
+        value: 2 分
+        notes: 実測が無いので仮置き
+      - part: 全ての文書の検査
+        value: 1 分
+        notes: 手元の測定で全ての文書の読み込みが約 1 秒、maid は mermaid を持つ文書（PoC で 13 件）だけで 1 件最大 0.90 秒。ランナーの実測が無いので 1 分を仮置き
+      - part: 余裕（内側の 50%）
+        value: 1.5 分
+      - part: ジョブの打ち切り（切り上げ）
+        value: 5 分
+    overflow: GitHub Actions がジョブを打ち切り、チェックが失敗する（PR はマージできない）
   - name: スクリプトが動く OS
     english_name: supported_os
     category: 動作環境
-    external_constraint: 未確定
-    source_kind: 未確定
-    value: 未確定
-    rationale: dev-docs が動く端末と CI のランナーを、モジュール構成設計で決める
+    external_constraint: dev-docs は端末の WSL2 の Ubuntu で動き、CI は GitHub ホストランナーの `ubuntu-latest` で動く
+    source_kind: 実行基盤の制限
+    value: Linux（WSL2 の Ubuntu と ubuntu-latest）
+    rationale: スクリプトを起動するのは dev-docs と CI だけで、どちらも Linux で動く。maid は Linux 側のファイルシステムに入れ、スクリプトの仮想環境は uv のキャッシュ（Linux 側）に置く（MOD-72-1）
+    source: ARCH-72-1#subsystems[scripts]

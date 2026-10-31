@@ -70,7 +70,7 @@ subsystems:
   - name: 検査と変換のスクリプト
     scope: scripts
     role: スキーマで見られない決まりの検査と、全ての種類の YAML から mdmark の記法の Markdown への変換を、dev-docs の validators・converters の約束で返す
-    runtime: Python 3.12
+    runtime: Python 3.14
     runs_on: dev-docs が起動する子プロセスと CI
   - name: CI
     scope: ci

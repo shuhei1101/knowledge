@@ -1,0 +1,268 @@
+id: "MOD-72-5"
+title: "検査と変換のスクリプト / scripts / knowledge_markdown.py"
+lead: dev-docs の converters の `knowledge-markdown`。標準入力の文書 1 件を、項目の `group` の階層を見出しにした mdmark の記法の Markdown にして標準出力へ返す（IF-72-2）。
+constants:
+  - name: HIDDEN_KEYS
+    title: 本文に出さないキー
+    container: scripts/knowledge_markdown.py
+    usecase: 文書の Markdown への変換
+    summary: dev-docs の画面がメタデータとして出すキー
+    value: frozenset({"id", "kind", "tags", "status", "visibility", "rev", "last_reviewed", "aliases"})
+    refs:
+      - IF-72-2#constraints[出さないキー]
+    reason: '`aliases` は dev-docs の検索の別名で、本文の読み手に役立たない'
+  - name: LAYOUT_KEYS
+    title: 構成が決まっているキー
+    container: scripts/knowledge_markdown.py
+    usecase: 文書の Markdown への変換
+    summary: 出す場所が決まっていて、種類に固有のキーの節にしないキー
+    value: frozenset({"name", "description", "items", "related", "sources"})
+functions:
+  - name: main
+    title: 文書の Markdown への変換の入口
+    kind: 関数
+    container: scripts/knowledge_markdown.py
+    usecase: 文書の Markdown への変換
+    role: 入口
+    scope: public
+    summary: 標準入力の文書を Markdown にして標準出力へ出す
+    args:
+      - name: argv
+        title: 引数
+        type: Sequence[str] | None
+        required: false
+        default: None
+        description: コマンドの引数。`None` は `sys.argv[1:]`。引数は取らない（`--help` だけ）
+    returns:
+      type: int
+      description: 終了コード。`0` = 変換できた、`1` = 読めない文書・`kind` のスキーマが無い・想定していない例外
+    process: |-
+      1. argparse で引数を読み、標準入出力を UTF-8 にする
+      2. 標準入力を文書として読む（文書の読み込み）
+         - 読めない文書の場合、標準エラーへ `{行} 行目: YAML として読めません: {理由}` を出し `1` を返す
+      3. `kind` のスキーマを読む（スキーマの読み込み）
+         - スキーマが無い場合、標準エラーへ `schemas/{kind}.schema.yaml がありません` を出し、標準出力へ何も出さず `1` を返す
+      4. Markdown にして（文書の変換）標準出力へ出し、`0` を返す
+         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返す
+    unit_tests:
+      - name: test_main
+        case: 正常
+        summary: 変換して出す
+        condition: 標準入力に rule の文書。作業ディレクトリは `schemas/rule.schema.yaml` を持つ一時フォルダ
+        mock: なし（一時ディレクトリ・`monkeypatch` の標準入力）
+        expected: '`0` を返し、標準出力が `# {name}` で始まる'
+      - name: test_main_when_schema_missing
+        case: 正常
+        summary: スキーマが無い
+        condition: '標準入力に `kind: missing` の文書'
+        mock: なし（一時ディレクトリ）
+        expected: '`1` を返し、標準出力が空で、標準エラーに `schemas/missing.schema.yaml` が出る'
+      - name: test_main_when_broken
+        case: 正常
+        summary: 読めない YAML
+        condition: 標準入力に括弧の閉じていない YAML
+        mock: なし
+        expected: '`1` を返し、標準エラーに `行目: YAML として読めません` が出る'
+    callees:
+      - MOD-72-2#functions[load_document]
+    refs:
+      - IF-72-2#
+  - name: load_schema
+    title: スキーマの読み込み
+    kind: 関数
+    container: scripts/knowledge_markdown.py
+    usecase: 文書の Markdown への変換
+    role: 読み込み
+    scope: public
+    summary: 文書の `kind` に当たる `schemas/{kind}.schema.yaml` を読む
+    args:
+      - name: root
+        title: 配信元の直下
+        type: Path
+        required: true
+        description: '`schemas/` を持つリポジトリの直下'
+      - name: kind
+        title: 種類
+        type: object
+        required: true
+        description: 文書の `kind` の値
+    returns:
+      type: Mapping[str, Any]
+      description: スキーマの中身
+    process: |-
+      1. `kind` が空でない文字列でない場合、スキーマが無い例外を送出する
+      2. `{root}/schemas/{kind}.schema.yaml` がファイルでない場合、スキーマが無い例外を送出する
+      3. `YAML(typ="safe")` で読んで返す
+    exceptions:
+      - name: FileNotFoundError
+        condition: '`kind` が空でない文字列でない'
+        message: 文書に kind がありません
+      - name: FileNotFoundError
+        condition: '`schemas/{kind}.schema.yaml` が無い'
+        message: schemas/{kind}.schema.yaml がありません
+    unit_tests:
+      - name: test_load_schema
+        case: 正常
+        summary: スキーマを読む
+        condition: '`schemas/rule.schema.yaml` を持つ一時フォルダと `kind="rule"`'
+        mock: なし（一時ディレクトリ）
+        expected: スキーマの `title` が読める
+      - name: test_load_schema_when_missing
+        case: 異常
+        summary: スキーマが無い
+        condition: '`kind="missing"`'
+        mock: なし（一時ディレクトリ）
+        expected: '`FileNotFoundError` で、メッセージに `schemas/missing.schema.yaml`'
+        exception: '`schemas/{kind}.schema.yaml` が無い'
+      - name: test_load_schema_when_no_kind
+        case: 異常
+        summary: kind が無い
+        condition: '`kind=None`'
+        mock: なし
+        expected: '`FileNotFoundError`'
+        exception: '`kind` が空でない文字列でない'
+  - name: convert
+    title: 文書の変換
+    kind: 関数
+    container: scripts/knowledge_markdown.py
+    usecase: 文書の Markdown への変換
+    role: サービス
+    scope: public
+    summary: 文書を「タイトル・概要・項目・種類に固有のキー・関連・出典」の並びの Markdown にする
+    args:
+      - name: doc
+        title: 文書
+        type: Mapping[str, Any]
+        required: true
+        description: 読んだ文書
+      - name: schema
+        title: スキーマ
+        type: Mapping[str, Any]
+        required: true
+        description: 文書の `kind` のスキーマ。種類に固有のキーの見出しに `properties.{キー}.title` を使う
+    returns:
+      type: str
+      description: 末尾に改行 1 つを持つ Markdown
+    process: |-
+      1. `# {name}` と、`description` の段落を置く
+      2. `id` が `overview` の項目があれば、その本文を見出しを付けずに置く
+      3. 残りの項目を見出しつきで並べる（項目の見出しの組み立て）
+      4. `HIDDEN_KEYS`・`LAYOUT_KEYS` に無いキーを文書の並びで `## {スキーマの title（無ければキー）}` の節にする（値の組み立て）
+      5. `related` があれば `## 関連` に、各行を `- [{to}](id:{to})（{type}）: {when}` で並べる
+      6. `sources` があれば `## 出典` に、各行を `- {id}: [{title}]({url})（{note}）` で並べる（`id`・`url`・`note` が無い行はその部分を省く）
+      7. ブロックごとに空行を 1 つ挟んでつなぐ。項目の本文は文字を書き換えない（mdmark のマーカーと `id:` のリンクを含む）
+    unit_tests:
+      - name: test_convert
+        case: 正常
+        summary: 規約を決まった並びにする
+        condition: '`overview`・`group` が `語の選び方` と `語の選び方 > 原則` の項目・`related` 1 行・`sources` 1 行を持つ rule の文書'
+        mock: なし
+        expected: '`# {name}`・`description`・`overview` の本文・`## 語の選び方`・`### 原則`・`## 関連`・`## 出典` の順で、`tags`・`rev` は出ない'
+      - name: test_convert_when_body_has_markers
+        case: 正常
+        summary: 本文を書き換えない
+        condition: '本文に `<!-- table: data -->` の表と `[A](id:a#x)` を持つ項目'
+        mock: なし
+        expected: 本文が 1 字も違わずに含まれる
+      - name: test_convert_when_extra_keys
+        case: 正常
+        summary: 種類に固有のキーを節にする
+        condition: '`arguments`（オブジェクトの配列）を持ち、スキーマの `properties.arguments.title` が `引数`'
+        mock: なし
+        expected: '`## 引数` の下に `<!-- table: data -->` の表'
+      - name: test_convert_when_no_title_in_schema
+        case: 正常
+        summary: title の無いキー
+        condition: スキーマに `properties.extra` が無い文書のキー `extra`
+        mock: なし
+        expected: '`## extra` の節'
+  - name: render_items
+    title: 項目の見出しの組み立て
+    kind: 関数
+    container: scripts/knowledge_markdown.py
+    usecase: 文書の Markdown への変換
+    scope: public
+    summary: 項目を `group` の階層と `name` を見出しにしたブロックの並びにする
+    args:
+      - name: items
+        title: 項目
+        type: Sequence[Mapping[str, Any]]
+        required: true
+        description: '`overview` を除いた項目（ファイルの並び）'
+    returns:
+      type: list[str]
+      description: 見出しと本文のブロック
+    process: |-
+      1. 直前の項目の `group` の段の並びを控える（初めは空）
+      2. 項目ごとに `group` を ` > ` で分け、直前と先頭から一致する段を飛ばして、残りの段を `#` を `2 + 段の深さ` 個付けた見出しにする
+      3. 項目の `name` を `group` の段の数の 1 つ下の見出し（`group` が無い項目は `##`）にし、本文を置く
+         - 見出しが `######` を超える場合、`######` に揃える
+    unit_tests:
+      - name: test_render_items
+        case: 正常
+        summary: 同じ段を繰り返さない
+        condition: '`group` が `A`・`A > B`・`A > B`・`C` の 4 項目'
+        mock: なし
+        expected: '`## A`・`### {1 つ目の name}`・`### B`・`#### {2 つ目}`・`#### {3 つ目}`・`## C`・`### {4 つ目}` の順で、`### B` は 1 回だけ'
+      - name: test_render_items_when_no_group
+        case: 正常
+        summary: group が無い項目
+        condition: '`group` を持たない 1 項目'
+        mock: なし
+        expected: '`## {name}` と本文'
+      - name: test_render_items_when_too_deep
+        case: 正常
+        summary: 深すぎる階層
+        condition: '`group` が 5 段の項目'
+        mock: なし
+        expected: '`name` の見出しが `######`'
+  - name: render_value
+    title: 値の組み立て
+    kind: 関数
+    container: scripts/knowledge_markdown.py
+    usecase: 文書の Markdown への変換
+    scope: public
+    summary: 種類に固有のキーの値を、型に合う Markdown のブロックにする
+    args:
+      - name: value
+        title: 値
+        type: object
+        required: true
+        description: キーの値
+    returns:
+      type: str
+      description: Markdown のブロック
+    process: |-
+      1. 値の型で分ける
+         - 文字列の場合、そのままの段落
+         - 文字列の配列の場合、`- {要素}` の箇条書き
+         - オブジェクトの配列の場合、`<!-- table: data -->` と `<!-- /table -->` で囲んだ表。列は全ての要素のキーを現れた順に並べ、セルの `|` は `\|`、改行は `<br>` にする。無いセルは `-`
+         - オブジェクトの場合、`- {キー}: {値}` の箇条書き
+         - それ以外（数・真偽値）の場合、`str(値)` の段落
+    unit_tests:
+      - name: test_render_value_when_string
+        case: 正常
+        summary: 文字列
+        condition: '`"段落"`'
+        mock: なし
+        expected: '`段落`'
+      - name: test_render_value_when_string_list
+        case: 正常
+        summary: 文字列の配列
+        condition: '`["a", "b"]`'
+        mock: なし
+        expected: '`- a\n- b`'
+      - name: test_render_value_when_object_list
+        case: 正常
+        summary: オブジェクトの配列
+        condition: '`[{"name": "x", "note": "a|b"}, {"name": "y"}]`'
+        mock: なし
+        expected: マーカーで囲んだ表で、列が `name`・`note`、`a\|b` と無いセルの `-` がある
+      - name: test_render_value_when_object
+        case: 正常
+        summary: オブジェクト
+        condition: '`{"a": 1}`'
+        mock: なし
+        expected: '`- a: 1`'
+notes:
+  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を書き、`_common.py` を同じフォルダから import する。
