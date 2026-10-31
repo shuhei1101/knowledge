@@ -1,0 +1,1 @@
+# プロンプトの YAML の規約をフックの注入文・MCP の instructions・ツールの description に広げ、キーを見直してスキーマを schemas/ に置く
