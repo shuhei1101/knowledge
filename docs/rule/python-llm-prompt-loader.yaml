@@ -27,13 +27,13 @@ tags:
   - name: action:検証
 status: current
 visibility: internal
-rev: 5
-last_reviewed: '2026-10-24'
+rev: 6
+last_reviewed: '2026-10-31'
 items:
   - id: overview
     name: 概要
     body: |-
-      `prompts/{id}.yaml` を読み、`when` に当たる部品の `text.en` を Jinja2 でレンダリングして 1 つのプロンプトに組み立てる。書き方は [プロンプトファイル](id:prompt-file)。
+      `prompts/{id}.yaml` を読み、`when` に当たる部品のトップレベルの `lang` の本文を Jinja2 でレンダリングして 1 つのプロンプトに組み立てる。書き方は [プロンプトファイル](id:prompt-file)。
   - id: structure-01
     group: 構成
     name: ローダーのファイル構成
@@ -58,7 +58,7 @@ items:
     group: node_loader.py
     name: 戻り値は TypedDict
     body: |-
-      - 戻り値は TypedDict（`PromptFile`: id / node / tags / vars / output / parts）
+      - 戻り値は TypedDict（`PromptFile`: id / name / description / kind / lang / tags / vars / examples / output / parts）
   - id: builder-01
     group: builder.py
     name: StrictUndefined の Environment
@@ -68,7 +68,7 @@ items:
     group: builder.py
     name: build_prompt の検証
     body: |-
-      - `build_prompt(prompt_id, **vars)`: `vars` の必須が渡されているかを確かめ、渡されていない必須でない変数を `None` で補い、`parts` を順に見て `when` が真の部品の `text.en` をレンダリングし `"\n\n".join`
+      - `build_prompt(prompt_id, **vars)`: `vars` の必須が渡されているかを確かめ、渡されていない必須でない変数を `None` で補い、`parts` を順に見て `when` が真の部品のトップレベルの `lang` の本文をレンダリングし `"\n\n".join`
   - id: builder-03
     group: builder.py
     name: role 別の build_bundle

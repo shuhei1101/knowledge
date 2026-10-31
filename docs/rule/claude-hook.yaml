@@ -25,8 +25,8 @@ tags:
   - name: action:作成
 status: current
 visibility: internal
-rev: 6
-last_reviewed: '2026-10-24'
+rev: 7
+last_reviewed: '2026-10-31'
 sources:
   - title: "Claude Code: Hooks reference"
     url: https://code.claude.com/docs/en/hooks
@@ -38,8 +38,7 @@ items:
       - settings.json内にインラインで書かないでください。
         - pythonファイルは`.claude/hooks/*.py`: スクリプト名はフックイベントと同じにしてください。
           - 例: `user_prompt_submit.py`
-        - プロンプトファイルは`.claude/hooks/*.md`
-          - 変数を埋め込みたい場合は`.claude/hooks/*.j2`にする
+        - プロンプトファイルはプラグインのルートの `content/prompts/` の YAML（[プロンプトファイル](id:prompt-file)）
   - id: rules-02
     group: ルール
     name: additionalContext の上限
