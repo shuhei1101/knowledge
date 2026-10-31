@@ -5,8 +5,9 @@ scenarios:
     setup:
       - name: Mock
         description: 差し替えない
-      - name: master の knowledge
-        description: '`visibility: public` の文書（使い方・変更履歴）と `visibility: internal` の文書（規約など）があり、公開の文書から internal の文書への参照を 1 つ以上含む'
+      - name: knowledge のクローン
+        description: '`visibility: public` の文書と `visibility: internal` の文書がある'
+        notes: 公開の文書から公開の文書への参照と、internal の文書への参照を 1 つずつ持つ公開の文書をクローンに置く
     flow: |-
       sequenceDiagram
         actor D as 開発者
