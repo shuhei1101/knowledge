@@ -16,6 +16,7 @@ from _common import (
     load_config,
     load_document,
     read_texts,
+    strings,
 )
 
 if TYPE_CHECKING:
@@ -225,5 +226,21 @@ def test_list_row_files_when_disabled(tmp_path: Path) -> None:
     row = {"id": "guide", "paths": ["docs/guide/*.yaml"], "enabled": False}
     # 実行
     result = list_row_files(tmp_path, row)
+    # 検証
+    assert result == []
+
+
+def test_strings() -> None:
+    """文字列だけを返す（正常系）。"""
+    # 実行
+    result = strings(["a", 1, "b"])
+    # 検証
+    assert result == ["a", "b"]
+
+
+def test_strings_when_not_list() -> None:
+    """配列でない値（正常系）。"""
+    # 実行
+    result = strings("a")
     # 検証
     assert result == []
