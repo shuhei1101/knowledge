@@ -52,6 +52,71 @@ layers:
   - name: 非機能要件テスト
     run_all: 未確定
   - name: E2E テスト
-    run_all: 未確定
+    description: pytest で `tests/e2e/` を実行する。knowledge の HEAD を一時フォルダへクローンして develop を踏ませ、端末の dev-docs をテストごとに子プロセスで起動して、管理の MCP・文書の MCP・画面の API を HTTP で呼んで確かめる。文書の違反の検査は、CI のジョブと同じ `uv run --frozen --script scripts/check_all.py` をクローンで子プロセスとして起動する。
     prerequisites:
       - '`/dev-docs:global-setup` を終えた端末。起動する dev-docs は、端末の設定（`~/.config/dev-docs/settings.yaml`）の `clone` を読み、その `.venv` の Python で起動する（環境変数 `KNOWLEDGE_E2E_DEV_DOCS_CLONE` を渡せばそちらを使う）。端末の設定は読むだけで書き換えず、テストは一時フォルダの設定（`DEV_DOCS_CONFIG`）と空いているポート（`DEV_DOCS_PORT`）で起動する'
+      - uv と Python 3.14・`git` が使え、開発コマンドの環境構築（クローン直後）を流してあり、maid が PATH にある
+      - リポジトリの直下で実行する。テストは HEAD の commit をクローンするため、確かめる変更は commit しておく
+      - 誤実行を防ぐため `--run-e2e` を必須にする（無いと全件 skip する）
+    run_all: |-
+      ```bash
+      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/e2e --run-e2e
+      ```
+    run_one:
+      label: ケース
+      command: |-
+        ```bash
+        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest {E2Eテストファイルパス}::{テスト関数名} --run-e2e
+        ```
+    carry_over: |-
+      対象ケースの実行が 1 ターンより長くかかる場合に使う。
+      結果の退避先と中断の合図の場所は `KNOWLEDGE_RUN_DIR=$RUN_DIR` を渡して固定する。
+      引き継ぎのときは、申し送りが指す既存の `RUN_DIR` を渡して同じ退避先を使う。
+      前回が中断で終わっている場合、合図ファイル（`$RUN_DIR/abort`）は自動で消えないため、渡す前に手で消す。
+
+      ```bash
+      RUN_DIR=${RUN_DIR:-${TMPDIR:-/tmp}/knowledge-e2e/$(date +%Y%m%d%H%M%S)}
+      mkdir -p "$RUN_DIR"
+      [ -f "$RUN_DIR/release_head" ] || { H=$(git rev-parse HEAD) && echo "$H" > "$RUN_DIR/release_head"; }
+      rm -f "$RUN_DIR/abort"
+      cat > "$RUN_DIR/run.sh" <<EOF
+      env KNOWLEDGE_RUN_DIR="$RUN_DIR" \\
+        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 \\
+        pytest --run-e2e {テストファイルパス}::{関数名} ...
+      echo done > "$RUN_DIR/done"
+      EOF
+      rm -f "$RUN_DIR/done"
+      setsid nohup bash "$RUN_DIR/run.sh" >> "$RUN_DIR/pytest.log" 2>&1 < /dev/null &
+      disown
+      ```
+
+      結果は `$RUN_DIR/results.jsonl`（1 行 = テスト 1 件の `test_id`・`phase`・`outcome`・`duration_sec`・`reason`）、完了合図は `$RUN_DIR/done`、release の位置の控えは `$RUN_DIR/release_head` に置く。
+      中断の合図で畳んだテストの `outcome` は `not_run` になり、同じ `RUN_DIR` で再開するときの回し直す分になる。
+      release PR への申し送りに `RUN_DIR` を含める。
+    monitoring: |-
+      5 分ごとに、`$RUN_DIR/results.jsonl` の結果の内訳と、完了合図（`$RUN_DIR/done`）の有無を出す。
+      Claude Code からは `Monitor` ツールへ渡す（`persistent: true`）。
+      `RUN_DIR` の代入は `while` の前に別の文として置く。
+
+      ```bash
+      RUN_DIR=…
+      while true; do
+        echo "== $(date +%H:%M) done=$([ -f "$RUN_DIR/done" ] && echo yes || echo no) $(python3 -c 'import json,collections as C;print(*[f"{k}={v}" for k,v in sorted(C.Counter(json.loads(l)["outcome"] for l in open("'"$RUN_DIR"'/results.jsonl",encoding="utf-8")).items())])' 2>/dev/null) =="
+        [ -f "$RUN_DIR/done" ] && break
+        sleep 300
+      done
+      ```
+
+      完了の判定は `$RUN_DIR/done` の有無と `$RUN_DIR/results.jsonl` の累積の内訳で行う。
+    abort: |-
+      合図ファイル `$RUN_DIR/abort` を作る。作った後に始まるテストは実行せず、`not_run` として `results.jsonl` に積む（実行中のテストは終わるまで走る）。
+
+      ```bash
+      touch "$RUN_DIR/abort"
+      ```
+
+      同じ `RUN_DIR` を渡して再開するときは、合図ファイルを手で消す。
+    duration: 全 14 ケースの直列で約 10 分（1 ケース 25〜50 秒。クローンと dev-docs の起動を毎回行う）
+    parallel: false
+    external_cost: 外部サービスに依存せず、料金は発生しない（dev-docs・maid・変換と検査のスクリプトは手元で動かす）
+    results: 全件実行は標準出力。セッションを跨いで走らせる形は `$RUN_DIR/results.jsonl`
