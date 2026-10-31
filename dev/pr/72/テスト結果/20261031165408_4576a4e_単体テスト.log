@@ -1,0 +1,15 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/unit
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-docs-server-knowledge-docs-mcp
+configfile: pytest.ini
+collected 70 items
+
+tests/unit/scripts/test_check_all.py ................                    [ 22%]
+tests/unit/scripts/test_common.py ............                           [ 40%]
+tests/unit/scripts/test_knowledge_checks.py ...................          [ 67%]
+tests/unit/scripts/test_knowledge_markdown.py .................          [ 91%]
+tests/unit/scripts/test_maid.py ......                                   [100%]
+
+============================== 70 passed in 2.49s ==============================
+exit: 0
