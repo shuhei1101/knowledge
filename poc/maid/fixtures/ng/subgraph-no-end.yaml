@@ -1,0 +1,11 @@
+id: ng-subgraph-no-end
+items:
+  - id: a
+    body: |-
+      前置き
+      ```mermaid
+      flowchart TD
+        subgraph S[枠]
+          A[開始] --> B[終了]
+        C[外] --> A
+      ```

@@ -1,0 +1,132 @@
+fixtures/ok/dev-document-management.yaml	exit=1	20.37s	Traceback (most recent call last):
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 54, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 46, in main
+    res = subprocess.run([maid, "-", "--format", "json"], input=body, capture_output=True, text=True, timeout=left)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/usr/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/node_modules/.bin/maid', '-', '--format', 'json']' timed out after 19.958933433052152 seconds
+fixtures/ok/flowchart-config-location.yaml	exit=0	16.58s	{"violations": []}
+fixtures/ok/flowchart-react-state-placement.yaml	exit=1	20.27s	Traceback (most recent call last):
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 54, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 46, in main
+    res = subprocess.run([maid, "-", "--format", "json"], input=body, capture_output=True, text=True, timeout=left)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/usr/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/node_modules/.bin/maid', '-', '--format', 'json']' timed out after 19.9728131191805 seconds
+fixtures/ok/flowchart-related-link.yaml	exit=0	20.19s	{"violations": []}
+fixtures/ok/flowchart-tag-attach.yaml	exit=1	20.32s	Traceback (most recent call last):
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 54, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 46, in main
+    res = subprocess.run([maid, "-", "--format", "json"], input=body, capture_output=True, text=True, timeout=left)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/usr/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/node_modules/.bin/maid', '-', '--format', 'json']' timed out after 19.978872327832505 seconds
+fixtures/ok/flowchart-term-registration.yaml	exit=1	20.32s	Traceback (most recent call last):
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 54, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 46, in main
+    res = subprocess.run([maid, "-", "--format", "json"], input=body, capture_output=True, text=True, timeout=left)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/usr/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/node_modules/.bin/maid', '-', '--format', 'json']' timed out after 19.979713120032102 seconds
+fixtures/ok/flowchart-word-choice.yaml	exit=0	18.28s	{"violations": []}
+fixtures/ok/flowchart-yaml-file-unit.yaml	exit=0	12.38s	{"violations": []}
+fixtures/ok/markdown-flowchart.yaml	exit=0	15.03s	{"violations": []}
+fixtures/ok/template-flowchart.yaml	exit=1	12.83s	Traceback (most recent call last):
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 54, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 48, in main
+    violations.append({"item": item, "line": doc_line + e["line"] - 1, "column": e["column"], "code": e["code"], "message": e["message"]})
+                                                                                                      ~^^^^^^^^
+KeyError: 'code'
+fixtures/ok/template-interface.yaml	exit=0	12.70s	{"violations": []}
+fixtures/ok/template-scenario.yaml	exit=1	20.23s	Traceback (most recent call last):
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 54, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 46, in main
+    res = subprocess.run([maid, "-", "--format", "json"], input=body, capture_output=True, text=True, timeout=left)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/usr/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/node_modules/.bin/maid', '-', '--format', 'json']' timed out after 3.169497463153675 seconds
+fixtures/ok/ui-screen-division.yaml	exit=1	20.22s	Traceback (most recent call last):
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 54, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 46, in main
+    res = subprocess.run([maid, "-", "--format", "json"], input=body, capture_output=True, text=True, timeout=left)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/usr/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/node_modules/.bin/maid', '-', '--format', 'json']' timed out after 7.529867383884266 seconds
+fixtures/ng/subgraph-no-end.yaml	exit=1	13.02s	Traceback (most recent call last):
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 54, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/poc-scripts-maid-check/poc/maid/check_mermaid.py", line 48, in main
+    violations.append({"item": item, "line": doc_line + e["line"] - 1, "column": e["column"], "code": e.get("code"), "message": e["message"]})
+                                                                                                      ^^^^^^^^^
+KeyError: 'code'
+fixtures/ng/unclosed-bracket.yaml	exit=1	12.10s	{"violations": [{"item": "items[0].body", "line": 8, "column": 8, "code": "FL-NODE-UNCLOSED-BRACKET", "message": "Unclosed '['. Add a matching ']' before the arrow or newline."}]}
+fixtures/ng/unknown-arrow.yaml	exit=1	12.30s	{"violations": [{"item": "items[0].body", "line": 8, "column": 7, "code": null, "message": "Expecting: one of these possible Token sequences:\n  1. [Identifier]\n  2. [NumberLiteral]\nbut found: '>'"}]}

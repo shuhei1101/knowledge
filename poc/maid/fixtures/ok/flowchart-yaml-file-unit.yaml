@@ -1,0 +1,85 @@
+# yaml-language-server: $schema=../../schemas/flowchart.schema.yaml
+id: flowchart-yaml-file-unit
+kind: flowchart
+name: YAML ファイルの単位 判定フローチャート
+description: 文書・データのまとまりを markdown にするか、YAML のどの単位で 1 ファイルにするかを判定し、文書を YAML のファイルに分けるときに読む。
+tags:
+  - name: scope:判定フローチャート
+  - name: tool:markdown
+  - name: tool:yaml
+    main: true
+  - name: topic:データ
+  - name: topic:ファイル
+  - name: topic:フロー
+  - name: topic:フローチャート
+  - name: topic:ライフサイクル
+  - name: topic:判定フローチャート
+  - name: topic:文書
+  - name: action:判定
+status: current
+visibility: internal
+rev: 4
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      文書・データのまとまりを markdown にするか、YAML のどの単位で 1 ファイルにするかを判定
+  - id: yaml-file-unit-flow-01
+    group: YAML ファイルの単位 判定フローチャート
+    name: 判定フロー
+    body: |-
+      ```mermaid
+      flowchart TD
+        START([文書・データのまとまりを置きたい])
+        Q0{道具が markdown を前提にするファイルか? ※1}
+        Q1{外部の 1 つと 1 対 1 で対応するか? ※2}
+        Q2{単独のライフサイクルを持ち ID で参照されるか? ※3}
+        Q3{複数のセッション・ブランチが並行して書くか?}
+        Q4{いつも一覧としてまとめて読まれるか?}
+        Q5{一緒に読み込まれるまとまりか? ※4}
+
+        R1([markdown])
+        R2([対応するもの 1 つ = 1 ファイル])
+        R3([1 項目 = 1 ファイル。ID をファイル名にする])
+        R4([種類ごとに 1 ファイル])
+        R5([そのまとまり = 1 ファイル])
+
+        START --> Q0
+        Q0 -->|YES| R1
+        Q0 -->|NO| Q1
+        Q1 -->|NO| Q2
+        Q1 -->|YES| R2
+        Q2 -->|YES| Q3
+        Q2 -->|NO| Q5
+        Q3 -->|YES| R3
+        Q3 -->|NO| Q4
+        Q4 -->|YES| R4
+        Q4 -->|NO| R3
+        Q5 -->|YES| R5
+        Q5 -->|NO| R4
+      ```
+  - id: yaml-file-unit-flow-02
+    group: YAML ファイルの単位 判定フローチャート
+    name: ※1 markdown を前提にするファイル
+    body: |-
+      - **※1 markdown を前提にするファイル**: README・CLAUDE.md・AGENTS.md・SKILL.md・PR の本文など、道具が markdown として読むファイル
+  - id: yaml-file-unit-flow-03
+    group: YAML ファイルの単位 判定フローチャート
+    name: ※2 外部との 1 対 1
+    body: |-
+      - **※2 外部との 1 対 1**: テストファイル・画面・ソースファイル・外部 API のように、対応する相手が 1 つ決まるもの
+  - id: yaml-file-unit-flow-04
+    group: YAML ファイルの単位 判定フローチャート
+    name: ※3 単独のライフサイクル
+    body: |-
+      - **※3 単独のライフサイクル**: 状態・レビュー・決定を項目ごとに持ち、ほかの文書から ID で指されるもの
+  - id: yaml-file-unit-flow-05
+    group: YAML ファイルの単位 判定フローチャート
+    name: ※4 一緒に読み込まれるまとまり
+    body: |-
+      - **※4 一緒に読み込まれるまとまり**: rule-inject が注入する規約のトピックのように、いつも束で読まれるもの。中は同じキー構造のリストを種類別に並べる
+  - id: yaml-file-unit-flow-06
+    group: YAML ファイルの単位 判定フローチャート
+    name: 子のリストの切り出し
+    body: |-
+      R2・R4・R5 のファイルの中の子のリストは、子が独自の外部対応かライフサイクルを持つときだけ別ファイルに切り出し、親から ID で参照する。

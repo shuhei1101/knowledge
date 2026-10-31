@@ -1,0 +1,85 @@
+# yaml-language-server: $schema=../../schemas/flowchart.schema.yaml
+id: flowchart-tag-attach
+kind: flowchart
+name: タグの付与 判定フローチャート
+description: 文書に出てくる語を、タグとして付けるか、使われているタグを使い回すか、新しく付けるか、広いタグと main も付けるかを判定し、文書にタグを付けるときに読む。
+tags:
+  - name: scope:判定フローチャート
+  - name: topic:タグ
+    main: true
+  - name: topic:フロー
+  - name: topic:フローチャート
+  - name: topic:判定フローチャート
+  - name: topic:文書
+  - name: action:付与
+  - name: action:判定
+status: current
+visibility: internal
+rev: 4
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      文書に出てくる語を、タグとして付けるか、使われているタグを使い回すか、新しく付けるか、広いタグと main も付けるかを判定
+  - id: tag-attach-flow-01
+    group: タグの付与 判定フローチャート
+    name: 判定フロー
+    body: |-
+      ```mermaid
+      flowchart TD
+        START([文書にタグを付けたい])
+        A1([使われているタグを件数つきで引く])
+        A2([ファイルの種類ごとの範囲から語を書き出す ※1])
+        Q1{その語で探した人に、この文書が出てほしいか?}
+        Q2{評価・状態の語か、status など別のキーで表せるか?}
+        Q3{行為の語か?}
+        Q4{これ以上分けられない語か（単語 1 つ、または一語として定着した複合語 ※2）?}
+        Q5{使われているタグに、同じ概念の言い方・活用の違いのものがあるか?}
+        Q6{上位の広いタグがあるか?}
+        Q7{最も分量の多い主題か?}
+
+        A3([名詞形にして action: にする])
+        A4([道具の公式の名前なら tool:、それ以外は topic: にする。複合語なら構成語も書き出しに加える])
+        A5([単語に分け、分けた語ごとに Q1 から判定する])
+        A6([使われているタグを付ける])
+        A7([新しいタグを付け、同じ話題の既存の文書にもさかのぼって付ける])
+        A8([広いタグも付ける])
+        R1([この語のタグは付けない])
+        R2([main を付ける])
+        R3([main は付けない])
+
+        START --> A1
+        A1 --> A2
+        A2 --> Q1
+        Q1 -->|NO| R1
+        Q1 -->|YES| Q2
+        Q2 -->|NO| Q3
+        Q2 -->|YES| R1
+        Q3 -->|YES| A3
+        Q3 -->|NO| Q4
+        Q4 -->|YES| A4
+        Q4 -->|NO| A5
+        A3 --> Q5
+        A4 --> Q5
+        Q5 -->|YES| A6
+        Q5 -->|NO| A7
+        A6 --> Q6
+        A7 --> Q6
+        Q6 -->|YES| A8
+        Q6 -->|NO| Q7
+        A8 --> Q7
+        Q7 -->|YES| R2
+        Q7 -->|NO| R3
+      ```
+  - id: tag-attach-flow-02
+    group: タグの付与 判定フローチャート
+    name: ※1 書き出す範囲
+    body: |-
+      - **※1 書き出す範囲**: 規約 [タグと用語の登録](id:dev-tag-term-registration) のファイルの種類ごとの表のとおり
+        見出しの識別子（関数名・ファイル名）は、概念の語にしてから書き出す
+        ソースコードは行為の語を書き出さない（付けるファセットは表のとおり `topic:`・`tool:` だけ）
+  - id: tag-attach-flow-03
+    group: タグの付与 判定フローチャート
+    name: ※2 一語として定着した複合語
+    body: |-
+      - **※2 一語として定着した複合語**: 第一の基準は用語集にあるか。用語集に無いときは、分けると意味が変わる、または分けると関係ない文書が当たるか
