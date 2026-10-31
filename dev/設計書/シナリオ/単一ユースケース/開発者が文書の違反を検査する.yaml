@@ -72,3 +72,4 @@ success_guarantee: 違反が無ければ CI が成功する。
 minimal_guarantee: 違反が 1 つでもあれば CI が失敗し、全ての違反の文書のパス・項目・行・内容がログに出る。検査に要るランタイムが欠けていれば検査を始めずに失敗する。
 notes:
   E2E テストの動かし方: CI のジョブが走らせるコマンド（`uv run --frozen --script scripts/check_all.py`）を、knowledge のクローンで子プロセスとして起動し、ジョブの成否はその終了コード、ログはその標準出力で確かめる。maid が入っていない場合は PATH から maid を外して起動する。ワークフローの YAML そのものは、IF-72-4 のとおり作業 PR の Actions の実行結果で確かめる
+test_file: tests/e2e/単一ユースケース/test_開発者が文書の違反を検査する.py
