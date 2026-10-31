@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../schemas/files.schema.yaml
+files:
+  - path: hooks.json
+    name: フックの登録
+    description: プラグイン knowledge が Claude Code に登録するフックの一覧を受け持つ。フックを追加・変更するときに読む。
+    tags: [topic:フック, tool:claude-code]
+  - path: session-start/inject-word-choice.sh
+    name: 語の選び方の注入
+    description: セッションの開始時に、規約『文章の書き方』の語の選び方の要点をコンテキストへ注入する。注入する内容や注入する契機を変えるときに読む。
+    tags: [topic:フック, topic:語の選び方, tool:claude-code]
+    related:
+      - to: convention-writing-style
+        type: see_also
