@@ -1,0 +1,81 @@
+# commit: 2a5de22
+
+$ python3 check_rules.py .
+[PASS] rule.schema.yaml: docs/rule/prompt-file.yaml
+[PASS] rule.schema.yaml: docs/rule/claude-mcp.yaml
+[PASS] rule.schema.yaml: docs/rule/python-llm-prompt-loader.yaml
+[PASS] rule.schema.yaml: docs/rule/claude-hook.yaml
+[PASS] prompt.schema.yaml: prompt-file.yaml の structure-06 の例
+[PASS] prompt.schema.yaml: prompt-file.yaml の structure-07 の例
+[PASS] rules.yaml prompt-file の paths: content/prompts/session-context.yaml → ['**/prompts/**']
+[PASS] rules.yaml prompt-file の paths: content/prompts/node/reflection.yaml → ['**/prompts/**']
+[PASS] rules.yaml prompt-file の paths: plugins/dev-docs/content/prompts/session-context.yaml → ['**/prompts/**']
+exit=0
+
+----- check_rules.py -----
+"""変更した規約を rule.schema.yaml で検査し、prompt-file.yaml の例を prompt.schema.yaml で検査し、rules.yaml の paths の当たりを確かめる。"""
+import re
+import sys
+from pathlib import Path
+
+import yaml
+from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
+
+repo = Path(sys.argv[1])
+schemas = {p.name: yaml.safe_load(p.read_text(encoding="utf-8")) for p in (repo / "schemas").glob("*.schema.yaml")}
+registry = Registry().with_resources((n, Resource.from_contents(b)) for n, b in schemas.items())
+rule_v = Draft202012Validator(schemas["rule.schema.yaml"], registry=registry)
+prompt_v = Draft202012Validator(schemas["prompt.schema.yaml"], registry=registry)
+
+ok = True
+for name in ["prompt-file", "claude-mcp", "python-llm-prompt-loader", "claude-hook"]:
+    doc = yaml.safe_load((repo / "docs/rule" / f"{name}.yaml").read_text(encoding="utf-8"))
+    errors = list(rule_v.iter_errors(doc))
+    ids = [i["id"] for i in doc["items"]]
+    dup = sorted({i for i in ids if ids.count(i) > 1})
+    print(f"[{'PASS' if not errors and not dup else 'FAIL'}] rule.schema.yaml: docs/rule/{name}.yaml" + (f" 重複 ID {dup}" if dup else ""))
+    for e in errors:
+        print(f"    {'/'.join(map(str, e.absolute_path))}: {e.message}")
+    ok &= not errors and not dup
+
+doc = yaml.safe_load((repo / "docs/rule/prompt-file.yaml").read_text(encoding="utf-8"))
+for item in doc["items"]:
+    for block in re.findall(r"```yaml\n(.*?)```", item["body"], re.S):
+        errors = list(prompt_v.iter_errors(yaml.safe_load(block)))
+        print(f"[{'PASS' if not errors else 'FAIL'}] prompt.schema.yaml: prompt-file.yaml の {item['id']} の例")
+        for e in errors:
+            print(f"    {'/'.join(map(str, e.absolute_path))}: {e.message}")
+        ok &= not errors
+
+
+def glob_to_re(pattern):
+    """rules.yaml の glob（** はフォルダをまたぐ）を正規表現にする。"""
+    out = ""
+    i = 0
+    while i < len(pattern):
+        if pattern.startswith("**/", i):
+            out += "(?:.*/)?"
+            i += 3
+        elif pattern.startswith("**", i):
+            out += ".*"
+            i += 2
+        elif pattern[i] == "*":
+            out += "[^/]*"
+            i += 1
+        else:
+            out += re.escape(pattern[i])
+            i += 1
+    return re.compile(out + r"\Z")
+
+
+rules = yaml.safe_load((repo / "rules.yaml").read_text(encoding="utf-8"))
+entries = rules["rules"] if isinstance(rules, dict) else rules
+paths = next(r["paths"] for r in entries if r["rule"] == "docs/rule/prompt-file.yaml")
+for target in ["content/prompts/session-context.yaml", "content/prompts/node/reflection.yaml",
+               "plugins/dev-docs/content/prompts/session-context.yaml"]:
+    hit = [p for p in paths if glob_to_re(p).match(target)]
+    print(f"[{'PASS' if hit else 'FAIL'}] rules.yaml prompt-file の paths: {target} → {hit}")
+    ok &= bool(hit)
+
+sys.exit(0 if ok else 1)

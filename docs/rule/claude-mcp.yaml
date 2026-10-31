@@ -74,8 +74,8 @@ tags:
   - name: action:適用
 status: current
 visibility: internal
-rev: 8
-last_reviewed: '2026-10-30'
+rev: 9
+last_reviewed: '2026-10-31'
 sources:
   - title: "Anthropic: Writing effective tools for agents"
     url: https://www.anthropic.com/engineering/writing-tools-for-agents
@@ -207,7 +207,7 @@ items:
 
       | 要素 | 書き方 |
       | --- | --- |
-      | description | 関数の docstring（1 行） |
+      | description | `content/prompts/` の YAML（`kind: tool`。[プロンプトファイル](id:prompt-file)）を、登録のときに読む |
       | title | `@mcp.tool(title="日本語タイトル")` |
       | 引数の説明 | `Annotated[型, Field(description=...)]` |
       | 引数の選択肢制限 | `Literal[...]` → enum としてスキーマに反映 |
