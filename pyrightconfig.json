@@ -2,5 +2,17 @@
   "include": ["scripts", "tests"],
   "extraPaths": ["scripts"],
   "typeCheckingMode": "strict",
-  "pythonVersion": "3.14"
+  "pythonVersion": "3.14",
+  "executionEnvironments": [
+    {
+      "root": "tests",
+      "extraPaths": ["scripts"],
+      "reportUnknownMemberType": "warning",
+      "reportUnknownVariableType": "warning",
+      "reportUnknownArgumentType": "warning"
+    },
+    {
+      "root": "scripts"
+    }
+  ]
 }
