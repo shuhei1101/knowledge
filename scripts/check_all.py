@@ -32,11 +32,14 @@ from ruamel.yaml.error import YAMLError
 
 from _common import (
     LIMIT_SEC,
+    ConfigError,
     DocumentError,
     as_list,
     as_mapping,
     format_path,
     line_of,
+    list_row_files,
+    load_config,
     load_document,
     load_safe,
     read_texts,
@@ -46,9 +49,6 @@ from knowledge_checks import build_id_index, check_document
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
-
-# リポジトリの直下の dev-docs の配信の設定
-CONFIG = "dev-docs.yaml"
 
 # validators[] の文書の違反の検査の id
 CHECKS_ID = "knowledge-checks"
@@ -79,14 +79,6 @@ class Target:
     schema: str
     # 行の validators に knowledge-checks を持つか
     checks: bool
-
-
-class ConfigError(Exception):
-    """dev-docs.yaml が無い・読めない・documents が配列でない。"""
-
-    def __init__(self, message: str) -> None:
-        super().__init__(message)
-        self.message = message
 
 
 def _use_utf8(stream: object) -> None:
@@ -136,25 +128,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _EXIT_VIOLATIONS if count else 0
 
 
-def load_config(root: Path) -> list[Mapping[str, Any]]:
-    """dev-docs.yaml の documents[] の行を読む。"""
-    path = root / CONFIG
-    if not path.is_file():
-        message = f"{CONFIG} がありません"
-        raise ConfigError(message)
-    try:
-        doc = load_document(path.read_text(encoding="utf-8"))
-    except DocumentError as error:
-        message = f"{CONFIG} の {error.line} 行目が読めません: {error.message}"
-        raise ConfigError(message) from error
-    documents = as_list(cast("Mapping[str, object]", doc).get("documents"))
-    rows = [as_mapping(row) for row in documents] if documents is not None else [None]
-    if not all(row is not None for row in rows):
-        message = f"{CONFIG} に documents の配列がありません"
-        raise ConfigError(message)
-    return [row for row in rows if row is not None]
-
-
 def _strings(value: object) -> list[str]:
     """文字列の配列の値から文字列だけを返す。配列でなければ空。"""
     elements = as_list(value)
@@ -172,17 +145,9 @@ def list_targets(root: Path, rows: Sequence[Mapping[str, Any]]) -> list[Target]:
         # 無効な行と、スキーマを持たない行は検査しない
         if row.get("enabled") is False or not isinstance(schema, str) or not schema:
             continue
-        exclude = _strings(row.get("exclude"))
         checks = CHECKS_ID in _strings(row.get("validators"))
-        for pattern in _strings(row.get("paths")):
-            for file in root.glob(pattern):
-                # ファイル名が exclude のどれかに当たるものを除く（dev-docs と同じ判定）
-                if not file.is_file() or any(
-                    PurePosixPath(file.name).full_match(name) for name in exclude
-                ):
-                    continue
-                relative = PurePosixPath(file.relative_to(root).as_posix())
-                targets.setdefault(relative, Target(path=relative, schema=schema, checks=checks))
+        for relative in list_row_files(root, row):
+            targets.setdefault(relative, Target(path=relative, schema=schema, checks=checks))
     return sorted(targets.values(), key=lambda target: target.path)
 
 

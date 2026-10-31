@@ -1,11 +1,12 @@
 """文書の YAML の読み込み・項目のパスと行の対応・違反の型・ファイルの並列の読み込み。
 
-入口のスクリプト（knowledge_checks.py・knowledge_markdown.py・check_all.py）が同じフォルダから import する。
+入口のスクリプト（knowledge_checks.py・knowledge_markdown.py・check_all.py・build_pages.py）が同じフォルダから import する。
 """
 
 from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor
-from typing import TYPE_CHECKING, Protocol, TypedDict, cast
+from pathlib import PurePosixPath
+from typing import TYPE_CHECKING, Any, Protocol, TypedDict, cast
 
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
@@ -21,6 +22,9 @@ LIMIT_SEC = 20.0
 
 # read_texts が並列に読むスレッドの数。/mnt/c の 259 件を 1 件ずつ読むと 3.4 秒、16 で 0.2 秒
 READ_WORKERS = 16
+
+# リポジトリの直下の dev-docs の配信の設定
+CONFIG = "dev-docs.yaml"
 
 type PathPart = str | int
 
@@ -42,6 +46,14 @@ class DocumentError(Exception):
         super().__init__(f"{line} 行目: {message}")
         # 読めなかった行（1 始まり）。行が分からないときは 1
         self.line = line
+        self.message = message
+
+
+class ConfigError(Exception):
+    """dev-docs.yaml が無い・読めない・documents が配列でない。"""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
         self.message = message
 
 
@@ -194,3 +206,47 @@ def line_of(doc: CommentedMap, parts: Sequence[PathPart]) -> int:
         else:
             break
     return line
+
+
+def load_config(root: Path) -> list[Mapping[str, Any]]:
+    """dev-docs.yaml の documents[] の行を読む。"""
+    path = root / CONFIG
+    if not path.is_file():
+        message = f"{CONFIG} がありません"
+        raise ConfigError(message)
+    try:
+        doc = load_document(path.read_text(encoding="utf-8"))
+    except DocumentError as error:
+        message = f"{CONFIG} の {error.line} 行目が読めません: {error.message}"
+        raise ConfigError(message) from error
+    documents = as_list(cast("Mapping[str, object]", doc).get("documents"))
+    rows = [as_mapping(row) for row in documents] if documents is not None else [None]
+    if not all(row is not None for row in rows):
+        message = f"{CONFIG} に documents の配列がありません"
+        raise ConfigError(message)
+    return [row for row in rows if row is not None]
+
+
+def _strings(value: object) -> list[str]:
+    """文字列の配列の値から文字列だけを返す。配列でなければ空。"""
+    elements = as_list(value)
+    if elements is None:
+        return []
+    return [element for element in elements if isinstance(element, str)]
+
+
+def list_row_files(root: Path, row: Mapping[str, Any]) -> list[PurePosixPath]:
+    """documents[] の 1 行の paths・exclude に当たるファイルを、リポジトリの直下からのパスで返す。"""
+    if row.get("enabled") is False:
+        return []
+    exclude = _strings(row.get("exclude"))
+    files: set[PurePosixPath] = set()
+    for pattern in _strings(row.get("paths")):
+        for file in root.glob(pattern):
+            # ファイル名が exclude のどれかに当たるものを除く（dev-docs と同じ判定）
+            if not file.is_file() or any(
+                PurePosixPath(file.name).full_match(name) for name in exclude
+            ):
+                continue
+            files.add(PurePosixPath(file.relative_to(root).as_posix()))
+    return sorted(files)
