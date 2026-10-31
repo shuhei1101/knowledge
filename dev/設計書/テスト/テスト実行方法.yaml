@@ -53,3 +53,5 @@ layers:
     run_all: 未確定
   - name: E2E テスト
     run_all: 未確定
+    prerequisites:
+      - '`/dev-docs:global-setup` を終えた端末。起動する dev-docs は、端末の設定（`~/.config/dev-docs/settings.yaml`）の `clone` を読み、その `.venv` の Python で起動する（環境変数 `KNOWLEDGE_E2E_DEV_DOCS_CLONE` を渡せばそちらを使う）。端末の設定は読むだけで書き換えず、テストは一時フォルダの設定（`DEV_DOCS_CONFIG`）と空いているポート（`DEV_DOCS_PORT`）で起動する'

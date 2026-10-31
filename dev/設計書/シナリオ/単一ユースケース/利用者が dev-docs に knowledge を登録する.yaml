@@ -61,3 +61,5 @@ preconditions:
   - knowledge のクローンの直下に `dev-docs.yaml` がある
 success_guarantee: '`sources[]` に knowledge の行（`config`・`scope.read`・`scope.write`）があり、dev-docs が読み直して knowledge を配信している。'
 minimal_guarantee: 点検で違反があれば端末の設定を書き換えない。
+notes:
+  E2E テストの動かし方: スキル `/dev-docs:setup` は動かさず、スキルが行う処理（管理の MCP の `check_project` → 一時フォルダの端末の設定の `sources[]` への knowledge の行の記載 → `reload` → `status`）をテストが順に行う。スキルの手順（質問の仕方・記載する行）は dev-docs の E2E が確かめる
