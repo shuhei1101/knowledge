@@ -60,6 +60,8 @@ rules:
     exclude:
       - "**/CLAUDE.md"
       - "**/SKILL.md"
+      - "**/.claude/agents/**"
+      - "**/.claude/commands/**"
     tools:
       - "mcp__*__write_design_doc*"
   - rule: docs/rule/convention-issue-presentation.yaml
