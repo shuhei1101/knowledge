@@ -68,7 +68,7 @@ items:
     group: builder.py
     name: build_prompt の検証
     body: |-
-      - `build_prompt(prompt_id, **vars)`: `vars` の必須が渡されているかを確かめ、渡されていない必須でない変数を `None` で補い、`parts` を順に見て `when` が真の部品のトップレベルの `lang` の本文をレンダリングし `"\n\n".join`
+      - `build_prompt(prompt_id, **vars)`: `vars` の必須が渡されているかを確かめ、渡されていない必須でない変数を `default` か `None` で補い、`parts` を順に見て `when` が真の部品のトップレベルの `lang` の本文をレンダリングし `"\n\n".join`
   - id: builder-03
     group: builder.py
     name: role 別の build_bundle
