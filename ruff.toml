@@ -1,0 +1,31 @@
+line-length = 100
+target-version = "py314"
+
+[lint]
+select = [
+    "E", "F", "I", "B", "UP", "SIM", "RUF",
+    "N", "PLC2701",   # 命名と、他モジュールの _ 付きシンボルの import
+    "ANN", "TC",      # 型注釈と TYPE_CHECKING
+    "C901", "PLR2004",   # 複雑度とマジックナンバー
+    "G004", "T20", "LOG",   # logger への f-string・print・logging の使い方
+    "BLE001", "TRY002", "TRY400", "EM",   # 例外の捕まえ方・投げ方・出し方
+    "PLW1514",   # encoding の明示
+    "DTZ",   # 保存する日時はタイムゾーン付き
+    "S",   # セキュリティ（assert・シェル・pickle・yaml.load など）
+    "PT",   # pytest の書き方
+]
+ignore = [
+    "E501",   # 行長は formatter に任せる
+    "RUF001", "RUF002", "RUF003",   # 日本語の文字列 / docstring / コメントの全角記号を紛らわしい Unicode として指すため外す
+]
+
+[lint.isort]
+known-first-party = ["_common", "_maid", "knowledge_checks", "knowledge_markdown", "check_all"]
+
+[lint.per-file-ignores]
+"tests/**" = ["S101", "PLR2004"]   # テストの assert と期待値の数値は許す
+"scripts/*.py" = ["T20"]   # スクリプトは print で出力する
+
+[format]
+quote-style = "double"
+indent-style = "space"
