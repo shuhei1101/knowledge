@@ -153,8 +153,8 @@ response:
     type: str
     description: 終了コードが 0 以外のときの理由（1 行）。dev-docs が「検査を実行できませんでした」の理由に載せる
   - name: exit_code
-    type: Literal[0, 2]
-    description: 0 = 検査を終えた（違反の有無に依らない）。2 = maid が PATH から引けず、検査を始めなかった
+    type: Literal[0, 1, 2]
+    description: 0 = 検査を終えた（違反の有無に依らない）。1 = 想定していない例外で落ちた。2 = maid が PATH から引けず、検査を始めなかった
 response_example: |-
   ```json
   [
@@ -168,6 +168,8 @@ exceptions:
     condition: 検査を終えた。違反・時間切れ・読めない YAML も違反として配列で返し、終了コード 0
   - name: 終了コード 2
     condition: '`maid` が PATH から引けない（`shutil.which` で検査の前に見分ける）'
+  - name: 終了コード 1
+    condition: '想定していない例外。標準エラーに traceback を出し、dev-docs が「検査を実行できませんでした」の違反 1 件（`path: $`）に置き換える'
 constraints:
   - item: 処理時間
     constraint: 起動から 20 秒。maid を呼ぶ前に残り時間を確かめ、足りなければ呼ばずに時間切れを違反として返す。maid には残り時間を打ち切りとして渡す
