@@ -462,3 +462,5 @@ functions:
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を書き、`_common.py` を同じフォルダから import する。mdmark（LIB-137-1）は `npx` で子プロセスとして呼ぶので Python の依存には入れない
   変換を子プロセスで呼ぶ: 変換は `knowledge_markdown.py` を import せず、`dev-docs.yaml` の `converters[].run` を起動する。dev-docs の画面と同じ Markdown になり、E2E テストは `run` を差し替えて変換の失敗を起こせる
+test_files:
+  - tests/unit/scripts/test_build_pages.py
