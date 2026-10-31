@@ -18,7 +18,7 @@ scenarios:
         E->>M: write_docs に source knowledge と文書
         M->>M: scope.write とスキーマを確かめる
         M->>V: 標準入力に文書の YAML
-        V-->>M: 終了コード 0 と空の違反の一覧
+        V-->>M: 終了コード 0 と空の違反の配列
         M->>W: 文書を書き込む
         M-->>E: 書き込んだ文書
     expected:
@@ -38,11 +38,11 @@ scenarios:
         participant V as knowledge の検査のスクリプト
         E->>M: write_docs に source knowledge と文書
         M->>V: 標準入力に文書の YAML
-        V-->>M: 終了コード 1 と違反の一覧
+        V-->>M: 終了コード 0 と違反の配列
         M-->>E: isError と違反の一覧
     expected:
       - 作業ツリーの文書が変わらない
-      - 応答が `isError` で、違反の項目のパスと文書の行を持つ
+      - 応答が `isError` で、違反の `path` が mermaid を持つ項目のパス、`rule` に文書の行と maid の内容が入る
     test: test_error_when_validator_reports_violation
   - name: 異常シナリオ（作業場所が scope.write の外）
     setup:
