@@ -71,7 +71,27 @@ categories:
     refs:
       - TP-72-1#layers[lint]
   - name: ビルド・生成
-    commands: 未確定
+    prerequisites:
+      - Node.js 24 以降（`npx -y` が mdmark のタグの中身と依存を呼ぶたびに取る。外部ライブラリ『mdmark』）
+    commands: |-
+      1. 公開の文書だけを 1 枚の HTML にまとめた Pages の成果物を `_site` に作る（IF『Pages の成果物の作成』）
+
+      ```bash
+      uv run --frozen --script scripts/build_pages.py --out _site
+      ```
+
+      2. 成果物に YAML が入っていないことを確かめる（CI のワークフローと同じ行。当たったパスを出して終了コード 1、無ければ 0）
+
+      ```bash
+      ! find _site -type f \( -name '*.yaml' -o -name '*.yml' \) | grep .
+      ```
+    refs:
+      - IF-137-1#
+      - IF-137-2#constraints[YAML の検査]
+      - LIB-137-1#
+    verification:
+      state: 未確認
+      detail: '`scripts/build_pages.py` がまだ無く、走らせられない。実装の工程で確かめる'
   - name: 取り込み前の検査
     prerequisites:
       - 環境構築（クローン直後）を流してある
