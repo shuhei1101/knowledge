@@ -25,7 +25,7 @@ tags:
   - name: action:作成
 status: current
 visibility: internal
-rev: 7
+rev: 8
 last_reviewed: '2026-10-31'
 sources:
   - title: "Claude Code: Hooks reference"
@@ -41,9 +41,9 @@ items:
         - プロンプトファイルはプラグインのルートの `content/prompts/` の YAML（[プロンプトファイル](id:prompt-file)）
   - id: rules-02
     group: ルール
-    name: additionalContext の上限
+    name: 注入文の書き分けと書き方
     body: |-
-      - hooksの`additionalContext`でコンテキストを注入する場合の文字数の上限は公式の hooks リファレンスに従う
+      - hooksの`additionalContext`でコンテキストを注入する文の中身・長さは [注入文の書き分けと書き方](id:claude-context-placement) に従う
   - id: rules-03
     group: ルール
     name: 1 セッション 1 回の決まり
