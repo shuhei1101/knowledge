@@ -1,8 +1,8 @@
-# knowledge を開発ドキュメントサーバーと文書の MCP のプラグイン（HTTP）で使えるようにし、使い方を書き直す
+# knowledge を dev-docs の配信元として使えるようにし、使い方を書き直す
 
 ## 概要
 
-利用者が、dev-docs に knowledge を登録して文書の MCP のプラグイン `knowledge-docs` を入れると、どの端末・プロジェクトからでも規約を画面で読み、MCP で検索・取得・書き込みできるようになる。
+利用者が `/dev-docs:setup` で knowledge を dev-docs の配信元に登録すると、どの端末・プロジェクトからでも規約を画面で読み、dev-docs の MCP に `source: knowledge` を渡して検索・取得できるようになる。
 
 ## 背景
 
@@ -12,13 +12,14 @@
 スキーマ・参照の検査と CI は、#64 のレビューでこの Issue に含めると決まった（[コメント](https://github.com/shuhei1101/knowledge/pull/64#discussion_r4367269018)）。
 開発ドキュメントサーバーと文書の MCP は各リポジトリが作らず、汎用の dev-docs を使うと決まった（[ユーザーの追記](https://github.com/shuhei1101/knowledge/issues/51#issuecomment-6386949622)、D-96〜D-115）。
 dev-docs の本体は [shuhei1101/dev-docs#3](https://github.com/shuhei1101/dev-docs/issues/3)・[shuhei1101/dev-docs#4](https://github.com/shuhei1101/dev-docs/issues/4)、規約は [#73](https://github.com/shuhei1101/knowledge/issues/73) が受け持つ。
+#73 の規約の改訂で、各リポジトリは文書の MCP のプラグインとマーケットプレイスを持たないと決まり、[#76](https://github.com/shuhei1101/knowledge/issues/76) をこの Issue に統合した。
 
 ## 計画書
 
 | ファイル | 中身 |
 | --- | --- |
 | [要件](./要件.md) | 要望の整理と影響する UC 一覧 |
-| [反映作業](./反映作業/index.yaml) | この端末での knowledge の登録とプラグインの導入 |
+| [反映作業](./反映作業/index.yaml) | この端末の dev-docs への knowledge の登録 |
 
 対象システムごとの計画書は、初期構築でアーキテクチャ図のサブシステムを決めた後に追加する。
 
