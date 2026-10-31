@@ -18,6 +18,10 @@ scenarios:
       - 画面で develop の knowledge の全ての種類の文書が開ける
       - 'knowledge のクローンの外の作業場所から `search_docs` に `source: knowledge` を渡すと knowledge の文書が返る'
     test: test_normal
+    uses:
+      - SC-72-2#scenarios[正常シナリオ]
+      - SC-72-3#scenarios[正常シナリオ]
+      - SC-72-4#scenarios[正常シナリオ]
   - name: 異常シナリオ（登録の点検で誤りがある）
     setup:
       - name: Mock
@@ -32,6 +36,8 @@ scenarios:
       - '`sources[]` に knowledge の行が追加されていない'
       - 誤りのあるファイル（`dev-docs.yaml`）と内容が利用者へ返る
     test: test_error_when_setup_check_fails
+    uses:
+      - SC-72-2#scenarios[異常シナリオ（点検で違反がある）]
 lead: 利用者が端末で knowledge を dev-docs の配信元に登録し、画面とエージェントの MCP から knowledge の文書を引けるようになるまでの流れ。
 issue: 51
 primary_actor: 利用者

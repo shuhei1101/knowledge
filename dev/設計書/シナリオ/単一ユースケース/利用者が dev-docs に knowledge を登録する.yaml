@@ -1,0 +1,63 @@
+id: "SC-72-2"
+title: "利用者が dev-docs に knowledge を登録する"
+scenarios:
+  - name: 正常シナリオ
+    setup:
+      - name: Mock
+        description: 差し替えない。端末の dev-docs（管理の MCP の `check_project`・`reload`）をそのまま使う
+      - name: knowledge のクローン
+        description: develop を踏んだクローン。`dev-docs.yaml` と `files.yaml` が範囲のファイルと一致している
+      - name: 端末の設定
+        description: '`sources[]` に knowledge が無い'
+    flow: |-
+      sequenceDiagram
+        actor U as 利用者
+        participant S as dev-docs の setup
+        participant A as 管理の MCP
+        participant K as knowledge のクローン
+        participant C as 端末の設定
+        U->>S: /dev-docs:setup とクローンのパス
+        S->>A: check_project
+        A->>K: dev-docs.yaml と文書・スクリプトを読む
+        A-->>S: 違反なし
+        S->>U: scope.write と scope.read を聞く
+        U-->>S: scope.read は全ての作業場所、scope.write はクローンと worktree
+        S->>C: sources に knowledge の行を書く
+        S->>A: reload
+        A-->>S: 配信中
+        S-->>U: 追加した配信元と点検の結果
+    expected:
+      - '`sources[]` に knowledge の行があり、`config` が knowledge の `dev-docs.yaml` の絶対パス'
+      - '`scope.read` が全ての作業場所、`scope.write` が knowledge のクローンと worktree'
+      - 管理の MCP の `status` に knowledge が配信中で載る
+    test: test_normal
+  - name: 異常シナリオ（点検で違反がある）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 壊した knowledge のクローン
+        description: '`dev-docs.yaml` の documents の行が存在しないスキーマを指す'
+        notes: '`schema: schemas/missing.schema.yaml`'
+    flow: |-
+      sequenceDiagram
+        actor U as 利用者
+        participant S as dev-docs の setup
+        participant A as 管理の MCP
+        participant C as 端末の設定
+        U->>S: /dev-docs:setup とクローンのパス
+        S->>A: check_project
+        A-->>S: 違反（キーのパスと理由）
+        S-->>U: 違反を示して止まる
+    expected:
+      - '`sources[]` に knowledge の行が追加されていない'
+      - 違反のキーのパス（`documents[...].schema`）と理由が利用者へ返る
+    test: test_error_when_check_project_fails
+lead: 利用者が `/dev-docs:setup` に knowledge のクローンのパスを渡し、点検を通して端末の設定の `sources[]` に knowledge を登録する。
+issue: 51
+primary_actor: 利用者
+trigger: 利用者が `/dev-docs:setup {knowledge のクローンのパス}` を実行する
+preconditions:
+  - '`/dev-docs:global-setup` を終え、端末の設定がある'
+  - knowledge のクローンの直下に `dev-docs.yaml` がある
+success_guarantee: '`sources[]` に knowledge の行（`config`・`scope.read`・`scope.write`）があり、dev-docs が読み直して knowledge を配信している。'
+minimal_guarantee: 点検で違反があれば端末の設定を書き換えない。

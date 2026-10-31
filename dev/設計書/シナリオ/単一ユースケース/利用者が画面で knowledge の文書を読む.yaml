@@ -1,0 +1,51 @@
+id: "SC-72-3"
+title: "利用者が画面で knowledge の文書を読む"
+scenarios:
+  - name: 正常シナリオ
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 配信中の knowledge
+        description: develop の全ての種類の文書（rule・template・flowchart・guide・changelog・skill）と files.yaml の行がある
+    flow: |-
+      sequenceDiagram
+        actor U as 利用者
+        participant D as dev-docs の画面
+        participant V as knowledge の変換のスクリプト
+        U->>D: knowledge のタブとサイドバーから文書を選ぶ
+        alt 既定の変換で描けない種類
+          D->>V: 標準入力に文書の YAML
+          V-->>D: mdmark の記法の Markdown
+        else 既定の変換で描ける種類
+          D->>D: スキーマ駆動で変換する
+        end
+        D-->>U: 共通スタイルで描いた本文
+    expected:
+      - 全ての種類の文書が HTTP 200 で開け、本文が空でない
+      - タブとサイドバーの並びが `dev-docs.yaml` の `nav` と一致する
+    test: test_normal
+  - name: 異常シナリオ（変換のスクリプトが失敗する）
+    setup:
+      - name: Mock
+        description: 変換のスクリプトを、終了コード 1 で終わるものに差し替える
+    flow: |-
+      sequenceDiagram
+        actor U as 利用者
+        participant D as dev-docs の画面
+        participant V as knowledge の変換のスクリプト
+        U->>D: 変換のスクリプトを使う種類の文書を選ぶ
+        D->>V: 標準入力に文書の YAML
+        V-->>D: 終了コード 1
+        D-->>U: 変換に失敗したことと理由
+    expected:
+      - 画面に変換に失敗したことと理由（`exit`）が出る
+      - 既定の変換の種類の文書は開ける
+    test: test_error_when_converter_fails
+lead: 利用者が dev-docs の画面で、`nav` のタブとサイドバーから knowledge の文書を開き、変換した本文を読む。
+issue: 51
+primary_actor: 利用者
+trigger: 利用者がブラウザで dev-docs の画面の knowledge を開く
+preconditions:
+  - knowledge が dev-docs に登録され、配信中
+success_guarantee: 開いた文書の本文が mdmark の共通スタイルで描かれる。
+minimal_guarantee: 変換に失敗した文書は、失敗したことと理由を画面に出し、他の文書は開ける。
