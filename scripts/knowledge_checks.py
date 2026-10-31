@@ -195,10 +195,15 @@ def check_references(doc: CommentedMap, index: Mapping[str, frozenset[str]]) -> 
 
     violations: list[Violation] = []
     for parts, first_line, value in iter_strings(doc):
+        fenced = _fenced_lines(value)
         for match in ID_LINK.finditer(value):
             target_doc, target_item = match.group(1), match.group(2)
+            offset = value.count("\n", 0, match.start())
+            # コードブロックの中の参照は記述例なので見ない
+            if offset in fenced:
+                continue
             # 本文の 1 行目の行に、一致の前にある改行の数を足した行
-            line = first_line + value.count("\n", 0, match.start())
+            line = first_line + offset
             # 文書が無い
             if target_doc not in known:
                 violations.append(
@@ -229,6 +234,26 @@ def check_references(doc: CommentedMap, index: Mapping[str, frozenset[str]]) -> 
                 }
             )
     return violations
+
+
+def _fenced_lines(text: str) -> frozenset[int]:
+    """文字列のうち、コードブロックの囲みの中と囲みの行の位置（0 始まり）を返す。"""
+    fenced: set[int] = set()
+    # 開いている囲みのバッククォートの数。0 は囲みの外
+    open_ticks = 0
+    for position, line in enumerate(text.split("\n")):
+        matched = FENCE.match(line)
+        # 囲みの外: 囲みを開く行なら、開いた数を覚える
+        if open_ticks == 0:
+            if matched:
+                open_ticks = len(matched.group(1))
+                fenced.add(position)
+            continue
+        fenced.add(position)
+        # 囲みの中: 開いた数以上のバッククォートで情報文字列の無い行で閉じる
+        if matched and len(matched.group(1)) >= open_ticks and not matched.group(2):
+            open_ticks = 0
+    return frozenset(fenced)
 
 
 def mermaid_blocks(text: str) -> list[tuple[int, str]]:
