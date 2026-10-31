@@ -279,6 +279,27 @@ def test_check_references_when_missing() -> None:
     assert result[0]["rule"].startswith("7 行目: ")
 
 
+def test_check_references_when_in_code_block() -> None:
+    """コードブロックの中の参照は見ない（正常系）。"""
+    # 準備
+    doc = load_document(
+        "id: self\n"
+        "items:\n"
+        "  - id: p\n"
+        "    body: |-\n"
+        "      ```yaml\n"
+        "      [B](id:missing)\n"
+        "      ```\n"
+        "      [C](id:gone)\n"
+    )
+    # 実行
+    result = check_references(doc, {})
+    # 検証
+    assert len(result) == 1
+    assert "gone" in result[0]["rule"]
+    assert result[0]["rule"].startswith("8 行目: ")
+
+
 def test_mermaid_blocks() -> None:
     """mermaid のブロックだけを取り出す（正常系）。"""
     # 準備
