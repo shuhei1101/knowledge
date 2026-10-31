@@ -2,9 +2,32 @@ id: "TP-72-1"
 title: "テスト実行方法"
 layers:
   - name: lint
-    run_all: 未確定
+    description: '`scripts/` と `tests/` に、ruff の linter と formatter の check、pyright strict を当てる。設定は直下の `ruff.toml`・`pyrightconfig.json`。'
+    prerequisites:
+      - uv と Python 3.14 が入っている
+      - リポジトリの直下で実行する
+    run_all: |-
+      ```bash
+      uvx ruff@0.17.3 check scripts tests && uvx ruff@0.17.3 format --check scripts tests && uv run --no-project --python 3.14 --with pyright==1.1.414 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pyright
+      ```
+    external_cost: なし
   - name: 単体テスト（バック）
-    run_all: 未確定
+    description: pytest で `tests/unit/` を実行する。`pyproject.toml` を持たないため、`uv run --no-project` で依存を一時の環境に入れて起動する。`scripts/` は直下の `pytest.ini` の `pythonpath` で import する。
+    prerequisites:
+      - uv と Python 3.14 が入っている
+      - リポジトリの直下で実行する
+    run_all: |-
+      ```bash
+      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/unit
+      ```
+    run_one:
+      label: ファイル
+      command: |-
+        ```bash
+        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest {テストファイルパス}
+        ```
+    parallel: false
+    external_cost: なし（maid は差し替えのスクリプトを使う）
   - name: 結合テスト（バック）
     run_all: 未確定
   - name: 外部疎通テスト
