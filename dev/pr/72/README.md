@@ -34,7 +34,7 @@ dev-docs の本体は [shuhei1101/dev-docs#3](https://github.com/shuhei1101/dev-
 - [x] ~~画面一覧・画面遷移~~（画面と画面遷移は dev-docs が持ち、knowledge は `nav` でタブとサイドバーの並びを書くだけ）
 - [x] 単一ユースケース設計
 - [x] ~~モック作成~~（画面は dev-docs が持ち、knowledge は画面を作らない）
-- [ ] インターフェース定義設計
+- [x] インターフェース定義設計
 - [x] ~~部品設計~~（画面の部品は dev-docs と mdmark が持つ）
 - [x] ~~画面設計~~（画面の UI 項目は dev-docs が持ち、knowledge の変更は画面の UI 項目を増やさない）
 - [ ] モジュール構成設計

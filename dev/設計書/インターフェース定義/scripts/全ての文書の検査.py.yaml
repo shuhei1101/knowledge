@@ -1,0 +1,124 @@
+id: "IF-72-3"
+title: "全ての文書の検査"
+entry:
+  kind: operation
+  value: リポジトリの直下で起動するコマンド（CLI）。CI のワークフローと開発者の手元から呼ぶ
+flows:
+  - name: 正常系
+    summary: 違反の無い文書だけなら終了コード 0 で終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`dev-docs.yaml`・`schemas/rule.schema.yaml`・違反の無い `docs/rule/` の文書 2 件を持つ一時フォルダ'
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>S: maid が PATH にあるかを確かめる
+        S->>F: dev-docs.yaml の documents を読む
+        loop 全ての文書
+          S->>S: スキーマの検査と文書の違反の検査
+        end
+        S-->>C: 終了コード 0 と件数の行
+    expected:
+      - 終了コードが 0
+      - 標準出力の最後の行が、文書 2 件・違反 0 件を示す
+  - name: 正常系（違反がある・終了コード 1）
+    summary: 全ての文書を検査し終えてから、全ての違反を出して終了コード 1 で終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: スキーマに合わない文書（`description` が無い）と、項目の ID が重複した文書を 1 つずつ持つ一時フォルダ
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>F: dev-docs.yaml の documents を読む
+        loop 全ての文書
+          S->>S: スキーマの検査と文書の違反の検査
+        end
+        S-->>C: 終了コード 1 と全ての違反の行
+    expected:
+      - 終了コードが 1
+      - 標準出力に 2 つの文書の違反が、ファイルのパス・行・項目のパス・内容つきで 1 行ずつ出る
+  - name: 異常系（maid が無い・終了コード 2）
+    summary: maid が PATH から引けなければ検査を始めずに終わる
+    setup:
+      - name: Mock
+        description: PATH から maid を外す
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        C->>S: リポジトリの直下で起動する
+        S->>S: maid が PATH に無い
+        S-->>C: 終了コード 2 と標準エラーの理由
+    expected:
+      - 終了コードが 2
+      - 標準エラーに maid が PATH から引けないことが出る
+  - name: 異常系（dev-docs.yaml が読めない・終了コード 2）
+    summary: dev-docs.yaml が無いか読めなければ検査を始めずに終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`dev-docs.yaml` を持たない一時フォルダ'
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>F: dev-docs.yaml を読む
+        F-->>S: ファイルが無い
+        S-->>C: 終了コード 2 と標準エラーの理由
+    expected:
+      - 終了コードが 2
+      - 標準エラーに `dev-docs.yaml` が無いことが出る
+lead: '`dev-docs.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を当て、全ての違反を出して終了コードで合否を返す。'
+identifier: check-all
+idempotent: true
+side_effects: なし（ファイルを書き換えない）
+callers:
+  - SC-72-6#scenarios[正常シナリオ]
+exclusivity: 制限なし
+request:
+  - name: cwd
+    type: Path
+    required: true
+    location: argument
+    description: knowledge のリポジトリの直下。`dev-docs.yaml` を読む
+    notes: 引数は取らず、作業ディレクトリとして受け取る
+response:
+  - name: stdout
+    type: str
+    description: '違反 1 件を 1 行で `{ファイルのパス}:{行}: {項目のパス}: {内容}` の形で出し、最後に検査した文書の数と違反の数を 1 行で出す'
+    example: "docs/rule/a.yaml:42: items[3].body: mermaid: Expected 'end' to close subgraph"
+  - name: stderr
+    type: str
+    description: 終了コード 2 のときの理由
+  - name: exit_code
+    type: Literal[0, 1, 2]
+    description: 0 = 違反なし。1 = 違反が 1 件以上。2 = maid が PATH から引けないか `dev-docs.yaml` が読めず、検査を始めなかった
+exceptions:
+  - name: なし（正常終了）
+    condition: 全ての文書に違反が無い（終了コード 0）
+  - name: 終了コード 1
+    condition: 違反が 1 件以上ある。全ての文書を検査し終えてから返す
+  - name: 終了コード 2
+    condition: maid が PATH から引けないか、`dev-docs.yaml` が無い・YAML として読めない
+constraints:
+  - item: 検査の範囲
+    constraint: '`dev-docs.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も当てる'
+  - item: 1 文書あたりの処理時間
+    constraint: 「文書の違反の検査」と同じ 20 秒。超えたブロックは時間切れの違反にする
+    decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
+  - item: 全体の処理時間
+    constraint: 未確定
+    decided_by: NFR-72-1#requirements[CI の 1 回の所要時間]

@@ -1,0 +1,178 @@
+id: "IF-72-1"
+title: "文書の違反の検査"
+entry:
+  kind: operation
+  value: '`dev-docs.yaml` の `validators[]` の `knowledge-checks`（dev-docs が配信元の直下で子プロセスとして起動する。境界は標準入出力と終了コード）'
+flows:
+  - name: 正常系
+    summary: 違反の無い文書に空の配列を返す
+    setup:
+      - name: Mock
+        description: 差し替えない。PATH の maid を使う
+      - name: 配信元
+        description: '`docs/rule/a.yaml`（項目 `x` を持つ）だけを持つ一時フォルダ'
+      - name: 標準入力
+        description: '`[A](id:a#x)` と正しい mermaid を持ち、`related` の `to` が `a` の文書'
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の違反の検査
+        participant F as 配信元の docs
+        participant M as maid
+        D->>S: 標準入力に文書の YAML
+        S->>S: maid が PATH にあるかを確かめる
+        S->>F: 文書と項目の ID を集める
+        S->>S: 項目の ID の重複と参照の実在を確かめる
+        S->>M: mermaid のブロック（残り時間で打ち切る）
+        M-->>S: 誤りなし
+        S-->>D: 終了コード 0 と空の配列
+    expected:
+      - 終了コードが 0
+      - 標準出力が `[]`
+      - 配信元のファイルのハッシュが変わらない
+  - name: 正常系（違反がある）
+    summary: 項目の ID の重複・参照切れ・mermaid の誤りを全て配列で返す
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 配信元
+        description: '`docs/rule/a.yaml` だけを持つ一時フォルダ'
+      - name: 標準入力
+        description: '項目の ID が 2 つ重なり、`[B](id:missing)` と `related` の `to: missing` と `end` の抜けた subgraph を持つ文書'
+        notes: 違反は 4 件
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の違反の検査
+        participant F as 配信元の docs
+        participant M as maid
+        D->>S: 標準入力に文書の YAML
+        S->>F: 文書と項目の ID を集める
+        S->>S: 項目の ID の重複と参照切れを控える
+        S->>M: mermaid のブロック
+        M-->>S: 誤りの行と内容
+        S-->>D: 終了コード 0 と違反の配列
+    expected:
+      - 終了コードが 0
+      - 標準出力の配列が 4 件で、`path` が `items[1].id`・`items[2].body`・`related[0].to`・`items[3].body`
+      - mermaid の違反の `rule` の行が、文書の中の誤った行と一致する
+  - name: 正常系（時間切れ）
+    summary: 残り時間が足りない mermaid のブロックを時間切れの違反として返す
+    setup:
+      - name: Mock
+        description: maid を、打ち切りまで返らないスクリプトに差し替える
+      - name: 処理時間の上限
+        description: 上限を 1 秒にして起動する
+        notes: 上限は関数の引数で差し替える
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の違反の検査
+        participant M as maid
+        D->>S: 標準入力に文書の YAML
+        S->>M: mermaid のブロック（残り時間で打ち切る）
+        M-->>S: 打ち切り
+        S-->>D: 終了コード 0 と時間切れの違反
+    expected:
+      - 終了コードが 0
+      - 標準出力に、打ち切ったブロックの項目の `path` で時間切れを示す違反がある
+      - 起動から終了までが、上限に 1 秒を加えた時間を超えない
+  - name: 正常系（YAML として読めない）
+    summary: '読めない入力を `path: $` の違反 1 件で返す'
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: 括弧が閉じていない YAML
+        notes: '`items:\n  - id: a\n    name: [`'
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の違反の検査
+        D->>S: 標準入力に壊れた YAML
+        S->>S: YAML として読めない
+        S-->>D: 終了コード 0 と path $ の違反
+    expected:
+      - 終了コードが 0
+      - 標準出力が 1 件で、`path` が `$`、`rule` に読めない行がある
+  - name: 異常系（maid が無い・終了コード 2）
+    summary: maid が PATH から引けなければ検査を始めずに終わる
+    setup:
+      - name: Mock
+        description: PATH から maid を外す
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の違反の検査
+        D->>S: 標準入力に文書の YAML
+        S->>S: maid が PATH に無い
+        S-->>D: 終了コード 2 と標準エラーの理由
+    expected:
+      - 終了コードが 2
+      - 標準出力が空
+      - 標準エラーに maid が PATH から引けないことと、開発コマンドの環境構築への案内が出る
+lead: 標準入力の文書 1 件に、スキーマで見られない決まり（項目の ID の重複・`id:` の参照と `related` の `to` の実在・mermaid の文法）を当て、違反を dev-docs の validators の約束で標準出力へ返す。
+identifier: knowledge-checks
+idempotent: true
+side_effects: なし（ファイルを書き換えない。maid は `--fix` を付けずに呼ぶ）
+callers:
+  - SC-72-5#scenarios[正常シナリオ]
+  - SC-72-6#scenarios[正常シナリオ]
+exclusivity: 制限なし（読むだけで、同時に起動されても結果は変わらない）
+request:
+  - name: stdin
+    type: str
+    required: true
+    location: body
+    description: 検査する文書 1 件の YAML（UTF-8）。書き込みでは書き込もうとする内容
+    constraints: '`schemas/{kind}.schema.yaml` の検査は dev-docs が先に通す'
+    notes: 標準入力で受け取る
+  - name: cwd
+    type: Path
+    required: true
+    location: argument
+    description: knowledge の配信元の直下。`docs/**/*.yaml` を読み、`id:` の参照先と `related` の `to` が実在するかを確かめる
+    notes: 引数ではなく、子プロセスの作業ディレクトリとして受け取る
+response:
+  - name: stdout
+    type: list[Violation]
+    description: 違反の配列の JSON。違反が無ければ `[]`
+  - name: stdout[].path
+    type: str
+    description: 違反した項目のパス（dev-docs の項目のパスと同じ書き方）。文書全体にかかるものは `$`
+    example: items[3].body
+  - name: stdout[].rule
+    type: str
+    description: '違反の内容。先頭に文書の行（1 始まり）を `{行} 行目: ` で置く'
+    example: "42 行目: mermaid: Expected 'end' to close subgraph"
+  - name: stdout[].fix
+    type: str
+    description: 修正の仕方。1 文で書く
+    example: subgraph を end で閉じる
+  - name: stderr
+    type: str
+    description: 終了コードが 0 以外のときの理由（1 行）。dev-docs が「検査を実行できませんでした」の理由に載せる
+  - name: exit_code
+    type: Literal[0, 2]
+    description: 0 = 検査を終えた（違反の有無に依らない）。2 = maid が PATH から引けず、検査を始めなかった
+response_example: |-
+  ```json
+  [
+    {"path": "items[2].id", "rule": "18 行目: 項目の ID `overview` が items[0] と重複しています", "fix": "項目の ID を文書の中で一意にする"},
+    {"path": "items[3].body", "rule": "42 行目: mermaid: Expected 'end' to close subgraph", "fix": "mermaid の文法の誤りを修正する"}
+  ]
+  ```
+response_notes: '違反があっても終了コードは 0 にする。dev-docs は 0 以外の終了コードで標準出力を読まず、違反 1 件（`path: $`）に置き換える'
+exceptions:
+  - name: なし（正常終了）
+    condition: 検査を終えた。違反・時間切れ・読めない YAML も違反として配列で返し、終了コード 0
+  - name: 終了コード 2
+    condition: '`maid` が PATH から引けない（`shutil.which` で検査の前に見分ける）'
+constraints:
+  - item: 処理時間
+    constraint: 起動から 20 秒。maid を呼ぶ前に残り時間を確かめ、足りなければ呼ばずに時間切れを違反として返す。maid には残り時間を打ち切りとして渡す
+    decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
+  - item: mermaid の検査の範囲
+    constraint: 文字列の項目の中の mermaid のコードブロック。バッククォート 4 つ以上で囲んだ記述例の中のブロックは検査しない
+  - item: '`id:` の参照'
+    constraint: '`[{名前}](id:{文書の ID})` は文書が、`[{名前}](id:{文書の ID}#{項目の ID})` はその文書の項目が実在する。自分を指す参照は標準入力の内容で確かめる'
