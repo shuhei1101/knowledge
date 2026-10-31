@@ -1,0 +1,14 @@
+dev-docs への knowledge の登録:
+  説明: この端末で /dev-docs:setup に knowledge のクローンのパスを渡し、端末の設定 ~/.config/dev-docs/settings.yaml の sources[] に knowledge を登録する。scope.read は全ての作業場所、scope.write は knowledge のクローンと worktree にする（端末の設定はユーザーの環境で、登録の範囲をユーザーが決めるため AI が行わない）
+  タグ: [端末の設定]
+  実行者: ユーザー
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 実行者が /dev-docs:setup の点検の誤りを確かめて依頼元へ返す
+  確認方法: knowledge のクローンの外の作業場所から dev-docs の MCP の search_docs に source に knowledge を渡すと knowledge の文書が返る
+  状態: "-"

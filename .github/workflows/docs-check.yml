@@ -1,0 +1,37 @@
+# dev-docs.yaml が指す全ての文書にスキーマの検査と文書の違反の検査を当て、違反があればジョブを失敗させる
+name: docs-check
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+      - "release/**"
+  push:
+    branches:
+      - develop
+      - master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-check-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: astral-sh/setup-uv@v6
+      # バージョンは開発コマンドの環境構築と揃える
+      - name: maid を入れる
+        run: npm install -g @probelabs/maid@0.0.29
+      # Python 3.14 と依存は、スクリプトのロックから uv が入れる
+      - name: 全ての文書を検査する
+        run: uv run --frozen --script scripts/check_all.py

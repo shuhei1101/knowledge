@@ -1,0 +1,98 @@
+id: "CMD-72-1"
+title: "開発コマンド"
+categories:
+  - name: 環境構築（クローン直後）
+    prerequisites:
+      - WSL では、npm のグローバルの置き場所が Linux 側のファイルシステムにある（`/mnt/c` の `node_modules` の maid は 1 回の起動に 9〜14 秒かかる）
+    commands: |-
+      1. mermaid の検査に使う maid を PATH から引ける場所に入れる
+
+      ```bash
+      npm install -g @probelabs/maid@0.0.29
+      ```
+
+      2. 入口のスクリプトごとに、ロックの依存を uv のキャッシュに入れる（初回の起動で依存の取得に 20 秒を超えないようにする）
+
+      ```bash
+      uv sync --script scripts/knowledge_checks.py
+      uv sync --script scripts/knowledge_markdown.py
+      uv sync --script scripts/check_all.py
+      ```
+    verification:
+      state: 済
+      date: '2026-10-31'
+      detail: WSL2 で maid 0.0.29 を入れ、`maid - --format json` が 0.35 秒で終了コード 0 を返した。3 つのスクリプトの `uv sync --script` がロックの依存を入れた
+  - name: 取り込み後の追従（pull 後）
+    commands: |-
+      1. ロック（`scripts/*.py.lock`）が変わったときは、入口のスクリプトごとに依存を入れ直す
+
+      ```bash
+      uv sync --script scripts/knowledge_checks.py
+      uv sync --script scripts/knowledge_markdown.py
+      uv sync --script scripts/check_all.py
+      ```
+    verification:
+      state: 済
+      date: '2026-10-31'
+      detail: 3 つのスクリプトで実行し、ロックの依存が入っていることを確かめた
+  - name: 依存の追加・更新・削除
+    commands: |-
+      依存はスクリプトの PEP 723 のメタデータとロック（`{スクリプト}.py.lock`）が持つ。`pyproject.toml` は作らない。
+
+      1. 依存を追加する（メタデータとロックを書き換える）
+
+      ```bash
+      uv add --script scripts/{スクリプト}.py "{パッケージ}{バージョンの指定}"
+      ```
+
+      2. 依存を上げる
+
+      ```bash
+      uv lock --script scripts/{スクリプト}.py --upgrade-package {パッケージ}
+      ```
+
+      3. 依存を外す
+
+      ```bash
+      uv remove --script scripts/{スクリプト}.py {パッケージ}
+      ```
+
+      4. maid のバージョンを上げるときは、環境構築と CI のワークフロー（`.github/workflows/docs-check.yml`）の `@probelabs/maid@{バージョン}` を揃えて書き換える
+    verification:
+      state: 済
+      date: '2026-10-31'
+      detail: 一時フォルダへコピーした `check_all.py` とロックで `uv add --script`・`uv lock --script --upgrade-package`・`uv remove --script` を実行し、メタデータとロックが書き換わることを確かめた
+  - name: 起動・停止
+    commands: 未確定
+  - name: テスト
+    refs:
+      - TP-72-1#
+  - name: 静的検査
+    refs:
+      - TP-72-1#layers[lint]
+  - name: ビルド・生成
+    commands: 未確定
+  - name: 取り込み前の検査
+    prerequisites:
+      - 環境構築（クローン直後）を流してある
+    commands: |-
+      1. CI と同じ、全ての文書の検査を流す（違反があれば終了コード 1 で、違反を 1 件 1 行で出す）
+
+      ```bash
+      uv run --frozen --script scripts/check_all.py
+      ```
+
+      2. 単体テストと静的検査は、テスト実行方法の各層の全件実行を流す
+    effects: 文書 257 件で約 10 秒（mermaid の図ごとに maid を起動する）
+    refs:
+      - TP-72-1#layers[単体テスト（バック）]
+      - TP-72-1#layers[lint]
+    verification:
+      state: 済
+      date: '2026-10-31'
+      detail: worktree で実行し、257 件の文書を約 10 秒で検査した。テンプレートの記述例の参照切れ 13 件で終了コード 1 を返した
+  - name: 管理作業
+    commands: 未確定
+prerequisites:
+  - uv（`uv run --script` と `uv lock --script` が使えるバージョン。Python 3.14 は uv が入れる）
+  - Node.js と npm（maid を入れる）

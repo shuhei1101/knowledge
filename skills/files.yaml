@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../schemas/files.schema.yaml
+files:
+  - path: text-review/SKILL.md
+    name: 文章の点検のスキル
+    description: 渡した範囲の文章を knowledge の文章の規約に合わせて点検して修正するスキルの手順を受け持つ。スキルの手順や点検の観点を変えるときに読む。
+    tags: [topic:文章, topic:スキル, tool:claude-code]
+    related:
+      - to: text-review
+        type: implements

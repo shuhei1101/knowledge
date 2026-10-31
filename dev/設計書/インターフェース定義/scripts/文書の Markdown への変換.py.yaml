@@ -1,0 +1,159 @@
+id: "IF-72-2"
+title: "文書の Markdown への変換"
+entry:
+  kind: operation
+  value: '`dev-docs.yaml` の `converters[]` の `knowledge-markdown`（`documents[]` の `docs/` の種類（`rule`・`template`・`flowchart`・`guide`・`changelog`・`skill`）の行が `converter` で指す。files.yaml の行は `converter` を持たない。dev-docs が配信元の直下で子プロセスとして起動する）'
+flows:
+  - name: 正常系
+    summary: 規約を、group の階層を見出しにした Markdown にする
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '`overview` と、`group` が `語の選び方`・`語の選び方 > 原則` の項目と `related` を持つ rule の文書'
+        notes: develop の `convention-writing-style.yaml` と同じ構造
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の Markdown への変換
+        participant F as 配信元の schemas
+        D->>S: 標準入力に文書の YAML
+        S->>F: kind のスキーマを読む
+        S->>S: group の階層で見出しを組む
+        S-->>D: 終了コード 0 と Markdown
+    expected:
+      - 終了コードが 0
+      - 標準出力が `# {name}` で始まり、`## 語の選び方` の下に `### 原則` が 1 回だけ出る
+      - 項目の本文が、元の Markdown と 1 字も違わずに含まれる
+      - '`## 関連` に `related` の行数だけ箇条書きがある'
+    test: test_normal
+  - name: 正常系（種類に固有のキーがある）
+    summary: スキルの固有のキーを、スキーマの title を見出しにした節で出す
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '`arguments`（オブジェクトの配列）と `preconditions`（文字列の配列）を持つ skill の文書'
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の Markdown への変換
+        participant F as 配信元の schemas
+        D->>S: 標準入力に skill の文書の YAML
+        S->>F: skill のスキーマを読む
+        S->>S: 固有のキーをスキーマの title の節にする
+        S-->>D: 終了コード 0 と Markdown
+    expected:
+      - 終了コードが 0
+      - '`arguments` が `## {arguments の title}` の下の `<!-- table: data -->` の表になる'
+      - '`preconditions` が `## {preconditions の title}` の下の箇条書きになる'
+    test: test_normal_when_kind_specific_keys
+  - name: 異常系（スキーマが無い・終了コード 1）
+    summary: kind のスキーマが無ければ変換せずに終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '`kind: missing` の文書'
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の Markdown への変換
+        participant F as 配信元の schemas
+        D->>S: 標準入力に文書の YAML
+        S->>F: kind のスキーマを読む
+        F-->>S: ファイルが無い
+        S-->>D: 終了コード 1 と標準エラーの理由
+    expected:
+      - 終了コードが 1
+      - 標準出力が空
+      - 標準エラーに `schemas/missing.schema.yaml` が無いことが出る
+    test: test_error_when_schema_missing
+  - name: 異常系（YAML として読めない・終了コード 1）
+    summary: 読めない入力は変換せずに終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: 括弧が閉じていない YAML
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の Markdown への変換
+        D->>S: 標準入力に壊れた YAML
+        S-->>D: 終了コード 1 と標準エラーの理由
+    expected:
+      - 終了コードが 1
+      - 標準エラーに読めない行が出る
+    test: test_error_when_invalid_yaml
+lead: 標準入力の文書 1 件を、項目の `group` の階層を見出しにした mdmark の記法の Markdown にして標準出力へ返す。
+identifier: knowledge-markdown
+idempotent: true
+side_effects: なし（ファイルを書き換えない）
+callers:
+  - SC-72-3#scenarios[正常シナリオ]
+exclusivity: 制限なし
+request:
+  - name: stdin
+    type: str
+    required: true
+    location: body
+    description: 変換する文書 1 件の YAML（UTF-8）
+    notes: 標準入力で受け取る
+  - name: cwd
+    type: Path
+    required: true
+    location: argument
+    description: knowledge の配信元の直下。`schemas/{kind}.schema.yaml` を読み、種類に固有のキーの見出しにスキーマの `title` を使う
+    notes: 子プロセスの作業ディレクトリとして受け取る
+response:
+  - name: stdout
+    type: str
+    description: mdmark の記法の Markdown。並びは「`# {name}`・`description`・`overview` の項目の本文・項目の節・種類に固有のキーの節・`## 関連`・`## 出典`」
+  - name: exit_code
+    type: Literal[0, 1]
+    description: 0 = 変換できた。1 = YAML として読めないか、`kind` のスキーマが `schemas/` に無い
+  - name: stderr
+    type: str
+    description: 終了コード 1 のときの理由（1 行）。dev-docs が画面の変換の失敗（`exit`）の理由に載せる
+response_example: |-
+  ```markdown
+  # 文章の書き方
+
+  エージェントが記載する文章の確認表と、語の選び方を定め…
+
+  エージェントが書く文章の確認と、語の選び方の決まり。
+
+  ## 語の選び方
+
+  ### 文章でない所の語の選び方
+
+  文章でない所（UI のラベル…）は…
+
+  ### 原則
+
+  #### 対応表に無い語の判断
+
+  …
+
+  ## 関連
+
+  - [flowchart-word-choice](id:flowchart-word-choice)（references）: 迷ったとき
+  ```
+response_notes: '項目の本文は書かれた Markdown のまま出し、`<!-- table: data -->` などの mdmark のマーカーと `id:` のリンクを書き換えない'
+exceptions:
+  - name: なし（正常終了）
+    condition: 変換できた
+  - name: 終了コード 1
+    condition: 標準入力が YAML として読めないか、`kind` に当たる `schemas/{kind}.schema.yaml` が無い
+constraints:
+  - item: 処理時間
+    constraint: 起動から 20 秒
+    decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
+  - item: 項目の見出し
+    constraint: 項目はファイルの並びどおりに出す。`group` を ` > ` で分けた各段を `##` から 1 つずつ深い見出しにし、直前の項目と同じ段は繰り返さない。項目の `name` はその 1 つ下の見出しにする。`overview` は見出しを付けず、`description` の直後に本文だけを置く
+  - item: 出さないキー
+    constraint: '`id`・`kind`・`tags`・`status`・`visibility`・`rev`・`last_reviewed`・`aliases` は本文に出さない（dev-docs の画面がメタデータとして出す）'
+  - item: 種類に固有のキー
+    constraint: '共通のメタデータ以外のキー（スキルの `arguments` など）は `## {スキーマの title}` の節にし、文字列は段落、文字列の配列は箇条書き、オブジェクトの配列は `<!-- table: data -->` の表で出す'
+test_file: tests/integration/scripts/test_knowledge_markdown.py

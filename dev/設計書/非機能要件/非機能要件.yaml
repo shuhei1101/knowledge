@@ -1,0 +1,50 @@
+id: "NFR-72-1"
+title: "非機能要件"
+requirements:
+  - name: 検査と変換のスクリプトの 1 文書あたりの処理時間
+    english_name: script_duration
+    category: 性能
+    external_constraint: dev-docs はスクリプトを端末の設定 `script_timeout_sec`（既定 30 秒）で打ち切る
+    source_kind: 実行基盤の制限
+    source: https://github.com/shuhei1101/dev-docs/blob/develop/src/dev_docs/features/settings/types.py
+    value: '20'
+    unit: 秒
+    rationale: 外側の待ち 30 秒に、内側（スクリプト全体）の 50% の余裕を含めて 30 ÷ 1.5 = 20 秒にする。余裕は実測が無いので仮置きで、実装の後に最も大きい文書で測って見直す
+    overflow: スクリプトは起動時に開始時刻を控え、maid を呼ぶ前に残り時間を確かめる。残りが足りなければ maid を呼ばず、時間切れを違反として返す（書き込みは行われない）。maid には残り時間を打ち切りとして渡す。それでも 30 秒を超えたときは dev-docs が `timeout` として返す
+    breakdown:
+      - part: 外側の待ち（dev-docs の `script_timeout_sec`）
+        value: 30 秒
+      - part: 余裕（内側の 50%）
+        value: 10 秒
+        notes: 実測が無いので仮置き
+      - part: スクリプト全体（maid の呼び出しを含む）
+        value: 20 秒
+  - name: CI の 1 回の所要時間
+    english_name: ci_duration
+    category: 性能
+    external_constraint: GitHub Actions の GitHub ホストランナーのジョブは 6 時間で打ち切られる
+    source_kind: 実行基盤の制限
+    source: https://docs.github.com/ja/actions/administering-github-actions/usage-limits-billing-and-administration
+    value: '5'
+    unit: 分
+    rationale: 外側の 6 時間は上限で、PR の待ちは内側の所要時間で決める。内側（内訳）の合計 3 分に 50% の余裕を足して切り上げた 5 分をジョブの `timeout-minutes` にする。内側は実測が無いので仮置きで、実装の後に CI の実行で測って見直す
+    breakdown:
+      - part: 環境の用意（checkout・uv と Python 3.14・依存・`npm install -g` の maid）
+        value: 2 分
+        notes: 実測が無いので仮置き
+      - part: 全ての文書の検査
+        value: 1 分
+        notes: 手元の測定で全ての文書の読み込みが約 1 秒、maid は mermaid を持つ文書（PoC で 13 件）だけで 1 件最大 0.90 秒。ランナーの実測が無いので 1 分を仮置き
+      - part: 余裕（内側の 50%）
+        value: 1.5 分
+      - part: ジョブの打ち切り（切り上げ）
+        value: 5 分
+    overflow: GitHub Actions がジョブを打ち切り、チェックが失敗する（PR はマージできない）
+  - name: スクリプトが動く OS
+    english_name: supported_os
+    category: 動作環境
+    external_constraint: dev-docs は端末の WSL2 の Ubuntu で動き、CI は GitHub ホストランナーの `ubuntu-latest` で動く
+    source_kind: 実行基盤の制限
+    value: Linux（WSL2 の Ubuntu と ubuntu-latest）
+    rationale: スクリプトを起動するのは dev-docs と CI だけで、どちらも Linux で動く。maid は Linux 側のファイルシステムに入れ、スクリプトの仮想環境は uv のキャッシュ（Linux 側）に置く（MOD-72-1）
+    source: ARCH-72-1#subsystems[scripts]

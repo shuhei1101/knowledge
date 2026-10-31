@@ -1,0 +1,13 @@
+summary: "1 つの機能の正常・異常シナリオ"
+docs_index: true
+items:
+  - page: 利用者が dev-docs に knowledge を登録する.yaml
+    summary: '`/dev-docs:setup` の点検を通して `sources[]` に knowledge を登録する'
+  - page: 利用者が画面で knowledge の文書を読む.yaml
+    summary: dev-docs の画面で `nav` から文書を開いて読む
+  - page: エージェントが knowledge の文書を検索・取得する.yaml
+    summary: '`search_docs` に `source: knowledge` を渡して文書を検索・取得する'
+  - page: エージェントが knowledge の文書を書き込む.yaml
+    summary: '`write_docs` で検査のスクリプトを通してから文書を書き込む'
+  - page: 開発者が文書の違反を検査する.yaml
+    summary: CI で全ての文書にスキーマの検査と検査のスクリプトを当てる

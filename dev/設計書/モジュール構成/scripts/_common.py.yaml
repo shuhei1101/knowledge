@@ -1,0 +1,378 @@
+id: "MOD-72-2"
+title: "検査と変換のスクリプト / scripts / _common.py"
+lead: 文書の YAML の読み込みと、項目のパス・文書の行の対応、違反の型、ファイルの並列の読み込みを、入口の 3 つのスクリプトへ渡す。
+data_models:
+  - name: Violation
+    title: 違反
+    container: scripts/_common.py
+    usecase: 共通
+    role: DTO
+    summary: dev-docs の validators の約束の違反 1 件
+    description: '`TypedDict`。標準出力へは `json.dumps(list[Violation], ensure_ascii=False)` で出す。'
+    properties:
+      - name: path
+        type: str
+        description: 違反した項目のパス（`items[3].body` の書き方）。文書全体にかかるものは `$`
+      - name: rule
+        type: str
+        description: '違反の内容。先頭に文書の行（1 始まり）を `{行} 行目: ` で置く'
+      - name: fix
+        type: str
+        description: 修正の仕方の 1 文
+    refs:
+      - IF-72-1#response[stdout]
+  - name: DocumentError
+    title: 読めない文書
+    container: scripts/_common.py
+    usecase: 共通
+    role: 例外
+    summary: YAML として読めないか、最上位がマッピングでない文書
+    inherits: Exception
+    properties:
+      - name: line
+        type: int
+        description: 読めなかった行（1 始まり）。行が分からないときは 1
+      - name: message
+        type: str
+        description: 理由の 1 行（ruamel.yaml の `problem` か `最上位がマッピングではありません`）
+constants:
+  - name: LIMIT_SEC
+    title: 処理時間の上限
+    container: scripts/_common.py
+    usecase: 共通
+    summary: スクリプトの起動から終わりまでの上限（秒）
+    value: '20.0'
+    refs:
+      - NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
+  - name: READ_WORKERS
+    title: 読み込みのスレッドの数
+    container: scripts/_common.py
+    usecase: 共通
+    summary: '`read_texts` が並列に読むスレッドの数'
+    value: '16'
+    reason: '`/mnt/c` の 259 件を 1 件ずつ読むと 3.4 秒、16 のスレッドで 0.2 秒（2026-10-31 に測った値）'
+functions:
+  - name: load_document
+    title: 文書の読み込み
+    kind: 関数
+    container: scripts/_common.py
+    usecase: 共通
+    role: 読み込み
+    scope: public
+    summary: 文書の YAML を行の情報つきのマッピングとして読む
+    args:
+      - name: text
+        title: 文書の YAML
+        type: str
+        required: true
+        description: 文書 1 件の YAML（UTF-8 で読んだ文字列）
+    returns:
+      type: CommentedMap
+      description: 文書の最上位のマッピング。`.lc` で各キー・要素の行を引ける
+    process: |-
+      1. `YAML(typ="rt")` で `text` を読む（LIB-72-1）
+         - `YAMLError` の場合、`problem_mark.line + 1` を行、`problem` を理由にした読めない文書を送出する
+      2. 最上位が `CommentedMap` でない場合、行 1・`最上位がマッピングではありません` の読めない文書を送出する
+      3. 読んだマッピングを返す
+    exceptions:
+      - name: DocumentError
+        condition: YAML として読めない
+        message: ruamel.yaml の `problem`
+      - name: DocumentError
+        condition: 最上位がマッピングでない（空の文書・配列）
+        message: 最上位がマッピングではありません
+    unit_tests:
+      - name: test_load_document
+        case: 正常
+        summary: マッピングの文書を読む
+        condition: '`id: a` と `items` を持つ YAML'
+        mock: なし
+        expected: '`CommentedMap` で、`lc.key("items")` が行を返す'
+      - name: test_load_document_when_broken
+        case: 異常
+        summary: 読めない YAML
+        condition: '`items:\n  - id: a\n    name: [`'
+        mock: なし
+        expected: '`DocumentError` で、`line` が 3 以上（括弧の開いた行以降）'
+        exception: YAML として読めない
+      - name: test_load_document_when_not_mapping
+        case: 異常
+        summary: 最上位が配列
+        condition: '`- a`'
+        mock: なし
+        expected: '`DocumentError` で、`line` が 1'
+        exception: 最上位がマッピングでない
+  - name: format_path
+    title: 項目のパスの組み立て
+    kind: 関数
+    container: scripts/_common.py
+    usecase: 共通
+    scope: public
+    summary: キーと添字の並びを dev-docs の項目のパスの書き方にする
+    args:
+      - name: parts
+        title: キーと添字
+        type: Sequence[str | int]
+        required: true
+        description: 最上位から順のキー（str）と配列の添字（int）
+    returns:
+      type: str
+      description: '`items[3].body` の形のパス。`parts` が空なら `$`'
+    process: |-
+      1. `parts` が空なら `$` を返す
+      2. 添字は `[{添字}]`、キーは先頭なら `{キー}`、それ以外は `.{キー}` でつないで返す
+    unit_tests:
+      - name: test_format_path
+        case: 正常
+        summary: キーと添字をつなぐ
+        condition: '`["items", 3, "body"]`'
+        mock: なし
+        expected: '`items[3].body`'
+      - name: test_format_path_when_empty
+        case: 正常
+        summary: 文書全体
+        condition: '`[]`'
+        mock: なし
+        expected: '`$`'
+  - name: iter_strings
+    title: 文字列の項目の列挙
+    kind: 関数
+    container: scripts/_common.py
+    usecase: 共通
+    role: 走査
+    scope: public
+    summary: 文書の中の全ての文字列の値を、項目のパスと本文の 1 行目の行で返す
+    args:
+      - name: node
+        title: 文書
+        type: CommentedMap | CommentedSeq
+        required: true
+        description: '`load_document` が返したマッピングか、その中のマッピング・配列'
+      - name: parts
+        title: 親のパス
+        type: tuple[str | int, ...]
+        required: false
+        default: ()
+        description: '`node` までのキーと添字'
+    returns:
+      type: Iterator[tuple[tuple[str | int, ...], int, str]]
+      description: （項目のキーと添字、本文の 1 行目の文書の行（1 始まり）、文字列）。並びは文書の並びどおり
+    returns_example: |-
+      ```python
+      (("items", 3, "body"), 42, "```mermaid\nflowchart TD\n...")
+      ```
+    process: |-
+      1. マッピングはキーごとに、配列は添字ごとに値を見る
+         - 値がマッピング・配列の場合、子へ再帰する
+         - 値が文字列の場合、`node.lc.value(キー)`（配列は `node.lc.item(添字)`）の行に 1 を足して返す。値が `LiteralScalarString`・`FoldedScalarString`（`|`・`>` のブロック）のときは、本文が次の行から始まるのでさらに 1 を足す
+         - それ以外の型（数・真偽値・null）は飛ばす
+    unit_tests:
+      - name: test_iter_strings
+        case: 正常
+        summary: 入れ子の文字列をパスと行で返す
+        condition: '1 行目 `id: a`、3 行目から `items` の 1 要素（`id`・`body: |-` のブロック）、`rev: 1` を持つ文書'
+        mock: なし
+        expected: '`(("id",), 1, "a")`・`(("items", 0, "id"), 4, ...)`・`(("items", 0, "body"), {`body:` の行 + 1}, ...)` の順で、`rev` は返らない'
+      - name: test_iter_strings_when_flow_scalar
+        case: 正常
+        summary: 1 行の文字列は同じ行
+        condition: '`description: 説明` が 2 行目'
+        mock: なし
+        expected: 行が 2
+  - name: read_texts
+    title: ファイルの並列の読み込み
+    kind: 関数
+    container: scripts/_common.py
+    usecase: 共通
+    role: 読み込み
+    scope: public
+    summary: ファイルを並列に UTF-8 で読み、パス → 中身で返す
+    args:
+      - name: paths
+        title: 読むファイル
+        type: Sequence[Path]
+        required: true
+        description: 読むファイルの絶対パス
+    returns:
+      type: dict[Path, str | None]
+      description: パス → 中身。読めなかったファイル（`OSError`・`UnicodeDecodeError`）は `None`
+    process: |-
+      1. `ThreadPoolExecutor(max_workers=READ_WORKERS)` で各ファイルを `read_text(encoding="utf-8")` で読む
+         - `OSError`・`UnicodeDecodeError` の場合、そのファイルを `None` にする
+      2. `paths` の並びの辞書で返す
+    unit_tests:
+      - name: test_read_texts
+        case: 正常
+        summary: 全てのファイルを読む
+        condition: 一時フォルダの UTF-8 のファイル 3 つ
+        mock: なし（一時ディレクトリ）
+        expected: 3 つの中身が `paths` の並びで返る
+      - name: test_read_texts_when_unreadable
+        case: 正常
+        summary: 読めないファイルは None
+        condition: 無いファイル 1 つと、Shift_JIS で書いたファイル 1 つ
+        mock: なし（一時ディレクトリ）
+        expected: どちらも `None`
+  - name: line_of
+    title: 項目の行の引き当て
+    kind: 関数
+    container: scripts/_common.py
+    usecase: 共通
+    scope: public
+    summary: キーと添字の並びが指す項目の、文書の行（1 始まり）を返す
+    args:
+      - name: doc
+        title: 文書
+        type: CommentedMap
+        required: true
+        description: '`load_document` が返したマッピング'
+      - name: parts
+        title: キーと添字
+        type: Sequence[str | int]
+        required: true
+        description: jsonschema の `absolute_path` など
+    returns:
+      type: int
+      description: たどれた最も深いキー・要素の行。`parts` が空なら 1
+    process: |-
+      1. `doc` から `parts` を順にたどり、マッピングは `lc.key(キー)`、配列は `lc.item(添字)` の行を控える
+         - キー・添字が無いか、値がマッピング・配列でない場合、そこでやめる
+      2. 控えた最後の行に 1 を足して返す（控えが無ければ 1）
+    unit_tests:
+      - name: test_line_of
+        case: 正常
+        summary: 入れ子のキーの行
+        condition: '`items` の 2 つ目の要素の `name` が 7 行目の文書と `["items", 1, "name"]`'
+        mock: なし
+        expected: '7'
+      - name: test_line_of_when_missing
+        case: 正常
+        summary: 無いキーは親の行
+        condition: '`["items", 1, "nope"]`'
+        mock: なし
+        expected: '`items[1]` の行'
+      - name: test_line_of_when_empty
+        case: 正常
+        summary: 文書全体
+        condition: '`[]`'
+        mock: なし
+        expected: '1'
+  - name: key_line
+    title: キーの行
+    container: scripts/_common.py
+    usecase: 共通
+    summary: マッピングのキーの文書の行（1 始まり）を返す
+    kind: 関数
+    scope: public
+    args:
+      - name: node
+        title: マッピング
+        type: CommentedMap
+        required: true
+        description: 行の情報つきで読んだマッピング
+      - name: key
+        title: キー
+        type: object
+        required: true
+        description: 行を引くキー
+    returns:
+      type: int
+      description: '`lc.key(key)` の行に 1 を足した行'
+    process: 1. `lc.key(key)` の行に 1 を足して返す
+  - name: value_line
+    title: 値の行
+    container: scripts/_common.py
+    usecase: 共通
+    summary: マッピングの値の始まりの文書の行（1 始まり）を返す
+    kind: 関数
+    scope: public
+    args:
+      - name: node
+        title: マッピング
+        type: CommentedMap
+        required: true
+        description: 行の情報つきで読んだマッピング
+      - name: key
+        title: キー
+        type: object
+        required: true
+        description: 値の行を引くキー
+    returns:
+      type: int
+      description: '`lc.value(key)` の行に 1 を足した行'
+    process: 1. `lc.value(key)` の行に 1 を足して返す
+  - name: item_line
+    title: 要素の行
+    container: scripts/_common.py
+    usecase: 共通
+    summary: 配列の要素の始まりの文書の行（1 始まり）を返す
+    kind: 関数
+    scope: public
+    args:
+      - name: node
+        title: 配列
+        type: CommentedSeq
+        required: true
+        description: 行の情報つきで読んだ配列
+      - name: index
+        title: 添字
+        type: int
+        required: true
+        description: 行を引く要素の添字
+    returns:
+      type: int
+      description: '`lc.item(index)` の行に 1 を足した行'
+    process: 1. `lc.item(index)` の行に 1 を足して返す
+  - name: as_mapping
+    title: マッピングへの絞り込み
+    container: scripts/_common.py
+    usecase: 共通
+    summary: マッピングなら文字列のキーで引ける型で返す
+    kind: 関数
+    scope: public
+    args:
+      - name: value
+        title: 値
+        type: object
+        required: true
+        description: 読んだ YAML の値
+    returns:
+      type: Mapping[str, object] | None
+      description: マッピングでなければ None
+    process: 1. `Mapping` なら `Mapping[str, object]` として返し、そうでなければ None を返す
+  - name: as_list
+    title: 配列への絞り込み
+    container: scripts/_common.py
+    usecase: 共通
+    summary: 配列なら要素の型を object にして返す
+    kind: 関数
+    scope: public
+    args:
+      - name: value
+        title: 値
+        type: object
+        required: true
+        description: 読んだ YAML の値
+    returns:
+      type: list[object] | None
+      description: 配列でなければ None
+    process: 1. `list` なら `list[object]` として返し、そうでなければ None を返す
+  - name: load_safe
+    title: 行の情報なしの読み込み
+    container: scripts/_common.py
+    usecase: 共通
+    summary: 行の情報の要らない YAML（スキーマ・dev-docs.yaml）を安全な型だけで読む
+    kind: 関数
+    scope: public
+    args:
+      - name: text
+        title: YAML
+        type: str
+        required: true
+        description: 読む YAML の文字列
+    returns:
+      type: object
+      description: '`YAML(typ="safe")` で読んだ値'
+    process: 1. `YAML(typ="safe")` で読んで返す（読めない場合、ruamel.yaml の `YAMLError` をそのまま送出する）
+test_files:
+  - tests/unit/scripts/test_common.py
