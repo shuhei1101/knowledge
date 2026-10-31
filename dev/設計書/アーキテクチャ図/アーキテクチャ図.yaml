@@ -27,6 +27,12 @@ overview:
     - id: actions
       label: GitHub Actions
       kind: external
+    - id: mdmark
+      label: mdmark
+      kind: external
+    - id: pages
+      label: GitHub Pages
+      kind: external
   edges:
     - from: user
       to: devdocs
@@ -49,6 +55,21 @@ overview:
     - from: ci
       to: scripts
       label: 検査
+    - from: actions
+      to: ci
+      label: master への push
+    - from: ci
+      to: scripts
+      label: 成果物の作成
+    - from: scripts
+      to: mdmark
+      label: 子プロセス
+    - from: ci
+      to: pages
+      label: 配信
+    - from: user
+      to: pages
+      label: 公開の文書
   subgraphs:
     - id: knowledge
       label: knowledge
@@ -74,7 +95,7 @@ subsystems:
     runs_on: dev-docs が起動する子プロセスと CI
   - name: CI
     scope: ci
-    role: PR ごとに全ての文書へスキーマの検査と検査のスクリプトを当て、違反があれば失敗させる
+    role: PR ごとに全ての文書へスキーマの検査と検査のスクリプトを当て、違反があれば失敗させる。master への push で公開の文書だけを HTML にして GitHub Pages へ配信する
     runtime: GitHub Actions のワークフロー
     runs_on: GitHub Actions
 lead: |-
@@ -95,8 +116,21 @@ external_systems:
       事前確認: 要。検査のスクリプトの起動時に `maid` が PATH から引けるかを確かめ、無ければ検査を始めずに足りないものを返す。maid を呼ぶ前に残り時間を確かめる（非機能要件のスクリプトの処理時間）
     detail: LIB-72-3#
   - name: GitHub Actions
-    purpose: PR で CI のワークフローを動かす
+    purpose: PR で文書の検査のワークフローを、master への push で公開文書の配信のワークフローを動かす
     direction: 受信のみ
     protocol: ワークフローの YAML
     notes:
       事前確認: 要。ワークフローの最初のステップで、検査に要るランタイム（Python・maid）が入ったかを確かめ、欠けていれば検査を始めずに失敗させる
+  - name: mdmark
+    purpose: 公開の文書の Markdown を 1 枚の HTML にまとめる（`build`）
+    direction: 双方向
+    protocol: CLI（子プロセス、`npx` でタグを指定して起動）
+    detail: LIB-137-1#
+    notes:
+      事前確認: 不要。`build` が 0 以外で終われば、Pages の成果物の作成がその標準エラーを出して失敗する
+  - name: GitHub Pages
+    purpose: 公開の文書の HTML を利用者へ配信する
+    direction: 送信のみ
+    protocol: Pages の成果物（`actions/upload-pages-artifact`・`actions/deploy-pages`）
+    notes:
+      事前確認: 要。配信の前に `actions/configure-pages` で Pages の設定を読み、配信元が GitHub Actions でなければ配信せずに失敗させる

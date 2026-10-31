@@ -1,0 +1,69 @@
+id: "LIB-137-1"
+title: "mdmark"
+kind: "CLI"
+version:
+  current: v0.8.0
+  latest: v0.8.0
+  checked_on: '2026-10-31'
+  source: Pages の成果物の作成のスクリプトが呼ぶ `npx -y github:shuhei1101/mdmark#v0.8.0`
+  pinning: タグで固定する（npm に公開しておらず、ブランチ名では中身が変わる）
+catalogs:
+  - name: コマンド
+    version: v0.8.0
+    entries:
+      - name: build
+        kind: コマンド
+        purpose: 設定の `build` が指す Markdown を 1 枚の HTML にまとめる
+        params:
+          - name: --config
+            type: Path
+            required: false
+            default: 今のフォルダから上へ順に探した `mdmark.config.yaml`
+            description: 設定ファイル
+          - name: build.include
+            type: list[str]
+            required: true
+            description: まとめる Markdown の glob（設定ファイルのあるフォルダからの相対）。文書は glob の並び、同じ glob の中はパスの順に並ぶ
+            notes: 設定ファイルのキー
+          - name: build.entry
+            type: str
+            required: false
+            default: '`build.include` で最初に当たった文書'
+            description: 開いたときに出す文書
+            notes: 設定ファイルのキー
+          - name: build.out
+            type: str
+            required: true
+            description: 書き出す HTML のパス。既にあれば上書きする
+            notes: 設定ファイルのキー
+        returns:
+          - name: exit_code
+            type: Literal[0, 1]
+            description: 0 = 書き出した。1 = 設定が読めない・`build` が無い・まとめる文書が 0 件・`build.out` へ書けない（HTML は書かない）
+          - name: stdout
+            type: str
+            description: '`書き出した: {build.out}（文書 {件数} 件）`'
+          - name: stderr
+            type: str
+            description: 警告（まとめた HTML に含まれない文書へのリンクなど。終了コードは 0 のまま）と、終了コード 1 の理由
+lead: 印を持つ Markdown を描くライブラリと CLI。CLI の `build` は、設定の `build` が指す複数の Markdown を、文書の一覧と文書間のリンクで行き来できる CDN を読まない 1 枚の HTML にまとめる。
+supplier: shuhei1101
+dependency_scope: 必須
+adoption: 採用
+used_in:
+  - scripts/
+upstream: shuhei1101/mdmark
+verification:
+  state: 未確認
+license: ライセンスの表記なし（knowledge と同じ所有者の公開リポジトリ）
+official_url: https://github.com/shuhei1101/mdmark
+docs_url: https://github.com/shuhei1101/mdmark/blob/v0.8.0/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E6%9B%B8%E3%81%8D%E5%87%BA%E3%81%99/%E6%96%87%E6%9B%B8%E3%82%921%E6%9E%9A%E3%81%AB%E3%81%BE%E3%81%A8%E3%82%81%E3%82%8B.md
+selection:
+  candidates: '`npx github:shuhei1101/mdmark#{タグ}` で呼ぶ、mdmark をタグで checkout してコミット済みの `dist/cli.js` を node で呼ぶ'
+  decision: '`dist/cli.js` は `yaml`・`esbuild` などの実行時の依存を同梱しておらず、checkout だけでは `ERR_MODULE_NOT_FOUND` で動かない。`npx` は依存ごと入れ、mdmark の使い方もこの呼び方で書いている'
+install: |-
+  入れる手順は無い。Node 24 以降で、呼ぶたびに `npx -y` がタグの中身と依存を取る
+
+  ```bash
+  npx -y github:shuhei1101/mdmark#v0.8.0 build --config {設定ファイル}
+  ```

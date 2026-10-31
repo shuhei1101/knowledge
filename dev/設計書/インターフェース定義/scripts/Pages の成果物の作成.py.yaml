@@ -1,0 +1,187 @@
+id: "IF-137-1"
+title: "Pages の成果物の作成"
+entry:
+  kind: operation
+  value: リポジトリの直下で起動するコマンド（CLI）。公開文書の配信のワークフローと開発者の手元から呼ぶ
+flows:
+  - name: 正常系
+    summary: 公開の文書だけを 1 枚の HTML にまとめ、終了コード 0 で終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`dev-docs.yaml`・スキーマ・変換のスクリプトと、`visibility: public` の文書 2 件・`visibility: internal` の文書 1 件を持つ一時フォルダ'
+        notes: 公開の文書の 1 件が、もう 1 件の公開の文書の項目と internal の文書を 1 つずつ参照する
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as Pages の成果物の作成
+        participant V as 変換のスクリプト
+        participant M as mdmark
+        C->>S: リポジトリの直下で --out を付けて起動する
+        S->>S: dev-docs.yaml の documents を読み、公開の文書を選ぶ
+        loop 公開の文書
+          S->>V: 標準入力に文書の YAML
+          V-->>S: Markdown
+          S->>S: 参照をリンクに書き換えて一時フォルダに置く
+        end
+        S->>M: build
+        M-->>S: 終了コード 0
+        S-->>C: 終了コード 0 と出力のフォルダの index.html
+    expected:
+      - 終了コードが 0
+      - 出力のフォルダにあるファイルは `index.html` だけ
+      - '`index.html` に公開の文書 2 件の本文が入り、internal の文書の本文は入らない'
+      - 公開の文書の項目への参照は `index.html` の中のリンクになり、internal の文書への参照は GitHub の master の YAML の URL になる
+  - name: 異常系（変換が失敗する・終了コード 1）
+    summary: 変換のスクリプトが失敗した文書で止め、出力を残さずに終わる
+    setup:
+      - name: Mock
+        description: '`dev-docs.yaml` の `converters[].run` を、標準エラーに 1 行出して終了コード 1 で終わるコマンドに差し替える'
+      - name: リポジトリ
+        description: 正常系と同じ一時フォルダ
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as Pages の成果物の作成
+        participant V as 変換のスクリプト
+        C->>S: リポジトリの直下で --out を付けて起動する
+        S->>V: 標準入力に文書の YAML
+        V-->>S: 終了コード 1 と標準エラー
+        S-->>C: 終了コード 1 と失敗した文書のパス・標準エラー
+    expected:
+      - 終了コードが 1
+      - 標準エラーに失敗した文書のパスと、変換のスクリプトの標準エラーが出る
+      - 出力のフォルダに `index.html` が無い
+  - name: 異常系（参照先が無い・終了コード 1）
+    summary: documents に無い ID への参照があれば、出力を残さずに終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: 公開の文書が `documents[]` のどの文書にも無い ID を参照する一時フォルダ
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as Pages の成果物の作成
+        participant V as 変換のスクリプト
+        C->>S: リポジトリの直下で --out を付けて起動する
+        S->>V: 標準入力に文書の YAML
+        V-->>S: Markdown
+        S->>S: 参照先の ID が見つからない
+        S-->>C: 終了コード 1 と文書のパス・参照先の ID
+    expected:
+      - 終了コードが 1
+      - 標準エラーに参照元の文書のパスと、見つからない ID が出る
+      - 出力のフォルダに `index.html` が無い
+  - name: 異常系（mdmark の build が失敗する・終了コード 1）
+    summary: mdmark の build が失敗すれば、出力を残さずに終わる
+    setup:
+      - name: Mock
+        description: PATH の `npx` を、標準エラーに 1 行出して終了コード 1 で終わるコマンドに差し替える
+      - name: リポジトリ
+        description: 正常系と同じ一時フォルダ
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as Pages の成果物の作成
+        participant M as mdmark
+        C->>S: リポジトリの直下で --out を付けて起動する
+        S->>M: build
+        M-->>S: 終了コード 1 と標準エラー
+        S-->>C: 終了コード 1 と mdmark の標準エラー
+    expected:
+      - 終了コードが 1
+      - 標準エラーに mdmark の標準エラーが出る
+      - 出力のフォルダに `index.html` が無い
+  - name: 異常系（公開の文書が無い・終了コード 2）
+    summary: 公開の文書が 0 件なら成果物を作り始めずに終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`visibility: internal` の文書だけを持つ一時フォルダ'
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as Pages の成果物の作成
+        C->>S: リポジトリの直下で --out を付けて起動する
+        S->>S: 公開の文書が 0 件
+        S-->>C: 終了コード 2 と標準エラーの理由
+    expected:
+      - 終了コードが 2
+      - 標準エラーに公開の文書が無いことが出る
+  - name: 異常系（dev-docs.yaml が読めない・終了コード 2）
+    summary: dev-docs.yaml が無いか読めなければ成果物を作り始めずに終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`dev-docs.yaml` を持たない一時フォルダ'
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as Pages の成果物の作成
+        C->>S: リポジトリの直下で --out を付けて起動する
+        S->>S: dev-docs.yaml が無い
+        S-->>C: 終了コード 2 と標準エラーの理由
+    expected:
+      - 終了コードが 2
+      - 標準エラーに `dev-docs.yaml` が無いことが出る
+lead: '`dev-docs.yaml` の `documents[]` が指す文書のうち `visibility: public` のものを変換のスクリプトで Markdown にし、文書の ID への参照をリンクに書き換えて、mdmark の `build` で 1 枚の HTML にまとめた出力のフォルダを作る。'
+identifier: build-pages
+idempotent: true
+side_effects: 出力のフォルダを作り直す（中身を消してから `index.html` を書く）。途中の Markdown と mdmark の設定は一時フォルダに置き、終了時に消す。リポジトリのファイルは書き換えない
+callers:
+  - SC-137-1#scenarios[正常シナリオ]
+  - SC-137-1#scenarios[異常シナリオ（変換のスクリプトが失敗する）]
+exclusivity: 制限なし（同じ出力のフォルダへ同時に呼ばない）
+request:
+  - name: cwd
+    type: Path
+    required: true
+    location: argument
+    description: knowledge のリポジトリの直下。`dev-docs.yaml` と文書の YAML を読む
+    notes: 作業ディレクトリとして受け取る
+  - name: --out
+    type: Path
+    required: true
+    location: argument
+    description: 出力のフォルダ。無ければ作り、あれば中身を消してから書く
+    example: _site
+response:
+  - name: '{--out}/index.html'
+    type: ファイル
+    description: 公開の文書を全て 1 枚にまとめた HTML。開くと `documents[]` の並びで最初の公開の文書を出す
+  - name: stdout
+    type: str
+    description: 'mdmark の `build` の結果の行（`書き出した: {出力}（文書 {件数} 件）`）'
+  - name: stderr
+    type: str
+    description: 終了コード 1・2 のときの理由。変換の失敗は失敗した文書のパスと変換のスクリプトの標準エラー
+  - name: exit_code
+    type: Literal[0, 1, 2]
+    description: 0 = 出力を作った。1 = 変換か mdmark の `build` が失敗した。2 = `dev-docs.yaml` が読めないか、公開の文書が 0 件で、成果物を作り始めなかった
+exceptions:
+  - name: なし（正常終了）
+    condition: 全ての公開の文書を変換し、`index.html` を書いた（終了コード 0）
+  - name: 終了コード 1
+    condition: 変換のスクリプトが 0 以外で終わった文書がある、参照先の ID が `documents[]` の文書に無い、または mdmark の `build` が 0 以外で終わった。最初の失敗で止め、出力のフォルダに `index.html` を残さない
+  - name: 終了コード 2
+    condition: '`dev-docs.yaml` が無い・YAML として読めない、または `visibility: public` の文書が 0 件'
+constraints:
+  - item: 対象の文書
+    constraint: '`documents[]` のうち `converter` を持つ行の `paths` に当たる YAML で、`visibility` が `public` のもの。`records` の行（files.yaml）は対象にしない'
+  - item: 変換の呼び方
+    constraint: '`documents[].converter` が指す `converters[]` の `run` を、リポジトリの直下を作業ディレクトリにして子プロセスで起動し、標準入力に文書の YAML を渡す'
+  - item: 参照の書き換え
+    constraint: '`(id:{ID})`・`(id:{ID}#{項目})` を、参照先が公開の文書なら `./{ID}.md`（項目があれば `#{見出しの ID}`）、それ以外なら `https://github.com/shuhei1101/knowledge/blob/master/{参照先の YAML のパス}` に書き換える'
+    notes: 見出しの ID は、変換のスクリプトがその項目に出す見出しの文字から、mdmark と同じ GitHub の規則で作る
+  - item: mdmark の呼び方
+    constraint: '`npx -y github:shuhei1101/mdmark#{タグ} build --config {一時フォルダの設定}`。タグは外部ライブラリ『mdmark』の採用バージョンに固定する'
+  - item: 1 文書あたりの処理時間
+    constraint: 20 秒。超えた変換は失敗として扱い、終了コード 1 で終える
+    decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
+  - item: 全体の処理時間
+    constraint: CI のジョブの 5 分に収める（スクリプト自身は打ち切らない）
+    decided_by: NFR-72-1#requirements[CI の 1 回の所要時間]
