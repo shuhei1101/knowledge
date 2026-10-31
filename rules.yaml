@@ -49,6 +49,19 @@ rules:
       - "mcp__*__update_body"
       - "mcp__*__update_body_if_unchanged"
       - "mcp__*__create_draft_pr"
+  - rule: docs/rule/convention-doc-presentation.yaml
+    paths:
+      - "**/*.md"
+      - "**/docs/**/*.yaml"
+      - "**/dev/設計書/**/*.yaml"
+      - "**/dev-docs/**/src/dev_docs/features/convert/**"
+      - "**/dev-docs/**/frontend/src/features/docs/**"
+      - "**/mdmark/**/src/{render,parts,diagram}/**"
+    exclude:
+      - "**/CLAUDE.md"
+      - "**/SKILL.md"
+    tools:
+      - "mcp__*__write_design_doc*"
   - rule: docs/rule/convention-issue-presentation.yaml
     paths:
       - "**/dev/pr/**/*.md"
