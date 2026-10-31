@@ -2,7 +2,7 @@ id: "IF-72-2"
 title: "文書の Markdown への変換"
 entry:
   kind: operation
-  value: '`dev-docs.yaml` の `converters[]` の `knowledge-markdown`（`documents[]` の全ての種類の行が `converter` で指す。dev-docs が配信元の直下で子プロセスとして起動する）'
+  value: '`dev-docs.yaml` の `converters[]` の `knowledge-markdown`（`documents[]` の `docs/` の種類（`rule`・`template`・`flowchart`・`guide`・`changelog`・`skill`）の行が `converter` で指す。files.yaml の行は `converter` を持たない。dev-docs が配信元の直下で子プロセスとして起動する）'
 flows:
   - name: 正常系
     summary: 規約を、group の階層を見出しにした Markdown にする

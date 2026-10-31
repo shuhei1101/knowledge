@@ -13,11 +13,11 @@ scenarios:
         participant D as dev-docs の画面
         participant V as knowledge の変換のスクリプト
         U->>D: knowledge のタブとサイドバーから文書を選ぶ
-        alt 既定の変換で描けない種類
+        alt docs の種類の文書
           D->>V: 標準入力に文書の YAML
           V-->>D: mdmark の記法の Markdown
-        else 既定の変換で描ける種類
-          D->>D: スキーマ駆動で変換する
+        else files.yaml の行
+          D->>D: 行の path のファイルを本文として読む
         end
         D-->>U: 共通スタイルで描いた本文
     expected:
@@ -33,13 +33,13 @@ scenarios:
         actor U as 利用者
         participant D as dev-docs の画面
         participant V as knowledge の変換のスクリプト
-        U->>D: 変換のスクリプトを使う種類の文書を選ぶ
+        U->>D: docs の種類の文書を選ぶ
         D->>V: 標準入力に文書の YAML
         V-->>D: 終了コード 1
         D-->>U: 変換に失敗したことと理由
     expected:
       - 画面に変換に失敗したことと理由（`exit`）が出る
-      - 既定の変換の種類の文書は開ける
+      - files.yaml の行の Markdown（`skills/text-review/SKILL.md`）は開ける
     test: test_error_when_converter_fails
 lead: 利用者が dev-docs の画面で、`nav` のタブとサイドバーから knowledge の文書を開き、変換した本文を読む。
 issue: 51

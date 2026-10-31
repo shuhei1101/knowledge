@@ -93,6 +93,7 @@ external_systems:
     protocol: CLI（子プロセス）
     notes:
       事前確認: 要。検査のスクリプトの起動時に `maid` が PATH から引けるかを確かめ、無ければ検査を始めずに足りないものを返す。maid を呼ぶ前に残り時間を確かめる（非機能要件のスクリプトの処理時間）
+    detail: LIB-72-3#
   - name: GitHub Actions
     purpose: PR で CI のワークフローを動かす
     direction: 受信のみ
