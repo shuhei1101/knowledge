@@ -33,6 +33,7 @@ flows:
       - 出力のフォルダにあるファイルは `index.html` だけ
       - '`index.html` に公開の文書 2 件の本文が入り、internal の文書の本文は入らない'
       - 公開の文書の項目への参照は `index.html` の中のリンクになり、internal の文書への参照は GitHub の master の YAML の URL になる
+    test: test_normal
   - name: 異常系（変換が失敗する・終了コード 1）
     summary: 変換のスクリプトが失敗した文書で止め、出力を残さずに終わる
     setup:
@@ -53,6 +54,7 @@ flows:
       - 終了コードが 1
       - 標準エラーに失敗した文書のパスと、変換のスクリプトの標準エラーが出る
       - 出力のフォルダに `index.html` が無い
+    test: test_error_when_converter_fails
   - name: 異常系（参照先が無い・終了コード 1）
     summary: documents に無い ID への参照があれば、出力を残さずに終わる
     setup:
@@ -74,6 +76,7 @@ flows:
       - 終了コードが 1
       - 標準エラーに参照元の文書のパスと、見つからない ID が出る
       - 出力のフォルダに `index.html` が無い
+    test: test_error_when_reference_missing
   - name: 異常系（mdmark の build が失敗する・終了コード 1）
     summary: mdmark の build が失敗すれば、出力を残さずに終わる
     setup:
@@ -94,6 +97,7 @@ flows:
       - 終了コードが 1
       - 標準エラーに mdmark の標準エラーが出る
       - 出力のフォルダに `index.html` が無い
+    test: test_error_when_mdmark_fails
   - name: 異常系（公開の文書が無い・終了コード 2）
     summary: 公開の文書が 0 件なら成果物を作り始めずに終わる
     setup:
@@ -111,6 +115,7 @@ flows:
     expected:
       - 終了コードが 2
       - 標準エラーに公開の文書が無いことが出る
+    test: test_error_when_no_public
   - name: 異常系（dev-docs.yaml が読めない・終了コード 2）
     summary: dev-docs.yaml が無いか読めなければ成果物を作り始めずに終わる
     setup:
@@ -128,6 +133,7 @@ flows:
     expected:
       - 終了コードが 2
       - 標準エラーに `dev-docs.yaml` が無いことが出る
+    test: test_error_when_config_missing
 lead: '`dev-docs.yaml` の `documents[]` が指す文書のうち `visibility: public` のものを変換のスクリプトで Markdown にし、文書の ID への参照をリンクに書き換えて、mdmark の `build` で 1 枚の HTML にまとめた出力のフォルダを作る。'
 identifier: build-pages
 idempotent: true
@@ -185,3 +191,4 @@ constraints:
   - item: 全体の処理時間
     constraint: CI のジョブの 5 分に収める（スクリプト自身は打ち切らない）
     decided_by: NFR-72-1#requirements[CI の 1 回の所要時間]
+test_file: tests/integration/scripts/test_build_pages.py
