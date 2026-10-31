@@ -102,6 +102,15 @@ rules:
     paths:
       - "**/.claude/hooks/**"
       - "**/settings.json"
+  - rule: docs/rule/claude-context-placement.yaml
+    paths:
+      - "**/.claude/hooks/**"
+      - "**/hooks/**"
+      - "**/mcp/**"
+      - "**/mcp_server.py*"
+      - "**/.mcp.json"
+      - "**/CLAUDE.md"
+      - "**/skills/**/SKILL.md"
   - rule: docs/rule/claude-rule-writing.yaml
     paths:
       - "**/.claude/rules/**/*.md"

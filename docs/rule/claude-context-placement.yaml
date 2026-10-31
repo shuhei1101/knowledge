@@ -1,0 +1,134 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: claude-context-placement
+kind: rule
+name: 注入文の書き分けと書き方
+description: SessionStart の additionalContext・MCP の instructions・ツールの description・CLAUDE.md・スキル・フックのどこに何を書くかと、注入文の書き方を定め、エージェントに読ませる文をフック・MCP サーバー・CLAUDE.md・スキルに記載するときに読む。
+tags:
+  - name: scope:claude
+  - name: topic:コンテキスト
+    main: true
+  - name: topic:フック
+  - name: topic:サーバー
+  - name: topic:ツール
+  - name: topic:スキル
+  - name: topic:サブエージェント
+  - name: topic:セッション
+  - name: topic:プロンプト
+  - name: topic:文章
+  - name: topic:書き方
+  - name: topic:上限
+  - name: tool:claude-code
+  - name: tool:mcp
+  - name: action:注入
+  - name: action:配置
+  - name: action:参照
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-31'
+sources:
+  - title: "Claude Code: Hooks reference"
+    url: https://code.claude.com/docs/en/hooks
+    note: SessionStart の用途・事実の文で書く・`additionalContext` の上限 10,000 字
+    checked: '2026-10-31'
+  - title: "Claude Code: Connect Claude Code to tools via MCP"
+    url: https://code.claude.com/docs/en/mcp
+    note: tool search で開始時に読まれるのはツール名と server instructions・instructions の上限 4,096 字
+    checked: '2026-10-31'
+  - title: "MCP Blog: Server Instructions"
+    url: https://blog.modelcontextprotocol.io/posts/2025-11-03-using-server-instructions/
+    note: instructions に書くこと・書かないこと
+  - title: "Claude Docs: Define tools"
+    url: https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools
+    note: description に何をする・いつ使う・いつ使わない・何を返さないを書く
+  - title: "Anthropic: Writing effective tools for agents"
+    url: https://www.anthropic.com/engineering/writing-tools-for-agents
+  - title: "Anthropic: Effective context engineering for AI agents"
+    url: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+    note: 最小の指示から始める・例は典型の少数
+  - title: "Claude Docs: Prompting best practices"
+    url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+    note: 強い命令の文は過剰発火の原因になる
+  - title: "Claude Code: Context window"
+    url: https://code.claude.com/docs/en/context-window
+    note: compact でフックの文脈が要約に消え、SessionStart が再実行される
+  - title: "Code-Index-MCP: MCP vs Native analysis"
+    url: https://glama.ai/mcp/servers/@ViperJuice/Code-Index-MCP/blob/e3183d0106c586aec03535faabe632b4db4d6046/analysis_archive/MCP_VS_NATIVE_ANALYSIS.md
+    note: MCP が空の結果を返して使われなくなった例
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      エージェントに読ませる文を、SessionStart の `additionalContext`・MCP の instructions・ツールの description・CLAUDE.md・スキル・フックのどこに何を書くかと、その書き方の決まり。
+      文を置くファイル（`content/prompts/` の YAML）は [プロンプトファイル](id:prompt-file) が決める。
+  - id: placement-01
+    group: 何をどこに書くか
+    name: 置き場所ごとに書くこと
+    body: |-
+      <!-- table: data -->
+
+      | 置き場所 | 書くこと | 書かないこと |
+      | --- | --- | --- |
+      | SessionStart の `additionalContext` | その時点で変わる事実（使える配信元・権限・索引や検査の警告） | 固定の使い方・手順・CLAUDE.md のコピー |
+      | MCP の instructions | 扱う作業の分類、いつこの MCP を探すか、grep・Read との使い分け、ツール間の順序 | ツールの description の繰り返し・宣伝 |
+      | ツールの description | 何をする・いつ使う・いつ使わない・何を返さない・引数の意味 | ほかのツールの説明 |
+      | CLAUDE.md | プロジェクト固有の約束事（文書の場所など） | MCP の使い方 |
+      | スキル | 複数ステップの作業手順 | 常に要る前提 |
+      | フック（PreToolUse など） | 必ず守らせたいこと | 説明の文 |
+
+      <!-- /table -->
+  - id: placement-02
+    group: 何をどこに書くか
+    name: 同じ文を 2 か所に置かない
+    body: |-
+      - 同じ文を 2 か所に置かない
+        別の置き場所へ移すときは、元の場所を参照先の 1 行にする
+  - id: writing-01
+    group: 書き方
+    name: 事実の文で書く
+    body: |-
+      - 命令ではなく事実の文で書く
+        MUST・必ず・禁止は使わず、守らせたいものはフックで担保する
+  - id: writing-02
+    group: 書き方
+    name: 使う場面と例の数
+    body: |-
+      - 使う場面は作業の言葉で 3〜5 個、典型的な例は 1〜3 個にする（網羅しない）
+  - id: writing-03
+    group: 書き方
+    name: 使わない場面を対にする
+    body: |-
+      - 使う場面と対にして、使わない場面（grep・Read で足りる場面）も同じくらいの数を書く
+  - id: writing-04
+    group: 書き方
+    name: 参照先を示す
+    body: |-
+      - 詳しいことは写さず、`describe` やスキルなど参照先を示す
+  - id: writing-05
+    group: 書き方
+    name: 長さと要点の位置
+    body: |-
+      - 公式の上限は `additionalContext` 10,000 字・instructions 4,096 字
+        SessionStart は 1,000 字以内を目安にし、要点を先頭に置く
+  - id: writing-06
+    group: 書き方
+    name: compact での入れ直し
+    body: |-
+      - compact では状態を入れ直す
+        「いつ使うか」は compact で消えない instructions・description に置くので入れ直さない
+  - id: writing-07
+    group: 書き方
+    name: サブエージェントへの届け方
+    body: |-
+      - サブエージェントには SessionStart が届かないので、使い分けは description・instructions で届ける
+        足りないと分かったら SubagentStart のフックで入れる
+  - id: writing-08
+    group: 書き方
+    name: 最小の文から始める
+    body: |-
+      - 最小の文から始め、使われていないと分かったら追加する
+  - id: writing-09
+    group: 書き方
+    name: 使われないときはツールの結果を疑う
+    body: |-
+      - 使われないときは、文言より先にツールの結果（空の結果・遅さ）を疑う
