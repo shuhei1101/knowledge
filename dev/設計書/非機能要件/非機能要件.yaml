@@ -7,10 +7,18 @@ requirements:
     external_constraint: dev-docs はスクリプトを端末の設定 `script_timeout_sec`（既定 30 秒）で打ち切る
     source_kind: 実行基盤の制限
     source: https://github.com/shuhei1101/dev-docs/blob/develop/src/dev_docs/features/settings/types.py
-    value: '30'
+    value: '20'
     unit: 秒
-    rationale: dev-docs の既定の打ち切りをそのまま上限にする
-    overflow: dev-docs が `timeout` として返し、書き込みは行われず、変換は失敗として画面に出る
+    rationale: 外側の待ち 30 秒に、内側（スクリプト全体）の 50% の余裕を含めて 30 ÷ 1.5 = 20 秒にする。余裕は実測が無いので仮置きで、実装の後に最も大きい文書で測って見直す
+    overflow: スクリプトは起動時に開始時刻を控え、maid を呼ぶ前に残り時間を確かめる。残りが足りなければ maid を呼ばず、時間切れを違反として返す（書き込みは行われない）。maid には残り時間を打ち切りとして渡す。それでも 30 秒を超えたときは dev-docs が `timeout` として返す
+    breakdown:
+      - part: 外側の待ち（dev-docs の `script_timeout_sec`）
+        value: 30 秒
+      - part: 余裕（内側の 50%）
+        value: 10 秒
+        notes: 実測が無いので仮置き
+      - part: スクリプト全体（maid の呼び出しを含む）
+        value: 20 秒
   - name: CI の 1 回の所要時間
     english_name: ci_duration
     category: 性能
