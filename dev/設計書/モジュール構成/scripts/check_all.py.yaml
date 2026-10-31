@@ -324,3 +324,5 @@ functions:
       - MOD-72-4#functions[check_document]
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と `jsonschema>=4.26.0`（LIB-72-2）を書き、`knowledge_checks.py` を同じフォルダから import する。
+test_files:
+  - tests/unit/scripts/test_check_all.py
