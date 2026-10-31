@@ -1,0 +1,29 @@
+id: "NFR-72-1"
+title: "非機能要件"
+requirements:
+  - name: 検査と変換のスクリプトの 1 文書あたりの処理時間
+    english_name: script_duration
+    category: 性能
+    external_constraint: dev-docs はスクリプトを端末の設定 `script_timeout_sec`（既定 30 秒）で打ち切る
+    source_kind: 実行基盤の制限
+    source: https://github.com/shuhei1101/dev-docs/blob/develop/src/dev_docs/features/settings/types.py
+    value: '30'
+    unit: 秒
+    rationale: dev-docs の既定の打ち切りをそのまま上限にする
+    overflow: dev-docs が `timeout` として返し、書き込みは行われず、変換は失敗として画面に出る
+  - name: CI の 1 回の所要時間
+    english_name: ci_duration
+    category: 性能
+    external_constraint: GitHub Actions の GitHub ホストランナーのジョブは 6 時間で打ち切られる
+    source_kind: 実行基盤の制限
+    source: https://docs.github.com/ja/actions/administering-github-actions/usage-limits-billing-and-administration
+    value: 未確定
+    unit: 分
+    rationale: 文書の数と検査のスクリプトの処理時間が決まるモジュール構成設計で決める
+  - name: スクリプトが動く OS
+    english_name: supported_os
+    category: 動作環境
+    external_constraint: 未確定
+    source_kind: 未確定
+    value: 未確定
+    rationale: dev-docs が動く端末と CI のランナーを、モジュール構成設計で決める
