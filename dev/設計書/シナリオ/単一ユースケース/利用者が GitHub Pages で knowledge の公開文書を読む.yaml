@@ -1,0 +1,95 @@
+id: "SC-137-1"
+title: "利用者が GitHub Pages で knowledge の公開文書を読む"
+scenarios:
+  - name: 正常シナリオ
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: knowledge のクローン
+        description: '`visibility: public` の文書と `visibility: internal` の文書がある'
+        notes: 公開の文書から公開の文書への参照と、internal の文書への参照を 1 つずつ持つ公開の文書をクローンに置く
+    flow: |-
+      sequenceDiagram
+        actor D as 開発者
+        participant G as GitHub Actions
+        participant W as 配信のワークフロー
+        participant B as Pages の成果物を作るスクリプト
+        participant V as knowledge の変換のスクリプト
+        participant M as mdmark
+        participant P as GitHub Pages
+        actor U as 利用者
+        D->>G: master へマージする
+        G->>W: ワークフローを起動する
+        W->>B: 成果物を作る
+        loop visibility が public の文書
+          B->>V: 標準入力に文書の YAML
+          V-->>B: mdmark の記法の Markdown
+        end
+        B->>B: 文書の ID への参照を HTML の中のリンクか GitHub の URL に書き換える
+        B->>M: build
+        M-->>B: HTML
+        B-->>W: HTML だけを置いた出力のフォルダ
+        W->>W: 出力に .yaml が無いことを確かめる
+        W->>P: 成果物を配信する
+        U->>P: ブラウザで開く
+        P-->>U: 公開の文書の HTML
+    expected:
+      - ジョブが成功で終わる
+      - '成果物に `visibility: public` の全ての文書の本文が入り、`visibility: internal` の文書の本文は入らない'
+      - 成果物に `.yaml` のファイルが無い
+      - 公開の文書どうしの参照は成果物の中のリンクになり、internal の文書への参照は GitHub の master の YAML の URL になる
+    test: test_normal
+  - name: 異常シナリオ（変換のスクリプトが失敗する）
+    setup:
+      - name: Mock
+        description: 変換のスクリプトを、終了コード 1 で終わるものに差し替える
+    flow: |-
+      sequenceDiagram
+        participant G as GitHub Actions
+        participant W as 配信のワークフロー
+        participant B as Pages の成果物を作るスクリプト
+        participant V as knowledge の変換のスクリプト
+        participant P as GitHub Pages
+        G->>W: ワークフローを起動する
+        W->>B: 成果物を作る
+        B->>V: 標準入力に文書の YAML
+        V-->>B: 終了コード 1
+        B-->>W: 失敗した文書のパスと標準エラーを出して終了コード 1
+        W-->>G: 配信せずに失敗
+        Note over P: 前に配信したサイトのまま
+    expected:
+      - ジョブが配信のステップに進まずに失敗で終わる
+      - ログに失敗した文書のパスと変換のスクリプトの標準エラーが出る
+    test: test_error_when_converter_fails
+  - name: 異常シナリオ（成果物に YAML が混じる）
+    setup:
+      - name: Mock
+        description: Pages の成果物を作るスクリプトの出力のフォルダに、YAML のファイルを 1 つ置く
+    flow: |-
+      sequenceDiagram
+        participant G as GitHub Actions
+        participant W as 配信のワークフロー
+        participant B as Pages の成果物を作るスクリプト
+        participant P as GitHub Pages
+        G->>W: ワークフローを起動する
+        W->>B: 成果物を作る
+        B-->>W: 出力のフォルダ
+        W->>W: 出力に .yaml が無いことを確かめる
+        W-->>G: 混じった .yaml のパスを出して配信せずに失敗
+        Note over P: 前に配信したサイトのまま
+    expected:
+      - ジョブが配信のステップに進まずに失敗で終わる
+      - ログに混じった `.yaml` のパスが出る
+    test: test_error_when_output_contains_yaml
+lead: 'master へのマージで動くワークフローが `visibility: public` の文書だけを HTML にして GitHub Pages へ配信し、利用者がブラウザで読む。'
+issue: 69
+primary_actor: 利用者
+trigger: 開発者が knowledge の master へマージする（または配信のワークフローを手動で起動する）
+preconditions:
+  - Pages の配信元が GitHub Actions になっている
+  - '`.github/workflows/` に公開文書の配信のワークフローがある'
+success_guarantee: 'Pages に `visibility: public` の文書だけが mdmark の共通スタイルの HTML で載り、YAML の原本と `visibility: internal` の文書は載らない。'
+minimal_guarantee: 成果物を作れなかったとき・成果物に YAML が混じったときは配信せずにジョブを失敗させ、前に配信したサイトをそのまま残す。
+notes:
+  E2E テストの動かし方: ワークフローが走らせる成果物を作るコマンドと出力の検査のコマンドを、knowledge のクローンで子プロセスとして起動し、ジョブの成否はその終了コード、成果物は出力のフォルダで確かめる。Pages への配信そのものは、反映作業の確認方法で確かめる
+test_file: tests/e2e/単一ユースケース/test_利用者がGitHubPagesでknowledgeの公開文書を読む.py

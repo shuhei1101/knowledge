@@ -1,0 +1,52 @@
+# master の visibility: public の文書だけを 1 枚の HTML にし、YAML が無いことを確かめてから GitHub Pages へ配信する
+name: pages
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 配信は 1 つずつ流し、実行中の配信は取り消さない
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      # mdmark を npx で呼ぶ
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/configure-pages@v5
+      # Python 3.14 と依存は、スクリプトのロックから uv が入れる
+      - name: 公開の文書を 1 枚の HTML にまとめる
+        run: uv run --frozen --script scripts/build_pages.py --out _site
+      # 当たった YAML のパスを出して失敗する
+      - name: 成果物に YAML が無いことを確かめる
+        shell: bash
+        run: "! find _site -type f \\( -name '*.yaml' -o -name '*.yml' \\) | grep ."
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

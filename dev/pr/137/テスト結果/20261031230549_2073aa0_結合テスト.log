@@ -1,0 +1,30 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/integration -v
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0 -- /home/shuhei2441/.cache/uv/builds-v0/.tmpR0hknx/bin/python
+cachedir: .pytest_cache
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy
+configfile: pytest.ini
+collecting ... collected 19 items
+
+tests/integration/scripts/test_build_pages.py::test_normal PASSED        [  5%]
+tests/integration/scripts/test_build_pages.py::test_error_when_converter_fails PASSED [ 10%]
+tests/integration/scripts/test_build_pages.py::test_error_when_reference_missing PASSED [ 15%]
+tests/integration/scripts/test_build_pages.py::test_error_when_mdmark_fails PASSED [ 21%]
+tests/integration/scripts/test_build_pages.py::test_error_when_no_public PASSED [ 26%]
+tests/integration/scripts/test_build_pages.py::test_error_when_config_missing PASSED [ 31%]
+tests/integration/scripts/test_check_all.py::test_normal PASSED          [ 36%]
+tests/integration/scripts/test_check_all.py::test_normal_when_violations PASSED [ 42%]
+tests/integration/scripts/test_check_all.py::test_error_when_maid_missing PASSED [ 47%]
+tests/integration/scripts/test_check_all.py::test_error_when_config_missing PASSED [ 52%]
+tests/integration/scripts/test_knowledge_checks.py::test_normal PASSED   [ 57%]
+tests/integration/scripts/test_knowledge_checks.py::test_normal_when_violations PASSED [ 63%]
+tests/integration/scripts/test_knowledge_checks.py::test_normal_when_timed_out PASSED [ 68%]
+tests/integration/scripts/test_knowledge_checks.py::test_normal_when_invalid_yaml PASSED [ 73%]
+tests/integration/scripts/test_knowledge_checks.py::test_error_when_maid_missing PASSED [ 78%]
+tests/integration/scripts/test_knowledge_markdown.py::test_normal PASSED [ 84%]
+tests/integration/scripts/test_knowledge_markdown.py::test_normal_when_kind_specific_keys PASSED [ 89%]
+tests/integration/scripts/test_knowledge_markdown.py::test_error_when_schema_missing PASSED [ 94%]
+tests/integration/scripts/test_knowledge_markdown.py::test_error_when_invalid_yaml PASSED [100%]
+
+============================= 19 passed in 14.93s ==============================
+exit=0

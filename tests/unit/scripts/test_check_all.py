@@ -3,11 +3,13 @@
 import re
 from collections.abc import Callable, Mapping
 from pathlib import Path, PurePosixPath
-
-import pytest
+from typing import TYPE_CHECKING
 
 import check_all
-from check_all import ConfigError, Target, build_validators, check_target, list_targets, load_config
+from check_all import Target, build_validators, check_target, list_targets
+
+if TYPE_CHECKING:
+    import pytest
 
 type FakeMaidFactory = Callable[..., str]
 type RepoFactory = Callable[[Mapping[str, str]], Path]
@@ -137,53 +139,6 @@ def test_main_when_config_missing(
     # 検証
     assert code == 2
     assert "dev-docs.yaml" in capsys.readouterr().err
-
-
-def test_load_config(tmp_path: Path) -> None:
-    """行を読む（正常系）。"""
-    # 準備
-    (tmp_path / "dev-docs.yaml").write_text(
-        "name: knowledge\n"
-        "documents:\n"
-        "  - id: rule\n"
-        "    paths:\n"
-        "      - docs/rule/*.yaml\n"
-        "    schema: schemas/rule.schema.yaml\n"
-        "  - id: guide\n"
-        "    paths:\n"
-        "      - docs/guide/*.yaml\n"
-        "    schema: schemas/guide.schema.yaml\n",
-        encoding="utf-8",
-    )
-    # 実行
-    result = load_config(tmp_path)
-    # 検証
-    assert len(result) == 2
-
-
-def test_load_config_when_missing(tmp_path: Path) -> None:
-    """ファイルが無い（異常系）。"""
-    # 実行・検証
-    with pytest.raises(ConfigError, match=r"dev-docs\.yaml がありません"):
-        load_config(tmp_path)
-
-
-def test_load_config_when_broken(tmp_path: Path) -> None:
-    """YAML として読めない（異常系）。"""
-    # 準備
-    (tmp_path / "dev-docs.yaml").write_text("name: knowledge\ndocuments: [\n", encoding="utf-8")
-    # 実行・検証
-    with pytest.raises(ConfigError, match=r"dev-docs\.yaml の \d+ 行目が読めません"):
-        load_config(tmp_path)
-
-
-def test_load_config_when_no_documents(tmp_path: Path) -> None:
-    """documents が無い（異常系）。"""
-    # 準備
-    (tmp_path / "dev-docs.yaml").write_text("name: knowledge\n", encoding="utf-8")
-    # 実行・検証
-    with pytest.raises(ConfigError, match=r"dev-docs\.yaml に documents の配列がありません"):
-        load_config(tmp_path)
 
 
 def test_list_targets(tmp_path: Path) -> None:

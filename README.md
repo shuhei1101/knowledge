@@ -2,7 +2,7 @@
 
 どのプロジェクトでも共通で使うコーディング規約・テンプレートを置くリポジトリ。
 
-ドキュメント: [docs/](./docs/)
+ドキュメント: [https://shuhei1101.github.io/knowledge/](https://shuhei1101.github.io/knowledge/)
 
 ## 使い方
 

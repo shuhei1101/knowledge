@@ -1,11 +1,23 @@
 """scripts/_common.py の単体テスト。"""
 
+from pathlib import PurePosixPath
 from typing import TYPE_CHECKING
 
 import pytest
 from ruamel.yaml.comments import CommentedMap
 
-from _common import DocumentError, format_path, iter_strings, line_of, load_document, read_texts
+from _common import (
+    ConfigError,
+    DocumentError,
+    format_path,
+    iter_strings,
+    line_of,
+    list_row_files,
+    load_config,
+    load_document,
+    read_texts,
+    strings,
+)
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -143,3 +155,92 @@ def test_line_of_when_empty() -> None:
     result = line_of(doc, [])
     # 検証
     assert result == 1
+
+
+def test_load_config(tmp_path: Path) -> None:
+    """行を読む（正常系）。"""
+    # 準備
+    (tmp_path / "dev-docs.yaml").write_text(
+        "name: knowledge\n"
+        "documents:\n"
+        "  - id: rule\n"
+        "    paths:\n"
+        "      - docs/rule/*.yaml\n"
+        "    schema: schemas/rule.schema.yaml\n"
+        "  - id: guide\n"
+        "    paths:\n"
+        "      - docs/guide/*.yaml\n"
+        "    schema: schemas/guide.schema.yaml\n",
+        encoding="utf-8",
+    )
+    # 実行
+    result = load_config(tmp_path)
+    # 検証
+    assert len(result) == 2
+
+
+def test_load_config_when_missing(tmp_path: Path) -> None:
+    """ファイルが無い（異常系）。"""
+    # 実行・検証
+    with pytest.raises(ConfigError, match=r"dev-docs\.yaml がありません"):
+        load_config(tmp_path)
+
+
+def test_load_config_when_broken(tmp_path: Path) -> None:
+    """YAML として読めない（異常系）。"""
+    # 準備
+    (tmp_path / "dev-docs.yaml").write_text("name: knowledge\ndocuments: [\n", encoding="utf-8")
+    # 実行・検証
+    with pytest.raises(ConfigError, match=r"dev-docs\.yaml の \d+ 行目が読めません"):
+        load_config(tmp_path)
+
+
+def test_load_config_when_no_documents(tmp_path: Path) -> None:
+    """documents が無い（異常系）。"""
+    # 準備
+    (tmp_path / "dev-docs.yaml").write_text("name: knowledge\n", encoding="utf-8")
+    # 実行・検証
+    with pytest.raises(ConfigError, match=r"dev-docs\.yaml に documents の配列がありません"):
+        load_config(tmp_path)
+
+
+def test_list_row_files(tmp_path: Path) -> None:
+    """行のパターンで引く（正常系）。"""
+    # 準備
+    (tmp_path / "docs" / "rule").mkdir(parents=True)
+    (tmp_path / "docs" / "rule" / "b.yaml").write_text("id: b\n", encoding="utf-8")
+    (tmp_path / "docs" / "rule" / "a.yaml").write_text("id: a\n", encoding="utf-8")
+    (tmp_path / "docs" / "rule" / "index.yaml").write_text("items: []\n", encoding="utf-8")
+    row = {"id": "rule", "paths": ["docs/rule/*.yaml"], "exclude": ["index.yaml"]}
+    # 実行
+    result = list_row_files(tmp_path, row)
+    # 検証
+    assert result == [PurePosixPath("docs/rule/a.yaml"), PurePosixPath("docs/rule/b.yaml")]
+
+
+def test_list_row_files_when_disabled(tmp_path: Path) -> None:
+    """無効な行（正常系）。"""
+    # 準備
+    (tmp_path / "docs" / "guide").mkdir(parents=True)
+    (tmp_path / "docs" / "guide" / "g.yaml").write_text("id: g\n", encoding="utf-8")
+    row = {"id": "guide", "paths": ["docs/guide/*.yaml"], "enabled": False}
+    # 実行
+    result = list_row_files(tmp_path, row)
+    # 検証
+    assert result == []
+
+
+def test_strings() -> None:
+    """文字列だけを返す（正常系）。"""
+    # 実行
+    result = strings(["a", 1, "b"])
+    # 検証
+    assert result == ["a", "b"]
+
+
+def test_strings_when_not_list() -> None:
+    """配列でない値（正常系）。"""
+    # 実行
+    result = strings("a")
+    # 検証
+    assert result == []
