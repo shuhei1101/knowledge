@@ -1,0 +1,1 @@
+# SessionStart・MCP の instructions・ツールの description などに書く内容の書き分けと、注入文の書き方の規約を新設する
