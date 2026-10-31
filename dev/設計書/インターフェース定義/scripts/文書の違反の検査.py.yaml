@@ -30,6 +30,7 @@ flows:
       - 終了コードが 0
       - 標準出力が `[]`
       - 配信元のファイルのハッシュが変わらない
+    test: test_normal
   - name: 正常系（違反がある）
     summary: 項目の ID の重複・参照切れ・mermaid の誤りを全て配列で返す
     setup:
@@ -56,6 +57,7 @@ flows:
       - 終了コードが 0
       - 標準出力の配列が 4 件で、`path` が `items[1].id`・`items[2].body`・`related[0].to`・`items[3].body`
       - mermaid の違反の `rule` の行が、文書の中の誤った行と一致する
+    test: test_normal_when_violations
   - name: 正常系（時間切れ）
     summary: 残り時間が足りない mermaid のブロックを時間切れの違反として返す
     setup:
@@ -77,6 +79,7 @@ flows:
       - 終了コードが 0
       - 標準出力に、打ち切ったブロックの項目の `path` で時間切れを示す違反がある
       - 起動から終了までが、上限に 1 秒を加えた時間を超えない
+    test: test_normal_when_timed_out
   - name: 正常系（YAML として読めない）
     summary: '読めない入力を `path: $` の違反 1 件で返す'
     setup:
@@ -95,6 +98,7 @@ flows:
     expected:
       - 終了コードが 0
       - 標準出力が 1 件で、`path` が `$`、`rule` に読めない行がある
+    test: test_normal_when_invalid_yaml
   - name: 異常系（maid が無い・終了コード 2）
     summary: maid が PATH から引けなければ検査を始めずに終わる
     setup:
@@ -111,6 +115,7 @@ flows:
       - 終了コードが 2
       - 標準出力が空
       - 標準エラーに maid が PATH から引けないことと、開発コマンドの環境構築への案内が出る
+    test: test_error_when_maid_missing
 lead: 標準入力の文書 1 件に、スキーマで見られない決まり（項目の ID の重複・`id:` の参照と `related` の `to` の実在・mermaid の文法）を当て、違反を dev-docs の validators の約束で標準出力へ返す。
 identifier: knowledge-checks
 idempotent: true
@@ -178,3 +183,4 @@ constraints:
     constraint: 文字列の項目の中の mermaid のコードブロック。バッククォート 4 つ以上で囲んだ記述例の中のブロックは検査しない
   - item: '`id:` の参照'
     constraint: '`[{名前}](id:{文書の ID})` は文書が、`[{名前}](id:{文書の ID}#{項目の ID})` はその文書の項目が実在する。自分を指す参照は標準入力の内容で確かめる。コードブロックの中の参照は検査しない'
+test_file: tests/integration/scripts/test_knowledge_checks.py

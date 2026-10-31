@@ -26,6 +26,7 @@ flows:
       - 標準出力が `# {name}` で始まり、`## 語の選び方` の下に `### 原則` が 1 回だけ出る
       - 項目の本文が、元の Markdown と 1 字も違わずに含まれる
       - '`## 関連` に `related` の行数だけ箇条書きがある'
+    test: test_normal
   - name: 正常系（種類に固有のキーがある）
     summary: スキルの固有のキーを、スキーマの title を見出しにした節で出す
     setup:
@@ -46,6 +47,7 @@ flows:
       - 終了コードが 0
       - '`arguments` が `## {arguments の title}` の下の `<!-- table: data -->` の表になる'
       - '`preconditions` が `## {preconditions の title}` の下の箇条書きになる'
+    test: test_normal_when_kind_specific_keys
   - name: 異常系（スキーマが無い・終了コード 1）
     summary: kind のスキーマが無ければ変換せずに終わる
     setup:
@@ -66,6 +68,7 @@ flows:
       - 終了コードが 1
       - 標準出力が空
       - 標準エラーに `schemas/missing.schema.yaml` が無いことが出る
+    test: test_error_when_schema_missing
   - name: 異常系（YAML として読めない・終了コード 1）
     summary: 読めない入力は変換せずに終わる
     setup:
@@ -82,6 +85,7 @@ flows:
     expected:
       - 終了コードが 1
       - 標準エラーに読めない行が出る
+    test: test_error_when_invalid_yaml
 lead: 標準入力の文書 1 件を、項目の `group` の階層を見出しにした mdmark の記法の Markdown にして標準出力へ返す。
 identifier: knowledge-markdown
 idempotent: true
@@ -152,3 +156,4 @@ constraints:
     constraint: '`id`・`kind`・`tags`・`status`・`visibility`・`rev`・`last_reviewed`・`aliases` は本文に出さない（dev-docs の画面がメタデータとして出す）'
   - item: 種類に固有のキー
     constraint: '共通のメタデータ以外のキー（スキルの `arguments` など）は `## {スキーマの title}` の節にし、文字列は段落、文字列の配列は箇条書き、オブジェクトの配列は `<!-- table: data -->` の表で出す'
+test_file: tests/integration/scripts/test_knowledge_markdown.py

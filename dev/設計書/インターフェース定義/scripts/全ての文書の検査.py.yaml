@@ -26,6 +26,7 @@ flows:
     expected:
       - 終了コードが 0
       - 標準出力の最後の行が、文書 2 件・違反 0 件を示す
+    test: test_normal
   - name: 正常系（違反がある・終了コード 1）
     summary: 全ての文書を検査し終えてから、全ての違反を出して終了コード 1 で終わる
     setup:
@@ -47,6 +48,7 @@ flows:
     expected:
       - 終了コードが 1
       - 標準出力に 2 つの文書の違反が、ファイルのパス・行・項目のパス・内容つきで 1 行ずつ出る
+    test: test_normal_when_violations
   - name: 異常系（maid が無い・終了コード 2）
     summary: maid が PATH から引けなければ検査を始めずに終わる
     setup:
@@ -62,6 +64,7 @@ flows:
     expected:
       - 終了コードが 2
       - 標準エラーに maid が PATH から引けないことが出る
+    test: test_error_when_maid_missing
   - name: 異常系（dev-docs.yaml が読めない・終了コード 2）
     summary: dev-docs.yaml が無いか読めなければ検査を始めずに終わる
     setup:
@@ -81,6 +84,7 @@ flows:
     expected:
       - 終了コードが 2
       - 標準エラーに `dev-docs.yaml` が無いことが出る
+    test: test_error_when_config_missing
 lead: '`dev-docs.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を当て、全ての違反を出して終了コードで合否を返す。'
 identifier: check-all
 idempotent: true
@@ -122,3 +126,4 @@ constraints:
   - item: 全体の処理時間
     constraint: CI のジョブの 5 分に収める（スクリプト自身は打ち切らない）
     decided_by: NFR-72-1#requirements[CI の 1 回の所要時間]
+test_file: tests/integration/scripts/test_check_all.py

@@ -74,3 +74,5 @@ constraints:
     decided_by: NFR-72-1#requirements[CI の 1 回の所要時間]
   - item: maid の入れ方
     constraint: ランナーのグローバル（`npm install -g @probelabs/maid`）。バージョンは開発コマンドの環境構築と同じものに固定する
+notes:
+  確かめ方: '結合テストのファイルは持たない（GitHub Actions の上でしかジョブの成否を確かめられない）。ジョブが起動する「全ての文書の検査」の合否は IF-72-3 の結合テストが確かめ、ジョブの成否は作業 PR の Actions の実行結果で確かめる。PR #72 では、正常系を run 41183934226（599084c、success）、異常系（違反がある・ジョブの失敗）を run 41181644561（3b3ba6c、違反 13 件で終了コード 1、failure）で確かめた。異常系（maid を入れられない）は、`npm install -g` のステップが失敗すればジョブが止まる Actions の既定の動きにより、実行しては確かめていない'

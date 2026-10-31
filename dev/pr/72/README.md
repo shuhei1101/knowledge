@@ -41,7 +41,7 @@ dev-docs の本体は [shuhei1101/dev-docs#3](https://github.com/shuhei1101/dev-
 - [x] ドキュメント修正（要件.md の `## 更新ドキュメント`）
 - [x] 単体テスト作成
 - [x] 実装
-- [ ] 結合テスト作成
+- [x] 結合テスト作成
 - [ ] E2E テスト作成
 
 ## PoC 結果
