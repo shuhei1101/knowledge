@@ -1,0 +1,33 @@
+id: "LIB-72-2"
+title: "jsonschema"
+kind: "ライブラリ"
+version:
+  current: 4.26.0
+  checked_on: '2026-10-31'
+  pinning: dev-docs 本体と同じ `>=4.26.0`
+catalogs:
+  - name: API
+    version: 4.26.0
+    entries:
+      - name: Draft202012Validator
+        kind: クラス
+        purpose: '`schemas/{種類}.schema.yaml` で文書を検査する'
+      - name: Draft202012Validator.iter_errors
+        kind: 関数
+        purpose: 違反を全件取り出し、`absolute_path` から項目のパスを作る
+lead: JSON Schema の検査器。Draft 2020-12 の `$ref`・`unevaluatedProperties`・`contains`/`minContains` に対応する。
+purl: pkg:pypi/jsonschema
+dependency_scope: 必須
+adoption: 採用
+used_in:
+  - scripts/
+verification:
+  state: 済
+  date: '2026-10-31'
+  detail: Python 3.12.13 と jsonschema 4.26.0 で、`Draft202012Validator.iter_errors` が `type`・`contains`・`unevaluatedProperties` の違反を全件、`absolute_path` つきで返すことを確かめた
+license: MIT（商用利用可）
+official_url: https://pypi.org/project/jsonschema/
+docs_url: https://python-jsonschema.readthedocs.io/
+selection:
+  candidates: jsonschema のみ（dev-docs 本体の既存の依存）
+  decision: dev-docs の `check_schema` と同じ検査器になり、CI と書き込みのときの判定が揃う。dev-docs の CLI に検査のコマンドが無いため、CI はこのライブラリで同じ検査をする（[reviewer の合格](https://github.com/shuhei1101/knowledge/pull/72#discussion_r4430689450)）

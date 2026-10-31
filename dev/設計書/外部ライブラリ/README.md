@@ -6,3 +6,5 @@
 
 | ページ | 概要 |
 | --- | --- |
+| [ruamel-yaml](./ruamel-yaml.yaml) | 文書の YAML を行・列つきで読む YAML 1.2 のパーサー |
+| [jsonschema](./jsonschema.yaml) | 文書を JSON Schema 2020-12 で検査する検査器 |
