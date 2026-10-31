@@ -392,6 +392,37 @@ def _run_check_all(folder: Path, *, without_maid: bool = False) -> subprocess.Co
     )
 
 
+# 配信のワークフローの、成果物を作るコマンドと、出力に YAML が無いことを確かめるコマンド
+PAGES_BUILD = ("uv", "run", "--frozen", "--script", "scripts/build_pages.py", "--out", "_site")
+PAGES_YAML_CHECK = "! find _site -type f \\( -name '*.yaml' -o -name '*.yml' \\) | grep ."
+
+
+def _run_pages_build(folder: Path) -> subprocess.CompletedProcess[str]:
+    """配信のワークフローと同じコマンドで、Pages の成果物を作るスクリプトを子プロセスとして起動する。"""
+    return subprocess.run(  # noqa: S603 - 引数は配列で渡し、シェルを通さない
+        PAGES_BUILD,
+        cwd=folder,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+        timeout=PROCESS_WAIT_SEC,
+    )
+
+
+def _run_pages_yaml_check(folder: Path) -> subprocess.CompletedProcess[str]:
+    """配信のワークフローと同じコマンドを bash で起動し、出力に YAML が無いことを確かめる。"""
+    return subprocess.run(  # noqa: S603 - ワークフローと同じ固定のコマンドの行を bash に渡す
+        ["bash", "-c", PAGES_YAML_CHECK],  # noqa: S607 - bash は PATH から引く
+        cwd=folder,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+        timeout=PROCESS_WAIT_SEC,
+    )
+
+
 def _page_path(clone: Path, file: Path) -> str:
     """文書のファイルを、画面の API のページの path にする（拡張子を落とした直下からのパス）。"""
     return str(file.relative_to(clone).with_suffix(""))
@@ -435,3 +466,15 @@ def run_check_all() -> Callable[..., subprocess.CompletedProcess[str]]:
 def representative_pages() -> Callable[[Path], dict[str, str]]:
     """文書の行ごとの先頭の文書のページの path を返す関数を返す。"""
     return _representative_pages
+
+
+@pytest.fixture
+def run_pages_build() -> Callable[[Path], subprocess.CompletedProcess[str]]:
+    """配信のワークフローと同じコマンドで Pages の成果物を作る関数を返す。"""
+    return _run_pages_build
+
+
+@pytest.fixture
+def run_pages_yaml_check() -> Callable[[Path], subprocess.CompletedProcess[str]]:
+    """配信のワークフローと同じコマンドで出力に YAML が無いことを確かめる関数を返す。"""
+    return _run_pages_yaml_check
