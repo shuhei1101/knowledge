@@ -1,0 +1,1 @@
+# PoC: maid で YAML の文書の mermaid を --fix 無しで検査し、違反の一覧に詰め替える
