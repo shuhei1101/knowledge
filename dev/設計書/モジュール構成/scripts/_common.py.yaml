@@ -495,5 +495,35 @@ functions:
         condition: '`enabled: false` の行と、当たる文書 1 件'
         mock: なし（一時ディレクトリ）
         expected: 空
+  - name: strings
+    title: 文字列の配列の値の取り出し
+    container: scripts/_common.py
+    usecase: 共通
+    role: 変換
+    summary: YAML の値が配列なら、その中の文字列だけを返す
+    kind: 関数
+    scope: public
+    args:
+      - name: value
+        title: 値
+        type: object
+        required: true
+        description: '`documents[]` の行の `paths`・`exclude`・`validators` などの値'
+    returns:
+      type: list[str]
+      description: 配列の中の文字列。配列でなければ空
+    unit_tests:
+      - name: test_strings
+        case: 正常
+        summary: 文字列だけを返す
+        condition: '`["a", 1, "b"]`'
+        mock: なし
+        expected: '`["a", "b"]`'
+      - name: test_strings_when_not_list
+        case: 正常
+        summary: 配列でない値
+        condition: '`"a"`'
+        mock: なし
+        expected: '`[]`'
 test_files:
   - tests/unit/scripts/test_common.py
