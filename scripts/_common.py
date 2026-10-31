@@ -227,7 +227,7 @@ def load_config(root: Path) -> list[Mapping[str, Any]]:
     return [row for row in rows if row is not None]
 
 
-def _strings(value: object) -> list[str]:
+def strings(value: object) -> list[str]:
     """文字列の配列の値から文字列だけを返す。配列でなければ空。"""
     elements = as_list(value)
     if elements is None:
@@ -239,9 +239,9 @@ def list_row_files(root: Path, row: Mapping[str, Any]) -> list[PurePosixPath]:
     """documents[] の 1 行の paths・exclude に当たるファイルを、リポジトリの直下からのパスで返す。"""
     if row.get("enabled") is False:
         return []
-    exclude = _strings(row.get("exclude"))
+    exclude = strings(row.get("exclude"))
     files: set[PurePosixPath] = set()
-    for pattern in _strings(row.get("paths")):
+    for pattern in strings(row.get("paths")):
         for file in root.glob(pattern):
             # ファイル名が exclude のどれかに当たるものを除く（dev-docs と同じ判定）
             if not file.is_file() or any(

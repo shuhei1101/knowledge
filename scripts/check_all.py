@@ -34,7 +34,6 @@ from _common import (
     LIMIT_SEC,
     ConfigError,
     DocumentError,
-    as_list,
     as_mapping,
     format_path,
     line_of,
@@ -43,6 +42,7 @@ from _common import (
     load_document,
     load_safe,
     read_texts,
+    strings,
 )
 from _maid import find_maid
 from knowledge_checks import build_id_index, check_document
@@ -128,14 +128,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _EXIT_VIOLATIONS if count else 0
 
 
-def _strings(value: object) -> list[str]:
-    """文字列の配列の値から文字列だけを返す。配列でなければ空。"""
-    elements = as_list(value)
-    if elements is None:
-        return []
-    return [element for element in elements if isinstance(element, str)]
-
-
 def list_targets(root: Path, rows: Sequence[Mapping[str, Any]]) -> list[Target]:
     """documents[] の行の paths・exclude に当たるファイルを、当てる検査と並べて返す。"""
     # 同じファイルは最初に当たった行で 1 件にする
@@ -145,7 +137,7 @@ def list_targets(root: Path, rows: Sequence[Mapping[str, Any]]) -> list[Target]:
         # 無効な行と、スキーマを持たない行は検査しない
         if row.get("enabled") is False or not isinstance(schema, str) or not schema:
             continue
-        checks = CHECKS_ID in _strings(row.get("validators"))
+        checks = CHECKS_ID in strings(row.get("validators"))
         for relative in list_row_files(root, row):
             targets.setdefault(relative, Target(path=relative, schema=schema, checks=checks))
     return sorted(targets.values(), key=lambda target: target.path)
