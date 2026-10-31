@@ -42,7 +42,7 @@ dev-docs の本体は [shuhei1101/dev-docs#3](https://github.com/shuhei1101/dev-
 - [x] 単体テスト作成
 - [x] 実装
 - [x] 結合テスト作成
-- [ ] E2E テスト作成
+- [x] E2E テスト作成
 
 ## PoC 結果
 
