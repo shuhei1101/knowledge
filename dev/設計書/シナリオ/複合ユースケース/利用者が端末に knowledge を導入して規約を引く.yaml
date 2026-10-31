@@ -32,7 +32,7 @@ scenarios:
       - '`sources[]` に knowledge の行が追加されていない'
       - 誤りのあるファイル（`dev-docs.yaml`）と内容が利用者へ返る
     test: test_error_when_setup_check_fails
-lead: 利用者が端末で dev-docs を準備して knowledge を配信元に登録し、画面とエージェントの MCP から knowledge の文書を引けるようになるまでの流れ。
+lead: 利用者が端末で knowledge を dev-docs の配信元に登録し、画面とエージェントの MCP から knowledge の文書を引けるようになるまでの流れ。
 issue: 51
 primary_actor: 利用者
 stakeholders:
@@ -43,7 +43,7 @@ stakeholders:
 trigger: 利用者が新しい端末で knowledge を使い始める
 preconditions:
   - 端末に knowledge のクローンがある
-  - Claude Code に dev-docs のプラグインを入れられる
+  - '`/dev-docs:global-setup` を終え、端末の設定（`~/.config/dev-docs/settings.yaml`）がある'
 success_guarantee: '端末の設定の `sources[]` に knowledge があり、画面で develop の文書が開け、どの作業場所からも `search_docs` に `source: knowledge` を渡すと knowledge の文書が返る。'
 minimal_guarantee: 登録の点検で誤りがあれば `sources[]` を書き換えず、誤りのあるファイルと内容を利用者へ返す。
 frequency: 端末ごとに 1 回（入れ直し・端末の移行のときにもう 1 回）
