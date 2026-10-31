@@ -1,0 +1,50 @@
+id: "SC-72-1"
+title: "利用者が端末に knowledge を導入して規約を引く"
+scenarios:
+  - name: 正常シナリオ
+    setup:
+      - name: Mock
+        description: 差し替えない。端末の dev-docs と knowledge のクローンをそのまま使う
+      - name: knowledge のクローン
+        description: develop を踏んだ knowledge のクローン。`dev-docs.yaml`・`files.yaml`・スクリプトがある
+      - name: 端末の設定
+        description: '`~/.config/dev-docs/settings.yaml` の `sources[]` に knowledge が無い'
+    flow: |-
+      flowchart TD
+        A[利用者が dev-docs に knowledge を登録する] --> B[利用者が画面で knowledge の文書を読む]
+        A --> C[エージェントが knowledge の文書を検索・取得する]
+    expected:
+      - '`sources[]` に knowledge の行があり、`scope.read` が全ての作業場所、`scope.write` が knowledge のクローンと worktree'
+      - 画面で develop の knowledge の全ての種類の文書が開ける
+      - 'knowledge のクローンの外の作業場所から `search_docs` に `source: knowledge` を渡すと knowledge の文書が返る'
+    test: test_normal
+  - name: 異常シナリオ（登録の点検で誤りがある）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 壊した knowledge のクローン
+        description: '`dev-docs.yaml` の documents の行が存在しないスキーマを指すクローン'
+        notes: '`schema: schemas/missing.schema.yaml`'
+    flow: |-
+      flowchart TD
+        A[利用者が dev-docs に knowledge を登録する] -->|点検で誤り| X[登録しない]
+    expected:
+      - '`sources[]` に knowledge の行が追加されていない'
+      - 誤りのあるファイル（`dev-docs.yaml`）と内容が利用者へ返る
+    test: test_error_when_setup_check_fails
+lead: 利用者が端末で dev-docs を準備して knowledge を配信元に登録し、画面とエージェントの MCP から knowledge の文書を引けるようになるまでの流れ。
+issue: 51
+primary_actor: 利用者
+stakeholders:
+  - name: 利用者
+    interest: どの作業場所からでも knowledge の規約を画面と MCP で引ける
+  - name: エージェント
+    interest: '`source: knowledge` で規約を検索・取得でき、knowledge の外から誤って書き込まない'
+trigger: 利用者が新しい端末で knowledge を使い始める
+preconditions:
+  - 端末に knowledge のクローンがある
+  - Claude Code に dev-docs のプラグインを入れられる
+success_guarantee: '端末の設定の `sources[]` に knowledge があり、画面で develop の文書が開け、どの作業場所からも `search_docs` に `source: knowledge` を渡すと knowledge の文書が返る。'
+minimal_guarantee: 登録の点検で誤りがあれば `sources[]` を書き換えず、誤りのあるファイルと内容を利用者へ返す。
+frequency: 端末ごとに 1 回（入れ直し・端末の移行のときにもう 1 回）
+priority: 高（shuhei1101/ai-monitor#3093 が待っている）
