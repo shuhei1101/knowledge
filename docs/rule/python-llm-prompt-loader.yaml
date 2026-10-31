@@ -2,24 +2,38 @@
 id: python-llm-prompt-loader
 kind: rule
 name: プロンプトローダー実装
-description: プロンプトのローダーとビルダーの構成と、守るルールを定める。
+description: プロンプトのローダーとビルダーの構成と、守るルールを定め、プロンプトを読み込んで組み立てる処理を実装するときに読む。
 tags:
   - name: scope:python
   - name: topic:llm
+  - name: topic:id
+  - name: topic:sot
+  - name: topic:testing
+  - name: tool:yaml
+  - name: topic:ビルダー
+  - name: topic:ファイル
+  - name: topic:プロンプト
     main: true
+  - name: topic:ローダー
+  - name: topic:ロール
+  - name: topic:型ヒント
+  - name: topic:構成
+  - name: topic:環境
+  - name: topic:結合テスト
+  - name: topic:部品
+  - name: action:ビルド
+  - name: action:変換
+  - name: action:実装
+  - name: action:検証
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
-related:
-  - to: prompt-file
-    type: requires
-    when: プロンプトのローダーを実装するとき
+rev: 6
+last_reviewed: '2026-10-31'
 items:
   - id: overview
     name: 概要
     body: |-
-      `prompts/{id}.yaml` を読み、`when` に当たる部品の `text.en` を Jinja2 でレンダリングして 1 つのプロンプトに組み立てる。書き方は [プロンプトファイル](id:prompt-file)。
+      `prompts/{id}.yaml` を読み、`when` に当たる部品のトップレベルの `lang` の本文を Jinja2 でレンダリングして 1 つのプロンプトに組み立てる。書き方は [プロンプトファイル](id:prompt-file)。
   - id: structure-01
     group: 構成
     name: ローダーのファイル構成
@@ -44,7 +58,7 @@ items:
     group: node_loader.py
     name: 戻り値は TypedDict
     body: |-
-      - 戻り値は TypedDict（`PromptFile`: id / node / tags / vars / output / parts）
+      - 戻り値は TypedDict（`PromptFile`: id / name / description / kind / lang / tags / vars / examples / output / parts）
   - id: builder-01
     group: builder.py
     name: StrictUndefined の Environment
@@ -54,7 +68,7 @@ items:
     group: builder.py
     name: build_prompt の検証
     body: |-
-      - `build_prompt(prompt_id, **vars)`: `vars` の必須が渡されているかを確かめ、渡されていない必須でない変数を `None` で補い、`parts` を順に見て `when` が真の部品の `text.en` をレンダリングし `"\n\n".join`
+      - `build_prompt(prompt_id, **vars)`: `vars` の必須が渡されているかを確かめ、渡されていない必須でない変数を `default` か `None` で補い、`parts` を順に見て `when` が真の部品のトップレベルの `lang` の本文をレンダリングし `"\n\n".join`
   - id: builder-03
     group: builder.py
     name: role 別の build_bundle

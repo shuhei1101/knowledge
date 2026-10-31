@@ -2,52 +2,32 @@
 id: python-core-type-hint
 kind: rule
 name: 型ヒント
-description: 型ヒントを PEP 695 で記載する決まりと、NewType と type 文の使い分け、使う typing 機能を定める。
+description: 型ヒントを PEP 695 で記載する決まりと、NewType と type 文の使い分け、使う typing 機能を定め、Python の型ヒントを記載するときに読む。
 tags:
   - name: scope:python
-  - name: topic:core
+  - name: topic:dto
+  - name: topic:デコレータ
+  - name: topic:ヒント
+  - name: topic:型ヒント
     main: true
+  - name: action:制限
+  - name: action:参照
+  - name: action:比較
+  - name: action:統一
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
     body: |-
-      Python 3.12+ 必須。PEP 695 で書く。
-  - id: basic-01
-    group: 基本
-    name: future annotations
-    body: |-
-      - `from __future__ import annotations` を全ファイル冒頭に置く
-  - id: basic-02
-    group: 基本
-    name: 型注釈は必須
-    body: |-
-      - 関数 / メソッドの引数と返り値には必ず型注釈。クラス属性 / モジュール変数にも
+      Python 3.14+ 必須。PEP 695 で書く。
   - id: basic-03
     group: 基本
     name: Any は最終手段
     body: |-
       - `Any` は最終手段（理由をコメントで残す）
-  - id: pep695-01
-    group: PEP 695
-    name: type 文による型エイリアス
-    body: |-
-      - 型エイリアスは `type X = ...` 文（`TypeAlias` import は使わない）
-        - 識別子型: `type UserId = str`
-        - 関数型: `type AsyncChatFn = Callable[[ChatMessages], Awaitable[str]]`
-  - id: pep695-02
-    group: PEP 695
-    name: ジェネリクスの記法
-    body: |-
-      - ジェネリクスは `def first[T](xs: list[T]) -> T | None` / `class Pair[K, V]` 形式
-  - id: pep695-03
-    group: PEP 695
-    name: 制約付きジェネリクス
-    body: |-
-      - 制約付きは `def parse[T: BaseModel](raw: str, schema: type[T]) -> T`
   - id: newtype-vs-type-01
     group: NewType vs type 文
     name: NewType と type 文の比較表

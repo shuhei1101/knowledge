@@ -1,0 +1,85 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-llm-structured-output
+kind: rule
+name: 構造化出力 — Pydantic で受け取る
+description: LLM 出力を Pydantic モデルとして受け取る方法（SDK の組み込みを標準にし、Instructor は複数プロバイダーが要るときだけ）と、タスク特化の関数・ファイル構成を定め、LLM の出力を構造化して受け取るときに読む。
+tags:
+  - name: scope:python
+  - name: topic:llm
+  - name: topic:sdk
+  - name: topic:クライアント
+  - name: topic:スキーマ
+  - name: topic:タスク
+  - name: topic:パターン
+  - name: topic:ファイル
+  - name: topic:フィールド
+  - name: topic:プロバイダー
+  - name: topic:メッセージ
+  - name: topic:モデル
+  - name: topic:リテラル
+  - name: topic:リポジトリ
+  - name: topic:例外
+  - name: topic:構成
+  - name: topic:構造
+  - name: topic:関数
+  - name: tool:anthropic
+  - name: tool:instructor
+  - name: tool:pydantic
+    main: true
+  - name: action:パース
+  - name: action:出力
+  - name: action:検証
+  - name: action:特化
+  - name: action:表示
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      LLM 出力を Pydantic モデルとして受け取るには、各 SDK の組み込みの構造化出力を使い、`AsyncChatFn` の実装の中に閉じる。
+      Instructor は複数プロバイダーが要るリポジトリだけで使う。
+  - id: common-01
+    group: SDK と Instructor に共通
+    name: Field の description と Literal
+    body: |-
+      - スキーマの `Field(description=...)` が抽出精度に効くので書く。固定選択肢は `Literal`、ネスト・`list[...]` も可
+  - id: common-02
+    group: SDK と Instructor に共通
+    name: 検証失敗は例外を伝える
+    body: |-
+      - 検証に失敗したときは、SDK・Instructor が送出する例外を呼び出し側へ伝える（`None` に変えない）
+  - id: sdk-01
+    group: SDK の組み込み
+    name: anthropic は messages.parse
+    body: |-
+      - anthropic は `client.messages.parse(output_format=MySchema, ...)` で Pydantic モデルとして受け取る
+  - id: instructor-01
+    group: Instructor（複数プロバイダーが要るリポジトリだけ）
+    name: from_provider でクライアント作成
+    body: |-
+      - クライアントは `instructor.from_provider("{provider}/{model}")` で作る（非同期は `async_client=True`）
+  - id: instructor-02
+    group: Instructor（複数プロバイダーが要るリポジトリだけ）
+    name: response_model で呼び出す
+    body: |-
+      - `client.chat.completions.create(response_model=MySchema, max_retries=3, ...)` で
+        - JSON 受信 → Pydantic 検証 → 失敗時は LLM に修正させて再試行
+  - id: instructor-05
+    group: Instructor（複数プロバイダーが要るリポジトリだけ）
+    name: create_partial で逐次表示
+    body: |-
+      - 逐次表示には `create_partial(...)`（部分的に埋まったオブジェクトが yield される）
+  - id: task-specific-client-01
+    group: Task-specific client パターン
+    name: タスク特化の関数に封じる
+    body: |-
+      特定タスク特化の関数として封じる:
+      `type ExtractEventFn = Callable[[str], Awaitable[ExtractedEvent]]` を定義し、`make_extract_event_fn(*, client, model) -> ExtractEventFn` で client / model をクロージャに隠す。呼び出し側は記事を渡すだけ。
+  - id: file-structure-01
+    group: ファイル構成
+    name: スキーマと関数のファイル構成
+    body: |-
+      タスクが小さければスキーマ + プロンプト + 関数を 1 ファイルにまとめてよい（短いプロンプトはコード内、長ければ `content/prompts/`）。

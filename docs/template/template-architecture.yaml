@@ -2,13 +2,18 @@
 id: template-architecture
 kind: template
 name: "テンプレート: アーキテクチャ図"
-description: システム全体の輪郭（サブシステムの分け方・外部システムとの境界）を記載するアーキテクチャ図のテンプレート。
+description: システム全体の輪郭（サブシステムの分け方・外部システムとの境界）を記載するアーキテクチャ図の書式を定め、アーキテクチャ図を作る・見直すときに読む。
 tags:
   - name: scope:テンプレート
+  - name: topic:architecture
     main: true
+  - name: topic:サブシステム
+  - name: topic:システム
+  - name: topic:テンプレート
+  - name: topic:境界
 status: current
 visibility: internal
-rev: 1
+rev: 3
 items:
   - id: overview
     name: 概要
@@ -147,7 +152,7 @@ items:
       - name: バックエンド
         scope: backend
         role: 業務ロジックと永続化
-        runtime: Python 3.12
+        runtime: Python 3.14
       external_systems:
       - name: SendGrid
         purpose: メール送信

@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: typescript-core-util
+kind: rule
+name: 整形関数とロガー
+description: 日付・数値・通貨などの整形関数を 1 か所に集約する決まりと、ログ出力をロガー経由にする決まりを定め、整形処理やログ出力を TypeScript に実装するときに読む。
+tags:
+  - name: scope:typescript
+  - name: topic:dom
+  - name: topic:コンソール
+  - name: topic:ロガー
+    main: true
+  - name: topic:ログ
+  - name: topic:数値
+  - name: topic:日付
+  - name: topic:通貨
+  - name: topic:関数
+  - name: action:出力
+  - name: action:整形
+  - name: action:集約
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: TypeScript
+  - id: fmt-01
+    group: 整形関数
+    name: 整形関数を集約する
+    body: |-
+      - 日付・数値・通貨などの整形関数を、1 か所に集約する。
+        画面ごとに整形関数を再定義しない。
+  - id: fmt-02
+    group: 整形関数
+    name: 純関数で DOM を触らない
+    body: |-
+      - 整形関数は純関数にし、DOM を触らない。
+  - id: logger-01
+    group: ロガー
+    name: console を直接呼ばない
+    body: |-
+      - ログ出力は、ロガーに集約する。
+        画面と共通層は、`console.*` を直接呼ばず、ロガー経由で出す。
+  - id: logger-02
+    group: ロガー
+    name: レベルで出し分ける
+    body: |-
+      - ログは、レベル（error / warn / info / debug）で出し分ける。

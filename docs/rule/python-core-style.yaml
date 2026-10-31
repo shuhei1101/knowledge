@@ -2,76 +2,45 @@
 id: python-core-style
 kind: rule
 name: スタイル
-description: ruff・mypy・pyright のツール構成と設定、モジュールの区切り方を定める。
+description: ruff・pyright・import-linter のツール構成と設定の置き場所、モジュールの区切り方を定め、Python の静的検査やフォーマッタを設定するときに読む。
 tags:
   - name: scope:python
-  - name: topic:core
+  - name: topic:pyproject
+  - name: topic:インポート
+  - name: topic:スタイル
     main: true
+  - name: topic:ツール
+  - name: topic:フォーマッタ
+  - name: topic:マーカー
+  - name: topic:モジュール
+  - name: topic:構成
+  - name: topic:正本
+  - name: topic:設定
+  - name: tool:import-linter
+  - name: tool:pyright
+  - name: tool:ruff
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-10-30'
 items:
   - id: tool-config-01
     group: ツール構成
     name: ツール構成の表
     body: |-
-      | ツール    | 役割                                                 |
-      | --------- | ---------------------------------------------------- |
-      | `ruff`    | フォーマッタ + リンタ（black + isort + flake8 相当） |
-      | `mypy`    | 型チェック（CI / 厳格）                              |
-      | `pyright` | エディタ統合の高速型チェック（任意）                 |
-      | `pytest`  | テストランナー                                       |
-  - id: ruff-config-01
-    group: ruff 設定
-    name: ruff の設定
+      | ツール                        | 役割                                                           |
+      | ----------------------------- | -------------------------------------------------------------- |
+      | `ruff`                        | フォーマッタ + リンタ（black + isort + flake8 相当）           |
+      | `pyright`（`basedpyright`）   | 型チェック（CI / strict が正）                                 |
+      | `ty`                          | 型チェック（試験的に並行して実行。1.0 になったら見直す）       |
+      | `import-linter`               | 依存の向きの検査（layers 契約）                                |
+      | `pytest`                      | テストランナー                                                 |
+  - id: config-01
+    group: 設定
+    name: 設定の正本は pyproject
     body: |-
-      ```toml
-      [tool.ruff]
-      line-length = 100
-      target-version = "py312"
-
-      [tool.ruff.lint]
-      select = [
-          "E", "F", "I", "B", "UP", "SIM", "RUF",
-          "PLR2004",  # マジックナンバー禁止（dev/コーディング全般）
-          "BLE001",   # 広い except は最上位だけ（python/core/言語ルール）
-          "TRY400",   # 例外は logger.exception で出す（python/shared/ロガー）
-          "DTZ",      # 保存する日時はタイムゾーン付き（dev/コーディング全般）
-          "ASYNC",    # async の中でブロックする処理を呼ばない（python/concurrency/非同期処理）
-          "S101",     # assert を実行時の検査に使わない（python/core/言語ルール）
-          "S602", "S604",  # 外部コマンドはシェルを通さない（dev/コーディング全般）
-          "S301", "S506",  # 外部から来たデータを pickle / yaml.load で読まない（dev/コーディング全般）
-          "PT011", "PT012",  # pytest.raises の型の絞り込みとブロックの 1 文（python/testing/pytest）
-      ]
-      ignore = [
-          "E501",     # 行長は formatter に任せる
-          "RUF001", "RUF002", "RUF003",   # 日本語の文字列 / docstring / コメントの全角記号を紛らわしい Unicode として指すため外す
-      ]
-
-      [tool.ruff.lint.per-file-ignores]
-      "tests/**" = ["S101", "PLR2004"]   # テストの assert と期待値の数値は許す
-
-      [tool.ruff.format]
-      quote-style = "double"
-      indent-style = "space"
-      ```
-  - id: mypy-config-01
-    group: mypy 設定
-    name: mypy の設定
-    body: |-
-      ```toml
-      [tool.mypy]
-      python_version = "3.12"
-      strict = true
-      pretty = true
-      plugins = ["pydantic.mypy"]   # Pydantic 使用時
-      ```
-  - id: mypy-config-02
-    group: mypy 設定
-    name: pyright の設定
-    body: |-
-      pyright を使う場合は `typeCheckingMode = "strict"`。
+      ruff・pyright・import-linter の設定の正本は各リポジトリの `pyproject.toml`。
+      初期値は [pyproject.toml 標準テンプレート](id:python-packaging-pyproject) を使う。
   - id: writing-01
     group: 書き方
     name: セクションマーカーの扱い

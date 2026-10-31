@@ -2,14 +2,32 @@
 id: next-backend-route-ts
 kind: rule
 name: app/api/v{N}/{resource}/route.ts
-description: HTTP ハンドラ route.ts のエラーハンドリング・認証・入力検証・レスポンス封筒・HTTP メソッドの決まりを定める。
+description: HTTP ハンドラ route.ts のエラーハンドリング・認証・入力検証・レスポンス封筒・HTTP メソッドの決まりを定め、API の route.ts を実装するときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:api
+  - name: topic:http
+  - name: topic:エラー
+  - name: topic:エラーハンドリング
+  - name: topic:コンテキスト
+  - name: topic:ハンドラ
+  - name: topic:ページ
+  - name: topic:ミューテーション
+  - name: topic:メソッド
+  - name: topic:リソース
+  - name: topic:ルート
     main: true
+  - name: topic:レスポンス封筒
+  - name: tool:zod
+  - name: action:パース
+  - name: action:ラップ
+  - name: action:入力
+  - name: action:検証
+  - name: action:認証
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: overview

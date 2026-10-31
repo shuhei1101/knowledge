@@ -2,15 +2,31 @@
 id: python-testing-fixture
 kind: rule
 name: Factory-as-Fixture パターン（DB リソース準備の推奨形）
-description: DB リソースを準備する fixture を、関数を返す Factory-as-Fixture の形にする決まりを定める。
+description: DB リソースを準備する fixture を関数を返す Factory-as-Fixture の方式で作る決まりと、アプリの fixture の作り方を定め、Python のテストで DB リソースを準備する fixture を作るときに読む。
 tags:
   - name: scope:python
   - name: topic:testing
+  - name: topic:db
+  - name: topic:アプリ
+  - name: topic:セットアップ
+  - name: topic:ハードコード
+  - name: topic:パターン
+  - name: topic:ファクトリ
+  - name: topic:ファクトリフィクスチャ
+  - name: topic:フィクスチャ
     main: true
+  - name: topic:リソース
+  - name: topic:引数
+  - name: topic:責務
+  - name: topic:関数
+  - name: action:クリーンアップ
+  - name: action:依存
+  - name: action:起動
+  - name: action:追跡
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -60,3 +76,13 @@ items:
     name: 手動 cleanup の禁止
     body: |-
       - アンチパターン: `try/finally` で手動 cleanup を書く → fixture の `yield` に任せる
+  - id: app-fixture-01
+    group: アプリの fixture
+    name: LifespanManager で起動する
+    body: |-
+      - アプリの fixture は `build_fastapi(handlers=...)` を `LifespanManager` で起動して返す（lifespan もテストされる）
+  - id: app-fixture-02
+    group: アプリの fixture
+    name: AsyncClient で叩く
+    body: |-
+      - クライアントの fixture は `AsyncClient(transport=ASGITransport(app=app))`。同期の `TestClient` は使わない

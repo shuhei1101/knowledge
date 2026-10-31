@@ -2,14 +2,23 @@
 id: python-fastapi-health-check
 kind: rule
 name: ヘルスチェック
-description: ヘルスチェックのエンドポイントの中身と、liveness・readiness を分ける場合、依存先の診断の扱いを定める。
+description: ヘルスチェックのエンドポイントの中身と、liveness・readiness を分ける場合、依存先の診断の扱いを定め、FastAPI にヘルスチェックを実装するときに読む。
 tags:
   - name: scope:python
-  - name: topic:fastapi
+  - name: tool:fastapi
+  - name: topic:エンドポイント
+  - name: topic:フラグ
+  - name: topic:ヘルスチェック
     main: true
+  - name: topic:設定
+  - name: action:依存
+  - name: action:判定
+  - name: action:検査
+  - name: action:疎通
+  - name: action:診断
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: health-check-01

@@ -2,13 +2,22 @@
 id: claude-subagent
 kind: rule
 name: サブエージェント委譲ガイド
-description: スキルのステップをサブエージェントへ委譲するときのマーカー、判断基準、制約を定める。
+description: スキルのステップをサブエージェントへ委譲するときのマーカー、判断基準、制約を定め、スキルの処理をサブエージェントに委譲するかを決めるときに読む。
 tags:
   - name: scope:claude
+  - name: topic:エージェント
+  - name: topic:ガイド
+  - name: topic:コンテキスト
+  - name: topic:サブエージェント
     main: true
+  - name: topic:スキル
+  - name: topic:マーカー
+  - name: topic:制約
+  - name: action:判断
+  - name: action:委譲
 status: current
 visibility: internal
-rev: 1
+rev: 3
 last_reviewed: '2026-10-24'
 items:
   - id: overview

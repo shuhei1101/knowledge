@@ -2,15 +2,37 @@
 id: python-llm-cost-cache
 kind: rule
 name: トークン管理とコスト最適化
-description: LLM のトークン管理、max_tokens の絞り方、プロンプトキャッシュの設計、その他のコスト最適化の定石を定める。
+description: LLM のトークン管理、max_tokens の絞り方、プロンプトキャッシュの設計、その他のコスト最適化の定石を定め、LLM 呼び出しのコストを抑えるときに読む。
 tags:
   - name: scope:python
   - name: topic:llm
+  - name: topic:api
+  - name: topic:キャッシュ
+  - name: topic:コスト
     main: true
+  - name: topic:システム
+  - name: topic:トークン
+  - name: topic:バッチ
+  - name: topic:プロバイダー
+  - name: topic:プロンプト
+  - name: topic:メッセージ
+  - name: topic:モデル
+  - name: topic:履歴
+  - name: topic:接頭辞
+  - name: action:管理
+  - name: action:計測
+  - name: action:設計
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
+sources:
+  - title: "Anthropic: Prompt caching"
+    url: https://platform.claude.com/docs/en/build-with-claude/prompt-caching
+    note: 最小長・割引率・保持時間
+  - title: "OpenAI: Prompt caching"
+    url: https://platform.openai.com/docs/guides/prompt-caching
+    note: 最小長・割引率・保持時間
 items:
   - id: token-cost-01
     group: トークン管理とコスト最適化
@@ -57,8 +79,8 @@ items:
     body: |-
       | Provider  | 仕組み                                                 | 条件（最小長・割引率・保持時間）                                                                  |
       | --------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-      | Anthropic | `cache_control: {"type": "ephemeral"}` を指定（リクエスト直下なら自動、ブロック単位でも可） | [公式ドキュメント](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)          |
-      | OpenAI    | 自動（同一プレフィックスで効く、コード変更不要）       | [公式ドキュメント](https://platform.openai.com/docs/guides/prompt-caching)                        |
+      | Anthropic | `cache_control: {"type": "ephemeral"}` を指定（リクエスト直下なら自動、ブロック単位でも可） | 公式ドキュメント          |
+      | OpenAI    | 自動（同一プレフィックスで効く、コード変更不要）       | 公式ドキュメント                        |
   - id: prompt-cache-05
     group: プロンプトキャッシュの設計（最重要）
     name: 1 回きりの用途では効かない

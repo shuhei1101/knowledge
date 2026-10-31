@@ -1,0 +1,138 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: testing-core-e2e
+kind: rule
+name: E2E テスト（Playwright）
+description: Playwright の E2E テストの設定の要点、フォルダ構成、ルールを定め、TypeScript の E2E テストを作る・設定するときに読む。
+tags:
+  - name: scope:testing
+  - name: topic:testing
+  - name: topic:concurrency
+  - name: topic:db
+  - name: topic:e2e
+  - name: tool:typescript
+  - name: topic:アクセシビリティ
+  - name: topic:サーバー
+  - name: topic:シード
+  - name: topic:スクリーンショット
+  - name: topic:セットアップ
+  - name: topic:トレース
+  - name: topic:フォルダ
+  - name: topic:ポート
+  - name: topic:モック
+  - name: topic:ロケータ
+  - name: topic:回帰
+  - name: topic:構成
+  - name: topic:視覚回帰
+  - name: topic:設定
+  - name: topic:責務
+  - name: tool:playwright
+    main: true
+  - name: action:ログイン
+  - name: action:共有
+  - name: action:切り替え
+  - name: action:実行
+  - name: action:挿入
+  - name: action:検査
+  - name: action:検証
+  - name: action:起動
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: TypeScript のテスト
+  - id: playwright-config-01
+    group: playwright.config.ts の要点
+    name: testDir と並列実行
+    body: |-
+      - `testDir: "./tests/e2e"`、`fullyParallel: true`、CI は `retries: 2` + `workers: 1` にする。
+  - id: playwright-config-02
+    group: playwright.config.ts の要点
+    name: trace と screenshot
+    body: |-
+      - `trace: "on-first-retry"`、`screenshot: "only-on-failure"` にする。
+  - id: playwright-config-03
+    group: playwright.config.ts の要点
+    name: storageState の指定
+    body: |-
+      - projects に `storageState: "tests/e2e/.auth/user.json"` を設定する（chromium・webkit・mobile）。
+  - id: playwright-config-04
+    group: playwright.config.ts の要点
+    name: global.setup と global.teardown
+    body: |-
+      - `global.setup.ts` と `global.teardown.ts` は、setup project の `dependencies` と `teardown` で繋ぐ（`globalSetup` の設定は使わない）。
+  - id: playwright-config-05
+    group: playwright.config.ts の要点
+    name: webServer の自動起動
+    body: |-
+      - `webServer` で、アプリのサーバーを自動で起動し、`reuseExistingServer: !process.env.CI` にする。
+  - id: folder-responsibility-01
+    group: フォルダ構成と責務
+    name: フォルダ構成と責務
+    body: |-
+      ```text
+      tests/e2e/
+      ├── {domain}/                   # spec のみ（画面・ドメイン単位のフォルダ）
+      │   └── login.spec.ts
+      ├── usecases/                   # 横断ユースケース
+      ├── pages/                      # Page Object（UI 操作の抽象化だけ。業務ロジックは置かない）
+      ├── fixtures/                   # テストデータの Factory
+      ├── helpers/                    # 共通操作。責務ごとに分割する（helper.ts を乱立させない）
+      ├── .auth/                      # Storage State（gitignore の対象）
+      ├── reports/                    # CI のレポートの出力先
+      ├── snapshots/                  # 視覚回帰の比較画像
+      ├── global.setup.ts             # Storage State の生成・DB の初期化
+      └── global.teardown.ts          # 後片付け
+      ```
+  - id: rules-01
+    group: ルール
+    name: ロケータの優先順位
+    body: |-
+      - ロケータは、role・label・placeholder を基本にする。
+        `data-testid` は最後の手段にする。
+  - id: rules-02
+    group: ルール
+    name: ログインは Storage State で 1 回
+    body: |-
+      - ログインは、global.setup の Storage State で 1 回だけ行う（各テストで繰り返さない）。
+        `.auth/` は gitignore にする。
+  - id: rules-03
+    group: ルール
+    name: DB のシードは helpers で直接 insert する
+    body: |-
+      - DB のシードは、helpers で直接 insert する（API 経由より速く確実）。
+  - id: rules-04
+    group: ルール
+    name: DB の状態を共有するテスト
+    body: |-
+      - DB の状態を共有するテストは、データをテストごとに分けて独立させる（`serial` で直列にしない）。
+  - id: rules-05
+    group: ルール
+    name: 視覚回帰
+    body: |-
+      - 視覚回帰は `toHaveScreenshot` で行う（`snapshotPathTemplate` で `tests/e2e/snapshots/` に保存する）。
+        ベースラインは、比較する環境と同じ OS で生成する。
+  - id: rules-06
+    group: ルール
+    name: a11y の検査
+    body: |-
+      - a11y は、`@axe-core/playwright` の AxeBuilder で、violations がゼロであることを確認する。
+  - id: rules-07
+    group: ルール
+    name: 外部 I/O はモックに切り替える
+    body: |-
+      - 外部 I/O（LLM・TTS など）は、`playwright.config.ts` の `webServer` の `env` に渡す環境変数で、モックに切り替える。
+        実課金と非決定性に依存させない。
+  - id: rules-08
+    group: ルール
+    name: 検証対象
+    body: |-
+      - 検証対象は、画面が組み上がること・共通シェルが付くこと・主要な操作とバリデーションに絞る。
+  - id: rules-09
+    group: ルール
+    name: 別ポートで起動する
+    body: |-
+      - メインの dev server が動いている間に走らせるときは、worktree から別ポート（`E2E_PORT`）でアプリを起動する。

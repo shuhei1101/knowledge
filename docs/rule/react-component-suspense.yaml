@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-component-suspense
+kind: rule
+name: Suspense
+description: Suspense の fallback の決まりを定め、React の画面で Suspense を使うときに読む。
+tags:
+  - name: scope:react
+  - name: topic:フロントエンド
+  - name: topic:サスペンス
+    main: true
+  - name: topic:スケルトン
+  - name: topic:フォールバック
+  - name: topic:ページ
+  - name: topic:画面
+  - name: tool:react
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+  - id: suspense-01
+    group: Suspense
+    name: Suspense はページ内の部分の fallback
+    body: |-
+      - `<Suspense>` は、ページ内の部分の fallback に使う。
+  - id: suspense-02
+    group: Suspense
+    name: fallback は同じ高さの Skeleton
+    body: |-
+      - fallback には、レイアウトがずれないよう同じ高さの `<Skeleton>` を使う。

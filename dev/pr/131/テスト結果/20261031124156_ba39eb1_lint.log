@@ -1,0 +1,95 @@
+# commit: ba39eb1
+# 検査のスクリプト: /tmp/claude-1000/-mnt-c-Users-shuhe-repo-knowledge/eedc2c46-f48b-43ed-8b1c-552a79df0dc1/scratchpad/check_rules.py（以下に全文を載せる）
+
+$ python3 -c "import importlib.metadata as m; print(m.version(\"jsonschema\"))"
+4.26.0
+
+$ python3 check_rules.py .
+[PASS] rule.schema.yaml・リンク先: docs/rule/claude-context-placement.yaml
+[PASS] rule.schema.yaml・リンク先: docs/rule/claude-hook.yaml
+[PASS] rule.schema.yaml・リンク先: docs/rule/claude-mcp.yaml
+[PASS] rules.yaml: claude-context-placement の行が 1 つあり、rule が実在する
+[PASS] rules.yaml claude-context-placement の paths: /home/u/repo/.claude/hooks/session_start.py → ['**/.claude/hooks/**', '**/hooks/**']
+[PASS] rules.yaml claude-context-placement の paths: /home/u/repo/plugins/dev-docs/hooks/hooks.json → ['**/hooks/**']
+[PASS] rules.yaml claude-context-placement の paths: /home/u/repo/src/dev_docs/mcp/server.py → ['**/mcp/**']
+[PASS] rules.yaml claude-context-placement の paths: /home/u/repo/src/mcp_server.py → ['**/mcp_server.py*']
+[PASS] rules.yaml claude-context-placement の paths: /home/u/repo/.mcp.json → ['**/.mcp.json']
+[PASS] rules.yaml claude-context-placement の paths: /home/u/repo/CLAUDE.md → ['**/CLAUDE.md']
+[PASS] rules.yaml claude-context-placement の paths: /home/u/repo/plugins/x/skills/setup/SKILL.md → ['**/skills/**/SKILL.md']
+[PASS] rules.yaml claude-context-placement の paths に当たらない: /home/u/repo/content/prompts/session-context.yaml → []
+[PASS] rules.yaml claude-context-placement の paths に当たらない: /home/u/repo/src/app/main.py → []
+exit=0
+
+----- check_rules.py -----
+"""変更した規約を rule.schema.yaml で検査し、id: のリンク先の実在と rules.yaml の paths の当たりを確かめる。"""
+import re
+import sys
+from pathlib import Path
+
+import yaml
+from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
+
+repo = Path(sys.argv[1])
+schemas = {p.name: yaml.safe_load(p.read_text(encoding="utf-8")) for p in (repo / "schemas").glob("*.schema.yaml")}
+registry = Registry().with_resources((n, Resource.from_contents(b)) for n, b in schemas.items())
+rule_v = Draft202012Validator(schemas["rule.schema.yaml"], registry=registry)
+doc_ids = {yaml.safe_load(p.read_text(encoding="utf-8")).get("id") for p in (repo / "docs").rglob("*.yaml")}
+
+ok = True
+for name in ["claude-context-placement", "claude-hook", "claude-mcp"]:
+    path = repo / "docs/rule" / f"{name}.yaml"
+    doc = yaml.safe_load(path.read_text(encoding="utf-8"))
+    errors = [f"{'/'.join(map(str, e.absolute_path))}: {e.message}" for e in rule_v.iter_errors(doc)]
+    if doc["id"] != path.stem:
+        errors.append(f"id: ファイル名と違う {doc['id']}")
+    ids = [i["id"] for i in doc["items"]]
+    errors += [f"items: 重複 ID {i}" for i in sorted({i for i in ids if ids.count(i) > 1})]
+    for item in doc["items"]:
+        for ref in re.findall(r"\]\(id:([a-z0-9-]+)", item["body"]):
+            if ref not in doc_ids:
+                errors.append(f"items/{item['id']}: リンク先が無い id:{ref}")
+    print(f"[{'PASS' if not errors else 'FAIL'}] rule.schema.yaml・リンク先: docs/rule/{name}.yaml")
+    for e in errors:
+        print(f"    {e}")
+    ok &= not errors
+
+
+def glob_to_re(pattern):
+    """rules.yaml の glob（** はフォルダをまたぐ）を正規表現にする。"""
+    out = ""
+    i = 0
+    while i < len(pattern):
+        if pattern.startswith("**/", i):
+            out += "(?:.*/)?"
+            i += 3
+        elif pattern.startswith("**", i):
+            out += ".*"
+            i += 2
+        elif pattern[i] == "*":
+            out += "[^/]*"
+            i += 1
+        else:
+            out += re.escape(pattern[i])
+            i += 1
+    return re.compile(out + r"\Z")
+
+
+rules = yaml.safe_load((repo / "rules.yaml").read_text(encoding="utf-8"))
+entries = rules["rules"] if isinstance(rules, dict) else rules
+hits = [r for r in entries if r["rule"] == "docs/rule/claude-context-placement.yaml"]
+print(f"[{'PASS' if len(hits) == 1 and (repo / hits[0]['rule']).exists() else 'FAIL'}] rules.yaml: claude-context-placement の行が 1 つあり、rule が実在する")
+ok &= len(hits) == 1
+paths = hits[0]["paths"] if hits else []
+for target in ["/home/u/repo/.claude/hooks/session_start.py", "/home/u/repo/plugins/dev-docs/hooks/hooks.json",
+               "/home/u/repo/src/dev_docs/mcp/server.py", "/home/u/repo/src/mcp_server.py",
+               "/home/u/repo/.mcp.json", "/home/u/repo/CLAUDE.md", "/home/u/repo/plugins/x/skills/setup/SKILL.md"]:
+    hit = [p for p in paths if glob_to_re(p).match(target)]
+    print(f"[{'PASS' if hit else 'FAIL'}] rules.yaml claude-context-placement の paths: {target} → {hit}")
+    ok &= bool(hit)
+for target in ["/home/u/repo/content/prompts/session-context.yaml", "/home/u/repo/src/app/main.py"]:
+    hit = [p for p in paths if glob_to_re(p).match(target)]
+    print(f"[{'PASS' if not hit else 'FAIL'}] rules.yaml claude-context-placement の paths に当たらない: {target} → {hit}")
+    ok &= not hit
+
+sys.exit(0 if ok else 1)

@@ -2,20 +2,42 @@
 id: ui-display-stability
 kind: rule
 name: 表示の安定
-description: 読み込み・待ち時間・動きで表示が崩れたり揺れたりしないようにする決まりを定める。
+description: 読み込み・待ち時間・動きで表示が崩れたり揺れたりしないようにする決まりを定め、画面の読み込み中の表示やアニメーションを設計・実装するときに読む。
 tags:
   - name: scope:ui
+  - name: topic:アニメーション
+  - name: topic:ダイアログ
+  - name: topic:ポップオーバー
+  - name: topic:待ち時間
+  - name: topic:画面
+  - name: action:実装
+  - name: action:表示
     main: true
+  - name: action:読み込み
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
+sources:
+  - id: I
+    title: pbakaus/impeccable
+    url: https://github.com/pbakaus/impeccable
+  - id: V
+    title: Vercel Web Interface Guidelines
+    url: https://vercel.com/design/guidelines
+  - id: "N"
+    title: "Nielsen Norman Group: Progress Indicators Make a Slow System Less Insufferable"
+    url: https://www.nngroup.com/articles/progress-indicators/
+  - id: MW
+    title: GoogleChrome/modern-web-guidance
+    url: https://github.com/GoogleChrome/modern-web-guidance
 items:
   - id: overview
     name: 概要
     body: |-
+      対象: 共通（単体 HTML・React）
       読み込み・待ち時間・動きで表示が崩れたり揺れたりしないようにする。
-      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、N = Nielsen Norman Group、MW = modern-web-guidance（リンクは `## 出典`）。
+      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、N = Nielsen Norman Group、MW = modern-web-guidance（リンクはメタデータの `sources`）。
   - id: display-stability-01
     group: 表示の安定
     name: 表示の安定の決まり
@@ -26,7 +48,7 @@ items:
       | --- | --- |
       | 画像は寸法を先に確保し、読み込みで周りを動かさない | V |
       | タブ・ビュー・絞り込みを切り替えても、周りの枠の幅や高さを変えない | - |
-      | ポップオーバーとダイアログは、外側のクリックと Esc で閉じる | MW |
+      | ポップオーバーとメニューは、外側のクリックと Esc で閉じる。ダイアログの閉じ方は、閉じ方の表に従う | MW |
       | 幅・高さ・余白を動きの対象にしない | V / I |
       | メニューやツールチップが、親の枠で切れないようにする | I |
       | 文字が他の要素に隠れたり、枠からはみ出したりしない | I |
@@ -35,23 +57,23 @@ items:
       | 待ち時間で表示を変える。1 秒未満は出さない、10 秒未満は回る表示、10 秒以上は進み具合を割合で出す | N |
 
       <!-- /table -->
-  - id: sources-01
-    group: 出典
-    name: "出典 I: impeccable"
+  - id: close-behavior-01
+    group: 閉じ方
+    name: ダイアログ・ポップオーバーの閉じ方の表
     body: |-
-      - I: [pbakaus/impeccable](https://github.com/pbakaus/impeccable)
-  - id: sources-02
-    group: 出典
-    name: "出典 V: Web Interface Guidelines"
+      <!-- table: data -->
+
+      | 種類 | 外側のクリック | Esc |
+      | --- | --- | --- |
+      | ポップオーバー・メニュー | 閉じる | 閉じる |
+      | 入力を持つダイアログ | 閉じない | 確認を挟んでから閉じる |
+      | 確認ダイアログ | 閉じない | 閉じる |
+
+      <!-- /table -->
+  - id: close-behavior-02
+    group: 閉じ方
+    name: 閉じ方の実装
     body: |-
-      - V: [Web Interface Guidelines](https://vercel.com/design/guidelines)
-  - id: sources-03
-    group: 出典
-    name: "出典 N: Progress Indicators"
-    body: |-
-      - N: [Progress Indicators Make a Slow System Less Insufferable](https://www.nngroup.com/articles/progress-indicators/)
-  - id: sources-04
-    group: 出典
-    name: "出典 MW: modern-web-guidance"
-    body: |-
-      - MW: [GoogleChrome/modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance)
+      - 単体 HTML は、`<dialog closedby>`・`popover`・`commandfor` で実装する。
+        外側のクリックで閉じないダイアログは、`closedby="closerequest"` にする。
+      - React は、Base UI の部品で実装する。

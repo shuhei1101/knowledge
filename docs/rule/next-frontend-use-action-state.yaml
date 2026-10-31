@@ -2,14 +2,22 @@
 id: next-frontend-use-action-state
 kind: rule
 name: Server Action をクライアントから呼ぶ — useTransition / useActionState / useFormStatus
-description: Server Action をクライアントから呼ぶ useTransition・useActionState・useFormStatus の使い分けと通知の決まりを定める。
+description: Server Action をクライアントから呼ぶ useTransition・useActionState・useFormStatus の使い分けと通知の決まりを定め、画面から Server Action を呼ぶときに読む。
 tags:
   - name: scope:next
-  - name: topic:frontend
+  - name: topic:フロントエンド
+  - name: topic:アクション
+  - name: topic:クライアント
+  - name: topic:サーバー
+  - name: topic:サーバーアクション
     main: true
+  - name: topic:フォーム
+  - name: topic:ミューテーション
+  - name: topic:画面
+  - name: action:通知
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: server-action-client-call-01
@@ -32,4 +40,4 @@ items:
       | プログレッシブエンハンスメント必要 | `useActionState` + `<form action>`      |
       | `<form>` 内のサブミットボタン      | `useFormStatus`                         |
       | 楽観 UI                            | `useOptimistic` (+ useTransition)       |
-      | 複雑な楽観更新 / キャンセル        | useMutation（[useMutationパターン](id:next-frontend-use-mutation-pattern)） |
+      | 複雑な楽観更新 / キャンセル        | useMutation（[useMutationパターン](id:react-data-mutation)） |

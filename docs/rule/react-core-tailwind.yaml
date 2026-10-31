@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-core-tailwind
+kind: rule
+name: Tailwind
+description: React のフロントエンドで Tailwind v4 を使うときの、トークンの持ち方・割り当て・標準パレットの無効化・任意値の禁止を定め、Tailwind のスタイルを設定・記載するときに読む。
+tags:
+  - name: scope:react
+  - name: tool:css
+  - name: topic:フロントエンド
+  - name: topic:lint
+  - name: topic:スタイル
+  - name: topic:テーマ
+  - name: topic:トークン
+  - name: topic:パレット
+  - name: topic:設定
+  - name: tool:react
+  - name: tool:tailwind-css
+    main: true
+  - name: action:割り当て
+status: current
+visibility: internal
+rev: 6
+last_reviewed: '2026-10-30'
+sources:
+  - title: "Tailwind CSS: Theme variables"
+    url: https://tailwindcss.com/docs/theme
+  - title: "Tailwind CSS: Adding custom styles"
+    url: https://tailwindcss.com/docs/adding-custom-styles
+  - title: "shadcn/ui: Manual installation"
+    url: https://ui.shadcn.com/docs/installation/manual
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      スタイルは Tailwind v4 と shadcn/ui で書く。
+      トークンの名前と段階は規約『[デザイントークン](id:ui-token)』に従い、この規約には書かない。
+  - id: token-01
+    group: トークン
+    name: トークンは :root の 3 ティアで持つ
+    body: |-
+      - トークンは `:root` の 3 ティアで持つ。
+        置き場所は `shared/styles/` にする。
+  - id: token-02
+    group: トークン
+    name: theme inline で割り当てる
+    body: |-
+      - Tailwind には、`@theme inline` で自前のトークンを割り当てる。
+  - id: token-03
+    group: トークン
+    name: 標準のパレットを無効にする
+    body: |-
+      - `--color-*: initial` で、色の標準のパレットのクラスを削除する。
+  - id: arbitrary-01
+    group: 任意値
+    name: 任意値を lint で禁止する
+    body: |-
+      - `w-[321px]` のような任意値と、トークンに無い色を書かない。
+        eslint-plugin-better-tailwindcss で禁止する。

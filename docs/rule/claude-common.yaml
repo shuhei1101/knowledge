@@ -2,13 +2,26 @@
 id: claude-common
 kind: rule
 name: Claude 成果物の共通ルール
-description: SKILL.md・ルール・CLAUDE.md の文章の確認、スクリプトの配置場所、メインエージェント・スキル・カスタムサブエージェントの違いを定める。
+description: SKILL.md・ルール・CLAUDE.md の文章の確認、スクリプトの配置場所、メインエージェント・スキル・カスタムサブエージェントの違いを定め、これらの Claude 成果物を作る・修正するときに読む。
 tags:
   - name: scope:claude
+  - name: topic:スクリプト
+  - name: topic:エージェント
+  - name: topic:サブエージェント
+  - name: topic:スキル
+  - name: topic:ルール
+  - name: topic:文章
+  - name: topic:本文
+  - name: tool:claude
     main: true
+  - name: action:仲介
+  - name: action:入力
+  - name: action:呼び出し
+  - name: action:定義
+  - name: action:配置
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: concise-writing-01
@@ -25,14 +38,14 @@ items:
       ```md
       - ブラウザに出す依存を増やさない。
         - フレームワーク（React/Vue）・状態管理ライブラリ・UI ライブラリは使わない
-        - 外部依存がどうしても必要なときだけ vendoring する（`html/shared/vendor.md`）
-        - dev ツール（tsc / eslint / vitest 等）は別（`html/tooling/tsc運用.md`）
+        - 外部依存がどうしても必要なときだけ vendoring する
+        - dev ツール（tsc / eslint / vitest 等）は別
       ```
 
       悪い例: 横に長い。
 
       ```md
-      ブラウザに出す依存を増やさない。フレームワーク（React/Vue）・状態管理ライブラリ・UI ライブラリは使わない。外部依存がどうしても必要なときだけ vendoring する（`html/shared/vendor.md`）。dev ツール（tsc / eslint / vitest 等）は別（`html/tooling/tsc運用.md`）。
+      ブラウザに出す依存を増やさない。フレームワーク（React/Vue）・状態管理ライブラリ・UI ライブラリは使わない。外部依存がどうしても必要なときだけ vendoring する。dev ツール（tsc / eslint / vitest 等）は別。
       ```
   - id: script-location-01
     group: スクリプトの配置場所

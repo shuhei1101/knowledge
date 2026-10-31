@@ -2,14 +2,27 @@
 id: next-frontend-streaming
 kind: rule
 name: Streaming / Suspense
-description: Suspense 境界と loading.tsx、View Transitions の使い方を定める。
+description: Suspense 境界と loading.tsx、View Transitions の使い方を定め、画面のストリーミング表示や遷移アニメーションを実装するときに読む。
 tags:
   - name: scope:next
-  - name: topic:frontend
+  - name: topic:フロントエンド
+  - name: topic:api
+  - name: topic:部品
+  - name: topic:アニメーション
+  - name: topic:キャッシュ
+  - name: topic:サスペンス
     main: true
+  - name: topic:ストリーミング
+  - name: topic:ビュー
+  - name: topic:ビュートランジション
+  - name: topic:フォールバック
+  - name: topic:ローディング
+  - name: topic:境界
+  - name: topic:画面
+  - name: action:参照
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: suspense-boundary-01
@@ -17,16 +30,6 @@ items:
     name: loading.tsx は全体の fallback
     body: |-
       - `loading.tsx`: ページ全体の fallback（ナビゲーション中）
-  - id: suspense-boundary-02
-    group: Suspense 境界
-    name: Suspense は部分の fallback
-    body: |-
-      - `<Suspense>`: ページ内部分の fallback
-  - id: suspense-boundary-03
-    group: Suspense 境界
-    name: fallback は同じ高さの Skeleton
-    body: |-
-      - fallback は CLS が出ないよう同じ高さの `<Skeleton>` を使う
   - id: suspense-boundary-04
     group: Suspense 境界
     name: 動的 API を読むコンポーネント

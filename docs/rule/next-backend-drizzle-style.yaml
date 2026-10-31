@@ -2,14 +2,21 @@
 id: next-backend-drizzle-style
 kind: rule
 name: Drizzle — SQL Builder vs Relational Queries
-description: Drizzle の SQL Builder を標準とし、Relational Queries を使う範囲と SQL Injection の対策を定める。
+description: Drizzle の SQL Builder を標準とし、Relational Queries を使う範囲と SQL Injection の対策を定め、Drizzle でクエリを記載するときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: tool:sql
+  - name: topic:クエリ
+  - name: topic:テンプレート
+  - name: topic:ビルダー
+  - name: topic:リレーショナルクエリ
     main: true
+  - name: tool:drizzle
+  - name: action:注入
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: drizzle-sql-builder-01

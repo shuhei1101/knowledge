@@ -2,14 +2,99 @@
 id: claude-mcp
 kind: rule
 name: MCP サーバー作成ルール
-description: MCP サーバーの SDK・構成・ツールの単位・読み取りと差分のツール・検索・登録・動作確認の決まりを定める。
+description: MCP サーバーの SDK・構成・ツールの単位・読み取りと差分のツール・検索・登録・動作確認の決まりを定め、MCP サーバーやそのツールを作る・修正するときに読む。
 tags:
   - name: scope:claude
+  - name: topic:http
+  - name: topic:issue
+  - name: tool:markdown
+  - name: topic:sdk
+  - name: topic:url
+  - name: tool:yaml
+  - name: topic:エイリアス
+  - name: topic:キー
+  - name: topic:サーバー
+  - name: topic:スキーマ
+  - name: topic:セッション
+  - name: topic:タグ
+  - name: topic:ツール
+  - name: topic:テキスト
+  - name: topic:トランスポート
+  - name: topic:ハンドラ
+  - name: topic:ビュー
+  - name: topic:プラグイン
+  - name: topic:プロジェクト
+  - name: topic:ベクトル
+  - name: topic:ベクトル検索
+  - name: topic:ポート
+  - name: topic:ポート台帳
+  - name: topic:モジュール
+  - name: topic:モデル
+  - name: topic:モード
+  - name: topic:ルール
+  - name: topic:ロジック
+  - name: topic:主題
+  - name: topic:会話
+  - name: topic:台帳
+  - name: topic:変数
+  - name: topic:差分
+  - name: topic:常駐
+  - name: topic:引数
+  - name: topic:文書
+  - name: topic:構成
+  - name: topic:標準入出力
+  - name: topic:正本
+  - name: topic:用語
+  - name: tool:dev-docs
+  - name: tool:mcp
     main: true
+  - name: tool:next-js
+  - name: action:上書き
+  - name: action:付与
+  - name: action:作成
+  - name: action:依存
+  - name: action:分割
+  - name: action:取得
+  - name: action:変換
+  - name: action:定義
+  - name: action:探索
+  - name: action:接続
+  - name: action:操作
+  - name: action:案内
+  - name: action:検索
+  - name: action:添付
+  - name: action:照合
+  - name: action:特定
+  - name: action:登録
+  - name: action:記録
+  - name: action:読み取り
+  - name: action:起動
+  - name: action:返却
+  - name: action:通知
+  - name: action:適用
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 10
+last_reviewed: '2026-10-31'
+sources:
+  - title: "Anthropic: Writing effective tools for agents"
+    url: https://www.anthropic.com/engineering/writing-tools-for-agents
+  - title: "MCP 仕様: Tools"
+    url: https://modelcontextprotocol.io/specification/2025-06-18/server/tools
+    note: "`tools/list` の `cursor` / `nextCursor`"
+    library: MCP
+    version: '2025-06-18'
+  - title: Google AIP-157
+    url: https://google.aip.dev/157
+    note: view
+  - title: "anthropics/claude-code #9962"
+    url: https://github.com/anthropics/claude-code/issues/9962
+    note: structuredContent を優先し text を捨てる
+  - title: "MCP 仕様 2026-07-28: Changelog"
+    url: https://modelcontextprotocol.io/specification/2026-07-28/changelog
+    note: 接続を会話とみなさない
+    library: MCP
+    version: '2026-07-28'
 items:
   - id: sdk-transport-01
     group: SDK とトランスポート
@@ -43,6 +128,11 @@ items:
     name: 常駐サーバーの起動方法
     body: |-
       - 常駐サーバをどう起動するかを決める。既に常駐しているプロセス（アプリ本体・compose のサービス）に相乗りさせると、起動するものが増えない
+      - 常駐の MCP サーバーは、プラグインで配る。
+      - 起動と管理は systemd --user を主にする。
+        立て方は、tmux・systemd の規約で定める。
+      - SessionStart のフックは、落ちていたときの起動の補助にする。
+      - 状態の確認・再読込・再起動・更新は、サーバー自身が出す管理の MCP ツールで行う。
   - id: sdk-transport-07
     group: SDK とトランスポート
     name: モジュール変数に状態を持たない
@@ -66,15 +156,14 @@ items:
         - セッションの作業対象のファイルは、ツールの引数で絶対パスを受ける。セッションごとの値は PreToolUse フックで引数に入れる
   - id: server-tool-unit-01
     group: サーバーとツールの単位
-    name: リポジトリごとにサーバー 1 つ
+    name: 文書の MCP のサーバーは dev-docs の 1 つ
     body: |-
-      - 文書の置き場所（リポジトリ）ごとにサーバーを 1 つにする
-        分けるのは、置き場所・権限・リリースの単位が違うときだけ
+      - 文書の MCP のサーバーは dev-docs の 1 つにし、配信元ごとに分けない（`## 登録`）
   - id: server-tool-unit-02
     group: サーバーとツールの単位
     name: ツールは操作で分ける
     body: |-
-      - ツールは操作（検索・取得・書き込み・差分・タグの一覧・スキーマの取得）で分け、文書の種類は `kind` の enum 引数で指す
+      - ツールは操作（検索・取得・書き込み・差分・スキーマの取得）で分け、文書の種類は `kind` の enum 引数で指す
         種類ごとのツールを作らない
   - id: server-tool-unit-03
     group: サーバーとツールの単位
@@ -91,9 +180,9 @@ items:
       - 記録を探して引くツール（コメント・ログ・ノウハウなど）は、文書でなくても `search` と ID で取るツールにまとめる
   - id: mdmark-yaml-role-01
     group: mdmark と YAML の正本・MCP の役割の分担
-    name: YAML と MCP は各プロジェクト
+    name: YAML は各プロジェクト、MCP は dev-docs
     body: |-
-      - YAML の正本と、それを扱う MCP・開発ドキュメントサーバーは、文書を持つ各プロジェクトが持つ
+      - YAML の正本・スキーマ・検査と変換のスクリプトは各プロジェクトが持ち、MCP と開発ドキュメントサーバーは dev-docs が持つ
   - id: mdmark-yaml-role-02
     group: mdmark と YAML の正本・MCP の役割の分担
     name: mdmark の役割
@@ -118,7 +207,7 @@ items:
 
       | 要素 | 書き方 |
       | --- | --- |
-      | description | 関数の docstring（1 行） |
+      | description | `content/prompts/` の YAML（`kind: tool`。[プロンプトファイル](id:prompt-file)）を、登録のときに読む。書く内容は [注入文の書き分けと書き方](id:claude-context-placement) に従う |
       | title | `@mcp.tool(title="日本語タイトル")` |
       | 引数の説明 | `Annotated[型, Field(description=...)]` |
       | 引数の選択肢制限 | `Literal[...]` → enum としてスキーマに反映 |
@@ -199,8 +288,16 @@ items:
     group: 読み取りのツール
     name: 返却形式
     body: |-
-      - 一覧は Markdown の表（各行に ID と名前）、1 件の本文は Markdown（複数なら `<document>` で包む）、YAML が正本の項目は YAML のまま返す
+      - 一覧は Markdown の表（各行に ID と名前）、1 件の本文は Markdown（文書ごとに `<document>` で包む。`read-tool-19`）、YAML が正本の項目は YAML のまま返す
         参照は ID と名前・概要文まで結合し、相手の本文は結合しない
+  - id: read-tool-19
+    group: 読み取りのツール
+    name: 文書ごとの場所と範囲
+    body: |-
+      - 本文を返すときは、文書ごとに場所（文書のファイルの絶対パスか URL）と範囲（`full`・`section`・`summary`）を載せる
+        - markdown は文書ごとに `<document path="..." scope="...">` で包み、json は各項目に `path`・`scope` を持たせる
+        - `full` は全文を返したときだけ付ける。`section` はセクションを指定した取得（`read-tool-10`）、`summary` は `view` が `brief` など説明だけを返したとき（`read-tool-03`）に付ける
+        - 載せ方の詳細は rule-inject の [MCPの結果の書式](https://github.com/shuhei1101/rule-inject/blob/master/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/MCP%E3%81%AE%E7%B5%90%E6%9E%9C%E3%81%AE%E6%9B%B8%E5%BC%8F.md) に従う
   - id: read-tool-12
     group: 読み取りのツール
     name: 用語・エイリアスの一覧付与
@@ -247,11 +344,6 @@ items:
     body: |-
       - 1 セッション 1 回の決まりは、MCP のツールに限らず、フック・mod で文脈を追加するときにも当てる
         入力に用語の文脈を追加するときは、そのセッションで初めて出た語だけ、語・ID・説明・関連する文書（ID と名前）を 1 回だけ追加する
-  - id: read-tool-19
-    group: 読み取りのツール
-    name: 出典
-    body: |-
-      出典: [Anthropic: Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)、[MCP 仕様: Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools)（`tools/list` の `cursor` / `nextCursor`）、[Google AIP-157](https://google.aip.dev/157)（view）、[anthropics/claude-code #9962](https://github.com/anthropics/claude-code/issues/9962)（structuredContent を優先し text を捨てる）、[MCP 仕様 2026-07-28: Changelog](https://modelcontextprotocol.io/specification/2026-07-28/changelog)（接続を会話とみなさない）
   - id: diff-tool-01
     group: 差分のツール
     name: 既読時点の記録
@@ -289,7 +381,7 @@ items:
     group: 検索の手段
     name: 検索の基本手段
     body: |-
-      - 検索はタグ・メタデータ・キーワード（正規化と `aliases`）を基本にする
+      - 検索はタグ・メタデータ・キーワード（正規化）を基本にする
         ベクトル検索は必須にせず、ライブラリも指定しない
   - id: search-method-02
     group: 検索の手段
@@ -327,7 +419,7 @@ items:
     group: 登録
     name: プロジェクト用の登録
     body: |-
-      - プロジェクト用: ルートの `.mcp.json`（バージョン管理でチーム共有）。開発ドキュメントサーバーにつなぐ MCP は対象外
+      - プロジェクト用: ルートの `.mcp.json`（バージョン管理でチーム共有）。文書の MCP は対象外
   - id: registration-02
     group: 登録
     name: プラグイン用の登録
@@ -335,20 +427,20 @@ items:
       - プラグイン用: プラグインルートの `.mcp.json`
   - id: registration-03
     group: 登録
-    name: マーケットプレイスでの登録
+    name: 文書の MCP の配り方
     body: |-
-      - 開発ドキュメントサーバーにつなぐ MCP は、各リポジトリを Claude Code のマーケットプレイスにし、プラグインで配る
-        利用者は、どのプロジェクトでも使うならユーザースコープ、特定のプロジェクトだけならプロジェクトスコープで入れる
+      - 文書の MCP は、dev-docs のプラグインが配る
+        利用者は、ユーザースコープで入れる
   - id: registration-04
     group: 登録
     name: 文書の MCP のプラグイン
     body: |-
-      - 文書の MCP のプラグインは、文書を持つリポジトリごとに 1 つにし、ほかのプラグインと分ける
+      - 各リポジトリは、文書の MCP のプラグインとマーケットプレイスを持たない
   - id: registration-05
     group: 登録
-    name: プラグインの命名
+    name: 文書の MCP の接続先
     body: |-
-      - 文書の MCP のプラグインの名前は `{リポジトリ}-docs` にする（例: `knowledge-docs`・`mdmark-docs`）
+      - 文書の MCP の接続先は `http://127.0.0.1:${DEV_DOCS_PORT:-8781}/mcp` の 1 つで、配信元はツールの引数 `source` で指す
   - id: registration-06
     group: 登録
     name: 接続先の記載
@@ -358,9 +450,9 @@ items:
       ```json
       {
         "mcpServers": {
-          "my-tools": {
+          "rule-inject": {
             "type": "http",
-            "url": "http://127.0.0.1:${KNOWLEDGE_PORT:-8781}/mcp",
+            "url": "http://127.0.0.1:${RULE_INJECT_PORT:-8783}/mcp",
             "alwaysLoad": true
           }
         }
@@ -402,7 +494,7 @@ items:
       | observability | `OBSERVABILITY_PORT` | 8766 |
       | ai-monitor | `AI_MONITOR_PORT` | 8767 |
       | claude-balancer | `CLAUDE_BALANCER_PORT` | 8770 |
-      | knowledge | `KNOWLEDGE_PORT` | 8781 |
+      | dev-docs | `DEV_DOCS_PORT` | 8781 |
       | mdmark | `MDMARK_PORT` | 8782 |
       | rule-inject | `RULE_INJECT_PORT` | 8783 |
       | MindStella | `MINDSTELLA_PORT` | 8784 |

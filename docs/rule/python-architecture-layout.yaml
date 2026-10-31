@@ -2,19 +2,28 @@
 id: python-architecture-layout
 kind: rule
 name: トップレベルレイアウト + feature 内構造
-description: トップレベルと feature 内のフォルダ構成、shared・integrations・server・tests の置き方を定める。
+description: トップレベルと feature 内のフォルダ構成、shared・integrations・server・tests の置き方を定め、Python プロジェクトのフォルダやファイルを新しく置くときに読む。
 tags:
   - name: scope:python
   - name: topic:architecture
+  - name: topic:api
+  - name: topic:スクリプト
+  - name: topic:testing
+  - name: topic:サーバー
+  - name: topic:ファイル
+  - name: topic:フィーチャ
+  - name: topic:フォルダ
+  - name: topic:プロジェクト
+  - name: topic:プロンプト
+  - name: topic:ルート
+  - name: topic:レイアウト
     main: true
+  - name: topic:構成
+  - name: topic:構造
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
-related:
-  - to: dev-content-location
-    type: requires
-    when: プロンプトファイルなどのコンテンツを置くとき
+rev: 6
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -122,7 +131,7 @@ items:
     group: tests/
     name: tests の構成
     body: |-
-      `tests/` の構成は [testing/テスト戦略](id:python-testing-strategy#file-placement-01) のファイル配置。
+      `tests/` の構成は [testing/テストの種類と配置](id:python-testing-layers#file-placement-01) のファイル配置。
   - id: single-file-script-01
     group: 単一ファイルスクリプト
     name: 単一ファイルスクリプト

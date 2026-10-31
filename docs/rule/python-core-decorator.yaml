@@ -2,15 +2,23 @@
 id: python-core-decorator
 kind: rule
 name: 推奨デコレータ + ハンドラーデコレータ
-description: 推奨するデコレータ、ハンドラーデコレータ、合成の順序、自作デコレータの注意、@overload の使いどころを定める。
+description: 推奨するデコレータ、ハンドラーデコレータ、合成の順序、自作デコレータの注意、@overload の使いどころを定め、デコレータを使う・自作するときに読む。
 tags:
   - name: scope:python
-  - name: topic:core
+  - name: topic:デコレータ
     main: true
+  - name: topic:ハンドラ
+  - name: topic:ヒント
+  - name: topic:型ヒント
+  - name: topic:責務
+  - name: topic:関心事
+  - name: topic:非同期
+  - name: action:ラップ
+  - name: action:合成
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-10-30'
 items:
   - id: recommended-decorator-01
     group: 推奨デコレータ
@@ -41,7 +49,7 @@ items:
       | --------------------------------------- | --------------------------------------------------------------- |
       | `@catch_and_log(*exc_types, level=...)` | 指定例外をログに出して再送出する                                |
       | `@catch_and_map(SrcError, to=DstError)` | 例外型を変換（vendor 例外 → ドメイン例外）。`raise from` で連鎖 |
-      | `@with_retry(retries=3, on=(...))`      | 指数バックオフでリトライ（引数は [llm/例外とリトライ](id:python-llm-exception-retry)）      |
+      | `@stamina.retry(on=<フック関数>, attempts=4)` | 指数バックオフでリトライ（引数は [llm/例外とリトライ](id:python-llm-exception-retry)）      |
       | `@with_timeout(seconds=60)`             | `asyncio.timeout` ラッパー。超過で `IntegrationTimeoutError`    |
       | `@measure_time(metric="...")`           | 実行時間メトリクス                                              |
   - id: composition-01
@@ -52,7 +60,7 @@ items:
 
       ```python
       @with_timeout(seconds=60)                                   # 3. 全体 60 秒で打ち切り
-      @with_retry(retries=3, on=(LlmRateLimitError, LlmServerError))  # 2. 3 回までリトライ
+      @stamina.retry(on=retry_on_llm_error, attempts=4)  # 2. 3 回までリトライ（フック関数は llm/例外とリトライ）
       @catch_and_map(openai.APIStatusError, to=LlmServerError)        # 1. vendor 例外を変換
       async def chat(req: ChatRequest) -> ChatResponse: ...
       ```

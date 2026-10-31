@@ -2,14 +2,29 @@
 id: next-backend-auth-context
 kind: rule
 name: app/(shared)/auth/index.ts — getAuthContext()
-description: すべての route・Server Action・Server Component が認証を取得する getAuthContext の使い方を定める。
+description: すべての route・Server Action・Server Component が認証を取得する getAuthContext の使い方を定め、認証情報や DB クライアントが必要な処理を実装するときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:部品
+  - name: topic:db
+  - name: topic:アクション
+  - name: topic:インデックス
+  - name: topic:クライアント
+  - name: topic:コンテキスト
     main: true
+  - name: topic:サーバー
+  - name: topic:サーバーアクション
+  - name: topic:サーバーコンポーネント
+  - name: topic:プロバイダー
+  - name: topic:ルート
+  - name: topic:関数
+  - name: action:取得
+  - name: action:差し替え
+  - name: action:認証
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: overview

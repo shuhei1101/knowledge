@@ -2,15 +2,44 @@
 id: python-fastapi-route
 kind: rule
 name: ルーター実装パターン
-description: ルーターを薄く保つ責務、配置、記載方法、エラー処理の決まりを定める。
+description: ルーターを薄く保つ責務、配置、記載方法、エラー処理の決まりを定め、FastAPI のルーターを実装するときに読む。
 tags:
   - name: scope:python
-  - name: topic:fastapi
+  - name: tool:fastapi
+  - name: tool:html
+  - name: topic:sse
+  - name: topic:エイリアス
+  - name: topic:エラー
+  - name: topic:サーバー
+  - name: topic:サービス
+  - name: topic:スキーマ
+  - name: topic:ストリーミング
+  - name: topic:テンプレート
+  - name: topic:ハンドラ
+  - name: topic:パターン
+  - name: topic:ページ
+  - name: topic:ルーティング
     main: true
+  - name: topic:ルート
+  - name: topic:型エイリアス
+  - name: topic:引数
+  - name: topic:画面
+  - name: topic:設定
+  - name: topic:責務
+  - name: topic:関数
+  - name: tool:pydantic
+  - name: action:パース
+  - name: action:依存
+  - name: action:入力
+  - name: action:呼び出し
+  - name: action:変換
+  - name: action:実装
+  - name: action:認証
+  - name: action:配置
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 6
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -51,6 +80,7 @@ items:
     name: APIRouter の設定
     body: |-
       - `APIRouter(prefix=, tags=)` を router 側で設定（`include_router` には付けない）
+        - `tags` は 1 つ必須（operationId の `{tag}` になる。[fastapi/アプリケーション](id:python-fastapi-application)）
   - id: writing-02
     group: 書き方
     name: 引数は Annotated
@@ -65,7 +95,7 @@ items:
     group: 書き方
     name: レスポンススキーマの指定
     body: |-
-      - レスポンススキーマは戻り値の型注釈で指定（返す型と合わないときだけ `response_model=`。[fastapi/スキーマ](id:python-fastapi-schema)）、作成系は `status_code=201` を明示、`responses={...}` で OpenAPI に反映
+      - レスポンススキーマは戻り値の型注釈で指定（返す型と合わないときだけ `response_model=`。[fastapi/スキーマ](id:python-fastapi-schema)）、作成系は `status_code=201` を明示、エラーレスポンスは 422 を含めて `ProblemDetail` モデルを `APIRouter(responses=...)` で一括宣言して OpenAPI に反映（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
   - id: writing-05
     group: 書き方
     name: SSE のストリーミング
@@ -96,6 +126,11 @@ items:
     name: 長い処理は 202 を返す
     body: |-
       - 時間のかかる処理は、受け付けた時点で 202 と状態を照会する先を返し、完了まで待たせない
+  - id: writing-11
+    group: 書き方
+    name: handlers は get_handlers で受ける
+    body: |-
+      - 配線済み関数の束は型付きの `get_handlers` を `Annotated[Handlers, Depends(get_handlers)]` で受ける（[fastapi/アプリケーション](id:python-fastapi-application)）
   - id: error-handling-01
     group: エラー処理
     name: HTTPException を直接 raise しない

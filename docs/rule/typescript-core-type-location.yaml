@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: typescript-core-type-location
+kind: rule
+name: 型の置き場所と導出
+description: 型の置き場所と、Zod から型を導出する決まりを定め、TypeScript で型を定義する場所を決めるときに読む。
+tags:
+  - name: scope:typescript
+    main: true
+  - name: tool:zod
+  - name: action:導出
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: TypeScript
+  - id: placement-01
+    group: 置き場所
+    name: 型の置き場所の表
+    body: |-
+      <!-- table: data -->
+
+      | 型 | 置き場所 |
+      | --- | --- |
+      | フォームのスキーマと型 | 画面の `form.ts` |
+      | URL の search のスキーマと型 | 画面の `search.ts` |
+      | API のリクエスト・レスポンスの型 | 生成物（手書きしない） |
+      | Component の Props | コンポーネントのファイルの中（export しない） |
+      | hook の引数・戻り値の型 | hook のファイルの中 |
+      | 複数のフィーチャで共通のドメインの型 | 共通層の `types.ts`（3 つ以上のファイルで使うもの） |
+
+      <!-- /table -->
+  - id: placement-02
+    group: 置き場所
+    name: グローバルな types.d.ts を使わない
+    body: |-
+      - グローバルな `types.d.ts` を使わない。
+        型は、所有するコードの近くに置く。
+  - id: zod-01
+    group: Zod
+    name: z.infer で型を導出する
+    body: |-
+      - Zod のスキーマから導出する型は、必ず `z.infer` で導出する。

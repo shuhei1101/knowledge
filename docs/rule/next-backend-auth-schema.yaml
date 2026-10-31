@@ -2,14 +2,33 @@
 id: next-backend-auth-schema
 kind: rule
 name: drizzle/schema.ts — 認証関連テーブル
-description: Better Auth が要求する認証関連テーブルの定義と、ID・リレーション・タイムスタンプの決まりを定める。
+description: Better Auth が要求する認証関連テーブルの定義と、ID・リレーション・タイムスタンプの決まりを定め、認証関連テーブルのスキーマを定義するときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:id
+  - name: topic:アプリ
+  - name: topic:カスケード
+  - name: topic:スキーマ
+  - name: topic:タイムスタンプ
+  - name: topic:テキスト
+  - name: topic:テーブル
     main: true
+  - name: topic:データ
+  - name: topic:プロフィール
+  - name: topic:ヘルパー
+  - name: topic:リレーション
+  - name: topic:関連
+  - name: tool:better-auth
+  - name: tool:drizzle
+  - name: action:分離
+  - name: action:削除
+  - name: action:定義
+  - name: action:要求
+  - name: action:認証
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: drizzle-schema-auth-01

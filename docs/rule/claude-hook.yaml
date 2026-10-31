@@ -2,18 +2,34 @@
 id: claude-hook
 kind: rule
 name: フック作成ガイド
-description: フックをスクリプトとして作る決まりと、Bash コマンドを一度だけ止めるワンタイムトークンの使い方を定める。
+description: フックをスクリプトとして作る決まりと、Bash コマンドを一度だけ止めるワンタイムトークンの使い方を定め、Claude Code のフックを作る・修正するときに読む。
 tags:
   - name: scope:claude
+  - name: topic:naming
+  - name: topic:スクリプト
+  - name: topic:ガイド
+  - name: topic:コマンド
+  - name: topic:コンテキスト
+  - name: topic:セッション
+  - name: topic:トークン
+  - name: topic:フック
     main: true
+  - name: topic:ブロック
+  - name: topic:ワンタイムトークン
+  - name: topic:上限
+  - name: topic:設定
+  - name: tool:bash
+  - name: tool:claude
+  - name: tool:claude-code
+  - name: tool:mcp
+  - name: action:作成
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
-related:
-  - to: claude-mcp
-    type: requires
-    when: フックで文脈を注入するとき
+rev: 8
+last_reviewed: '2026-10-31'
+sources:
+  - title: "Claude Code: Hooks reference"
+    url: https://code.claude.com/docs/en/hooks
 items:
   - id: rules-01
     group: ルール
@@ -22,18 +38,22 @@ items:
       - settings.json内にインラインで書かないでください。
         - pythonファイルは`.claude/hooks/*.py`: スクリプト名はフックイベントと同じにしてください。
           - 例: `user_prompt_submit.py`
-        - プロンプトファイルは`.claude/hooks/*.md`
-          - 変数を埋め込みたい場合は`.claude/hooks/*.j2`にする
+        - プロンプトファイルはプラグインのルートの `content/prompts/` の YAML（[プロンプトファイル](id:prompt-file)）
   - id: rules-02
     group: ルール
-    name: additionalContext の上限
+    name: 注入文の書き分けと書き方
     body: |-
-      - hooksの`additionalContext`でコンテキストを注入する場合の文字数の上限は公式の hooks リファレンス（`https://code.claude.com/docs/en/hooks`）に従う
+      - hooksの`additionalContext`でコンテキストを注入する文の中身・長さは [注入文の書き分けと書き方](id:claude-context-placement) に従う
   - id: rules-03
     group: ルール
     name: 1 セッション 1 回の決まり
     body: |-
       - 文脈を注入するときは、[MCP サーバー作成ルール](id:claude-mcp) の 1 セッション 1 回の決まりに従う
+  - id: rules-04
+    group: ルール
+    name: MCP に届かないときは何も追加しない
+    body: |-
+      - 文脈を追加するために MCP を呼んで届かないときは、何も追加せず、入力をそのまま渡す。
   - id: one-time-token-block-01
     group: ワンタイムトークン付き条件ブロック
     name: ワンタイムトークンの用途

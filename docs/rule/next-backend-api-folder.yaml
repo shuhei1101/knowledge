@@ -2,14 +2,38 @@
 id: next-backend-api-folder
 kind: rule
 name: app/api/v{N}/{resource}/ — フォルダ構成
-description: app/api/v{N}/{resource}/ 配下の 6 ファイルの責務分離（CQRS）と、呼び出し階層、Server Actions との使い分けを定める。
+description: app/api/v{N}/{resource}/ 配下の 6 ファイルの責務分離（CQRS）と、呼び出し階層、Server Actions との使い分けを定め、Next.js の API ルートのフォルダを作るときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:api
+  - name: topic:concurrency
+  - name: topic:cqrs
+  - name: topic:db
+  - name: topic:sse
+  - name: topic:webhook
+  - name: topic:アクション
+  - name: topic:クエリ
+  - name: topic:サーバー
+  - name: topic:サーバーアクション
+  - name: topic:ストリーミング
+  - name: topic:ファイル
+  - name: topic:フォルダ
     main: true
+  - name: topic:ミューテーション
+  - name: topic:リソース
+  - name: topic:ルート
+  - name: topic:構成
+  - name: topic:責務
+  - name: topic:階層
+  - name: tool:next-js
+  - name: action:公開
+  - name: action:分離
+  - name: action:呼び出し
+  - name: action:選択
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: overview

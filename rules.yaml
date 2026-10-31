@@ -13,29 +13,25 @@ rules:
       - "**/dev/設計書/デザイン方針.md"
   - rule: docs/template/template-checksheet.yaml
     paths:
-      - "**/dev/**/チェックシート/**/*.md"
+      - "**/docs/checksheet/*.yaml"
   - rule: docs/template/template-flowchart.yaml
     paths:
-      - "**/dev/エージェント運用/判定フローチャート/**/*.md"
-      - "**/dev/判定フローチャート/**/*.md"
       - "**/docs/flowchart/*.yaml"
   - rule: docs/template/template-setup-procedure.yaml
     paths:
-      - "**/docs/使い方/セットアップ手順/*.md"
-      - "**/docs/使い方/プロジェクトの立ち上げ/*.md"
-      - "**/docs/guide/*.yaml"
+      - "**/docs/guide/guide-setup-*.yaml"
   - rule: docs/template/template-getting-started.yaml
     paths:
-      - "**/docs/はじめに/概要.md"
-      - "**/docs/はじめに/クイックスタート.md"
+      - "**/docs/guide/guide-getting-started-*.yaml"
   - rule: docs/template/template-reference.yaml
     paths:
-      - "**/docs/リファレンス/API.md"
-      - "**/docs/リファレンス/コマンド.md"
+      - "**/docs/reference/*.yaml"
   - rule: docs/template/template-template.yaml
     paths:
-      - "**/dev/テンプレート/**/*.md"
       - "**/docs/template/*.yaml"
+  - rule: docs/template/template-skill.yaml
+    paths:
+      - "**/docs/skill/*.yaml"
   - rule: docs/rule/convention-writing-style.yaml
     paths:
       - "**/*.md"
@@ -65,12 +61,6 @@ rules:
   - rule: docs/rule/convention-keep-existing-text.yaml
     paths:
       - "**/*"
-  - rule: docs/rule/convention-design-style.yaml
-    paths:
-      - "**/dev/mock/styles/**"
-  - rule: docs/rule/convention-common-components.yaml
-    paths:
-      - "**/dev/mock/components/**"
   - rule: docs/flowchart/flowchart-config-location.yaml
     paths:
       - "**/config/defaults.yaml*"
@@ -112,6 +102,15 @@ rules:
     paths:
       - "**/.claude/hooks/**"
       - "**/settings.json"
+  - rule: docs/rule/claude-context-placement.yaml
+    paths:
+      - "**/hooks/**"
+      - "**/mcp/**"
+      - "**/mcp_server.py*"
+      - "**/.mcp.json"
+      - "**/CLAUDE.md"
+      - "**/skills/**/SKILL.md"
+      - "**/content/prompts/**"
   - rule: docs/rule/claude-rule-writing.yaml
     paths:
       - "**/.claude/rules/**/*.md"
@@ -132,11 +131,19 @@ rules:
       - "**/docs/**/*.yaml"
   - rule: docs/rule/dev-tag-term-registration.yaml
     paths:
-      - "**/tags.yaml"
       - "**/terms.yaml"
   - rule: docs/rule/dev-coding-general.yaml
     paths:
       - "**/*.{py,html,js,css,j2,ts,tsx,yaml,yml}*"
+  - rule: docs/rule/typescript-core-style.yaml
+    paths:
+      - "**/*.{ts,tsx}"
+  - rule: docs/rule/ui-no-iframe.yaml
+    paths:
+      - "**/*.{tsx,jsx,html}"
+    exclude:
+      - "**/docs/_layouts/**"
+      - "**/docs/_includes/**"
   - rule: docs/rule/dev-precheck.yaml
     paths:
       - "**/*.{py,js,ts,tsx}*"
@@ -146,192 +153,9 @@ rules:
   - rule: docs/rule/dev-content-location.yaml
     paths:
       - "**/content/**"
-  - rule: docs/rule/html-components-custom-element.yaml
-    paths:
-      - "**/components/**/*.{ts,js}*"
-      - "**/_shared/**/*.{ts,js}*"
-  - rule: docs/rule/html-components-prefetch-catalog.yaml
-    paths:
-      - "**/frontend/pages/**"
-      - "**/components/**"
-  - rule: docs/rule/html-components-common-shell.yaml
-    paths:
-      - "**/app-shell*"
-  - rule: docs/rule/html-core-no-iframe.yaml
-    paths:
-      - "**/frontend/**/*.{css,html,ts,js}*"
-      - "**/*.html*"
-    exclude:
-      - "**/docs/_layouts/**"
-      - "**/docs/_includes/**"
-      - "**/*.md"
   - rule: docs/rule/html-core-server-rendering.yaml
     paths:
-      - "**/templates/**/*.html*"
-      - "**/frontend/pages/**/index.html*"
-  - rule: docs/rule/html-core-buildless.yaml
-    paths:
-      - "**/frontend/**/*.css*"
-      - "**/frontend/**/*.html*"
-      - "**/frontend/**/*.{ts,js}*"
-      - "**/static/**/*.{ts,js}*"
-      - "**/assets/**/*.{ts,js}*"
-  - rule: docs/rule/html-css-comment.yaml
-    paths:
-      - "**/*.css*"
-  - rule: docs/rule/html-css-token.yaml
-    paths:
-      - "**/css/tokens.css*"
-      - "**/tokens.css*"
-  - rule: docs/rule/html-css-nesting.yaml
-    paths:
-      - "**/*.css*"
-  - rule: docs/rule/html-css-layers.yaml
-    paths:
-      - "**/frontend/**/*.css*"
-  - rule: docs/rule/html-html-comment.yaml
-    paths:
-      - "**/*.html*"
-  - rule: docs/rule/html-html-native-elements.yaml
-    paths:
-      - "**/*.html*"
-  - rule: docs/rule/html-js-api-layer.yaml
-    paths:
-      - "**/frontend/**/api*.{ts,js}*"
-  - rule: docs/rule/html-js-websocket.yaml
-    paths:
-      - "**/ws/**/*.{ts,js}*"
-  - rule: docs/rule/html-js-endpoint.yaml
-    paths:
-      - "**/frontend/**/*.ts*"
-  - rule: docs/rule/html-js-vanilla-ts.yaml
-    paths:
-      - "**/frontend/**/*.ts*"
-      - "**/static/**/*.{ts,js}*"
-      - "**/assets/**/*.{ts,js}*"
-  - rule: docs/rule/html-js-module-resolution.yaml
-    paths:
-      - "**/frontend/**/*.{ts,js}*"
-      - "**/frontend/**/*.html*"
-  - rule: docs/rule/html-js-layer-separation.yaml
-    paths:
-      - "**/frontend/**/*.{ts,js}*"
-  - rule: docs/rule/html-js-state-management.yaml
-    paths:
-      - "**/frontend/**/*.{ts,js}*"
-  - rule: docs/rule/html-layout-patterns.yaml
-    paths:
-      - "**/layout.css*"
-      - "**/app-shell*"
-      - "**/templates/**/*.html*"
-  - rule: docs/rule/html-layout-screen-template.yaml
-    paths:
-      - "**/frontend/pages/**/*.html*"
-      - "**/templates/**/*.html*"
-  - rule: docs/rule/html-naming-css-class.yaml
-    paths:
-      - "**/*.css*"
-  - rule: docs/rule/html-naming-custom-element.yaml
-    paths:
-      - "**/components/**/*.{ts,js}*"
-      - "**/_shared/**/*.{ts,js}*"
-  - rule: docs/rule/html-naming-file-name.yaml
-    paths:
-      - "**/frontend/**/*.css*"
-      - "**/frontend/**/*.html*"
-      - "**/frontend/**/*.{ts,js}*"
-  - rule: docs/rule/html-pages-shared.yaml
-    paths:
-      - "**/frontend/pages/**/_shared/**"
-  - rule: docs/rule/html-pages-index-html.yaml
-    paths:
-      - "**/frontend/pages/**/index.html*"
-  - rule: docs/rule/html-pages-screen-css.yaml
-    paths:
-      - "**/frontend/pages/**/screen.css*"
-  - rule: docs/rule/html-pages-screen-ts.yaml
-    paths:
-      - "**/frontend/pages/**/screen.ts*"
-      - "**/frontend/pages/**/api.ts*"
-      - "**/frontend/pages/**/state.ts*"
-  - rule: docs/rule/html-pages-screen-creation.yaml
-    paths:
-      - "**/frontend/pages/**"
-  - rule: docs/rule/html-shared-components.yaml
-    paths:
-      - "**/frontend/shared/components/**"
-  - rule: docs/rule/html-shared-core.yaml
-    paths:
-      - "**/frontend/shared/core/**"
-  - rule: docs/rule/html-shared-css.yaml
-    paths:
-      - "**/shared/css/**"
-  - rule: docs/rule/html-shared-fmt.yaml
-    paths:
-      - "**/frontend/shared/lib/fmt.{ts,js}*"
-  - rule: docs/rule/html-shared-lib.yaml
-    paths:
-      - "**/shared/lib/**"
-  - rule: docs/rule/html-shared-logger.yaml
-    paths:
-      - "**/frontend/shared/lib/logger.{ts,js}*"
-  - rule: docs/rule/html-shared-vendor.yaml
-    paths:
-      - "**/shared/vendor/**"
-  - rule: docs/rule/html-testing-e2e.yaml
-    paths:
-      - "**/frontend/tests/e2e/**/*.spec.{ts,js}*"
-      - "**/playwright.config.{ts,js}"
-  - rule: docs/rule/html-testing-strategy.yaml
-    paths:
-      - "**/frontend/**/*.test.{ts,js}*"
-      - "**/frontend/tests/e2e/**/*.spec.{ts,js}*"
-      - "**/vitest.config.{ts,js}"
-      - "**/playwright.config.{ts,js}"
-  - rule: docs/rule/html-testing-fixture.yaml
-    paths:
-      - "**/frontend/tests/e2e/**/*.spec.{ts,js}*"
-      - "**/playwright.config.{ts,js}"
-  - rule: docs/rule/html-testing-unit.yaml
-    paths:
-      - "**/frontend/**/*.test.{ts,js}*"
-      - "**/vitest.config.{ts,js}"
-  - rule: docs/rule/html-tooling-tsc.yaml
-    paths:
-      - "**/frontend/**/*.ts*"
-      - "**/static/**/*.{ts,js}*"
-      - "**/assets/**/*.{ts,js}*"
-      - "**/tsconfig*.json"
-      - "**/eslint.config.*"
-      - "**/package.json"
-      - "**/vitest.config.*"
-      - "**/playwright.config.*"
-  - rule: docs/rule/html-typescript-comment.yaml
-    paths:
-      - "**/*.{ts,tsx}*"
-  - rule: docs/rule/html-typescript-type-system.yaml
-    paths:
-      - "**/*.{ts,tsx}*"
-  - rule: docs/rule/html-typescript-function-object-args.yaml
-    paths:
-      - "**/*.{ts,tsx}*"
-  - rule: docs/rule/html-folder-structure.yaml
-    paths:
-      - "**/frontend/**"
-  - rule: docs/rule/html-mobile.yaml
-    paths:
-      - "**/frontend/pages/**/screen.ts*"
-      - "**/frontend/shared/css/**"
-      - "**/frontend/shared/components/**"
-      - "**/*.html*"
-      - "**/*.css*"
-    exclude:
-      - "**/docs/_layouts/**"
-      - "**/docs/_includes/**"
-      - "**/*.md"
-  - rule: docs/rule/html-commonization.yaml
-    paths:
-      - "**/frontend/**"
+      - "**/templates/**/*.{html,j2}"
   - rule: docs/rule/markdown-editing.yaml
     paths:
       - "**/*.md"
@@ -344,603 +168,122 @@ rules:
     paths:
       - "**/*.md"
       - "**/docs/**/*.yaml"
-  - rule: docs/rule/next-backend-api-folder.yaml
-    paths:
-      - "**/app/api/**/route.ts*"
-  - rule: docs/rule/next-backend-db-enum.yaml
-    paths:
-      - "**/drizzle/schema.ts*"
-  - rule: docs/rule/next-backend-db-id.yaml
-    paths:
-      - "**/drizzle/db.ts*"
-      - "**/drizzle/schema.ts*"
-  - rule: docs/rule/next-backend-db-ts.yaml
-    paths:
-      - "**/app/api/**/db.ts*"
-  - rule: docs/rule/next-backend-db-timestamp.yaml
-    paths:
-      - "**/drizzle/schema.ts*"
-  - rule: docs/rule/next-backend-db-helper-ts.yaml
-    paths:
-      - "**/app/api/**/dbHelper.ts*"
-  - rule: docs/rule/next-backend-db-migration.yaml
-    paths:
-      - "**/drizzle.config.ts"
-      - "**/drizzle/migrations/**/*.sql"
-  - rule: docs/rule/next-backend-db-relation.yaml
-    paths:
-      - "**/drizzle/schema.ts*"
-  - rule: docs/rule/next-backend-db-history.yaml
-    paths:
-      - "**/app/api/**/service.ts*"
-  - rule: docs/rule/next-backend-db-optimistic-lock.yaml
-    paths:
-      - "**/app/(authenticated)/**/*EditScreen.tsx*"
-      - "**/app/api/**/db.ts*"
-      - "**/app/api/**/service.ts*"
-  - rule: docs/rule/next-backend-drizzle-style.yaml
-    paths:
-      - "**/app/api/**/db.ts*"
-      - "**/app/api/**/query.ts*"
-  - rule: docs/rule/next-backend-action-ts.yaml
-    paths:
-      - "**/app/(authenticated)/**/*EditScreen.tsx*"
-      - "**/app/(authenticated)/**/actions.ts*"
-      - "**/app/(shared)/actions/**/*.ts*"
-      - "**/app/(shared)/actions/auth.ts*"
-      - "**/app/(shared)/actions/types.ts*"
-  - rule: docs/rule/next-backend-webhook.yaml
-    paths:
-      - "**/app/api/**/webhooks/**/route.ts*"
-  - rule: docs/rule/next-backend-cache.yaml
-    paths:
-      - "**/app/(authenticated)/**/actions.ts*"
-      - "**/next.config.js"
-      - "**/next.config.ts"
-  - rule: docs/rule/next-backend-query-ts.yaml
-    paths:
-      - "**/app/api/**/query.ts*"
-  - rule: docs/rule/next-backend-client-ts.yaml
-    paths:
-      - "**/app/api/**/client.ts*"
-  - rule: docs/rule/next-backend-service-ts.yaml
-    paths:
-      - "**/app/(authenticated)/**/actions.ts*"
-      - "**/app/api/**/service.ts*"
-  - rule: docs/rule/next-backend-proxy.yaml
-    paths:
-      - "**/middleware.ts*"
-      - "**/proxy.ts*"
-  - rule: docs/rule/next-backend-route-ts.yaml
-    paths:
-      - "**/app/api/**/route.ts*"
-      - "**/app/api/**/auth/**/route.ts*"
-      - "**/app/api/**/cron/**/route.ts*"
-  - rule: docs/rule/next-backend-rate-limit.yaml
-    paths:
-      - "**/proxy.ts*"
-  - rule: docs/rule/next-backend-local-yaml-dev-db.yaml
-    paths:
-      - "**/app/**/*.{ts,tsx}*"
-  - rule: docs/rule/next-backend-idempotency.yaml
-    paths:
-      - "**/app/api/v*/webhooks/**/route.ts*"
-  - rule: docs/rule/next-backend-auth-action.yaml
-    paths:
-      - "**/app/(shared)/actions/auth.ts*"
-  - rule: docs/rule/next-backend-auth-client.yaml
-    paths:
-      - "**/app/(shared)/auth/client.ts*"
-  - rule: docs/rule/next-backend-auth-context.yaml
-    paths:
-      - "**/app/(authenticated)/**/actions.ts*"
-      - "**/app/(authenticated)/*/[id]/edit/page.tsx*"
-      - "**/app/(shared)/auth/index.ts*"
-      - "**/app/(shared)/auth/provider.ts*"
-      - "**/app/api/**/route.ts*"
-      - "**/proxy.ts*"
-  - rule: docs/rule/next-backend-auth-schema.yaml
-    paths:
-      - "**/drizzle/schema.ts*"
-      - "**/lib/auth.ts*"
-  - rule: docs/rule/next-backend-auth-setup.yaml
-    paths:
-      - "**/app/(shared)/auth/provider.ts*"
-      - "**/app/api/**/auth/**/route.ts*"
-      - "**/lib/auth.ts*"
-  - rule: docs/rule/next-devops-deploy.yaml
-    paths:
-      - "**/Dockerfile"
-      - "**/vercel.json"
-  - rule: docs/rule/next-devtools-storybook.yaml
-    paths:
-      - "**/*.stories.ts*"
-      - "**/*.stories.tsx*"
-      - "**/.storybook/main.ts"
-      - "**/.storybook/preview.ts"
-  - rule: docs/rule/next-devtools-mock.yaml
-    paths:
-      - "**/mocks/browser.ts"
-      - "**/mocks/handlers.ts"
-      - "**/mocks/server.ts"
-  - rule: docs/rule/next-devtools-lint-format.yaml
-    paths:
-      - "**/.prettierrc"
-      - "**/prettier.config.{js,ts,mjs}"
-      - "**/next.config.{js,ts,mjs}"
-  - rule: docs/rule/next-frontend-404-tsx.yaml
-    paths:
-      - "**/app/(authenticated)/*/[id]/edit/page.tsx*"
-      - "**/app/(authenticated)/*/[id]/page.tsx*"
-      - "**/app/**/not-found.tsx*"
-  - rule: docs/rule/next-frontend-id-routing.yaml
-    paths:
-      - "**/app/(authenticated)/*/[id]/edit/page.tsx*"
-      - "**/app/(authenticated)/*/[id]/page.tsx*"
-  - rule: docs/rule/next-frontend-pwa.yaml
-    paths:
-      - "**/app/manifest.ts*"
-      - "**/app/sw.ts*"
-      - "**/public/sw.js"
-  - rule: docs/rule/next-frontend-seo.yaml
-    paths:
-      - "**/app/(authenticated)/*/[id]/page.tsx*"
-      - "**/app/(authenticated)/*/page.tsx*"
-      - "**/app/**/icon.tsx*"
-      - "**/app/**/opengraph-image.tsx*"
-      - "**/app/**/robots.ts*"
-      - "**/app/**/sitemap.ts*"
-      - "**/app/**/twitter-image.tsx*"
-      - "**/app/manifest.ts*"
-  - rule: docs/rule/next-frontend-zustand-pattern.yaml
-    paths:
-      - "**/app/**/*.{ts,tsx}*"
-  - rule: docs/rule/next-frontend-app-folder.yaml
-    paths:
-      - "**/app/**/*.{ts,tsx}*"
-  - rule: docs/rule/next-frontend-route-file.yaml
-    paths:
-      - "**/app/**/default.tsx*"
-      - "**/app/**/layout.tsx*"
-      - "**/app/**/loading.tsx*"
-      - "**/app/**/template.tsx*"
-  - rule: docs/rule/next-frontend-naming.yaml
-    paths:
-      - "**/app/**/*.{ts,tsx}*"
-  - rule: docs/rule/next-frontend-type.yaml
-    paths:
-      - "**/app/**/*.{ts,tsx}*"
-      - "**/app/(authenticated)/**/form.ts*"
-  - rule: docs/rule/next-frontend-url-state.yaml
-    paths:
-      - "**/hooks/use*UrlState.ts*"
-  - rule: docs/rule/next-frontend-use-action-state.yaml
-    paths:
-      - "**/app/(authenticated)/**/*EditScreen.tsx*"
-      - "**/app/(authenticated)/**/*NewScreen.tsx*"
-  - rule: docs/rule/next-frontend-use-form-pattern.yaml
-    paths:
-      - "**/hooks/use*Form.ts*"
-  - rule: docs/rule/next-frontend-use-mutation-pattern.yaml
-    paths:
-      - "**/hooks/use*.ts*"
-  - rule: docs/rule/next-frontend-use-query-pattern.yaml
-    paths:
-      - "**/app/(authenticated)/**/*ListScreen.tsx*"
-      - "**/hooks/use*.ts*"
-  - rule: docs/rule/next-frontend-use-url-state-pattern.yaml
-    paths:
-      - "**/app/(authenticated)/**/*ListScreen.tsx*"
-      - "**/hooks/use*UrlState.ts*"
-  - rule: docs/rule/next-frontend-asset.yaml
-    paths:
-      - "**/next.config.js"
-      - "**/next.config.ts"
-  - rule: docs/rule/next-frontend-error-tsx.yaml
-    paths:
-      - "**/app/**/error.tsx*"
-      - "**/app/global-error.tsx*"
-  - rule: docs/rule/next-frontend-endpoint.yaml
-    paths:
-      - "**/app/(shared)/endpoints.ts*"
-      - "**/app/api/**/client.ts*"
-  - rule: docs/rule/next-frontend-query-client-setup.yaml
-    paths:
-      - "**/app/(shared)/providers/QueryProvider.tsx*"
-  - rule: docs/rule/next-frontend-context-pattern.yaml
-    paths:
-      - "**/app/**/*.{ts,tsx}*"
-  - rule: docs/rule/next-frontend-component-catalog.yaml
-    paths:
-      - "**/*.stories.tsx*"
-      - "**/app/(shared)/components/**/*.tsx*"
-  - rule: docs/rule/next-frontend-screen-wrapper.yaml
-    paths:
-      - "**/app/(authenticated)/**/*EditScreen.tsx*"
-      - "**/app/(authenticated)/**/*ListScreen.tsx*"
-      - "**/app/(authenticated)/**/*NewScreen.tsx*"
-      - "**/app/(authenticated)/**/*ViewScreen.tsx*"
-      - "**/app/(shared)/components/ScreenWrapper.tsx*"
-  - rule: docs/rule/next-frontend-streaming.yaml
-    paths:
-      - "**/app/**/*.{ts,tsx}*"
-  - rule: docs/rule/next-frontend-tag-input.yaml
-    paths:
-      - "**/app/(shared)/components/TagInput.tsx*"
-  - rule: docs/rule/next-frontend-dialog.yaml
-    paths:
-      - "**/*AlertDialog.tsx*"
-      - "**/*Dialog.tsx*"
-      - "**/*Drawer.tsx*"
-      - "**/*Popover.tsx*"
-      - "**/*Sheet.tsx*"
-  - rule: docs/rule/next-frontend-feature-folder.yaml
-    paths:
-      - "**/app/(authenticated)/**/*.tsx*"
-      - "**/app/(authenticated)/*/new/page.tsx*"
-      - "**/app/(authenticated)/*/page.tsx*"
-  - rule: docs/rule/next-frontend-form-ts.yaml
-    paths:
-      - "**/app/(authenticated)/**/form.ts*"
-      - "**/hooks/use*Form.ts*"
-  - rule: docs/rule/next-frontend-form-component.yaml
-    paths:
-      - "**/app/(authenticated)/**/*EditScreen.tsx*"
-      - "**/app/(authenticated)/**/*NewScreen.tsx*"
-      - "**/hooks/use*Form.ts*"
-  - rule: docs/rule/next-frontend-page-header.yaml
-    paths:
-      - "**/app/(authenticated)/**/*ListScreen.tsx*"
-      - "**/app/(authenticated)/**/*ViewScreen.tsx*"
-      - "**/app/(shared)/components/PageHeader.tsx*"
-  - rule: docs/rule/next-frontend-route-group.yaml
-    paths:
-      - "**/app/(auth)/**/*.tsx*"
-      - "**/app/**/layout.tsx*"
-  - rule: docs/rule/next-frontend-loading-button.yaml
-    paths:
-      - "**/app/(shared)/components/LoadingButton.tsx*"
-  - rule: docs/rule/next-frontend-list-screen-tsx.yaml
-    paths:
-      - "**/app/(authenticated)/**/*ListScreen.tsx*"
-  - rule: docs/rule/next-frontend-list-page-tsx.yaml
-    paths:
-      - "**/app/(authenticated)/*/page.tsx*"
-  - rule: docs/rule/next-frontend-required-mark.yaml
-    paths:
-      - "**/app/(shared)/components/RequiredMark.tsx*"
-  - rule: docs/rule/next-frontend-state-management-criteria.yaml
-    paths:
-      - "**/app/**/*.{ts,tsx}*"
-  - rule: docs/rule/next-frontend-confirm-dialog.yaml
-    paths:
-      - "**/app/(authenticated)/**/*EditScreen.tsx*"
-      - "**/app/(shared)/hooks/useConfirmDialog.ts*"
-      - "**/app/(shared)/providers/ConfirmDialogProvider.tsx*"
-  - rule: docs/rule/next-frontend-empty-state.yaml
-    paths:
-      - "**/app/(authenticated)/**/*ListScreen.tsx*"
-      - "**/app/(shared)/components/EmptyState.tsx*"
-  - rule: docs/rule/next-frontend-edit-screen-tsx.yaml
-    paths:
-      - "**/app/(authenticated)/**/*EditScreen.tsx*"
-      - "**/app/(authenticated)/**/*NewScreen.tsx*"
-  - rule: docs/rule/next-frontend-edit-page-tsx.yaml
-    paths:
-      - "**/app/(authenticated)/*/[id]/edit/page.tsx*"
-      - "**/app/(authenticated)/*/new/page.tsx*"
-  - rule: docs/rule/next-frontend-autosave.yaml
-    paths:
-      - "**/hooks/useAutosave.ts*"
-      - "**/useBeforeUnload.ts*"
-  - rule: docs/rule/next-frontend-autosave-indicator.yaml
-    paths:
-      - "**/app/(shared)/components/AutosaveIndicator.tsx*"
-      - "**/hooks/useAutosave.ts*"
-  - rule: docs/rule/next-frontend-detail-screen-tsx.yaml
-    paths:
-      - "**/app/(authenticated)/**/*ViewScreen.tsx*"
-  - rule: docs/rule/next-frontend-detail-page-tsx.yaml
-    paths:
-      - "**/app/(authenticated)/*/[id]/page.tsx*"
-  - rule: docs/rule/next-shared-error-action-handler.yaml
-    paths:
-      - "**/app/(authenticated)/**/actions.ts*"
-      - "**/app/(shared)/actions/**/*.ts*"
-      - "**/app/(shared)/actions/types.ts*"
-      - "**/app/(shared)/errors/handler/action.ts*"
-  - rule: docs/rule/next-shared-error-client-handler.yaml
-    paths:
-      - "**/app/(shared)/errors/handler/client.ts*"
-  - rule: docs/rule/next-shared-error-class.yaml
-    paths:
-      - "**/app/(shared)/errors/appError.ts*"
-      - "**/app/(shared)/errors/handler/action.ts*"
-      - "**/app/(shared)/errors/handler/client.ts*"
-      - "**/app/(shared)/errors/handler/server.ts*"
-      - "**/app/**/error.tsx*"
-      - "**/app/api/**/client.ts*"
-      - "**/app/api/**/db.ts*"
-      - "**/app/api/**/query.ts*"
-      - "**/app/api/**/service.ts*"
-  - rule: docs/rule/next-shared-error-route-handler.yaml
-    paths:
-      - "**/app/(shared)/errors/handler/server.ts*"
-      - "**/app/api/**/route.ts*"
-  - rule: docs/rule/next-shared-security.yaml
-    paths:
-      - "**/next.config.js"
-      - "**/next.config.ts"
-      - "**/.env"
-      - "**/.env.local"
-  - rule: docs/rule/next-shared-logger-tag.yaml
-    paths:
-      - "**/app/(shared)/logger.ts*"
-      - "**/app/api/**/route.ts*"
-  - rule: docs/rule/next-shared-logger-implementation.yaml
-    paths:
-      - "**/app/(shared)/logger.ts*"
-      - "**/app/api/**/route.ts*"
-      - "**/app/api/**/webhooks/**/route.ts*"
-  - rule: docs/rule/next-shared-env-var.yaml
-    paths:
-      - "**/app/(shared)/config.ts*"
-      - "**/app/**/env.ts*"
-      - "**/.env.example"
-      - "**/.env.local"
-      - "**/.env.sample"
-  - rule: docs/rule/next-testing-e2e.yaml
-    paths:
-      - "**/playwright.config.ts*"
-      - "**/tests/e2e/**/*.spec.ts*"
-      - "**/tests/pages/**/*.ts*"
-  - rule: docs/rule/next-testing-strategy.yaml
-    paths:
-      - "**/tests/e2e/**/*.spec.ts*"
-      - "**/tests/unit/**/*.test.ts*"
-  - rule: docs/rule/next-testing-fixture.yaml
-    paths:
-      - "**/tests/e2e/**/*.spec.ts*"
-      - "**/tests/fixtures/**/*.ts*"
-  - rule: docs/rule/next-testing-unit.yaml
-    paths:
-      - "**/tests/components/**/*.test.tsx*"
-      - "**/tests/unit/**/*.test.ts*"
-      - "**/tests/unit/**/*.test.tsx*"
-      - "**/vitest.config.ts*"
+  - rule: docs/rule/react-state-effect.yaml
+    paths:
+      - "**/frontend/src/features/**/*.tsx"
+      - "**/frontend/src/shared/components/**/*.tsx"
+      - "**/frontend/src/**/use-*.ts"
+    exclude:
+      - "**/*.test.tsx"
+      - "**/*.test.ts"
+      - "**/*.stories.tsx"
+      - "**/frontend/src/shared/components/ui/**"
+  - rule: docs/flowchart/flowchart-react-state-placement.yaml
+    paths:
+      - "**/frontend/src/**/*-screen.tsx"
+      - "**/frontend/src/**/use-*.ts"
+      - "**/frontend/src/**/store.ts"
+      - "**/frontend/src/shared/stores/**/*.ts"
+    exclude:
+      - "**/*.test.tsx"
+      - "**/*.test.ts"
+      - "**/*.stories.tsx"
+  - rule: docs/rule/dev-design-principles.yaml
+    paths:
+      - "**/*.{py,ts,tsx}"
+    exclude:
+      - "**/*.gen.ts"
+      - "**/generated/**"
+    on: [write]
   - rule: docs/rule/prompt-file.yaml
     paths:
       - "**/prompts/**"
       - "**/prompt/**"
-  - rule: docs/rule/python-architecture-typescript-style.yaml
-    paths:
-      - "**/*.py*"
   - rule: docs/rule/python-architecture-composition-root.yaml
     paths:
-      - "**/*.py*"
-  - rule: docs/rule/python-architecture-refactoring-criteria.yaml
-    paths:
-      - "**/features/**/service.py*"
-  - rule: docs/rule/python-architecture-layout.yaml
-    paths:
-      - "**/features/**/types.py*"
-      - "**/main.py*"
-  - rule: docs/rule/python-architecture-dependency-management.yaml
-    paths:
-      - "**/features/**/service.py*"
-      - "**/integrations/**/client.py*"
-      - "**/main.py*"
-  - rule: docs/rule/python-architecture-design-principles.yaml
-    paths:
-      - "**/*.py*"
-  - rule: docs/rule/python-concurrency-parallel.yaml
-    paths:
-      - "**/runtime/**/*.py*"
+      - "**/main.py"
   - rule: docs/rule/python-concurrency-async.yaml
     paths:
-      - "**/runtime/**/*.py*"
+      - "**/runtime/**/*.py"
+      - "**/integrations/**/*.py"
+      - "**/features/**/service.py"
   - rule: docs/rule/python-core-comment.yaml
     paths:
-      - "**/*.py*"
-  - rule: docs/rule/python-core-style.yaml
-    paths:
-      - "**/*.py*"
-      - "**/pyproject.toml"
-  - rule: docs/rule/python-core-decorator.yaml
-    paths:
-      - "**/_decorators.py*"
-      - "**/features/**/service.py*"
-      - "**/integrations/**/client.py*"
-      - "**/integrations/llm/**/*.py*"
-      - "**/shared/decorators.py*"
-  - rule: docs/rule/python-core-naming.yaml
-    paths:
-      - "**/*.py*"
-  - rule: docs/rule/python-core-type-hint.yaml
-    paths:
-      - "**/*.py*"
-      - "**/features/**/types.py*"
-      - "**/shared/types.py*"
-  - rule: docs/rule/python-core-language-rules.yaml
-    paths:
-      - "**/*.py*"
+      - "**/*.py"
   - rule: docs/rule/python-fastapi-application.yaml
     paths:
-      - "**/server/app.py*"
-      - "**/server/ws/**/*.py*"
+      - "**/server/{app,lifespan,middleware}.py"
   - rule: docs/rule/python-fastapi-schema.yaml
     paths:
-      - "**/features/**/route.py*"
-      - "**/server/routes/**/*.py*"
+      - "**/features/**/route.py"
+      - "**/server/routes/**/*.py"
+      - "**/features/**/schemas.py"
   - rule: docs/rule/python-fastapi-health-check.yaml
     paths:
-      - "**/healthz.py*"
-      - "**/server/routes/**/health*.py*"
-      - "**/server/routes/health*.py*"
+      - "**/healthz.py"
+      - "**/server/routes/**/health*.py"
+      - "**/server/routes/health*.py"
   - rule: docs/rule/python-fastapi-route.yaml
     paths:
-      - "**/features/**/route.py*"
-      - "**/server/routes/**/*.py*"
+      - "**/features/**/route.py"
+      - "**/server/routes/**/*.py"
   - rule: docs/rule/python-fastapi-auth-error.yaml
     paths:
-      - "**/features/**/route.py*"
-      - "**/server/error_handlers.py*"
-      - "**/server/routes/**/*.py*"
-  - rule: docs/rule/python-llm-instructor.yaml
-    paths:
-      - "**/integrations/llm/**/*.py*"
-  - rule: docs/rule/python-llm-cost-cache.yaml
-    paths:
-      - "**/integrations/llm/**/*.py*"
+      - "**/server/{error_handlers,auth,deps}.py"
   - rule: docs/rule/python-llm-provider.yaml
     paths:
-      - "**/integrations/llm/**/*.py*"
+      - "**/integrations/llm/**/*.py"
   - rule: docs/rule/python-llm-prompt-loader.yaml
     paths:
-      - "**/integrations/llm/prompts/**/*.py*"
+      - "**/integrations/llm/prompts/**/*.py"
   - rule: docs/rule/python-llm-exception-retry.yaml
     paths:
-      - "**/integrations/llm/**/*.py*"
-  - rule: docs/rule/python-packaging-python-version.yaml
-    paths:
-      - "**/pyproject.toml"
+      - "**/integrations/llm/**/*.py"
   - rule: docs/rule/python-packaging-pyproject.yaml
     paths:
       - "**/pyproject.toml"
-  - rule: docs/rule/python-packaging-dependency.yaml
-    paths:
-      - "**/pyproject.toml"
-  - rule: docs/rule/python-packaging-distribution.yaml
-    paths:
-      - "**/pyproject.toml"
-  - rule: docs/rule/python-performance-cheatsheet.yaml
-    paths:
-      - "**/benchmarks/**/*.py*"
-      - "**/perf/**/*.py*"
-      - "**/profile_*.py*"
   - rule: docs/rule/python-scripts-python-script.yaml
     paths:
-      - "**/{tool,tools,script,scripts}/**/*.py*"
-      - "**/hooks/**/*.py*"
+      - "**/{tool,tools,script,scripts}/*.py"
   - rule: docs/rule/python-scripts-tkinter.yaml
     paths:
-      - "**/*_gui.py*"
-      - "**/gui.py*"
-      - "**/gui/**/*.py*"
+      - "**/*_gui.py"
+      - "**/gui.py"
+      - "**/gui/**/*.py"
   - rule: docs/rule/python-scripts-launcher-windows.yaml
     paths:
-      - "**/*.bat*"
-  - rule: docs/rule/python-scripts-launcher-unix.yaml
-    paths:
-      - "**/*.sh*"
+      - "**/*.bat"
   - rule: docs/rule/python-shared-error-definition.yaml
     paths:
-      - "**/server/error_handlers.py*"
-      - "**/shared/errors.py*"
-  - rule: docs/rule/python-shared-logger.yaml
-    paths:
-      - "**/shared/logger.py*"
+      - "**/server/error_handlers.py"
+      - "**/shared/errors.py"
+      - "**/integrations/**/client.py"
   - rule: docs/rule/python-shared-type-definition.yaml
     paths:
-      - "**/shared/types.py*"
+      - "**/shared/types.py"
   - rule: docs/rule/python-shared-constant.yaml
     paths:
-      - "**/shared/constants.py*"
+      - "**/shared/constants.py"
   - rule: docs/rule/python-shared-settings.yaml
     paths:
-      - "**/config/settings.yaml*"
-      - "**/shared/settings.py*"
+      - "**/config/settings.yaml"
+      - "**/shared/settings.py"
   - rule: docs/rule/python-testing-pytest.yaml
     paths:
-      - "**/benchmarks/**/*.py*"
-      - "**/tests/**/test_*.py*"
-      - "**/tests/conftest.py*"
+      - "**/benchmarks/**/*.py"
+      - "**/tests/**/test_*.py"
+      - "**/tests/conftest.py"
+      - "**/tests/**/conftest.py"
   - rule: docs/rule/python-testing-strategy.yaml
     paths:
-      - "**/tests/**/test_*.py*"
+      - "**/tests/**/test_*.py"
   - rule: docs/rule/python-testing-fixture.yaml
     paths:
-      - "**/benchmarks/**/*.py*"
-      - "**/tests/**/test_*.py*"
-      - "**/tests/conftest.py*"
-  - rule: docs/rule/python-testing-mock.yaml
-    paths:
-      - "**/tests/**/test_*.py*"
-      - "**/tests/conftest.py*"
-  - rule: docs/rule/ui-screen-division.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
+      - "**/tests/conftest.py"
+      - "**/tests/**/conftest.py"
   - rule: docs/rule/ui-screen-division.yaml
     paths:
       - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-business-screen-elements.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-business-screen-elements.yaml
-    paths:
-      - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-document-parts.yaml
-    paths:
-      - "**/dev/**/*.md"
-      - "**/docs/README.md"
-      - "**/docs/{はじめに,使い方,リファレンス}/**/*.md"
   - rule: docs/rule/ui-screen-design-principles.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-screen-design-principles.yaml
-    paths:
-      - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-information-hierarchy.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-information-hierarchy.yaml
-    paths:
-      - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-operation-accessibility.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-operation-accessibility.yaml
-    paths:
-      - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-input-wording.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-input-wording.yaml
-    paths:
-      - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-display-stability.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-display-stability.yaml
-    paths:
-      - "**/設計書/画面設計/**"
-  - rule: docs/rule/ui-supported-browser.yaml
-    paths:
-      - "**/*.html*"
-      - "**/*.{tsx,jsx,vue,svelte}*"
-    exclude:
-      - "**/*.md"
-  - rule: docs/rule/ui-supported-browser.yaml
     paths:
       - "**/設計書/画面設計/**"

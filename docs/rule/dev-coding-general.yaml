@@ -2,18 +2,50 @@
 id: dev-coding-general
 kind: rule
 name: コーディング全般における規約
-description: 例外・フォールバック・定数・識別子・コメント・コードの品質・外部入力・タイムスタンプについて、言語を問わず守るコーディングの決まりを定める。
+description: 例外・フォールバック・定数・識別子・コメント・コードの品質・外部入力・ログ・タイムスタンプについて言語を問わず守るコーディングの決まりを定め、コードを記載する・レビューするときに読む。
 tags:
   - name: scope:dev
+  - name: topic:docstring
+  - name: topic:インデント
+  - name: topic:エラー
+  - name: topic:コマンド
+  - name: topic:コメント
+  - name: topic:コード
+  - name: topic:ソース
+  - name: topic:ソースコード
+  - name: topic:タイムスタンプ
+  - name: topic:デッドコード
+  - name: topic:データ
+  - name: topic:パス
+  - name: topic:フォールバック
+  - name: topic:マジックナンバー
+  - name: topic:ログ
+  - name: topic:仕様
+  - name: topic:例外
+  - name: topic:品質
+  - name: topic:定数
+  - name: topic:履歴
+  - name: topic:日本語
+  - name: topic:英語
+  - name: topic:規約
+  - name: topic:言語
+  - name: topic:設計書
+  - name: topic:識別子
+  - name: topic:関数
+  - name: action:コーディング
     main: true
+  - name: action:入力
+  - name: action:参照
+  - name: action:実行
+  - name: action:検証
+  - name: action:秘匿
+  - name: action:統一
+  - name: action:設計
+  - name: action:読み込み
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
-related:
-  - to: flowchart-config-location
-    type: requires
-    when: 定数の置き場所を決めるとき
+rev: 5
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -121,6 +153,11 @@ items:
     name: 実行されるデータの読み込み
     body: |-
       - 外部から来たデータを、読み込むだけでコードが動く形式・関数で読まない（Python なら `pickle` と `yaml.load` を使わず `yaml.safe_load`）
+  - id: log-01
+    group: ログ
+    name: ログに秘匿値を入れない
+    body: |-
+      - ログのメッセージと構造化引数に秘匿値（パスワード・API キー・トークン）を入れない
   - id: timestamp-01
     group: タイムスタンプ
     name: JST 統一

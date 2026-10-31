@@ -2,14 +2,34 @@
 id: next-backend-db-ts
 kind: rule
 name: app/api/v{N}/{resource}/db.ts
-description: app/api/v{N}/{resource}/db.ts を書き込み専用にする決まりと、必須テンプレート・命名・バルク操作を定める。
+description: 書き込み専用の db.ts の決まりと、必須テンプレート・命名・バルク操作を定め、INSERT / UPDATE / DELETE の関数を実装するときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:api
+  - name: topic:db
     main: true
+  - name: topic:naming
+  - name: tool:sql
+  - name: topic:オブジェクト
+  - name: topic:テンプレート
+  - name: topic:テーブル
+  - name: topic:バルク
+  - name: topic:ファイル
+  - name: topic:リソース
+  - name: topic:ロック
+  - name: topic:引数
+  - name: topic:楽観的ロック
+  - name: topic:関数
+  - name: action:削除
+  - name: action:参照
+  - name: action:挿入
+  - name: action:操作
+  - name: action:更新
+  - name: action:書き込み
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: db-ts-01

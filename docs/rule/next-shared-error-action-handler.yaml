@@ -2,14 +2,21 @@
 id: next-shared-error-action-handler
 kind: rule
 name: handleActionError — Server Action のエラー変換
-description: Server Action のエラーを ActionResult に変換する handleActionError の使い方を定める。
+description: Server Action のエラーを ActionResult に変換する handleActionError の使い方を定め、Server Action のエラー処理を実装するときに読む。
 tags:
   - name: scope:next
-  - name: topic:shared
+  - name: topic:アクション
+  - name: topic:エラー
     main: true
+  - name: topic:サーバー
+  - name: topic:サーバーアクション
+  - name: topic:リダイレクト
+  - name: action:変換
+  - name: action:検証
+  - name: action:派生
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: handle-action-error-01

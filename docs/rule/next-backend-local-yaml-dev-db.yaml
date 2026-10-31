@@ -2,19 +2,30 @@
 id: next-backend-local-yaml-dev-db
 kind: rule
 name: ローカル開発用 YAML データストア
-description: ローカル開発用の YAML データストアで query.ts と db.ts の実装を切り替える構成を定める。
+description: ローカル開発用の YAML データストアで query.ts と db.ts の実装を切り替える構成を定め、DB に接続せずローカルで開発できるようにするときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:db
+  - name: tool:yaml
     main: true
+  - name: topic:クエリ
+  - name: topic:スキーマ
+  - name: topic:データストア
+  - name: topic:トランザクション
+  - name: topic:ファイル
+  - name: topic:フィールド
+  - name: topic:ローカル
+  - name: topic:構成
+  - name: topic:環境変数
+  - name: topic:関数
+  - name: action:切り替え
+  - name: action:実装
+  - name: action:開発
 status: current
 visibility: internal
-rev: 1
+rev: 5
 last_reviewed: '2026-10-24'
-related:
-  - to: dev-yaml
-    type: requires
-    when: YAML データストアのロックとロールバックを実装するとき
 items:
   - id: overview
     name: 概要

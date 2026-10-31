@@ -2,14 +2,33 @@
 id: next-backend-db-migration
 kind: rule
 name: Drizzle — マイグレーション運用
-description: drizzle-kit による schema から SQL migration、DB 適用までの流れと運用の決まりを定める。
+description: drizzle-kit による schema から SQL migration、DB 適用までの流れと運用の決まりを定め、DB スキーマを変更してマイグレーションを作る・適用するときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:db
+  - name: topic:enum
+  - name: tool:sql
+  - name: topic:カラム
+  - name: topic:コード
+  - name: topic:スキーマ
+  - name: topic:ファイル
+  - name: topic:本番
+  - name: tool:drizzle
     main: true
+  - name: action:コミット
+  - name: action:デプロイ
+  - name: action:削除
+  - name: action:参照
+  - name: action:排除
+  - name: action:生成
+  - name: action:移行
+  - name: action:編集
+  - name: action:運用
+  - name: action:適用
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: overview

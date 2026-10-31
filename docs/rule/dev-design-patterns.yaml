@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-design-patterns
+kind: rule
+name: デザインパターン
+description: 関数中心のコードで使うデザインパターン（アダプター・関数を渡す・デコレーター・ファサード）の書き方を定め、パターンで抽象化する実装を記載するときに読む。
+tags:
+  - name: scope:dev
+  - name: topic:アダプター
+  - name: topic:コード
+  - name: topic:ストラテジー
+  - name: topic:デコレータ
+  - name: topic:デザイン
+  - name: topic:デザインパターン
+    main: true
+  - name: topic:パターン
+  - name: topic:ファサード
+  - name: topic:関心事
+  - name: topic:関数
+  - name: action:公開
+  - name: action:定義
+  - name: action:配線
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      Python・TypeScript のコードで使うパターンの書き方。
+      抽象化を始める基準は [設計原則](id:dev-design-principles) が決める。
+  - id: adapter-01
+    group: アダプター
+    name: 利用側が関数の型を定義する
+    body: |-
+      - アダプターは、利用する側が関数の型を定義し、ベンダーごとの関数がその型を満たすように書く。
+        型と例外の変換は、アダプターの中で行う。
+  - id: adapter-02
+    group: アダプター
+    name: 配線は 1 か所で行う
+    body: |-
+      - どのアダプターを使うかの配線は、アプリを組み立てる 1 か所（composition root）で行う。
+        テストでは同じ型の関数を渡して差し替える。
+  - id: strategy-01
+    group: ストラテジー
+    name: 関数を渡す
+    body: |-
+      - 処理の差し替えは、関数を引数で渡して行う。
+        選択が複数あるときは、キーから関数を引く dict（オブジェクト）で選ぶ。
+  - id: decorator-01
+    group: デコレーター
+    name: 横断的な関心事だけに使う
+    body: |-
+      - ログ・リトライ・計測など横断的な関心事だけに使う。
+        Python は関数デコレーター、TypeScript は高階関数で書く。
+  - id: facade-01
+    group: ファサード
+    name: 機能の公開関数を絞る
+    body: |-
+      - 機能の外から使う関数を、1 つのモジュールにまとめて公開する。
+        内部の関数は外から呼ばない。

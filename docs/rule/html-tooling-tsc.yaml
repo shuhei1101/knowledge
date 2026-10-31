@@ -2,16 +2,36 @@
 id: html-tooling-tsc
 kind: rule
 name: tsc 運用（バニラ TS + FastAPI）
-description: tsc が生成する js の出力先、設定ファイル、scripts、gitignore の運用を定める。
+description: tsc が生成する js の出力先、設定ファイル、scripts、gitignore の運用を定め、単体 HTML で TypeScript のビルド設定を作る・修正するときに読む。
 tags:
   - name: scope:html
   - name: topic:tooling
+  - name: tool:fastapi
+  - name: topic:フロントエンド
+  - name: topic:gitignore
+  - name: tool:javascript
+  - name: tool:typescript
+  - name: topic:エイリアス
+  - name: topic:バニラ
+  - name: topic:ファイル
+  - name: topic:ブラウザ
+  - name: topic:リポジトリ
+  - name: topic:ルート
+  - name: topic:設定
+  - name: tool:tsc
     main: true
+  - name: action:出力
+  - name: action:生成
+  - name: action:運用
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
   - id: tsc-operation-01
     group: tsc 運用（バニラ TS + FastAPI）
     name: ブラウザに出すのは生成 js

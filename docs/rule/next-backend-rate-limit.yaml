@@ -2,14 +2,34 @@
 id: next-backend-rate-limit
 kind: rule
 name: Rate Limiting
-description: Upstash Ratelimit によるレートリミットの構成・キー設計・クライアント側の扱い・運用を定める。
+description: Upstash Ratelimit によるレートリミットの構成・キー設計・クライアント側の扱い・運用を定め、API にレート制限を設けるときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:api
+  - name: topic:id
+  - name: topic:アクション
+  - name: topic:アルゴリズム
+  - name: topic:エンドポイント
+  - name: topic:キー
+  - name: topic:クライアント
+  - name: topic:レート制限
     main: true
+  - name: topic:本番
+  - name: topic:構成
+  - name: tool:redis
+  - name: tool:upstash
+  - name: action:ログイン
+  - name: action:制限
+  - name: action:変換
+  - name: action:定義
+  - name: action:監視
+  - name: action:設計
+  - name: action:運用
+  - name: action:適用
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: overview
@@ -56,7 +76,7 @@ items:
     group: クライアント側
     name: 429 の変換
     body: |-
-      429 は `RateLimitError`（`RATE_LIMIT`）に変換し、`handleAppError` が長め toast を出す（[shared/エラークライアントハンドラー](id:next-shared-error-client-handler)）。
+      429 は `RateLimitError`（`RATE_LIMIT`）に変換し、`handleAppError` が長め toast を出す（[shared/エラークライアントハンドラー](id:react-shared-error-client-handler)）。
   - id: operation-01
     group: 運用
     name: dev と prod で Redis を分ける

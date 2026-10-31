@@ -2,13 +2,24 @@
 id: claude-json
 kind: rule
 name: Claude Code Jsonファイル作成時のルール
-description: Claude Code の設定の JSON にコメントを記載する方法と、フックの説明の置き方を定める。
+description: Claude Code の設定の JSON にコメントを記載する方法と、フックの説明の置き方を定め、設定の JSON を編集するときに読む。
 tags:
   - name: scope:claude
+  - name: tool:json
     main: true
+  - name: topic:オブジェクト
+  - name: topic:キー
+  - name: topic:コメント
+  - name: topic:ファイル
+  - name: topic:フック
+  - name: topic:ルール
+  - name: topic:設定
+  - name: tool:claude
+  - name: tool:claude-code
+  - name: action:作成
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: comment-format-01

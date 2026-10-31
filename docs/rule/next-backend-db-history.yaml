@@ -2,14 +2,28 @@
 id: next-backend-db-history
 kind: rule
 name: Drizzle — ハードデリート + 履歴テーブル
-description: ソフトデリートを使わず、削除前に履歴テーブルへ退避してハードデリートする決まりを定める。
+description: ソフトデリートを使わず、削除前に履歴テーブルへ退避してハードデリートする決まりを定め、レコードの削除を実装するときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:id
+  - name: tool:json
+  - name: topic:スナップショット
+  - name: topic:ソフトデリート
+  - name: topic:テーブル
+  - name: topic:トランザクション
+  - name: topic:ハードデリート
     main: true
+  - name: topic:レコード
+  - name: topic:履歴
+  - name: tool:drizzle
+  - name: action:削除
+  - name: action:記録
+  - name: action:追跡
+  - name: action:退避
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: drizzle-hard-delete-history-01

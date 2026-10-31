@@ -2,15 +2,32 @@
 id: python-scripts-python-script
 kind: rule
 name: 単一ファイルスクリプト
-description: pyproject.toml を作らない単一ファイルの Python スクリプトの配置と必須要素を定める。
+description: pyproject.toml を作らない単一ファイルの Python スクリプトの配置と必須要素を定め、簡易な Python スクリプトを作るときに読む。
 tags:
   - name: scope:python
-  - name: topic:scripts
+  - name: topic:スクリプト
     main: true
+  - name: topic:docstring
+  - name: topic:pyproject
+  - name: topic:コメント
+  - name: topic:コード
+  - name: topic:ファイル
+  - name: topic:フォルダ
+  - name: topic:メッセージ
+  - name: topic:モジュール
+  - name: topic:例外
+  - name: topic:引数
+  - name: topic:日本語
+  - name: topic:要素
+  - name: tool:argparse
+  - name: action:パース
+  - name: action:出力
+  - name: action:終了
+  - name: action:配置
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -27,11 +44,6 @@ items:
     body: |-
       1. モジュール docstring: 1 行目で何をするか + 使い方
          - Usage はインデントなしでコピペ実行可能なコマンド、その上に `#` で説明、任意引数は `[角括弧]`
-  - id: required-elements-02
-    group: 必須要素
-    name: future annotations
-    body: |-
-      2. `from __future__ import annotations`
   - id: required-elements-03
     group: 必須要素
     name: 引数は argparse でパース
@@ -52,7 +64,7 @@ items:
     name: 出力は print
     body: |-
       6. 出力は `print`（エラーは `file=sys.stderr`）— logging モジュールは使わない
-         - このページが当たるファイルでは、[python/core/言語ルール](id:python-core-language-rules#logging-01) の `## ロギング`（`print` ではなく `logger`）より本ページを優先する
+         - ruff の `T20`（print の禁止）は `**/{tool,tools,script,scripts}/*.py` の `per-file-ignores` で外す（[pyproject.toml 標準テンプレート](id:python-packaging-pyproject)）
   - id: required-elements-07
     group: 必須要素
     name: 例外と終了コード

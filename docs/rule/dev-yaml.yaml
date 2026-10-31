@@ -2,36 +2,98 @@
 id: dev-yaml
 kind: rule
 name: YAML
-description: YAML の正本の持ち方、スキーマの定義、検査、書き込み、MCP からの書き込みと読み取りの決まりを定める。
+description: YAML の正本の持ち方、スキーマの定義、検査、書き込み、MCP からの書き込みと読み取り、設定ファイルの決まりを定め、YAML の文書やスキーマ、設定ファイルを扱うときに読む。
 tags:
   - name: scope:dev
+  - name: topic:バックエンド
+  - name: topic:フロントエンド
+  - name: tool:json
+  - name: topic:sot
+  - name: topic:worktree
+  - name: tool:yaml
     main: true
+  - name: topic:インデックス
+  - name: topic:エラー
+  - name: topic:キー
+  - name: topic:スキーマ
+  - name: topic:タグ
+  - name: topic:ツリー
+  - name: topic:ツール
+  - name: topic:テーブル
+  - name: topic:データ
+  - name: topic:ハードコード
+  - name: topic:バージョン
+  - name: topic:ファイル
+  - name: topic:ブロック
+  - name: topic:ランタイム
+  - name: topic:リポジトリ
+  - name: topic:レイヤー
+  - name: topic:ロック
+  - name: topic:差分
+  - name: topic:手順
+  - name: topic:排他ロック
+  - name: topic:文書
+  - name: topic:構成
+  - name: topic:構造
+  - name: topic:権限
+  - name: topic:正本
+  - name: topic:画面
+  - name: topic:端末
+  - name: topic:設定
+  - name: topic:違反
+  - name: tool:git
+  - name: tool:mcp
+  - name: tool:mermaid
+  - name: action:クローン
+  - name: action:付与
+  - name: action:共有
+  - name: action:出力
+  - name: action:判断
+  - name: action:取り込み
+  - name: action:定義
+  - name: action:排他
+  - name: action:書き込み
+  - name: action:検査
+  - name: action:移行
+  - name: action:管理
+  - name: action:組み立て
+  - name: action:絞り込み
+  - name: action:読み取り
+  - name: action:適用
+  - name: action:集計
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 7
+last_reviewed: '2026-10-30'
 related:
-  - to: claude-mcp
-    type: requires
-    when: YAML を読み取る MCP のツールを作るとき
-  - to: dev-content-location
-    type: requires
-    when: content/ に置く正本の置き場所を決めるとき
-  - to: dev-tag-term-registration
-    type: requires
-    when: YAML のタグを登録するとき
-  - to: flowchart-config-location
-    type: requires
-    when: アプリの設定値の置き場所を決めるとき
-  - to: python-shared-settings
+  - to: claude-plugin
     type: references
-    when: pydantic-settings で読む設定を扱うとき
+    when: プラグインが読む設定ファイルの置き場所を決めるとき
+sources:
+  - title: "Anthropic: Writing effective tools for agents"
+    url: https://www.anthropic.com/engineering/writing-tools-for-agents
+    note: 入出力の説明
+  - title: "MCP 仕様: Tools"
+    url: https://modelcontextprotocol.io/specification/2025-06-18/server/tools
+    note: "`inputSchema` / `outputSchema`"
+    library: MCP
+    version: '2025-06-18'
+  - title: "JSON Schema 2020-12: Core"
+    url: https://json-schema.org/draft/2020-12/json-schema-core
+    note: "`$ref`・`$defs`"
+    library: JSON Schema
+    version: '2020-12'
+  - title: "JSON Schema 2020-12: Validation"
+    url: https://json-schema.org/draft/2020-12/json-schema-validation
+    note: "`title`・`description`"
+    library: JSON Schema
+    version: '2020-12'
 items:
   - id: overview
     name: 概要
     body: |-
       YAML を扱う決まり。
-      データの正本の持ち方、スキーマの書き方、検査、書き込み、MCP からの書き込みと読み取りを定める。
+      データの正本の持ち方、スキーマの書き方、検査、書き込み、MCP からの書き込みと読み取り、設定ファイルを定める。
   - id: data-source-01
     group: データの正本
     name: データの正本の適用範囲
@@ -142,6 +204,22 @@ items:
     name: ブロック形式で記載
     body: |-
       - フロー形式（`{type: string, ...}`）を使わず、ブロック形式で書く
+  - id: schema-07
+    group: スキーマ
+    name: 共有するスキーマの正本
+    body: |-
+      - 複数のリポジトリが読む YAML のスキーマは、1 つのリポジトリが `schemas/{種類}.schema.yaml` を正本として持つ。
+  - id: schema-08
+    group: スキーマ
+    name: 正本のスキーマの取り込み
+    body: |-
+      - 正本以外のリポジトリは、そのスキーマだけに依存し（コードに依存しない）、正本のリポジトリのタグを指定して取り込み、取り込んだバージョンを記録する。
+  - id: schema-09
+    group: スキーマ
+    name: スキーマを変えるときの手順
+    body: |-
+      - スキーマを変えるときは、正本のリポジトリに Issue を立てる。
+        正本以外のリポジトリは、取り込むバージョンを上げる。
   - id: inspection-01
     group: 検査
     name: 検査の対象と時点
@@ -226,6 +304,27 @@ items:
     name: 返り値は差分と結果のみ
     body: |-
       - 返り値は新しいバージョン・短い差分・検査の結果にし、全文を返さない
+  - id: mcp-write-07
+    group: MCP からの書き込み
+    name: 作業ツリーを書き換えるだけで commit しない
+    body: |-
+      - 書き込みのツールは、呼んだセッションの作業ツリー（PreToolUse フックが引数に入れる。[MCP サーバー作成ルール](id:claude-mcp) の常駐サーバーの決まり）のファイルを書き換えるだけにし、commit しない。
+  - id: mcp-write-08
+    group: MCP からの書き込み
+    name: 他のリポジトリへの書き込みは権限で決める
+    body: |-
+      - 他のリポジトリへ書き込めるかは、端末の設定の作業場所ごとの権限（読める・書ける作業場所の glob）で決める。
+  - id: mcp-write-09
+    group: MCP からの書き込み
+    name: Git のリポジトリはクローンか worktree で作業中のときだけ
+    body: |-
+      - Git のリポジトリへは、そのクローンか worktree で作業中のときだけ書き、書く先はその作業ツリーにする。
+        作業中でないときは、書かずに断る。
+  - id: mcp-write-10
+    group: MCP からの書き込み
+    name: Git 管理外の書き込み先
+    body: |-
+      - Git 管理外の書き込み先は、権限に当たれば、どの作業場所からも書ける。
   - id: mcp-read-01
     group: MCP からの読み取り
     name: 読み取りのツールの作り方
@@ -234,46 +333,71 @@ items:
       YAML では次を追加する。
   - id: mcp-read-02
     group: MCP からの読み取り
-    name: タグの一覧を登録
+    name: タグは正規化して比べる
     body: |-
-      - タグの一覧を YAML に登録する。登録外のタグは弾かずに未登録の候補として受け付け、検査で警告する（[タグと用語の登録](id:dev-tag-term-registration)）
+      - タグは自由な文字列で、一致の前に正規化（NFKC・大文字小文字）する（[タグと用語の登録](id:dev-tag-term-registration)）
   - id: mcp-read-03
     group: MCP からの読み取り
-    name: タグ一覧のツール
+    name: 使われているタグの集計
     body: |-
-      - タグの一覧のツールを置き、登録したタグごとに名前・説明・そのタグを持つ項目の数・使っている種類を返す。数が 0 のタグも返す。`query` を受け、正規化した名前・`aliases`・説明に一致するタグを上位から返す
+      - 使われているタグは、検索の集計（`group_by: tags`）でタグごとの件数を返す
   - id: mcp-read-04
     group: MCP からの読み取り
     name: AND と OR の絞り込み
     body: |-
       - 検索のタグは複数を渡せ、既定は全てを持つ項目（AND）に絞る。どれかを持つ項目（OR）は別の引数（`any_tags`）で渡す
-  - id: mcp-read-05
-    group: MCP からの読み取り
-    name: 登録外タグの検索
-    body: |-
-      - 登録外のタグで検索したら、近い候補を添えたエラーにする
   - id: mcp-read-06
     group: MCP からの読み取り
     name: ツール説明をスキーマから作る
     body: |-
-      - 読み取りのツールの説明も、スキーマから組み立てる。使える絞り込みと、タグの一覧のツールは語彙が多いときに呼ぶこと（引数なしの `search` がタグごとの件数を返す）を記載する
-  - id: sources-01
-    group: 出典
-    name: "出典: ツールの設計"
+      - 読み取りのツールの説明も、スキーマから組み立てる。使える絞り込みと、タグで絞る前に `group_by: tags` で使われているタグを引くこと（引数なしの `search` がタグごとの件数を返す）を記載する
+  - id: config-file-01
+    group: 設定ファイル
+    name: 設定の YAML はテーブルの構造にする
     body: |-
-      - [Anthropic: Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)（入出力の説明）
-  - id: sources-02
-    group: 出典
-    name: "出典: MCP 仕様"
+      - 設定の YAML は、まとまり（文書・検査・変換など）を配列にし、主キーの `id` でつなぐ。
+  - id: config-file-02
+    group: 設定ファイル
+    name: ファイルの指定は paths に並べる
     body: |-
-      - [MCP 仕様: Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools)（`inputSchema` / `outputSchema`）
-  - id: sources-03
-    group: 出典
-    name: "出典: JSON Schema Core"
+      - ファイルの指定は、`paths[]` にファイルか glob を並べる。
+  - id: config-file-03
+    group: 設定ファイル
+    name: リポジトリの設定ファイル
     body: |-
-      - [JSON Schema 2020-12: Core](https://json-schema.org/draft/2020-12/json-schema-core)（`$ref`・`$defs`）
-  - id: sources-04
-    group: 出典
-    name: "出典: JSON Schema Validation"
+      - リポジトリと一緒に変わる設定は、リポジトリの設定ファイル（Git の中）に置く。
+  - id: config-file-04
+    group: 設定ファイル
+    name: 端末の設定ファイル
     body: |-
-      - [JSON Schema 2020-12: Validation](https://json-schema.org/draft/2020-12/json-schema-validation)（`title`・`description`）
+      - 端末ごとの選択は、`~/.config/{名前}/settings.yaml`（Git の外）に置く。
+        端末の設定は、リポジトリの設定ファイルのパスを指す。
+  - id: config-file-05
+    group: 設定ファイル
+    name: 設定ファイルのバージョン
+    body: |-
+      - 設定ファイル（リポジトリの設定・端末の設定）に、`version`（最後に移し替えたツールのバージョン）を持たせる。
+  - id: config-file-06
+    group: 設定ファイル
+    name: 設定の移し替え
+    body: |-
+      - ツールは、バージョンごとの移し替えの手順（`migrations/{バージョン}/`）を持つ。
+        古い設定は、手順を示して移し替えてから使う。
+  - id: config-file-07
+    group: 設定ファイル
+    name: 設定のほうが新しいとき
+    body: |-
+      - 設定のほうがツールより新しいときは、ツールの更新を案内して止まる。
+  - id: config-file-08
+    group: 設定ファイル
+    name: 既存の決まりとの書き分け
+    body: |-
+      <!-- table: data -->
+
+      | 既存の決まり | 既存の対象 | この規約の対象 |
+      | --- | --- | --- |
+      | `worktree-safe-01` | アプリが実行時に UI / API から書き込む YAML。どの worktree から書いても main repo の同じファイルに着地させる | MCP のツールで文書の正本を書き換えるとき。呼んだセッションの作業ツリーに書く（`mcp-write-07`） |
+      | claude-plugin の `settings-file-01`〜`05`・`two-layer-choice-04`・[設定値の置き場所](id:flowchart-config-location) | プラグイン・アプリの環境の値。`~/.config/{名前}/settings.yaml` に置く | 端末の設定が、リポジトリの設定ファイルのパスを指す（`config-file-03`・`config-file-04`） |
+      | claude-plugin の `no-version-01` | プラグインの manifest に version を置かない | `config-file-05` の `version` は設定ファイルのもの。プラグインの manifest には当てない |
+
+      <!-- /table -->

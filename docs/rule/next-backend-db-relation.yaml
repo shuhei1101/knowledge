@@ -2,14 +2,26 @@
 id: next-backend-db-relation
 kind: rule
 name: drizzle/schema.ts — Relations と Index
-description: 外部キー・relations・index の付け方と、onDelete の選び方を定める。
+description: 外部キー・relations・index の付け方と、onDelete の選び方を定め、テーブルの関連やインデックスを定義するときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:naming
+  - name: topic:インデックス
     main: true
+  - name: topic:キー
+  - name: topic:スキーマ
+  - name: topic:テーブル
+  - name: topic:リレーション
+  - name: topic:制約
+  - name: topic:外部キー
+  - name: tool:drizzle
+  - name: action:削除
+  - name: action:宣言
+  - name: action:選択
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: drizzle-schema-relations-index-01

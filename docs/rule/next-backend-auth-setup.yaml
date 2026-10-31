@@ -2,19 +2,27 @@
 id: next-backend-auth-setup
 kind: rule
 name: lib/auth.ts — Better Auth セットアップ
-description: 採用する認証プロバイダ Better Auth のセットアップの決まりを定める。
+description: 採用する認証プロバイダ Better Auth のセットアップの決まりを定め、Better Auth の設定を作る・修正するときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:cookie
+  - name: topic:キャッシュ
+  - name: topic:シークレット
+  - name: topic:セッション
+  - name: topic:セットアップ
+  - name: topic:プロバイダー
+  - name: topic:期限
+  - name: topic:設定
+  - name: tool:better-auth
     main: true
+  - name: action:呼び出し
+  - name: action:採用
+  - name: action:認証
 status: current
 visibility: internal
-rev: 1
+rev: 5
 last_reviewed: '2026-10-24'
-related:
-  - to: flowchart-config-location
-    type: requires
-    when: 認証のシークレットの置き場所を決めるとき
 items:
   - id: overview
     name: 概要

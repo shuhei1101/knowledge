@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-shared-error-client-handler
+kind: rule
+name: handleAppError
+description: useQuery・useMutation のエラーをクライアント側で扱う handleAppError の使い方と、エラー種別ごとの挙動を定め、React でエラーを画面に表示するときに読む。
+tags:
+  - name: scope:react
+  - name: topic:エラー
+    main: true
+  - name: topic:クエリ
+  - name: topic:クライアント
+  - name: topic:ミューテーション
+  - name: topic:挙動
+  - name: topic:画面
+  - name: topic:種別
+  - name: tool:react
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+related:
+  - to: react-shared-error-class
+    type: requires
+    when: エラーの種類を判定するとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+  - id: handle-app-error-01
+    group: handleAppError
+    name: handleAppError に渡す
+    body: |-
+      - `useQuery`・`useMutation` のエラーは、`handleAppError(error, { navigate, queryClient })` で処理する。
+  - id: handle-app-error-02
+    group: handleAppError
+    name: raw error を JSX に出さない
+    body: |-
+      - raw の error や `error.message` を、JSX に直接出さない。
+  - id: error-kind-behavior-01
+    group: エラー種別ごとの挙動
+    name: エラー種別ごとの挙動表
+    body: |-
+      <!-- table: data -->
+
+      | Error | UX |
+      | --- | --- |
+      | `ClientAuthError` | toast を出し、ログイン画面へ遷移する |
+      | `VersionConflictError` | toast を出し、`queryClient.invalidateQueries` で最新にする |
+      | `RateLimitError` | 長め（5 秒）の toast を出す |
+      | 上記以外の `AppError` | toast を出す |
+      | 予期しないエラー | 汎用の文言の toast を出す |
+
+      <!-- /table -->

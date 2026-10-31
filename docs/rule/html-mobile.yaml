@@ -2,20 +2,45 @@
 id: html-mobile
 kind: rule
 name: モバイル対応ルール
-description: モバイル対応の基本方針、共通シェルの責務、対象外画面、落とし穴のチェックリストを定める。
+description: モバイル対応の基本方針、共通シェルの責務、対象外画面、viewport meta の置き場所を定め、単体 HTML の画面をスマホ対応にするときに読む。
 tags:
   - name: scope:html
+  - name: tool:css
+  - name: topic:dom
+  - name: topic:フロントエンド
+  - name: topic:インデックス
+  - name: topic:サイドバー
+  - name: topic:シェル
+  - name: topic:チェックリスト
+  - name: topic:デスクトップ
+  - name: topic:ドロワー
+  - name: topic:ビューポート
+  - name: topic:ブレークポイント
+  - name: topic:モバイル
     main: true
+  - name: topic:ルール
+  - name: topic:レイアウト
+  - name: topic:画面
+  - name: topic:落とし穴
+  - name: topic:責務
+  - name: action:切り替え
+  - name: action:対応
+  - name: action:集約
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
   - id: basic-policy-01
     group: 基本方針
     name: ブレークポイントは 768px 単一
     body: |-
-      - ブレークポイントは `@media (max-width: 768px)` 単一。タブレット中間は設けない。
+      - ブレークポイントは [レイアウト](id:ui-layout) の `md`（48rem）単一にする。タブレット中間は設けない。
+        - 新しく作る画面は `min-width` で広げる。既存のデスクトップ向けの画面は `@media (max-width: 48rem)` で足してよい。
   - id: basic-policy-02
     group: 基本方針
     name: スマホ対応は screen.css の末尾
@@ -58,149 +83,14 @@ items:
     group: 共通シェル（`frontend/shared/`）の責務
     name: z-index は tokens.css に集約
     body: |-
-      - z-index は `tokens.css` に集約し、ドロワー / debug-fab / モーダルの重なりを一元管理する。
+      - z-index は `tokens.css` に集約し、ドロワー / モーダルの重なりを一元管理する。
   - id: out-of-scope-screen-01
     group: 対象外画面
     name: 透過画面は対象外
     body: |-
       - 他のアプリへ埋め込む透過画面（`<style>` で `html, body { background: transparent }` を宣言、または `app-shell` 不使用の透過全画面）はモバイル対応スコープ外。
-  - id: pitfall-text-code-01
-    group: 落とし穴チェックリスト > テキスト・コード
-    name: 長い文字列の折り返し
-    body: |-
-      - 長い URL / トークン / ファイルパス / 半角混在の日本語長文を含む親に `overflow-wrap: anywhere` を当てる
-  - id: pitfall-text-code-02
-    group: 落とし穴チェックリスト > テキスト・コード
-    name: pre と code の横スクロール
-    body: |-
-      - `<pre>` / `<code>` は `overflow-x: auto` + `white-space: pre-wrap` を両立させる
-  - id: pitfall-text-code-03
-    group: 落とし穴チェックリスト > テキスト・コード
-    name: ellipsis の全文表示
-    body: |-
-      - `text-overflow: ellipsis` で省略する場合、タップ全文表示の導線を用意する
-  - id: pitfall-table-01
-    group: 落とし穴チェックリスト > テーブル
-    name: 多列 table の横スクロール
-    body: |-
-      - 多列 `<table>` は親に `overflow-x: auto` のラッパを付けて横スクロール許容
-  - id: pitfall-table-02
-    group: 落とし穴チェックリスト > テーブル
-    name: 行の縦積み変換
-    body: |-
-      - スマホで「行を縦積み変換」する場合、`tr { display: grid }` で 1 行 1 ブロック化
-  - id: pitfall-table-03
-    group: 落とし穴チェックリスト > テーブル
-    name: sticky の thead の制約
-    body: |-
-      - `overflow-x: auto` ラッパ内では `position: sticky` の thead が機能しない
-  - id: pitfall-tab-row-01
-    group: 落とし穴チェックリスト > タブ・横並び
-    name: 横並びタブの折り返し
-    body: |-
-      - ヘッダーの外に並べた横並びタブが多い場合は `overflow-x: auto` + `flex-wrap: nowrap` で横スクロール（ヘッダーの中では横スクロールさせない）
-  - id: pitfall-tab-row-02
-    group: 落とし穴チェックリスト > タブ・横並び
-    name: フォーム行の縦並び
-    body: |-
-      - `.row` のフォーム行はスマホで `flex-direction: column` に倒す
-  - id: pitfall-tab-row-03
-    group: 落とし穴チェックリスト > タブ・横並び
-    name: inline-flex の折り返し
-    body: |-
-      - `inline-flex` を連続で並べる親には `flex-wrap: wrap` を必ず付ける
-  - id: pitfall-form-01
-    group: 落とし穴チェックリスト > 入力フォーム
-    name: 入力欄は 16px 以上
-    body: |-
-      - `input` / `textarea` / `select` の `font-size` は 16px 未満にしない
-  - id: pitfall-form-02
-    group: 落とし穴チェックリスト > 入力フォーム
-    name: 固定 width の input
-    body: |-
-      - 固定 width の input は `max-width: 100%` を保証
-  - id: pitfall-form-03
-    group: 落とし穴チェックリスト > 入力フォーム
-    name: number のスピンボタン
-    body: |-
-      - `<input type="number">` のスピンボタンはスマホで `-webkit-appearance: none` を検討
-  - id: pitfall-form-04
-    group: 落とし穴チェックリスト > 入力フォーム
-    name: label と input の縦積み
-    body: |-
-      - `label` + `input` の横並びはスマホ時に縦積み
-  - id: pitfall-viewport-01
-    group: 落とし穴チェックリスト > ビューポート・高さ
-    name: 100dvh を使う
-    body: |-
-      - `100vh` / `min-height: 100vh` / `100svh` は使わず `100dvh` を使う
-  - id: pitfall-viewport-02
-    group: 落とし穴チェックリスト > ビューポート・高さ
-    name: 100vw を使わない
-    body: |-
-      - `100vw` は使わず `100%` を使う
   - id: pitfall-viewport-03
     group: 落とし穴チェックリスト > ビューポート・高さ
     name: viewport meta の集約
     body: |-
       - viewport meta は `templates/_layout.html` に集約。各画面 HTML で再宣言しない
-  - id: pitfall-flex-grid-01
-    group: 落とし穴チェックリスト > Flexbox / Grid
-    name: flex 子の min-width
-    body: |-
-      - flex 子要素には `min-width: 0` を明示
-  - id: pitfall-flex-grid-02
-    group: 落とし穴チェックリスト > Flexbox / Grid
-    name: grid の列数固定を避ける
-    body: |-
-      - `grid-template-columns: repeat(N, 1fr)` の N 列固定は使わず、`repeat(auto-fit, minmax(MIN, 1fr))` か `@media` で 1 列化
-  - id: pitfall-flex-grid-03
-    group: 落とし穴チェックリスト > Flexbox / Grid
-    name: sticky と align-self
-    body: |-
-      - flex/grid の子に `position: sticky` を使うときは `align-self: start` を付ける
-  - id: pitfall-touch-01
-    group: 落とし穴チェックリスト > タッチ・操作性
-    name: タップ領域は 44px 以上
-    body: |-
-      - ボタン / リンクの実効タップ領域は最小 44×44px
-  - id: pitfall-touch-02
-    group: 落とし穴チェックリスト > タッチ・操作性
-    name: hover 前提の UI
-    body: |-
-      - `:hover` 前提の UI は `click` トグルに切替、または `@media (hover: hover)` で分岐
-  - id: pitfall-touch-03
-    group: 落とし穴チェックリスト > タッチ・操作性
-    name: ドラッグ&ドロップの代替
-    body: |-
-      - ドラッグ&ドロップを持つ UI はタップ操作の代替手段を用意
-  - id: pitfall-touch-04
-    group: 落とし穴チェックリスト > タッチ・操作性
-    name: touch-action の指定
-    body: |-
-      - 連続クリック想定の要素には `touch-action: manipulation` を付ける
-  - id: pitfall-media-01
-    group: 落とし穴チェックリスト > メディア要素
-    name: メディア要素の max-width
-    body: |-
-      - `<img>` / `<canvas>` / `<svg>` は `max-width: 100%; height: auto`
-  - id: pitfall-media-02
-    group: 落とし穴チェックリスト > メディア要素
-    name: 固定 width の画像
-    body: |-
-      - アバター画像など固定 width はコンテナ側で `max-width` を制約
-  - id: pitfall-layer-01
-    group: 落とし穴チェックリスト > レイヤ・重なり
-    name: fixed の座標基準
-    body: |-
-      - `position: fixed` の座標は `right` / `bottom` 基準にして `max-width` で制約
-  - id: pitfall-layer-02
-    group: 落とし穴チェックリスト > レイヤ・重なり
-    name: モーダルの flip
-    body: |-
-      - モーダル・ポップオーバーはビューポート境界判定で flip
-  - id: pitfall-layer-03
-    group: 落とし穴チェックリスト > レイヤ・重なり
-    name: debug-fab とキーボード
-    body: |-
-      - `debug-fab` のキーボード重なりは `visualViewport` API か `position: sticky` で回避

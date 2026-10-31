@@ -2,14 +2,28 @@
 id: next-frontend-edit-page-tsx
 kind: rule
 name: "{feature}/[id]/edit/page.tsx — Edit Server Component"
-description: 編集画面の Server Component の権限チェックと、新規画面のデータ取得の扱いを定める。
+description: 編集画面の Server Component の権限チェックと、新規画面のデータ取得の扱いを定め、編集・新規画面の page.tsx を実装するときに読む。
 tags:
   - name: scope:next
-  - name: topic:frontend
+  - name: topic:フロントエンド
+  - name: topic:部品
+  - name: topic:id
+  - name: topic:サーバー
+  - name: topic:サーバーコンポーネント
     main: true
+  - name: topic:データ
+  - name: topic:ビュー
+  - name: topic:フィーチャ
+  - name: topic:ページ
+  - name: topic:リダイレクト
+  - name: topic:権限
+  - name: topic:画面
+  - name: action:取得
+  - name: action:検査
+  - name: action:編集
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: edit-page-01

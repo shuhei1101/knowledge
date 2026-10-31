@@ -2,14 +2,23 @@
 id: next-backend-proxy
 kind: rule
 name: proxy.ts（旧 Middleware）
-description: Next.js 16 の proxy.ts（旧 Middleware）の用途・ランタイム・matcher・認証チェックを定める。
+description: Next.js 16 の proxy.ts（旧 Middleware）の用途・ランタイム・matcher・認証チェックを定め、proxy.ts を作る・修正するときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:パス
+  - name: topic:ミドルウェア
     main: true
+  - name: topic:リダイレクト
+  - name: tool:next-js
+  - name: tool:node-js
+  - name: action:判定
+  - name: action:検査
+  - name: action:認証
+  - name: action:適用
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: overview

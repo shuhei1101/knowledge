@@ -2,15 +2,31 @@
 id: python-fastapi-auth-error
 kind: rule
 name: 認証と例外ハンドラ
-description: FastAPI の認証パターン、SecretStr の扱い、例外ハンドラの決まりを定める。
+description: FastAPI の認証パターン、SecretStr の扱い、例外ハンドラの決まりを定め、FastAPI に認証やエラー応答を実装するときに読む。
 tags:
   - name: scope:python
-  - name: topic:fastapi
+  - name: tool:fastapi
+  - name: topic:api
+  - name: topic:エラー
+  - name: topic:シークレット
+  - name: topic:スコープ
+  - name: topic:ハンドラ
+  - name: topic:パターン
+  - name: topic:ログ
+  - name: topic:例外
+  - name: topic:例外ハンドラ
     main: true
+  - name: action:参照
+  - name: action:検証
+  - name: action:登録
+  - name: action:認証
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 7
+last_reviewed: '2026-10-30'
+sources:
+  - title: "RFC 9457: Problem Details for HTTP APIs"
+    url: https://www.rfc-editor.org/rfc/rfc9457.html
 items:
   - id: auth-pattern-01
     group: 認証パターン
@@ -52,17 +68,24 @@ items:
 
       | 例外                      | HTTP                          |
       | ------------------------- | ----------------------------- |
-      | `ValidationError`         | 400                           |
+      | `InvalidInputError`       | 400                           |
       | `UnauthorizedError`       | 401                           |
       | `ForbiddenError`          | 403                           |
       | `NotFoundError`           | 404                           |
       | `ConflictError`           | 409                           |
-      | `LlmRateLimitError`       | 429（retry-after ヘッダ付与） |
       | `AppError`                | 500                           |
       | `IntegrationError`        | 502                           |
+      | `LlmRateLimitError`       | 503（Retry-After 付き）       |
+      | `LlmServerError`          | 503（Retry-After 付き）       |
       | `IntegrationTimeoutError` | 504                           |
 
       <!-- /table -->
+
+      例外から HTTP へのマップはこの表だけに置き、ほかのルールは参照だけにする。
+
+      Retry-After は、`retry_after` 属性を持つ `LlmRateLimitError` ではその値を返す。
+      属性を持たない `LlmServerError` では [llm/例外とリトライ](id:python-llm-exception-retry#stamina-retry-01) の `wait_max` の値を返す。
+      上流の 5xx からの回復を待つ間隔として、同じ例外へのリトライのバックオフの上限を使う。
   - id: exception-handler-02
     group: 例外ハンドラ
     name: 500 系はログに出す
@@ -72,9 +95,9 @@ items:
     group: 例外ハンドラ
     name: RFC 9457 形式のレスポンス
     body: |-
-      - レスポンスは [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html) の Problem Details（`application/problem+json`。`type` / `title` / `status` / `detail`、拡張メンバーに `code` / `request_id`）に統一する
+      - レスポンスは RFC 9457 の Problem Details（`application/problem+json`。`type` / `title` / `status` / `detail`、拡張メンバーに `code` / `request_id`）に統一する
   - id: exception-handler-04
     group: 例外ハンドラ
     name: RequestValidationError のカスタム
     body: |-
-      - Pydantic の `RequestValidationError`（デフォルト 422）もカスタム可
+      - Pydantic の `RequestValidationError`（422）も `register_exception_handlers(app)` で ProblemDetail に揃える

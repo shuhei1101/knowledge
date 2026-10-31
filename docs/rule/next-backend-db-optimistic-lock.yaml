@@ -2,14 +2,25 @@
 id: next-backend-db-optimistic-lock
 kind: rule
 name: Drizzle — 楽観的ロック
-description: updatedAt 比較による楽観的ロックの標準パターンと、API ごとの比較方法を定める。
+description: updatedAt 比較による楽観的ロックの標準パターンと、API ごとの比較方法を定め、同時更新を検知する更新処理を実装するときに読む。
 tags:
   - name: scope:next
-  - name: topic:backend
+  - name: topic:バックエンド
+  - name: topic:api
+  - name: topic:パターン
+  - name: topic:ロック
+  - name: topic:例外
+  - name: topic:文字列
+  - name: topic:楽観的ロック
     main: true
+  - name: tool:drizzle
+  - name: action:公開
+  - name: action:更新
+  - name: action:検知
+  - name: action:比較
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: drizzle-optimistic-lock-01

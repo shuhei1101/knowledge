@@ -2,13 +2,20 @@
 id: template-dev-command
 kind: template
 name: "テンプレート: 開発コマンド"
-description: 開発者が開発で使うコマンドの前提・実行の順序・コマンド・料金や副作用・確かめた記録を記載する開発コマンドのテンプレート。
+description: 開発者が開発で使うコマンドの前提・実行の順序・料金や副作用・確かめた記録を記載する開発コマンドの書式を定め、開発コマンドを作る・追加するときに読む。
 tags:
   - name: scope:テンプレート
+  - name: topic:コマンド
     main: true
+  - name: topic:テンプレート
+  - name: topic:副作用
+  - name: topic:料金
+  - name: action:実行
+  - name: action:記録
+  - name: action:開発
 status: current
 visibility: internal
-rev: 1
+rev: 3
 items:
   - id: overview
     name: 概要
@@ -45,7 +52,7 @@ items:
       title: 開発コマンド
       lead: 開発で使うコマンドの、分類ごとの前提・順序・コマンド・確かめた記録。
       prerequisites:
-      - Python 3.12 と uv
+      - Python 3.14 と uv
       categories:
       - name: 環境構築（クローン直後）
         commands: |-

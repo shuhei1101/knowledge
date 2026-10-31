@@ -2,18 +2,24 @@
 id: dev-content-location
 kind: rule
 name: コンテンツの置き場所
-description: リポジトリ直下の content/ に置く、コードではない正本と、置かない値を定める。
+description: リポジトリ直下の content/ に置く、コードではない正本と、置かない値を定め、プロンプトや素材の一覧などを置く場所を決めるときに読む。
 tags:
   - name: scope:dev
+  - name: topic:カタログ
+  - name: topic:コンテンツ
     main: true
+  - name: topic:コード
+  - name: topic:プロンプト
+  - name: topic:モデル
+  - name: topic:リポジトリ
+  - name: topic:単価
+  - name: topic:正本
+  - name: action:定義
+  - name: action:評価
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
-related:
-  - to: flowchart-config-location
-    type: requires
-    when: content/ に置かない値の置き場所を決めるとき
 items:
   - id: overview
     name: 概要

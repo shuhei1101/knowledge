@@ -2,22 +2,31 @@
 id: python-architecture-refactoring-criteria
 kind: rule
 name: リファクタ判断基準
-description: 共通化・抽象化・設定の外出し・関数の長さ・ファイル分割を行う基準を定める。
+description: 共通化・抽象化・設定の外出し・関数の長さ・ファイル分割を行う基準を定め、リファクタリングするかを判断するときに読む。
 tags:
   - name: scope:python
   - name: topic:architecture
+  - name: topic:dry
+  - name: topic:エイリアス
+  - name: topic:コスト
+  - name: topic:コード
+  - name: topic:トリガー
+  - name: topic:ファイル
+  - name: topic:プロトコル
+  - name: topic:型エイリアス
+  - name: topic:設定
+  - name: topic:重複
+  - name: topic:関数
+  - name: action:ジャンプ
+  - name: action:リファクタリング
     main: true
+  - name: action:分割
+  - name: action:判断
+  - name: action:抽象
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
-related:
-  - to: dev-content-location
-    type: requires
-    when: 設定をコードから外へ出す置き場所を決めるとき
-  - to: flowchart-config-location
-    type: requires
-    when: 設定をコードから外へ出す置き場所を決めるとき
 items:
   - id: dry-threshold-01
     group: DRY 化 — 何回書いたら共通化するか

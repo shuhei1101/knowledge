@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-core-component-style
+kind: rule
+name: コンポーネントの書き方
+description: React のコンポーネントの定義・props の型・ジェネリクス・fetch の呼び方の決まりを定め、React のコンポーネントを記載するときに読む。
+tags:
+  - name: scope:react
+  - name: topic:部品
+    main: true
+  - name: topic:props
+  - name: topic:アダプター
+  - name: topic:クエリ
+  - name: topic:ジェネリクス
+  - name: topic:定数
+  - name: topic:引数
+  - name: topic:書き方
+  - name: topic:関数
+  - name: tool:react
+  - name: action:代入
+  - name: action:分割
+  - name: action:取得
+  - name: action:定義
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      TypeScript 全般の書き方は [TypeScript のスタイル](id:typescript-core-style) に従う。
+  - id: component-01
+    group: コンポーネント
+    name: const とアロー関数で書く
+    body: |-
+      - コンポーネントは、`const TaskCard = (props: TaskCardProps) => ...` のように書く。
+  - id: component-02
+    group: コンポーネント
+    name: props の型
+    body: |-
+      - props の型は、コンポーネントと同じファイルに `type {Name}Props` で置く。
+        `React.FC` を使わない。
+  - id: component-03
+    group: コンポーネント
+    name: props は引数で分割代入する
+    body: |-
+      - props は、引数で分割代入して受ける。
+  - id: component-04
+    group: コンポーネント
+    name: tsx のジェネリクス
+    body: |-
+      - `.tsx` でジェネリクスのアロー関数を書くときは、`<T,>` と書く。
+  - id: component-05
+    group: コンポーネント
+    name: fetch は adapters と queries 経由
+    body: |-
+      - コンポーネントは、fetch・WebSocket を直接呼ばない。
+        `queries.ts` と `shared/adapters/` を経由して呼ぶ。

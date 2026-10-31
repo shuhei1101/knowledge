@@ -2,21 +2,41 @@
 id: claude-plugin
 kind: rule
 name: Claude プラグインルール
-description: Claude プラグインの分け方、テンプレート・フック・定数・設定ファイルの置き方、version と反映のタイミングを定める。
+description: Claude プラグインの分け方、テンプレート・フック・定数・設定ファイルの置き方、バージョンと反映のタイミングを定め、プラグインを作る・修正するときに読む。
 tags:
   - name: scope:claude
+  - name: tool:yaml
+  - name: topic:サンプル
+  - name: topic:スキル
+  - name: topic:ソース
+  - name: topic:テンプレート
+  - name: topic:バージョン
+  - name: topic:ファイル
+  - name: topic:フォルダ
+  - name: topic:フック
+  - name: topic:プラグイン
+  - name: topic:プロジェクト
+  - name: topic:リポジトリ
+  - name: topic:ルール
     main: true
+  - name: topic:定数
+  - name: topic:文書
+  - name: topic:構成
+  - name: topic:環境変数
+  - name: topic:設定
+  - name: tool:claude
+  - name: tool:mcp
+  - name: action:出力
+  - name: action:反映
+  - name: action:定義
+  - name: action:実行
+  - name: action:展開
+  - name: action:管理
+  - name: action:適用
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
-related:
-  - to: claude-mcp
-    type: requires
-    when: 文書の MCP のプラグインを作るとき、またはプラグインの設定を MCP サーバーへ渡すとき
-  - to: flowchart-config-location
-    type: requires
-    when: プラグインの設定ファイルの置き場所を決めるとき
+rev: 7
+last_reviewed: '2026-10-30'
 items:
   - id: plugin-division-01
     group: プラグインの分け方
@@ -27,7 +47,7 @@ items:
     group: プラグインの分け方
     name: 文書の MCP のプラグイン
     body: |-
-      - 文書の MCP のプラグインは [MCP サーバー作成ルール](id:claude-mcp) の `## 登録` に従う
+      - 各リポジトリは文書の MCP のプラグインを持たない（[MCP サーバー作成ルール](id:claude-mcp) の `## 登録`）
   - id: template-folder-01
     group: テンプレートフォルダ
     name: 共通の出力をテンプレート化
@@ -144,8 +164,8 @@ items:
     group: 設定ファイル
     name: 単純な値は env に置く
     body: |-
-      - 単純な値 1 つ（プロジェクトごとに変えない、キーと値で書ける値）だけを受け取るプラグインは、ユーザースコープの `env` で直接受け取ってよい（例: [MCP サーバー作成ルール](id:claude-mcp) の `## 登録` の `{リポジトリ}_PORT`）
-        - 受け取る値が増えたり、プロジェクトごとに変える値ができたりしたら、設定ファイルへ移す
+      - 単純な値 1 つ（プロジェクトごとに変えない、キーと値で書ける値）だけを受け取るプラグインは、ユーザースコープの `env` で直接受け取ってよい
+        - 受け取る値が増えたり、プロジェクトごとに変える値ができたりしたら、設定ファイルへ移す（`settings-file-08` に当たる値は移さない）
 
       ```json
       {
@@ -164,6 +184,19 @@ items:
           term_sources:
             - docs/terms.md
       ```
+  - id: settings-file-07
+    group: 設定ファイル
+    name: リポジトリの設定ファイルとバージョン
+    body: |-
+      - リポジトリと一緒に変わる設定の置き場所と、設定ファイルの `version`・移し替えは、[YAML](id:dev-yaml) の `## 設定ファイル` に従う。
+        `version` は設定ファイルのもので、プラグインの manifest には当てない（`no-version-01`）。
+  - id: settings-file-08
+    group: 設定ファイル
+    name: YAML を読めない仕組みも読む値は env に置く
+    body: |-
+      - 設定ファイルを持つプラグインでも、`.mcp.json` など YAML を読めない仕組みも読む値は、ユーザースコープの `env` に置く（例: [MCP サーバー作成ルール](id:claude-mcp) の `## 登録` の `{リポジトリ}_PORT`）
+        - サーバーと `.mcp.json` の両方が同じ `env` を読む
+        - 同じ値を設定ファイルと `env` の 2 か所に記載しない
   - id: no-version-01
     group: version を置かない規約
     name: version を置かない

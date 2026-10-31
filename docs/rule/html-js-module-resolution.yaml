@@ -2,19 +2,30 @@
 id: html-js-module-resolution
 kind: rule
 name: モジュール解決
-description: import maps でモジュールを解決する決まりを定める。
+description: import maps でモジュールを解決する決まりを定め、単体 HTML でスクリプトのモジュールを読み込むときに読む。
 tags:
   - name: scope:html
-  - name: topic:js
+  - name: tool:javascript
+  - name: topic:スクリプト
+  - name: tool:typescript
+  - name: topic:インポート
+  - name: topic:インポートマップ
+  - name: topic:モジュール
     main: true
+  - name: topic:文書
+  - name: tool:tsc
+  - name: action:先読み
+  - name: action:生成
+  - name: action:解決
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: overview
     name: 概要
     body: |-
+      対象: 単体 HTML
       import maps でモジュールを解決する（バンドルしない）。
   - id: module-resolution-01
     group: モジュール解決

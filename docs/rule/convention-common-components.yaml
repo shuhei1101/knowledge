@@ -2,18 +2,36 @@
 id: convention-common-components
 kind: rule
 name: 共通コンポーネント規約
-description: プロジェクト初期に画面全体で繰り返し使う共通コンポーネントを決めるための一覧と、決めるべき観点を定める。
+description: プロジェクト初期に画面全体で繰り返し使う共通コンポーネントを決めるための一覧と決めるべき観点を示し、新しいプロジェクトで共通コンポーネントを選ぶときに読む。
 tags:
   - name: scope:規約
+  - name: topic:部品
     main: true
+  - name: topic:ui
+  - name: topic:アクション
+  - name: topic:データ
+  - name: topic:ナビゲーション
+  - name: topic:プロジェクト
+  - name: topic:レイアウト
+  - name: topic:画面
+  - name: topic:規約
+  - name: topic:観点
+  - name: tool:shadcn-ui
+  - name: action:フィードバック
+  - name: action:入力
+  - name: action:参照
+  - name: action:採用
+  - name: action:表示
+  - name: action:転記
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: overview
     name: 概要
     body: |-
+      対象: 共通（単体 HTML・React）
       プロジェクト初期に「画面全体で繰り返し使うコンポーネント」を決めるための材料集。
       コンポーネント名と「決めるべき観点（What to decide）」だけを並べる。
 
@@ -146,3 +164,64 @@ items:
       | コードブロック | シンタックスハイライト、コピーボタン、行番号 |
       | リッチテキストエディタ | 採用有無、ツールバー構成 |
       | マップ | 採用有無、ピンの形状、クラスタリング |
+  - id: shadcn-mapping-01
+    group: shadcn/ui の部品名との対応
+    name: 対応表の使い方
+    body: |-
+      React では、一覧のコンポーネントを shadcn/ui の部品名で採用する。
+      対応する部品が無いもの（自前）は、`shared/components/` に作る。
+      「決めるべき観点」のうち、shadcn/ui の既定で決まるものは、プロジェクトで改めて決めない。
+  - id: shadcn-mapping-02
+    group: shadcn/ui の部品名との対応
+    name: shadcn/ui の部品名との対応表
+    body: |-
+      <!-- table: data -->
+
+      | コンポーネント | shadcn/ui の部品 |
+      | --- | --- |
+      | アプリシェル・サイドバー | Sidebar |
+      | トップバー・フッタ | 自前 |
+      | ドロワー | Sheet |
+      | パンくず | Breadcrumb |
+      | アコーディオン | Accordion |
+      | タブ | Tabs |
+      | ステップインジケータ | 自前 |
+      | ページネーション | Pagination |
+      | セグメントコントロール | Toggle Group |
+      | ツリービュー | 自前 |
+      | テキスト入力 | Input・Field |
+      | テキストエリア | Textarea |
+      | セレクト | Select |
+      | コンボボックス | Combobox |
+      | チェックボックス | Checkbox |
+      | ラジオ | Radio Group |
+      | トグル | Switch |
+      | 日付ピッカー | Calendar・Popover |
+      | 時刻ピッカー | 自前（`<input type="time">`） |
+      | スライダー | Slider |
+      | ファイルアップロード | 自前 |
+      | テーブル | Table（TanStack Table と組み合わせる） |
+      | カード | Card |
+      | リスト | Item |
+      | バッジ / タグ・チップ | Badge |
+      | アバター | Avatar |
+      | チャート | Chart |
+      | プログレス | Progress |
+      | アラート（バナー） | Alert |
+      | トースト | Sonner |
+      | モーダル | Dialog |
+      | ダイアログ | Alert Dialog |
+      | ボトムシート | Drawer |
+      | ポップオーバー | Popover |
+      | ツールチップ | Tooltip |
+      | スピナー | Spinner |
+      | スケルトン | Skeleton |
+      | エンプティステート | Empty |
+      | プライマリボタン・セカンダリボタン | Button（variant で分ける） |
+      | アイコンボタン | Button（`size="icon"`） |
+      | FAB | 自前 |
+      | メニュー（ケバブ） | Dropdown Menu |
+      | カレンダー | Calendar |
+      | コードブロック・リッチテキストエディタ・マップ | 自前 |
+
+      <!-- /table -->

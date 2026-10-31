@@ -2,16 +2,21 @@
 id: html-css-nesting
 kind: rule
 name: ネスト
-description: ネイティブ CSS Nesting を使う範囲を定める。
+description: ネイティブ CSS Nesting を使う範囲を定め、単体 HTML の CSS でネストを記載するときに読む。
 tags:
   - name: scope:html
-  - name: topic:css
+  - name: tool:css
+  - name: topic:ネスト
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
   - id: nesting-01
     group: ネスト
     name: ネイティブ Nesting を使う

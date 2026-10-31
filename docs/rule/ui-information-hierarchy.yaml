@@ -2,20 +2,39 @@
 id: ui-information-hierarchy
 kind: rule
 name: 情報の階層と見た目
-description: 画面の中で何を先に見せるかと、見た目の揃え方を定める。
+description: 画面の中で何を先に見せるかと、見た目の揃え方を定め、画面の情報の優先順位や見た目の一貫性を決めるときに読む。
 tags:
   - name: scope:ui
+  - name: topic:画面
+  - name: topic:階層
     main: true
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
+sources:
+  - id: I
+    title: pbakaus/impeccable
+    url: https://github.com/pbakaus/impeccable
+  - id: V
+    title: Vercel Web Interface Guidelines
+    url: https://vercel.com/design/guidelines
+  - id: R
+    title: raunofreiberg/interfaces
+    url: https://github.com/raunofreiberg/interfaces
+  - id: ID
+    title: Dammyjay93/interface-design
+    url: https://github.com/Dammyjay93/interface-design
+  - id: MW
+    title: GoogleChrome/modern-web-guidance
+    url: https://github.com/GoogleChrome/modern-web-guidance
 items:
   - id: overview
     name: 概要
     body: |-
+      対象: 共通（単体 HTML・React）
       画面の中で何を先に見せるかと、見た目の揃え方。
-      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、R = raunofreiberg/interfaces、ID = interface-design、MW = modern-web-guidance（リンクは `## 出典`）。
+      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、R = raunofreiberg/interfaces、ID = interface-design、MW = modern-web-guidance（リンクはメタデータの `sources`）。
   - id: information-hierarchy-01
     group: 情報の階層
     name: 情報の階層の決まり
@@ -57,28 +76,3 @@ items:
       | 次の型を使わない: 見出しの上の小さな英字ラベル、左端だけの太い色線、文字のグラデーション、光る影、意味のない点滅、順序の無いところの 01・02・03、同じ大きさの箱を並べただけの構成 | I |
 
       <!-- /table -->
-  - id: sources-01
-    group: 出典
-    name: "出典 I: impeccable"
-    body: |-
-      - I: [pbakaus/impeccable](https://github.com/pbakaus/impeccable)
-  - id: sources-02
-    group: 出典
-    name: "出典 V: Web Interface Guidelines"
-    body: |-
-      - V: [Web Interface Guidelines](https://vercel.com/design/guidelines)
-  - id: sources-03
-    group: 出典
-    name: "出典 R: interfaces"
-    body: |-
-      - R: [raunofreiberg/interfaces](https://github.com/raunofreiberg/interfaces)
-  - id: sources-04
-    group: 出典
-    name: "出典 ID: interface-design"
-    body: |-
-      - ID: [Dammyjay93/interface-design](https://github.com/Dammyjay93/interface-design)
-  - id: sources-05
-    group: 出典
-    name: "出典 MW: modern-web-guidance"
-    body: |-
-      - MW: [GoogleChrome/modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance)

@@ -2,20 +2,32 @@
 id: python-concurrency-async
 kind: rule
 name: asyncio 規約
-description: asyncio の API の使い分けと、キャンセル・ストリーミング・キュー・排他・CPU バウンド処理の扱いを定める。
+description: asyncio の API の使い分けと、キャンセル・ストリーミング・キュー・排他・CPU バウンド処理の扱いを定め、非同期処理を実装するときに読む。
 tags:
   - name: scope:python
   - name: topic:concurrency
+  - name: topic:api
+  - name: topic:コンシューマー
+  - name: topic:ジェネレーター
+  - name: topic:ストリーミング
+  - name: topic:プロデューサー
+  - name: topic:規約
+  - name: topic:非同期
+  - name: tool:asyncio
     main: true
+  - name: action:キャンセル
+  - name: action:制限
+  - name: action:実行
+  - name: action:排他
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 4
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
     body: |-
-      Python 3.12+ の asyncio 機能を前提に書く。
+      Python 3.14+ の asyncio 機能を前提に書く。
   - id: asyncio-rules-01
     group: asyncio 規約
     name: asyncio の API 表

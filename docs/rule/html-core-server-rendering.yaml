@@ -2,19 +2,34 @@
 id: html-core-server-rendering
 kind: rule
 name: サーバー描画
-description: サーバーがテンプレートから HTML を組み立てる画面の決まりを定める。
+description: サーバーがテンプレートから HTML を組み立てる画面の決まりを定め、サーバー描画の画面を実装するときに読む。
 tags:
   - name: scope:html
-  - name: topic:core
+  - name: tool:python
+  - name: topic:url
+  - name: topic:エラー
+  - name: topic:サーバー
     main: true
+  - name: topic:スクリプト
+  - name: topic:テンプレート
+  - name: topic:マクロ
+  - name: topic:環境
+  - name: topic:画面
+  - name: action:エスケープ
+  - name: action:定義
+  - name: action:描画
+  - name: action:組み立て
+  - name: action:継承
+  - name: action:計算
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
 items:
   - id: overview
     name: 概要
     body: |-
+      対象: 単体 HTML
       サーバーがテンプレートから HTML を組み立てる画面の決まり。
       ツール名は候補で、前提にしない。
   - id: server-rendering-01

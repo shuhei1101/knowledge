@@ -2,22 +2,21 @@
 id: ui-site-genre
 kind: rule
 name: サイトのジャンル
-description: サイトのジャンルごとの雰囲気の例を示す。
+description: サイトのジャンルごとの雰囲気の例を示し、デザインの方向を探って候補を出し分けるときに読む。
 tags:
   - name: scope:ui
+  - name: topic:サイト
     main: true
+  - name: topic:デザイン
 status: current
 visibility: internal
-rev: 1
+rev: 4
 last_reviewed: '2026-10-24'
-related:
-  - to: convention-design-style
-    type: references
-    when: 業務系のデザインスタイルを選ぶとき
 items:
   - id: overview
     name: 概要
     body: |-
+      対象: 共通（単体 HTML・React）
       サイトのジャンルごとの雰囲気の例。
 
       方向を探るための例で、採用を決めるものではない。

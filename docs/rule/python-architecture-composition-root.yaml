@@ -2,15 +2,30 @@
 id: python-architecture-composition-root
 kind: rule
 name: composition root — 関数の配線
-description: main.py で関数の依存を配線する composition root の基本パターンと、FastAPI・CLI・テストでの扱いを定める。
+description: main.py で関数の依存を配線する composition root の基本パターンと、FastAPI・CLI・テストでの扱いを定め、依存の配線を実装する・テストで差し替えるときに読む。
 tags:
   - name: scope:python
   - name: topic:architecture
+  - name: topic:cli
+  - name: topic:dataclass
+  - name: tool:fastapi
+  - name: topic:testing
+  - name: topic:クラス
+  - name: topic:コンポジションルート
     main: true
+  - name: topic:ハンドラ
+  - name: topic:パターン
+  - name: topic:ライブラリ
+  - name: topic:関数
+  - name: action:依存
+  - name: action:分割
+  - name: action:差し替え
+  - name: action:組み立て
+  - name: action:配線
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-10-30'
 items:
   - id: overview
     name: 概要
@@ -48,7 +63,7 @@ items:
     group: FastAPI との組み合わせ
     name: FastAPI との組み合わせ
     body: |-
-      `lifespan` で `app.state.handlers = build_handlers(settings)` をセットする（[fastapi/アプリケーション](id:python-fastapi-application)）。
+      `build_fastapi(handlers: Handlers | None = None)` が `Settings()` を 1 度だけ作り、`handlers` が `None` のときだけ `build_handlers(settings)` で配線する（[fastapi/アプリケーション](id:python-fastapi-application)）。
   - id: cli-combination-01
     group: CLI との組み合わせ
     name: CLI との組み合わせ
@@ -58,7 +73,7 @@ items:
     group: テストでの差し替え
     name: テストでの差し替え
     body: |-
-      `build_test_handlers()` を conftest に作り、mock 関数を partial で注入。build 系は外部依存をすべて引数で受けるテスト前提の設計にする。
+      `build_test_handlers()` を conftest に作り、mock 関数を partial で注入し、`build_fastapi(handlers=build_test_handlers())` で渡す。build 系は外部依存をすべて引数で受けるテスト前提の設計にする。
   - id: library-classes-01
     group: ライブラリ標準クラスはそのまま使う
     name: ライブラリ標準クラスはそのまま

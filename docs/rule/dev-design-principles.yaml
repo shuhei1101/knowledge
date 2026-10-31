@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-design-principles
+kind: rule
+name: 設計原則
+description: コードを記載するときの共通の設計原則（抽象化の量・共通化の回数・複雑さの検査・関数の大きさ・触った箇所の掃除）を定め、抽象化や共通化を判断するときに読む。
+tags:
+  - name: scope:dev
+  - name: topic:lint
+  - name: topic:yagni
+  - name: topic:アダプター
+  - name: topic:コード
+  - name: topic:ボーイスカウトルール
+  - name: topic:境界
+  - name: topic:設計原則
+    main: true
+  - name: topic:重複
+  - name: topic:関数
+  - name: action:クリーンアップ
+  - name: action:抽象
+  - name: action:検査
+  - name: action:設計
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      Python・TypeScript のコードを書くときに守る設計原則。
+      対象は `.py`・`.ts`・`.tsx`。
+  - id: abstraction-01
+    group: 抽象化
+    name: YAGNI を既定にする
+    body: |-
+      - YAGNI を既定にする。
+        内部の処理は、実装が 2 個になるまで抽象化しない。
+  - id: abstraction-02
+    group: 抽象化
+    name: 外部との境界だけ最初からアダプターにする
+    body: |-
+      - 外部との境界（HTTP・SDK・DB・storage・時刻・ID の生成）だけ、最初からアダプターにする。
+        書き方は [デザインパターン](id:dev-design-patterns) に従う。
+  - id: dedup-01
+    group: 共通化
+    name: 知識は 1 回目から共通化する
+    body: |-
+      - 知識（業務ルール・定数・スキーマ・API の型）は、1 回目から 1 か所にまとめる。
+  - id: dedup-02
+    group: 共通化
+    name: コードの見た目の重複は 3 回目で共通化する
+    body: |-
+      - コードの見た目の重複は、3 回目で共通化する。
+        共通化した関数に分岐用の引数が増えたら、インラインに戻す。
+  - id: complexity-01
+    group: 複雑さ
+    name: 複雑さは lint で検査する
+    body: |-
+      - 複雑さは lint で検査する。
+        新しいリポジトリは error、既存の Python のリポジトリは warn から始める。
+  - id: complexity-02
+    group: 複雑さ
+    name: 関数の大きさの基準
+    body: |-
+      - 行数の基準は置かない。
+        関数の大きさは、SLAP（1 関数の中の抽象度をそろえる）と cognitive complexity で見る。
+  - id: complexity-03
+    group: 複雑さ
+    name: cognitive complexity を測る道具
+    body: |-
+      - Python は complexipy で測る。
+        `[tool.complexipy]` の `max-complexity-allowed` に上限を置き、超えると終了コード 1 で終わる。
+      - TypeScript は `sonarjs/cognitive-complexity` で測る。
+      - ruff の `C901` は McCabe の循環的複雑度で、cognitive complexity ではないため代わりにしない。
+        ネストの深い関数と平らな分岐の関数で、`C901` は同じ値を返し、complexipy は差を返す。
+  - id: scout-01
+    group: 掃除
+    name: ボーイスカウトルールは触った関数の中だけ
+    body: |-
+      - 触った関数の中だけ、デッドコード・命名・ネストを掃除する。
+        周辺のリファクタリングは別の commit にする。
