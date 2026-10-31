@@ -5,10 +5,10 @@ Pages の配信元の切り替え:
   時期: master へ入った後
   回数: 1 回限り
   可逆: true
-  疎通確認: null
-  実行: null
-  確認: null
-  切り戻し: null
+  疎通確認: Pages の配信元の切り替え/疎通確認.sh
+  実行: Pages の配信元の切り替え/実行.sh
+  確認: Pages の配信元の切り替え/確認.sh
+  切り戻し: Pages の配信元の切り替え/切り戻し.sh
   失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
   確認方法: "`gh api repos/shuhei1101/knowledge/pages` の build_type が workflow で、https://shuhei1101.github.io/knowledge/ が 200 を返し、公開の文書の YAML のパス（docs/guide/ の YAML）を Pages の URL に付けて開くと 404 を返す"
   状態: "-"
