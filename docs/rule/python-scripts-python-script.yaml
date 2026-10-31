@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-scripts-python-script
+kind: rule
+name: 単一ファイルスクリプト
+description: pyproject.toml を作らない単一ファイルの Python スクリプトの配置と必須要素を定め、簡易な Python スクリプトを作るときに読む。
+tags:
+  - name: scope:python
+  - name: topic:スクリプト
+    main: true
+  - name: topic:docstring
+  - name: topic:pyproject
+  - name: topic:コメント
+  - name: topic:コード
+  - name: topic:ファイル
+  - name: topic:フォルダ
+  - name: topic:メッセージ
+  - name: topic:モジュール
+  - name: topic:例外
+  - name: topic:引数
+  - name: topic:日本語
+  - name: topic:要素
+  - name: tool:argparse
+  - name: action:パース
+  - name: action:出力
+  - name: action:終了
+  - name: action:配置
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      pyproject.toml を作らない簡易スクリプト（自動化・コンバート・レポート生成等）。パッケージ化が必要になったら py-project に昇格。
+  - id: layout-01
+    group: 配置
+    name: scripts サブフォルダに置く
+    body: |-
+      ルート直下ではなく `scripts/`（or `tools/`）サブフォルダ。共通ヘルパーは `_common.py`。
+  - id: required-elements-01
+    group: 必須要素
+    name: モジュール docstring
+    body: |-
+      1. モジュール docstring: 1 行目で何をするか + 使い方
+         - Usage はインデントなしでコピペ実行可能なコマンド、その上に `#` で説明、任意引数は `[角括弧]`
+  - id: required-elements-03
+    group: 必須要素
+    name: 引数は argparse でパース
+    body: |-
+      3. 引数は argparse でパース（パス等の即値ハードコード禁止）
+  - id: required-elements-04
+    group: 必須要素
+    name: main は終了コードを返す
+    body: |-
+      4. `main() -> int` で終了コードを返し、`if __name__ == "__main__": sys.exit(main())`
+  - id: required-elements-05
+    group: 必須要素
+    name: トップレベルに処理を記載しない
+    body: |-
+      5. トップレベルに処理を書かない（import しただけで実行されてしまう）
+  - id: required-elements-06
+    group: 必須要素
+    name: 出力は print
+    body: |-
+      6. 出力は `print`（エラーは `file=sys.stderr`）— logging モジュールは使わない
+         - ruff の `T20`（print の禁止）は `**/{tool,tools,script,scripts}/*.py` の `per-file-ignores` で外す（[pyproject.toml 標準テンプレート](id:python-packaging-pyproject)）
+  - id: required-elements-07
+    group: 必須要素
+    name: 例外と終了コード
+    body: |-
+      7. 想定例外は捕まえて専用の終了コード、未捕捉は `traceback.print_exc()`
+  - id: required-elements-08
+    group: 必須要素
+    name: 日本語のコメントとメッセージ
+    body: |-
+      8. コメント・print メッセージは日本語

@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-shared-logger-tag
+kind: rule
+name: Logger の component tag
+description: logger.create に渡す component tag を {layer}:{name} の形式で命名する決まりを定め、ロガーを作って tag を付けるときに読む。
+tags:
+  - name: scope:react
+  - name: topic:部品
+  - name: topic:naming
+  - name: topic:タグ
+    main: true
+  - name: topic:レイヤー
+  - name: topic:ロガー
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      `logger.create("tag")` の tag は、必ず `{layer}:{name}` の形式にする。
+      集約サービスで `component` のキーによるフィルタを統一する。
+  - id: logger-tag-01
+    group: Logger
+    name: tag の命名表
+    body: |-
+      <!-- table: data -->
+
+      | Layer | Format | Example |
+      | --- | --- | --- |
+      | Route | `route:{path}` | `route:tasks` |
+      | Screen | `screen:{Name}` | `screen:TaskEditScreen` |
+      | Hook | `hook:{hookName}` | `hook:useTaskForm` |
+      | Hook（共通） | `hook:shared:{name}` | `hook:shared:useConfirmDialog` |
+      | Adapter | `adapter:{name}` | `adapter:api-client` |
+      | Component | `component:{Name}` | `component:TaskCard` |
+      | Error boundary | `error-boundary:{path}` | `error-boundary:tasks` |
+      | Auth | `auth:{event}` | `auth:login` |
+      | Provider | `provider:{name}` | `provider:QueryProvider` |
+
+      <!-- /table -->

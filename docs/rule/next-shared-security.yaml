@@ -1,0 +1,109 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-shared-security
+kind: rule
+name: Security
+description: Next.js のセキュリティヘッダ・CSRF・XSS・SQL Injection・Open Redirect・認証セッション・その他の対策を定め、Next.js のセキュリティ対策を実装・確認するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:api
+  - name: topic:cookie
+  - name: topic:csrf
+  - name: tool:sql
+  - name: topic:xss
+  - name: topic:アクション
+  - name: topic:サーバー
+  - name: topic:サーバーアクション
+  - name: topic:シークレット
+  - name: topic:セキュリティ
+    main: true
+  - name: topic:セッション
+  - name: topic:トークン
+  - name: topic:ファイル
+  - name: topic:フィールド
+  - name: topic:フォーム
+  - name: topic:ヘッダー
+  - name: topic:リダイレクト
+  - name: topic:ルート
+  - name: topic:属性
+  - name: topic:期限
+  - name: tool:next-js
+  - name: tool:zod
+  - name: action:アップロード
+  - name: action:ログアウト
+  - name: action:付与
+  - name: action:入力
+  - name: action:制限
+  - name: action:検証
+  - name: action:注入
+  - name: action:認証
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: security-header-01
+    group: セキュリティヘッダ
+    name: セキュリティヘッダの付与
+    body: |-
+      `next.config.ts` の `headers()` で全レスポンスに付与:
+      X-Frame-Options (SAMEORIGIN) / X-Content-Type-Options (nosniff) / Referrer-Policy (strict-origin-when-cross-origin) / Strict-Transport-Security / Permissions-Policy。CSP は要件に応じて nonce 方式（proxy.ts で nonce 生成 → ヘッダに付与）。nonce 方式は全ページが動的描画になり Cache Components と併用できない。Cache Components を使う場合は `headers()` で nonce なしの CSP を付ける。
+  - id: csrf-01
+    group: CSRF
+    name: Server Actions の CSRF 対策
+    body: |-
+      - Server Actions は同一 origin チェック自動（追加対策不要）
+  - id: csrf-02
+    group: CSRF
+    name: route.ts の CSRF 対策
+    body: |-
+      - route.ts の mutation は Origin ヘッダ検証、または SameSite=strict cookie で防御
+  - id: sql-injection-01
+    group: SQL Injection
+    name: sql.raw に値を渡さない
+    body: |-
+      - `sql.raw` に文字列結合した値を渡さない
+  - id: open-redirect-01
+    group: Open Redirect
+    name: redirect に外部入力を渡さない
+    body: |-
+      - `redirect()` に URL クエリ等の外部入力を直接渡さない
+  - id: open-redirect-02
+    group: Open Redirect
+    name: リダイレクト先の検証
+    body: |-
+      - `/` 始まりかつ `//` 始まりでないことを検証してから redirect
+  - id: auth-session-01
+    group: 認証セッション
+    name: セッション cookie の属性
+    body: |-
+      - httpOnly + Secure + SameSite=strict cookie
+  - id: auth-session-02
+    group: 認証セッション
+    name: トークンの有効期限
+    body: |-
+      - トークンは長いランダム文字列、30 日 + sliding renewal
+  - id: auth-session-03
+    group: 認証セッション
+    name: ログアウト時の無効化
+    body: |-
+      - ログアウト時にサーバー側 token も無効化
+  - id: others-01
+    group: その他
+    name: 外部入力は Zod で許可フィールドのみ
+    body: |-
+      - 全外部入力（body / action input / URL クエリ）を許可フィールドだけ Zod で parse してから DB に渡す
+  - id: others-02
+    group: その他
+    name: secret の置き場所
+    body: |-
+      - secret は env / Vercel ダッシュボードのみ。`NEXT_PUBLIC_` を付けない。定期ローテーション
+  - id: others-04
+    group: その他
+    name: 認証 API とフォームの対策
+    body: |-
+      - 認証 API には厳しい rate limit、フォーム POST には CAPTCHA
+  - id: others-05
+    group: その他
+    name: ファイルアップロードの制限
+    body: |-
+      - File upload はサイズ制限 + MIME ホワイトリスト + 別ドメイン保存

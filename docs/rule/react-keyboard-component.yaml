@@ -1,0 +1,116 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-keyboard-component
+kind: rule
+name: 部品・表・フォーカスのキー操作
+description: React の部品・表・ルート遷移のフォーカスのキー操作の実装と、キー操作のテストの書き方を定め、React の部品にキーボード操作を実装・テストするときに読む。
+tags:
+  - name: scope:react
+  - name: topic:フロントエンド
+  - name: topic:e2e
+  - name: topic:testing
+  - name: topic:ui
+  - name: topic:キー
+  - name: topic:キーボード
+  - name: topic:キー操作
+    main: true
+  - name: topic:グリッド
+  - name: topic:シナリオ
+  - name: topic:スクロール
+  - name: topic:タブ
+  - name: topic:フォーカス
+  - name: topic:フォーカストラップ
+  - name: topic:ルート
+  - name: topic:ロール
+  - name: topic:仮想スクロール
+  - name: topic:単体テスト
+  - name: topic:見出し
+  - name: topic:部品
+  - name: tool:axe
+  - name: tool:react
+  - name: tool:user-event
+  - name: action:ラップ
+  - name: action:実装
+  - name: action:操作
+  - name: action:移動
+  - name: action:遷移
+status: current
+visibility: internal
+rev: 6
+last_reviewed: '2026-10-30'
+related:
+  - to: react-keyboard-shortcut
+    type: references
+    when: ショートカットを実装するとき
+  - to: react-devtools-lint-format
+    type: references
+    when: アクセシビリティの lint を設定するとき
+sources:
+  - title: "APG: Keyboard Interface"
+    url: https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/
+  - title: "APG: Dialog (Modal)"
+    url: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/
+  - title: "Base UI: Dialog"
+    url: https://base-ui.com/react/components/dialog
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      スタックによらないキー操作の決まりは、規約『[キーボード操作](id:ui-keyboard)』に従い、この規約には書かない。
+  - id: base-ui-01
+    group: 部品
+    name: Base UI の部品はそのまま使う
+    body: |-
+      - Base UI にある部品（Menu・Tabs・Toolbar・Select・Combobox・Dialog・Drawer）は、Base UI のキー操作をそのまま使い、上書きしない。
+  - id: base-ui-02
+    group: 部品
+    name: フォーカストラップを自作しない
+    body: |-
+      - モーダルは Base UI の `Dialog` を使い、フォーカストラップを自作しない。
+        開いたときのフォーカス先は `initialFocus`、閉じたときの戻し先は `finalFocus` で指定する。
+  - id: custom-01
+    group: 部品
+    name: 自作の部品は roving tabindex
+    body: |-
+      - Base UI に無い部品（ツリー・グリッド）を自作するときは、roving tabindex を既定にし、自作のフックと `tabbable` で作る。
+        `aria-activedescendant` は、入力欄にフォーカスを残すとき（コンボボックス・コマンドパレット）だけ使う。
+  - id: virtual-01
+    group: 部品
+    name: 仮想スクロールではフォーカス中の項目を外さない
+    body: |-
+      - 仮想スクロールでは、フォーカス中の項目を描画範囲から外さない（TanStack Virtual の `rangeExtractor`）。
+  - id: table-01
+    group: 表
+    name: 表は role="grid" でセル単位に移動する
+    body: |-
+      - 表（TanStack Table）は `role="grid"` にして、セル単位で移動する（APG の data grid）。
+  - id: route-01
+    group: ルート遷移
+    name: ルートが変わったら h1 にフォーカスを移す
+    body: |-
+      - ルートが変わったら、新しい画面の `h1`（`tabindex="-1"`）へフォーカスを移す。
+        最初の読み込みでは移さない。
+        TanStack Router には組み込みの仕組みが無いので、ルートのレイアウトで行う。
+  - id: test-01
+    group: テスト
+    name: 単体テストは user-event を使う
+    body: |-
+      - 単体テストは `@testing-library/user-event` を使い、`fireEvent.keyDown` を使わない（`user.tab()`・`user.keyboard('{Escape}')`）。
+        フォーカスは `toHaveFocus()` で確かめる。
+  - id: test-02
+    group: テスト
+    name: E2E の確かめ方
+    body: |-
+      - E2E は `locator.press()` と `ControlOrMeta+K` で操作し、フォーカスは `toBeFocused()` で確かめる。
+        ダイアログは、「開く → Tab が中で回る → Escape → 開いた元に戻る」を必ず確かめる。
+  - id: test-03
+    group: テスト
+    name: Tab だけで完了するシナリオ
+    body: |-
+      - 主要な画面に、Tab だけで主な操作を完了するシナリオを 1 本置く。
+  - id: test-04
+    group: テスト
+    name: axe はキー操作の確認の代わりにしない
+    body: |-
+      - axe（`@axe-core/playwright`・Storybook の `addon-a11y`）は、キーボードで操作できるかまでは検出しない。
+        E2E のキー操作の確認と、Tab だけで完了するシナリオの代わりにしない。

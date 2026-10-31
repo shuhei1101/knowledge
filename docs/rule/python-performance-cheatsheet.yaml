@@ -1,0 +1,104 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-performance-cheatsheet
+kind: rule
+name: パフォーマンスチートシート
+description: 最適化の前に計測する原則と、計測ツールの使い分け、ホットパスのチェックリストを定め、Python のコードの性能を改善するときに読む。
+tags:
+  - name: scope:python
+  - name: topic:performance
+    main: true
+  - name: topic:concurrency
+  - name: tool:rust
+  - name: topic:アルゴリズム
+  - name: topic:コード
+  - name: topic:チェックリスト
+  - name: topic:ツール
+  - name: topic:データ
+  - name: topic:ホットパス
+  - name: topic:数値
+  - name: topic:文字列
+  - name: topic:構造
+  - name: topic:配列
+  - name: tool:cython
+  - name: tool:numba
+  - name: tool:numpy
+  - name: tool:pandas
+  - name: action:計測
+  - name: action:選択
+  - name: action:除去
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      最適化に着手する前に計測する。「推測するな、計測せよ」。
+  - id: profiling-tools-01
+    group: 計測ツール早見表
+    name: 計測ツールの早見表
+    body: |-
+      <!-- table: data -->
+
+      | ツール                           | 用途                                         | 備考                    |
+      | -------------------------------- | -------------------------------------------- | ----------------------- |
+      | `time.perf_counter()` / `timeit` | 単発 / マイクロベンチ                        | 手書き計測              |
+      | `cProfile` + `snakeviz`          | 全体プロファイル（開発中）                   | 標準ライブラリ + 可視化 |
+      | `line_profiler`                  | 行単位（`@profile` + `kernprof -lv`）        | 特定関数を細かく        |
+      | `py-spy`                         | 本番 attach（`top` / `record -o flame.svg`） | 低オーバーヘッド        |
+      | `scalene`                        | CPU + メモリ + GPU を行単位                  | HTML レポート           |
+      | `memray`                         | メモリプロファイル                           | リーク調査              |
+      | `pytest-benchmark`               | 回帰ベンチ                                   | CI に組み込み可         |
+
+      <!-- /table -->
+  - id: profiling-tools-02
+    group: 計測ツール早見表
+    name: 計測ツールの使い分け
+    body: |-
+      使い分け: どこが遅いか不明 → cProfile（開発）/ py-spy（本番）。特定関数 → line_profiler / scalene。メモリ → memray。cProfile はオーバーヘッドが大きいので本番では使わない。
+  - id: hot-path-checklist-01
+    group: ホットパスのチェックリスト（試す順）
+    name: アルゴリズム改善
+    body: |-
+      1. アルゴリズム改善（O(n²) → O(n log n)、最大効果）
+  - id: hot-path-checklist-02
+    group: ホットパスのチェックリスト（試す順）
+    name: 不要処理の除去
+    body: |-
+      2. 不要処理の除去（ループ内の関数呼び出しを外へ）
+  - id: hot-path-checklist-03
+    group: ホットパスのチェックリスト（試す順）
+    name: データ構造の選択
+    body: |-
+      3. データ構造（`in` 判定は list → set / dict、連続アクセスは deque）
+  - id: hot-path-checklist-04
+    group: ホットパスのチェックリスト（試す順）
+    name: メモ化
+    body: |-
+      4. `@functools.cache` / `@cached_property` でメモ化
+  - id: hot-path-checklist-05
+    group: ホットパスのチェックリスト（試す順）
+    name: 文字列の連結
+    body: |-
+      5. 文字列はループ `+=` でなく `"".join(parts)`
+  - id: hot-path-checklist-06
+    group: ホットパスのチェックリスト（試す順）
+    name: extend と comprehension
+    body: |-
+      6. `list.extend` > append ループ、comprehension > map > for
+  - id: hot-path-checklist-07
+    group: ホットパスのチェックリスト（試す順）
+    name: 数値配列は NumPy / pandas
+    body: |-
+      7. 数値配列は NumPy / pandas
+  - id: hot-path-checklist-08
+    group: ホットパスのチェックリスト（試す順）
+    name: 並列化
+    body: |-
+      8. 並列化（[concurrency/並列処理](id:python-concurrency-parallel)）
+  - id: hot-path-checklist-09
+    group: ホットパスのチェックリスト（試す順）
+    name: Cython・numba・Rust は最終手段
+    body: |-
+      9. Cython / numba / Rust 拡張は最終手段

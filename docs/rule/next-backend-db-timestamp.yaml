@@ -1,0 +1,88 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-db-timestamp
+kind: rule
+name: drizzle/schema.ts — 共通カラム（timestamps / auditFields）
+description: 全テーブル共通の timestamps と機密データ向けの auditFields の定義と、テーブル区分ごとの使い方を定め、テーブルに作成・更新日時の列を付けるときに読む。
+tags:
+  - name: scope:next
+  - name: topic:バックエンド
+  - name: topic:カラム
+  - name: topic:スキーマ
+  - name: topic:タイムスタンプ
+    main: true
+  - name: topic:テーブル
+  - name: topic:データ
+  - name: topic:マスター
+  - name: topic:モード
+  - name: topic:文字列
+  - name: topic:日時
+  - name: topic:機密
+  - name: tool:drizzle
+  - name: action:付与
+  - name: action:定義
+  - name: action:更新
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: drizzle-schema-common-columns-01
+    group: drizzle/schema.ts — 共通カラム（timestamps / auditFields）
+    name: timestamps と auditFields
+    body: |-
+      - 全テーブル共通の `createdAt` / `updatedAt` と、機密データ向けの `createdBy` / `updatedBy`。
+  - id: drizzle-schema-common-columns-02
+    group: drizzle/schema.ts — 共通カラム（timestamps / auditFields）
+    name: timestamp は string モード
+    body: |-
+      - `timestamp` は `mode: "string"` で持つ。値は DB サーバーのタイムゾーンの Postgres 形式の文字列で返り、`toISOString()` の形式とは限らない
+
+      ```ts
+      // drizzle/_helpers.ts（または schema.ts 冒頭）
+      import { timestamp, text } from "drizzle-orm/pg-core"
+
+      /** 作成/更新日時 — 全テーブル共通 */
+      export const timestamps = {
+        /** 作成日時 */
+        createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+          .notNull()
+          .defaultNow(),
+        /** 更新日時 */
+        updatedAt: timestamp("updated_at", { withTimezone: true, mode: "string" })
+          .notNull()
+          .defaultNow(),
+      }
+
+      /** 監査カラム — 機密データテーブルに付与 */
+      export const auditFields = {
+        /** 作成者 user ID */
+        createdBy: text("created_by"),    // user.id が text 型なので text
+        /** 最終更新者 user ID */
+        updatedBy: text("updated_by"),
+      }
+      ```
+  - id: drizzle-schema-common-columns-03
+    group: drizzle/schema.ts — 共通カラム（timestamps / auditFields）
+    name: 使用時の区分
+    body: |-
+      使用時:
+  - id: drizzle-schema-common-columns-04
+    group: drizzle/schema.ts — 共通カラム（timestamps / auditFields）
+    name: マスター系は不変なら不要
+    body: |-
+      - マスター系 — 不変なら `timestamps` なしで OK
+  - id: drizzle-schema-common-columns-05
+    group: drizzle/schema.ts — 共通カラム（timestamps / auditFields）
+    name: データ系は timestamps 必須
+    body: |-
+      - データ系 — `...timestamps` 必須
+  - id: drizzle-schema-common-columns-06
+    group: drizzle/schema.ts — 共通カラム（timestamps / auditFields）
+    name: 機密データ系は auditFields も付与
+    body: |-
+      - 機密データ系 — `...timestamps` に加えて `...auditFields` も付与
+  - id: drizzle-schema-common-columns-07
+    group: drizzle/schema.ts — 共通カラム（timestamps / auditFields）
+    name: updatedAt は明示更新
+    body: |-
+      `updatedAt` はアプリケーション側で明示更新する（書き方は [DB楽観的ロック](id:next-backend-db-optimistic-lock)）。

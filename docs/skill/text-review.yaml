@@ -1,0 +1,138 @@
+# yaml-language-server: $schema=../../schemas/skill.schema.yaml
+id: text-review
+kind: skill
+name: 文章を点検して修正する
+description: 範囲のファイルを文章の規約に合わせて点検して修正し、結果をサマリーで返すスキルの入力・手順・分岐を記載し、スキルの動作を確かめる・変更するときに読む。
+tags:
+  - name: scope:スキル
+  - name: topic:サマリー
+  - name: topic:スキル
+  - name: topic:ファイル
+  - name: topic:手順
+  - name: topic:文章
+    main: true
+  - name: action:修正
+  - name: action:入力
+  - name: action:分岐
+  - name: action:点検
+status: current
+visibility: internal
+rev: 3
+related:
+  - to: convention-writing-style
+    type: requires
+    when: 文章を点検するとき
+  - to: convention-keep-existing-text
+    type: requires
+    when: 反する文を修正するとき
+  - to: convention-issue-presentation
+    type: requires
+    when: 論点の表を点検するとき
+  - to: doc-parts
+    type: requires
+    when: ドキュメントの部品を点検するとき
+  - to: claude-rule-writing
+    type: requires
+    when: 範囲に `.claude/rules/` のファイルがあるとき
+skill: knowledge プラグインの skills/text-review/SKILL.md
+issue: 87
+primary_actor: 利用者
+trigger: 利用者がスキルを起動する
+arguments:
+  - name: 範囲
+    description: ファイルのパス・フォルダのパス（配下をすべて）・Git のコミットか範囲（変わったファイル）のどれでもよい
+preconditions:
+  - knowledge の規約を dev-docs かファイルで読める
+externals:
+  - name: 利用者
+    exchange: 範囲を受け取り、サマリーを返す
+  - name: Git
+    exchange: コミットで変わったファイルの一覧
+    when_absent: コミットを渡されなければ呼ばない
+  - name: dev-docs
+    exchange: 文章に関わる規約の本文（ID で引く）
+    when_absent: knowledge の規約のファイルを直接読む
+  - name: 範囲のファイル
+    exchange: 本文を読み、修正した本文を記載する
+flow: |-
+  <!-- html -->
+
+  ```html
+  <mdmark-flow>
+  {
+    "title": "文章を点検して修正する",
+    "scope": "起動からサマリーまで",
+    "updated": "2026-10-29",
+    "width": 560,
+    "height": 730,
+    "nodes": [
+      { "id": "ask", "kind": "external", "x": 170, "y": 10, "w": 220, "h": 56, "name": "スキルを起動", "sub": "範囲を渡す" },
+      { "id": "range", "kind": "script", "x": 170, "y": 100, "w": 220, "h": 56, "name": "範囲をファイルに展開", "sub": "ファイル・フォルダ・コミット" },
+      { "id": "any", "kind": "dm", "x": 170, "y": 190, "w": 220, "h": 56, "name": "ファイルがあるか" },
+      { "id": "none", "kind": "external", "x": 420, "y": 190, "w": 130, "h": 56, "name": "見つからないと返す" },
+      { "id": "has", "kind": "dm", "x": 170, "y": 280, "w": 220, "h": 56, "name": "dev-docs があるか" },
+      { "id": "viadd", "kind": "mcp", "x": 20, "y": 380, "w": 220, "h": 56, "name": "規約を dev-docs で読む", "sub": "search_docs" },
+      { "id": "direct", "kind": "data", "x": 320, "y": 380, "w": 220, "h": 56, "name": "規約のファイルを読む" },
+      { "id": "scan", "kind": "llm", "x": 170, "y": 480, "w": 220, "h": 56, "name": "すべてを調べる", "sub": "修正する箇所の一覧を作る" },
+      { "id": "fix", "kind": "llm", "x": 170, "y": 570, "w": 220, "h": 56, "name": "まとめて修正する", "sub": "一覧が空なら飛ばす" },
+      { "id": "sum", "kind": "external", "x": 170, "y": 660, "w": 220, "h": 56, "name": "サマリーを出す" }
+    ],
+    "wires": [
+      { "id": "w1", "from": "ask", "to": "range", "line": "flow", "points": [[280, 66], [280, 100]] },
+      { "id": "w2", "from": "range", "to": "any", "line": "flow", "points": [[280, 156], [280, 190]] },
+      { "id": "w3", "from": "any", "to": "none", "line": "flow", "points": [[390, 218], [420, 218]], "label": "無い", "labelAt": [405, 206] },
+      { "id": "w4", "from": "any", "to": "has", "line": "flow", "points": [[280, 246], [280, 280]], "label": "ある", "labelAt": [300, 263] },
+      { "id": "w5", "from": "has", "to": "viadd", "line": "flow", "points": [[260, 336], [260, 358], [130, 358], [130, 380]], "label": "ある", "labelAt": [195, 358] },
+      { "id": "w6", "from": "has", "to": "direct", "line": "flow", "points": [[300, 336], [300, 358], [430, 358], [430, 380]], "label": "無い", "labelAt": [365, 358] },
+      { "id": "w7", "from": "viadd", "to": "scan", "line": "flow", "points": [[130, 436], [130, 458], [250, 458], [250, 480]] },
+      { "id": "w8", "from": "direct", "to": "scan", "line": "flow", "points": [[430, 436], [430, 458], [310, 458], [310, 480]] },
+      { "id": "w9", "from": "scan", "to": "fix", "line": "flow", "points": [[280, 536], [280, 570]] },
+      { "id": "w10", "from": "fix", "to": "sum", "line": "flow", "points": [[280, 626], [280, 660]] }
+    ]
+  }
+  </mdmark-flow>
+  ```
+
+  <!-- /html -->
+sequence: |-
+  <!-- html -->
+
+  ```html
+  <mdmark-sequence>
+  {
+    "title": "文章を点検して修正する",
+    "scope": "コミットを渡し、dev-docs があるとき",
+    "updated": "2026-10-29",
+    "participants": [
+      { "id": "user", "kind": "external", "name": "利用者" },
+      { "id": "skill", "kind": "llm", "name": "スキル" },
+      { "id": "git", "kind": "script", "name": "Git" },
+      { "id": "dd", "kind": "mcp", "name": "dev-docs" },
+      { "id": "fs", "kind": "data", "name": "範囲のファイル" }
+    ],
+    "steps": [
+      { "from": "user", "to": "skill", "label": "範囲（コミット）" },
+      { "from": "skill", "to": "git", "label": "変わったファイルを取る" },
+      { "from": "git", "to": "skill", "label": "ファイルの一覧", "reply": true },
+      { "from": "skill", "to": "dd", "label": "文章の規約を ID で引く", "tip": "search_docs。配信元は knowledge" },
+      { "from": "dd", "to": "skill", "label": "規約の本文", "reply": true },
+      { "from": "skill", "to": "fs", "label": "本文を読む" },
+      { "from": "fs", "to": "skill", "label": "本文", "reply": true },
+      { "from": "skill", "to": "fs", "label": "修正した本文を記載する" },
+      { "from": "skill", "to": "user", "label": "サマリー", "reply": true }
+    ]
+  }
+  </mdmark-sequence>
+  ```
+
+  <!-- /html -->
+branches:
+  - name: 正常
+    when: 規約に反する文がある
+    result: 反する文だけが修正され、サマリーにファイルごとの修正した箇所・当てた規約・件数が出る
+  - name: 正常（修正する箇所が無い）
+    when: 反する文が無い
+    result: ファイルは変わらず、サマリーが「修正する箇所はありませんでした」になる
+  - name: 異常（範囲にファイルが無い）
+    when: 無いパスか、文章のファイルを含まないコミット
+    result: 規約を読まず、渡した範囲と見つからないことが出る

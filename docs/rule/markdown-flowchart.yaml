@@ -1,0 +1,110 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: markdown-flowchart
+kind: rule
+name: 判定フローチャート
+description: 決めたい内容が複数の判定軸で決まるときの判定フローチャートについて、記述例とノード・エッジ・ラベル・用語の決まりを定め、判定フローチャートを記載するときに読む。
+tags:
+  - name: scope:markdown
+  - name: topic:アクション
+  - name: topic:ノード
+  - name: topic:フローチャート
+  - name: topic:マーカー
+  - name: topic:ラベル
+  - name: topic:全角
+  - name: topic:判定フローチャート
+    main: true
+  - name: topic:括弧
+  - name: topic:用語
+  - name: action:分岐
+  - name: action:判定
+status: current
+visibility: internal
+rev: 3
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      決めたい内容が複数の判定軸で決まる時の判定フローチャートの書き方。
+  - id: example-01
+    group: 記述例
+    name: 判定フローチャートの記述例
+    body: |-
+      ````md
+      ```mermaid
+      flowchart TD
+        START([新規に｛対象｝を書きたい])
+        Q0{Q0 の判定文?}
+        Q1{Q1 の判定文?}
+
+        A1([不合格時のアクション])
+        R1([最終結果 1])
+        R2([最終結果 2])
+
+        START --> Q0
+        Q0 -->|NO| Q1
+        Q0 -->|YES| A1
+        Q1 -->|YES| R1
+        Q1 -->|NO| R2
+      ```
+
+      - **※1 用語名**: 定義（1 行）
+      - **※2 用語名**: 定義（1 行）
+      ````
+  - id: node-kind-01
+    group: ノード種類
+    name: 判定ノード
+    body: |-
+      - 判定ノード `Q{N}{判定文?}`: 菱形。YES / NO で分岐する
+  - id: node-kind-02
+    group: ノード種類
+    name: アクションノード
+    body: |-
+      - アクションノード `A{N}([アクション文])`: 角丸。不合格時の対応
+  - id: node-kind-03
+    group: ノード種類
+    name: 終端ノード
+    body: |-
+      - 終端ノード `R{N}([結果文])`: 角丸。判定通過時の最終結果
+  - id: node-kind-04
+    group: ノード種類
+    name: 開始ノード
+    body: |-
+      - 開始ノード `START([...])`: 1 個だけ
+  - id: edge-order-01
+    group: エッジ順序（一本道の時のみ）
+    name: 一本道のエッジ順序
+    body: |-
+      - YES / NO の一方だけが次質問に進み、もう一方が終端 / アクションに離脱する一本道の判定が連続する場合、離脱エッジ（終端 / アクション側）の宣言位置を前の判定と逆にする
+        - 前の判定で離脱側を第 1 エッジに書いたら、今の判定では第 2 エッジに書く（次でまた第 1 に戻す）
+        - 離脱側が YES か NO かは判定ごとに入れ替わり得るので、ラベルではなく離脱側の宣言位置を基準に反転する
+  - id: edge-order-02
+    group: エッジ順序（一本道の時のみ）
+    name: 両方が分岐するときの扱い
+    body: |-
+      - YES / NO 両方が次質問に分岐する場合、両方が終端 / アクションの場合は本ルール適用不要
+  - id: label-01
+    group: ラベル
+    name: エッジラベル
+    body: |-
+      - エッジラベルは `|YES|` / `|NO|` の 1 単語だけにする（補足は判定ノード本文に含める）
+  - id: label-02
+    group: ラベル
+    name: 判定文は疑問形
+    body: |-
+      - 判定文は疑問形（`〜か`）で統一
+  - id: term-01
+    group: 用語
+    name: 用語のマーカー
+    body: |-
+      - 図中で `※N` のマーカーを付けて、図の直下に `- **※N 用語名**: 定義` の 1 行を並べる
+  - id: term-02
+    group: 用語
+    name: ※N の採番
+    body: |-
+      - 番号は 図中の登場順で採番、初出だけに ※N を付ける
+  - id: caution-01
+    group: 注意
+    name: 括弧は全角
+    body: |-
+      - ノード内の括弧は全角を使う。

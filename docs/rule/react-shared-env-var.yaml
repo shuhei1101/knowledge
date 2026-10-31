@@ -1,0 +1,68 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-shared-env-var
+kind: rule
+name: 環境変数と設定
+description: Vite の SPA での環境変数・定数・機能フラグの置き場所と読み方を定め、React の環境変数や設定値を追加・参照するときに読む。
+tags:
+  - name: scope:react
+  - name: topic:spa
+  - name: topic:インポート
+  - name: topic:サンプル
+  - name: topic:テンプレート
+  - name: topic:ファイル
+  - name: topic:フィーチャ
+  - name: topic:フラグ
+  - name: topic:変数
+  - name: topic:定数
+  - name: topic:機能フラグ
+  - name: topic:環境
+  - name: topic:環境変数
+    main: true
+  - name: topic:設定
+  - name: tool:react
+  - name: tool:vite
+  - name: action:公開
+  - name: action:参照
+  - name: action:定義
+  - name: action:検証
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      置き場所の判定は [設定値の置き場所](id:flowchart-config-location) に従う。
+  - id: env-01
+    group: 環境変数
+    name: VITE_ の値は公開される
+    body: |-
+      - `VITE_` で始まる値は、ブラウザの JS にバンドルされて公開される。
+        秘匿値には `VITE_` を付けず、フロントエンドに置かない。
+  - id: env-02
+    group: 環境変数
+    name: import.meta.env は 1 か所で検証する
+    body: |-
+      - `import.meta.env` は、1 つのファイルで Zod に通して読み、散在して読まない。
+  - id: constant-01
+    group: 定数
+    name: 環境で変わらない定数は constants.ts
+    body: |-
+      - 環境で変わらない定数は、`shared/core/constants.ts` に置く（UPPER_SNAKE_CASE）。
+  - id: sample-01
+    group: サンプルファイル
+    name: サンプルファイルをテンプレートにする
+    body: |-
+      - `.env.sample` を、git で管理するテンプレートにする（必要な変数の正式なリスト）。
+  - id: feature-flag-01
+    group: 機能フラグ
+    name: 機能フラグの定義
+    body: |-
+      - 機能フラグは、`config/defaults.yaml` の `features:` に boolean で定義する。
+  - id: feature-flag-02
+    group: 機能フラグ
+    name: isFeatureEnabled 経由で参照する
+    body: |-
+      - `shared/core/feature-flags.ts` の `isFeatureEnabled(name)` を経由して参照する（外部のサービスへの置き換えを容易にする）。

@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-llm-exception-retry
+kind: rule
+name: LLM 例外階層とリトライ戦略
+description: LLM の例外階層と、リトライ・タイムアウト・サーキットブレーカーの戦略を定め、LLM 呼び出しのエラー処理やリトライを実装するときに読む。
+tags:
+  - name: scope:python
+  - name: topic:llm
+  - name: topic:testing
+  - name: topic:エラー
+  - name: topic:クライアント
+  - name: topic:サーキットブレーカー
+  - name: topic:ジッター
+  - name: topic:タイムアウト
+  - name: topic:デコレータ
+  - name: topic:バックオフ
+  - name: topic:リトライ
+    main: true
+  - name: topic:ログ
+  - name: topic:例外
+  - name: topic:引数
+  - name: topic:戦略
+  - name: topic:指数バックオフ
+  - name: topic:階層
+  - name: action:参照
+  - name: action:合成
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      リトライ可否を例外の型で判断できるよう `LlmError` ベースで分類する。
+  - id: llm-exception-retry-01
+    group: LLM 例外階層とリトライ戦略
+    name: LLM 例外階層の表
+    body: |-
+      <!-- table: data -->
+
+      | 例外                      | 意味         | リトライ                                            |
+      | ------------------------- | ------------ | --------------------------------------------------- |
+      | `LlmRateLimitError`       | レート制限   | ✅ 指数バックオフ（`retry_after` 属性があれば尊重） |
+      | `LlmServerError`          | 5xx          | ✅ 短い待ち                                         |
+      | `IntegrationTimeoutError` | タイムアウト | ✅ ジッタ付き                                       |
+      | `LlmBadRequestError`      | 4xx          | ❌ プロンプト修正が必要                             |
+      | `LlmAuthError`            | 401 / 403    | ❌ API キー要修正                                   |
+      | `LlmContentFilterError`   | フィルタ拒否 | ❌ 同じ入力は同じ結果                               |
+
+      <!-- /table -->
+  - id: stamina-retry-01
+    group: stamina によるリトライ
+    name: stamina.retry の引数
+    body: |-
+      - `@stamina.retry(on=<フック関数>, attempts=4, timeout=60.0, wait_initial=1.0, wait_max=30.0, wait_jitter=0.2)`（初回 + リトライ 3 回。`timeout` は外側の `@with_timeout` の秒数に揃える）
+  - id: stamina-retry-02
+    group: stamina によるリトライ
+    name: 指数バックオフとジッター
+    body: |-
+      - 指数バックオフ（`wait_initial * wait_exp_base^(attempt - 1)` に 0〜`wait_jitter` 秒のジッタを加え、`wait_max` でクランプ）
+  - id: stamina-retry-03
+    group: stamina によるリトライ
+    name: リトライは 1 層だけ
+    body: |-
+      - リトライは stamina の 1 層だけで行い、SDK のクライアントは `max_retries=0` を明示する
+  - id: stamina-retry-04
+    group: stamina によるリトライ
+    name: retry_after の優先
+    body: |-
+      - `on` に渡すフック関数は、`LlmRateLimitError.retry_after`（Retry-After ヘッダから抽出してコンストラクタに渡す）があればその秒数（float）を返して待ちに使う。フックが返した待ちは `wait_max` で抑えられないため、`retry_after` が `wait_max` を超えるときは False を返してリトライせず、その値を 503 の Retry-After で返す。無ければ既定のバックオフ。同じ値を 503 の Retry-After にも使う（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
+  - id: stamina-retry-05
+    group: stamina によるリトライ
+    name: リトライ時のログ
+    body: |-
+      - リトライ時は warning ログ（attempt / max / exception / delay_sec）、最終失敗は error ログ
+  - id: stamina-retry-06
+    group: stamina によるリトライ
+    name: テストではリトライの待ちを止める
+    body: |-
+      - テストでは `stamina.set_testing(True, attempts=...)` でバックオフの待ちを無効にする。試行の回数は `attempts`（既定は 1）になるので、リトライを確かめるテストでは `stamina-retry-01` と同じ回数を渡す
+  - id: timeout-01
+    group: タイムアウト
+    name: クライアントとデコレータのタイムアウト
+    body: |-
+      クライアントレベル（`AsyncOpenAI(timeout=30)`）+ デコレータレベル（`@with_timeout(seconds=60)`）の 2 レイヤー。
+  - id: composition-01
+    group: 合成
+    name: デコレータの重ね方の参照
+    body: |-
+      デコレーターの重ね方は [core/デコレーター](id:python-core-decorator)。
+  - id: circuit-breaker-01
+    group: サーキットブレーカー
+    name: サーキットブレーカーの参照
+    body: |-
+      外部規約『事前確認』の `## 処理ごとの確かめ方` に従う。

@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: markdown-editing
+kind: rule
+name: Markdown 編集規約
+description: Markdown を編集するときのフロントマター・区切り線・太字・1 行の長さ・表の No 列・同上マークの決まりを定め、Markdown を作る・編集するときに読む。
+tags:
+  - name: scope:markdown
+    main: true
+  - name: topic:カラム
+  - name: topic:テーブル
+  - name: topic:フロントマター
+  - name: topic:句点
+  - name: topic:改行
+  - name: topic:見出し
+  - name: topic:規約
+  - name: action:引用
+  - name: action:編集
+  - name: action:配置
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: frontmatter-placement-01
+    group: フロントマターの配置
+    name: フロントマターの前に置かない
+    body: |-
+      YAML フロントマター（`---` ブロック）を持つ Markdown ファイルでは、開き `---` より前に HTML コメントも空行も置かない。
+  - id: hr-01
+    group: "`---`について"
+    name: 区切り線を使わない
+    body: |-
+      マークダウン内で指定がない場合、`---`による区切り線は使わないこと。
+  - id: emphasis-01
+    group: "`**`について"
+    name: 太字・斜体・引用を使わない
+    body: |-
+      マークダウンで指定がない場合、`**` による太字、`*` による斜体、`>` による引用は使わない。
+  - id: line-length-01
+    group: 一行の長さについて
+    name: 句点ごとに改行
+    body: |-
+      - 本文の段落・箇条書きは句点（。）ごとに改行する（1 文 = 1 行）
+        - 文を追記するときも既存行への連結ではなく新しい行に追加する
+  - id: line-length-02
+    group: 一行の長さについて
+    name: 表と見出しは改行の対象外
+    body: |-
+      - 表のセル・見出しは対象外（セル内の改行は `<br>`）
+  - id: table-no-column-01
+    group: "テーブルの No / # カラムについて"
+    name: 連番の No 列を付けない
+    body: |-
+      - 連番だけの No / # カラムは付けない
+  - id: table-no-column-02
+    group: "テーブルの No / # カラムについて"
+    name: 番号に意味がある場合
+    body: |-
+      - 番号自体に意味がある場合（不変 ID・Issue / PR 番号など、番号で参照する運用があるもの）のみ付けてよい
+  - id: table-ditto-01
+    group: テーブルの同上マーク（〃）について
+    name: 同上マークを使わない
+    body: |-
+      - 同列で値が連続しても `〃` で省略せず、セルごとに実値を書く

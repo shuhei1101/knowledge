@@ -1,0 +1,95 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-architecture-refactoring-criteria
+kind: rule
+name: リファクタ判断基準
+description: 共通化・抽象化・設定の外出し・関数の長さ・ファイル分割を行う基準を定め、リファクタリングするかを判断するときに読む。
+tags:
+  - name: scope:python
+  - name: topic:architecture
+  - name: topic:dry
+  - name: topic:エイリアス
+  - name: topic:コスト
+  - name: topic:コード
+  - name: topic:トリガー
+  - name: topic:ファイル
+  - name: topic:プロトコル
+  - name: topic:型エイリアス
+  - name: topic:設定
+  - name: topic:重複
+  - name: topic:関数
+  - name: action:ジャンプ
+  - name: action:リファクタリング
+    main: true
+  - name: action:分割
+  - name: action:判断
+  - name: action:抽象
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: dry-threshold-01
+    group: DRY 化 — 何回書いたら共通化するか
+    name: DRY 化のトリガー表
+    body: |-
+      | トリガー             | アクション                                         |
+      | -------------------- | -------------------------------------------------- |
+      | 1 回目               | そのまま書く                                       |
+      | 2 回目（コピペ発生） | 共通化を検討開始                                   |
+      | 3 回目               | 必ず共通化（`_helpers.py` / `shared/utils.py` へ） |
+      | 4 回目以降に発見     | 共通化漏れ。最優先で潰す                           |
+  - id: dry-threshold-02
+    group: DRY 化 — 何回書いたら共通化するか
+    name: 3 行以上は関数化
+    body: |-
+      - ロジック 3 行以上で再利用候補なら関数化
+  - id: dry-threshold-03
+    group: DRY 化 — 何回書いたら共通化するか
+    name: 1〜2 行の重複は許容
+    body: |-
+      - 1〜2 行の同じ式はインライン重複でも OK（共通化コストが上回る）
+  - id: abstraction-timing-01
+    group: 抽象化 — いつ型エイリアス / Protocol を切るか
+    name: 抽象化の状況表
+    body: |-
+      | 状況                                  | アクション           |
+      | ------------------------------------- | -------------------- |
+      | 実装が 1 個                           | 抽象化しない         |
+      | 2 個目が見えた / テスト用 Mock が要る | 関数の型エイリアス   |
+      | 3 個以上 or 振る舞いが複雑            | `Protocol`           |
+      | 拡張ポイントが予定済み                | 最初から型エイリアス |
+  - id: abstraction-timing-02
+    group: 抽象化 — いつ型エイリアス / Protocol を切るか
+    name: 型ジャンプのコスト
+    body: |-
+      抽象化のコストは「読む人が辿る型ジャンプの増加」。毎回必要かを問う。
+  - id: config-externalization-01
+    group: 設定外出し — いつコードから出すか
+    name: 設定の置き場所
+    body: |-
+      置き場所は [設定値の置き場所](id:flowchart-config-location) と [コンテンツの置き場所](id:dev-content-location) に従う。
+  - id: config-externalization-02
+    group: 設定外出し — いつコードから出すか
+    name: コード変更なしで変える値
+    body: |-
+      - 「コード変更なしで値を変えたい」→ 設定へ
+  - id: function-length-01
+    group: 関数の長さ
+    name: 関数の長さ
+    body: |-
+      - 関数が 40 行を超えたら、分けられないかを考える
+  - id: file-split-01
+    group: ファイル分割
+    name: ファイル分割の状況表
+    body: |-
+      | 状況                        | アクション                                          |
+      | --------------------------- | --------------------------------------------------- |
+      | 〜200 行                    | OK                                                  |
+      | 200〜400 行                 | 役割別（types / service / query / route）分割を検討 |
+      | 400 行以上                  | 分割推奨                                            |
+      | セクションマーカー 5 個以上 | 分割サイン                                          |
+  - id: file-split-02
+    group: ファイル分割
+    name: reference は 1 ファイル 1 トピック
+    body: |-
+      reference（`*.md`）は 1 ファイル 1 トピック原則（フック注入単位を小さく保つ）。

@@ -1,0 +1,86 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-db-relation
+kind: rule
+name: drizzle/schema.ts — Relations と Index
+description: 外部キー・relations・index の付け方と、onDelete の選び方を定め、テーブルの関連やインデックスを定義するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:バックエンド
+  - name: topic:naming
+  - name: topic:インデックス
+    main: true
+  - name: topic:キー
+  - name: topic:スキーマ
+  - name: topic:テーブル
+  - name: topic:リレーション
+  - name: topic:制約
+  - name: topic:外部キー
+  - name: tool:drizzle
+  - name: action:削除
+  - name: action:宣言
+  - name: action:選択
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: drizzle-schema-relations-index-01
+    group: drizzle/schema.ts — Relations と Index
+    name: 外部キーと index の付け方
+    body: |-
+      - 外部キー定義、relations、index の付け方。
+  - id: drizzle-schema-relations-index-02
+    group: drizzle/schema.ts — Relations と Index
+    name: WHERE・ORDER BY の対象に index
+    body: |-
+      - 頻繁な WHERE / ORDER BY 対象 カラムに index
+  - id: drizzle-schema-relations-index-03
+    group: drizzle/schema.ts — Relations と Index
+    name: 複合 index の列順
+    body: |-
+      - 複合 index はクエリパターンに合わせる（等価条件の列を先頭、範囲条件の列をその後ろに置く）
+  - id: drizzle-schema-relations-index-04
+    group: drizzle/schema.ts — Relations と Index
+    name: 過剰な index を避ける
+    body: |-
+      - 過剰な index は INSERT/UPDATE を遅くする → 必要なものだけ
+  - id: drizzle-schema-relations-index-05
+    group: drizzle/schema.ts — Relations と Index
+    name: index の命名
+    body: |-
+      - index 名は `{table}_{column}_idx` / `{table}_{cols}_unique`
+  - id: drizzle-schema-relations-index-06
+    group: drizzle/schema.ts — Relations と Index
+    name: onDelete を明示
+    body: |-
+      - `onDelete` を明示（デフォルトに任せない）
+  - id: drizzle-schema-relations-index-07
+    group: drizzle/schema.ts — Relations と Index
+    name: references で宣言
+    body: |-
+      - 外部キーは 必ず `references()` で宣言（手動 JOIN なし）
+  - id: drizzle-schema-relations-index-08
+    group: drizzle/schema.ts — Relations と Index
+    name: 全外部キーに relation
+    body: |-
+      - 全外部キーに relation を定義（バージョンにより `relations()` / `defineRelations()`）
+  - id: drizzle-schema-relations-index-09
+    group: drizzle/schema.ts — Relations と Index
+    name: 全外部キーに index
+    body: |-
+      - 全外部キーに `index()` を付ける
+  - id: drizzle-schema-relations-index-10
+    group: drizzle/schema.ts — Relations と Index
+    name: ユニーク制約
+    body: |-
+      - ユニーク制約は `uniqueIndex` で複合キー対応
+  - id: ondelete-choice-01
+    group: onDelete の選び方
+    name: onDelete の選び方の表
+    body: |-
+      | Behavior    | 用途                                                |
+      | ----------- | --------------------------------------------------- |
+      | `cascade`   | 親消滅で子も削除する（タグ・コメント・履歴）            |
+      | `restrict`  | 子が存在する間は親を削除できない（マスター ↔ データ）     |
+      | `set null`  | 親消滅で外部キーを null（任意関連、カテゴリ削除等） |
+      | `no action` | `restrict` と同じ拒否だが、検査をトランザクション末尾まで遅延できる（基本使わない） |

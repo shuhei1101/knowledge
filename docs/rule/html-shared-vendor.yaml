@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-shared-vendor
+kind: rule
+name: shared/vendor
+description: 外部依存を vendoring して固定する shared/vendor の決まりと、ライセンス表記の扱いを定め、単体 HTML に外部ライブラリを取り込むときに読む。
+tags:
+  - name: scope:html
+  - name: topic:ヘッダー
+  - name: topic:ベンダー
+    main: true
+  - name: topic:ライセンス
+  - name: topic:ライブラリ
+  - name: action:依存
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
+  - id: shared-vendor-01
+    group: shared/vendor
+    name: 外部依存は vendoring して固定
+    body: |-
+      - 外部依存は vendoring してここに固定する（mermaid 等）。
+        - CDN ランタイム依存にしない。
+        - バンドルの代わりに、固定済みファイルをそのまま配信する。
+  - id: shared-vendor-02
+    group: shared/vendor
+    name: ライセンスのヘッダーを残す
+    body: |-
+      - 配布ファイル先頭の著作権・ライセンスのヘッダーを削除しない・書き換えない（再度 minify しない）。
+  - id: shared-vendor-03
+    group: shared/vendor
+    name: 独自ライセンスの扱い
+    body: |-
+      - OSS でない独自ライセンスのもの（例: GSAP の Standard License）は、`vendor/{ライブラリ}/` にライセンスの所在（URL とバージョン）を書いたファイルを置く。
+        - 禁止されている使い方（例: GSAP は演出を GUI で組むツールへの利用）は、外部ライブラリの設計書の `license` に書く。

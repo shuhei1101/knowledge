@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-component-page-header
+kind: rule
+name: "`<PageHeader>` — ページタイトル + actions"
+description: ページタイトルとアクションを表示する PageHeader の Props と使い方を定め、画面の見出し部分を実装するときに読む。
+tags:
+  - name: scope:react
+  - name: topic:フロントエンド
+  - name: topic:props
+  - name: topic:アクション
+  - name: topic:ヘッダー
+    main: true
+  - name: topic:ページ
+  - name: topic:リンク
+  - name: topic:画面
+  - name: topic:見出し
+  - name: action:表示
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+  - id: page-header-01
+    group: "`<PageHeader>` — ページタイトル + actions"
+    name: Props
+    body: |-
+      - Props: `title`, `description?`, `actions?`
+  - id: page-header-02
+    group: "`<PageHeader>` — ページタイトル + actions"
+    name: title は h1
+    body: |-
+      - `title` は `<h1>`（a11y / SEO）
+  - id: page-header-03
+    group: "`<PageHeader>` — ページタイトル + actions"
+    name: 1 Screen に 1 つ
+    body: |-
+      - 1 Screen に 1 つ
+  - id: page-header-04
+    group: "`<PageHeader>` — ページタイトル + actions"
+    name: actions のリンクは型付きの Link
+    body: |-
+      - actions のリンクは、型付きの `<Link>` で書く

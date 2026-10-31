@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-form-schema
+kind: rule
+name: form.ts
+description: 画面の form.ts に Zod スキーマと型を置く決まりを定め、フォームの入力スキーマを定義するときに読む。
+tags:
+  - name: scope:react
+  - name: topic:フロントエンド
+  - name: topic:エラー
+  - name: topic:スキーマ
+    main: true
+  - name: topic:フォルダ
+  - name: topic:フォーム
+  - name: topic:プリミティブ
+  - name: topic:メッセージ
+  - name: topic:日本語
+  - name: topic:画面
+  - name: tool:zod
+  - name: action:エクスポート
+  - name: action:定義
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+  - id: form-ts-01
+    group: form.ts
+    name: 画面のフォルダに置く
+    body: |-
+      - フォームの Zod スキーマと型は、画面のフォルダの `form.ts` に置く（新規と編集で共用する）。
+  - id: form-ts-02
+    group: form.ts
+    name: defaultXxxForm を export する
+    body: |-
+      - `defaultXxxForm` を export し、新規の画面で使う。
+  - id: form-ts-03
+    group: form.ts
+    name: エラーメッセージは日本語
+    body: |-
+      - エラーメッセージは日本語で書く。
+  - id: form-ts-04
+    group: form.ts
+    name: 共通プリミティブの置き場所
+    body: |-
+      - 共通のスキーマ（`IdSchema` など）は、`shared/core/schema.ts` に集約する。
+  - id: form-ts-05
+    group: form.ts
+    name: スキーマを別に定義しない
+    body: |-
+      - orval が生成した Zod と同じ項目のスキーマを、別に定義しない。
+        構造が違うときだけ、`form.ts` で生成した Zod を拡張する。

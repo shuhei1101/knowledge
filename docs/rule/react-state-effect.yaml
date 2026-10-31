@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-state-effect
+kind: rule
+name: useEffect
+description: useEffect を使ってよい場面と、使わずに済ませる場面（派生値・データ取得・イベント）を定め、useEffect を記載するときに読む。
+tags:
+  - name: scope:react
+  - name: topic:フロントエンド
+  - name: topic:lint
+  - name: topic:props
+  - name: topic:イベント
+  - name: topic:エフェクト
+    main: true
+  - name: topic:クエリ
+  - name: topic:システム
+  - name: topic:データ
+  - name: topic:ハンドラ
+  - name: tool:tanstack-query
+  - name: action:取得
+  - name: action:描画
+  - name: action:操作
+  - name: action:検査
+  - name: action:派生
+  - name: action:複製
+  - name: action:計算
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-30'
+related:
+  - to: flowchart-react-state-placement
+    type: requires
+    when: 新しい値の置き場所を決めるとき
+sources:
+  - title: "React: You Might Not Need an Effect"
+    url: https://react.dev/learn/you-might-not-need-an-effect
+  - title: "React: Synchronizing with Effects"
+    url: https://react.dev/learn/synchronizing-with-effects
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+  - id: effect-01
+    group: useEffect
+    name: 外部のシステムと同期するときだけ使う
+    body: |-
+      - `useEffect` は、React の外のシステム（ブラウザの API・WebSocket・外部ライブラリの購読）と同期するときだけ使う。
+        購読は、cleanup で解除する。
+  - id: effect-02
+    group: useEffect
+    name: 計算で出せる値は描画中に計算する
+    body: |-
+      - props と既存の state から計算できる値は、state にせず描画中に計算する。
+  - id: effect-03
+    group: useEffect
+    name: データ取得は TanStack Query に任せる
+    body: |-
+      - データ取得は、TanStack Query に任せる。
+        `useEffect` で fetch しない。
+  - id: effect-04
+    group: useEffect
+    name: props を state に複製しない
+    body: |-
+      - props を `useState` に複製して `useEffect` で同期しない。
+  - id: effect-05
+    group: useEffect
+    name: 操作の結果はイベントハンドラで処理する
+    body: |-
+      - 利用者の操作の結果は、イベントハンドラで処理する。
+        state の変化を `useEffect` で受けて処理しない。
+  - id: lint-01
+    group: lint
+    name: lint で検査する
+    body: |-
+      - `eslint-plugin-react-hooks` の `recommended-latest` で検査する。

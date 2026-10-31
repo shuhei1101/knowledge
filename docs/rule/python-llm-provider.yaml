@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-llm-provider
+kind: rule
+name: LLM プロバイダ実装
+description: LLM プロバイダを関数で抽象化して注入する構成と、実装の要点を定め、LLM プロバイダの呼び出しを実装する・切り替えるときに読む。
+tags:
+  - name: scope:python
+  - name: topic:llm
+  - name: topic:システム
+  - name: topic:ストリーミング
+  - name: topic:トークン
+  - name: topic:ファクトリ
+  - name: topic:フォールバック
+  - name: topic:プロバイダー
+    main: true
+  - name: topic:ベンダー
+  - name: topic:メッセージ
+  - name: topic:モック
+  - name: topic:ログ
+  - name: topic:例外
+  - name: topic:構成
+  - name: topic:構造
+  - name: topic:関数
+  - name: tool:anthropic
+  - name: action:ラップ
+  - name: action:出力
+  - name: action:分離
+  - name: action:切り替え
+  - name: action:実装
+  - name: action:抽象
+  - name: action:注入
+  - name: action:配線
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      LLM API（Claude / OpenAI / Gemini 等）を関数で抽象化して注入できるようにする。
+  - id: structure-01
+    group: 構成
+    name: types.py の Message
+    body: |-
+      - `integrations/llm/types.py` に `Message`（TypedDict: role / content）と `type AsyncChatFn = Callable[[ChatRequest], Awaitable[ChatResponse]]`
+  - id: structure-02
+    group: 構成
+    name: make_provider_chat の構成
+    body: |-
+      - 各プロバイダは `make_{provider}_chat(*, api_key, model, timeout, max_tokens) -> AsyncChatFn` のファクトリ関数
+        - クライアント生成をクロージャに閉じ、`AsyncChatFn` 互換の関数を返す
+  - id: structure-03
+    group: 構成
+    name: Mock も同じ構造
+    body: |-
+      - Mock も同じ構造: `make_mock_chat(*responses)` で固定文字列を順に返す
+  - id: structure-04
+    group: 構成
+    name: プロバイダの配線と切り替え
+    body: |-
+      - composition root でプロバイダを 1 つ選んで配線。切り替えは設定 1 行（service のシグネチャは不変）
+  - id: implementation-points-01
+    group: 実装の要点
+    name: vendor 例外のラップ
+    body: |-
+      - vendor 例外をドメイン例外にラップ
+        - RateLimitError → `LlmRateLimitError` / 5xx → `LlmServerError` / 400 → `LlmBadRequestError` / timeout → `IntegrationTimeoutError`、すべて `raise ... from e`
+  - id: implementation-points-02
+    group: 実装の要点
+    name: トークン使用量のログ
+    body: |-
+      - 呼び出しごとにトークン使用量を構造化ログ（provider / model / input_tokens / output_tokens / cache_read_tokens）
+  - id: implementation-points-03
+    group: 実装の要点
+    name: Anthropic の system 分離
+    body: |-
+      - Anthropic は system メッセージを別パラメータに分離する必要がある
+  - id: implementation-points-04
+    group: 実装の要点
+    name: fallback の方針
+    body: |-
+      - fallback は primary を try し `LlmServerError` / `IntegrationTimeoutError` で secondary へ
+  - id: implementation-points-05
+    group: 実装の要点
+    name: ストリーミングの型
+    body: |-
+      - ストリーミングは `type AsyncChatStreamFn = Callable[[ChatRequest], AsyncIterator[str]]` の async generator
+  - id: implementation-points-06
+    group: 実装の要点
+    name: 構造化出力はファクトリの中に閉じる
+    body: |-
+      - 構造化出力は各 SDK の組み込みの呼び出しを `make_{provider}_chat` の中に閉じる（[llm/構造化出力](id:python-llm-structured-output)）

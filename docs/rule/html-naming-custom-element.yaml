@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-naming-custom-element
+kind: rule
+name: カスタムエレメント命名
+description: カスタムエレメントの名前に app- 接頭辞を付ける決まりを定め、カスタムエレメントに名前を付けるときに読む。
+tags:
+  - name: scope:html
+  - name: topic:naming
+  - name: topic:エレメント
+  - name: topic:カスタムエレメント
+    main: true
+  - name: topic:属性
+  - name: topic:接頭辞
+status: current
+visibility: internal
+rev: 3
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
+  - id: custom-element-naming-01
+    group: カスタムエレメント命名
+    name: app- 接頭辞とハイフン区切り
+    body: |-
+      - `app-` 接頭辞 + 小文字・ハイフン区切り（`app-sidebar`, `app-toast`）。
+        - プロジェクト固有が増えたら別接頭辞を追加してよい。
+  - id: custom-element-naming-02
+    group: カスタムエレメント命名
+    name: is 属性は使わない
+    body: |-
+      - `is` 属性（customized built-in）は使わない。
+        - 要素を拡張したい時は autonomous custom element でラップする。

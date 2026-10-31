@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-feature-folder
+kind: rule
+name: フィーチャフォルダ構成
+description: フィーチャフォルダの構成、components・hooks の配置、命名のルールを定め、新しいフィーチャのフォルダを作るときに読む。
+tags:
+  - name: scope:next
+  - name: topic:フロントエンド
+  - name: topic:部品
+  - name: topic:id
+  - name: topic:naming
+  - name: topic:アクション
+  - name: topic:ケバブケース
+  - name: topic:ビュー
+  - name: topic:フィーチャ
+    main: true
+  - name: topic:フォルダ
+  - name: topic:フォーム
+  - name: topic:フック
+  - name: topic:ページ
+  - name: topic:接尾辞
+  - name: topic:接頭辞
+  - name: topic:構成
+  - name: topic:画面
+  - name: action:配置
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      ```
+      app/(authenticated)/{feature}/
+      ├── page.tsx                       # Server Component: 一覧
+      ├── {Feature}ListScreen.tsx        # Client Component
+      ├── form.ts                        # Zod schema + Type（new/edit 共用）
+      ├── actions.ts                     # Server Actions（'use server'）
+      ├── components/
+      ├── hooks/
+      ├── new/
+      │   ├── page.tsx
+      │   └── {Feature}NewScreen.tsx
+      └── [id]/
+          ├── page.tsx                   # View 画面
+          ├── {Feature}ViewScreen.tsx
+          ├── components/
+          ├── hooks/
+          └── edit/
+              ├── page.tsx
+              ├── {Feature}EditScreen.tsx
+              ├── components/
+              └── hooks/
+      ```
+  - id: components-hooks-placement-01
+    group: components / hooks の配置
+    name: components と hooks の配置表
+    body: |-
+      | Scope | Location |
+      |---|---|
+      | フィーチャ全体 | `{feature}/components/`, `{feature}/hooks/` |
+      | view/edit 共用 | `{feature}/[id]/components/`, `{feature}/[id]/hooks/` |
+      | edit 専用 | `{feature}/[id]/edit/components/`, `{feature}/[id]/edit/hooks/` |
+      | 複数フィーチャ共通 | `app/(shared)/components/`, `app/(shared)/hooks/` |
+  - id: rules-01
+    group: ルール
+    name: フィーチャ名は kebab-case 複数形
+    body: |-
+      - フィーチャ名は kebab-case 複数形（`resources/`, `family-members/`）
+  - id: rules-02
+    group: ルール
+    name: form.ts と actions.ts の位置
+    body: |-
+      - `form.ts` / `actions.ts` はフィーチャ直下（`[id]/edit/` 配下に置かない）
+  - id: rules-03
+    group: ルール
+    name: "[id]/page.tsx が View 本体"
+    body: |-
+      - `[id]/page.tsx` が View 本体（`view/` サブルートは作らない）
+  - id: rules-04
+    group: ルール
+    name: Screen 接尾辞
+    body: |-
+      - Screen 接尾辞: `ListScreen` / `NewScreen` / `ViewScreen` / `EditScreen`
+  - id: rules-05
+    group: ルール
+    name: アンダースコア接頭辞の禁止
+    body: |-
+      - `_components/` / `_hooks/` 禁止（アンダースコア prefix 廃止）

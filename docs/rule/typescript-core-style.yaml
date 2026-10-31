@@ -1,0 +1,120 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: typescript-core-style
+kind: rule
+name: TypeScript のスタイル
+description: TypeScript 全般の関数・型・enum・export・型の断定・関数の引数の書き方を定め、TypeScript のコードを記載するときに読む。
+tags:
+  - name: scope:typescript
+    main: true
+  - name: topic:enum
+  - name: topic:インターフェース
+  - name: topic:インポート
+  - name: topic:エイリアス
+  - name: topic:オブジェクト
+  - name: topic:クラス
+  - name: topic:コード
+  - name: topic:ジェネリクス
+  - name: topic:スタイル
+  - name: topic:ユーティリティ
+  - name: topic:型エイリアス
+  - name: topic:契約
+  - name: topic:定数
+  - name: topic:引数
+  - name: topic:関数
+  - name: action:エクスポート
+  - name: action:依存
+  - name: action:定義
+  - name: action:導出
+  - name: action:注入
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: TypeScript
+      機械で判定できる規則は ESLint（typescript-eslint）で止める。
+  - id: function-01
+    group: 関数とクラス
+    name: 関数ベースで書く
+    body: |-
+      - 関数ベースで書き、クラスは必要なときだけ使う。
+        クラスを使ってよい場面は、ライブラリが要求するものと、Error の派生クラスだけ。
+  - id: function-02
+    group: 関数とクラス
+    name: const とアロー関数で書く
+    body: |-
+      - 関数は、`function` 宣言ではなく `const` とアロー関数で書く。
+  - id: type-01
+    group: 型
+    name: type を使い interface を使わない
+    body: |-
+      - 型は `type` で書く。
+        `interface` は、ライブラリの拡張と declaration merging のときだけ使う。
+  - id: type-02
+    group: 型
+    name: enum を使わない
+    body: |-
+      - `enum` を使わず、union のリテラルか `as const` のオブジェクトで書く。
+  - id: type-03
+    group: 型
+    name: 対応表は satisfies で確かめる
+    body: |-
+      - 設定や対応表のオブジェクトは、`satisfies` で型を確かめる。
+  - id: type-04
+    group: 型
+    name: 状態の種類は判別できる union にする
+    body: |-
+      - 状態の種類は判別できる union にし、`switch` の最後は `never` で網羅を確かめる。
+  - id: type-05
+    group: 型
+    name: 型の断定は外から来る値だけ
+    body: |-
+      - 非 null の断定（`!`）と `as` の型の断定は、DOM の取得など外から来る値で必要なときだけ使う。
+  - id: type-06
+    group: 型
+    name: any を避け unknown で受けて絞る
+    body: |-
+      - `any` を避け、不明な値は `unknown` で受けて絞る。
+        公開 API（export する関数・型）には型を付ける。
+        局所変数は推論に任せてよい。
+  - id: type-07
+    group: 型
+    name: generics は汎用ユーティリティだけ
+    body: |-
+      - generics は、汎用ユーティリティだけに使う。
+        制約（`extends`）を付けて、緩すぎる型を避ける。
+  - id: type-08
+    group: 型
+    name: 戻り値は導出する
+    body: |-
+      - 内部関数の戻り値を別の場所で使うときは、手書きせず導出する。
+        シグネチャの変更に、型が追従する。
+  - id: type-09
+    group: 型
+    name: 型だけの import は import type
+    body: |-
+      - 型だけの import は `import type` にし、ランタイムの import と混ぜない。
+  - id: function-args-01
+    group: 関数の引数
+    name: 依存は引数で注入する
+    body: |-
+      - 依存は、引数で注入する。
+  - id: function-args-02
+    group: 関数の引数
+    name: 引数が多いときはオブジェクトで受ける
+    body: |-
+      - 引数が 2 つ以上、または真偽値・ID が並ぶときは、オブジェクトで受ける。
+  - id: function-args-03
+    group: 関数の引数
+    name: 関数型エイリアスで契約を定義する
+    body: |-
+      - コールバックと依存の契約は、関数型エイリアスに名前を付けて定義し、引数で渡す。
+  - id: export-01
+    group: export
+    name: 名前付き export だけ
+    body: |-
+      - export は、名前付きだけにする。
+        `export default` は、ツールが求めるもの（`*.stories.tsx`・`vite.config.ts` など）だけに使う。

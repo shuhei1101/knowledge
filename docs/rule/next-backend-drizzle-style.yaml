@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-drizzle-style
+kind: rule
+name: Drizzle — SQL Builder vs Relational Queries
+description: Drizzle の SQL Builder を標準とし、Relational Queries を使う範囲と SQL Injection の対策を定め、Drizzle でクエリを記載するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:バックエンド
+  - name: tool:sql
+  - name: topic:クエリ
+  - name: topic:テンプレート
+  - name: topic:ビルダー
+  - name: topic:リレーショナルクエリ
+    main: true
+  - name: tool:drizzle
+  - name: action:注入
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: drizzle-sql-builder-01
+    group: Drizzle — SQL Builder vs Relational Queries
+    name: 標準は SQL Builder
+    body: |-
+      - 標準は **SQL Builder**
+  - id: drizzle-sql-builder-02
+    group: Drizzle — SQL Builder vs Relational Queries
+    name: Relational Query の範囲
+    body: |-
+      - Relational Query は「単体取得 + 1 階層 with」のみ採用
+  - id: drizzle-sql-builder-03
+    group: Drizzle — SQL Builder vs Relational Queries
+    name: 複雑な JOIN の組み方
+    body: |-
+      - 複雑な JOIN は **alias + groupBy + Promise.all** を駆使
+  - id: drizzle-sql-builder-04
+    group: Drizzle — SQL Builder vs Relational Queries
+    name: sql.raw を使わない
+    body: |-
+      - `db.execute(sql.raw(...))` は使わない（SQL Injection の温床）
+  - id: drizzle-sql-builder-05
+    group: Drizzle — SQL Builder vs Relational Queries
+    name: 動的 SQL はテンプレートタグ
+    body: |-
+      - 動的 SQL が必要なら `sql\`...\`` テンプレートタグ（パラメータ化される）
+  - id: drizzle-sql-builder-06
+    group: Drizzle — SQL Builder vs Relational Queries
+    name: 使い分けの表
+    body: |-
+      <!-- table: data -->
+
+      | ケース                                     | 推奨                        |
+      | ------------------------------------------ | --------------------------- |
+      | 単純な「ID で 1 件取得 + 1 階層 with」     | Relational Query            |
+      | 一覧取得（フィルタ・ソート・ページング）   | SQL Builder                 |
+      | 複数 JOIN（3+ テーブル）                   | SQL Builder                 |
+      | エイリアス必要（同じテーブルを 2 回 JOIN） | SQL Builder                 |
+      | 重複排除（`groupBy`）                      | SQL Builder                 |
+      | 件数 + 行を並列で取る                      | SQL Builder + `Promise.all` |
+      | `relations()` を使った自然な書き味が欲しい | Relational Query            |
+
+      <!-- /table -->

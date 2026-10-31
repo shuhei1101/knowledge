@@ -1,0 +1,104 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: claude-common
+kind: rule
+name: Claude 成果物の共通ルール
+description: SKILL.md・ルール・CLAUDE.md の文章の確認、スクリプトの配置場所、メインエージェント・スキル・カスタムサブエージェントの違いを定め、これらの Claude 成果物を作る・修正するときに読む。
+tags:
+  - name: scope:claude
+  - name: topic:スクリプト
+  - name: topic:エージェント
+  - name: topic:サブエージェント
+  - name: topic:スキル
+  - name: topic:ルール
+  - name: topic:文章
+  - name: topic:本文
+  - name: tool:claude
+    main: true
+  - name: action:仲介
+  - name: action:入力
+  - name: action:呼び出し
+  - name: action:定義
+  - name: action:配置
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: concise-writing-01
+    group: 簡潔に書く
+    name: 文章の確認表への準拠
+    body: |-
+      - SKILL.md・ルール・CLAUDE.md を新規作成・編集するときは規約『文章の書き方』の確認表に従う。
+  - id: sentence-style-01
+    group: 文の書き方
+    name: 文の書き方の良い例と悪い例
+    body: |-
+      いい例: 箇条書きのインデントで表現
+
+      ```md
+      - ブラウザに出す依存を増やさない。
+        - フレームワーク（React/Vue）・状態管理ライブラリ・UI ライブラリは使わない
+        - 外部依存がどうしても必要なときだけ vendoring する
+        - dev ツール（tsc / eslint / vitest 等）は別
+      ```
+
+      悪い例: 横に長い。
+
+      ```md
+      ブラウザに出す依存を増やさない。フレームワーク（React/Vue）・状態管理ライブラリ・UI ライブラリは使わない。外部依存がどうしても必要なときだけ vendoring する。dev ツール（tsc / eslint / vitest 等）は別。
+      ```
+  - id: script-location-01
+    group: スクリプトの配置場所
+    name: スクリプトの配置先
+    body: |-
+      - スクリプトは`{pluginsルート}/scripts/{任意のカテゴリフォルダ}/`配下に配置します。
+        - スクリプトは機能ごとにフォルダを分けてください。
+  - id: script-location-02
+    group: スクリプトの配置場所
+    name: スクリプト呼び出しの仲介
+    body: |-
+      - スキルから特定スクリプトを呼ぶときにmcpを仲介すること
+        - トランスポートは規約『mcp』に従う。
+  - id: main-agent-01
+    group: メインエージェント / スキル / カスタムサブエージェントの関係 > メインエージェント
+    name: メインエージェントの定義
+    body: |-
+      - ユーザーと直接対話する Claude 本体。会話履歴を保持する主コンテキスト。
+  - id: skill-01
+    group: メインエージェント / スキル / カスタムサブエージェントの関係 > スキル（`skills/**/SKILL.md`）
+    name: スキルの位置づけ
+    body: |-
+      - メインエージェントと同じコンテキストで読み込まれるただのファイル（別プロセスではない）。`context: fork` を付けたスキルだけは、サブエージェントへプロンプトとして渡る。
+  - id: skill-02
+    group: メインエージェント / スキル / カスタムサブエージェントの関係 > スキル（`skills/**/SKILL.md`）
+    name: スキルに戻り値は無い
+    body: |-
+      - `context: fork` なしのスキルに戻り値の概念はない。スキル内で調査 / 収集した情報はメインエージェントのコンテキストに直接残るので、「戻り値」を書く必要はない。
+  - id: skill-03
+    group: メインエージェント / スキル / カスタムサブエージェントの関係 > スキル（`skills/**/SKILL.md`）
+    name: スキルの入力
+    body: |-
+      - 入力は呼び出し時の引数（`$ARGUMENTS`、`arguments` フロントマターで宣言した `$issue_number` 等）のみ。それ以外は「メインエージェントが知っていること」を前提にして良い。
+  - id: skill-04
+    group: メインエージェント / スキル / カスタムサブエージェントの関係 > スキル（`skills/**/SKILL.md`）
+    name: スキルの記述の禁止事項
+    body: |-
+      - 書き方の禁止事項:
+        - `## 戻り値` / `## 出力` セクションを作らない
+        - 「このスキルは呼び出し元に〜を返す」等の記述は書かない
+        - スキル内のステップは「メインエージェントが順番に実行する手順書」として書く
+  - id: custom-subagent-01
+    group: メインエージェント / スキル / カスタムサブエージェントの関係 > カスタムサブエージェント（`agents/**/*.md`）
+    name: カスタムサブエージェントの位置づけ
+    body: |-
+      - 別コンテキストで起動する独立プロセス。呼び出し元の会話履歴・スキル内容・他ファイル情報を持たない。
+  - id: custom-subagent-02
+    group: メインエージェント / スキル / カスタムサブエージェントの関係 > カスタムサブエージェント（`agents/**/*.md`）
+    name: サブエージェントの情報源
+    body: |-
+      - 情報源は呼び出し時に渡された引数（入力）・CLAUDE.md の階層・`skills` フィールドで指定したスキルのみ。それ以外は知らない前提で書く。
+  - id: custom-subagent-03
+    group: メインエージェント / スキル / カスタムサブエージェントの関係 > カスタムサブエージェント（`agents/**/*.md`）
+    name: 呼び出し元を本文に記載しない
+    body: |-
+      - サブエージェント側は呼び出し元を知らないので、呼び出し元のスキル名やフェーズ名を本文に書かないこと。

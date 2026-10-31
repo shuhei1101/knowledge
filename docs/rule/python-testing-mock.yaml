@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-testing-mock
+kind: rule
+name: 結合テストの Mock パターン
+description: 結合テストで依存を差し替える Mock を、普通の関数で記載する方法と使い分けを定め、結合テストで外部依存を Mock にするときに読む。
+tags:
+  - name: scope:python
+  - name: topic:testing
+  - name: topic:パターン
+  - name: topic:モック
+    main: true
+  - name: topic:結合テスト
+  - name: topic:通信
+  - name: topic:関数
+  - name: action:依存
+  - name: action:差し替え
+  - name: action:比較
+  - name: action:集約
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      関数の型エイリアスで DI している依存は Mock も普通の関数で書く（`AsyncMock` より読みやすい）。引数注入していない依存は `monkeypatch` / `mock.patch` で差し替えてよい。
+  - id: integration-mock-pattern-01
+    group: 結合テストの Mock パターン
+    name: Mock の方式の比較
+    body: |-
+      <!-- table: data -->
+
+      | 対象         | パターン                                                             |
+      | ------------ | -------------------------------------------------------------------- |
+      | LLM          | `make_chat_mock(*responses)` — 固定文字列を順に返すファクトリ        |
+      | 呼び出し検証 | クロージャに `calls` リストを持つ spy 関数（`_chat.calls` で参照）   |
+      | エラー注入   | `make_chat_error(LlmRateLimitError("..."))` — raise するだけの関数   |
+      | HTTP         | fetch を型エイリアス化していれば Mock 関数注入。httpx2 直なら `MockTransport` を関数注入（SDK は `http_client=` に渡す） |
+      | 時刻         | `NowFn` に固定時刻関数を渡す（freezegun より関数注入がシンプル）     |
+      | ID 生成      | `iter(["id-1", ...])` + `next` を返す関数                            |
+      | 永続化       | クロージャの dict による in-memory `save` / `find`                   |
+      | 環境変数     | `monkeypatch.setenv` → `Settings()`                                  |
+
+      <!-- /table -->
+  - id: integration-mock-pattern-02
+    group: 結合テストの Mock パターン
+    name: Mock を conftest に集約
+    body: |-
+      - よく使う Mock は conftest の fixture に集約
+  - id: integration-mock-pattern-03
+    group: 結合テストの Mock パターン
+    name: 実通信テストの置き場所
+    body: |-
+      - 本物の外部サービスに通信するテストを結合テストに書かない（課金・不安定 → 外部疎通テスト（`tests/external/`）へ）

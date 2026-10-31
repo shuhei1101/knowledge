@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-core-buildless
+kind: rule
+name: ビルドレス原則（バンドルしない）
+description: バンドラを使わないビルドレス原則と、ブラウザのスクリプトの拡張子の決まりを定め、単体 HTML のビルドやスクリプトの拡張子を決めるときに読む。
+tags:
+  - name: scope:html
+  - name: tool:javascript
+  - name: topic:スクリプト
+  - name: tool:typescript
+  - name: topic:バンドル
+  - name: topic:ビルドレス
+    main: true
+  - name: topic:ブラウザ
+  - name: tool:tsc
+  - name: action:ビルド
+  - name: action:拡張
+  - name: action:配信
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
+  - id: buildless-01
+    group: ビルドレス原則（バンドルしない）
+    name: バンドラを使わない
+    body: |-
+      - バンドラを使わない。
+        - webpack / vite / esbuild などでブラウザ用にバンドル・最適化しない。
+        - ネイティブ ES Modules と素の CSS をそのまま配信する。起動を軽く保つのが目的。
+        - ただし TypeScript の型システムを使うため、`tsc` による `.ts` → `.js` のトランスパイル 1 工程だけは許可する。
+        - 開発時のツールは使ってよい（[html/tooling/tsc運用](id:html-tooling-tsc)）。
+  - id: script-extension-01
+    group: ブラウザのスクリプトの拡張子
+    name: tsc を挟む配信では ts で記載
+    body: |-
+      - `tsc` を挟める配信（サーバーが配る画面など）では、ブラウザのスクリプトを `.ts` で書き、`.js` を手で書かない。
+        - スクリプトを置くフォルダの名前（`frontend/`・`static/`・`assets/` など）によらない。
+  - id: script-extension-02
+    group: ブラウザのスクリプトの拡張子
+    name: js で記載してよい場合
+    body: |-
+      - `.js` で書いてよいのは、ビルドせずにそのまま配るもの（GitHub Pages・モックのプレビューなど）だけ。

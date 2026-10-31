@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-devtools-mock
+kind: rule
+name: モック（MSW）
+description: MSW で開発中・テスト中の API をモックする handler の共有と運用を定め、API のモックを作る・修正するときに読む。
+tags:
+  - name: scope:react
+  - name: topic:devtools
+  - name: topic:api
+  - name: topic:testing
+  - name: topic:エンドポイント
+  - name: topic:ソース
+  - name: topic:ハンドラ
+  - name: topic:バリエーション
+  - name: topic:モック
+    main: true
+  - name: topic:構造
+  - name: topic:遅延
+  - name: tool:msw
+  - name: tool:playwright
+  - name: tool:storybook
+  - name: tool:vitest
+  - name: action:クリーンアップ
+  - name: action:共有
+  - name: action:運用
+  - name: action:開発
+status: current
+visibility: internal
+rev: 3
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      開発中・テスト中の API のモック。
+      MSW で、fetch をネットワークレイヤーで intercept する。
+  - id: mocking-msw-01
+    group: モック（MSW）
+    name: handler を Storybook・Vitest・Playwright で共有
+    body: |-
+      - 同じ handler の定義を、Storybook・Vitest・Playwright で再利用する。
+        orval が生成する MSW のモックを土台にする。
+
+      ```bash
+      # .env.local
+      VITE_API_MOCKING=enabled
+      ```
+  - id: mocking-msw-02
+    group: モック（MSW）
+    name: テスト間の handler の後始末
+    body: |-
+      `afterEach(() => server.resetHandlers())` で、上書きが他のテストに漏れないようにする。
+      テストでは、handler の無いリクエストをエラーにする。
+
+      通常の E2E は本物の API に対して走るので、MSW は使わない。
+      特定のレスポンスを返したいときや障害をシミュレートしたいときは、`page.route()` で fetch を intercept する。
+      MSW の handler を共有したいときは `@msw/playwright` を使う。
+  - id: mocking-msw-03
+    group: モック（MSW）
+    name: handlers.ts を source of truth にする
+    body: |-
+      - `src/testing/msw/handlers.ts` を、1 つの source of truth にする。
+  - id: mocking-msw-04
+    group: モック（MSW）
+    name: 実際のレスポンスの構造に合わせる
+    body: |-
+      - 実際のレスポンスの構造（封筒 `{ data, meta }` と `{ error }`）に合わせる。
+  - id: mocking-msw-05
+    group: モック（MSW）
+    name: 成功・失敗・空・遅延のバリエーション
+    body: |-
+      - 「成功・失敗・空・ネットワークの遅延」のバリエーションを用意する。
+  - id: mocking-msw-06
+    group: モック（MSW）
+    name: 必要なエンドポイントを網羅する
+    body: |-
+      - 各画面で必要なエンドポイントを網羅する。

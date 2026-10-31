@@ -1,0 +1,72 @@
+id: "SC-72-5"
+title: "エージェントが knowledge の文書を書き込む"
+scenarios:
+  - name: 正常シナリオ
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 作業場所
+        description: knowledge の worktree
+      - name: 書き込む内容
+        description: スキーマに合い、ID の重複・参照切れ・mermaid の誤りが無い規約の YAML
+    flow: |-
+      sequenceDiagram
+        participant E as エージェント
+        participant M as dev-docs の文書の MCP
+        participant V as knowledge の検査のスクリプト
+        participant W as knowledge の作業ツリー
+        E->>M: write_docs に source knowledge と文書
+        M->>M: scope.write とスキーマを確かめる
+        M->>V: 標準入力に文書の YAML
+        V-->>M: 終了コード 0 と空の違反の配列
+        M->>W: 文書を書き込む
+        M-->>E: 書き込んだ文書
+    expected:
+      - 作業ツリーの文書が渡した内容になる
+      - 応答が `isError` でない
+    test: test_normal
+  - name: 異常シナリオ（検査のスクリプトが違反を返す）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 書き込む内容
+        description: スキーマには合うが、`subgraph` の `end` が抜けた mermaid を持つ規約の YAML
+    flow: |-
+      sequenceDiagram
+        participant E as エージェント
+        participant M as dev-docs の文書の MCP
+        participant V as knowledge の検査のスクリプト
+        E->>M: write_docs に source knowledge と文書
+        M->>V: 標準入力に文書の YAML
+        V-->>M: 終了コード 0 と違反の配列
+        M-->>E: isError と違反の一覧
+    expected:
+      - 作業ツリーの文書が変わらない
+      - 応答が `isError` で、違反の `path` が mermaid を持つ項目のパス、`rule` に文書の行と maid の内容が入る
+    test: test_error_when_validator_reports_violation
+  - name: 異常シナリオ（作業場所が scope.write の外）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 作業場所
+        description: knowledge のクローンの外の作業場所
+    flow: |-
+      sequenceDiagram
+        participant E as エージェント
+        participant M as dev-docs の文書の MCP
+        E->>M: write_docs に source knowledge と文書
+        M-->>E: isError と scope.write の外であること
+    expected:
+      - knowledge の作業ツリーの文書が変わらない
+      - 応答が `isError` で、`scope.write` の外であることが分かる
+    test: test_error_when_out_of_write_scope
+lead: エージェントが knowledge のクローンか worktree で `write_docs` を呼び、dev-docs がスキーマと knowledge の検査のスクリプトを通してから文書を書き込む。
+issue: 51
+primary_actor: エージェント
+trigger: エージェントが規約を追加・修正する
+preconditions:
+  - knowledge が dev-docs に登録され、配信中
+  - 検査のスクリプトが使う maid が Linux 側に入り、PATH から引ける
+success_guarantee: 違反の無い内容だけが knowledge の作業ツリーに書き込まれる。
+minimal_guarantee: 違反のある内容・`scope.write` の外からの書き込みは、ファイルを変えずに `isError` で返す。
+test_file: tests/e2e/単一ユースケース/test_エージェントがknowledgeの文書を書き込む.py

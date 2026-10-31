@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-data-query
+kind: rule
+name: クエリ
+description: TanStack Query の読み取りの置き場所、queryOptions の合成、queryKey、hook の命名を定め、サーバーのデータを React で読む処理を実装するときに読む。
+tags:
+  - name: scope:react
+  - name: topic:フロントエンド
+  - name: topic:naming
+  - name: topic:クエリ
+    main: true
+  - name: topic:サーバー
+  - name: topic:データ
+  - name: topic:パラメータ
+  - name: topic:ビュー
+  - name: topic:フック
+  - name: topic:ルート
+  - name: topic:ローダー
+  - name: tool:react
+  - name: tool:tanstack-query
+  - name: action:先読み
+  - name: action:共有
+  - name: action:合成
+  - name: action:編集
+  - name: action:読み取り
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-30'
+related:
+  - to: react-data-api-client
+    type: requires
+    when: API を呼ぶ hook の出どころを決めるとき
+sources:
+  - title: "TanStack Query: Query Options"
+    url: https://tanstack.com/query/latest/docs/framework/react/guides/query-options
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      サーバーのデータは、TanStack Query で読む。
+  - id: use-query-01
+    group: クエリ
+    name: queries.ts に queryOptions をまとめる
+    body: |-
+      - 画面の `queries.ts` に、queryOptions の合成と invalidate をまとめる。
+        orval が生成した hook を、そのまま使ってよい。
+  - id: use-query-02
+    group: クエリ
+    name: queryKey に全パラメータを含める
+    body: |-
+      - `queryKey` に、結果を変える全パラメータ（filter・sort・page・pageSize など）を含める。
+  - id: use-query-03
+    group: クエリ
+    name: ルートの loader で先読みする
+    body: |-
+      - 画面の初期表示に要るデータは、ルートの loader で `queryClient.ensureQueryData` を呼んで先読みする。
+  - id: use-query-04
+    group: クエリ
+    name: View と Edit で hook を共有する
+    body: |-
+      - View と Edit で同じ API を使うときは、`features/{domain}/shared/` の hook に共通化する。
+  - id: naming-01
+    group: 命名
+    name: 命名の表
+    body: |-
+      <!-- table: data -->
+
+      | パターン | 役割 |
+      | --- | --- |
+      | `use{Feature}` | 単体 |
+      | `use{Feature}List` | 一覧 |
+      | `use{Feature}By{Key}` | キー指定 |
+
+      <!-- /table -->

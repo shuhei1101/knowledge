@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-precheck
+kind: rule
+name: 事前確認
+description: 費用や時間のかかる処理の前に、この先の処理が成り立つかを確かめる決まりを定め、費用や時間のかかる処理を実装するときに読む。
+tags:
+  - name: scope:dev
+  - name: topic:コスト
+  - name: topic:事前確認
+    main: true
+  - name: action:依存
+  - name: action:判定
+  - name: action:確認
+  - name: action:起動
+  - name: action:送信
+status: current
+visibility: internal
+rev: 3
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      費用や時間のかかる処理の前に、この先の処理が成り立つかを確かめる決まり。
+      入力の妥当性の検査とは別に扱う。
+  - id: check-target-01
+    group: 確かめるもの
+    name: 成否を左右する条件
+    body: |-
+      - 成否を左右する条件を先に確かめる。対象は後段の外部システムへの到達・上限（トークン数・サイズ・件数）・残り時間・利用枠・認証情報の期限
+  - id: check-target-02
+    group: 確かめるもの
+    name: 送信前に手元で数える
+    body: |-
+      - 上限のある外部へ送信するものは、送信する前に手元で数える
+  - id: startup-running-01
+    group: 起動時と動いている間
+    name: 起動時の確認
+    body: |-
+      - 起動時に、設定・認証情報・必須の外部への到達を確かめる。欠けていれば起動を止め、何が足りないかを出す
+  - id: startup-running-02
+    group: 起動時と動いている間
+    name: 動作中の判定
+    body: |-
+      - 動いている間の判定は起動時の確認と分け、依存先の一時的な障害で自分を止めない。依存先の確認は監視の側で行う
+  - id: per-process-check-01
+    group: 処理ごとの確かめ方
+    name: 最初の確認は手元で
+    body: |-
+      - 処理の最初の確認は、手元での数え上げ・直近の結果の記録で行い、毎回外部へ照会しない
+  - id: per-process-check-02
+    group: 処理ごとの確かめ方
+    name: 落ちている依存先は呼ばない
+    body: |-
+      - 依存先が落ちていると分かっている間は、呼ばずにすぐ失敗を返す
+  - id: per-process-check-03
+    group: 処理ごとの確かめ方
+    name: 残り時間の確認
+    body: |-
+      - 工程ごとに残り時間を確かめ、間に合わない処理は始めない。残り時間は下流へ渡す
+  - id: on-stop-01
+    group: 止めたとき
+    name: 止めたときの伝え方
+    body: |-
+      - 確認で止めたときは、費用の発生前に止まったことと、足りないものを伝える
+  - id: on-stop-02
+    group: 止めたとき
+    name: 確認できない場合の代わりの値
+    body: |-
+      - 確認できなかったときの代わりの値は外部規約『コーディング全般』の `## フォールバック仕様` に従う

@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: ui-screen-design-principles
+kind: rule
+name: 画面デザインの原則
+description: 画面に置いた要素が意味を持っているかを判断する原則を定め、画面の要素を追加する・見直すときに読む。
+tags:
+  - name: scope:ui
+  - name: topic:デザイン
+  - name: topic:画面
+    main: true
+  - name: topic:要素
+  - name: action:判断
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+sources:
+  - id: "claude-balancer#52"
+    title: "claude-balancer#52"
+    url: https://github.com/shuhei1101/claude-balancer/pull/52#discussion_r4058761017
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 共通（単体 HTML・React）
+      画面に置いた要素が意味を持っているかを判断する原則。
+      部品名は例として挙げたもので、他の部品にも同じ観点で当てる。
+  - id: screen-design-principles-01
+    group: 画面デザインの原則
+    name: 画面デザインの原則の表
+    body: |-
+      | 観点 | 原則 | 出どころ |
+      | --- | --- | --- |
+      | アイコンと意味 | ボタンのアイコン・記号は、そのボタンが起こすことを表すものだけを使う。押す前に何が起きるかが読めること。1 つのボタンに性質の違うアクションをぶら下げない | claude-balancer#52 |
+      | 主アクションのボタン | FAB のように画面でいちばん大事な 1 操作を置くボタンは、その操作がある画面にだけ置く。ボタンを埋めるために別のアクションを入れない | claude-balancer#52 |
+      | 入口の単一性 | 同じ遷移・同じ操作の入口は 1 つにする。増やすのは、出る条件が排他であること（片方はスマホ幅、片方は PC 幅 等）か、見えている入口への近道（キー操作 等）であることを示せる場合に限る | claude-balancer#52 |
+      | ヘッダーの容量 | ヘッダーには画面幅に収まる要素だけを置き、ヘッダーの中で横スクロールさせない。数が増えて収まらなくなるもの（タブ 等）はヘッダーの外へ出し、ヘッダー直下に追従させて並べる | claude-balancer#52 |
+      | 状態の可視化 | オン / オフを切り替えるボタン（ピン 等）は、押す前（非活性の見た目）と押した後（活性の見た目）が別物に見えること。再度押して戻せるなら、解除専用のボタンを別に置かない | claude-balancer#52 |

@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=../../schemas/guide.schema.yaml
+id: guide-setup-install-plugin
+kind: guide
+name: knowledge のプラグインを入れる
+description: マーケットプレイスを登録してプラグインを入れる手順と、反映・確認・元に戻す方法を示し、knowledge のスキルを Claude Code で使いたいときに読む。
+tags:
+  - name: scope:使い方
+  - name: topic:セットアップ手順
+  - name: topic:スキル
+  - name: topic:プラグイン
+    main: true
+  - name: topic:マーケットプレイス
+  - name: topic:手順
+  - name: tool:claude
+  - name: tool:claude-code
+  - name: action:インストール
+  - name: action:再読み込み
+  - name: action:反映
+  - name: action:導入
+  - name: action:注入
+  - name: action:登録
+  - name: action:選択
+status: current
+visibility: public
+rev: 5
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      knowledge のスキル（文章を点検して修正する `/knowledge:text-review`）を Claude Code で使いたいときに実行する。
+      入れると、セッションの開始時に、規約『文章の書き方』の語の選び方の要点（原則と、避ける語 → 使う語の対応）がフックで注入される。
+  - id: prerequisite-01
+    group: 前提
+    name: "前提: Claude Code の導入"
+    body: |-
+      - Claude Code を入れてある
+  - id: step-marketplace-01
+    group: 手順 > マーケットプレイスを登録する
+    name: マーケットプレイスの登録
+    body: |-
+      ```bash
+      claude plugin marketplace add shuhei1101/knowledge
+      ```
+
+      登録しないと、次の手順で `knowledge@knowledge` が見つからずに失敗する。
+  - id: step-install-01
+    group: 手順 > プラグインを入れる
+    name: プラグインのインストール
+    body: |-
+      ```bash
+      claude plugin install knowledge@knowledge
+      ```
+
+      既定はユーザースコープで、どのプロジェクトでも使える。
+      特定のプロジェクトだけで使うときは、そのプロジェクトの直下で `--scope project` を付ける。
+  - id: reflection-01
+    group: 反映
+    name: 反映は reload
+    body: |-
+      `/reload`（開いている Claude Code のセッションで `/reload-plugins` を実行する）。
+  - id: check-installed-01
+    group: 確認 > プラグインが有効になっている
+    name: プラグインが有効なことを確認
+    body: |-
+      ```bash
+      claude plugin list
+      ```
+
+      `knowledge@knowledge` が `enabled` で並ぶ。
+  - id: check-skill-01
+    group: 確認 > スキルを呼べる
+    name: スキルを呼べることを確認
+    body: |-
+      Claude Code のセッションで `/knowledge:text-review` と入力すると、スキルが候補に出る。
+  - id: check-hook-01
+    group: 確認 > 語の選び方の要点が注入されている
+    name: 語の選び方の要点が注入されたことを確認
+    body: |-
+      Claude Code で新しいセッションを開始し（`/clear` でもよい）、セッションの開始時に注入された『語の選び方』の文を、そのまま示すよう Claude に頼む。
+      原則と、避ける語 → 使う語の対応が返る。
+
+      再開したセッション（`resume`）には、前回の注入が会話の履歴に残っているため、もう一度は注入しない。
+  - id: rollback-01
+    group: 元に戻す
+    name: 元に戻す
+    body: |-
+      ```bash
+      claude plugin uninstall knowledge@knowledge
+      claude plugin marketplace remove knowledge
+      ```
+
+      マーケットプレイスを削除すると、そこから入れたプラグインも外れる。

@@ -1,0 +1,23 @@
+# 回したコードの commit: 24bfc4dcd5593a3e055de77bb2042a3429119ec5
+
+$ uv run --with jsonschema --with pyyaml --with referencing python check.py . {rule-inject 0.2.3}   # docs/**/*.yaml を schemas/*.schema.yaml で検査し、id とファイル名・id: 参照・rules.yaml の rule の実在と React の 2 件の glob の当たりを確かめる
+文書 273 件、違反 0 件
+rules.yaml entries 145
+react-state-effect.yaml use-task-list.ts HIT
+react-state-effect.yaml use-task-list.test.ts -
+react-state-effect.yaml ui-store.ts -
+react-state-effect.yaml ui-store.test.ts -
+react-state-effect.yaml list-screen.tsx HIT
+react-state-effect.yaml list-screen.test.tsx -
+react-state-effect.yaml list-screen.stories.tsx -
+flowchart-react-state-placement.yaml use-task-list.ts HIT
+flowchart-react-state-placement.yaml use-task-list.test.ts -
+flowchart-react-state-placement.yaml ui-store.ts HIT
+flowchart-react-state-placement.yaml ui-store.test.ts -
+flowchart-react-state-placement.yaml list-screen.tsx HIT
+flowchart-react-state-placement.yaml list-screen.test.tsx -
+flowchart-react-state-placement.yaml list-screen.stories.tsx -
+exit=0
+
+$ git diff --check origin/develop...HEAD
+空白の違反なし

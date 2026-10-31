@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: obs-browser-source
+kind: rule
+name: OBSのブラウザソース
+description: OBS のブラウザソースで取り込む画面の前提のブラウザと、OBS 側・ページ側の作法を定め、OBS に取り込む画面を作るときに読む。
+tags:
+  - name: scope:obs
+  - name: topic:ブラウザ
+  - name: topic:ブラウザソース
+    main: true
+  - name: topic:ページ
+  - name: topic:画面
+  - name: topic:設定
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+sources:
+  - title: obs-browser
+    url: https://github.com/obsproject/obs-browser
+  - title: OBS のリリースノート
+    url: https://github.com/obsproject/obs-studio/releases
+  - title: OBS の Browser Source の KB
+    url: https://obsproject.com/kb/browser-source
+  - title: Stick to Compositor-Only Properties and Manage Layer Count
+    url: https://web.dev/articles/stick-to-compositor-only-properties-and-manage-layer-count
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 共通（OBS のブラウザソースで取り込む画面）
+      OBS のブラウザソースで取り込む画面の前提のブラウザと、OBS 側・ページ側の作法。
+  - id: assumed-browser-01
+    group: 前提のブラウザ
+    name: 前提のブラウザ
+    body: |-
+      | 要素 | 決まり |
+      | --- | --- |
+      | 前提のブラウザ | OBS 同梱の Chromium。それより新しいブラウザの API は、機能の有無を確かめてから使う |
+      | バージョンの確かめ先 | OBS のバージョンと同梱の Chromium のバージョンの対応は書かない。OBS のリリースノートと、obs-browser の CEF のバージョンで確かめる |
+  - id: obs-side-setting-01
+    group: OBS 側の設定
+    name: OBS 側の設定
+    body: |-
+      | 要素 | 決まり |
+      | --- | --- |
+      | ハードウェアアクセラレーション | ブラウザソースのハードウェアアクセラレーションを有効にする |
+      | フレームレート | カスタムフレームレートはオフにし、OBS の出力のフレームレートに合わせる。ハードウェアアクセラレーションが効かない構成では、カスタムフレームレートを出力のフレームレートと同じ値にする |
+      | 非表示の間 | 「表示されていないときにソースをシャットダウン」をオフにする |
+  - id: page-side-01
+    group: ページ側
+    name: ページ側の作法
+    body: |-
+      | 要素 | 決まり |
+      | --- | --- |
+      | 背景 | `html` と `body` に不透明な背景を付けない（OBS が透過して重ねる） |
+      | 非表示の間 | `obsSourceVisibleChanged` を受け取り、非表示の間は演出のキューを止める |
+      | アニメーション | `transform` と `opacity` を基本にする |

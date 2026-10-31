@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-naming-css-class
+kind: rule
+name: CSS クラス命名
+description: CSS クラスの命名の種類別の例と、状態の表し方を定め、単体 HTML の CSS クラスに名前を付けるときに読む。
+tags:
+  - name: scope:html
+  - name: topic:naming
+    main: true
+  - name: tool:css
+  - name: topic:クラス
+  - name: topic:セレクタ
+  - name: topic:フォルダ
+  - name: topic:レイヤー
+  - name: topic:属性
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
+  - id: css-class-naming-01
+    group: CSS クラス命名
+    name: 役割は layer とフォルダで担保
+    body: |-
+      - 役割（component / layout / utility）は `@layer` とフォルダ分割で担保するので、ハンガリアン記法（`c-` / `l-` / `u-` 等）は用いない。
+        - 素直な名前にする。
+  - id: css-class-naming-02
+    group: CSS クラス命名
+    name: クラス名の種類別の例
+    body: |-
+      | 種類                 | 例                                                                              |
+      | -------------------- | ------------------------------------------------------------------------------- |
+      | コンポーネント       | `.button` `.card` `.task-card`                                                  |
+      | 要素（BEM 風の連結） | `.card__title` `.card__body`                                                    |
+      | 状態                 | `.is-open` `.is-active`、または `[aria-expanded]` / `[data-state]` 属性セレクタ |
+  - id: css-class-naming-03
+    group: CSS クラス命名
+    name: 状態は属性セレクタで表す
+    body: |-
+      状態は `:has()` や属性セレクタで表せるものはクラスを増やさず表現する。連結（`__`）はネイティブ Nesting で生成できないのでフル記述する（css/ネスト）。

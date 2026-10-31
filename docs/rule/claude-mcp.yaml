@@ -1,0 +1,512 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: claude-mcp
+kind: rule
+name: MCP サーバー作成ルール
+description: MCP サーバーの SDK・構成・ツールの単位・読み取りと差分のツール・検索・登録・動作確認の決まりを定め、MCP サーバーやそのツールを作る・修正するときに読む。
+tags:
+  - name: scope:claude
+  - name: topic:http
+  - name: topic:issue
+  - name: tool:markdown
+  - name: topic:sdk
+  - name: topic:url
+  - name: tool:yaml
+  - name: topic:エイリアス
+  - name: topic:キー
+  - name: topic:サーバー
+  - name: topic:スキーマ
+  - name: topic:セッション
+  - name: topic:タグ
+  - name: topic:ツール
+  - name: topic:テキスト
+  - name: topic:トランスポート
+  - name: topic:ハンドラ
+  - name: topic:ビュー
+  - name: topic:プラグイン
+  - name: topic:プロジェクト
+  - name: topic:ベクトル
+  - name: topic:ベクトル検索
+  - name: topic:ポート
+  - name: topic:ポート台帳
+  - name: topic:モジュール
+  - name: topic:モデル
+  - name: topic:モード
+  - name: topic:ルール
+  - name: topic:ロジック
+  - name: topic:主題
+  - name: topic:会話
+  - name: topic:台帳
+  - name: topic:変数
+  - name: topic:差分
+  - name: topic:常駐
+  - name: topic:引数
+  - name: topic:文書
+  - name: topic:構成
+  - name: topic:標準入出力
+  - name: topic:正本
+  - name: topic:用語
+  - name: tool:dev-docs
+  - name: tool:mcp
+    main: true
+  - name: tool:next-js
+  - name: action:上書き
+  - name: action:付与
+  - name: action:作成
+  - name: action:依存
+  - name: action:分割
+  - name: action:取得
+  - name: action:変換
+  - name: action:定義
+  - name: action:探索
+  - name: action:接続
+  - name: action:操作
+  - name: action:案内
+  - name: action:検索
+  - name: action:添付
+  - name: action:照合
+  - name: action:特定
+  - name: action:登録
+  - name: action:記録
+  - name: action:読み取り
+  - name: action:起動
+  - name: action:返却
+  - name: action:通知
+  - name: action:適用
+status: current
+visibility: internal
+rev: 10
+last_reviewed: '2026-10-31'
+sources:
+  - title: "Anthropic: Writing effective tools for agents"
+    url: https://www.anthropic.com/engineering/writing-tools-for-agents
+  - title: "MCP 仕様: Tools"
+    url: https://modelcontextprotocol.io/specification/2025-06-18/server/tools
+    note: "`tools/list` の `cursor` / `nextCursor`"
+    library: MCP
+    version: '2025-06-18'
+  - title: Google AIP-157
+    url: https://google.aip.dev/157
+    note: view
+  - title: "anthropics/claude-code #9962"
+    url: https://github.com/anthropics/claude-code/issues/9962
+    note: structuredContent を優先し text を捨てる
+  - title: "MCP 仕様 2026-07-28: Changelog"
+    url: https://modelcontextprotocol.io/specification/2026-07-28/changelog
+    note: 接続を会話とみなさない
+    library: MCP
+    version: '2026-07-28'
+items:
+  - id: sdk-transport-01
+    group: SDK とトランスポート
+    name: 公式 SDK の使用
+    body: |-
+      - 公式 MCP Python SDK（pip の `mcp` パッケージ）の `MCPServer` を使う
+        - `from mcp.server.mcpserver import MCPServer`
+        - 旧名の `FastMCP`（`mcp.server.fastmcp`）は v2 で削除された。サードパーティの「FastMCP」（pip の `fastmcp`）とも別物
+  - id: sdk-transport-02
+    group: SDK とトランスポート
+    name: HTTP の常駐サーバー
+    body: |-
+      - MCP サーバーは HTTP（Streamable HTTP）の常駐サーバーにする（`mcp.streamable_http_app()`）。stdio（`mcp.run()`）は禁止する
+  - id: sdk-transport-03
+    group: SDK とトランスポート
+    name: stdio を避ける理由
+    body: |-
+      - stdio は **セッションごとに 1 プロセス**が立つ。5 セッション並べれば同じサーバが 5 個起動し、依存解決も 5 回走る。並行で起動するセッションの数だけプロセスが増える
+  - id: sdk-transport-04
+    group: SDK とトランスポート
+    name: 起動のノンブロッキング
+    body: |-
+      - Claude Code の MCP 起動は既定でノンブロッキング。接続中のサーバーのツールが要るときは、Claude が接続完了を待つ
+  - id: sdk-transport-05
+    group: SDK とトランスポート
+    name: alwaysLoad の付け方
+    body: |-
+      - 毎ターン使うツールを持つサーバーだけ `.mcp.json` に `"alwaysLoad": true` を付ける。ツール検索を介さず最初のプロンプトから載り、起動がツールの確定まで待つ（上限は `MCP_CONNECT_TIMEOUT_MS`）
+  - id: sdk-transport-06
+    group: SDK とトランスポート
+    name: 常駐サーバーの起動方法
+    body: |-
+      - 常駐サーバをどう起動するかを決める。既に常駐しているプロセス（アプリ本体・compose のサービス）に相乗りさせると、起動するものが増えない
+      - 常駐の MCP サーバーは、プラグインで配る。
+      - 起動と管理は systemd --user を主にする。
+        立て方は、tmux・systemd の規約で定める。
+      - SessionStart のフックは、落ちていたときの起動の補助にする。
+      - 状態の確認・再読込・再起動・更新は、サーバー自身が出す管理の MCP ツールで行う。
+  - id: sdk-transport-07
+    group: SDK とトランスポート
+    name: モジュール変数に状態を持たない
+    body: |-
+      - HTTP は 1 プロセスを複数セッションが共有するため、ツール関数はモジュール変数に状態を持たせない
+  - id: structure-01
+    group: 構成
+    name: ロジックの置き場所
+    body: |-
+      - ロジックの置き場所はツールの重さで決める
+        - 外部 API を 1 回叩く程度の薄い操作は、サーバーファイルに直接書いてよい。
+          subprocess を挟むと起動コストと引数の受け渡しが増えるだけで得るものがない
+        - 分岐・状態管理を伴う処理は `scripts/` や `tools/` の単体実行可能な CLI に切り出し、サーバーはそれを呼ぶだけにする。
+          CLI 単体でデバッグでき、ロジックが MCP に縛られない
+  - id: structure-02
+    group: 構成
+    name: セッション情報の受け取り
+    body: |-
+      - 常駐サーバーには、セッションの作業ディレクトリと環境変数（`CLAUDE_PROJECT_DIR`・`CLAUDE_CODE_SESSION_ID`）が渡らない
+        - サーバーが持つファイルは、作業ディレクトリに依存せず、起動時に設定したルートを基準にパス解決する
+        - セッションの作業対象のファイルは、ツールの引数で絶対パスを受ける。セッションごとの値は PreToolUse フックで引数に入れる
+  - id: server-tool-unit-01
+    group: サーバーとツールの単位
+    name: 文書の MCP のサーバーは dev-docs の 1 つ
+    body: |-
+      - 文書の MCP のサーバーは dev-docs の 1 つにし、配信元ごとに分けない（`## 登録`）
+  - id: server-tool-unit-02
+    group: サーバーとツールの単位
+    name: ツールは操作で分ける
+    body: |-
+      - ツールは操作（検索・取得・書き込み・差分・スキーマの取得）で分け、文書の種類は `kind` の enum 引数で指す
+        種類ごとのツールを作らない
+  - id: server-tool-unit-03
+    group: サーバーとツールの単位
+    name: kind ごとのハンドラー
+    body: |-
+      - 種類ごとの違い（スキーマ・独自の検査・返す形式・読み書きの場所）は、サーバーの中で `kind` ごとのハンドラーに振り分ける
+  - id: server-tool-unit-04
+    group: サーバーとツールの単位
+    name: 別ツールにする操作
+    body: |-
+      - 操作の意味が種類に固有のものと、削除など rule-inject や権限で止めたい操作だけ、別のツールにする
+        - 記録を探すのではなく、ID などから今の状態を計算して返す取得（例: キャラクターの今の状態）
+        - 種類ごとに中身と検査が違う、業務のデータの追記（例: ノードが記載する行動の選択肢）
+      - 記録を探して引くツール（コメント・ログ・ノウハウなど）は、文書でなくても `search` と ID で取るツールにまとめる
+  - id: mdmark-yaml-role-01
+    group: mdmark と YAML の正本・MCP の役割の分担
+    name: YAML は各プロジェクト、MCP は dev-docs
+    body: |-
+      - YAML の正本・スキーマ・検査と変換のスクリプトは各プロジェクトが持ち、MCP と開発ドキュメントサーバーは dev-docs が持つ
+  - id: mdmark-yaml-role-02
+    group: mdmark と YAML の正本・MCP の役割の分担
+    name: mdmark の役割
+    body: |-
+      - mdmark は Markdown の記法と共通スタイルの描画だけを受け持ち、YAML を読まない
+        用語集の表の印など Markdown の機能は mdmark に残す
+  - id: mdmark-yaml-role-03
+    group: mdmark と YAML の正本・MCP の役割の分担
+    name: YAML から Markdown への変換
+    body: |-
+      - 配信するときは、各プロジェクトのスクリプトが YAML を mdmark の記法の Markdown に変換し、mdmark で描く
+  - id: mdmark-yaml-role-04
+    group: mdmark と YAML の正本・MCP の役割の分担
+    name: mdmark と YAML の非依存
+    body: |-
+      - mdmark と YAML の正本・MCP は互いに依存せず、使う側のプロジェクトが両方を取り入れる
+  - id: tool-schema-01
+    group: ツール定義のスキーマ
+    name: ツール定義の項目表
+    body: |-
+      <!-- table: data -->
+
+      | 要素 | 書き方 |
+      | --- | --- |
+      | description | `content/prompts/` の YAML（`kind: tool`。[プロンプトファイル](id:prompt-file)）を、登録のときに読む。書く内容は [注入文の書き分けと書き方](id:claude-context-placement) に従う |
+      | title | `@mcp.tool(title="日本語タイトル")` |
+      | 引数の説明 | `Annotated[型, Field(description=...)]` |
+      | 引数の選択肢制限 | `Literal[...]` → enum としてスキーマに反映 |
+      | 出力スキーマ | 型付きで返すツールだけ、戻り値を Pydantic モデルにする → outputSchema 自動生成。各フィールドに `Field(description=...)` |
+      | ツールの性質 | `ToolAnnotations(readOnlyHint=..., destructiveHint=...)` |
+
+      <!-- /table -->
+  - id: tool-schema-02
+    group: ツール定義のスキーマ
+    name: 共通の戻り値モデル
+    body: |-
+      - 型付きで返すツールの戻り値は `{success: bool, output: str}` 形式の共通モデルを基本とする
+  - id: tool-schema-03
+    group: ツール定義のスキーマ
+    name: Markdown・YAML は str で返す
+    body: |-
+      - Markdown・YAML を見せるツールは `str` を返し、outputSchema を出さない
+        Claude Code は structuredContent があると text を読まない
+  - id: tool-schema-04
+    group: ツール定義のスキーマ
+    name: structuredContent と text
+    body: |-
+      - 型付きで返すツールは、structuredContent と text に同じ内容を入れる
+  - id: read-tool-01
+    group: 読み取りのツール
+    name: search 1 つにまとめる
+    body: |-
+      - 種類ごとの `list_*` を作らず、絞り込みの引数を持つ `search` 1 つにまとめる
+  - id: read-tool-02
+    group: 読み取りのツール
+    name: limit・total・next_cursor
+    body: |-
+      - 既定の `limit` を持ち、絞り込みに当たった総数 `total` を返す。続きがあるときは `next_cursor` を返す。型付きで返すツールは、どちらも共通モデルに項目を追加して返す
+  - id: read-tool-03
+    group: 読み取りのツール
+    name: view と include の指定
+    body: |-
+      - `view`（`brief` / `standard` / `full`）で返す量を選べ、`include` / `exclude`（項目名の enum の配列）で追加・除外できるようにする。既定は `search` が `brief`、1 件を取るツールが `standard`。省いた項目は `omitted` で返し、取り方を添える
+  - id: read-tool-04
+    group: 読み取りのツール
+    name: brief の返す項目
+    body: |-
+      - `search` の `brief` は各行に ID・名前・概要文・タグ・文字数・バージョンを返し、中身は ID で取るツールで返す。結果の先頭に総件数と、当たった全件の合計文字数を返す
+  - id: read-tool-05
+    group: 読み取りのツール
+    name: 切り詰め時の案内
+    body: |-
+      - 切り詰めたときは、`total` と返した件数に加えて、絞り込める引数を案内する
+  - id: read-tool-06
+    group: 読み取りのツール
+    name: 引数なし search の結果
+    body: |-
+      - 引数なしの `search` は、既定件数の先頭ページ・`brief`・タグごとの件数・総件数・`next_cursor` を返す
+  - id: read-tool-07
+    group: 読み取りのツール
+    name: count_only
+    body: |-
+      - `search` に任意の `count_only` を持たせ、一覧を返さずに総件数・合計文字数・タグごとの件数だけを返せるようにする
+        手順で先に呼ぶことは強制せず、エージェントがヒットの多さを見て絞り込むときに使う
+  - id: read-tool-08
+    group: 読み取りのツール
+    name: 主題タグの優先
+    body: |-
+      - タグの絞り込みは、主題のタグ（`main`）が一致した文書を上に並べる
+  - id: read-tool-09
+    group: 読み取りのツール
+    name: ids による複数取得
+    body: |-
+      - 1 件を取るツールは `ids` の配列で複数を受け、渡した順に返す
+        合計が 50,000 文字を超えるときは 1 件も返さず、分けて呼ぶよう返す（Claude Code は 50,000 文字を超える結果をファイルに退避する）
+        見つからない ID があれば全体を失敗にし、近い ID を添える
+  - id: read-tool-10
+    group: 読み取りのツール
+    name: 長い文書の分割取得
+    body: |-
+      - 長い文書は、セクションごとの行範囲・文字数・ハッシュを返すツールを置き、セクションを指定して取得させる
+  - id: read-tool-11
+    group: 読み取りのツール
+    name: 返却形式
+    body: |-
+      - 一覧は Markdown の表（各行に ID と名前）、1 件の本文は Markdown（文書ごとに `<document>` で包む。`read-tool-19`）、YAML が正本の項目は YAML のまま返す
+        参照は ID と名前・概要文まで結合し、相手の本文は結合しない
+  - id: read-tool-19
+    group: 読み取りのツール
+    name: 文書ごとの場所と範囲
+    body: |-
+      - 本文を返すときは、文書ごとに場所（文書のファイルの絶対パスか URL）と範囲（`full`・`section`・`summary`）を載せる
+        - markdown は文書ごとに `<document path="..." scope="...">` で包み、json は各項目に `path`・`scope` を持たせる
+        - `full` は全文を返したときだけ付ける。`section` はセクションを指定した取得（`read-tool-10`）、`summary` は `view` が `brief` など説明だけを返したとき（`read-tool-03`）に付ける
+        - 載せ方の詳細は rule-inject の [MCPの結果の書式](https://github.com/shuhei1101/rule-inject/blob/master/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/MCP%E3%81%AE%E7%B5%90%E6%9E%9C%E3%81%AE%E6%9B%B8%E5%BC%8F.md) に従う
+  - id: read-tool-12
+    group: 読み取りのツール
+    name: 用語・エイリアスの一覧付与
+    body: |-
+      - 本文に出る用語・エイリアスは、本文を変えずに末尾に一覧（語と ID）を付ける
+        語の名前と概要文を引くツールを置く
+  - id: read-tool-13
+    group: 読み取りのツール
+    name: 用語照合ツール
+    body: |-
+      - 用語・エイリアスの照合に使う語の一覧（語・正規化した語・ID・種類・概要・関連する文書）を返すツールを置く
+        指定したバージョンから変わっていなければ、変わっていないことだけを返す
+        mod が使うので、`format` の既定は `json` にする
+  - id: read-tool-14
+    group: 読み取りのツール
+    name: readOnlyHint
+    body: |-
+      - 読み取りのツールに `readOnlyHint` を付ける（Claude Code が並列に実行する）
+  - id: read-tool-15
+    group: 読み取りのツール
+    name: format 引数
+    body: |-
+      - 読み取りのツールに共通の `format`（`markdown` / `json`、既定 `markdown`）を持たせる
+        `json` のときは structuredContent と text に同じ JSON を入れ、`markdown` のときは structuredContent を返さない
+  - id: read-tool-16
+    group: 読み取りのツール
+    name: 会話キー
+    body: |-
+      - 会話キーは `session_id` と `agent_id` の別々の 2 つの引数で受け、PreToolUse フックが入れる
+        エージェントには記載させない
+  - id: read-tool-17
+    group: 読み取りのツール
+    name: 同じ内容は 1 回だけ渡す
+    body: |-
+      - 1 つのセッションで同じ内容は 1 回だけ渡す
+        対象は、関連に結合した相手の名前・概要文、1 件を取るツールの末尾の用語の一覧、同じバージョンの文書の本文
+        サーバーは会話キーごとに返した内容のハッシュを記録し、2 回目は返し済みのマーカーだけを返す（用語の一覧は、返した語を省く）
+        `repeat_seen` で再取得できるようにし、`/clear`・圧縮の後はフックで記録を捨てる
+        会話キーが無いときは省かない
+        検索結果の各行の概要文は、選ぶために使うので省かない
+  - id: read-tool-18
+    group: 読み取りのツール
+    name: 1 回の決まりの適用範囲
+    body: |-
+      - 1 セッション 1 回の決まりは、MCP のツールに限らず、フック・mod で文脈を追加するときにも当てる
+        入力に用語の文脈を追加するときは、そのセッションで初めて出た語だけ、語・ID・説明・関連する文書（ID と名前）を 1 回だけ追加する
+  - id: diff-tool-01
+    group: 差分のツール
+    name: 既読時点の記録
+    body: |-
+      - サーバーがエージェントの既読時点を記録し、`changes_since_read` で前回から変わった項目・キー・変更前の値を返す
+        エージェントにバージョンを持たせない
+  - id: diff-tool-02
+    group: 差分のツール
+    name: 区間の差分一覧
+    body: |-
+      - 区間（`from`・`to`）で追加・変更・削除された文書の一覧を返すツールを置く
+        区間を自分で指すときは、`changes_since_read` ではなくこのツールを使う
+        `include_diff` で文書ごとの差分も返す
+  - id: diff-tool-03
+    group: 差分のツール
+    name: from・to の指定
+    body: |-
+      - `from`・`to` は git の commit・日時・ブランチ・タグのどれでも受け、サーバーが commit に解決する
+        日時はその時点の最後の commit にする
+        解決した commit と日時を結果の先頭に返す
+  - id: diff-tool-04
+    group: 差分のツール
+    name: 差分モード
+    body: |-
+      - 1 件を取るツールに差分モード（`diff_from`・`diff_to`・`context_lines`、既定 3）を持たせ、git と同じ `+`・`-` の行で返す
+        `rev` だけの変化は出さず、参照の ID には名前を添える
+        `format: json` のときは、変わったキーごとの変更前後の値と、本文の変わった行の配列を返す
+  - id: diff-tool-05
+    group: 差分のツール
+    name: 変更通知に頼らない
+    body: |-
+      - MCP の変更通知（resources の購読）には頼らない
+        Claude Code は購読せず、通知はモデルに届かない
+  - id: search-method-01
+    group: 検索の手段
+    name: 検索の基本手段
+    body: |-
+      - 検索はタグ・メタデータ・キーワード（正規化）を基本にする
+        ベクトル検索は必須にせず、ライブラリも指定しない
+  - id: search-method-02
+    group: 検索の手段
+    name: 言い換えの探索
+    body: |-
+      - 言い換えや関連の探索は、安いモデルのサブエージェントに検索のツールを使わせる
+  - id: search-method-03
+    group: 検索の手段
+    name: ベクトル検索の追加
+    body: |-
+      - ベクトル検索を追加するときは DB サーバーを立てず、埋め込みはメモリか Git の外のキャッシュに置く
+        YAML と Git には入れない
+  - id: relation-impact-tool-01
+    group: 関連と影響範囲のツール
+    name: 骨組みのツール
+    body: |-
+      - 全文書の ID・種類・概要文を返す骨組みのツールを置く
+  - id: relation-impact-tool-02
+    group: 関連と影響範囲のツール
+    name: 関連をたどるツール
+    body: |-
+      - ID を起点に関連・コード参照をたどり、影響する文書を理由つきで返すツールを置く
+  - id: relation-impact-tool-03
+    group: 関連と影響範囲のツール
+    name: 関連候補の記録
+    body: |-
+      - 関連の候補は、同じコミットでの変更・同じ会話での編集・同じ会話での閲覧を分けて記録し、上位 3 件を概要文つきで出す
+        採用されたものだけ文書の関連に記載する
+  - id: relation-impact-tool-04
+    group: 関連と影響範囲のツール
+    name: Issue の対応範囲の特定
+    body: |-
+      - Issue の対応範囲は、骨組み → 用語集で言い換えたキーワードの検索 → 関連・コード参照のたどり → 変更の種類ごとのチェックリスト → 人の確認、の順で決める
+  - id: registration-01
+    group: 登録
+    name: プロジェクト用の登録
+    body: |-
+      - プロジェクト用: ルートの `.mcp.json`（バージョン管理でチーム共有）。文書の MCP は対象外
+  - id: registration-02
+    group: 登録
+    name: プラグイン用の登録
+    body: |-
+      - プラグイン用: プラグインルートの `.mcp.json`
+  - id: registration-03
+    group: 登録
+    name: 文書の MCP の配り方
+    body: |-
+      - 文書の MCP は、dev-docs のプラグインが配る
+        利用者は、ユーザースコープで入れる
+  - id: registration-04
+    group: 登録
+    name: 文書の MCP のプラグイン
+    body: |-
+      - 各リポジトリは、文書の MCP のプラグインとマーケットプレイスを持たない
+  - id: registration-05
+    group: 登録
+    name: 文書の MCP の接続先
+    body: |-
+      - 文書の MCP の接続先は `http://127.0.0.1:${DEV_DOCS_PORT:-8781}/mcp` の 1 つで、配信元はツールの引数 `source` で指す
+  - id: registration-06
+    group: 登録
+    name: 接続先の記載
+    body: |-
+      接続先を書く。
+
+      ```json
+      {
+        "mcpServers": {
+          "rule-inject": {
+            "type": "http",
+            "url": "http://127.0.0.1:${RULE_INJECT_PORT:-8783}/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+      ```
+  - id: registration-07
+    group: 登録
+    name: type の添付
+    body: |-
+      - `url` を書くときは `type` を添える。`type` の無いエントリは stdio として読まれ、サーバーごとスキップされる
+  - id: registration-08
+    group: 登録
+    name: url の形式
+    body: |-
+      - `url` は `http://127.0.0.1:${{リポジトリ}_PORT:-{既定のポート}}/mcp` の形式で書く。`{リポジトリ}_PORT` と `{既定のポート}` は次の台帳の環境変数と既定のポート
+  - id: registration-09
+    group: 登録
+    name: ポートの上書き
+    body: |-
+      - ポートがぶつかるときだけ、`~/.claude/settings.json` の `env` に `{リポジトリ}_PORT` を書いて上書きする
+  - id: registration-10
+    group: 登録
+    name: サーバー側のポート
+    body: |-
+      - サーバーは起動時に同じ `{リポジトリ}_PORT` を読み、無ければ台帳の既定のポートで待ち受ける。上書きするときは、サーバーを起動する環境にも同じ値を渡す
+  - id: registration-11
+    group: 登録
+    name: ポート台帳の案内
+    body: |-
+      既定のポートの台帳は次のとおり。
+  - id: registration-12
+    group: 登録
+    name: 既定ポートの表
+    body: |-
+      <!-- table: data -->
+
+      | リポジトリ | 環境変数 | 既定のポート |
+      | --- | --- | --- |
+      | observability | `OBSERVABILITY_PORT` | 8766 |
+      | ai-monitor | `AI_MONITOR_PORT` | 8767 |
+      | claude-balancer | `CLAUDE_BALANCER_PORT` | 8770 |
+      | dev-docs | `DEV_DOCS_PORT` | 8781 |
+      | mdmark | `MDMARK_PORT` | 8782 |
+      | rule-inject | `RULE_INJECT_PORT` | 8783 |
+      | MindStella | `MINDSTELLA_PORT` | 8784 |
+
+      <!-- /table -->
+  - id: verification-01
+    group: 動作確認
+    name: 全ツールの定義確認
+    body: |-
+      - `mcp.list_tools()` を非同期実行し、全ツールの title・引数説明・enum・annotations が生成されることと、型付きで返すツールの outputSchema が生成されることを確認する
+  - id: verification-02
+    group: 動作確認
+    name: 再接続の注意
+    body: |-
+      - 設定が変わらないプラグイン MCP サーバーは `/reload-plugins` で再接続されないので、反映にはセッション再起動が必要。`/mcp` で接続状態を確認する

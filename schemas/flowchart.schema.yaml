@@ -1,0 +1,11 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: 判定フローチャート
+description: 決めたい内容が複数の判定軸で決まるときの判定フローチャート。
+allOf:
+  - $ref: common.schema.yaml#/$defs/metadata
+properties:
+  kind:
+    title: 種類
+    description: 文書の種類。この種類では `flowchart` に固定する。
+    const: flowchart
+unevaluatedProperties: false

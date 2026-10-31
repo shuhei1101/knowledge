@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: claude-skills-usage
+kind: rule
+name: AgentSkills関連の知識
+description: SKILL.md の公式の参照先、動的コンテキスト注入、変数の展開、ユーザー定義の環境変数の扱いを定め、SKILL.md にコンテキストや変数を埋め込むときに読む。
+tags:
+  - name: scope:claude
+  - name: topic:コンテキスト
+  - name: topic:スキル
+    main: true
+  - name: topic:ユーザー
+  - name: topic:リテラル
+  - name: topic:動的コンテキスト
+  - name: topic:変数
+  - name: topic:引数
+  - name: topic:環境
+  - name: topic:環境変数
+  - name: topic:関連
+  - name: action:エスケープ
+  - name: action:参照
+  - name: action:定義
+  - name: action:展開
+  - name: action:注入
+  - name: action:適用
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+sources:
+  - title: "Claude Code: Skills"
+    url: https://code.claude.com/docs/en/skills.md
+items:
+  - id: caution-01
+    group: 注意事項
+    name: SKILL.md にのみ適用
+    body: |-
+      - 本ルールはSKILL.mdにのみ適用すること
+        - CLAUDE.mdやAGENT.mdには適用されないため、注意
+  - id: skill-dynamic-context-01
+    group: スキル内の動的コンテキスト注入の書き方
+    name: 動的コンテキスト注入
+    body: |-
+      - `` !`<command>` `` はスキルの内容を Claude に送信する前にシェルで実行され、出力で置き換わる
+        - インライン形式は `!` が行頭か空白の直後にあるときだけ認識される（`` KEY=!`cmd` `` はリテラルのまま）
+        - 複数行のコマンドは、`` ```! `` で開くフェンスコードブロックを使う
+        - 出力は再展開されない。コマンドが失敗するとスキル全体の呼び出しが中止される
+  - id: skill-variable-expansion-01
+    group: スキル内の環境変数や引数の展開方法
+    name: 展開される変数
+    body: |-
+      - 展開される変数: `$ARGUMENTS`、`$ARGUMENTS[N]`、`$N`、`arguments` フロントマターで宣言した `$name`、`${CLAUDE_SESSION_ID}`、`${CLAUDE_EFFORT}`、`${CLAUDE_SKILL_DIR}`
+  - id: skill-variable-expansion-02
+    group: スキル内の環境変数や引数の展開方法
+    name: リテラルの $ のエスケープ
+    body: |-
+      - 数字・`ARGUMENTS`・宣言した引数名の前のリテラル `$` は、バックスラッシュでエスケープする（`\$1.00`）
+  - id: user-env-var-01
+    group: ユーザー定義環境変数を値として展開する
+    name: ユーザー定義環境変数
+    body: |-
+      `$ARGUMENTS` / `${CLAUDE_SESSION_ID}` などの公式変数以外に、プラグイン側で `export` した独自環境変数（`$GH_KIT_LABEL_TYPE_FEAT` など）をスキル本文に **値として** 埋め込みたい場合のルール。
+  - id: user-env-var-02
+    group: ユーザー定義環境変数を値として展開する
+    name: バッククォートでは展開されない
+    body: |-
+      - バッククォートで挟むと Markdown のインラインコード扱いになり展開されない
+        - 例: `` `$GH_KIT_LABEL_TYPE_FEAT` `` は `$GH_KIT_LABEL_TYPE_FEAT` という文字列がそのまま Claude に渡る（値を判断材料にできない）
+  - id: user-env-var-03
+    group: ユーザー定義環境変数を値として展開する
+    name: 値を渡す方法
+    body: |-
+      - 値を渡したい場合は動的コンテキスト注入の `` !`echo "$VAR"` `` 形式を使う
+        - 例: `` !`echo "$GH_KIT_LABEL_TYPE_FEAT"` `` はスキル読み込み時に `echo` が実行され、値（例: `type:feat`）が本文に埋め込まれる

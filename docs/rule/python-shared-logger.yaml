@@ -1,0 +1,102 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-shared-logger
+kind: rule
+name: JSON Lines 構造化ログ
+description: JSON Lines の構造化ログで出力する実装の要点・レベル運用・書き方と、OpenTelemetry・request_id・trace_id の載せ方を定め、Python でログを出力する・ロガーを設定するときに読む。
+tags:
+  - name: scope:python
+  - name: topic:ascii
+  - name: topic:id
+  - name: tool:json
+  - name: topic:トレース
+  - name: topic:フォーマッタ
+  - name: topic:モジュール
+  - name: topic:ループ
+  - name: topic:ロガー
+  - name: topic:ログ
+    main: true
+  - name: topic:変数
+  - name: topic:引数
+  - name: topic:構造
+  - name: topic:標準入出力
+  - name: topic:環境
+  - name: topic:環境変数
+  - name: topic:設定
+  - name: tool:opentelemetry
+  - name: action:デバッグ
+  - name: action:出力
+  - name: action:反映
+  - name: action:実装
+  - name: action:抑制
+  - name: action:運用
+  - name: action:集計
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      出力は JSON Lines（1 行 1 JSON）で集計・grep・dashboard 連携を見据える。
+  - id: logger-implementation-01
+    group: 標準実装の要点（`shared/logger.py`）
+    name: JsonLinesFormatter の出力項目
+    body: |-
+      - `JsonLinesFormatter(logging.Formatter)`: `{ ts, level, name, msg }` + `extra={...}` のフィールドを取り込み（LogRecord 予約キーは除外）、`exc_info` は `exc` に
+  - id: logger-implementation-02
+    group: 標準実装の要点（`shared/logger.py`）
+    name: ensure_ascii の指定
+    body: |-
+      - `json.dumps(..., ensure_ascii=False, default=str)`
+  - id: logger-implementation-03
+    group: 標準実装の要点（`shared/logger.py`）
+    name: root logger の設定は 1 度だけ
+    body: |-
+      - root logger はプロセスで 1 度だけ設定（フラグで二重登録防止）、stdout へ
+  - id: logger-implementation-04
+    group: 標準実装の要点（`shared/logger.py`）
+    name: モジュールごとの get_logger
+    body: |-
+      - 各モジュールは `logger = get_logger(__name__)`（出力の name でどこから出たか即わかる）
+  - id: logger-implementation-05
+    group: 標準実装の要点（`shared/logger.py`）
+    name: レベルは Settings から反映
+    body: |-
+      - レベルは `Settings.log_level` から main で反映。本番 INFO、開発 DEBUG
+  - id: level-usage-01
+    group: レベル運用
+    name: ログレベルの運用表
+    body: |-
+      | レベル   | 用途                                             |
+      | -------- | ------------------------------------------------ |
+      | debug    | 開発時のみ（トレース、引数 dump）                |
+      | info     | 業務イベント（リクエスト受領、ユースケース完了） |
+      | warning  | 想定内エラー（retry で吸収、無効入力）           |
+      | error    | 想定外エラー（人間が対応すべき）                 |
+      | critical | プロセス継続不能                                 |
+  - id: writing-01
+    group: 書き方
+    name: 集計用の構造化引数
+    body: |-
+      - 集計に使うものは構造化引数（`extra={"provider": ..., "tokens": ...}`）
+  - id: writing-04
+    group: 書き方
+    name: ループ内の debug の抑制
+    body: |-
+      - ループ内の大量 debug は本番で INFO 以上に抑制
+  - id: observability-01
+    group: 観測
+    name: OpenTelemetry は環境変数で有効にする
+    body: |-
+      - FastAPI 組み込みの OpenTelemetry は環境変数 `FASTAPI_OTEL_AUTO_CONFIGURE` で有効にする（送信先の collector が無いときは無効のまま）
+  - id: observability-02
+    group: 観測
+    name: request_id と trace_id をログに載せる
+    body: |-
+      - `request_id` と `trace_id` は `contextvars` に持ち、`JsonLinesFormatter` が各行に載せる
+  - id: output-destination-01
+    group: 出力先
+    name: 出力先は stdout
+    body: |-
+      開発 / Docker / serverless とも stdout のまま。単発スクリプトのファイル保存はランチャー（bat / sh）側で tee。

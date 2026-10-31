@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-shared-error-action-handler
+kind: rule
+name: handleActionError — Server Action のエラー変換
+description: Server Action のエラーを ActionResult に変換する handleActionError の使い方を定め、Server Action のエラー処理を実装するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:アクション
+  - name: topic:エラー
+    main: true
+  - name: topic:サーバー
+  - name: topic:サーバーアクション
+  - name: topic:リダイレクト
+  - name: action:変換
+  - name: action:検証
+  - name: action:派生
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: handle-action-error-01
+    group: handleActionError — Server Action のエラー変換
+    name: 全 Server Action を try/catch で囲む
+    body: |-
+      - 全 Server Action を try/catch で囲み、catch で `handleActionError(e)` を返す
+  - id: handle-action-error-02
+    group: handleActionError — Server Action のエラー変換
+    name: 戻り値は ActionResult
+    body: |-
+      - 戻り値は `ActionResult<T>` 形式
+        - `{ ok: true, data: T } | { ok: false, error: { code, message, field? } }`
+  - id: handle-action-error-03
+    group: handleActionError — Server Action のエラー変換
+    name: ZodError は VALIDATION
+    body: |-
+      - ZodError は最初の issue を `code: "VALIDATION"` + `field` に変換
+  - id: handle-action-error-04
+    group: handleActionError — Server Action のエラー変換
+    name: AppError 派生の変換
+    body: |-
+      - AppError 派生は `code` / `message`（ClientValueError は `field` も）に変換
+  - id: handle-action-error-05
+    group: handleActionError — Server Action のエラー変換
+    name: 予期しないエラーは INTERNAL
+    body: |-
+      - 予期しないエラーはログに stack を記録し `code: "INTERNAL"` の汎用メッセージを返す
+  - id: handle-action-error-06
+    group: handleActionError — Server Action のエラー変換
+    name: redirect と notFound は catch しない
+    body: |-
+      - `redirect()` / `notFound()` は catch しない
+        - catch の先頭で `unstable_rethrow(e)` を呼ぶ、または redirect を try の外に出す

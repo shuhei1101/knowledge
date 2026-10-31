@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-css-layers
+kind: rule
+name: レイヤー構成
+description: エントリ CSS の冒頭で @layer の順序を固定する決まりを定め、単体 HTML の CSS をレイヤーに分けるときに読む。
+tags:
+  - name: scope:html
+  - name: tool:css
+  - name: topic:エントリ
+  - name: topic:レイヤー
+    main: true
+  - name: topic:構成
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
+      エントリ CSS の冒頭で `@layer` の順序を固定する。
+
+      ```css
+      @layer reset, tokens, base, layout, components, utilities;
+      ```
+  - id: layer-structure-01
+    group: レイヤー構成
+    name: 全 CSS をレイヤーに入れる
+    body: |-
+      - 全ての CSS をいずれかのレイヤーに入れる。
+        - レイヤー外（unlayered）のスタイルは全レイヤーより強くなり、事故の元になる。
+  - id: layer-structure-02
+    group: レイヤー構成
+    name: utilities は最終レイヤー
+    body: |-
+      - `utilities` は最終レイヤーなので、単一クラス（低 specificity）でも components を確実に上書きできる。
+        - ユーティリティで `!important` を使わない。
+  - id: layer-structure-03
+    group: レイヤー構成
+    name: レイヤーの順序表
+    body: |-
+      <!-- table: data -->
+
+      | レイヤー   | 役割                      |
+      | ---------- | ------------------------- |
+      | reset      | normalize                 |
+      | tokens     | `:root` 変数・`@property` |
+      | base       | 要素デフォルト・タイポ    |
+      | layout     | 骨格・グリッド            |
+      | components | UI 部品                   |
+      | utilities  | 単一目的                  |
+
+      <!-- /table -->

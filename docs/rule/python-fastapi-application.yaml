@@ -1,0 +1,114 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-fastapi-application
+kind: rule
+name: FastAPI アプリ構成
+description: FastAPI アプリの組み立て、lifespan、CORS、ミドルウェア、例外ハンドラの登録の決まりを定め、FastAPI アプリを組み立てる・設定するときに読む。
+tags:
+  - name: scope:python
+  - name: tool:fastapi
+    main: true
+  - name: topic:asgi
+  - name: topic:cors
+  - name: topic:id
+  - name: topic:spa
+  - name: topic:アプリ
+  - name: topic:ハンドラ
+  - name: topic:ハードコード
+  - name: topic:ヘルスチェック
+  - name: topic:ミドルウェア
+  - name: topic:メタデータ
+  - name: topic:ライフサイクル
+  - name: topic:ルート
+  - name: topic:例外
+  - name: topic:例外ハンドラ
+  - name: topic:本番
+  - name: topic:構成
+  - name: topic:設定
+  - name: tool:openapi
+  - name: action:ビルド
+  - name: action:依存
+  - name: action:保持
+  - name: action:参照
+  - name: action:生成
+  - name: action:登録
+  - name: action:終了
+  - name: action:組み立て
+  - name: action:起動
+  - name: action:配信
+  - name: action:配線
+  - name: action:開発
+status: current
+visibility: internal
+rev: 6
+last_reviewed: '2026-10-30'
+items:
+  - id: fastapi-app-structure-01
+    group: FastAPI アプリ構成
+    name: build_fastapi で組み立てる
+    body: |-
+      - `server/app.py` の `build_fastapi(handlers: Handlers | None = None) -> FastAPI` で組み立て、`uvicorn {pkg}.server.app:build_fastapi --factory` で起動
+  - id: fastapi-app-structure-02
+    group: FastAPI アプリ構成
+    name: 依存配線は build_handlers から
+    body: |-
+      - `handlers` が `None` のときは `main.py` の `build_handlers(settings)` で依存を配線し、テストは Mock の Handlers を渡す
+  - id: lifespan-01
+    group: lifespan
+    name: lifespan の startup と shutdown
+    body: |-
+      - `@asynccontextmanager` の lifespan で startup / shutdown（`on_event` は非推奨）
+  - id: lifespan-02
+    group: lifespan
+    name: build_fastapi で Settings と handlers を保持
+    body: |-
+      - `Settings()` は `build_fastapi` の中で 1 度だけ作り、`app.state.settings` / `app.state.handlers` にセット（lifespan では作らず、上書きしない）
+  - id: lifespan-03
+    group: lifespan
+    name: settings をグローバルに持たない
+    body: |-
+      - settings をグローバル変数で持たない（モジュールロード時に env が読まれてテストしづらい）
+  - id: route-reference-01
+    group: ルートからの参照
+    name: ルートからの handlers の参照
+    body: |-
+      - `server/deps.py` の型付きの `get_handlers(request) -> Handlers` を `Annotated[Handlers, Depends(get_handlers)]` で受ける（`request.app.state` を直接読むと型が `Any` になる）
+  - id: cors-01
+    group: CORS
+    name: CORS の origins をハードコードしない
+    body: |-
+      - `allow_origins=["*"]` のハードコード禁止。Settings の `cors_origins: list[str]` + `cors_origin_regex: str` で管理
+  - id: cors-02
+    group: CORS
+    name: 開発と本番の CORS 設定
+    body: |-
+      - 開発は regex（`http://localhost:5173$`。Vite の dev サーバーの既定のポート。worktree では `.dev/{役割}.port` に記録した空きポートに合わせる）、本番は origins にドメイン列挙
+  - id: spa-01
+    group: SPA の配信
+    name: ビルドした SPA を配る
+    body: |-
+      - ビルドした SPA（`index.html` と `assets/`）は FastAPI が配る。`assets/` を `StaticFiles` でマウントし、API のルーターの後ろに、API に当たらない GET で `index.html` を返すルートを最後に置く（画面の切り替えはフロントのルーターが行う）
+  - id: custom-middleware-01
+    group: カスタム middleware
+    name: pure ASGI ミドルウェア
+    body: |-
+      pure ASGI ミドルウェア（`__call__(self, scope, receive, send)` を持つクラス）が標準。`BaseHTTPMiddleware` は ContextVar の変更が上位へ伝わらないので使わない。例: X-Request-Id の付与。
+  - id: others-01
+    group: その他
+    name: /healthz に外部依存を持たせない
+    body: |-
+      - ヘルスチェック `/healthz` は DB 等の外部依存を持たせない（[fastapi/ヘルスチェック](id:python-fastapi-health-check)）
+  - id: others-02
+    group: その他
+    name: OpenAPI のメタデータ
+    body: |-
+      - OpenAPI メタデータは `FastAPI(title=, version=, openapi_tags=)`、ルーター側の `tags` でグループ化
+  - id: others-03
+    group: その他
+    name: 例外ハンドラの一括登録
+    body: |-
+      - 例外ハンドラは `register_exception_handlers(app)` で一括登録（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
+  - id: others-04
+    group: その他
+    name: operationId の生成
+    body: |-
+      - operationId は `FastAPI(generate_unique_id_function=...)` で `{tag}-{関数名}` にする（`tag` は [fastapi/ルート定義](id:python-fastapi-route) の `APIRouter(tags=)`）

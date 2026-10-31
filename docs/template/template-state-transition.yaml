@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=../../schemas/template.schema.yaml
+id: template-state-transition
+kind: template
+name: "テンプレート: 状態遷移"
+description: 1 エンティティが取りうる状態と許可された遷移を記載する状態遷移の書式を定め、状態遷移の設計書を作る・修正するときに読む。
+tags:
+  - name: scope:テンプレート
+  - name: topic:エンティティ
+  - name: topic:テンプレート
+  - name: topic:状態遷移
+    main: true
+  - name: topic:設計書
+  - name: action:遷移
+status: current
+visibility: internal
+rev: 3
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      1 エンティティが取りうる状態と、許可された遷移。1 ファイル = 1 エンティティ。
+      副作用・実装の関数は別の設計書に書く。
+  - id: item-list-01
+    name: 項目
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- |
+      | title | タイトル | string | 必須 | - | pattern: ^状態遷移: .+$ | `状態遷移: {エンティティ名}`。 | - |
+      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。<br>初回に書いた内容のまま保ち、後から情報を追加しない（仕様は各項目に書く）。<br>対象そのものが変わったときだけ書き換える。 | - |
+      | state_transitions | 状態遷移 | object | 必須 | - | - | 状態の一覧と遷移の表。<br>状態の名前は図のノードになるので、空白と記号を含めない。含める場合は `node` に図のノード名を書く。 | - |
+      | state_transitions.states | 状態 | array | 必須 | - | minItems: 1 | - | - |
+      | state_transitions.states[].name | 状態名 | string | 必須 | - | - | 業務用語での状態の名前。遷移の元・先はこの名前で指す。 | - |
+      | state_transitions.states[].identifier | 識別子 | string | 必須 | - | - | 実装上の値・ラベル・フラグ（例 `status = draft`）。 | - |
+      | state_transitions.states[].sub_identifier | 備考識別子 | string | - | - | - | 複数の識別子で状態を表すときの補助の識別子（assignee・補助ラベル 等）。 | - |
+      | state_transitions.states[].entry_condition | 入る条件 | string | - | - | - | この状態に入る条件。 | - |
+      | state_transitions.states[].entry_value | 入る値 | string | - | - | - | この状態に入ったときに入る値（例 `started_at` が入る）。 | - |
+      | state_transitions.states[].on_enter | 入る時の処理 | string | - | - | - | - | - |
+      | state_transitions.states[].on_exit | 出る時の処理 | string | - | - | - | - | - |
+      | state_transitions.states[].node | 図のノード | string | - | - | pattern: ^[^\s\[\]:（）()]+$ | 図のノード名が状態名と違うときだけ書く。 | - |
+      | state_transitions.states[].notes | 補足 | string | - | - | - | Markdown で書く本文。<br>他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - |
+      | state_transitions.initial | 初期状態 | string | 必須 | - | - | 作成時に入る状態の名前。 | - |
+      | state_transitions.final | 終了状態 | array | - | - | - | 消える前の最後の状態の名前。 | - |
+      | state_transitions.transitions | 遷移 | array | 必須 | - | minItems: 1 | 許可された遷移。図はこの並びで描く。 | - |
+      | state_transitions.transitions[].from | 元 | string | 必須 | - | - | 元の状態の名前。どの状態からも入る遷移は `全状態`。 | - |
+      | state_transitions.transitions[].to | 先 | string | 必須 | - | - | 先の状態の名前。入る前の状態へ戻る遷移は `元の状態`。 | - |
+      | state_transitions.transitions[].trigger | きっかけ | string | - | - | - | 遷移を起こす操作や出来事。 | - |
+      | state_transitions.transitions[].condition | 条件 | string | - | - | - | きっかけに付く条件。図では `{きっかけ} [{条件}]` と描く。 | - |
+      | state_transitions.transitions[].action | そのときの処理 | string | - | - | - | - | - |
+      | state_transitions.transitions[].self | 状態を出ない | boolean | - | - | - | 状態を出ずに処理だけを実行する遷移（元と先が同じ）。 | - |
+      | state_transitions.transitions[].representative | 代表 | string | - | - | - | `全状態` / `元の状態` の遷移を図で代表させる状態の名前。図には代表との遷移だけを描く。 | - |
+      | state_transitions.transitions[].note | 注記 | string | - | - | - | `全状態` の遷移に図で添える注記。 | - |
+      | refs | 関連 | array | - | - | - | - | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+
+      <!-- /table -->
+  - id: example-sample-01
+    name: 記載例
+    body: |-
+      ```yaml
+      title: '状態遷移: 記事'
+      lead: '`記事` が取りうる状態と許可された遷移の一覧。'
+      state_transitions:
+        states:
+        - name: 下書き
+          identifier: status = draft
+        - name: 公開
+          identifier: status = published
+        initial: 下書き
+        final:
+        - 公開
+        transitions:
+        - from: 下書き
+          to: 公開
+          trigger: 承認
+      ```

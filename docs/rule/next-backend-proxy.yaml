@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-proxy
+kind: rule
+name: proxy.ts（旧 Middleware）
+description: Next.js 16 の proxy.ts（旧 Middleware）の用途・ランタイム・matcher・認証チェックを定め、proxy.ts を作る・修正するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:バックエンド
+  - name: topic:パス
+  - name: topic:ミドルウェア
+    main: true
+  - name: topic:リダイレクト
+  - name: tool:next-js
+  - name: tool:node-js
+  - name: action:判定
+  - name: action:検査
+  - name: action:認証
+  - name: action:適用
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      Next.js 16 で `middleware.ts` → `proxy.ts` にリネーム（export 関数名も `proxy`）。配置はプロジェクト直下。
+  - id: proxy-ts-01
+    group: proxy.ts（旧 Middleware）
+    name: 用途
+    body: |-
+      - 用途: 認証ガード（未認証を `/login` へ redirect）・レートリミット・ヘッダ書き換え・rewrite
+  - id: proxy-ts-02
+    group: proxy.ts（旧 Middleware）
+    name: ランタイムは nodejs 固定
+    body: |-
+      - ランタイムは `nodejs` 固定で `runtime` は設定できない（edge が必要なら `proxy.ts` にせず `middleware.ts` を使う）
+  - id: proxy-ts-03
+    group: proxy.ts（旧 Middleware）
+    name: matcher で適用パスを指定
+    body: |-
+      - `config.matcher` で適用パスを指定。静的アセット・auth API・webhook は negative lookahead で除外する
+
+      ```ts
+      export const config = {
+        matcher: ["/((?!_next/static|_next/image|favicon.ico|api/v{N}/auth|api/v{N}/webhooks).*)"],
+      }
+      ```
+  - id: proxy-ts-04
+    group: proxy.ts（旧 Middleware）
+    name: 認証チェックは軽量判定
+    body: |-
+      - 認証チェックは cookie の有無等の軽量判定に留める（本判定は `getAuthContext()` 側）。Server Action は matcher の対象外パスでは proxy を通らないため、各 Action で認証する
+  - id: proxy-ts-05
+    group: proxy.ts（旧 Middleware）
+    name: 未認証 redirect に from を付ける
+    body: |-
+      - 未認証 redirect 時は `?from=` に元パスを付けてログイン後に戻せるようにする

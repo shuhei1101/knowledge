@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-edit-page-tsx
+kind: rule
+name: "{feature}/[id]/edit/page.tsx — Edit Server Component"
+description: 編集画面の Server Component の権限チェックと、新規画面のデータ取得の扱いを定め、編集・新規画面の page.tsx を実装するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:フロントエンド
+  - name: topic:部品
+  - name: topic:id
+  - name: topic:サーバー
+  - name: topic:サーバーコンポーネント
+    main: true
+  - name: topic:データ
+  - name: topic:ビュー
+  - name: topic:フィーチャ
+  - name: topic:ページ
+  - name: topic:リダイレクト
+  - name: topic:権限
+  - name: topic:画面
+  - name: action:取得
+  - name: action:検査
+  - name: action:編集
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: edit-page-01
+    group: "{feature}/[id]/edit/page.tsx — Edit Server Component"
+    name: 該当なしは notFound
+    body: |-
+      - 該当なし → `notFound()`
+  - id: edit-page-02
+    group: "{feature}/[id]/edit/page.tsx — Edit Server Component"
+    name: 権限なしは view へ redirect
+    body: |-
+      - 権限なし → `redirect(RESOURCE_URL.view(id))`（URL クエリからリダイレクト先取得禁止）
+  - id: edit-page-03
+    group: "{feature}/[id]/edit/page.tsx — Edit Server Component"
+    name: canEdit の取得元
+    body: |-
+      - `canEdit` は `fetchResource` のレスポンスに含まれる
+  - id: new-page-01
+    group: new 用
+    name: new はデータ取得なし
+    body: |-
+      `new/page.tsx` はデータ取得なし（空フォームから始まる）。

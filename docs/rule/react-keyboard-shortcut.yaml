@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-keyboard-shortcut
+kind: rule
+name: ショートカット
+description: React でショートカットを実装するときの、ライブラリ・薄いフック・定義の置き場所・表示を定め、ショートカットキーを実装するときに読む。
+tags:
+  - name: scope:react
+  - name: topic:フロントエンド
+  - name: topic:ime
+  - name: topic:testing
+  - name: topic:キー
+  - name: topic:コマンド
+  - name: topic:コマンドパレット
+  - name: topic:ショートカット
+    main: true
+  - name: topic:バージョン
+  - name: topic:パレット
+  - name: topic:フック
+  - name: topic:ライブラリ
+  - name: tool:react
+  - name: tool:tanstack-query
+  - name: action:変換
+  - name: action:定義
+  - name: action:実装
+  - name: action:発火
+  - name: action:表示
+status: current
+visibility: internal
+rev: 6
+last_reviewed: '2026-10-30'
+related:
+  - to: react-keyboard-component
+    type: references
+    when: 部品・表・フォーカスのキー操作を実装するとき
+sources:
+  - title: "TanStack Hotkeys: Overview"
+    url: https://tanstack.com/hotkeys/latest/docs/overview
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      スタックによらないキー操作の決まりは、規約『[キーボード操作](id:ui-keyboard)』に従い、この規約には書かない。
+  - id: library-01
+    group: ライブラリ
+    name: "@tanstack/react-hotkeys を使う"
+    body: |-
+      - ショートカットは、`@tanstack/react-hotkeys` で実装する。
+        IME・スコープ・一覧・再割り当て・表示・競合の検出が、このライブラリに揃っている。
+  - id: library-02
+    group: ライブラリ
+    name: バージョンを固定する
+    body: |-
+      - `@tanstack/react-hotkeys` は、バージョンを固定する。
+  - id: hook-01
+    group: 薄いフック
+    name: useShortcut で包む
+    body: |-
+      - `@tanstack/react-hotkeys` は、プロジェクトの薄いフック `useShortcut(id)` で包み、部品からは直接呼ばない。
+        ライブラリの差し替えを、このフック 1 つで済ませる。
+  - id: hook-02
+    group: 薄いフック
+    name: 定義は 1 か所に置く
+    body: |-
+      - ショートカットの定義（ID・キー・説明・スコープ）は 1 か所に置く。
+        `useShortcut(id)` は ID から定義を引き、部品にキーを書き込まない。
+  - id: display-01
+    group: 表示
+    name: キーの表示
+    body: |-
+      - ボタン・メニュー・コマンドパレットの項目には、shadcn の `Kbd`・`CommandShortcut`・`Tooltip` でキーを表示する。
+        ショートカットを持つ要素には、`aria-keyshortcuts` を付ける。
+  - id: display-02
+    group: 表示
+    name: ヘルプとコマンドパレット
+    body: |-
+      - `?` で開くショートカットの一覧と、キーの表示は、定義から生成する。
+        コマンドパレットは、`cmdk`（shadcn の `Command`）で作り、画面の移動とその画面の操作を登録する。
+  - id: test-01
+    group: テスト
+    name: IME の変換中は発火しない
+    body: |-
+      - `isComposing: true` と `keyCode: 229` の keydown で、ショートカットが発火しないことを単体テストで確かめる。

@@ -1,0 +1,131 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-query-ts
+kind: rule
+name: app/api/v{N}/{resource}/query.ts
+description: 読み取り専用の query.ts に置く SELECT 関数・フィルタ Zod スキーマ・戻り値型の決まりと命名を定め、データの取得関数を実装するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:バックエンド
+  - name: topic:api
+  - name: topic:concurrency
+  - name: topic:naming
+  - name: topic:オブジェクト
+  - name: topic:キー
+  - name: topic:クエリ
+    main: true
+  - name: topic:サーバー
+  - name: topic:スキーマ
+  - name: topic:データ
+  - name: topic:ファイル
+  - name: topic:フィルター
+  - name: topic:フラグ
+  - name: topic:ヘルパー
+  - name: topic:リソース
+  - name: topic:引数
+  - name: topic:接頭辞
+  - name: topic:構造
+  - name: topic:権限
+  - name: topic:重複
+  - name: topic:関数
+  - name: tool:zod
+  - name: action:共有
+  - name: action:取得
+  - name: action:定義
+  - name: action:排除
+  - name: action:計算
+  - name: action:読み取り
+  - name: action:選択
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      読み取り（SELECT）専用ファイル。SELECT 関数群 + フィルタ Zod スキーマ + 戻り値型 を全てここに集約する。
+  - id: rules-01
+    group: ルール
+    name: SELECT 関数だけを置く
+    body: |-
+      - SELECT 関数だけを置く（INSERT / UPDATE / DELETE は `db.ts`）
+  - id: rules-02
+    group: ルール
+    name: フィルタ Zod スキーマの共有
+    body: |-
+      - フィルタ Zod スキーマ + 型 もここで定義（route.ts / client.ts から共有）
+  - id: rules-03
+    group: ルール
+    name: 戻り値型も定義する
+    body: |-
+      - 戻り値型 もここで定義（`ResourceDetail` 等）
+  - id: rules-04
+    group: ルール
+    name: 失敗は QueryError で包む
+    body: |-
+      - 失敗は `QueryError` で包む（`DatabaseError` ではない）
+  - id: rules-05
+    group: ルール
+    name: 引数はオブジェクト
+    body: |-
+      - 引数は オブジェクト（`{ db, userId, params }`）
+  - id: rules-06
+    group: ルール
+    name: fetch プレフィックス
+    body: |-
+      - 関数名は `fetch{Feature}` プレフィックス
+  - id: rules-07
+    group: ルール
+    name: JOIN と並列取得
+    body: |-
+      - 複雑な JOIN・並列取得 (`Promise.all`) を積極利用
+  - id: rules-08
+    group: ルール
+    name: groupBy で重複排除
+    body: |-
+      - 重複排除のため `groupBy` を使う（必要なら）
+  - id: rules-09
+    group: ルール
+    name: 構造化ヘルパーは同ファイル
+    body: |-
+      - 結果を構造化する private helper（`buildXxx`）は同ファイル内
+  - id: rules-10
+    group: ルール
+    name: 権限フラグはサーバーで計算
+    body: |-
+      - `canEdit` 等の権限フラグもサーバーで計算してレスポンスに含める
+  - id: naming-01
+    group: 命名
+    name: 単体取得の命名
+    body: |-
+      - `fetch{Feature}` — 単体取得
+  - id: naming-02
+    group: 命名
+    name: 一覧の命名
+    body: |-
+      - `fetch{Feature}List` — 一覧
+  - id: naming-03
+    group: 命名
+    name: 特定キー取得の命名
+    body: |-
+      - `fetch{Feature}By{Key}` — 特定キーでの取得
+  - id: naming-04
+    group: 命名
+    name: 件数の命名
+    body: |-
+      - `count{Feature}` — 件数だけ
+  - id: naming-05
+    group: 命名
+    name: 存在確認の命名
+    body: |-
+      - `exists{Feature}` — boolean
+  - id: naming-06
+    group: 命名
+    name: Schema の命名
+    body: |-
+      - Schema: `{Feature}FilterSchema`, `{Feature}SortSchema`, `{Feature}SearchParamsSchema`
+  - id: naming-07
+    group: 命名
+    name: 戻り値型の命名
+    body: |-
+      - 戻り値型: `{Feature}Detail`, `{Feature}WithChildren` 等

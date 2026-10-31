@@ -1,0 +1,87 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-architecture-dependency-management
+kind: rule
+name: 依存方向のルール
+description: レイヤー間の依存方向のルールと、同層参照が必要になったときのパターン、依存方向のチェック方法を定め、モジュール間の import を追加する・依存方向を確かめるときに読む。
+tags:
+  - name: scope:python
+  - name: topic:architecture
+  - name: topic:dto
+  - name: topic:アダプター
+  - name: topic:インポート
+  - name: topic:エイリアス
+  - name: topic:パターン
+  - name: topic:モジュール
+  - name: topic:ランタイム
+  - name: topic:ルール
+  - name: topic:レイヤー
+  - name: topic:例外
+  - name: topic:型エイリアス
+  - name: action:依存
+    main: true
+  - name: action:参照
+  - name: action:検査
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      ```
+      features / server
+              ↓
+         integrations / runtime
+              ↓
+            shared
+      ```
+  - id: dependency-rules-01
+    group: 依存方向のルール
+    name: shared は誰にも依存しない
+    body: |-
+      - `shared/` は誰にも依存しない（最下層）
+  - id: dependency-rules-02
+    group: 依存方向のルール
+    name: integrations と runtime の依存先
+    body: |-
+      - `integrations/` / `runtime/` は `shared/` のみに依存
+  - id: dependency-rules-03
+    group: 依存方向のルール
+    name: 同層内の相互参照は禁止
+    body: |-
+      - 同層内（features 同士、integrations 同士）の相互参照は基本禁止
+  - id: same-layer-patterns-01
+    group: 同層参照が必要になったときの 3 パターン
+    name: 同層参照のパターン表
+    body: |-
+      | パターン                      | 使いどき                                    |
+      | ----------------------------- | ------------------------------------------- |
+      | shared に共通化して引き上げ   | 複数 feature が同じユーティリティを使う     |
+      | 関数の型エイリアスで DIP      | feature A が feature B のデータを必要とする |
+      | server でオーケストレーション | 複数 feature を組み合わせる処理             |
+  - id: type-alias-dip-01
+    group: 同層参照が必要になったときの 3 パターン > 型エイリアス DIP の要点
+    name: 最小 DTO を持つ
+    body: |-
+      - 利用側 feature の `types.py` に「自分視点の最小 DTO」（`UserMinimal` 等）と関数型（`type FindUserForChat = Callable[...]`）を定義
+  - id: type-alias-dip-02
+    group: 同層参照が必要になったときの 3 パターン > 型エイリアス DIP の要点
+    name: 相手の DTO は知らない
+    body: |-
+      - 相手 feature の DTO 全体は知らない
+  - id: type-alias-dip-03
+    group: 同層参照が必要になったときの 3 パターン > 型エイリアス DIP の要点
+    name: adapter は main.py で組む
+    body: |-
+      - adapter（変換 + 配線）は `main.py` で書く
+  - id: dependency-check-01
+    group: 依存方向チェック
+    name: 依存方向チェックの方法
+    body: |-
+      import-linter の layers 契約と independence 契約で検査する（設定は [pyproject.toml 標準テンプレート](id:python-packaging-pyproject)）。
+  - id: type-only-import-01
+    group: "例外: 型のみインポート"
+    name: TYPE_CHECKING の扱い
+    body: |-
+      `TYPE_CHECKING` 配下の型参照は実行時依存でないため緩く扱えるが、基本はそもそも参照しない設計を優先。

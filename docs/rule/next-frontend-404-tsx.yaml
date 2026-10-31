@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-404-tsx
+kind: rule
+name: not-found.tsx — 404 ページ
+description: notFound() が呼ばれたときに表示される not-found.tsx の配置・リンク・文言・URL の決まりを定め、404 ページを作るときに読む。
+tags:
+  - name: scope:next
+  - name: topic:フロントエンド
+  - name: topic:url
+  - name: topic:ページ
+    main: true
+  - name: topic:リンク
+  - name: topic:定数
+  - name: topic:文言
+  - name: action:表示
+  - name: action:配置
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      `notFound()` が呼ばれた時に表示される Server Component。
+  - id: not-found-tsx-01
+    group: not-found.tsx — 404 ページ
+    name: not-found.tsx の配置
+    body: |-
+      - 配置は `app/not-found.tsx`（ルート）と各サブツリー `not-found.tsx`
+  - id: not-found-tsx-02
+    group: not-found.tsx — 404 ページ
+    name: 戻る先のリンク
+    body: |-
+      - 戻る先のリンクを必ず用意（`<Link href={...}>`）
+  - id: not-found-tsx-03
+    group: not-found.tsx — 404 ページ
+    name: 文言は短く
+    body: |-
+      - 文言は短く、原因（削除 / URL 違い）を簡潔に説明
+  - id: not-found-tsx-04
+    group: not-found.tsx — 404 ページ
+    name: URL は定数経由
+    body: |-
+      - URL は `RESOURCE_URL.*` 経由（hard-code 禁止）

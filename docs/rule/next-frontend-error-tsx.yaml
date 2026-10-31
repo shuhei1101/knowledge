@@ -1,0 +1,71 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-error-tsx
+kind: rule
+name: error.tsx / global-error.tsx
+description: error.tsx と global-error.tsx の実装と配置の決まりを定め、エラー画面を作るときに読む。
+tags:
+  - name: scope:next
+  - name: topic:フロントエンド
+  - name: tool:html
+  - name: topic:props
+  - name: topic:エフェクト
+  - name: topic:エラー
+    main: true
+  - name: topic:クライアント
+  - name: topic:ツリー
+  - name: topic:ボタン
+  - name: topic:リトライ
+  - name: topic:ログ
+  - name: topic:文言
+  - name: topic:画面
+  - name: action:実装
+  - name: action:設置
+  - name: action:配置
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: error-tsx-01
+    group: error.tsx / global-error.tsx
+    name: use client は必須
+    body: |-
+      - `'use client'` 必須
+  - id: error-tsx-02
+    group: error.tsx / global-error.tsx
+    name: Props の error は unknown
+    body: |-
+      - Props: `error: unknown`（`instanceof Error` で絞ってから `digest` を読む）, `retry: () => void`
+  - id: error-tsx-03
+    group: error.tsx / global-error.tsx
+    name: useEffect でログに出す
+    body: |-
+      - `useEffect` 内で `log.error`（`error.digest` でサーバーエラーと突合）
+  - id: error-tsx-04
+    group: error.tsx / global-error.tsx
+    name: 利用者には汎用文言
+    body: |-
+      - ユーザーには汎用文言、詳細はログへ
+  - id: error-tsx-05
+    group: error.tsx / global-error.tsx
+    name: retry ボタンの設置
+    body: |-
+      - `retry()` で再取得・再 render するボタンを必ず設置（`reset()` は再取得しない）
+  - id: error-tsx-06
+    group: error.tsx / global-error.tsx
+    name: global-error は html と body を自前で記載
+    body: |-
+      - `global-error.tsx` は `<html><body>` を自前で書く（ルート layout 自体が落ちる前提）
+  - id: layout-01
+    group: 配置
+    name: 配置のツリー
+    body: |-
+      ```
+      app/
+      ├── global-error.tsx          # ルート layout 自体のエラー
+      ├── error.tsx                 # ルート layout 配下
+      └── (authenticated)/
+          ├── error.tsx             # 認証エリア全体
+          └── resources/
+              └── error.tsx         # resources 配下
+      ```

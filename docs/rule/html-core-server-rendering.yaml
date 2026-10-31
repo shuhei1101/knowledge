@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-core-server-rendering
+kind: rule
+name: サーバー描画
+description: サーバーがテンプレートから HTML を組み立てる画面の決まりを定め、サーバー描画の画面を実装するときに読む。
+tags:
+  - name: scope:html
+  - name: tool:python
+  - name: topic:url
+  - name: topic:エラー
+  - name: topic:サーバー
+    main: true
+  - name: topic:スクリプト
+  - name: topic:テンプレート
+  - name: topic:マクロ
+  - name: topic:環境
+  - name: topic:画面
+  - name: action:エスケープ
+  - name: action:定義
+  - name: action:描画
+  - name: action:組み立て
+  - name: action:継承
+  - name: action:計算
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
+      サーバーがテンプレートから HTML を組み立てる画面の決まり。
+      ツール名は候補で、前提にしない。
+  - id: server-rendering-01
+    group: サーバー描画
+    name: テンプレートで組み立てる
+    body: |-
+      - HTML はテンプレートで組み立てる
+  - id: server-rendering-02
+    group: サーバー描画
+    name: 自動エスケープの明示
+    body: |-
+      - 自動エスケープを、テンプレートの拡張子で有効にする設定を明示する（`select_autoescape`）
+  - id: server-rendering-03
+    group: サーバー描画
+    name: 未定義の値はエラーにする
+    body: |-
+      - 未定義の値はエラーにする。空文字で描かない（`StrictUndefined`）
+  - id: server-rendering-04
+    group: サーバー描画
+    name: テンプレート環境の使い回し
+    body: |-
+      - テンプレートの環境はアプリの起動時に 1 つ作って使い回す
+  - id: server-rendering-05
+    group: サーバー描画
+    name: 計算は Python 側で済ませる
+    body: |-
+      - 計算・判断は Python 側で済ませ、テンプレートには表示する値だけを渡す
+  - id: server-rendering-06
+    group: サーバー描画
+    name: 継承とマクロ
+    body: |-
+      - 共通の骨格は継承（`extends` + `block`）、繰り返す部品はマクロにする
+  - id: server-rendering-07
+    group: サーバー描画
+    name: エスケープを外す条件
+    body: |-
+      - エスケープを外すのは信頼できる変換（Markdown の変換器など）の出力だけにし、テンプレートの `safe` ではなくコード側で `Markup` にして渡す
+  - id: server-rendering-08
+    group: サーバー描画
+    name: script 内に値を直接置かない
+    body: |-
+      - `<script>` の中・イベント属性・属性名には値を直接置かない。JS へ値を渡すときは HTML の中で安全な JSON 化にする（`tojson`）
+  - id: server-rendering-09
+    group: サーバー描画
+    name: URL は url_for で組み立てる
+    body: |-
+      - URL はルート名から組み立て、文字列で直書きしない（`url_for`）

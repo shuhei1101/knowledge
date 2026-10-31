@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-testing-strategy
+kind: rule
+name: テスト方針
+description: テスト関数の docstring・準備 / 実行 / 検証の区切り・分岐の禁止・入力と期待値の書き方を定め、Python のテスト関数を記載するときに読む。
+tags:
+  - name: scope:python
+  - name: topic:testing
+    main: true
+  - name: topic:docstring
+  - name: topic:naming
+  - name: topic:方針
+  - name: topic:関数
+  - name: action:入力
+  - name: action:分岐
+  - name: action:参照
+  - name: action:実行
+  - name: action:検証
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-30'
+items:
+  - id: test-function-format-01
+    group: テスト関数の書式
+    name: テスト関数の docstring
+    body: |-
+      - 各テスト関数に 1 行 docstring を書く。
+        内容は設計書テスト表の概要をそのまま反映し、末尾に（正常系）/（異常系）を付ける
+  - id: test-function-format-02
+    group: テスト関数の書式
+    name: 準備・実行・検証の区切り
+    body: |-
+      - 関数内を `# 準備` → `# 実行` → `# 検証` の順のコメントで区切る。
+        例外検証のように実行と検証が一体になる場合は `# 実行・検証` にまとめる
+  - id: test-function-format-03
+    group: テスト関数の書式
+    name: テスト関数に分岐を書かない
+    body: |-
+      - テスト関数に分岐・ループ・計算を書かない。
+        期待値は計算せず値で書き、複数の条件は `parametrize` で並べる
+  - id: test-function-format-04
+    group: テスト関数の書式
+    name: 入力と期待値は値で記載
+    body: |-
+      - 入力と期待値は、他のテスト関数と重複しても値で書く。
+        fixture は共通のまま使う
+
+      ```python
+      def test_is_minor_when_age_19():
+          """19 歳は未成年と判定する（正常系）。"""
+          # 準備
+          user = User(age=19)
+          # 実行
+          result = user.is_minor()
+          # 検証
+          assert result is True
+      ```
+  - id: test-function-format-05
+    group: テスト関数の書式
+    name: 命名の詳細の参照先
+    body: |-
+      命名の詳細（when 形式・期待値を名前に入れない）は [testing/pytest](id:python-testing-pytest#naming-01) の「命名」を参照。

@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: claude-hook
+kind: rule
+name: フック作成ガイド
+description: フックをスクリプトとして作る決まりと、Bash コマンドを一度だけ止めるワンタイムトークンの使い方を定め、Claude Code のフックを作る・修正するときに読む。
+tags:
+  - name: scope:claude
+  - name: topic:naming
+  - name: topic:スクリプト
+  - name: topic:ガイド
+  - name: topic:コマンド
+  - name: topic:コンテキスト
+  - name: topic:セッション
+  - name: topic:トークン
+  - name: topic:フック
+    main: true
+  - name: topic:ブロック
+  - name: topic:ワンタイムトークン
+  - name: topic:上限
+  - name: topic:設定
+  - name: tool:bash
+  - name: tool:claude
+  - name: tool:claude-code
+  - name: tool:mcp
+  - name: action:作成
+status: current
+visibility: internal
+rev: 8
+last_reviewed: '2026-10-31'
+sources:
+  - title: "Claude Code: Hooks reference"
+    url: https://code.claude.com/docs/en/hooks
+items:
+  - id: rules-01
+    group: ルール
+    name: settings.json に直接記載しない
+    body: |-
+      - settings.json内にインラインで書かないでください。
+        - pythonファイルは`.claude/hooks/*.py`: スクリプト名はフックイベントと同じにしてください。
+          - 例: `user_prompt_submit.py`
+        - プロンプトファイルはプラグインのルートの `content/prompts/` の YAML（[プロンプトファイル](id:prompt-file)）
+  - id: rules-02
+    group: ルール
+    name: 注入文の書き分けと書き方
+    body: |-
+      - hooksの`additionalContext`でコンテキストを注入する文の中身・長さは [注入文の書き分けと書き方](id:claude-context-placement) に従う
+  - id: rules-03
+    group: ルール
+    name: 1 セッション 1 回の決まり
+    body: |-
+      - 文脈を注入するときは、[MCP サーバー作成ルール](id:claude-mcp) の 1 セッション 1 回の決まりに従う
+  - id: rules-04
+    group: ルール
+    name: MCP に届かないときは何も追加しない
+    body: |-
+      - 文脈を追加するために MCP を呼んで届かないときは、何も追加せず、入力をそのまま渡す。
+  - id: one-time-token-block-01
+    group: ワンタイムトークン付き条件ブロック
+    name: ワンタイムトークンの用途
+    body: |-
+      - PreToolUseなどで特定のBashコマンドを一度だけ防ぐときの方法
+  - id: one-time-token-block-02
+    group: ワンタイムトークン付き条件ブロック
+    name: ワンタイムトークンの使いどころ
+    body: |-
+      - 例えば、Push時に一度だけ確認させたい場合等に使う
+        - 「確認 → 通過 → 確認 → 通過」を交互に繰り返す。
+        - トークンなし時 → トークン作成 → ブロック（確認表示）
+        - トークンあり時 → トークン削除（消費）→ 通過
+  - id: one-time-token-block-03
+    group: ワンタイムトークン付き条件ブロック
+    name: トークン命名規約
+    body: |-
+      - トークン命名規約:
+        - フックごとに一意のトークンファイル名を使う。
+        - トークン名に `session_id` を含める。

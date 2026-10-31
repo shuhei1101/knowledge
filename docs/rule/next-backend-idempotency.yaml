@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-idempotency
+kind: rule
+name: Next.js App Router — Idempotency
+description: 二重実行が致命的な POST に Idempotency-Key を適用するケースと、クリーンアップ、Stripe との連携を定め、課金や通知送信などの POST を実装するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:バックエンド
+  - name: topic:アプリルーター
+  - name: topic:キー
+  - name: topic:冪等性
+    main: true
+  - name: topic:期限
+  - name: tool:next-js
+  - name: tool:stripe
+  - name: action:クリーンアップ
+  - name: action:削除
+  - name: action:実行
+  - name: action:連携
+  - name: action:適用
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      > 対象: 課金・通知送信・在庫減少など、二重実行されると致命的な POST。`Idempotency-Key` ヘッダで冪等性を担保する。
+      クライアントは UUID 等の一意キーを `Idempotency-Key` ヘッダで送信する。
+      サーバーは利用者とキーの組に一意制約を付けて、レスポンスと期限とともに保存する。
+      同じキーで再来たら前回のレスポンスを返す（処理は走らせない）。
+  - id: where-to-apply-01
+    group: どこに適用するか
+    name: 適用するケースの表
+    body: |-
+      | ケース                | Idempotency 必要?  |
+      | --------------------- | ------------------ |
+      | 課金 / 払い戻し       | ✅ 必須            |
+      | 通知 / メール送信     | ✅ 必須            |
+      | 在庫減少 / 予約       | ✅ 必須            |
+      | 一般的なフォーム POST | △ あると安全       |
+      | GET / PUT / DELETE    | ❌ HTTP 仕様で冪等 |
+      | PATCH                 | ❌ 楽観的ロックで二重適用を防ぐ |
+  - id: cleanup-01
+    group: クリーンアップ
+    name: 期限切れキーの削除
+    body: |-
+      期限切れキーは Cron で定期的に削除する（期限の列で絞って DELETE する）。
+  - id: stripe-integration-01
+    group: Stripe との連携
+    name: Stripe との連携
+    body: |-
+      Stripe API は `Idempotency-Key` をネイティブサポートする（SDK では `idempotencyKey` オプション）。Stripe へ渡すキーはクライアントのキーに利用者 ID を含めて作り、利用者をまたいで衝突させない。

@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-css-comment
+kind: rule
+name: CSS コメント
+description: CSS のセレクタにコメントを付ける決まりを定め、単体 HTML の CSS を記載するときに読む。
+tags:
+  - name: scope:html
+  - name: tool:css
+  - name: topic:コメント
+    main: true
+  - name: topic:セレクタ
+  - name: action:省略
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
+  - id: css-comment-01
+    group: CSS コメント
+    name: 全セレクタにコメント
+    body: |-
+      - 全ての CSS セレクタ（クラス・要素・擬似クラス等）にコメントを書く。
+        - コメントはセレクタの直上に置く。
+  - id: css-comment-02
+    group: CSS コメント
+    name: 状態セレクタは省略可
+    body: |-
+      - `:hover` / `:focus` 等の状態セレクタはベースクラスの「続き」なので、用途が自明なら省略可。
+  - id: css-comment-03
+    group: CSS コメント
+    name: コメントの形式
+    body: |-
+      - `/* ... */` 形式のみ使用（`//` は CSS の正規コメントではない）。

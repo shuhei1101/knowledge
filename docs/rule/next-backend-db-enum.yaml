@@ -1,0 +1,87 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-db-enum
+kind: rule
+name: drizzle/schema.ts — Enum
+description: drizzle/schema.ts の Enum を pgEnum で定義する決まりと、Zod スキーマとの併用、命名を定め、DB スキーマに Enum を追加するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:バックエンド
+  - name: topic:db
+  - name: topic:enum
+    main: true
+  - name: topic:naming
+  - name: topic:カラム
+  - name: topic:スキーマ
+  - name: topic:テンプレート
+  - name: topic:テーブル
+  - name: topic:接尾辞
+  - name: tool:drizzle
+  - name: tool:jsdoc
+  - name: tool:zod
+  - name: action:削除
+  - name: action:定義
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: drizzle-schema-enum-01
+    group: drizzle/schema.ts — Enum
+    name: 固定値は pgEnum
+    body: |-
+      - 固定セットの値を取るカラムは `pgEnum` で型安全に定義。
+  - id: drizzle-schema-enum-02
+    group: drizzle/schema.ts — Enum
+    name: 動的な値は別テーブル
+    body: |-
+      - 値が動的に変わる（ユーザー追加可能等）なら別テーブルで管理
+  - id: drizzle-schema-enum-03
+    group: drizzle/schema.ts — Enum
+    name: 値は削除できない
+    body: |-
+      - 値は削除できない（Postgres は追加と改名のみ）。削除は『DBマイグレーション』の手順で型を再作成する
+  - id: drizzle-schema-enum-04
+    group: drizzle/schema.ts — Enum
+    name: カラム JSDoc に値の説明
+    body: |-
+      - カラム JSDoc に値の説明を付ける
+  - id: template-sample-01
+    group: テンプレ
+    name: Enum のテンプレート
+    body: |-
+      ```ts
+      import { pgEnum } from "drizzle-orm/pg-core"
+
+      /** リソースステータス */
+      export const resourceStatus = pgEnum("resource_status", [
+        "draft",       // 下書き
+        "published",   // 公開中
+        "archived",    // アーカイブ
+      ])
+      export type ResourceStatus = (typeof resourceStatus.enumValues)[number]
+      ```
+  - id: zod-schema-combination-01
+    group: Zod スキーマと併用
+    name: Zod スキーマとの併用
+    body: |-
+      ```ts
+      import { z } from "zod"
+
+      export const ResourceFormSchema = z.object({
+        status: z.enum(resourceStatus.enumValues),
+      })
+      ```
+  - id: naming-01
+    group: 命名
+    name: Enum の命名表
+    body: |-
+      | 対象                                 | 命名                                             |
+      | ------------------------------------ | ------------------------------------------------ |
+      | Enum 定義（camelCase 単数）          | `resourceStatus`, `userType`, `notificationType` |
+      | Postgres での名前（snake_case 単数） | `resource_status`, `user_type`                   |
+      | TypeScript の型（PascalCase 単数）   | `ResourceStatus`, `UserType`                     |
+  - id: naming-02
+    group: 命名
+    name: Enum 接尾辞は付けない
+    body: |-
+      `*Enum` 接尾辞は付けない

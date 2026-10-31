@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-auth-client
+kind: rule
+name: app/(shared)/auth/client.ts — クライアント側 useSession
+description: ブラウザから Better Auth のセッションを参照する useSession の配置と使い方を定め、クライアント側でセッションを参照するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:バックエンド
+  - name: topic:部品
+  - name: topic:url
+  - name: topic:インポート
+  - name: topic:クライアント
+    main: true
+  - name: topic:サーバー
+  - name: topic:サーバーコンポーネント
+  - name: topic:セッション
+  - name: topic:フック
+  - name: topic:ブラウザ
+  - name: topic:ローディング
+  - name: topic:変数
+  - name: topic:環境
+  - name: topic:環境変数
+  - name: tool:better-auth
+  - name: action:公開
+  - name: action:参照
+  - name: action:認証
+  - name: action:配置
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: auth-client-01
+    group: app/(shared)/auth/client.ts — クライアント側 useSession
+    name: クライアント側の hook
+    body: |-
+      - ブラウザから Better Auth のセッションを参照・操作する hook。
+  - id: auth-client-02
+    group: app/(shared)/auth/client.ts — クライアント側 useSession
+    name: 配置と use client
+    body: |-
+      - 配置は `app/(shared)/auth/client.ts`（ファイル冒頭 `'use client'`）
+  - id: auth-client-03
+    group: app/(shared)/auth/client.ts — クライアント側 useSession
+    name: baseURL は環境変数経由
+    body: |-
+      - `baseURL` は `NEXT_PUBLIC_APP_URL` 経由
+  - id: auth-client-04
+    group: app/(shared)/auth/client.ts — クライアント側 useSession
+    name: Server Component から import しない
+    body: |-
+      - クライアント専用 — Server Component から import しない
+  - id: auth-client-05
+    group: app/(shared)/auth/client.ts — クライアント側 useSession
+    name: createAuthClient の公開
+    body: |-
+      - `better-auth/react` の `createAuthClient` を `authClient` として export し、`useSession` を再 export する
+  - id: auth-client-06
+    group: app/(shared)/auth/client.ts — クライアント側 useSession
+    name: isPending で loading を扱う
+    body: |-
+      - `isPending` で loading 状態を扱う

@@ -1,0 +1,94 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-tooling-tsc
+kind: rule
+name: tsc 運用（バニラ TS + FastAPI）
+description: tsc が生成する js の出力先、設定ファイル、scripts、gitignore の運用を定め、単体 HTML で TypeScript のビルド設定を作る・修正するときに読む。
+tags:
+  - name: scope:html
+  - name: topic:tooling
+  - name: tool:fastapi
+  - name: topic:フロントエンド
+  - name: topic:gitignore
+  - name: tool:javascript
+  - name: tool:typescript
+  - name: topic:エイリアス
+  - name: topic:バニラ
+  - name: topic:ファイル
+  - name: topic:ブラウザ
+  - name: topic:リポジトリ
+  - name: topic:ルート
+  - name: topic:設定
+  - name: tool:tsc
+    main: true
+  - name: action:出力
+  - name: action:生成
+  - name: action:運用
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
+  - id: tsc-operation-01
+    group: tsc 運用（バニラ TS + FastAPI）
+    name: ブラウザに出すのは生成 js
+    body: |-
+      - ブラウザに出すのは `tsc` が生成した `.js`。
+        - バンドラは使わない（[html/core/ビルドレス原則](id:html-core-buildless)）。
+  - id: tsc-operation-02
+    group: tsc 運用（バニラ TS + FastAPI）
+    name: js の出力先
+    body: |-
+      - 生成 `.js` は `.ts` と同じ階層に出す。`screen.ts` → 同じフォルダに `screen.js`。
+  - id: tsc-operation-03
+    group: tsc 運用（バニラ TS + FastAPI）
+    name: frontend が指す範囲
+    body: |-
+      - 以下の `frontend/` は画面のスクリプトの置き場所を指す。`static/`・`assets/` などに置く構成では、そのフォルダに読み替える。
+  - id: config-files-01
+    group: 設定ファイル（repo ルート）
+    name: 設定ファイルの表
+    body: |-
+      <!-- table: data -->
+
+      | ファイル              | 役割                                                                                              |
+      | --------------------- | ------------------------------------------------------------------------------------------------- |
+      | `tsconfig.json`       | 型チェック用。`noEmit`。`frontend/**/*.ts`（移行期は `.js` も）を include                         |
+      | `tsconfig.build.json` | 生成用。`tsconfig.json` を継承し `noEmit:false` + 同階層 emit。include は `frontend/**/*.ts` のみ |
+      | `tsconfig.plan.json` | 型チェック用。トップレベルの宣言が重なる従来のスクリプト（`import` / `export` の無い `.ts`）を、`tsconfig.json` と別のプログラムにする。`tsconfig.json` を継承し include だけを変える |
+      | `tsconfig.plan.build.json` | 生成用。`tsconfig.plan.json` を継承し、`tsconfig.build.json` と同じ構成で出す |
+      | `eslint.config.mjs`   | flat config。`typescript-eslint` で `.ts` を lint。`@typescript-eslint/no-deprecated` を有効にし、型情報つきの設定（`parserOptions.projectService`）で動かす |
+      | `package.json`        | dev ツールの devDependencies と scripts（`type: module`）                                         |
+
+      <!-- /table -->
+  - id: config-files-02
+    group: 設定ファイル（repo ルート）
+    name: paths の別名
+    body: |-
+      importmap の別名（`shared/`）は `tsconfig.json` の `paths` で `./frontend/shared/*` に解決する。
+  - id: scripts-01
+    group: scripts
+    name: scripts の表
+    body: |-
+      <!-- table: data -->
+
+      | script      | 中身                                 | 用途                                                     |
+      | ----------- | ------------------------------------ | -------------------------------------------------------- |
+      | `dev`       | `tsc -p tsconfig.build.json --watch` | 開発中。保存ごとに変更分だけ再生成            |
+      | `build`     | `tsc -p tsconfig.build.json`         | 全 `.ts` を一括生成                                      |
+      | `typecheck` | `tsc -p tsconfig.json --noEmit`      | CI / pre-commit。型崩れ検知                              |
+      | `lint`      | `eslint frontend`                    | flat config                                              |
+      | `test`      | `vitest run` / `playwright test`     | テスト                                                   |
+      | `gen-types` | `openapi-typescript`                 | API 型を `shared/api/schema.d.ts` に生成（コミットする） |
+
+      <!-- /table -->
+  - id: generated-js-gitignore-01
+    group: 生成 .js は gitignore
+    name: 生成 js は gitignore
+    body: |-
+      著作は `.ts`、`.js` は生成物。フロントエンドの生成 `.js` はコミットしない（`.gitignore`）。例外は手書きで維持する `shared/vendor/`（外部依存の vendoring）と openapi 生成型 `shared/api/schema.d.ts`（コミットする）。
+      ビルドしない配信先（GitHub Pages・配布先）と共用する生成 `.js` と、配信・テスト・Storybook・モックの配信がビルドせずにパスを直接読む生成 `.js` は、`.ts` と同じ階層へコミットする。
+      コミットする生成 `.js` はプロジェクトの設計書に列挙し、列挙したものに限る。

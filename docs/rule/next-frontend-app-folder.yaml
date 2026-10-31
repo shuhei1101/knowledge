@@ -1,0 +1,98 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-app-folder
+kind: rule
+name: app/ — フォルダ全体図
+description: Next.js App Router の app/ 配下のフォルダ構成と、page.tsx の共通原則を定め、app/ 配下にフォルダやページを追加するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:フロントエンド
+  - name: topic:api
+  - name: topic:部品
+  - name: topic:props
+  - name: topic:アプリルーター
+  - name: topic:インポート
+  - name: topic:サーバー
+  - name: topic:サーバーコンポーネント
+  - name: topic:ツリー
+  - name: topic:データ
+  - name: topic:フォルダ
+    main: true
+  - name: topic:プロジェクト
+  - name: topic:ページ
+  - name: topic:ルート
+  - name: topic:構成
+  - name: topic:要素
+  - name: tool:next-js
+  - name: action:バージョニング
+  - name: action:取得
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      Next.js App Router プロジェクトの `app/` 配下の構成。モノレポ前提で通常は `packages/web/app/`。
+  - id: app-folder-01
+    group: app/ — フォルダ全体図
+    name: API ルートのバージョニング
+    body: |-
+      - API ルートは `/api/v{N}/` 配下（バージョニング）
+  - id: app-folder-02
+    group: app/ — フォルダ全体図
+    name: proxy.ts の位置
+    body: |-
+      - `proxy.ts` はプロジェクト直下
+  - id: app-folder-03
+    group: app/ — フォルダ全体図
+    name: 共通要素は app/(shared)
+    body: |-
+      - 共通要素は `app/(shared)/` 配下
+  - id: top-level-structure-01
+    group: トップレベル
+    name: app の構成ツリー
+    body: |-
+      ```
+      packages/web/app/
+      ├── (authenticated)/   # 認証必須エリア — メイン画面群
+      ├── (auth)/            # 認証画面（login / signup / reset-password）
+      ├── (shared)/          # 共通コンポーネント・hook・provider・schema
+      ├── api/v{N}/            # バージョニング済み API ルート
+      ├── error/             # エラーページ（unauthorized 等）
+      ├── layout.tsx         # ルートレイアウト
+      ├── error.tsx          # ルートエラーバウンダリ
+      ├── global-error.tsx   # ルート layout 自体のエラー
+      ├── not-found.tsx      # 404
+      └── loading.tsx        # ルート suspense fallback
+      ```
+  - id: top-level-structure-02
+    group: トップレベル
+    name: プロジェクト直下の構成
+    body: |-
+      プロジェクト直下:
+
+      ```
+      packages/web/
+      ├── proxy.ts           # リクエスト前処理
+      ├── drizzle/           # DB スキーマ
+      ├── tests/             # E2E / Unit テスト
+      ├── config/
+      │   └── defaults.yaml  # YAML 構造化設定の既定値
+      └── stories/           # Storybook 用（任意）
+      ```
+  - id: page-tsx-principles-01
+    group: page.tsx 共通原則
+    name: page.tsx は Server Component
+    body: |-
+      - `page.tsx` は async Server Component（`'use client'` / `useState` / `useQuery` を付けない）
+  - id: page-tsx-principles-02
+    group: page.tsx 共通原則
+    name: データ取得は fetchXxx を直接 import
+    body: |-
+      - データ取得は `query.ts` の `fetchXxx` を直接 import（自分の API へ `fetch(/api/...)` しない）
+  - id: page-tsx-principles-03
+    group: page.tsx 共通原則
+    name: 取得データは props で渡す
+    body: |-
+      - 取得データは Client Screen に props で渡す

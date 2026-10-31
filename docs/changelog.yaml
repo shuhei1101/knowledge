@@ -1,0 +1,305 @@
+# yaml-language-server: $schema=../schemas/changelog.schema.yaml
+id: changelog
+kind: changelog
+name: 変更履歴
+description: リリースのバージョンごとに入った PR とその変更内容を一覧し、どのバージョンで何が変わったかを調べるときに読む。
+tags:
+  - name: scope:はじめに
+  - name: topic:http
+  - name: topic:naming
+  - name: topic:pr
+  - name: tool:yaml
+  - name: topic:キー
+  - name: topic:サーバー
+  - name: topic:ダークモード
+  - name: topic:テキスト
+  - name: topic:テンプレート
+  - name: topic:バージョン
+  - name: topic:ファイル
+  - name: topic:フォーム
+  - name: topic:フローチャート
+  - name: topic:プラグイン
+  - name: topic:プロジェクト
+  - name: topic:プロンプト
+  - name: topic:出典
+  - name: topic:判定フローチャート
+  - name: topic:履歴
+    main: true
+  - name: topic:差分
+  - name: topic:常駐
+  - name: topic:文書
+  - name: topic:文章
+  - name: topic:画面
+  - name: topic:索引
+  - name: topic:設定
+  - name: tool:mcp
+  - name: action:リリース
+  - name: action:判定
+  - name: action:変更
+  - name: action:定義
+  - name: action:描画
+  - name: action:改名
+  - name: action:移行
+  - name: action:管理
+  - name: action:組み立て
+  - name: action:統一
+  - name: action:統合
+  - name: action:読み取り
+status: current
+visibility: public
+rev: 5
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      リリースごとに入った PR の一覧。
+  - id: v0-2-0-01
+    group: v0.2.0
+    name: dev-docs の配信元
+    body: |-
+      [#72](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/72/README.md) knowledge を dev-docs の配信元として使えるようにし、使い方を書き直す
+  - id: v0-2-0-02
+    group: v0.2.0
+    name: 注入文の書き方
+    body: |-
+      [#131](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/131/README.md) SessionStart・MCP の instructions・ツールの description などに書く内容の書き分けと、注入文の書き方の規約を新設する
+  - id: v0-2-0-03
+    group: v0.2.0
+    name: プロンプトの YAML の範囲
+    body: |-
+      [#130](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/130/README.md) プロンプトの YAML の規約をフックの注入文・MCP の instructions・ツールの description に広げ、キーを見直してスキーマを schemas/ に置く
+  - id: v0-2-0-04
+    group: v0.2.0
+    name: タグの改名
+    body: |-
+      [#127](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/127/README.md) knowledge の既存のタグのうち、規約『タグと用語の登録』の tag-name-01 に合わないものを改名する
+  - id: v0-2-0-05
+    group: v0.2.0
+    name: ファイルツリーとコードのコピー
+    body: |-
+      [#126](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/126/README.md) 規約『ドキュメントの部品』のファイルツリーの注釈とコードのコピーの記述を mdmark の描画に合わせる
+  - id: v0-2-0-06
+    group: v0.2.0
+    name: タグの付け直し
+    body: |-
+      [#124](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/124/README.md) knowledge の既存の文書のタグを、規約『タグと用語の登録』の tag-scope-01・tag-scope-02 に沿って付け直す
+  - id: v0-2-0-07
+    group: v0.2.0
+    name: テンプレートの配置先（概要・リファレンス・チェックシート）
+    body: |-
+      [#123](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/123/README.md) テンプレート『概要・クイックスタート』『リファレンス』『チェックシート』の配置先・形式の記述を規約『ドキュメント管理』に合わせる
+  - id: v0-2-0-08
+    group: v0.2.0
+    name: description の書き換え
+    body: |-
+      [#121](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/121/README.md) knowledge の既存の文書の description を、1 文で受け持つことと読むときを記載する書き方へ書き換える
+  - id: v0-2-0-09
+    group: v0.2.0
+    name: プラグインの設定ファイルの例外
+    body: |-
+      [#120](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/120/README.md) 規約『Claude プラグインルール』の設定ファイルに、.mcp.json も読む値は設定ファイルを持つプラグインでも env に置く例外を追加する
+  - id: v0-2-0-10
+    group: v0.2.0
+    name: テンプレートの配置先（テンプレート・判定フローチャート・セットアップ手順）
+    body: |-
+      [#117](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/117/README.md) テンプレート『テンプレート』『判定フローチャート』『セットアップ手順』の配置先・形式の記述を規約『ドキュメント管理』に合わせる
+  - id: v0-2-0-11
+    group: v0.2.0
+    name: files.yaml の書き方
+    body: |-
+      [#116](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/116/README.md) 規約に、files.yaml に載せるファイルの判定・各列に入れる値・description の観点・設計書との implements を記載する
+  - id: v0-2-0-12
+    group: v0.2.0
+    name: 読み取りのツールの場所と範囲
+    body: |-
+      [#115](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/115/README.md) 規約『MCP サーバー作成ルール』の読み取りのツールに、本文を返すときは文書ごとの場所と範囲を rule-inject の載せ方で載せる、と追加する
+  - id: v0-2-0-13
+    group: v0.2.0
+    name: dev-docs での文書の配信
+    body: |-
+      [#114](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/114/README.md) 規約に dev-docs での文書の配信（立て方・dev-docs.yaml・接続先）を記載し、文書の MCP のポートの台帳を修正する
+  - id: v0-2-0-14
+    group: v0.2.0
+    name: タグの付け方の拡張
+    body: |-
+      [#113](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/113/README.md) 規約『タグと用語の登録』と判定フローチャート『タグの付与』に、単語まで分ける付け方・action: の命名・拾う範囲・ファイルの種類ごとの書き出す範囲を入れる
+  - id: v0-2-0-15
+    group: v0.2.0
+    name: related の重なりの削除（ドキュメント管理）
+    body: |-
+      [#107](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/107/README.md) 規約『ドキュメント管理』の related から本文のリンクと重なる要素を削除する
+  - id: v0-2-0-16
+    group: v0.2.0
+    name: related の重なりの削除（その他の文書）
+    body: |-
+      [#112](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/112/README.md) related から本文のリンクと重なる要素を削除する（規約『ドキュメント管理』以外の文書）
+  - id: v0-2-0-17
+    group: v0.2.0
+    name: 判定フローチャートの出典
+    body: |-
+      [#110](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/110/README.md) 判定フローチャートの本文の出典の表を、メタデータの sources へ移す
+  - id: v0-2-0-18
+    group: v0.2.0
+    name: テンプレートの例の pyright と Python 3.14
+    body: |-
+      [#109](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/109/README.md) テンプレートの例に残る mypy と Python 3.12 を pyright strict と Python 3.14 に揃える
+  - id: v0-2-0-19
+    group: v0.2.0
+    name: 語の選び方の SessionStart 注入
+    body: |-
+      [#106](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/106/README.md) 語の選び方の要点を knowledge のプラグインの SessionStart フックで注入する
+  - id: v0-2-0-20
+    group: v0.2.0
+    name: 規約の出典のメタデータ
+    body: |-
+      [#104](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/104/README.md) 規約のスキーマに出典・ライブラリとバージョン・確認日のメタデータのキーを追加し、本文の出典を移す
+  - id: v0-2-0-21
+    group: v0.2.0
+    name: スキルの設計書と文章の点検
+    body: |-
+      [#98](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/98/README.md) スキルの設計書のテンプレートと、文章を点検して修正するスキルを追加する
+  - id: v0-2-0-22
+    group: v0.2.0
+    name: Claude 共通の旧パスの削除
+    body: |-
+      [#103](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/103/README.md) 規約『Claude 共通』の文の書き方の例文から、存在しない旧パスの参照を無くす
+  - id: v0-2-0-23
+    group: v0.2.0
+    name: Python の規約の機械検査
+    body: |-
+      [#100](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/100/README.md) Python の規約を機械検査へ寄せて推奨ライブラリを更新し、Retry-After の値の決め方を記載して、規約『タグと用語の登録』をタグのマスターを持たない付け方に改める
+  - id: v0-2-0-24
+    group: v0.2.0
+    name: html・ui の React 前提
+    body: |-
+      [#95](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/95/README.md) html・ui の規約を React 前提に見直し、キーボード操作とタグの絞り込みの規約を ui に新設する
+  - id: v0-2-0-25
+    group: v0.2.0
+    name: 用語の登録と関連の判定フローチャート
+    body: |-
+      [#94](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/94/README.md) 用語の登録と関連の張り方の判定フローチャートを追加し、規約『タグと用語の登録』『ドキュメント管理』から参照する
+  - id: v0-2-0-26
+    group: v0.2.0
+    name: React の規約と設計原則
+    body: |-
+      [#89](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/89/README.md) React の規約・設計原則を新設して next/ を索引から外し、MCP・YAML の規約に書き込みの作業ツリー・常駐サーバー・設定の決まりを追加する
+  - id: v0-2-0-27
+    group: v0.2.0
+    name: FastAPI の名前・エラー・キー
+    body: |-
+      [#90](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/90/README.md) Python の FastAPI の規約に operationId・ProblemDetail・camelCase のキー・StrEnum・例外の名前と HTTP へのマップの決まりを記載する
+  - id: v0-2-0-28
+    group: v0.2.0
+    name: ルール索引の MCP の当て方
+    body: |-
+      [#71](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/71/README.md) ルール索引への登録の規約に MCP の引数・タグ・既読の当て方を追加し、MCP・YAML・タグの規約の範囲と例を追加する
+  - id: v0-2-0-29
+    group: v0.2.0
+    name: 文書の YAML への移行
+    body: |-
+      [#64](https://github.com/shuhei1101/knowledge/blob/v0.2.0/dev/pr/64/README.md) knowledge の文書を、道具が markdown を前提にするファイルを除いて YAML に移す
+  - id: v0-1-5-01
+    group: v0.1.5
+    name: 文書の MCP のプラグイン名
+    body: |-
+      [#61](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/61/README.md) MCP の規約に、文書の MCP のプラグインの名前と、mdmark と YAML の正本・MCP の役割の分担を追加する
+  - id: v0-1-5-02
+    group: v0.1.5
+    name: プラグイン設定の置き場所
+    body: |-
+      [#60](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/60/README.md) プラグインの設定は env に設定ファイルのパスだけを置き、本体を ~/.config の YAML（global・projects）に書くと規約に書く
+  - id: v0-1-5-03
+    group: v0.1.5
+    name: MCP の読み取りと差分
+    body: |-
+      [#57](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/57/README.md) MCP の規約に、format・会話キーの引数・1 セッション 1 回の注入・区間の差分のツール・プラグインでの配り方を追加する
+  - id: v0-1-5-04
+    group: v0.1.5
+    name: knowledge の語の修正
+    body: |-
+      [#55](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/55/README.md) knowledge の文書の語を、語の選び方の規約に合わせて修正する
+  - id: v0-1-5-05
+    group: v0.1.5
+    name: MCP の HTTP 常駐への統一
+    body: |-
+      [#54](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/54/README.md) MCP サーバーを HTTP の常駐サーバーに統一して stdio を禁止し、既定のポートの台帳と環境変数での上書きを規約に書く
+  - id: v0-1-5-06
+    group: v0.1.5
+    name: 文章の書き方への改名
+    body: |-
+      [#52](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/52/README.md) 規約『文章の追記』を『文章の書き方』に改名し、語の選び方の決まりを追加する
+  - id: v0-1-5-07
+    group: v0.1.5
+    name: 判定フローチャートの補足修正
+    body: |-
+      [#49](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/49/README.md) 判定フローチャートのテンプレートの補足を、実在する README.md の目次に合わせる
+  - id: v0-1-5-08
+    group: v0.1.5
+    name: 文書管理と MCP の方針
+    body: |-
+      [#48](https://github.com/shuhei1101/knowledge/blob/v0.1.5/dev/pr/48/README.md) AI エージェント向けの文書管理と MCP の方針を規約に入れ、mcp.md・YAML.md の食い違いを直す
+  - id: v0-1-4-01
+    group: v0.1.4
+    name: 画面規約の索引の修正
+    body: |-
+      [#39](https://github.com/shuhei1101/knowledge/blob/v0.1.4/dev/pr/39/README.md) 画面の実装の規約の索引のエントリが設計書の Markdown に当たらないようにする
+  - id: v0-1-4-02
+    group: v0.1.4
+    name: サーバー描画の規約
+    body: |-
+      [#37](https://github.com/shuhei1101/knowledge/blob/v0.1.4/dev/pr/37/README.md) サーバー側で描画する画面の規約を足し、置き場所によらない Web の規約の当たる範囲を広げる
+  - id: v0-1-3-01
+    group: v0.1.3
+    name: YAML の規約の統合
+    body: |-
+      [#31](https://github.com/shuhei1101/knowledge/blob/v0.1.3/dev/pr/31/README.md) YAML の規約を 1 つにまとめ、スキーマの書き方・検査・MCP からの読み書きの決まりを足す
+  - id: v0-1-2-01
+    group: v0.1.2
+    name: 一覧読み取りの命名
+    body: |-
+      [#28](https://github.com/shuhei1101/knowledge/blob/v0.1.2/dev/pr/28/README.md) Next.js の一覧読み取りの命名を 1 つにそろえる
+  - id: v0-1-2-02
+    group: v0.1.2
+    name: ミラーのキーを text.ja に
+    body: |-
+      [#27](https://github.com/shuhei1101/knowledge/blob/v0.1.2/dev/pr/27/README.md) 規約『プロンプトファイル』の日本語のミラーのキーを text.jp から text.ja にする
+  - id: v0-1-2-03
+    group: v0.1.2
+    name: フォームの規約の見直し
+    body: |-
+      [#25](https://github.com/shuhei1101/knowledge/blob/v0.1.2/dev/pr/25/README.md) Next.js のフォームの規約を shadcn/ui の Field + Controller へ移すかを決めて規約を合わせる
+  - id: v0-1-2-04
+    group: v0.1.2
+    name: 「ダーク」の扱いの統一
+    body: |-
+      [#24](https://github.com/shuhei1101/knowledge/blob/v0.1.2/dev/pr/24/README.md) 「ダーク」の扱いを規約・テンプレートでそろえる
+  - id: v0-1-2-05
+    group: v0.1.2
+    name: 出典列の略号の定義
+    body: |-
+      [#22](https://github.com/shuhei1101/knowledge/blob/v0.1.2/dev/pr/22/README.md) 規約『文章の追記』の出典列の略号に定義を持たせる
+  - id: v0-1-1-01
+    group: v0.1.1
+    name: 規約の見直し
+    body: |-
+      [#16](https://github.com/shuhei1101/knowledge/blob/v0.1.1/dev/pr/16/README.md) 規約を分野ごとにベストプラクティスと突き合わせて直す
+  - id: v0-1-1-02
+    group: v0.1.1
+    name: プロンプトファイルの規約
+    body: |-
+      [#13](https://github.com/shuhei1101/knowledge/blob/v0.1.1/dev/pr/13/README.md) プロンプトのファイルを触るときの規約を作る（1 ノード 1 枚の YAML・英日をキーで持つ）
+  - id: v0-1-0-01
+    group: v0.1.0
+    name: テンプレートの組み立て
+    body: |-
+      [#11](https://github.com/shuhei1101/knowledge/blob/v0.1.0/dev/pr/11/README.md) 設計書テンプレートのスキーマから Markdown のテンプレートを組み立てて置く
+  - id: v0-1-0-02
+    group: v0.1.0
+    name: 規約とテンプレートの移行
+    body: |-
+      [#10](https://github.com/shuhei1101/knowledge/blob/v0.1.0/dev/pr/10/README.md) ai-monitor から、AI Monitor が無くても使える規約とテンプレートを移す
+  - id: v0-1-0-03
+    group: v0.1.0
+    name: プロジェクトの立ち上げ
+    body: |-
+      [#6](https://github.com/shuhei1101/knowledge/blob/v0.1.0/dev/pr/6/README.md) プロジェクトを立ち上げる

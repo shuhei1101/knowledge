@@ -1,0 +1,243 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: ui-keyboard
+kind: rule
+name: キーボード操作
+description: スタックによらない Tab と複合部品のキー操作・フォーカス管理・ショートカットの設計・見つけやすさと、共通のキーの割り当てを定め、キーボード操作に対応した画面を設計するときに読む。
+tags:
+  - name: scope:ui
+  - name: topic:キー
+  - name: topic:キーボード
+    main: true
+  - name: topic:キー操作
+  - name: topic:ショートカット
+  - name: topic:スコープ
+  - name: topic:タブ
+  - name: topic:フォーカス
+  - name: topic:ルート
+  - name: topic:修飾キー
+  - name: topic:画面
+  - name: topic:部品
+  - name: action:修飾
+  - name: action:判定
+  - name: action:割り当て
+  - name: action:操作
+  - name: action:移動
+  - name: action:管理
+  - name: action:表示
+  - name: action:設計
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+related:
+  - to: ui-operation-accessibility
+    type: references
+    when: WCAG 2.2 の達成基準と検査の方法を確かめるとき
+  - to: react-keyboard-component
+    type: references
+    when: React で部品・表・フォーカスのキー操作とそのテストを実装するとき
+  - to: react-keyboard-shortcut
+    type: references
+    when: React でショートカットを実装するとき
+sources:
+  - id: APG
+    title: "APG: Keyboard Interface"
+    url: https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/
+  - id: APG
+    title: "APG: Dialog (Modal)"
+    url: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/
+  - id: WCAG
+    title: WCAG 2.2
+    url: https://www.w3.org/TR/WCAG22/
+    library: WCAG
+    version: '2.2'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 共通（単体 HTML・React）
+      キーボードだけで主な操作を完了できるようにするための、スタックによらない決まり。
+      実装（ライブラリ・部品の props・テスト）は React の規約に任せる。
+      個別のキーの割り当てはコードの一覧に置き、この規約には共通の割り当ての表だけを置く。
+  - id: tab-order-01
+    group: Tab の順序と複合部品
+    name: Tab の順序と tabindex
+    body: |-
+      <!-- table: data -->
+
+      | 決まり | 根拠 |
+      | --- | --- |
+      | Tab の順序は DOM の順序にし、見た目と揃える。`tabindex` に正の値を付けない | APG・WCAG 2.4.3 |
+      | `tabindex` は `0` と `-1` だけを使う | APG |
+
+      <!-- /table -->
+  - id: composite-widget-01
+    group: Tab の順序と複合部品
+    name: 複合部品のフォーカス
+    body: |-
+      <!-- table: data -->
+
+      | 決まり | 根拠 |
+      | --- | --- |
+      | 複合部品（リスト・グリッド・ツリー・タブ・メニュー・ツールバー・ラジオ）の Tab の停止位置は 1 つにし、中は矢印キーで移動する | APG |
+      | 複合部品に入ったら、選択中の項目、無ければ先頭にフォーカスする | APG |
+      | roving tabindex を既定にする。`aria-activedescendant` は、入力欄にフォーカスを残すとき（コンボボックス・コマンドパレット）だけ使う | APG |
+      | クリック・タップでも、`tabindex` と `aria-activedescendant` を更新する | APG |
+      | 仮想スクロールでは、フォーカス中の項目を描画範囲から外さない | 推測（中） |
+      | ライブラリの部品が持つキー操作は、そのまま使い、上書きしない | - |
+      | タブは、パネルをすぐ出せるならフォーカスで切り替え、読み込みに時間が掛かるなら Enter・Space で切り替える | APG |
+      | 表は `role="grid"` にして、セル単位で移動する | APG Grid |
+      | ツールバーの入力欄は 1 つだけにして、末尾に置く | Base UI |
+      | 探せる必要がある無効のボタンは、`aria-disabled` でフォーカスできるまま残す | Base UI |
+
+      <!-- /table -->
+  - id: composite-widget-02
+    group: Tab の順序と複合部品
+    name: 部品ごとのキー
+    body: |-
+      <!-- table: data -->
+
+      | 部品 | 矢印 | Home / End | Enter / Space | Escape | 文字キー |
+      | --- | --- | --- | --- | --- | --- |
+      | リスト | ↑↓ | 先頭・末尾 | Space で選択の切り替え | - | 頭文字へ移動 |
+      | メニュー | ↑↓。→ でサブメニュー、← で閉じる | 先頭・末尾 | 実行して閉じる | 閉じて開いた元へ戻す | 頭文字へ移動 |
+      | タブ | ←→。端で反対側へ回り込む | 先頭・末尾 | 手動切り替えのとき切り替える | - | - |
+      | ツールバー | ←→ | 先頭・末尾 | 実行 | - | - |
+      | ツリー | ↑↓。→ で開く・子へ、← で閉じる・親へ | 先頭・末尾 | 既定の動作 | - | 頭文字へ移動 |
+      | データグリッド | セルを移動。端で止まる | 行の先頭・末尾。Ctrl+Home / End で表の先頭・末尾 | Enter・F2 で編集 | 編集を抜ける | 編集を始める |
+
+      <!-- /table -->
+  - id: focus-management-01
+    group: フォーカス管理
+    name: フォーカスの表示と隠れ
+    body: |-
+      <!-- table: data -->
+
+      | 決まり | 根拠 |
+      | --- | --- |
+      | フォーカスの表示は `:focus-visible` で出し、消さない。コントラストは 3:1 以上にする | WCAG 2.4.7・1.4.11 |
+      | フォーカス中の要素を、固定ヘッダー・トースト・サイドパネルで隠さない | WCAG 2.4.11 |
+      | フォーカスを受け取っただけで、画面遷移や送信をしない | WCAG 3.2.1 |
+      | `autofocus` は、開いた直後に入力するのが明らかなときだけ使う | jsx-a11y |
+
+      <!-- /table -->
+  - id: focus-management-02
+    group: フォーカス管理
+    name: 重なる画面のフォーカス
+    body: |-
+      <!-- table: data -->
+
+      | 決まり | 根拠 |
+      | --- | --- |
+      | モーダルのフォーカストラップは自作せず、フォーカスを閉じ込める部品を使う | APG |
+      | モーダルを開いたら、最初にフォーカスできる要素へ移す。本文が長ければタイトルへ、取り消せない操作の確認ではキャンセルへ移す | APG Dialog |
+      | モーダルを閉じたら、開いた元へ戻す。元が消えていれば、次の作業につながる要素へ移す | APG Dialog |
+      | Escape で閉じるのは、いちばん上の層 1 つだけにする。IME で変換中の Escape では閉じない | Base UI のコード |
+      | モーダルでないサイドパネルは、操作で開いたら見出しへフォーカスを移し、閉じ込めない。Escape で閉じ、閉じたら開いた元へ戻す | APG の応用（中） |
+      | フォーカス中の要素を消すときは、次 → 前 → 親の順にフォーカスを移す。`document.body` へ落とさない | APG |
+
+      <!-- /table -->
+  - id: focus-management-03
+    group: フォーカス管理
+    name: ルートが変わったときのフォーカス
+    body: |-
+      - ルートが変わったら、新しい画面の `h1`（`tabindex="-1"`）へフォーカスを移す。
+        最初の読み込みでは移さない。
+        `h1` が無い画面だけ、`<main>` へ移す。
+      - 同じ画面の中で内容だけが変わるときは、フォーカスを移さず `aria-live="polite"` で知らせる。
+  - id: focus-management-04
+    group: フォーカス管理
+    name: 領域の間の移動
+    body: |-
+      - 領域（サイドバー・本文・サイドパネル）の間の移動のために、「本文へスキップ」のリンクと landmark（`header`・`nav`・`main`・`aside`）を必ず置く（WCAG 2.4.1）。
+      - F6 などで landmark を巡回する操作は、ブラウザが先に使うキーと衝突しないかを実機で確かめてから追加する。
+  - id: shortcut-design-01
+    group: ショートカットの設計
+    name: ショートカットは近道
+    body: |-
+      <!-- table: data -->
+
+      | 決まり | 根拠 |
+      | --- | --- |
+      | ショートカットは近道にとどめ、同じ操作を Tab と矢印で辿れる UI（ボタン・メニュー・コマンドパレット）からも必ず実行できるようにする | APG |
+      | 無効のボタンのショートカットも無効にする | MDN |
+      | ショートカットの一覧（ID・キー・説明・スコープ）は 1 か所で定義し、ヘルプ・ツールチップ・設定はそこから生成する。部品に直接キーを記載しない | - |
+
+      <!-- /table -->
+  - id: shortcut-design-02
+    group: ショートカットの設計
+    name: 修飾キーの無い 1 文字のショートカット
+    body: |-
+      - 修飾キーの無い 1 文字のショートカット（`?`・`/`・`j`・`g i`）は使う。
+        設定で、まとめてオフにできるようにする（WCAG 2.1.4）。
+  - id: shortcut-design-03
+    group: ショートカットの設計
+    name: 割り当てないキー
+    body: |-
+      <!-- table: data -->
+
+      | 区分 | 割り当てないキー |
+      | --- | --- |
+      | ブラウザの予約 | `Mod+W`・`Mod+T`・`Mod+N`・`Mod+L`・`Mod+Shift+N`・`Mod+Shift+T`・`Mod+Tab` |
+      | ブラウザの頻出機能 | `Mod+R`・`Mod+P`・`Mod+F`・`Mod+D`・`Mod+H`・`Mod+J`・`Mod+数字` |
+      | OS | Mac の `⌘+Q`・`⌘+H`・`⌘+M`・`⌘+Space`・`⌘+Tab`、Windows の `Win+*`・`Alt+F4` |
+      | IME の切り替え | `Ctrl+Space` |
+      | 支援技術 | `Insert+*`・`CapsLock+*`、Mac の `Ctrl+Option+*` |
+      | AltGr とぶつかるキー | `Ctrl+Alt+*` |
+
+      <!-- /table -->
+  - id: shortcut-design-04
+    group: ショートカットの設計
+    name: キーの判定
+    body: |-
+      <!-- table: data -->
+
+      | 決まり | 根拠 |
+      | --- | --- |
+      | 修飾キーは `Mod`（Mac は ⌘、ほかは Ctrl）で定義する | Playwright |
+      | IME で変換中のキーは無視する。判定は `e.isComposing \|\| e.keyCode === 229`（Safari は確定の Enter が `isComposing=false` で届く） | cmdk のコード |
+      | 入力欄にフォーカスがある間は、修飾キーの無いショートカットを無効にする。`Mod+*` と Escape は有効のままにする | tinykeys |
+      | `keydown` で受ける。オン・オフの操作では `e.repeat` を無視する。処理したときだけ `preventDefault` する | - |
+      | 文字は `e.key` で照合し、Alt・Option を含む組み合わせだけ `e.code` で照合する。Alt+文字は使わない | MDN |
+
+      <!-- /table -->
+  - id: shortcut-design-05
+    group: ショートカットの設計
+    name: スコープと 2 ストローク
+    body: |-
+      - スコープは、アプリ全体 → 画面 → パネル・ダイアログの入れ子にする。
+        内側を優先し、モーダルが開いている間は、モーダルのスコープだけを有効にする。
+      - 2 ストロークは、`g` + 文字による画面の移動だけにする。
+        間隔は 1000ms 程度にする。
+  - id: shortcut-assignment-01
+    group: 共通の割り当て
+    name: 共通の割り当ての表
+    body: |-
+      <!-- table: data -->
+
+      | キー | 割り当て | 実例 |
+      | --- | --- | --- |
+      | `Mod+K` | コマンドパレット | Linear・Slack・Notion・GitHub |
+      | `?` | ショートカットの一覧 | GitHub・Gmail・Linear |
+      | `/` | 画面内の検索欄へ | GitHub・Gmail |
+      | `g` → 文字 | 画面の移動 | GitHub・Gmail・Linear |
+      | `j` / `k` | 次・前の項目 | Gmail・GitHub |
+      | `x` | 項目の選択 | Gmail・Linear |
+      | `c` | 新規作成 | Gmail・Linear |
+      | `Enter` / `o` | 開く | Gmail |
+      | `Esc` | 閉じる・選択の解除 | 共通 |
+      | `Mod+Enter` | フォームの送信 | 共通 |
+      | `Mod+S` | 保存（自動保存なら割り当てない） | 共通 |
+      | `Mod+[` / `Mod+]` | 戻る・進む | Notion |
+
+      <!-- /table -->
+  - id: discoverability-01
+    group: 見つけやすさ
+    name: ショートカットを見つけやすくする
+    body: |-
+      - `?` でショートカットの一覧を開き、その画面で今使えるものをスコープごとに見せる。
+      - ボタン・メニュー・コマンドパレットの項目に、キーを表示する。
+        表示は、プラットフォームに合わせる（Mac は `⌘ K`、Windows は `Ctrl+K`）。一覧の定義から生成する。
+      - ショートカットを持つ要素には、`aria-keyshortcuts` を付ける。
+      - コマンドパレットに、画面の移動とその画面の操作を全て登録する。
+      - 設定画面に、「1 文字のショートカットを使う」のオン・オフを置く。

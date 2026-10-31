@@ -1,0 +1,211 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: ui-input-wording
+kind: rule
+name: 入力と文言
+description: 入力・送信・エラー・通知の振る舞いと、画面に出す言葉（語・操作の語・状態名・空の表示）を定め、フォームや画面の文言を設計・実装するときに読む。
+tags:
+  - name: scope:ui
+  - name: topic:エラー
+  - name: topic:フォーム
+  - name: topic:挙動
+  - name: topic:文言
+    main: true
+  - name: topic:画面
+  - name: topic:警告
+  - name: action:保存
+  - name: action:保持
+  - name: action:入力
+  - name: action:参照
+  - name: action:操作
+  - name: action:案内
+  - name: action:表示
+  - name: action:送信
+  - name: action:通知
+  - name: action:選択
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-24'
+sources:
+  - id: I
+    title: pbakaus/impeccable
+    url: https://github.com/pbakaus/impeccable
+  - id: V
+    title: Vercel Web Interface Guidelines
+    url: https://vercel.com/design/guidelines
+  - id: GOV
+    title: "GOV.UK Design System: Validation"
+    url: https://design-system.service.gov.uk/patterns/validation/
+  - id: GOV
+    title: "GOV.UK Design System: Error summary"
+    url: https://design-system.service.gov.uk/components/error-summary/
+  - id: GOV
+    title: "GOV.UK Design System: Button"
+    url: https://design-system.service.gov.uk/components/button/
+  - id: C
+    title: "IBM Carbon Design System: Notification"
+    url: https://carbondesignsystem.com/components/notification/usage/
+  - id: MS
+    title: Microsoft Japanese Localization Style Guide
+    url: https://aka.ms/japanese-styleguide
+  - id: SH
+    title: "SmartHR Design System: 基本的な考え方"
+    url: https://smarthr.design/products/contents/writing-style/
+  - id: SH
+    title: "SmartHR Design System: ステータス"
+    url: https://smarthr.design/products/contents/ui-text/statuslabel/
+  - id: SH
+    title: "SmartHR Design System: 操作を表す用語"
+    url: https://smarthr.design/products/contents/idiomatic-usage/action/
+  - id: SH
+    title: "SmartHR Design System: よくあるテーブル"
+    url: https://smarthr.design/products/design-patterns/smarthr-table/
+  - id: BK
+    title: "文化審議会: 公用文作成の考え方"
+    url: https://www.bunka.go.jp/seisaku/bunkashingikai/kokugo/hokoku/pdf/93651301_01.pdf
+  - id: APG
+    title: "WAI-ARIA Authoring Practices Guide: Button Pattern"
+    url: https://www.w3.org/WAI/ARIA/apg/patterns/button/
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 共通（単体 HTML・React）
+      入力・送信・エラー・通知の振る舞いと、画面に出す言葉。
+      画面の状態をどこに保持するか。
+      語の対応表は textlint の prh に任せ、この規約の対応表は任意で読む。
+      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、GOV = GOV.UK Design System、C = IBM Carbon Design System、MS = Microsoft Japanese Localization Style Guide、SH = SmartHR Design System、BK = 公用文作成の考え方、APG = WAI-ARIA Authoring Practices Guide（リンクはメタデータの `sources`）。
+  - id: input-submit-01
+    group: 入力と送信
+    name: 入力と送信の決まり
+    body: |-
+      | 要素 | 出典 |
+      | --- | --- |
+      | ラベルは常に見せる。入力欄の中の例示文をラベルの代わりにしない | V / I |
+      | 入力し終える前にエラーを出さない（1 文字ごとに検証しない） | GOV |
+      | 送信中は二重送信を防ぎ、処理中であることを見せる | V / I |
+      | 押せない理由が画面から読み取れないボタンを無効にしない。理由を近くに書くか、押したときに理由を示す | GOV |
+      | 取り返しのつかない操作には確認か取り消し猶予を置く。安全に戻せるなら確認より取り消しを選ぶ | V / I |
+  - id: error-notification-01
+    group: エラーと通知
+    name: エラーと通知の決まり
+    body: |-
+      | 要素 | 出典 |
+      | --- | --- |
+      | エラーは原因の近くに、何が起きたかと修正方法を書く。入力内容は削除しない | V / I |
+      | 検証エラーが出たら、フォームの先頭にエラーの一覧を出し、各項目へのリンクを付けてフォーカスを移す。一覧と各項目の文言を揃える | GOV |
+      | 対応が要る通知（エラー・警告）は関係する場所に置き、自動で閉じない。自動で閉じる通知は短い完了の知らせに限り、後から見返せる場所を用意する | C |
+      | 通知に置く操作は 1 つにする | C |
+  - id: wording-01
+    group: 文言
+    name: 文言の決まり
+    body: |-
+      | 要素 | 出典 |
+      | --- | --- |
+      | ボタンは起きることを動詞で書く（「OK」ではなく「Issue を作成」）。確認のボタンも操作名にする | V / I |
+      | 同じ概念は最後まで同じ言葉で呼ぶ（「公開」の結果は「公開しました」） | I |
+      | 内部の用語やエラーコードを主なメッセージにしない | I |
+      | 見れば分かるものにラベルを付けない（切り替えの部品の前の「ビュー:」等） | - |
+      | 文言は識別子より意味を先に書く（「v3.0.0（現在）」ではなく「現在（v3.0.0）」） | - |
+  - id: wording-term-format-01
+    group: 文言 > 語と書式
+    name: 語の選び方の参照
+    body: |-
+      語の選び方の一般の決まりは規約 [文章の書き方](id:convention-writing-style) の `## 語の選び方` に従う。
+      ここは画面に固有の型を決める。
+  - id: wording-term-format-02
+    group: 文言 > 語と書式
+    name: 語と書式の決まり
+    body: |-
+      | 要素 | 出典 |
+      | --- | --- |
+      | 一般の Web アプリと同じ形式的な語にする。やわらかさを狙った言い換えをしない（「直す」ではなく「修正」、「消す」ではなく「削除」）。長い文言は短くする（「選んだ n 件をコピー」ではなく「選択 n 件をコピー」） | MS / SH |
+      | 品詞を揃える。タブ・列名・見出し・状態は名詞、ボタンは操作語、説明文は敬体で述語まで書く | SH |
+      | ボタンの漢語は「する」を省き、目的語は「を」でつなぐ（追加・権限を追加）。画面タイトルは名詞にする（権限の追加） | SH |
+      | トグルは、ラベルを変えないチェックボックスかスイッチにする（状態によって「表示」と「非表示」を切り替えるボタンにしない） | APG |
+      | エラーのメッセージは「〜できませんでした」「〜が見つかりません」で終える。意思の確認は「〜しますか?」にする（「〜してもよろしいですか?」にしない） | MS |
+      | 長音は語末の -er / -or / -ar / -y に付ける（ユーザー・サーバー・メモリー） | BK |
+  - id: wording-operation-01
+    group: 文言 > 操作の語
+    name: 操作の語の案内
+    body: |-
+      ボタンやメニューの操作は、次の語に揃える。
+  - id: wording-operation-02
+    group: 文言 > 操作の語
+    name: 操作の語の対応表
+    body: |-
+      <!-- table: data -->
+
+      | 英語 | 使う語 | 避ける語・注意 |
+      | --- | --- | --- |
+      | Cancel | キャンセル | 実行済みは「取り消し」、実行中は「中断」 |
+      | Save | 保存 | - |
+      | Submit / Send | 送信 | 送る。申請は「提出」 |
+      | Add / Create | 追加 | 足す。作成・登録は内容に合うときだけ |
+      | Delete / Remove | 削除 | 消す |
+      | Erase / Clear | 消去・クリア・解除 | 削除との混同 |
+      | Edit | 編集 | 直す |
+      | Change / Modify | 変更 | 編集との混用。誤りの訂正は「修正」 |
+      | Update / Refresh | 更新 | 画面の再取得は「再読み込み」 |
+      | Close | 閉じる | - |
+      | Back | 戻る | 「一覧に戻る」のように戻り先を添える |
+      | Next | 次へ | 次 |
+      | Done / Finish | 完了 | - |
+      | Continue | 続行 | - |
+      | Apply | 適用 | - |
+      | Confirm | 確認 | ヘルプの閲覧は「参照」 |
+      | Search | 検索 | - |
+      | Settings | 設定 | - |
+      | Copy / Duplicate | コピー（クリップボード）・複製（データ） | 写し |
+      | Share | 共有 | - |
+      | Download / Upload | ダウンロード・アップロード | - |
+      | Import / Export | インポート・エクスポート | - |
+      | Retry | ボタンは「再試行」、文は「もう一度お試しください」 | 文中の「再試行してください」 |
+      | Undo / Paste / Select all | 元に戻す・貼り付け・すべて選択 | - |
+      | Sign in | サインイン | 1 つの製品でログインと混ぜない |
+      | Allow / Deny | 許可・拒否 | - |
+      | Question / Answer | 質問・回答 | 問い・答え |
+      | Mark / Flag | フラグ・〜アイコン | 印 |
+
+      <!-- /table -->
+  - id: wording-status-pattern-01
+    group: 文言 > 状態名の型
+    name: 状態名の型の案内
+    body: |-
+      状態名は次の型に当てはめる。
+  - id: wording-status-pattern-02
+    group: 文言 > 状態名の型
+    name: 状態名の型の表
+    body: |-
+      | パターン | 使うとき | 例 |
+      | --- | --- | --- |
+      | 未〇〇 | 始まっていない | 未着手・未対応 |
+      | 〇〇中 | 進行している | 対応中・確認中 |
+      | 〇〇待ち | 他者の入力や作業を待っている | 確認待ち・返信待ち |
+      | 〇〇済み | その作業が終わった | 対応済み・確認済み |
+      | 完了 | 全体が終わった | 完了 |
+      | 要〇〇 | 人の対応が要る | 要確認・要対応 |
+  - id: wording-empty-pattern-01
+    group: 文言 > 空の表示の型
+    name: 空の表示の型
+    body: |-
+      | 場所 | パターン | 例 |
+      | --- | --- | --- |
+      | 一覧 | 〇〇はありません。 | タスクはありません。 |
+      | 検索の 0 件 | 該当する〇〇はありません。別の条件を試してください。 | 該当するタスクはありません。別の条件を試してください。 |
+      | 項目の値の欄 | なし か — | なし |
+  - id: state-retention-01
+    group: 状態の保持
+    name: 状態の保持
+    body: |-
+      | 保持するもの | 置き場所 | 出典 |
+      | --- | --- | --- |
+      | 共有したいもの（タブ・ビュー・絞り込み・並べ替え） | URL | - |
+      | 端末ごとの好み（列の表示・密度） | localStorage | - |
+      | 1 回の作業中だけのもの（入力途中の下書き・スクロール位置） | sessionStorage | - |
+      | 保存ビュー | サーバー（画面が書き込みの経路を持たないときは localStorage） | - |
+  - id: state-retention-02
+    group: 状態の保持
+    name: 未保存のまま離れるときの警告
+    body: |-
+      未保存の入力があるまま画面を離れるときは警告する（V）。

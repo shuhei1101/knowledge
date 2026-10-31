@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-shared-type-definition
+kind: rule
+name: shared/types.py — 共通型エイリアス
+description: shared/types.py に置く共通型の範囲と、type と NewType の使い分け、共通の関数型・DTO の扱いを定め、Python で複数の feature が共有する型を追加するときに読む。
+tags:
+  - name: scope:python
+  - name: topic:dto
+  - name: topic:エイリアス
+  - name: topic:フィーチャ
+  - name: topic:型エイリアス
+    main: true
+  - name: topic:型ヒント
+  - name: topic:業務
+  - name: topic:識別子
+  - name: topic:関数
+  - name: action:配置
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      複数 feature で共有される型だけを置く。
+  - id: placement-policy-01
+    group: 配置方針
+    name: 横断的な識別子型
+    body: |-
+      - 横断的な識別子型（`UserId` 等）→ `shared/types.py`
+  - id: placement-policy-02
+    group: 配置方針
+    name: feature 固有の型
+    body: |-
+      - 特定 feature でしか使わない型 → `features/{feature}/types.py`
+  - id: placement-policy-03
+    group: 配置方針
+    name: 複数 feature になってから引き上げる
+    body: |-
+      - 複数 feature で使われるようになってから shared に引き上げる（YAGNI）
+  - id: placement-policy-04
+    group: 配置方針
+    name: 業務 DTO は shared に置かない
+    body: |-
+      - `User` のような業務 DTO を shared に置かない（feature 間の密結合になる）
+  - id: placement-policy-05
+    group: 配置方針
+    name: 標準型の別名は不要
+    body: |-
+      - `type ListOfInt = list[int]` のような標準型の別名は不要
+  - id: type-vs-newtype-01
+    group: type vs NewType
+    name: type と NewType の使い分け
+    body: |-
+      使い分けは [core/型ヒント](id:python-core-type-hint)。プロジェクト内で統一し、新規は `type` 文を使う。
+  - id: common-function-alias-01
+    group: 共通の関数型エイリアス
+    name: 共通の関数型エイリアス
+    body: |-
+      テストで差し替えたい横断関数は型で抽象化して shared に:
+      `type NowFn = Callable[[], datetime]` / `type GenerateId = Callable[[], str]` / `type AsyncHttpFetch = Callable[[str], Awaitable[dict]]` 等。composition root で本物 / 固定値 Mock を注入。
+  - id: common-dto-01
+    group: 共通 DTO
+    name: 共通 DTO の範囲
+    body: |-
+      `Pagination` / `Page[T]` のような真に横断的なものだけ。ほとんどの DTO は feature 内に閉じる。

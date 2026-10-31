@@ -1,0 +1,68 @@
+id: "LIB-72-3"
+title: "maid"
+kind: "CLI"
+version:
+  current: 0.0.29
+  latest: 0.0.29
+  checked_on: '2026-10-31'
+  source: 開発コマンドの環境構築と CI のワークフローの `npm install -g @probelabs/maid@0.0.29`
+  pinning: 完全なバージョンで固定する（0.0.x で、出力の形が変わりうる）
+catalogs:
+  - name: コマンド
+    version: 0.0.29
+    entries:
+      - name: maid - --format json
+        kind: コマンド
+        purpose: 標準入力の mermaid の図を検査し、誤りを JSON で標準出力へ出す
+        params:
+          - name: '-'
+            type: str
+            required: true
+            description: 入力を標準入力から読む
+          - name: --format
+            type: Literal['json']
+            required: true
+            description: 結果を JSON で出す
+        returns:
+          - name: exit_code
+            type: Literal[0, 1]
+            description: 0 = 誤りなし、1 = 誤りあり
+          - name: errors[].line
+            type: int
+            description: 図の中の行（1 始まり）
+          - name: errors[].column
+            type: int
+            description: 列（1 始まり）
+          - name: errors[].message
+            type: str
+            description: 誤りの内容
+          - name: errors[].code?
+            type: str
+            description: 誤りの種類のコード
+            notes: 誤りの種類によっては無い
+lead: mermaid の図の文法を検査する CLI（npm の `@probelabs/maid`）。誤りの行・列・内容を JSON で出し、`--fix` を付けなければ入力を書き換えない。
+purl: pkg:npm/%40probelabs/maid@0.0.29
+dependency_scope: 必須
+adoption: 採用
+used_in:
+  - scripts/
+  - .github/workflows/
+upstream: probelabs/maid
+verification:
+  state: 済
+  date: '2026-10-31'
+  detail: PoC（[#133](https://github.com/shuhei1101/knowledge/pull/133)、commit 8d7b885）で、Linux 側に入れた 0.0.29 を `maid - --format json` で呼んだ。develop の mermaid を含む 13 文書は全て誤りなし（最大 0.83 秒）、壊した 3 種は全て終了コード 1 で `errors[].line`・`column`・`message` が取れた（`code` は誤りの種類によって無い）。前後で 16 ファイルのハッシュは変わらなかった（[結果](https://github.com/shuhei1101/knowledge/blob/8d7b885/poc/maid/result-linux.tsv)）
+license: ISC（商用利用可）
+official_url: https://www.npmjs.com/package/@probelabs/maid
+docs_url: https://github.com/probelabs/maid
+selection:
+  candidates: '@probelabs/maid、@mermaid-js/mermaid-cli（描画にブラウザが要る）'
+  decision: PoC で、ブラウザを要らず 1 回 1 秒未満で検査でき、誤りの行を機械で取り出せると確かめた（D-104）
+install: |-
+  ```bash
+  npm install -g @probelabs/maid@0.0.29
+  ```
+
+  Linux 側のファイルシステムに入れ、PATH から呼ぶ。`/mnt/c` の `node_modules` に入れると 1 回の起動に 9〜14 秒かかる
+notes:
+  入力と行: 入力は mermaid の図 1 つで、Markdown のコードブロックの取り出しは呼ぶ側がする。`errors[].line` は図の中の行（1 始まり）で、文書の行へは呼ぶ側が戻す

@@ -1,0 +1,117 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/shuhei1101/dev-docs/85a4c5c3621751ba30a1bbbd19265722a33fbe1e/schemas/dev-docs.schema.json
+version: "3"
+name: knowledge
+description: どのプロジェクトでも共通で使うコーディング規約・テンプレート・判定フローチャート・使い方
+instructions: |-
+  規約（rule）・テンプレート（template）・判定フローチャート（flowchart）・使い方（guide）・変更履歴（changelog）・スキル（skill）は `docs/` の YAML が正本で、種類ごとの行に分かれる。
+  本文は `items[]` の各項目が持ち、`[名前](id:{文書の ID}#{項目の ID})` で他の文書・項目を指す。`related[].when` がその文書を読むときを表す。
+  `hooks/`・`skills/`・`scripts/` のファイルは、各フォルダの `files.yaml` が名前・概要文・タグを持つ。
+  書き込みのときは knowledge-checks が、項目の ID の重複・参照先の実在・mermaid の文法を検査する。
+related:
+  types: [references, requires, replaces, part_of, change_together, see_also, implements, tests]
+github:
+  repository: shuhei1101/knowledge
+validators:
+  - id: knowledge-checks
+    run: [uv, run, --frozen, --script, scripts/knowledge_checks.py]
+    on: [write]
+converters:
+  - id: knowledge-markdown
+    run: [uv, run, --frozen, --script, scripts/knowledge_markdown.py]
+documents:
+  - id: rule
+    title: 規約
+    paths: ["docs/rule/*.yaml"]
+    schema: schemas/rule.schema.yaml
+    validators: [knowledge-checks]
+    converter: knowledge-markdown
+    alias_type: doc
+  - id: template
+    title: テンプレート
+    paths: ["docs/template/*.yaml"]
+    schema: schemas/template.schema.yaml
+    validators: [knowledge-checks]
+    converter: knowledge-markdown
+    alias_type: doc
+  - id: flowchart
+    title: 判定フローチャート
+    paths: ["docs/flowchart/*.yaml"]
+    schema: schemas/flowchart.schema.yaml
+    validators: [knowledge-checks]
+    converter: knowledge-markdown
+    alias_type: doc
+  - id: guide
+    title: 使い方
+    paths: ["docs/guide/*.yaml"]
+    schema: schemas/guide.schema.yaml
+    validators: [knowledge-checks]
+    converter: knowledge-markdown
+    alias_type: doc
+  - id: changelog
+    title: 変更履歴
+    paths: [docs/changelog.yaml]
+    schema: schemas/changelog.schema.yaml
+    validators: [knowledge-checks]
+    converter: knowledge-markdown
+  - id: skill
+    title: スキル
+    paths: ["docs/skill/*.yaml"]
+    schema: schemas/skill.schema.yaml
+    validators: [knowledge-checks]
+    converter: knowledge-markdown
+    alias_type: skill
+  - id: hooks
+    title: フック
+    paths: [hooks/files.yaml]
+    schema: schemas/files.schema.yaml
+    records: files
+    body_file: path
+  - id: skills
+    title: スキルの本体
+    paths: [skills/files.yaml]
+    schema: schemas/files.schema.yaml
+    records: files
+    body_file: path
+  - id: scripts
+    title: 検査と変換のスクリプト
+    paths: [scripts/files.yaml]
+    schema: schemas/files.schema.yaml
+    records: files
+    body_file: path
+nav:
+  tabs:
+    - title: 規約
+      items:
+        - auto:
+            document: rule
+    - title: テンプレート
+      items:
+        - auto:
+            document: template
+    - title: 判定フローチャート
+      items:
+        - auto:
+            document: flowchart
+    - title: 使い方
+      items:
+        - auto:
+            document: guide
+        - page: changelog
+    - title: スキル
+      items:
+        - auto:
+            document: skill
+    - title: ファイル
+      items:
+        - group: フック
+          items:
+            - auto:
+                document: hooks
+        - group: スキルの本体
+          items:
+            - auto:
+                document: skills
+        - group: 検査と変換のスクリプト
+          items:
+            - auto:
+                document: scripts

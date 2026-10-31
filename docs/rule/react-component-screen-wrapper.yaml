@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: react-component-screen-wrapper
+kind: rule
+name: "`<ScreenWrapper>` — Screen の必須外殻"
+description: 全 Screen の最外殻である ScreenWrapper の挙動と使い方を定め、新しい Screen を実装するときに読む。
+tags:
+  - name: scope:react
+  - name: topic:フロントエンド
+  - name: topic:オーバーレイ
+  - name: topic:クラス
+  - name: topic:ローディング
+  - name: topic:挙動
+  - name: topic:画面
+    main: true
+  - name: action:ラップ
+  - name: action:上書き
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: React
+      全 Screen（List / View / Edit / New）の最外殻。`relative max-w-screen-xl mx-auto p-4 md:p-6`。
+  - id: screen-wrapper-01
+    group: "`<ScreenWrapper>` — Screen の必須外殻"
+    name: isLoading のオーバーレイ
+    body: |-
+      - `isLoading` 時に半透明オーバーレイ（mutation 中のみ。他のロードは `<Skeleton>` か Suspense の fallback）
+  - id: screen-wrapper-02
+    group: "`<ScreenWrapper>` — Screen の必須外殻"
+    name: className で上書き可能
+    body: |-
+      - `className` で個別 padding 等を上書き可能
+  - id: screen-wrapper-03
+    group: "`<ScreenWrapper>` — Screen の必須外殻"
+    name: 多重 wrap をしない
+    body: |-
+      - 多重 wrap しない

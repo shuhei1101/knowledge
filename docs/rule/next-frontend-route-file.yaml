@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-route-file
+kind: rule
+name: Next.js App Router — Route Files
+description: 各 route segment で使う標準ファイル（page.tsx 以外）の役割と配置を定め、route segment に page.tsx 以外の標準ファイルを置くときに読む。
+tags:
+  - name: scope:next
+  - name: topic:フロントエンド
+  - name: topic:アプリルーター
+  - name: topic:ファイル
+  - name: topic:ページ
+  - name: topic:ルート
+    main: true
+  - name: tool:next-js
+  - name: action:配置
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      各 route segment で使う標準ファイル（`page.tsx` 以外）の役割と配置規約。
+  - id: standard-files-01
+    group: 標準ファイル一覧（Next.js 16）
+    name: 標準ファイル一覧
+    body: |-
+      <!-- table: data -->
+
+      | File               | 役割                             | 配置                | Component 種別                              |
+      | ------------------ | -------------------------------- | ------------------- | ------------------------------------------- |
+      | `page.tsx`         | ルートの本体                     | 必須                | Server Component（推奨）                    |
+      | `layout.tsx`       | サブツリー共通レイアウト（永続） | 任意                | Server Component（推奨）                    |
+      | `template.tsx`     | ナビゲーションごとに再マウント   | 任意                | Client/Server どちらも                      |
+      | `loading.tsx`      | Suspense fallback                | 任意                | Server Component                            |
+      | `error.tsx`        | エラーバウンダリ                 | 任意                | Client Component（`'use client'` 必須） |
+      | `global-error.tsx` | ルート全体のエラーバウンダリ     | ルート直下のみ      | Client Component                        |
+      | `not-found.tsx`    | `notFound()` の UI               | 任意                | Server Component                            |
+      | `default.tsx`      | Parallel Routes の不在 slot 用   | `@slot/` 使用時必須 | Server Component                            |
+      | `route.ts`         | HTTP API ハンドラ                | `api/` 配下         | (Server)                                    |
+      | `proxy.ts`         | Next.js 16: 旧 `middleware.ts`   | プロジェクト直下    | (Server)                                    |
+
+      <!-- /table -->

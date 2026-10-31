@@ -1,0 +1,63 @@
+id: "MOD-72-1"
+title: "検査と変換のスクリプト / scripts"
+lead: dev-docs の validators・converters の約束で動く文書の検査・変換と、CI と手元から全ての文書を検査する CLI の、`scripts/` の単一ファイルのスクリプト。
+directory: |-
+  ```
+  scripts/
+  ├── _common.py                  # 文書の YAML の読み込み・項目のパスと行の対応・違反の型・ファイルの並列の読み込み
+  ├── _maid.py                    # maid の在りかの確認と、打ち切りつきの呼び出し
+  ├── knowledge_checks.py         # validators の knowledge-checks（文書の違反の検査）
+  ├── knowledge_checks.py.lock    # knowledge_checks.py の依存のロック（uv lock --script）
+  ├── knowledge_markdown.py       # converters の knowledge-markdown（文書の Markdown への変換）
+  ├── knowledge_markdown.py.lock
+  ├── check_all.py                # 全ての文書の検査（CI と手元の CLI）
+  ├── check_all.py.lock
+  └── files.yaml                  # scripts/ のファイルの一覧（dev-docs の files の行）
+  tests/
+  ├── unit/scripts/               # 1 物理ファイル = 1 テストファイル（test_common.py など）
+  └── integration/scripts/        # 1 インターフェース定義 = 1 テストファイル
+  ```
+diagrams:
+  - name: 全体
+    diagram: |-
+      classDiagram
+          direction LR
+          class checks["文書の違反の検査"]
+          checks : main()
+          checks : check_document()
+          class markdown["文書の Markdown への変換"]
+          markdown : main()
+          markdown : convert()
+          class checkall["全ての文書の検査"]
+          checkall : main()
+          checkall : check_target()
+          class common["共通"]
+          common : load_document()
+          common : iter_strings()
+          common : read_texts()
+          class maidcall["maid の呼び出し"]
+          maidcall : find_maid()
+          maidcall : run_maid()
+          checks ..> common
+          checks ..> maidcall
+          markdown ..> common
+          checkall ..> checks
+          checkall ..> common
+          checkall ..> maidcall
+notes:
+  起動の方式: |-
+    各入口のスクリプトは PEP 723 のインラインのメタデータ（`requires-python = ">=3.14"` と依存）を持ち、`uv lock --script` のロック（`{スクリプト}.py.lock`）で版を固定する。
+    dev-docs.yaml の `run` と CI は `uv run --frozen --script scripts/{スクリプト}.py` で起動する。仮想環境は uv のキャッシュ（Linux 側のファイルシステム）に置かれる。
+    `pyproject.toml` は作らない（規約『単一ファイルスクリプト』）。`_common.py`・`_maid.py` は入口のスクリプトと同じフォルダから import する。
+
+    | 方式 | 起動から依存の import まで（WSL2・`/mnt/c` の作業ツリー・2026-10-31 に測った値） |
+    | --- | --- |
+    | `scripts/` を uv のプロジェクトにし、`/mnt/c` の `.venv` から起動 | 5.9〜11.9 秒 |
+    | PEP 723 のスクリプトを `uv run --frozen --script` で起動 | 0.3〜0.6 秒 |
+
+    プロジェクトの方式は `/mnt/c` の `.venv` からの import だけで約 6 秒かかり、1 文書あたりの 20 秒（NFR-72-1）の 3 割を使うため採らない。
+  初回の起動: uv のキャッシュに仮想環境が無い初回は依存の取得で 20 秒を超えうる。開発コマンドの環境構築で、入口のスクリプトごとに `uv sync --script scripts/{スクリプト}.py` を先に流す。
+  全ての文書の読み込み: '`docs/**/*.yaml`（2026-10-31 時点で 259 件）を `/mnt/c` から 1 件ずつ読むと 3.4 秒かかる。`read_texts` が 16 のスレッドで並列に読み（0.2 秒）、`YAML(typ="rt")` で全件を読み込む（0.8 秒）。'
+  テストと静的検査: |-
+    単体テストは `tests/unit/scripts/test_{物理ファイルの名前から先頭の _ を除いたもの}.py`、結合テストは `tests/integration/scripts/` に置く。
+    pytest の `pythonpath` に `scripts` を入れる設定と、ruff（`T20` を `scripts/*.py` で外す）・pyright strict の設定はリポジトリの直下の設定ファイルに置く。コマンドはテストを作る担当がテスト実行方法に確定させる。

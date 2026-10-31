@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-detail-page-tsx
+kind: rule
+name: "{feature}/[id]/page.tsx — View Server Component"
+description: 詳細（View）の Server Component の構成と、該当なしの扱い、generateMetadata の参照先を定め、詳細画面の page.tsx を実装するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:フロントエンド
+  - name: topic:部品
+  - name: topic:id
+  - name: topic:サーバー
+  - name: topic:サーバーコンポーネント
+  - name: topic:ビュー
+    main: true
+  - name: topic:フィーチャ
+  - name: topic:ページ
+  - name: topic:構成
+  - name: topic:画面
+  - name: action:参照
+  - name: action:生成
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      `[id]/page.tsx` が View 本体（`view/` サブルートは作らない）。
+  - id: view-page-01
+    group: "{feature}/[id]/page.tsx — View Server Component"
+    name: 該当なしは notFound
+    body: |-
+      - 該当なし → `notFound()`
+  - id: generate-metadata-01
+    group: generateMetadata
+    name: generateMetadata の参照
+    body: |-
+      詳細: [frontend/SEO](id:next-frontend-seo)

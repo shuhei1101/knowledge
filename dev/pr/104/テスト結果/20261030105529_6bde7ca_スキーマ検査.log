@@ -1,0 +1,59 @@
+$ git rev-parse --short HEAD
+6bde7ca
+
+# 検査の方法: schemas/*.schema.yaml を JSON Schema 2020-12 の検証器（jsonschema 4.26）で docs/ の全 YAML（kind を持つもの）に当てる。
+# kind: rule は schemas/rule.schema.yaml（common.schema.yaml#/$defs/metadata を allOf で読み、unevaluatedProperties: false）に通す。
+$ python3 -I validate.py   # docs/**/*.yaml
+検査 252 件、違反のあるファイル 0 件
+
+$ python3 -I validate.py   # 更新した 34 件の規約だけ
+検査 34 件、違反のあるファイル 0 件
+
+# 追加した sources を持つ規約の件数
+sources を持つ規約 34 件
+
+# 否定の確認: sources の要素に未知のキーを足し、必須の url を消した規約は検査に落ちる
+docs/rule/bad.yaml: : Unevaluated properties are not allowed ('description', 'id', 'items', 'last_reviewed', 'name', 'related', 'rev', 'sources', 'status', 'tags', 'visibility' were unexpected)
+docs/rule/bad.yaml: sources/0: Additional properties are not allowed ('bogus' was unexpected)
+docs/rule/bad.yaml: sources/0: 'url' is a required property
+検査 1 件、違反のあるファイル 1 件
+
+# validate.py の中身
+import sys, glob, os, yaml
+from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
+from referencing.jsonschema import DRAFT202012
+
+root = os.getcwd()
+schemas = {}
+reg = Registry()
+for p in glob.glob('schemas/*.schema.yaml'):
+    d = yaml.safe_load(open(p, encoding='utf-8'))
+    schemas[os.path.basename(p)] = d
+    reg = reg.with_resource(os.path.basename(p), Resource.from_contents(d, DRAFT202012))
+    reg = reg.with_resource('file:///' + os.path.basename(p), Resource.from_contents(d, DRAFT202012))
+
+def validate(path):
+    doc = yaml.safe_load(open(path, encoding='utf-8'))
+    kind = doc.get('kind')
+    sch = schemas.get(kind + '.schema.yaml')
+    v = Draft202012Validator(sch, registry=reg)
+    return [f"{path}: {'/'.join(map(str, e.absolute_path))}: {e.message}" for e in sorted(v.iter_errors(doc), key=lambda e: list(map(str, e.absolute_path)))]
+
+targets = sys.argv[1:] or sorted(glob.glob('docs/**/*.yaml', recursive=True))
+bad = 0
+n = 0
+for t in targets:
+    try:
+        doc = yaml.safe_load(open(t, encoding='utf-8'))
+    except Exception as e:
+        print(f'{t}: YAML 読み込み失敗: {e}'); bad += 1; continue
+    if not isinstance(doc, dict) or 'kind' not in doc:
+        continue
+    if doc['kind'] + '.schema.yaml' not in schemas:
+        continue
+    n += 1
+    errs = validate(t)
+    for e in errs: print(e)
+    bad += bool(errs)
+print(f'検査 {n} 件、違反のあるファイル {bad} 件')

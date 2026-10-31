@@ -1,0 +1,102 @@
+id: "ARCH-72-1"
+title: "アーキテクチャ図"
+overview:
+  direction: LR
+  nodes:
+    - id: user
+      label: 利用者
+      kind: actor
+    - id: agent
+      label: エージェント
+      kind: actor
+    - id: content
+      label: 文書
+      kind: system
+    - id: scripts
+      label: 検査と変換のスクリプト
+      kind: system
+    - id: ci
+      label: CI
+      kind: system
+    - id: devdocs
+      label: dev-docs
+      kind: external
+    - id: maid
+      label: maid
+      kind: external
+    - id: actions
+      label: GitHub Actions
+      kind: external
+  edges:
+    - from: user
+      to: devdocs
+      label: 画面
+    - from: agent
+      to: devdocs
+      label: MCP
+    - from: devdocs
+      to: content
+      label: 読み書き
+    - from: devdocs
+      to: scripts
+      label: 子プロセス
+    - from: scripts
+      to: maid
+      label: 子プロセス
+    - from: actions
+      to: ci
+      label: PR
+    - from: ci
+      to: scripts
+      label: 検査
+  subgraphs:
+    - id: knowledge
+      label: knowledge
+      nodes:
+        - content
+        - scripts
+        - ci
+repository:
+  style: モノレポ
+  repositories:
+    - name: shuhei1101/knowledge
+  layout: 文書は `docs/`、スキーマは `schemas/`、スクリプトは `scripts/`、CI は `.github/workflows/`、配信の設定は直下の `dev-docs.yaml`。設計書は `dev/設計書/`。フック用のプラグインは `hooks/`・`skills/`・`.claude-plugin/`（変更しない）
+subsystems:
+  - name: 文書
+    scope: docs
+    role: 規約・テンプレート・判定フローチャート・使い方・変更履歴・スキルの YAML とそのスキーマ、YAML でないファイルを載せる files.yaml、dev-docs への配信の設定 `dev-docs.yaml` を持つ
+    runtime: YAML（JSON Schema 2020-12）
+    runs_on: dev-docs が読むリポジトリの作業ツリー
+  - name: 検査と変換のスクリプト
+    scope: scripts
+    role: スキーマで見られない決まりの検査と、全ての種類の YAML から mdmark の記法の Markdown への変換を、dev-docs の validators・converters の約束で返す
+    runtime: Python 3.14
+    runs_on: dev-docs が起動する子プロセスと CI
+  - name: CI
+    scope: ci
+    role: PR ごとに全ての文書へスキーマの検査と検査のスクリプトを当て、違反があれば失敗させる
+    runtime: GitHub Actions のワークフロー
+    runs_on: GitHub Actions
+lead: |-
+  knowledge は規約・テンプレートなどの文書を YAML で持ち、dev-docs の配信元として画面と文書の MCP から読まれる。
+  サーバーと MCP は dev-docs が持ち、knowledge は文書・スキーマ・検査と変換のスクリプト・CI だけを持つ。
+external_systems:
+  - name: dev-docs
+    purpose: knowledge の文書を画面と文書の MCP で配信し、書き込みのときに検査のスクリプト、配信のときに変換のスクリプトを呼ぶ
+    direction: 双方向
+    protocol: 子プロセス（標準入力に文書の YAML、標準出力に JSON / Markdown）
+    notes:
+      事前確認: 不要。dev-docs が knowledge のスクリプトを呼ぶ側で、knowledge から dev-docs を呼ばない
+  - name: '@probelabs/maid'
+    purpose: mermaid の文法の検査（`--fix` を付けない）
+    direction: 双方向
+    protocol: CLI（子プロセス）
+    notes:
+      事前確認: 要。検査のスクリプトの起動時に `maid` が PATH から引けるかを確かめ、無ければ検査を始めずに足りないものを返す。maid を呼ぶ前に残り時間を確かめる（非機能要件のスクリプトの処理時間）
+    detail: LIB-72-3#
+  - name: GitHub Actions
+    purpose: PR で CI のワークフローを動かす
+    direction: 受信のみ
+    protocol: ワークフローの YAML
+    notes:
+      事前確認: 要。ワークフローの最初のステップで、検査に要るランタイム（Python・maid）が入ったかを確かめ、欠けていれば検査を始めずに失敗させる

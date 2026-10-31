@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-pwa
+kind: rule
+name: PWA / Offline
+description: PWA の manifest・Apple 対応・Service Worker の決まりを定め、アプリを PWA 対応にするときに読む。
+tags:
+  - name: scope:next
+  - name: topic:フロントエンド
+  - name: topic:pwa
+    main: true
+  - name: topic:アプリ
+  - name: topic:オフライン
+  - name: topic:サービス
+  - name: topic:マニフェスト
+  - name: topic:ワーカー
+  - name: tool:serwist
+  - name: action:配置
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-24'
+sources:
+  - title: Serwist の Turbopack ガイド
+    url: https://serwist.pages.dev/docs/next/turbo
+items:
+  - id: manifest-01
+    group: manifest
+    name: manifest.ts の返し方
+    body: |-
+      - `app/manifest.ts` で `MetadataRoute.Manifest` を返す
+  - id: manifest-02
+    group: manifest
+    name: manifest の必須項目
+    body: |-
+      - 必須項目: name / short_name / start_url / scope / `display: "standalone"` / theme_color / icons（192・512・maskable の 3 種）
+  - id: apple-support-01
+    group: Apple 対応
+    name: appleWebApp の指定
+    body: |-
+      - `app/layout.tsx` の `metadata.appleWebApp`（capable / statusBarStyle / title）
+  - id: apple-support-02
+    group: Apple 対応
+    name: apple-touch-icon の配置
+    body: |-
+      - `apple-touch-icon.png` を `app/` 直下か `public/` に
+  - id: service-worker-01
+    group: Service Worker
+    name: Serwist による Service Worker
+    body: |-
+      Next.js は SW を直接サポートしないので Serwist を使う。Next.js 16 の既定の bundler は Turbopack のため `@serwist/turbopack` を使う（`@serwist/next` は webpack 用）。導入手順は Serwist の Turbopack ガイド。

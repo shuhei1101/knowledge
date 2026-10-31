@@ -1,0 +1,236 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-tag-term-registration
+kind: rule
+name: タグと用語の登録
+description: 文書へのタグ・用語・エイリアスの付与と用語集への登録の条件、description の書き方を定め、文書にタグや description を付ける・用語を登録するときに読む。
+tags:
+  - name: scope:dev
+  - name: topic:naming
+  - name: topic:エイリアス
+  - name: topic:タグ
+    main: true
+  - name: topic:ファイル
+  - name: topic:単語
+  - name: topic:文字列
+  - name: topic:文書
+  - name: topic:正規表現
+  - name: topic:用語
+  - name: topic:見出し
+  - name: topic:識別子
+  - name: action:付与
+  - name: action:定義
+  - name: action:登録
+status: current
+visibility: internal
+rev: 7
+last_reviewed: '2026-10-30'
+sources:
+  - title: "W3C: SKOS Reference"
+    url: https://www.w3.org/TR/skos-reference
+    note: prefLabel・altLabel・hiddenLabel
+  - title: "Vale: substitution"
+    url: https://docs.vale.sh/checks/substitution
+    note: やめた言い方の点検と from / to のテスト
+  - title: prh
+    url: https://github.com/prh/prh
+    note: やめた言い方の点検と from / to のテスト
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      文書にタグ・用語・エイリアスを付けるときと、用語集に登録するとき、description を書くときの決まり。
+  - id: tag-form-01
+    group: タグの形
+    name: タグは自由な文字列
+    body: |-
+      - タグは自由な文字列で、比較の前に正規化（NFKC・大文字小文字）する
+        分類は `scope:` などの接頭辞の命名で表す
+        付ける数の上限・目安は持たない
+  - id: tag-split-01
+    group: タグの分け方
+    name: 単語まで分ける
+    body: |-
+      - 書き出した語を単語まで分け、分けた語ごとに次の命名規則の表でタグにする
+        例: 「タグ・用語・エイリアスを登録する条件」→ `topic:タグ`・`topic:用語`・`topic:エイリアス`・`action:登録`
+  - id: tag-split-02
+    group: タグの分け方
+    name: 複合語を残す基準
+    body: |-
+      - 一語として定着した複合語（例: 設計書・全文検索）は分けずに残す
+      - 残すかの第一の基準は、用語集（`terms.yaml`）にあるか
+        用語集に無いときは、分けると意味が変わる、または分けると関係ない文書が当たるかで決める
+  - id: tag-name-01
+    group: タグの命名
+    name: 命名規則
+    body: |-
+      <!-- table: data -->
+
+      | 決まり | 例 |
+      | --- | --- |
+      | `facet:value` の形。facet 名は英語の小文字 | `topic:`・`action:`・`tool:`・`kind:`・`scope:` |
+      | topic は 1 概念の名詞。「A の B」の名詞句は作らない | `topic:エイリアス` ＋ `action:登録` |
+      | 一語として定着した複合語は残し、構成語も付ける | `topic:設計書`（＋ `topic:設計`） |
+      | action は名詞形 | `action:登録`・`action:削除`・`action:検索` |
+      | tool は公式の名前を小文字・ハイフン区切り | `tool:tanstack-query` |
+      | 表記ゆれは使われているタグに合わせる | `サーバー` |
+
+      <!-- /table -->
+  - id: tag-scope-01
+    group: タグにする語の範囲
+    name: 拾う範囲
+    body: |-
+      - `tag-scope-02` の表の範囲に出るドメインの名詞・行為の語は、機械的に全部タグにする
+        単語に分け、使われているタグに寄せる（`tag-attach-02`）
+      - 本文だけに出る語はタグにせず、全文検索に任せる
+  - id: tag-scope-02
+    group: タグにする語の範囲
+    name: ファイルの種類ごとの書き出す範囲
+    body: |-
+      語を書き出す範囲と付けるファセットは、ファイルの種類で決める。
+
+      <!-- table: data -->
+
+      | ファイルの種類 | 書き出す範囲 | 付けるファセット |
+      | --- | --- | --- |
+      | Markdown | タイトル・見出し・description・表の行見出し | 全て |
+      | YAML の文書（規約・フローチャート・MindStella の記録など） | 文書の `name`・`description`、項目の `name`・`group`（見出しに当たる）、本文の見出し | 全て |
+      | ソースコード（files.yaml の行） | ファイル名とフォルダ名の語・files.yaml の `description`・import している外部のライブラリ。関数名・クラス名は拾わない | `topic:`・`tool:` だけ |
+
+      <!-- /table -->
+  - id: tag-scope-03
+    group: タグにする語の範囲
+    name: 見出しの識別子
+    body: |-
+      - 見出しの識別子（関数名・ファイル名。`list_changes`・`describe()`・`dev-docs.yaml`）はタグにせず、概念の語にしてから付ける（`dev-docs.yaml` → `topic:設定`）
+  - id: description-01
+    group: description の書き方
+    name: 1 文で受け持つことと読むときを記載する
+    body: |-
+      - `description` は文書の種類を問わず 1 文で、「何を受け持つか／何について書いてあるか」と「どんなときに読むか」を記載する
+        例: `タスクの保存と取得を受け持ち、保存先や検索の条件を変えるときに読む`
+  - id: description-02
+    group: description の書き方
+    name: 書かないもの
+    body: |-
+      - 関数の一覧・実装の手順は書かない
+      - 既存の文書を YAML にするときも、同じ書き方にする
+  - id: tag-attach-01
+    group: タグを付ける条件
+    name: タグを付ける条件
+    body: |-
+      付ける前に、使われているタグを検索の集計（dev-docs の `group_by: tags`）で件数つきで引き、使い回せるタグ（`tag-attach-02`）があれば使い回す。
+      付けるかは判定フローチャート [タグの付与](id:flowchart-tag-attach) で決める。
+      次の表は例。
+
+      <!-- table: data -->
+
+      | 条件 | 例 |
+      | --- | --- |
+      | その語で探した人に、この文書が出てほしいときは、その語のタグを付ける。当てはまるものは全部付ける | 「索引の点検」を扱う設計書に `topic:索引`・`action:点検` |
+      | 上位の広いタグがあるときは、広いタグも一緒に付ける | FastAPI の規約に `tool:fastapi` と広い `scope:python` |
+      | 最も分量の多い主題に `main: true` を付ける | 「索引の点検」が中心の設計書に `topic:索引` を `main: true` で付ける |
+      | 2 つ以上の文書で同じ主題が出て一緒に引きたいときは、既存の文書にもさかのぼって付ける | `topic:タグ` を付け始めたら過去の調査 2 件にも付ける |
+
+      <!-- /table -->
+  - id: tag-attach-02
+    group: タグを付ける条件
+    name: 既存のタグに寄せる
+    body: |-
+      - 使われているタグに寄せるのは、同じ概念の言い方・活用の違い（「強い／強く」など）だけ
+        意味が近いだけの別の概念は、別のタグにしてよい
+        タグの種類の上限は持たない
+  - id: tag-not-attach-01
+    group: タグを付けない条件
+    name: タグを付けない条件
+    body: |-
+      <!-- table: data -->
+
+      | 条件 | 例 |
+      | --- | --- |
+      | 例として名前が出ただけで、その話題を調べる人の役に立たない | 例の一覧に並べただけの「Mermaid」 |
+      | そのタグ 1 つでは何の話か決まらない評価・状態の語 | 「重要」「初心者向け」「ベストプラクティス」 |
+      | 状態・フェーズなど別のキーで表せるもの | 「決定済み」は `status` で表す |
+      | 使われているタグと同じ概念の言い方・活用の違い。新設せず、使われているタグを引いて同じ語を使う | `topic:用語集` があるのに `topic:glossary` を作らない |
+      | 見出しによく出る一般語 | 機能・手段・背景・仕組み・案・一覧・リクエスト・レスポンス・例・前提・流れ・要点・補足・決めたこと・残る検討事項・やりたいこと |
+
+      <!-- /table -->
+  - id: term-register-01
+    group: 用語を登録する条件
+    name: 用語を登録する条件
+    body: |-
+      登録するかは判定フローチャート [用語の登録](id:flowchart-term-registration) で決める。
+      次の表は例。
+
+      <!-- table: data -->
+
+      | 条件 | 例 |
+      | --- | --- |
+      | プロジェクト固有の呼び名（システム名・製品の固有の語・話し合いで決めた呼び名） | 「ワークスペース」 |
+      | 一般的な語でも、このプロジェクトで一般と違う・狭い意味で使う語 | 「フェーズ」= エージェントが 1 ターンで実行する手順のまとまり |
+      | 外部ライブラリ・外部サービスを調べたときのその名前（調べた資料へのエイリアスでもよい） | 「sqlite-vec」 |
+      | 同じものに 2 つ以上の言い方が出たとき。正式な語を用語に、残りを `aliases` か `avoid` に入れる | 「移し替え」と「マイグレーション」 |
+
+      <!-- /table -->
+  - id: term-not-register-01
+    group: 用語を登録しない条件
+    name: 用語を登録しない条件
+    body: |-
+      登録しないかも判定フローチャート [用語の登録](id:flowchart-term-registration) で決める。
+      次の表は例。
+
+      <!-- table: data -->
+
+      | 条件 | 例 |
+      | --- | --- |
+      | 一般的な意味のまま使っている技術用語 | 「JSON」「正規表現」 |
+      | 1 文書の中だけで使い他の文書に出ない語 | ある PR の一時的な作業名 |
+
+      <!-- /table -->
+  - id: alias-register-01
+    group: エイリアスを登録する条件
+    name: エイリアスの定義
+    body: |-
+      エイリアスは、文書そのものを特定の語に紐付ける文字列。
+      利用者にはその語にツールチップで文書を出し、エージェントはタグと並んで検索に使う。
+  - id: alias-register-02
+    group: エイリアスを登録する条件
+    name: エイリアスを登録する条件
+    body: |-
+      登録するかは判定フローチャート [エイリアスを登録するかを決める](https://github.com/shuhei1101/alias-inject/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E3%82%A8%E3%82%A4%E3%83%AA%E3%82%A2%E3%82%B9%E3%82%92%E7%99%BB%E9%8C%B2%E3%81%99%E3%82%8B%E3%81%8B%E3%82%92%E6%B1%BA%E3%82%81%E3%82%8B.md) で決める。
+      次の表は例。
+
+      <!-- table: data -->
+
+      | 条件 | 例 |
+      | --- | --- |
+      | 本文や会話で、その文書をタイトル以外の名前で呼んでいる | 「索引と用語集を書く」を「索引の手順」と呼ぶ |
+      | 略称・英語名・旧名で参照される | `api.md` に「公開関数」 |
+
+      <!-- /table -->
+  - id: alias-not-register-01
+    group: エイリアスを登録しない条件
+    name: エイリアスを登録しない条件
+    body: |-
+      登録しないかも判定フローチャート [エイリアスを登録するかを決める](https://github.com/shuhei1101/alias-inject/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E3%82%A8%E3%82%A4%E3%83%AA%E3%82%A2%E3%82%B9%E3%82%92%E7%99%BB%E9%8C%B2%E3%81%99%E3%82%8B%E3%81%8B%E3%82%92%E6%B1%BA%E3%82%81%E3%82%8B.md) で決める。
+      次の表は例。
+
+      <!-- table: data -->
+
+      | 条件 | 例 |
+      | --- | --- |
+      | 複数の文書や用語に当てはまる一般語（ツールチップが誤った紐付けになる） | 「設定」「手順」 |
+      | 1〜2 文字の語や、ほかの語の一部としてよく出る語 | 「印」（「印刷」に当たる） |
+      | 正規化で吸収できる表記ゆれ | 「ＡＰＩ」と「API」の両方は登録しない |
+
+      <!-- /table -->
+  - id: matching-01
+    group: 一致のさせ方
+    name: 一致前の正規化
+    body: |-
+      - 一致の前に NFKC・英字の大文字小文字・前後の空白を正規化し、残る揺れは `aliases` に列挙する
+  - id: matching-02
+    group: 一致のさせ方
+    name: 正規表現の用途
+    body: |-
+      - 正規表現は、やめた言い方（`avoid`）の点検だけに使い、from / to のテストを付ける
+        自動の紐付け（ツールチップ・検索）には使わない

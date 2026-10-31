@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-js-vanilla-ts
+kind: rule
+name: バニラ TS 方針
+description: クラスを必要なときだけ使う関数指向の方針と、ブラウザの依存を増やさない方針を定め、単体 HTML のスクリプトを記載するときに読む。
+tags:
+  - name: scope:html
+  - name: tool:javascript
+  - name: topic:スクリプト
+  - name: tool:typescript
+  - name: topic:クラス
+  - name: topic:バニラ
+    main: true
+  - name: topic:ブラウザ
+  - name: topic:ライブラリ
+  - name: topic:方針
+  - name: topic:関数
+  - name: action:依存
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
+  - id: class-when-needed-01
+    group: クラスは必要な時だけ
+    name: 関数指向で記載する
+    body: |-
+      - 関数指向で書く。
+        - アロー関数 + クロージャで組み、状態はモジュールスコープ変数かクロージャで持つ。
+        - クラスを作るのは Custom Element・`EventTarget` 継承の `WsClient`・外部ライブラリの仕様で必要な時のみ。
+  - id: no-runtime-library-01
+    group: ランタイムライブラリを追加しない
+    name: ブラウザの依存を増やさない
+    body: |-
+      - ブラウザに出す依存を増やさない。
+        - フレームワーク（React/Vue）・状態管理ライブラリ・UI ライブラリは使わない。
+        - 外部依存がどうしても必要なときだけ vendoring する（[html/shared/vendor](id:html-shared-vendor)）。
+        - dev ツール（tsc / eslint / vitest 等）は別（[html/tooling/tsc運用](id:html-tooling-tsc)）。

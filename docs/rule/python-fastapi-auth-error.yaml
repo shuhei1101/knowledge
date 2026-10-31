@@ -1,0 +1,103 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-fastapi-auth-error
+kind: rule
+name: 認証と例外ハンドラ
+description: FastAPI の認証パターン、SecretStr の扱い、例外ハンドラの決まりを定め、FastAPI に認証やエラー応答を実装するときに読む。
+tags:
+  - name: scope:python
+  - name: tool:fastapi
+  - name: topic:api
+  - name: topic:エラー
+  - name: topic:シークレット
+  - name: topic:スコープ
+  - name: topic:ハンドラ
+  - name: topic:パターン
+  - name: topic:ログ
+  - name: topic:例外
+  - name: topic:例外ハンドラ
+    main: true
+  - name: action:参照
+  - name: action:検証
+  - name: action:登録
+  - name: action:認証
+status: current
+visibility: internal
+rev: 7
+last_reviewed: '2026-10-30'
+sources:
+  - title: "RFC 9457: Problem Details for HTTP APIs"
+    url: https://www.rfc-editor.org/rfc/rfc9457.html
+items:
+  - id: auth-pattern-01
+    group: 認証パターン
+    name: Bearer 認証
+    body: |-
+      - Bearer: `server/auth.py` の `verify_token`（Header から検証 → `AuthContext` dataclass を返す）を `Auth = Annotated[AuthContext, Depends(verify_token)]` に型エイリアス化
+  - id: auth-pattern-02
+    group: 認証パターン
+    name: API Key 認証
+    body: |-
+      - API Key: `x-api-key` ヘッダを `settings.api_key.get_secret_value()` と比較
+  - id: auth-pattern-03
+    group: 認証パターン
+    name: Scope 検証
+    body: |-
+      - Scope 検証: `require_scope(scope)` の Depends ファクトリで `ForbiddenError`
+  - id: auth-pattern-04
+    group: 認証パターン
+    name: 失敗時は UnauthorizedError
+    body: |-
+      - 失敗時は `UnauthorizedError` を raise（HTTPException 直 raise しない）
+  - id: secret-str-01
+    group: SecretStr
+    name: SecretStr の扱いの参照
+    body: |-
+      - `SecretStr` の扱いは [shared/設定](id:python-shared-settings)
+  - id: secret-str-02
+    group: SecretStr
+    name: 認証失敗のログレベル
+    body: |-
+      - 認証失敗のログは warning 程度にする
+  - id: exception-handler-01
+    group: 例外ハンドラ
+    name: 例外ハンドラの登録と対応表
+    body: |-
+      `server/error_handlers.py` の `register_exception_handlers(app)` で例外階層を一括 HTTP マップ:
+
+      <!-- table: data -->
+
+      | 例外                      | HTTP                          |
+      | ------------------------- | ----------------------------- |
+      | `InvalidInputError`       | 400                           |
+      | `UnauthorizedError`       | 401                           |
+      | `ForbiddenError`          | 403                           |
+      | `NotFoundError`           | 404                           |
+      | `ConflictError`           | 409                           |
+      | `AppError`                | 500                           |
+      | `IntegrationError`        | 502                           |
+      | `LlmRateLimitError`       | 503（Retry-After 付き）       |
+      | `LlmServerError`          | 503（Retry-After 付き）       |
+      | `IntegrationTimeoutError` | 504                           |
+
+      <!-- /table -->
+
+      例外から HTTP へのマップはこの表だけに置き、ほかのルールは参照だけにする。
+
+      Retry-After は、`retry_after` 属性を持つ `LlmRateLimitError` ではその値を返す。
+      属性を持たない `LlmServerError` では [llm/例外とリトライ](id:python-llm-exception-retry#stamina-retry-01) の `wait_max` の値を返す。
+      上流の 5xx からの回復を待つ間隔として、同じ例外へのリトライのバックオフの上限を使う。
+  - id: exception-handler-02
+    group: 例外ハンドラ
+    name: 500 系はログに出す
+    body: |-
+      - 500 / 502 系はハンドラ内で `logger.exception`
+  - id: exception-handler-03
+    group: 例外ハンドラ
+    name: RFC 9457 形式のレスポンス
+    body: |-
+      - レスポンスは RFC 9457 の Problem Details（`application/problem+json`。`type` / `title` / `status` / `detail`、拡張メンバーに `code` / `request_id`）に統一する
+  - id: exception-handler-04
+    group: 例外ハンドラ
+    name: RequestValidationError のカスタム
+    body: |-
+      - Pydantic の `RequestValidationError`（422）も `register_exception_handlers(app)` で ProblemDetail に揃える

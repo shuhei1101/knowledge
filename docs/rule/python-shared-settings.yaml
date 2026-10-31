@@ -1,0 +1,122 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-shared-settings
+kind: rule
+name: pydantic-settings による設定管理
+description: pydantic-settings の Settings による設定の読み込み・型と検証・運用の決まりを定め、Python で設定値や環境変数を読むときに読む。
+tags:
+  - name: scope:python
+  - name: topic:api
+  - name: topic:naming
+  - name: tool:yaml
+  - name: topic:キー
+  - name: topic:サンプル
+  - name: topic:シークレット
+  - name: topic:ネスト
+  - name: topic:パス
+  - name: topic:ファイル
+  - name: topic:フィールド
+  - name: topic:レイヤー
+  - name: topic:変数
+  - name: topic:環境
+  - name: topic:環境変数
+  - name: topic:設定
+    main: true
+  - name: tool:pydantic
+  - name: action:依存
+  - name: action:展開
+  - name: action:検証
+  - name: action:秘匿
+  - name: action:管理
+  - name: action:計算
+  - name: action:読み込み
+  - name: action:運用
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      既定値・環境の値・checkout の上書き・環境変数を `Settings(BaseSettings)` で型安全に読む（`shared/settings.py`）。
+      置き場所の判断（秘匿値・環境の値・既定値・定数のどこに置くか）は [設定値の置き場所](id:flowchart-config-location) に従う。ここは Python での読み方だけを決める。
+  - id: loading-01
+    group: 読み込み
+    name: 設定の 3 レイヤーの読み込み
+    body: |-
+      - 設定の 3 レイヤー（既定値 → 環境の値 → checkout の上書き）は、`settings_customise_sources` で `YamlConfigSettingsSource` に `yaml_file` を並べて読む。後のファイルが勝つ。無いファイルは飛ばされる
+  - id: loading-02
+    group: 読み込み
+    name: ネスト項目の deep_merge
+    body: |-
+      - ネストした項目は `deep_merge=True` で重ねる（既定の浅い重ねでは、後のファイルが上位キーの中身ごと置き換える）
+  - id: loading-03
+    group: 読み込み
+    name: 優先順は settings_customise_sources
+    body: |-
+      - `settings_customise_sources` が返す順が優先順。`init_settings` → `env_settings` → `file_secret_settings` → YAML の順にして、環境変数・引数が 3 レイヤーより勝つようにする
+  - id: loading-04
+    group: 読み込み
+    name: 既定値は YAML だけに置く
+    body: |-
+      - 既定値の YAML が無くても飛ばされるので、項目の既定値はコードに持たず YAML だけに置く（欠けたら必須項目の検証エラーで起動時に止まる）
+  - id: loading-05
+    group: 読み込み
+    name: YAML 読み込みの依存
+    body: |-
+      - YAML を読むには `pydantic-settings[yaml]` を入れる
+  - id: loading-06
+    group: 読み込み
+    name: "~ の展開"
+    body: |-
+      - `~` は `Path.expanduser()` で展開してから渡す
+  - id: loading-07
+    group: 読み込み
+    name: 秘匿値の secrets_dir
+    body: |-
+      - 秘匿値だけ `~/.config/{project}/secrets/` に分けるときは `secrets_dir` で読む
+  - id: type-validation-01
+    group: 型と検証
+    name: API キーは SecretStr
+    body: |-
+      - API キーは `SecretStr`（ログに出ない）。外部クライアントに渡す時だけ `get_secret_value()`
+  - id: type-validation-02
+    group: 型と検証
+    name: extra は ignore
+    body: |-
+      - `extra="ignore"` にする（他のブランチで追加した項目がホームの設定にあっても起動を止めない）
+  - id: type-validation-03
+    group: 型と検証
+    name: 計算済みパス
+    body: |-
+      - 計算済みパス（`project_root` 等）は `default_factory` / `@property` で
+  - id: type-validation-04
+    group: 型と検証
+    name: field_validator による検証
+    body: |-
+      - 検証は `@field_validator`（log_level の許可値チェック等）
+  - id: type-validation-05
+    group: 型と検証
+    name: ネスト設定と環境変数
+    body: |-
+      - ネスト設定は `BaseModel` 入れ子。環境変数は `env_nested_delimiter="__"` で `DB__HOST` → `Settings.db.host`
+  - id: type-validation-06
+    group: 型と検証
+    name: 環境変数名の命名
+    body: |-
+      - 環境変数名は `UPPER_SNAKE_CASE`、外部サービス系は `{SERVICE}_{NAME}`（`OPENAI_API_KEY`）
+  - id: operation-01
+    group: 運用
+    name: 秘匿値ファイルのサンプル
+    body: |-
+      - 秘匿値を持つファイルは、キーとプレースホルダだけを書いたサンプル（`settings.sample.yaml`）を対で置いて git 管理する
+  - id: operation-02
+    group: 運用
+    name: Settings は main.py で 1 度だけ作る
+    body: |-
+      - `Settings()` は main.py で 1 度だけインスタンス化し、partial で各関数に埋める（関数内で毎回作らない）
+  - id: operation-03
+    group: 運用
+    name: os.environ を直接読まない
+    body: |-
+      - `os.environ` を直接読まない（型も検証もない）

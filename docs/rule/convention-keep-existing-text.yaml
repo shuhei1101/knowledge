@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: convention-keep-existing-text
+kind: rule
+name: 既存文章の維持
+description: 既存のドキュメント・コードを編集するとき、変更対象以外の文章を一字一句そのまま維持する決まりを定め、既存の文書を編集するときに読む。
+tags:
+  - name: scope:規約
+  - name: topic:コード
+  - name: topic:差分
+  - name: topic:文書
+  - name: topic:文章
+    main: true
+  - name: topic:文言
+  - name: topic:構造
+  - name: action:編集
+status: current
+visibility: internal
+rev: 3
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      既存のドキュメント・コードを編集するとき、変更対象以外の文章は一字一句そのまま維持する。
+  - id: keep-existing-text-01
+    group: 既存文章の維持
+    name: 言い回しの変更をしない
+    body: |-
+      - 意味が変わらない言い回しの変更・語句の置換・削除をしない（例: 「本文を読み分解」→「本文を分解」）
+  - id: keep-existing-text-02
+    group: 既存文章の維持
+    name: 構造変更でも文言を維持
+    body: |-
+      - 行の分割・移動などの構造変更でも、既存の文言は維持して追加分だけを新しく書く
+  - id: keep-existing-text-03
+    group: 既存文章の維持
+    name: 差分は意図のある変更だけ
+    body: |-
+      - 差分は意図のある変更だけにする（無意味な差分はレビューで「変更があったのでは」と誤読させる）

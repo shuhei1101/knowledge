@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-core-style
+kind: rule
+name: スタイル
+description: ruff・pyright・import-linter のツール構成と設定の置き場所、モジュールの区切り方を定め、Python の静的検査やフォーマッタを設定するときに読む。
+tags:
+  - name: scope:python
+  - name: topic:pyproject
+  - name: topic:インポート
+  - name: topic:スタイル
+    main: true
+  - name: topic:ツール
+  - name: topic:フォーマッタ
+  - name: topic:マーカー
+  - name: topic:モジュール
+  - name: topic:構成
+  - name: topic:正本
+  - name: topic:設定
+  - name: tool:import-linter
+  - name: tool:pyright
+  - name: tool:ruff
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-30'
+items:
+  - id: tool-config-01
+    group: ツール構成
+    name: ツール構成の表
+    body: |-
+      | ツール                        | 役割                                                           |
+      | ----------------------------- | -------------------------------------------------------------- |
+      | `ruff`                        | フォーマッタ + リンタ（black + isort + flake8 相当）           |
+      | `pyright`（`basedpyright`）   | 型チェック（CI / strict が正）                                 |
+      | `ty`                          | 型チェック（試験的に並行して実行。1.0 になったら見直す）       |
+      | `import-linter`               | 依存の向きの検査（layers 契約）                                |
+      | `pytest`                      | テストランナー                                                 |
+  - id: config-01
+    group: 設定
+    name: 設定の正本は pyproject
+    body: |-
+      ruff・pyright・import-linter の設定の正本は各リポジトリの `pyproject.toml`。
+      初期値は [pyproject.toml 標準テンプレート](id:python-packaging-pyproject) を使う。
+  - id: writing-01
+    group: 書き方
+    name: セクションマーカーの扱い
+    body: |-
+      - 長いモジュールはセクションマーカー（`# === DTO ===` 等）で区切ってよいが、セクションが必要なほど長くなったらまずファイル分割（`types.py` / `service.py`）

@@ -1,0 +1,165 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: testing-core-strategy
+kind: rule
+name: テスト戦略
+description: Vitest と Playwright を使うテストレベル、テスト関数の書式、カバレッジ、CUJ、保守性の決まりを定め、TypeScript のテストを設計する・記載するときに読む。
+tags:
+  - name: scope:testing
+  - name: topic:testing
+    main: true
+  - name: topic:ci
+  - name: topic:crud
+  - name: topic:cuj
+  - name: topic:e2e
+  - name: tool:typescript
+  - name: topic:エラー
+  - name: topic:エラーハンドリング
+  - name: topic:オブジェクト
+  - name: topic:カバレッジ
+  - name: topic:ガード
+  - name: topic:コメント
+  - name: topic:フィクスチャ
+  - name: topic:フィルター
+  - name: topic:フロー
+  - name: topic:ページ
+  - name: topic:ページオブジェクト
+  - name: topic:モック
+  - name: topic:戦略
+  - name: topic:日時
+  - name: topic:時刻
+  - name: topic:権限
+  - name: topic:関数
+  - name: tool:playwright
+  - name: tool:vitest
+  - name: action:ソート
+  - name: action:ログイン
+  - name: action:保守
+  - name: action:分岐
+  - name: action:実行
+  - name: action:検索
+  - name: action:検証
+  - name: action:登録
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+related:
+  - to: react-core-folder-structure
+    type: references
+    when: テストファイルの置き場所を決めるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: TypeScript のテスト
+      構成は Vitest（Unit / Component）+ Playwright（E2E）+ Testing Library + MSW（任意）。
+      ピラミッドの構造にし、ユニットで網羅して、E2E はクリティカルパスだけにする。
+      テストの対応関係は、設計書（モジュール構成・結合・シナリオ）のテスト表が SoT で、テストは表と 1 対 1 で実装する。
+  - id: test-level-01
+    group: テストレベル
+    name: テストレベルの表
+    body: |-
+      | Level | Tool | 対象 | 比率 |
+      | --- | --- | --- | --- |
+      | Unit | Vitest | 純粋関数・schema・util | 多 |
+      | Component | Vitest + Testing Library | コンポーネントの描画・操作 | 中 |
+      | Integration | Vitest | 画面と API のモック（MSW）・service / db / API（実 DB か testcontainers） | 中 |
+      | E2E | Playwright | ブラウザでの重要なフロー | 少 |
+      | External | Vitest | 外部 API ラッパーの実接続（実際に使うパラメータ値の網羅） | 少 |
+  - id: test-level-02
+    group: テストレベル
+    name: Unit の単位
+    body: |-
+      - Unit / Component の単位は 1 ファイル。
+        同じファイルの中のヘルパーは実物のまま使い、ファイルの外・プロセスの外の依存は Mock する。
+  - id: test-level-03
+    group: テストレベル
+    name: 分岐カバレッジ
+    body: |-
+      - Unit は分岐ごとに 1 つ以上のテストを置き、分岐カバレッジを極力 100% にする。
+  - id: test-level-04
+    group: テストレベル
+    name: External は CI で実行しない
+    body: |-
+      - External は、CI では実行しない。
+        AI は、副作用が発生するとき、または見積もりが規約『開発時の従量課金APIの実行』の閾値を超える課金が発生するときは、ユーザーが実行を許可したときだけ実行する。
+  - id: test-function-format-01
+    group: テスト関数の書式
+    name: テスト名の書式
+    body: |-
+      - テスト名（`test` / `it` の説明文字列）は `{関数名}_when_{条件}` にし、期待値は名前に入れない（期待値が変わるたびに名前が変わるため）。
+        条件分岐のない唯一のケースは `{関数名}` だけにする。
+  - id: test-function-format-02
+    group: テスト関数の書式
+    name: 確認内容はコメントに書く
+    body: |-
+      - 何を確認するか（設計書のテスト表の概要 + 正常系 / 異常系）を、テストの直前のコメントに書く。
+  - id: test-function-format-03
+    group: テスト関数の書式
+    name: 準備・実行・検証の区切り
+    body: |-
+      - 関数の中を、`// 準備` → `// 実行` → `// 検証` の順のコメントで区切る。
+        例外の検証のように実行と検証が一体になるときは、`// 実行・検証` にまとめる。
+
+      ```ts
+      // 19 歳は未成年と判定する（正常系）
+      test("is_minor_when_age_19", () => {
+        // 準備
+        const user = new User({ age: 19 });
+        // 実行
+        const result = user.isMinor();
+        // 検証
+        expect(result).toBe(true);
+      });
+      ```
+  - id: time-01
+    group: 時刻
+    name: 時刻は固定日時で検証する
+    body: |-
+      - 時刻に関わる処理は、固定日時を渡して JST への変換を検証する。
+  - id: coverage-01
+    group: カバレッジ
+    name: 結合・E2E はカバレッジで縛らない
+    body: |-
+      - 結合・E2E は、カバレッジ率で縛らない（CUJ と重要なユースケースが通っているかを、定性的に判断する）。
+  - id: cuj-01
+    group: CUJ（必ず E2E でカバーするフロー）
+    name: 新規登録からログイン
+    body: |-
+      - 新規登録 → ログイン
+  - id: cuj-02
+    group: CUJ（必ず E2E でカバーするフロー）
+    name: CRUD の一巡
+    body: |-
+      - CRUD の一巡（作成 → 一覧 → 詳細 → 編集 → 削除）
+  - id: cuj-03
+    group: CUJ（必ず E2E でカバーするフロー）
+    name: 検索・フィルタ・ソート
+    body: |-
+      - 検索・フィルタ・ソート
+  - id: cuj-04
+    group: CUJ（必ず E2E でカバーするフロー）
+    name: 権限ガード
+    body: |-
+      - 権限ガード（権限なしで編集の URL に直接アクセスすると、弾かれる）
+  - id: cuj-05
+    group: CUJ（必ず E2E でカバーするフロー）
+    name: エラーハンドリング
+    body: |-
+      - エラーハンドリング（ネットワークの失敗時の UI）
+  - id: maintainability-01
+    group: 保守性
+    name: Page Object と Fixtures
+    body: |-
+      - セレクタは Page Object に、データの生成は Fixtures に集約する。
+  - id: maintainability-02
+    group: 保守性
+    name: mock は最小限
+    body: |-
+      - mock は最小限にする。
+        mock しすぎて振る舞いを検証できないときは、integration に切り替える。
+  - id: maintainability-03
+    group: 保守性
+    name: E2E でユニットの検証をしない
+    body: |-
+      - E2E で、ユニットレベルの検証をしない（unit に降ろす）。

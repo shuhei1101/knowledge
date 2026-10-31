@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-backend-db-migration
+kind: rule
+name: Drizzle — マイグレーション運用
+description: drizzle-kit による schema から SQL migration、DB 適用までの流れと運用の決まりを定め、DB スキーマを変更してマイグレーションを作る・適用するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:バックエンド
+  - name: topic:db
+  - name: topic:enum
+  - name: tool:sql
+  - name: topic:カラム
+  - name: topic:コード
+  - name: topic:スキーマ
+  - name: topic:ファイル
+  - name: topic:本番
+  - name: tool:drizzle
+    main: true
+  - name: action:コミット
+  - name: action:デプロイ
+  - name: action:削除
+  - name: action:参照
+  - name: action:排除
+  - name: action:生成
+  - name: action:移行
+  - name: action:編集
+  - name: action:運用
+  - name: action:適用
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      `drizzle-kit` を使った schema → SQL migration → DB 適用の流れ。
+
+      破壊的変更の手順:
+  - id: drizzle-migration-01
+    group: Drizzle — マイグレーション運用
+    name: 旧カラム参照を削除
+    body: |-
+      1. アプリケーション側で旧カラム参照を全て削除（or 二重書き対応）
+  - id: drizzle-migration-02
+    group: Drizzle — マイグレーション運用
+    name: デプロイして旧コードを排除
+    body: |-
+      2. デプロイ → 旧コードが本番に残らないように
+  - id: drizzle-migration-03
+    group: Drizzle — マイグレーション運用
+    name: 削除 migration の生成
+    body: |-
+      3. `pnpm drizzle-kit generate` で削除 migration 生成
+  - id: drizzle-migration-04
+    group: Drizzle — マイグレーション運用
+    name: 適用
+    body: |-
+      4. 適用
+  - id: drizzle-migration-05
+    group: Drizzle — マイグレーション運用
+    name: generate → 確認 → migrate
+    body: |-
+      - schema 変更後は必ず `generate` → 確認 → `migrate`
+  - id: drizzle-migration-06
+    group: Drizzle — マイグレーション運用
+    name: 本番の自動適用は不可
+    body: |-
+      - production 自動適用 NG（手動 / 専用 job）
+  - id: drizzle-migration-07
+    group: Drizzle — マイグレーション運用
+    name: migration ファイルをコミット
+    body: |-
+      - マイグレーションファイルは git にコミット
+  - id: drizzle-migration-08
+    group: Drizzle — マイグレーション運用
+    name: 生成 SQL の手編集
+    body: |-
+      - 生成された SQL は 手で編集 OK（だが schema.ts と矛盾しないこと）
+  - id: drizzle-migration-09
+    group: Drizzle — マイグレーション運用
+    name: Enum 値の削除
+    body: |-
+      - Enum 値は削除できない（追加と改名のみ）。削除は新しい型へ列を移して旧型を drop する

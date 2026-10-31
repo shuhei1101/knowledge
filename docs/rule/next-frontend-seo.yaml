@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-seo
+kind: rule
+name: Next.js App Router — SEO / Metadata
+description: Next.js 16 の Metadata API による SEO の決まりを定め、ページのメタデータや OG image を設定するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:フロントエンド
+  - name: topic:api
+  - name: topic:ogp
+  - name: topic:seo
+    main: true
+  - name: topic:アプリルーター
+  - name: topic:サイズ
+  - name: topic:データ
+  - name: topic:ページ
+  - name: topic:メタデータ
+  - name: topic:構造
+  - name: topic:画像
+  - name: topic:画面
+  - name: topic:言語
+  - name: topic:設定
+  - name: tool:next-js
+  - name: action:認証
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      > Stack: Next.js 16 Metadata API、`sitemap.ts`、`robots.ts`、`manifest.ts`、構造化データ。
+  - id: seo-metadata-01
+    group: Next.js App Router — SEO / Metadata
+    name: title と metadataBase
+    body: |-
+      1. title はページ固有、`metadataBase` でルート URL 統一
+  - id: seo-metadata-02
+    group: Next.js App Router — SEO / Metadata
+    name: OG image のサイズ
+    body: |-
+      2. OG image は 1200x630 推奨
+  - id: seo-metadata-03
+    group: Next.js App Router — SEO / Metadata
+    name: 動的 OG image
+    body: |-
+      3. 動的 OG image は `next/og` で（外部サービス不要）
+  - id: seo-metadata-04
+    group: Next.js App Router — SEO / Metadata
+    name: 構造化データ
+    body: |-
+      4. 構造化データは主要な詳細ページに（Article / Product / FAQ 等）
+  - id: seo-metadata-05
+    group: Next.js App Router — SEO / Metadata
+    name: 認証画面は noindex
+    body: |-
+      5. 認証画面は `noindex`（誤って公開しない）
+  - id: seo-metadata-06
+    group: Next.js App Router — SEO / Metadata
+    name: 多言語の alternates
+    body: |-
+      6. multi-locale なら `alternates.languages`

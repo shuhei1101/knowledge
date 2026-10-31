@@ -1,0 +1,140 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-testing-layers
+kind: rule
+name: テストの種類と配置
+description: 単体・結合・外部疎通・E2E の 4 種類のテストについて、単位ごとの方針・ファイル配置・実行方法を定め、Python のテストを作る・実行するときに読む。
+tags:
+  - name: scope:python
+  - name: topic:testing
+    main: true
+  - name: topic:e2e
+  - name: topic:カバレッジ
+  - name: topic:キー
+  - name: topic:コマンド
+  - name: topic:セットアップ
+  - name: topic:データ
+  - name: topic:ファイル
+  - name: topic:フィクスチャ
+  - name: topic:モック
+  - name: topic:例外
+  - name: topic:単体テスト
+  - name: topic:引数
+  - name: topic:環境変数
+  - name: topic:疎通テスト
+  - name: topic:結合テスト
+  - name: action:依存
+  - name: action:分岐
+  - name: action:実行
+  - name: action:比較
+  - name: action:注入
+  - name: action:疎通
+  - name: action:配置
+  - name: action:集約
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+related:
+  - to: python-testing-strategy
+    type: references
+    when: テスト関数の書式を確かめるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      単体・結合・外部疎通・E2E の 4 種類を書く。
+      テストの対応関係は設計書（モジュール構成 / 結合 / シナリオ）のテスト表が SoT で、テストは表と 1:1 で実装する。
+  - id: test-policy-01
+    group: テスト方針
+    name: 4 種類のテストの比較
+    body: |-
+      | 種類           | 目的                                                                                   | 実行                                                     |
+      | -------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+      | 単体テスト     | 関数 / メソッド単位のロジック（分岐・変換・組み立て）を確認                            | CI / 開発時に自動                                        |
+      | 結合テスト     | ユースケース 1 単位（入力 → サービス → 分岐 → 結果）を通しで確認。外部依存は Mock 注入 | CI / 開発時に自動                                        |
+      | 外部疎通テスト | 外部サービスへの実接続確認（実際に使うパラメータ値の網羅）                             | CI では実行しない。AI は、副作用が発生するか、見積もりが規約『開発時の従量課金APIの実行』の閾値を超える課金が発生するときは、ユーザーが実行を許可したときだけ実行する |
+      | E2E テスト     | シナリオ設計書どおりの業務フローを実環境で確認                                         | 手動 or 明示実行のみ                                     |
+  - id: unit-test-01
+    group: 単体テスト
+    name: 単体テストの単位
+    body: |-
+      - 単体の単位 = 1 ファイル。
+        同一ファイル内のヘルパーは実物のまま、ファイル外 / プロセス外の依存は Mock する（Sociable）
+  - id: unit-test-02
+    group: 単体テスト
+    name: データ引数は fixture で渡す
+    body: |-
+      - データ引数（DTO / 設定値）は Mock ではなく fixture で値を与える
+  - id: unit-test-03
+    group: 単体テスト
+    name: 分岐ごとのテスト
+    body: |-
+      - 分岐（if / フラグ / バリデーション / フォールバック）ごとに 1 テスト以上置き、分岐カバレッジを極力 100% にする
+  - id: unit-test-04
+    group: 単体テスト
+    name: 例外のテストの範囲
+    body: |-
+      - 自関数で raise する例外は異常系としてテストし、素通しで伝播する例外は代表 1 関数だけ確認する
+  - id: integration-test-01
+    group: 結合テスト
+    name: 結合テストの単位
+    body: |-
+      - 1 ファイル 1 ユースケース、条件分岐ごとに `test_*` 関数を並べる
+  - id: integration-test-02
+    group: 結合テスト
+    name: 外部依存の Mock 注入
+    body: |-
+      - 外部依存（`chat` 等）は Mock 関数を引数注入
+  - id: integration-test-03
+    group: 結合テスト
+    name: セットアップの集約
+    body: |-
+      - セットアップは conftest の fixture に集約
+  - id: integration-test-04
+    group: 結合テスト
+    name: カバレッジ目標の扱い
+    body: |-
+      - カバレッジ率を目標数値で縛らない（重要ユースケースが通っているかを定性判断）
+  - id: file-placement-01
+    group: ファイル配置
+    name: テストのファイル配置
+    body: |-
+      ```
+      tests/
+      ├── conftest.py       # 共通 fixtures
+      ├── unit/             # 単体（src をミラー・1 テストファイル = 1 実装ファイル）
+      ├── integration/      # 結合（src をミラー・1 テストファイル = 1 ユースケース）
+      ├── external/         # 外部疎通（--run-external ガード）
+      └── e2e/              # シナリオ E2E（実環境で実行）
+      ```
+  - id: file-placement-02
+    group: ファイル配置
+    name: テストの実行コマンド
+    body: |-
+      - 実行: `uv run pytest`（external / e2e はガードで skip され、単体 + 結合だけが走る）
+  - id: file-placement-03
+    group: ファイル配置
+    name: e2e の実行方法
+    body: |-
+      - e2e の起動方法・対象環境はプロジェクト固有（各プロジェクトのテスト実行方法ページに従う）
+  - id: external-test-01
+    group: 外部疎通テスト
+    name: 外部疎通テストの有効化
+    body: |-
+      - `tests/external/conftest.py` で `--run-external` オプションを定義し、なければ全 skip
+  - id: external-test-02
+    group: 外部疎通テスト
+    name: 外部疎通テストの実行条件
+    body: |-
+      - 実行は `uv run pytest tests/external/ --run-external`（CI では実行しない。AI の実行条件は冒頭の表）
+  - id: external-test-03
+    group: 外部疎通テスト
+    name: 外部疎通テストの確認内容
+    body: |-
+      - 内容は「実際に使うパラメータ値ごとに実接続が成立して期待形式のレスポンスが返る」の 1 回きり網羅確認。
+        業務ロジック検証は結合テスト側
+  - id: external-test-04
+    group: 外部疎通テスト
+    name: env キー欠落時の skip
+    body: |-
+      - env キーがなければ `pytest.skip`

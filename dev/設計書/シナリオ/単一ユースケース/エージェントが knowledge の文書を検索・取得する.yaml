@@ -1,0 +1,49 @@
+id: "SC-72-4"
+title: "エージェントが knowledge の文書を検索・取得する"
+scenarios:
+  - name: 正常シナリオ
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 作業場所
+        description: 'knowledge のクローンの外の作業場所（例: 別のリポジトリのクローン）'
+    flow: |-
+      sequenceDiagram
+        participant E as エージェント
+        participant M as dev-docs の文書の MCP
+        E->>M: search_docs に source knowledge と語・タグ
+        M-->>E: 当たった文書の名前・説明・タグ
+        E->>M: search_docs に文書の ID
+        M-->>E: 文書の本文
+    expected:
+      - '`search_docs` が knowledge の規約を返し、各行が `name`・`description`・`tags` を持つ'
+      - files.yaml の行の Markdown（`skills/text-review/SKILL.md`）も検索に当たる
+      - ID で取得した本文が develop のファイルの中身と一致する
+    test: test_normal
+  - name: 異常シナリオ（作業場所が scope.read の外）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 端末の設定
+        description: knowledge の `scope.read` を knowledge のクローンだけに狭めた設定
+      - name: 作業場所
+        description: knowledge のクローンの外の作業場所
+    flow: |-
+      sequenceDiagram
+        participant E as エージェント
+        participant M as dev-docs の文書の MCP
+        E->>M: search_docs に source knowledge
+        M-->>E: scope.read の外として返す
+    expected:
+      - knowledge の文書が 1 件も返らず、`scope.read` の外であることが分かる応答が返る
+    test: test_error_when_out_of_read_scope
+lead: 'エージェントが dev-docs の文書の MCP の `search_docs` に `source: knowledge` を渡し、規約や files.yaml の行の Markdown・ソースコードを検索・取得する。'
+issue: 51
+primary_actor: エージェント
+trigger: エージェントが作業の前に当たる規約を引く
+preconditions:
+  - knowledge が dev-docs に登録され、配信中
+  - エージェントの作業場所が knowledge の `scope.read` に入る
+success_guarantee: 当たった文書の名前・説明・タグと、取得した本文が返る。
+minimal_guarantee: '`scope.read` の外の作業場所には knowledge の文書を返さない。'
+test_file: tests/e2e/単一ユースケース/test_エージェントがknowledgeの文書を検索・取得する.py

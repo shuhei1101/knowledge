@@ -1,0 +1,91 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-core-decorator
+kind: rule
+name: 推奨デコレータ + ハンドラーデコレータ
+description: 推奨するデコレータ、ハンドラーデコレータ、合成の順序、自作デコレータの注意、@overload の使いどころを定め、デコレータを使う・自作するときに読む。
+tags:
+  - name: scope:python
+  - name: topic:デコレータ
+    main: true
+  - name: topic:ハンドラ
+  - name: topic:ヒント
+  - name: topic:型ヒント
+  - name: topic:責務
+  - name: topic:関心事
+  - name: topic:非同期
+  - name: action:ラップ
+  - name: action:合成
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-30'
+items:
+  - id: recommended-decorator-01
+    group: 推奨デコレータ
+    name: 推奨デコレータの表
+    body: |-
+      <!-- table: data -->
+
+      | デコレータ                                           | 用途                   |
+      | ---------------------------------------------------- | ---------------------- |
+      | `@dataclass(frozen=True, slots=True, kw_only=True)`  | 不変 DTO 標準          |
+      | `@final`                                             | 継承禁止               |
+      | `@functools.cache`                                   | 純粋関数のメモ化       |
+      | `@functools.cached_property`                         | クラス属性の lazy 計算 |
+      | `@typing.override`                                   | オーバーライド明示     |
+      | `@contextlib.contextmanager` / `asynccontextmanager` | with 文用関数          |
+
+      <!-- /table -->
+  - id: handler-decorator-01
+    group: ハンドラーデコレータ（横断関心事）
+    name: ハンドラーデコレータの方針
+    body: |-
+      例外キャッチ / リトライ / タイムアウト / メトリクスは関数デコレータで束ねる（クラスベース AOP は使わない）。`{pkg}/shared/decorators.py` に定義。
+  - id: handler-decorator-02
+    group: ハンドラーデコレータ（横断関心事）
+    name: ハンドラーデコレータの表
+    body: |-
+      | デコレータ                              | 用途                                                            |
+      | --------------------------------------- | --------------------------------------------------------------- |
+      | `@catch_and_log(*exc_types, level=...)` | 指定例外をログに出して再送出する                                |
+      | `@catch_and_map(SrcError, to=DstError)` | 例外型を変換（vendor 例外 → ドメイン例外）。`raise from` で連鎖 |
+      | `@stamina.retry(on=<フック関数>, attempts=4)` | 指数バックオフでリトライ（引数は [llm/例外とリトライ](id:python-llm-exception-retry)）      |
+      | `@with_timeout(seconds=60)`             | `asyncio.timeout` ラッパー。超過で `IntegrationTimeoutError`    |
+      | `@measure_time(metric="...")`           | 実行時間メトリクス                                              |
+  - id: composition-01
+    group: 合成
+    name: デコレータの合成順
+    body: |-
+      外側から順に適用、読み方は下から上:
+
+      ```python
+      @with_timeout(seconds=60)                                   # 3. 全体 60 秒で打ち切り
+      @stamina.retry(on=retry_on_llm_error, attempts=4)  # 2. 3 回までリトライ（フック関数は llm/例外とリトライ）
+      @catch_and_map(openai.APIStatusError, to=LlmServerError)        # 1. vendor 例外を変換
+      async def chat(req: ChatRequest) -> ChatResponse: ...
+      ```
+  - id: custom-decorator-caution-01
+    group: 自作デコレータの注意
+    name: functools.wraps を付ける
+    body: |-
+      - 必ず `@functools.wraps(fn)` を付ける
+  - id: custom-decorator-caution-02
+    group: 自作デコレータの注意
+    name: 型ヒントは PEP 695
+    body: |-
+      - 型ヒントは PEP 695 の `[**P, R]` パラメータ仕様
+  - id: custom-decorator-caution-03
+    group: 自作デコレータの注意
+    name: async と sync を分ける
+    body: |-
+      - async / sync は別関数に分ける
+  - id: custom-decorator-caution-04
+    group: 自作デコレータの注意
+    name: 1 デコレータ 1 責務
+    body: |-
+      - 1 デコレータ 1 責務（ログだけ・例外変換だけ）
+  - id: overload-01
+    group: "@overload"
+    name: "@overload の使いどころ"
+    body: |-
+      戻り値が引数型で分岐する関数のみ。ほとんどは型エイリアス + Callable / Protocol で済むので出番は少ない。

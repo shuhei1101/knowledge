@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../schemas/files.schema.yaml
+files:
+  - path: _common.py
+    name: 文書の読み込みの共通処理
+    description: 文書の YAML の読み込み・項目のパスと文書の行の対応・違反の型・ファイルの並列の読み込みを受け持つ。違反の行の求め方や処理時間の上限を変えるときに読む。
+    tags: [topic:検査, topic:行番号, tool:ruamel.yaml]
+  - path: _maid.py
+    name: maid の呼び出し
+    description: mermaid の文法を検査する maid の在りかの確認と、残り時間で打ち切る呼び出しを受け持つ。maid のバージョンを上げるときや、maid の出力の読み方を変えるときに読む。
+    tags: [topic:mermaid, topic:検査, tool:maid]
+  - path: knowledge_checks.py
+    name: 文書の違反の検査
+    description: dev-docs の validators の knowledge-checks として、文書 1 件の項目の ID の重複・参照先の実在・mermaid の文法を検査する。スキーマで見られない決まりを追加・変更するときに読む。
+    tags: [topic:検査, topic:参照, topic:mermaid, tool:dev-docs]
+  - path: knowledge_markdown.py
+    name: 文書の Markdown への変換
+    description: dev-docs の converters の knowledge-markdown として、文書 1 件を項目の group の階層を見出しにした Markdown にする。画面での文書の見え方を変えるときに読む。
+    tags: [topic:変換, topic:markdown, tool:dev-docs, tool:mdmark]
+  - path: check_all.py
+    name: 全ての文書の検査
+    description: dev-docs.yaml が指す全ての文書にスキーマの検査と文書の違反の検査を当て、CI と手元で合否を返す。CI の検査の範囲や出力を変えるときに読む。
+    tags: [topic:検査, topic:ci, topic:スキーマ, tool:jsonschema]

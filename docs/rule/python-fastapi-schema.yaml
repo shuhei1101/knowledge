@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-fastapi-schema
+kind: rule
+name: 入出力 Pydantic スキーマ
+description: FastAPI の入出力に使う Pydantic スキーマの分離・配置・Field・camelCase 対応・response_model の決まりを定め、API の入出力スキーマを定義するときに読む。
+tags:
+  - name: scope:python
+  - name: tool:fastapi
+  - name: topic:api
+  - name: topic:dto
+  - name: topic:スキーマ
+    main: true
+  - name: topic:フィールド
+  - name: topic:メソッド
+  - name: topic:入出力
+  - name: topic:型ヒント
+  - name: tool:pydantic
+  - name: action:出力
+  - name: action:分離
+  - name: action:変換
+  - name: action:配置
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-30'
+items:
+  - id: io-pydantic-schema-01
+    group: 入出力 Pydantic スキーマ
+    name: 内部 DTO とスキーマの分離
+    body: |-
+      - リクエスト / レスポンスは Pydantic、内部 DTO（`@dataclass`）とは分離
+  - id: io-pydantic-schema-02
+    group: 入出力 Pydantic スキーマ
+    name: スキーマの配置
+    body: |-
+      - 配置は `features/{feature}/schemas.py`（小規模なら `types.py` にまとめても可）
+  - id: io-pydantic-schema-03
+    group: 入出力 Pydantic スキーマ
+    name: 変換メソッドをスキーマ側に持つ
+    body: |-
+      - 変換メソッドをスキーマ側に持たせて route をワンライナーにする
+        - リクエスト側に `to_domain(self) -> DomainXxx`
+        - レスポンス側に `@classmethod from_domain(cls, result) -> Self`
+  - id: field-01
+    group: Field
+    name: API に出る選択肢は StrEnum
+    body: |-
+      - API に出る選択肢は `StrEnum`（OpenAPI に名前付きのスキーマとして出る）
+        - 内部だけで使う選択肢は `Literal`（[shared/定数](id:python-shared-constant)）
+  - id: camelcase-01
+    group: camelCase 対応
+    name: camelCase の扱い
+    body: |-
+      - API のスキーマの基底クラスに `ConfigDict(alias_generator=to_camel, validate_by_name=True, serialize_by_alias=True)` を置き、JSON のキーを camelCase にする
+  - id: response-model-01
+    group: response_model
+    name: レスポンスは戻り値の型注釈
+    body: |-
+      レスポンススキーマは戻り値の型注釈（`-> Response`）で指定する。`from_domain` で明示変換して返すのを基本にし、返す型と宣言したい型が合わないときだけ `response_model=` を使う。

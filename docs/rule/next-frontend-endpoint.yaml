@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-endpoint
+kind: rule
+name: URL 定数管理 — app/(shared)/endpoints.ts
+description: 全 URL を app/(shared)/endpoints.ts に集約する形式と命名の決まりを定め、画面や API 呼び出しで URL を参照する・追加するときに読む。
+tags:
+  - name: scope:next
+  - name: topic:フロントエンド
+  - name: topic:api
+  - name: topic:id
+  - name: topic:naming
+  - name: topic:url
+    main: true
+  - name: topic:オブジェクト
+  - name: topic:フィーチャ
+  - name: topic:定数
+  - name: topic:画面
+  - name: topic:関数
+  - name: action:エクスポート
+  - name: action:管理
+  - name: action:集約
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      全 URL を集約。コンポーネント・hook・client.ts での URL ハードコード禁止。
+  - id: format-01
+    group: 形式
+    name: endpoints.ts の形式の例
+    body: |-
+      ```ts
+      // フィーチャグループ（基本形）
+      export const RESOURCE_URL = {
+        list: `/resources`,
+        new:  `/resources/new`,
+        view: (id: string) => `/resources/${id}`,
+        edit: (id: string) => `/resources/${id}/edit`,
+      }
+
+      export const RESOURCE_API_URL = {
+        list:    `/api/v{N}/resources`,
+        detail:  (id: string) => `/api/v{N}/resources/${id}`,
+        publish: (id: string) => `/api/v{N}/resources/${id}/publish`,
+      }
+      ```
+  - id: format-02
+    group: 形式
+    name: 単発 URL は flat const
+    body: |-
+      - list / new / view / edit の単発のみ Flat const
+  - id: format-03
+    group: 形式
+    name: ID 付き URL は関数形式
+    body: |-
+      - ID 付き URL は関数形式 `(id: string) => ...`
+  - id: format-04
+    group: 形式
+    name: ベース URL は export しない
+    body: |-
+      - ベース URL（`RESOURCES` 等）は file-private（export しない）
+  - id: format-05
+    group: 形式
+    name: サブフィーチャは別オブジェクト
+    body: |-
+      - サブフィーチャは別オブジェクトに切り出す（深いネスト禁止）
+  - id: naming-01
+    group: 命名
+    name: 定数の命名表
+    body: |-
+      | 定数 | 意味 |
+      |---|---|
+      | `{FEATURE}_URL` | フロントエンドルート群 |
+      | `{FEATURE}_API_URL` | API ルート群（`/api/v{N}/...`） |

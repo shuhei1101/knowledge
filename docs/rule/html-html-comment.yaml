@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: html-html-comment
+kind: rule
+name: HTML コメント
+description: HTML のコメントを記載する場所と内容、注意点を定め、単体 HTML にコメントを記載するときに読む。
+tags:
+  - name: scope:html
+  - name: topic:コメント
+    main: true
+  - name: tool:jinja2
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 単体 HTML
+  - id: comment-place-01
+    group: 書く場所・内容
+    name: コメントを記載する場所と内容
+    body: |-
+      | 対象                         | コメントの書き方                                          |
+      | ---------------------------- | --------------------------------------------------------- |
+      | セクション・ブロックの区切り | セクションの直上に `<!-- セクション名 -->` を置く         |
+      | 非自明な属性・data 属性      | 属性の役割や JS との連携を説明する                        |
+      | hidden 要素                  | なぜ最初から非表示にしているかを書く                      |
+      | Jinja2 ブロック              | {% raw %}`{% block %}`{% endraw %} の用途を 1 行コメントで補足する |
+      | 共通レイアウト               | head に置いた各タグの意図（importmap・viewport 等）を書く |
+  - id: caution-01
+    group: 注意
+    name: Jinja2 コメントは消える
+    body: |-
+      - Jinja2 の `{# ... #}` はレンダリング後に消えるので、ブラウザで見えるコメントは `<!-- -->` を使う
+  - id: caution-02
+    group: 注意
+    name: 区切りコメントは常に記載
+    body: |-
+      - セクションが自明でも区切りコメントは書く

@@ -1,0 +1,112 @@
+# yaml-language-server: $schema=../../schemas/flowchart.schema.yaml
+id: flowchart-react-state-placement
+kind: flowchart
+name: React の状態の置き場所 判定フローチャート
+description: React のフロントエンドで新しい値（計算・TanStack Query・URL・フォーム・useState・useReducer・親・Zustand・Context）をどこに置くかを判定し、状態の置き場所を決めるときに読む。
+tags:
+  - name: scope:判定フローチャート
+  - name: topic:フロントエンド
+  - name: topic:url
+  - name: topic:クエリ
+  - name: topic:コンテキスト
+  - name: topic:フォーム
+  - name: topic:フロー
+  - name: topic:フローチャート
+  - name: topic:判定フローチャート
+  - name: tool:react
+    main: true
+  - name: tool:tanstack-query
+  - name: tool:zustand
+  - name: action:判定
+  - name: action:計算
+status: current
+visibility: internal
+rev: 6
+related:
+  - to: react-state-url-state
+    type: references
+    when: URL の状態を実装するとき
+sources:
+  - title: Choosing the State Structure
+    url: https://react.dev/learn/choosing-the-state-structure
+    note: 計算できる値は state にしない
+  - title: Sharing State Between Components
+    url: https://react.dev/learn/sharing-state-between-components
+    note: 近い親へ持ち上げる
+  - title: Scaling Up with Reducer and Context
+    url: https://react.dev/learn/scaling-up-with-reducer-and-context
+    note: Context と useReducer の組み合わせ
+  - title: Does TanStack Query replace client state?
+    url: https://tanstack.com/query/latest/docs/framework/react/guides/does-this-replace-client-state
+    note: サーバーのデータは TanStack Query に置く
+  - title: Working with Zustand
+    url: https://tkdodo.eu/blog/working-with-zustand
+    note: store を公開せず、カスタム hook と atomic selector で使う
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      React のフロントエンドで、新しい値をどこに置くかを判定する。
+      React の外のシステムと同期するときだけ `useEffect` を使う（[useEffect](id:react-state-effect)）。
+  - id: react-state-placement-flow-01
+    group: React の状態の置き場所 判定フローチャート
+    name: 判定フロー
+    body: |-
+      ```mermaid
+      flowchart TD
+        START([新しい値の置き場所を決めたい])
+        Q0{props・既存の state から計算できるか?}
+        Q1{サーバーのデータか?}
+        Q2{共有・戻る・リロードで復元したい値か? ※1}
+        Q3{フォームの入力中の値か?}
+        Q4{項目が多い、または検証が複雑か?}
+        Q5{使うのは 1 コンポーネントだけか?}
+        Q6{複数の値が連動するか?}
+        Q7{近い親に持ち上げて props か children で渡せるか?}
+        Q8{頻繁に更新される・一部だけ購読したい・React の外から参照する・リロード後も保持する、のどれかか?}
+
+        R1([state にしない。描画中に計算する])
+        R2([TanStack Query。ほかの store にコピーしない])
+        R3([URL の状態。validateSearch + Zod])
+        R4([React Hook Form + Zod])
+        R5([useState])
+        R6([useReducer])
+        R7([親へ持ち上げる])
+        R8([Zustand ※2])
+        R9([Context。必要なら useReducer と組み合わせる ※3])
+
+        START --> Q0
+        Q0 -->|YES| R1
+        Q0 -->|NO| Q1
+        Q1 -->|NO| Q2
+        Q1 -->|YES| R2
+        Q2 -->|YES| R3
+        Q2 -->|NO| Q3
+        Q3 -->|YES| Q4
+        Q3 -->|NO| Q5
+        Q4 -->|YES| R4
+        Q4 -->|NO| R5
+        Q5 -->|YES| Q6
+        Q5 -->|NO| Q7
+        Q6 -->|YES| R6
+        Q6 -->|NO| R5
+        Q7 -->|NO| Q8
+        Q7 -->|YES| R7
+        Q8 -->|YES| R8
+        Q8 -->|NO| R9
+      ```
+  - id: react-state-placement-flow-02
+    group: React の状態の置き場所 判定フローチャート
+    name: ※1 URL に置く値
+    body: |-
+      - **※1 URL に置く値**: タブ・フィルタ・ソート・ページ・選択中の ID。個人情報・フォームの入力中の値・読み込み中とエラーの表示は、URL に出さない
+  - id: react-state-placement-flow-03
+    group: React の状態の置き場所 判定フローチャート
+    name: ※2 Zustand の使い方
+    body: |-
+      - **※2 Zustand の使い方**: store は公開せず、カスタム hook だけを export する。selector で必要な値だけを購読し、actions は state と分ける。永続化は `persist` を使う。サーバーのデータとフォームの値は入れない。画面をまたぐ store は `shared/stores/` に置く
+  - id: react-state-placement-flow-04
+    group: React の状態の置き場所 判定フローチャート
+    name: ※3 Context の使い方
+    body: |-
+      - **※3 Context の使い方**: 1 つの Context は 1 つの責務にする。Provider と同じファイルに `use{Name}` を export し、Provider の外で呼んだら throw する。SPA ではルートの上に置いた Provider がページを移っても消えないので、ページをまたぐだけなら Context で足りる

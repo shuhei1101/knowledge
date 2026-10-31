@@ -1,0 +1,100 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-shared-env-var
+kind: rule
+name: 環境変数と設定
+description: Next.js での環境変数と設定の置き場所、NEXT_PUBLIC_ の扱い、クライアントへの config 公開、機能フラグを定め、環境変数や設定値を追加・参照するときに読む。
+tags:
+  - name: scope:next
+  - name: tool:yaml
+  - name: topic:クライアント
+  - name: topic:サンプル
+  - name: topic:テンプレート
+  - name: topic:ファイル
+  - name: topic:フィーチャ
+  - name: topic:フラグ
+  - name: topic:ランタイム
+  - name: topic:ローダー
+  - name: topic:変数
+  - name: topic:定数
+  - name: topic:接頭辞
+  - name: topic:機能フラグ
+  - name: topic:環境
+  - name: topic:環境変数
+    main: true
+  - name: topic:設定
+  - name: tool:next-js
+  - name: action:一元化
+  - name: action:公開
+  - name: action:定義
+  - name: action:接続
+  - name: action:秘匿
+  - name: action:評価
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      Next.js での環境変数と設定の読み方。
+
+      置き場所の判定は [設定値の置き場所](id:flowchart-config-location) に従う。
+  - id: next-placement-01
+    group: Next.js での置き場所
+    name: 秘匿値の置き場所
+    body: |-
+      - 秘匿値: dev は `.env.local`、prod は Vercel ダッシュボード
+  - id: next-placement-02
+    group: Next.js での置き場所
+    name: 定数は constants.ts
+    body: |-
+      - 環境で変わらない定数: `app/(shared)/constants.ts`（UPPER_SNAKE_CASE）
+  - id: next-placement-03
+    group: Next.js での置き場所
+    name: サンプルファイルのテンプレート
+    body: |-
+      - `.env.sample` / `settings.sample.yaml` をテンプレとして git 管理（必要変数の正式リスト）
+  - id: next-public-prefix-01
+    group: NEXT_PUBLIC_ プレフィックス
+    name: NEXT_PUBLIC_ はクライアントで読む値のみ
+    body: |-
+      - クライアントで読む値のみ付ける（ブラウザ JS にバンドルされ公開される）
+  - id: rules-01
+    group: ルール
+    name: runtimeConfig は使わない
+    body: |-
+      - `serverRuntimeConfig` / `publicRuntimeConfig` は Next.js 16 で廃止 → `process.env.*` を直接使う
+  - id: rules-02
+    group: ルール
+    name: ランタイム評価は connection
+    body: |-
+      - ランタイム評価したい場合は `connection()` でバウンダリを張る
+  - id: rules-03
+    group: ルール
+    name: env を型安全に一元化
+    body: |-
+      - env は `@t3-oss/env-nextjs` + Zod で型安全に一元化（`env.ts`）。`process.env` を散在的に読まない
+  - id: rules-04
+    group: ルール
+    name: YAML の loader
+    body: |-
+      - YAML は `app/(shared)/config.ts` の loader で 設定の 3 レイヤーを重ねて読み、Zod schema で parse、モジュールキャッシュ
+  - id: config-exposure-01
+    group: クライアントへの config 公開
+    name: クライアントへの config 公開の表
+    body: |-
+      | 方式                                           | 使いどき                     |
+      | ---------------------------------------------- | ---------------------------- |
+      | next.config.ts の `env` でビルド時インライン   | 変更頻度の低い値（推奨）     |
+      | API ルート + `useQuery`（staleTime: Infinity） | 再デプロイなしで反映したい値 |
+  - id: feature-flag-01
+    group: 機能フラグ
+    name: 機能フラグの定義
+    body: |-
+      - `config/defaults.yaml` の `features:` に boolean
+  - id: feature-flag-02
+    group: 機能フラグ
+    name: isFeatureEnabled
+    body: |-
+      - `app/(shared)/feature-flags.ts` の `isFeatureEnabled(name)` ラッパー経由で参照（将来 GrowthBook 等への置き換えを容易に）

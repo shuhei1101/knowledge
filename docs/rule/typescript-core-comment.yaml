@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: typescript-core-comment
+kind: rule
+name: TypeScript のコメント
+description: TypeScript で JSDoc の型タグを記載しない決まりと、コメントを記載する場所を定め、TypeScript のコードにコメントを記載するときに読む。
+tags:
+  - name: scope:typescript
+  - name: topic:コメント
+    main: true
+  - name: topic:コード
+  - name: topic:タグ
+  - name: tool:jsdoc
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-30'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: TypeScript
+      機械で判定できる規則は、eslint-plugin-jsdoc で止める。
+  - id: jsdoc-01
+    group: JSDoc
+    name: JSDoc の型タグを記載しない
+    body: |-
+      - JSDoc の `@param` `@returns` `@type` `@typedef` は書かない。
+  - id: comment-place-01
+    group: 記載する場所
+    name: コメントを記載する場所の表
+    body: |-
+      <!-- table: data -->
+
+      | 対象 | コメント |
+      | --- | --- |
+      | export する関数・型 | 直上に `/** ... */` 1 行で目的を書く |
+      | 意味が非自明な引数・フィールド | その上に `/** ... */`（IDE tooltip に出る） |
+      | union リテラルの各値の意味 | 型の上か各行に `/** ... */`（非自明なときだけ） |
+      | 複雑なロジック | インライン `//` で理由を書く |
+      | セクション区切り | `// ─── 名前 ───` |
+
+      <!-- /table -->

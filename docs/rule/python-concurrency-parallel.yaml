@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: python-concurrency-parallel
+kind: rule
+name: 並列処理
+description: GIL を前提にした並列処理の判断フロー、早見表、ProcessPoolExecutor の制約、共有状態の扱いを定め、並列処理を導入する手段を選ぶときに読む。
+tags:
+  - name: scope:python
+  - name: topic:concurrency
+    main: true
+  - name: topic:gil
+  - name: topic:ガード
+  - name: topic:フロー
+  - name: topic:制約
+  - name: topic:引数
+  - name: action:並列
+  - name: action:共有
+  - name: action:判断
+status: current
+visibility: internal
+rev: 5
+last_reviewed: '2026-10-30'
+sources:
+  - title: Python のドキュメント
+    url: https://docs.python.org/3/howto/free-threading-python.html
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      GIL 前提で設計する（フリースレッドビルド・subinterpreters を使うときは、Python のドキュメントと依存ライブラリで対応状況を確かめる）。
+  - id: decision-flow-01
+    group: 判断フロー
+    name: 並列処理の判断フロー
+    body: |-
+      ```
+      CPU バウンド？
+      ├── No (IO) → asyncio が第一候補。古い sync lib なら ThreadPoolExecutor
+      └── Yes
+          ├── 1 タスク 100ms 未満 → 並列化しない or numpy / numba で内部高速化
+          └── 1 タスク 100ms 以上 → ProcessPoolExecutor
+      ```
+  - id: quick-reference-01
+    group: 早見表
+    name: 並列処理の早見表
+    body: |-
+      | やりたいこと                | API                                                                        |
+      | --------------------------- | -------------------------------------------------------------------------- |
+      | 多数の HTTP 並列            | `asyncio` + httpx2.AsyncClient                                             |
+      | 同期 IO の並列（古い lib）  | `ThreadPoolExecutor`（GIL は IO 待ちで解放）                               |
+      | 重い計算の並列              | `ProcessPoolExecutor()`（`max_workers` 省略で CPU 数）                      |
+      | 既存 sync 関数を async から | `asyncio.to_thread`                                                        |
+      | 外部コマンド                | `subprocess.run(check=True)` / async なら `asyncio.create_subprocess_exec` |
+  - id: process-pool-constraint-01
+    group: ProcessPoolExecutor の制約
+    name: 引数と戻り値は pickle 可能
+    body: |-
+      - 引数 / 戻り値は pickle 可能であること（ラムダ / closure 不可）
+  - id: process-pool-constraint-02
+    group: ProcessPoolExecutor の制約
+    name: __main__ ガードは必須
+    body: |-
+      - `if __name__ == "__main__":` ガード必須（Windows / macOS、3.14 以降は Linux も）
+  - id: shared-state-01
+    group: 共有状態
+    name: 共有状態は避ける
+    body: |-
+      共有状態はバグの温床なので避け、Producer / Consumer でキューに流すのが基本。必要なら threading.Lock / multiprocessing.Queue 等。

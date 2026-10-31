@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: next-frontend-route-group
+kind: rule
+name: Route Groups
+description: Route Groups を 3 つに限る決まりと、(shared) に置くものを定め、Route Groups を増やしたくなったとき・ファイルを (shared) に置くかを決めるときに読む。
+tags:
+  - name: scope:next
+  - name: topic:フロントエンド
+  - name: topic:グループ
+  - name: topic:ファイル
+  - name: topic:フィーチャ
+  - name: topic:ルート
+  - name: topic:ルートグループ
+    main: true
+status: current
+visibility: internal
+rev: 4
+last_reviewed: '2026-10-24'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      3 グループのみ（増やすときは PR で議論）。
+  - id: route-groups-01
+    group: Route Groups
+    name: グループの用途表
+    body: |-
+      | Group | 用途 |
+      |---|---|
+      | `(authenticated)` | 認証必須エリア。`layout.tsx` で認証ガード + AppShell |
+      | `(auth)` | login / signup 等。ログイン済みなら `/home` に redirect |
+      | `(shared)` | 共通 UI / hook / provider / schema / logger / endpoints |
+  - id: shared-group-contents-01
+    group: "`(shared)/` に置くもの"
+    name: (shared) は複数フィーチャで使うものだけ
+    body: |-
+      複数フィーチャで使うもの限定（単一フィーチャ専用は `(authenticated)/{feature}/` へ）
