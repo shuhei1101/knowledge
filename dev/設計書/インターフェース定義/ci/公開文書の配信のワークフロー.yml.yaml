@@ -87,7 +87,8 @@ constraints:
   - item: ジョブの構成
     constraint: '成果物を作る `build` と、配信する `deploy`（`needs: build`、environment は `github-pages`）の 2 つ。`build` が失敗したら `deploy` は動かない'
   - item: YAML の検査
-    constraint: 成果物を上げる前に、出力のフォルダの `.yaml`・`.yml` のファイルを探し、当たったパスを全てログに出して `build` を失敗させる
+    constraint: 成果物を上げる前に、リポジトリの直下で `! find _site -type f \( -name '*.yaml' -o -name '*.yml' \) | grep .` を bash で実行する。当たったパスを 1 行ずつ標準出力へ出して終了コード 1、無ければ 0
+    notes: E2E テストはこのコマンドの行をそのまま子プロセスで起動する。ワークフローとテストのどちらかを変えるときは両方を揃える
   - item: 使う Action
     constraint: '`actions/checkout`・`actions/setup-node`（Node 24）・`astral-sh/setup-uv`・`actions/configure-pages`・`actions/upload-pages-artifact`・`actions/deploy-pages`'
 notes:
