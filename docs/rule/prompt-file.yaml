@@ -49,7 +49,7 @@ items:
     group: 配置
     name: prompts/{id}.yaml の配置
     body: |-
-      - `prompts/{id}.yaml` を平らに並べる
+      - `prompts/{id}.yaml` に置き、`prompts/` の下をサブフォルダで分けてよい。`{id}` は `prompts/` からのパスから `.yaml` を除いたもの（例: `prompts/node/reflection.yaml` の `id` は `node/reflection`）
   - id: layout-03
     group: 配置
     name: content/prompts/ に置く
@@ -165,7 +165,7 @@ items:
     body: |-
       ```yaml
       # yaml-language-server: $schema=https://raw.githubusercontent.com/shuhei1101/knowledge/{タグ}/schemas/prompt.schema.yaml
-      id: reflection
+      id: node/reflection
       name: 振り返りのノード
       kind: llm
       lang: en
@@ -258,17 +258,17 @@ items:
     name: lang の本文の有無
     body: |-
       - トップレベルの `lang` の本文がどの部品にもある
-  - id: inspection-05
+  - id: inspection-04
     group: 検査
     name: 言語の重なりの禁止
     body: |-
       - 同じ部品で `texts[].lang` が重ならない
-  - id: inspection-06
+  - id: inspection-05
     group: 検査
     name: example と type の整合
     body: |-
       - `example` が `type` に合う
-  - id: inspection-04
+  - id: inspection-06
     group: 検査
     name: スキーマと検査の参照先
     body: |-
@@ -283,7 +283,7 @@ items:
     group: スキーマの指し方
     name: 変えたいプロジェクトだけコピーする
     body: |-
-      - スキーマを変えたいプロジェクトだけ、スキーマをコピーしてモードラインでコピーを指す
+      - スキーマを変えたいプロジェクトだけ、`prompt.schema.yaml` と、`$ref` で指す `common.schema.yaml` をコピーし、モードラインでコピーを指す
   - id: update-01
     group: 更新
     name: 更新は MCP の書き込み
