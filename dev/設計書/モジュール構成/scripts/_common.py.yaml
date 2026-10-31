@@ -257,5 +257,122 @@ functions:
         condition: '`[]`'
         mock: なし
         expected: '1'
+  - name: key_line
+    title: キーの行
+    container: scripts/_common.py
+    usecase: 共通
+    summary: マッピングのキーの文書の行（1 始まり）を返す
+    kind: 関数
+    scope: public
+    args:
+      - name: node
+        title: マッピング
+        type: CommentedMap
+        required: true
+        description: 行の情報つきで読んだマッピング
+      - name: key
+        title: キー
+        type: object
+        required: true
+        description: 行を引くキー
+    returns:
+      type: int
+      description: '`lc.key(key)` の行に 1 を足した行'
+    process: 1. `lc.key(key)` の行に 1 を足して返す
+  - name: value_line
+    title: 値の行
+    container: scripts/_common.py
+    usecase: 共通
+    summary: マッピングの値の始まりの文書の行（1 始まり）を返す
+    kind: 関数
+    scope: public
+    args:
+      - name: node
+        title: マッピング
+        type: CommentedMap
+        required: true
+        description: 行の情報つきで読んだマッピング
+      - name: key
+        title: キー
+        type: object
+        required: true
+        description: 値の行を引くキー
+    returns:
+      type: int
+      description: '`lc.value(key)` の行に 1 を足した行'
+    process: 1. `lc.value(key)` の行に 1 を足して返す
+  - name: item_line
+    title: 要素の行
+    container: scripts/_common.py
+    usecase: 共通
+    summary: 配列の要素の始まりの文書の行（1 始まり）を返す
+    kind: 関数
+    scope: public
+    args:
+      - name: node
+        title: 配列
+        type: CommentedSeq
+        required: true
+        description: 行の情報つきで読んだ配列
+      - name: index
+        title: 添字
+        type: int
+        required: true
+        description: 行を引く要素の添字
+    returns:
+      type: int
+      description: '`lc.item(index)` の行に 1 を足した行'
+    process: 1. `lc.item(index)` の行に 1 を足して返す
+  - name: as_mapping
+    title: マッピングへの絞り込み
+    container: scripts/_common.py
+    usecase: 共通
+    summary: マッピングなら文字列のキーで引ける型で返す
+    kind: 関数
+    scope: public
+    args:
+      - name: value
+        title: 値
+        type: object
+        required: true
+        description: 読んだ YAML の値
+    returns:
+      type: Mapping[str, object] | None
+      description: マッピングでなければ None
+    process: 1. `Mapping` なら `Mapping[str, object]` として返し、そうでなければ None を返す
+  - name: as_list
+    title: 配列への絞り込み
+    container: scripts/_common.py
+    usecase: 共通
+    summary: 配列なら要素の型を object にして返す
+    kind: 関数
+    scope: public
+    args:
+      - name: value
+        title: 値
+        type: object
+        required: true
+        description: 読んだ YAML の値
+    returns:
+      type: list[object] | None
+      description: 配列でなければ None
+    process: 1. `list` なら `list[object]` として返し、そうでなければ None を返す
+  - name: load_safe
+    title: 行の情報なしの読み込み
+    container: scripts/_common.py
+    usecase: 共通
+    summary: 行の情報の要らない YAML（スキーマ・dev-docs.yaml）を安全な型だけで読む
+    kind: 関数
+    scope: public
+    args:
+      - name: text
+        title: YAML
+        type: str
+        required: true
+        description: 読む YAML の文字列
+    returns:
+      type: object
+      description: '`YAML(typ="safe")` で読んだ値'
+    process: 1. `YAML(typ="safe")` で読んで返す（読めない場合、ruamel.yaml の `YAMLError` をそのまま送出する）
 test_files:
   - tests/unit/scripts/test_common.py

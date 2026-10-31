@@ -223,7 +223,7 @@ functions:
       description: 本文の参照切れ（文書の並び）の後に `related` の参照切れ
     process: |-
       1. 文書自身の `id` と `items[].id` で索引を上書きした索引を作る（自分を指す参照は標準入力の内容で確かめる）
-      2. 文字列の項目ごとに `ID_LINK` の一致を見る（文字列の項目の列挙）
+      2. 文字列の項目ごとに `ID_LINK` の一致を見る（文字列の項目の列挙）。`FENCE` の囲み（バッククォートの数は問わない）の中の行は見ない（記述例の中の架空の参照を検査しない）
          - 文書が索引に無い場合、`{行} 行目: 参照先の文書 `{文書の ID}` がありません`・`実在する文書の ID を指す` にする
          - 項目を指し、その項目が無い場合、`{行} 行目: 参照先の項目 `{文書の ID}#{項目の ID}` がありません`・`実在する項目の ID を指す` にする
          - 行は、本文の 1 行目の行に、一致の前にある改行の数を足した行
@@ -241,6 +241,12 @@ functions:
         condition: '`items[0].body` の 3 行目に `[B](id:missing)`、`items[1].body` に `[C](id:a#nope)`、`related[0].to: gone`'
         mock: なし
         expected: 3 件で、`path` が `items[0].body`・`items[1].body`・`related[0].to` の順。`items[0].body` の行が本文の 1 行目 + 2
+      - name: test_check_references_when_in_code_block
+        case: 正常
+        summary: コードブロックの中の参照は見ない
+        condition: 本文の ```yaml の囲みの中に `[B](id:missing)`、囲みの後に `[C](id:gone)`。索引は空
+        mock: なし
+        expected: 1 件で、`rule` が `gone` を含み、行が `[C](id:gone)` の行
   - name: mermaid_blocks
     title: mermaid のブロックの取り出し
     kind: 関数
