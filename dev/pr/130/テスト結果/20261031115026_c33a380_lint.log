@@ -1,0 +1,175 @@
+# commit: c33a380
+# 検査のスクリプト: /tmp/claude-1000/-mnt-c-Users-shuhe-repo-knowledge/57197cb0-b8af-4640-90b0-45b58fc2da95/scratchpad/check_prompt.py・/tmp/claude-1000/-mnt-c-Users-shuhe-repo-knowledge/57197cb0-b8af-4640-90b0-45b58fc2da95/scratchpad/check_rules.py（以下に全文を載せる）
+
+$ python3 -c "import importlib.metadata as m; print(m.version(\"jsonschema\"))"
+4.26.0
+
+$ python3 check_prompt.py . /mnt/c/Users/shuhe/repo/knowledge/tmp/mcpベストプラクティス検討/.mindstella/docs/A-42.md
+[PASS] 例 1 (kind: hook): valid (期待 valid)
+[PASS] 例 2 (kind: llm): valid (期待 valid)
+[PASS] 例 2 から parts[0].role を省いた: invalid (期待 invalid)
+    parts/0: 'role' is a required property
+[PASS] 例 1 のトップレベルに知らないキーを追加した: invalid (期待 invalid)
+    (root): 'unknown_key' does not match any of the regexes: '^x-'
+[PASS] 例 1 の入れ子の変数の定義に知らないキーを追加した: invalid (期待 invalid)
+    vars/sources/items/properties/id: 'unknown_key' does not match any of the regexes: '^x-'
+[PASS] 例 1 の各階層に x- のキーを追加した: valid (期待 valid)
+[PASS] 例 1 (kind: hook) に output を追加した: invalid (期待 invalid)
+    (root): {'id': 'session-context', 'name': 'SessionStart の配信元の一覧', 'kind': 'hook', 'lang': 'ja', 'description': '作業場所から使える配信元と警告を、セッションの始めに伝える', 'tags': ['sessionstart', '配信元'], 'vars': {'sources': {'type': 'array', 're
+[PASS] 例 1 の type: array から items を省いた: invalid (期待 invalid)
+    vars/warnings: 'items' is a required property
+[PASS] 例 2 の type: object から properties を省いた: invalid (期待 invalid)
+    vars/character: 'properties' is a required property
+exit=0
+
+$ python3 check_rules.py .
+[PASS] rule.schema.yaml: docs/rule/prompt-file.yaml
+[PASS] rule.schema.yaml: docs/rule/claude-mcp.yaml
+[PASS] rule.schema.yaml: docs/rule/python-llm-prompt-loader.yaml
+[PASS] rule.schema.yaml: docs/rule/claude-hook.yaml
+[PASS] prompt.schema.yaml: prompt-file.yaml の structure-06 の例
+[PASS] prompt.schema.yaml: prompt-file.yaml の structure-07 の例
+[PASS] rules.yaml prompt-file の paths: content/prompts/session-context.yaml → ['**/prompts/**']
+[PASS] rules.yaml prompt-file の paths: content/prompts/node/reflection.yaml → ['**/prompts/**']
+[PASS] rules.yaml prompt-file の paths: plugins/dev-docs/content/prompts/session-context.yaml → ['**/prompts/**']
+exit=0
+
+----- check_prompt.py -----
+"""A-42 の例 1・例 2 と、落ちるべき例を prompt.schema.yaml で検査する。"""
+import copy
+import re
+import sys
+from pathlib import Path
+
+import yaml
+from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
+
+repo = Path(sys.argv[1])
+a42 = Path(sys.argv[2]).read_text(encoding="utf-8")
+
+schemas = {p.name: yaml.safe_load(p.read_text(encoding="utf-8")) for p in (repo / "schemas").glob("*.schema.yaml")}
+registry = Registry().with_resources(
+    (name, Resource.from_contents(body)) for name, body in schemas.items()
+)
+schema = schemas["prompt.schema.yaml"]
+Draft202012Validator.check_schema(schema)
+validator = Draft202012Validator(schema, registry=registry)
+
+blocks = re.findall(r"```yaml\n(.*?)```", a42, re.S)
+ex1, ex2 = (yaml.safe_load(b) for b in blocks[:2])
+
+
+def run(label, doc, expect_ok):
+    errors = sorted(validator.iter_errors(doc), key=lambda e: list(e.absolute_path))
+    ok = not errors
+    print(f"[{'PASS' if ok == expect_ok else 'FAIL'}] {label}: {'valid' if ok else 'invalid'} (期待 {'valid' if expect_ok else 'invalid'})")
+    for e in errors:
+        print(f"    {'/'.join(map(str, e.absolute_path)) or '(root)'}: {e.message}")
+    return ok == expect_ok
+
+
+results = [
+    run("例 1 (kind: hook)", ex1, True),
+    run("例 2 (kind: llm)", ex2, True),
+]
+
+no_role = copy.deepcopy(ex2)
+del no_role["parts"][0]["role"]
+results.append(run("例 2 から parts[0].role を省いた", no_role, False))
+
+unknown_top = copy.deepcopy(ex1)
+unknown_top["unknown_key"] = 1
+results.append(run("例 1 のトップレベルに知らないキーを追加した", unknown_top, False))
+
+unknown_nested = copy.deepcopy(ex1)
+unknown_nested["vars"]["sources"]["items"]["properties"]["id"]["unknown_key"] = 1
+results.append(run("例 1 の入れ子の変数の定義に知らないキーを追加した", unknown_nested, False))
+
+x_keys = copy.deepcopy(ex1)
+x_keys["x-cache"] = True
+x_keys["vars"]["sources"]["items"]["properties"]["id"]["x-note"] = "a"
+x_keys["parts"][0]["x-cache"] = True
+x_keys["parts"][0]["texts"][0]["x-reviewed"] = True
+results.append(run("例 1 の各階層に x- のキーを追加した", x_keys, True))
+
+hook_output = copy.deepcopy(ex1)
+hook_output["output"] = "x"
+results.append(run("例 1 (kind: hook) に output を追加した", hook_output, False))
+
+array_no_items = copy.deepcopy(ex1)
+del array_no_items["vars"]["warnings"]["items"]
+results.append(run("例 1 の type: array から items を省いた", array_no_items, False))
+
+object_no_props = copy.deepcopy(ex2)
+del object_no_props["vars"]["character"]["properties"]
+results.append(run("例 2 の type: object から properties を省いた", object_no_props, False))
+
+sys.exit(0 if all(results) else 1)
+----- check_rules.py -----
+"""変更した規約を rule.schema.yaml で検査し、prompt-file.yaml の例を prompt.schema.yaml で検査し、rules.yaml の paths の当たりを確かめる。"""
+import re
+import sys
+from pathlib import Path
+
+import yaml
+from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
+
+repo = Path(sys.argv[1])
+schemas = {p.name: yaml.safe_load(p.read_text(encoding="utf-8")) for p in (repo / "schemas").glob("*.schema.yaml")}
+registry = Registry().with_resources((n, Resource.from_contents(b)) for n, b in schemas.items())
+rule_v = Draft202012Validator(schemas["rule.schema.yaml"], registry=registry)
+prompt_v = Draft202012Validator(schemas["prompt.schema.yaml"], registry=registry)
+
+ok = True
+for name in ["prompt-file", "claude-mcp", "python-llm-prompt-loader", "claude-hook"]:
+    doc = yaml.safe_load((repo / "docs/rule" / f"{name}.yaml").read_text(encoding="utf-8"))
+    errors = list(rule_v.iter_errors(doc))
+    ids = [i["id"] for i in doc["items"]]
+    dup = sorted({i for i in ids if ids.count(i) > 1})
+    print(f"[{'PASS' if not errors and not dup else 'FAIL'}] rule.schema.yaml: docs/rule/{name}.yaml" + (f" 重複 ID {dup}" if dup else ""))
+    for e in errors:
+        print(f"    {'/'.join(map(str, e.absolute_path))}: {e.message}")
+    ok &= not errors and not dup
+
+doc = yaml.safe_load((repo / "docs/rule/prompt-file.yaml").read_text(encoding="utf-8"))
+for item in doc["items"]:
+    for block in re.findall(r"```yaml\n(.*?)```", item["body"], re.S):
+        errors = list(prompt_v.iter_errors(yaml.safe_load(block)))
+        print(f"[{'PASS' if not errors else 'FAIL'}] prompt.schema.yaml: prompt-file.yaml の {item['id']} の例")
+        for e in errors:
+            print(f"    {'/'.join(map(str, e.absolute_path))}: {e.message}")
+        ok &= not errors
+
+
+def glob_to_re(pattern):
+    """rules.yaml の glob（** はフォルダをまたぐ）を正規表現にする。"""
+    out = ""
+    i = 0
+    while i < len(pattern):
+        if pattern.startswith("**/", i):
+            out += "(?:.*/)?"
+            i += 3
+        elif pattern.startswith("**", i):
+            out += ".*"
+            i += 2
+        elif pattern[i] == "*":
+            out += "[^/]*"
+            i += 1
+        else:
+            out += re.escape(pattern[i])
+            i += 1
+    return re.compile(out + r"\Z")
+
+
+rules = yaml.safe_load((repo / "rules.yaml").read_text(encoding="utf-8"))
+entries = rules["rules"] if isinstance(rules, dict) else rules
+paths = next(r["paths"] for r in entries if r["rule"] == "docs/rule/prompt-file.yaml")
+for target in ["content/prompts/session-context.yaml", "content/prompts/node/reflection.yaml",
+               "plugins/dev-docs/content/prompts/session-context.yaml"]:
+    hit = [p for p in paths if glob_to_re(p).match(target)]
+    print(f"[{'PASS' if hit else 'FAIL'}] rules.yaml prompt-file の paths: {target} → {hit}")
+    ok &= bool(hit)
+
+sys.exit(0 if ok else 1)
