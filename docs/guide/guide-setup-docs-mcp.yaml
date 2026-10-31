@@ -86,13 +86,13 @@ items:
 
       ```yaml
       sources:
-        - id: knowledge
-          config: {knowledge のクローンの絶対パス}/dev-docs.yaml
+        - config: {knowledge のクローンの絶対パス}/dev-docs.yaml
           scope:
             read: ["{作業場所を置くフォルダ}/**"]
             write: ["{knowledge のクローンの絶対パス}"]
       ```
 
+      配信元の ID は、knowledge の `dev-docs.yaml` の `name`（`knowledge`）になる。
       worktree（`.claude/worktrees/*`）の中の作業場所はクローンにいるものとして判定するので、`scope.write` に worktree を並べなくてよい。
       `scope.read` に当たらない作業場所からは、knowledge の文書を読めない。
   - id: step-screen-01
@@ -118,7 +118,7 @@ items:
       スキーマと検査のスクリプト（`scripts/`）に通らない内容は、書き込まずに `isError` で返る。
   - id: reflection-01
     group: 反映
-    name: 反映は即時
+    name: 反映のタイミング
     body: |-
       - 端末の設定の `sources[]`: `即時`（`/dev-docs:setup` が最後に管理の MCP の `reload` を呼ぶ）
       - knowledge の `dev-docs.yaml`・スキーマ・`scripts/`: 管理の MCP の `reload` を呼ぶまで、変える前の設定で配信する（dev-docs の [配信元を配信する](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E9%85%8D%E4%BF%A1%E5%85%83%E3%82%92%E9%85%8D%E4%BF%A1%E3%81%99%E3%82%8B.md) の「設定を変えたら確かめる」）
