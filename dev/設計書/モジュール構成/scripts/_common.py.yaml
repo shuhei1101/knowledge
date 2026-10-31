@@ -35,6 +35,17 @@ data_models:
       - name: message
         type: str
         description: 理由の 1 行（ruamel.yaml の `problem` か `最上位がマッピングではありません`）
+  - name: ConfigError
+    title: 読めない dev-docs.yaml
+    container: scripts/_common.py
+    usecase: 共通
+    role: 例外
+    summary: '`dev-docs.yaml` が無い・読めない・`documents` が配列でない'
+    inherits: Exception
+    properties:
+      - name: message
+        type: str
+        description: 標準エラーへ出す理由の 1 行
 constants:
   - name: LIMIT_SEC
     title: 処理時間の上限
@@ -51,6 +62,12 @@ constants:
     summary: '`read_texts` が並列に読むスレッドの数'
     value: '16'
     reason: '`/mnt/c` の 259 件を 1 件ずつ読むと 3.4 秒、16 のスレッドで 0.2 秒（2026-10-31 に測った値）'
+  - name: CONFIG
+    title: 配信の設定のファイル
+    container: scripts/_common.py
+    usecase: 共通
+    summary: リポジトリの直下の dev-docs の配信の設定
+    value: '"dev-docs.yaml"'
 functions:
   - name: load_document
     title: 文書の読み込み
@@ -374,5 +391,109 @@ functions:
       type: object
       description: '`YAML(typ="safe")` で読んだ値'
     process: 1. `YAML(typ="safe")` で読んで返す（読めない場合、ruamel.yaml の `YAMLError` をそのまま送出する）
+  - name: load_config
+    title: dev-docs.yaml の読み込み
+    kind: 関数
+    container: scripts/_common.py
+    usecase: 共通
+    role: 読み込み
+    scope: public
+    summary: '`dev-docs.yaml` の `documents[]` の行を読む'
+    description: check_all.py から移した。「全ての文書の検査」と「Pages の成果物の作成」が使う
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`dev-docs.yaml` を持つフォルダ'
+    returns:
+      type: list[Mapping[str, Any]]
+      description: '`documents[]` の行'
+    process: |-
+      1. `{root}/dev-docs.yaml` が無い場合、`dev-docs.yaml がありません` の読めない dev-docs.yaml を送出する
+      2. 文書として読む（文書の読み込み）
+         - 読めない文書の場合、`dev-docs.yaml の {行} 行目が読めません: {理由}` の読めない dev-docs.yaml を送出する
+      3. `documents` がマッピングの配列でない場合、`dev-docs.yaml に documents の配列がありません` の読めない dev-docs.yaml を送出する
+      4. `documents` を返す
+    exceptions:
+      - name: ConfigError
+        condition: '`dev-docs.yaml` が無い'
+        message: dev-docs.yaml がありません
+      - name: ConfigError
+        condition: YAML として読めない
+        message: 'dev-docs.yaml の {行} 行目が読めません: {理由}'
+      - name: ConfigError
+        condition: '`documents` がマッピングの配列でない'
+        message: dev-docs.yaml に documents の配列がありません
+    unit_tests:
+      - name: test_load_config
+        case: 正常
+        summary: 行を読む
+        condition: '`documents` に 2 行を持つ `dev-docs.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: 2 行
+      - name: test_load_config_when_missing
+        case: 異常
+        summary: ファイルが無い
+        condition: 空の一時フォルダ
+        mock: なし（一時ディレクトリ）
+        expected: '`ConfigError` で、メッセージに `dev-docs.yaml がありません`'
+        exception: '`dev-docs.yaml` が無い'
+      - name: test_load_config_when_broken
+        case: 異常
+        summary: YAML として読めない
+        condition: 括弧の閉じていない `dev-docs.yaml`
+        mock: なし（一時ディレクトリ）
+        expected: '`ConfigError` で、メッセージに行'
+        exception: YAML として読めない
+      - name: test_load_config_when_no_documents
+        case: 異常
+        summary: documents が無い
+        condition: '`name: knowledge` だけの `dev-docs.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: '`ConfigError`'
+        exception: '`documents` がマッピングの配列でない'
+    callees:
+      - MOD-72-2#functions[load_document]
+  - name: list_row_files
+    title: documents の行のファイルの列挙
+    kind: 関数
+    container: scripts/_common.py
+    usecase: 共通
+    role: 読み込み
+    scope: public
+    summary: '`documents[]` の 1 行の `paths`・`exclude` に当たるファイルを、リポジトリの直下からのパスで返す'
+    description: check_all.py の検査する文書の列挙から、行のパターンでファイルを引く処理を切り出した
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: glob の起点
+      - name: row
+        title: documents の行
+        type: Mapping[str, Any]
+        required: true
+        description: '`load_config` が返した行 1 つ'
+    returns:
+      type: list[PurePosixPath]
+      description: パスの順のファイル。`enabled` が `false` の行は空
+    process: |-
+      1. `enabled` が `false` の行は空を返す
+      2. 行の `paths` の各パターンで `root.glob(パターン)` のファイルを引き、ファイル名が `exclude` のどれかに `PurePosixPath.full_match` で当たるものを除く（dev-docs の `DocumentTable.matches` と同じ判定）
+      3. 重なりを除き、パスの順に並べて返す
+    unit_tests:
+      - name: test_list_row_files
+        case: 正常
+        summary: 行のパターンで引く
+        condition: '`paths: ["docs/rule/*.yaml"]`・`exclude: ["index.yaml"]` の行と、`docs/rule/` の文書 2 件と `index.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: 文書 2 件のパスがパスの順に並ぶ
+      - name: test_list_row_files_when_disabled
+        case: 正常
+        summary: 無効な行
+        condition: '`enabled: false` の行と、当たる文書 1 件'
+        mock: なし（一時ディレクトリ）
+        expected: 空
 test_files:
   - tests/unit/scripts/test_common.py

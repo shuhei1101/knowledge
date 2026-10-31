@@ -19,24 +19,7 @@ data_models:
       - name: checks
         type: bool
         description: 行の `validators` に `knowledge-checks` を持つか
-  - name: ConfigError
-    title: 読めない dev-docs.yaml
-    container: scripts/check_all.py
-    usecase: 全ての文書の検査
-    role: 例外
-    summary: '`dev-docs.yaml` が無い・読めない・`documents` が配列でない'
-    inherits: Exception
-    properties:
-      - name: message
-        type: str
-        description: 標準エラーへ出す理由の 1 行
 constants:
-  - name: CONFIG
-    title: 配信の設定のファイル
-    container: scripts/check_all.py
-    usecase: 全ての文書の検査
-    summary: リポジトリの直下の dev-docs の配信の設定
-    value: '"dev-docs.yaml"'
   - name: CHECKS_ID
     title: 文書の違反の検査の ID
     container: scripts/check_all.py
@@ -100,73 +83,11 @@ functions:
         expected: '`2` を返し、標準エラーに `dev-docs.yaml` が出る'
     callees:
       - MOD-72-3#functions[find_maid]
+      - MOD-72-2#functions[load_config]
       - MOD-72-2#functions[read_texts]
       - MOD-72-4#functions[build_id_index]
     refs:
       - IF-72-3#
-  - name: load_config
-    title: dev-docs.yaml の読み込み
-    kind: 関数
-    container: scripts/check_all.py
-    usecase: 全ての文書の検査
-    role: 読み込み
-    scope: public
-    summary: '`dev-docs.yaml` の `documents[]` の行を読む'
-    args:
-      - name: root
-        title: リポジトリの直下
-        type: Path
-        required: true
-        description: '`dev-docs.yaml` を持つフォルダ'
-    returns:
-      type: list[Mapping[str, Any]]
-      description: '`documents[]` の行'
-    process: |-
-      1. `{root}/dev-docs.yaml` が無い場合、`dev-docs.yaml がありません` の読めない dev-docs.yaml を送出する
-      2. 文書として読む（文書の読み込み）
-         - 読めない文書の場合、`dev-docs.yaml の {行} 行目が読めません: {理由}` の読めない dev-docs.yaml を送出する
-      3. `documents` がマッピングの配列でない場合、`dev-docs.yaml に documents の配列がありません` の読めない dev-docs.yaml を送出する
-      4. `documents` を返す
-    exceptions:
-      - name: ConfigError
-        condition: '`dev-docs.yaml` が無い'
-        message: dev-docs.yaml がありません
-      - name: ConfigError
-        condition: YAML として読めない
-        message: 'dev-docs.yaml の {行} 行目が読めません: {理由}'
-      - name: ConfigError
-        condition: '`documents` がマッピングの配列でない'
-        message: dev-docs.yaml に documents の配列がありません
-    unit_tests:
-      - name: test_load_config
-        case: 正常
-        summary: 行を読む
-        condition: '`documents` に 2 行を持つ `dev-docs.yaml`'
-        mock: なし（一時ディレクトリ）
-        expected: 2 行
-      - name: test_load_config_when_missing
-        case: 異常
-        summary: ファイルが無い
-        condition: 空の一時フォルダ
-        mock: なし（一時ディレクトリ）
-        expected: '`ConfigError` で、メッセージに `dev-docs.yaml がありません`'
-        exception: '`dev-docs.yaml` が無い'
-      - name: test_load_config_when_broken
-        case: 異常
-        summary: YAML として読めない
-        condition: 括弧の閉じていない `dev-docs.yaml`
-        mock: なし（一時ディレクトリ）
-        expected: '`ConfigError` で、メッセージに行'
-        exception: YAML として読めない
-      - name: test_load_config_when_no_documents
-        case: 異常
-        summary: documents が無い
-        condition: '`name: knowledge` だけの `dev-docs.yaml`'
-        mock: なし（一時ディレクトリ）
-        expected: '`ConfigError`'
-        exception: '`documents` がマッピングの配列でない'
-    callees:
-      - MOD-72-2#functions[load_document]
   - name: list_targets
     title: 検査する文書の列挙
     kind: 関数
@@ -190,7 +111,7 @@ functions:
       description: パスの順の検査する文書。同じファイルは最初に当たった行で 1 件
     process: |-
       1. `enabled` が `false` の行と、`schema` を持たない行を飛ばす
-      2. 行の `paths` の各パターンで `root.glob(パターン)` のファイルを引き、ファイル名が `exclude` のどれかに `PurePosixPath.full_match` で当たるものを除く（dev-docs の `DocumentTable.matches` と同じ判定）
+      2. 行のファイルを引く（documents の行のファイルの列挙）
       3. `validators` に `CHECKS_ID` を持つ行の文書は、文書の違反の検査も当てる
       4. パスの順に並べて返す
     unit_tests:
@@ -206,6 +127,8 @@ functions:
         condition: '`exclude: ["index.yaml"]` の行に `index.yaml` と文書 1 件、`enabled: false` の行に文書 1 件'
         mock: なし（一時ディレクトリ）
         expected: 文書 1 件だけ
+    callees:
+      - MOD-72-2#functions[list_row_files]
   - name: build_validators
     title: スキーマの検査器の作成
     kind: 関数

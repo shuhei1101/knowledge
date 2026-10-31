@@ -1,0 +1,464 @@
+id: "MOD-137-1"
+title: "検査と変換のスクリプト / scripts / build_pages.py"
+lead: CI と手元から呼ぶ「Pages の成果物の作成」。公開の文書を変換のスクリプトで Markdown にし、参照をリンクに書き換えて mdmark の `build` で 1 枚の HTML にまとめる（IF-137-1）。
+data_models:
+  - name: Source
+    title: 公開の候補の文書
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    role: DTO
+    summary: '`documents[]` の変換の行から引いた文書 1 件と、参照の書き換えに使う値'
+    description: '`dataclass(frozen=True)`。'
+    properties:
+      - name: id
+        type: str
+        description: 文書の `id`
+      - name: path
+        type: PurePosixPath
+        description: リポジトリの直下からのパス
+      - name: public
+        type: bool
+        description: '`visibility` が `public` か'
+      - name: items
+        type: tuple[tuple[str, str, int], ...]
+        description: '`overview` を除いた項目の（`id`、`name`、見出しの深さ）。文書の並び。深さは `group` を ` > ` で区切った数 + 2（最大 6。変換のスクリプトの `render_items` と同じ）'
+      - name: run
+        type: tuple[str, ...]
+        description: 行の `converter` が指す `converters[].run`
+  - name: BuildError
+    title: 作れない成果物
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    role: 例外
+    summary: 変換・参照の書き換え・mdmark の `build` のどれかが失敗した
+    inherits: Exception
+    properties:
+      - name: message
+        type: str
+        description: 標準エラーへ出す理由。失敗した子プロセスの標準エラーを続ける
+constants:
+  - name: MDMARK_TAG
+    title: mdmark のタグ
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    summary: '`npx` で呼ぶ mdmark のバージョン。外部ライブラリ『mdmark』の採用バージョン（LIB-137-1）と揃える'
+    value: '"v0.8.0"'
+  - name: MASTER_BLOB_URL
+    title: master のファイルの URL
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    summary: 公開しない文書への参照のリンクの頭
+    value: '"https://github.com/shuhei1101/knowledge/blob/master/"'
+  - name: OUTPUT_HTML
+    title: 出力の HTML の名前
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    summary: Pages のトップになる HTML
+    value: '"index.html"'
+functions:
+  - name: main
+    title: Pages の成果物の作成の入口
+    kind: 関数
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    role: 入口
+    scope: public
+    summary: 公開の文書を 1 枚の HTML にして出力のフォルダに置き、終了コードで合否を返す
+    args:
+      - name: argv
+        title: 引数
+        type: Sequence[str] | None
+        required: false
+        default: None
+        description: コマンドの引数。`None` は `sys.argv[1:]`。`--out {出力のフォルダ}` が必須
+    returns:
+      type: int
+      description: 終了コード。`0` = 作った、`1` = 作れない成果物か想定していない例外、`2` = 作り始めなかった
+    process: |-
+      1. argparse で `--out` を読み、標準出力と標準エラーを UTF-8 にする
+      2. 作業ディレクトリの `documents[]` を読み（dev-docs.yaml の読み込み）、`converters[]` を読む（変換のコマンドの読み込み）
+         - 読めない dev-docs.yaml の場合、標準エラーへ理由を出し `2` を返す
+      3. 公開の候補の文書を引く（公開の候補の文書の列挙）
+         - `public` が無い場合、標準エラーへ `visibility: public の文書がありません` を出し `2` を返す
+      4. 出力のフォルダを空にして作り直す
+      5. 一時フォルダで、公開の文書を全て変換し（文書 1 件の変換）、文書ごとに項目の見出しの ID を引く（項目の見出しの ID の対応）
+      6. 参照を書き換えて（参照の書き換え）、`{一時フォルダ}/{id}.md` に置く
+      7. mdmark の設定を書き（mdmark の設定の書き出し）、`build` を呼ぶ（mdmark の build の呼び出し）。返った標準出力を出し、書かれた HTML を `{--out}/index.html` にコピーして `0` を返す
+         - 作れない成果物の場合、標準エラーへ理由を出し `1` を返す（出力のフォルダは空のまま）
+         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返す
+    unit_tests:
+      - name: test_main
+        case: 正常
+        summary: 公開の文書だけをまとめる
+        condition: '`visibility: public` の文書 2 件と `internal` の文書 1 件を持つ一時フォルダ。出力のフォルダに古いファイルを 1 つ置く'
+        mock: 文書 1 件の変換を「`# {id}`」を返すものに、mdmark の build の呼び出しを設定の `build.out` に HTML を書くものに差し替える
+        expected: '`0` を返し、出力のフォルダには `index.html` だけがある。mdmark に渡した `build.include` は公開の 2 件'
+      - name: test_main_when_build_fails
+        case: 正常
+        summary: 作れない成果物
+        condition: 正常と同じ一時フォルダ。出力のフォルダに前の `index.html` を置く
+        mock: 文書 1 件の変換を `BuildError` を送出するものに差し替える
+        expected: '`1` を返し、標準エラーに例外の理由が出て、出力のフォルダが空'
+      - name: test_main_when_no_public
+        case: 正常
+        summary: 公開の文書が無い
+        condition: '`internal` の文書だけを持つ一時フォルダ'
+        mock: なし
+        expected: '`2` を返し、標準エラーに `visibility: public` が出る'
+      - name: test_main_when_config_missing
+        case: 正常
+        summary: dev-docs.yaml が無い
+        condition: '`dev-docs.yaml` を持たない一時フォルダ'
+        mock: なし
+        expected: '`2` を返し、標準エラーに `dev-docs.yaml` が出る'
+    callees:
+      - MOD-72-2#functions[load_config]
+    refs:
+      - IF-137-1#
+  - name: load_converters
+    title: 変換のコマンドの読み込み
+    kind: 関数
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    role: 読み込み
+    scope: public
+    summary: '`dev-docs.yaml` の `converters[]` を `id` → `run` にする'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`dev-docs.yaml` を持つフォルダ'
+    returns:
+      type: dict[str, tuple[str, ...]]
+      description: 変換の `id` → `run`。`run` が文字列の配列でない行は入れない
+    process: |-
+      1. `{root}/dev-docs.yaml` を文書として読む（文書の読み込み）
+         - 読めない文書の場合、`dev-docs.yaml の {行} 行目が読めません: {理由}` の読めない dev-docs.yaml を送出する
+      2. `converters` の各行の `id` と `run` を返す
+    exceptions:
+      - name: ConfigError
+        condition: YAML として読めない
+        message: 'dev-docs.yaml の {行} 行目が読めません: {理由}'
+    unit_tests:
+      - name: test_load_converters
+        case: 正常
+        summary: 変換のコマンドを引く
+        condition: '`converters` に `knowledge-markdown`（`run: [uv, run, ...]`）を持つ `dev-docs.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: '`{"knowledge-markdown": ("uv", "run", ...)}`'
+    callees:
+      - MOD-72-2#functions[load_document]
+  - name: list_sources
+    title: 公開の候補の文書の列挙
+    kind: 関数
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    role: 読み込み
+    scope: public
+    summary: '`converter` を持つ `documents[]` の行の文書を読み、参照の書き換えに使う値と並べて返す'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: glob の起点
+      - name: rows
+        title: documents の行
+        type: Sequence[Mapping[str, Any]]
+        required: true
+        description: '`load_config` が返した行'
+      - name: converters
+        title: 変換のコマンド
+        type: Mapping[str, tuple[str, ...]]
+        required: true
+        description: '`load_converters` が返した値'
+    returns:
+      type: list[Source]
+      description: '`documents[]` の行の順、行の中はパスの順の文書。公開しない文書も含む（参照先のパスを引くため）'
+    process: |-
+      1. `records` を持つ行と、`converter` が `converters` に無い行を飛ばす
+      2. 行のファイルを引き（documents の行のファイルの列挙）、`YAML(typ="safe")` で読む（YAML の安全な読み込み）
+         - 読めない、`id` が文字列でない場合、`{パス}: 文書の id を読めません` の作れない成果物を送出する
+      3. `visibility` が `public` か、`overview` を除いた `items[]` の `id`・`name`・見出しの深さと、行の `run` を並べる
+      4. 同じパスは最初に当たった行で 1 件にして返す
+    exceptions:
+      - name: BuildError
+        condition: 文書が YAML として読めないか、`id` が文字列でない
+        message: '{パス}: 文書の id を読めません'
+    unit_tests:
+      - name: test_list_sources
+        case: 正常
+        summary: 変換の行の文書を読む
+        condition: '`docs/guide/*.yaml`（`converter: knowledge-markdown`）の行に public と internal の文書を 1 件ずつ、`records: files` の行に `scripts/files.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: 2 件で、`public` が `True` と `False`。`items` に `overview` が入らない
+      - name: test_list_sources_when_broken
+        case: 異常
+        summary: 読めない文書
+        condition: 括弧の閉じていない文書
+        mock: なし（一時ディレクトリ）
+        expected: '`BuildError` で、メッセージに文書のパス'
+        exception: 文書が YAML として読めないか、`id` が文字列でない
+    callees:
+      - MOD-72-2#functions[list_row_files]
+      - MOD-72-2#functions[load_safe]
+  - name: convert_source
+    title: 文書 1 件の変換
+    kind: 関数
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    role: サービス
+    scope: public
+    summary: 文書の YAML を変換のコマンドの標準入力へ渡し、標準出力の Markdown を返す
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: 子プロセスの作業ディレクトリ
+      - name: source
+        title: 文書
+        type: Source
+        required: true
+        description: 公開の文書 1 件
+    returns:
+      type: str
+      description: 変換のコマンドの標準出力
+    process: |-
+      1. `{root}/{source.path}` を UTF-8 で読み、`subprocess.run(source.run, input=..., cwd=root, capture_output=True, encoding="utf-8", timeout=LIMIT_SEC)` で起動する
+         - コマンドが無い場合、`{パス}: 変換のコマンド {先頭} がありません` の作れない成果物を送出する
+         - `TimeoutExpired` の場合、`{パス}: 変換が {LIMIT_SEC} 秒で終わりませんでした` の作れない成果物を送出する
+         - 終了コードが 0 でない場合、`{パス}: 変換のスクリプトが終了コード {コード} で失敗しました` の後に標準エラーを続けた作れない成果物を送出する
+      2. 標準出力を返す
+    exceptions:
+      - name: BuildError
+        condition: 変換のコマンドが無い
+        message: '{パス}: 変換のコマンド {先頭} がありません'
+      - name: BuildError
+        condition: '`LIMIT_SEC` 秒で終わらない'
+        message: '{パス}: 変換が {LIMIT_SEC} 秒で終わりませんでした'
+      - name: BuildError
+        condition: 終了コードが 0 でない
+        message: '{パス}: 変換のスクリプトが終了コード {コード} で失敗しました（続けて標準エラー）'
+    unit_tests:
+      - name: test_convert_source
+        case: 正常
+        summary: 標準出力を返す
+        condition: '`run` が標準入力をそのまま出す Python の 1 行のコマンド'
+        mock: なし（一時ディレクトリ）
+        expected: 文書の YAML と同じ文字列
+      - name: test_convert_source_when_failed
+        case: 異常
+        summary: 変換が失敗する
+        condition: '`run` が標準エラーに `broken` を出して終了コード 1 で終わるコマンド'
+        mock: なし（一時ディレクトリ）
+        expected: '`BuildError` で、メッセージに文書のパス・`終了コード 1`・`broken`'
+        exception: 終了コードが 0 でない
+      - name: test_convert_source_when_command_missing
+        case: 異常
+        summary: コマンドが無い
+        condition: '`run` が PATH に無いコマンド'
+        mock: なし（一時ディレクトリ）
+        expected: '`BuildError` で、メッセージにコマンドの名前'
+        exception: 変換のコマンドが無い
+  - name: github_slug
+    title: 見出しの ID の作成
+    kind: 関数
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    role: 変換
+    scope: public
+    summary: 見出しの文字から、mdmark と同じ GitHub の規則の ID を作る
+    args:
+      - name: text
+        title: 見出しの文字
+        type: str
+        required: true
+        description: 行頭の `#` と空白を除いた文字
+    returns:
+      type: str
+      description: 小文字にし、文字・数字・`-`・`_`・空白のほかを除き、空白を `-` にした ID
+    process: |-
+      1. 前後の空白を除いて小文字にする
+      2. `[^\w\- ]` に当たる文字を除き（Unicode の文字は残す）、空白を 1 つずつ `-` にする
+    unit_tests:
+      - name: test_github_slug
+        case: 正常
+        summary: mdmark の例と同じ ID
+        condition: '`Hello, World!`・`使い方`・`` `uv` で入れる ``'
+        mock: なし
+        expected: '`hello-world`・`使い方`・`uv-で入れる`'
+    refs:
+      - LIB-137-1#
+  - name: item_anchors
+    title: 項目の見出しの ID の対応
+    kind: 関数
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    role: 変換
+    scope: public
+    summary: 変換した Markdown の見出しを文書の項目と突き合わせ、項目の `id` → 見出しの ID を返す
+    args:
+      - name: markdown
+        title: 変換した Markdown
+        type: str
+        required: true
+        description: '`convert_source` が返した文字列'
+      - name: items
+        title: 項目
+        type: Sequence[tuple[str, str, int]]
+        required: true
+        description: '`Source.items`'
+    returns:
+      type: dict[str, str]
+      description: 項目の `id` → 見出しの ID。見出しを見つけられない項目は入れない
+    process: |-
+      1. コードブロック（`` ``` `` / `~~~` で囲んだ範囲）の外の `#` で始まる行を、上から順に見出しとして引く
+      2. 見出しごとに ID を作り（見出しの ID の作成）、同じ ID の 2 つ目からは `-1`・`-2` を付ける
+      3. `items` を順に、直前に対応づけた見出しより後で、文字が項目の `name` と同じで、`#` の数が項目の見出しの深さと同じ最初の見出しに対応づける（変換のスクリプトは項目を文書の並びで `name` の見出しにする。MOD-72-5）
+    unit_tests:
+      - name: test_item_anchors
+        case: 正常
+        summary: 同じ文字の見出しを順に対応づける
+        condition: '`## 手順`（group）の下に、深さ 3 の項目 `手順` と深さ 3 の項目 `確認` を持ち、コードブロックの中に `# 確認` の行がある Markdown'
+        mock: なし
+        expected: '`手順` の項目は `手順-1`、`確認` の項目は `確認`'
+    callees:
+      - MOD-137-1#functions[github_slug]
+  - name: rewrite_references
+    title: 参照の書き換え
+    kind: 関数
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    role: 変換
+    scope: public
+    summary: Markdown の `(id:{ID})`・`(id:{ID}#{項目})` を、公開の文書なら 1 枚の中のリンク、それ以外なら master の YAML の URL に書き換える
+    args:
+      - name: markdown
+        title: 変換した Markdown
+        type: str
+        required: true
+        description: 参照元の文書の Markdown
+      - name: source
+        title: 参照元の文書
+        type: Source
+        required: true
+        description: 理由のメッセージにパスを出す
+      - name: sources
+        title: 文書の索引
+        type: Mapping[str, Source]
+        required: true
+        description: '`id` → `list_sources` の文書（公開しない文書を含む）'
+      - name: anchors
+        title: 項目の見出しの ID
+        type: Mapping[str, Mapping[str, str]]
+        required: true
+        description: 公開の文書の `id` → `item_anchors` の値
+    returns:
+      type: str
+      description: 参照を書き換えた Markdown
+    process: |-
+      1. `\]\(id:([^)#\s]+)(?:#([^)\s]+))?\)` に当たる箇所を順に置き換える
+      2. `{ID}` が `sources` に無い場合、`{パス}: 参照先の文書がありません: {ID}` の作れない成果物を送出する
+      3. 参照先が公開の文書なら `](./{ID}.md)` にする。項目があり `anchors` に見出しの ID があれば `](./{ID}.md#{見出しの ID})` にする（`overview` は見出しを持たないので文書へのリンク）
+      4. 参照先が公開しない文書なら `]({MASTER_BLOB_URL}{参照先のパス})` にする（項目は落とす）
+    exceptions:
+      - name: BuildError
+        condition: 参照先の ID が `sources` に無い
+        message: '{パス}: 参照先の文書がありません: {ID}'
+    unit_tests:
+      - name: test_rewrite_references
+        case: 正常
+        summary: 公開の文書と公開しない文書への参照
+        condition: '`(id:pub)`・`(id:pub#step)`・`(id:pub#overview)`・`(id:int#step)` を持つ Markdown。`pub` は公開で `step` の見出しの ID が `手順`、`int` は `docs/rule/int.yaml` の公開しない文書'
+        mock: なし
+        expected: '`(./pub.md)`・`(./pub.md#手順)`・`(./pub.md)`・`(https://github.com/shuhei1101/knowledge/blob/master/docs/rule/int.yaml)`'
+      - name: test_rewrite_references_when_unknown
+        case: 異常
+        summary: 参照先が無い
+        condition: '`(id:missing)` を持つ Markdown'
+        mock: なし
+        expected: '`BuildError` で、メッセージに参照元のパスと `missing`'
+        exception: 参照先の ID が `sources` に無い
+  - name: write_bundle_config
+    title: mdmark の設定の書き出し
+    kind: 関数
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    role: 書き出し
+    scope: public
+    summary: 一時フォルダに、公開の文書を並びのとおりまとめる mdmark の設定を書く
+    args:
+      - name: workdir
+        title: 一時フォルダ
+        type: Path
+        required: true
+        description: '`{id}.md` を置いたフォルダ'
+      - name: names
+        title: まとめる文書
+        type: Sequence[str]
+        required: true
+        description: '`{id}.md` の並び。先頭を開いたときに出す'
+    returns:
+      type: Path
+      description: 書いた `mdmark.config.yaml` のパス
+    process: |-
+      1. `version: MDMARK_TAG`、`build.include: names`、`build.entry: names[0]`、`build.out: OUTPUT_HTML` を `{workdir}/mdmark.config.yaml` に JSON で書く（JSON は YAML として読める）
+      2. パスを返す
+    unit_tests:
+      - name: test_write_bundle_config
+        case: 正常
+        summary: 並びのとおりの設定
+        condition: '`["b.md", "a.md"]`'
+        mock: なし（一時ディレクトリ）
+        expected: 読んだ設定の `build.include` が `["b.md", "a.md"]`、`build.entry` が `b.md`、`build.out` が `index.html`
+  - name: run_mdmark
+    title: mdmark の build の呼び出し
+    kind: 関数
+    container: scripts/build_pages.py
+    usecase: Pages の成果物の作成
+    role: サービス
+    scope: public
+    summary: '`npx -y github:shuhei1101/mdmark#{MDMARK_TAG} build --config {設定}` を起動し、標準出力を返す'
+    args:
+      - name: config
+        title: mdmark の設定
+        type: Path
+        required: true
+        description: '`write_bundle_config` が返したパス。そのフォルダを作業ディレクトリにする'
+    returns:
+      type: str
+      description: 'mdmark の標準出力（`書き出した: index.html（文書 {件数} 件）`）'
+    process: |-
+      1. `subprocess.run(["npx", "-y", f"github:shuhei1101/mdmark#{MDMARK_TAG}", "build", "--config", str(config)], cwd=config.parent, capture_output=True, encoding="utf-8")` で起動する（打ち切らない）
+         - `npx` が無い場合、`npx が PATH にありません。Node 24 以降を入れてください` の作れない成果物を送出する
+         - 終了コードが 0 でない場合、`mdmark の build が終了コード {コード} で失敗しました` の後に標準エラーを続けた作れない成果物を送出する
+      2. 標準エラー（mdmark の警告）があれば標準エラーへそのまま出し、標準出力を返す
+    exceptions:
+      - name: BuildError
+        condition: '`npx` が PATH に無い'
+        message: npx が PATH にありません。Node 24 以降を入れてください
+      - name: BuildError
+        condition: 終了コードが 0 でない
+        message: mdmark の build が終了コード {コード} で失敗しました（続けて標準エラー）
+    unit_tests:
+      - name: test_run_mdmark_when_failed
+        case: 異常
+        summary: build が失敗する
+        condition: 一時フォルダの設定
+        mock: PATH の先頭に、標準エラーに `broken` を出して終了コード 1 で終わる `npx` を置く
+        expected: '`BuildError` で、メッセージに `終了コード 1` と `broken`'
+        exception: 終了コードが 0 でない
+      - name: test_run_mdmark_when_npx_missing
+        case: 異常
+        summary: npx が無い
+        condition: 一時フォルダの設定
+        mock: PATH を空のフォルダだけにする
+        expected: '`BuildError` で、メッセージに `npx`'
+        exception: '`npx` が PATH に無い'
+    refs:
+      - LIB-137-1#catalogs[コマンド].entries[build]
+notes:
+  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を書き、`_common.py` を同じフォルダから import する。mdmark（LIB-137-1）は `npx` で子プロセスとして呼ぶので Python の依存には入れない
+  変換を子プロセスで呼ぶ: 変換は `knowledge_markdown.py` を import せず、`dev-docs.yaml` の `converters[].run` を起動する。dev-docs の画面と同じ Markdown になり、E2E テストは `run` を差し替えて変換の失敗を起こせる

@@ -1,10 +1,10 @@
 id: "MOD-72-1"
 title: "検査と変換のスクリプト / scripts"
-lead: dev-docs の validators・converters の約束で動く文書の検査・変換と、CI と手元から全ての文書を検査する CLI の、`scripts/` の単一ファイルのスクリプト。
+lead: dev-docs の validators・converters の約束で動く文書の検査・変換と、CI と手元から全ての文書を検査する CLI・Pages の成果物を作る CLI の、`scripts/` の単一ファイルのスクリプト。
 directory: |-
   ```
   scripts/
-  ├── _common.py                  # 文書の YAML の読み込み・項目のパスと行の対応・違反の型・ファイルの並列の読み込み
+  ├── _common.py                  # 文書の YAML の読み込み・項目のパスと行の対応・違反の型・ファイルの並列の読み込み・dev-docs.yaml の読み込み
   ├── _maid.py                    # maid の在りかの確認と、打ち切りつきの呼び出し
   ├── knowledge_checks.py         # validators の knowledge-checks（文書の違反の検査）
   ├── knowledge_checks.py.lock    # knowledge_checks.py の依存のロック（uv lock --script）
@@ -12,6 +12,8 @@ directory: |-
   ├── knowledge_markdown.py.lock
   ├── check_all.py                # 全ての文書の検査（CI と手元の CLI）
   ├── check_all.py.lock
+  ├── build_pages.py              # Pages の成果物の作成（CI と手元の CLI）
+  ├── build_pages.py.lock
   └── files.yaml                  # scripts/ のファイルの一覧（dev-docs の files の行）
   tests/
   ├── unit/scripts/               # 1 物理ファイル = 1 テストファイル（test_common.py など）
@@ -31,6 +33,9 @@ diagrams:
           class checkall["全ての文書の検査"]
           checkall : main()
           checkall : check_target()
+          class pages["Pages の成果物の作成"]
+          pages : main()
+          pages : rewrite_references()
           class common["共通"]
           common : load_document()
           common : iter_strings()
@@ -44,6 +49,7 @@ diagrams:
           checkall ..> checks
           checkall ..> common
           checkall ..> maidcall
+          pages ..> common
 notes:
   起動の方式: |-
     各入口のスクリプトは PEP 723 のインラインのメタデータ（`requires-python = ">=3.14"` と依存）を持ち、`uv lock --script` のロック（`{スクリプト}.py.lock`）で版を固定する。
