@@ -1,0 +1,150 @@
+# yaml-language-server: $schema=../../schemas/guide.schema.yaml
+id: guide-setup-docs-mcp
+kind: guide
+name: knowledge を dev-docs の配信元に登録する
+description: knowledge を dev-docs の配信元に登録して画面と MCP で文書を引く手順と、反映・確認・元に戻す方法を示し、どの端末・作業場所からでも規約を検索・取得したいときに読む。
+tags:
+  - name: scope:使い方
+  - name: topic:セットアップ手順
+    main: true
+  - name: topic:配信元
+  - name: topic:端末
+  - name: topic:設定
+  - name: topic:規約
+  - name: topic:画面
+  - name: topic:文書
+  - name: topic:手順
+  - name: topic:権限
+  - name: tool:dev-docs
+  - name: tool:mcp
+  - name: tool:git
+  - name: action:登録
+  - name: action:配信
+  - name: action:検索
+  - name: action:取得
+  - name: action:書き込み
+  - name: action:クローン
+  - name: action:反映
+  - name: action:確認
+  - name: action:接続
+status: current
+visibility: public
+rev: 1
+last_reviewed: '2026-10-31'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      どの端末・作業場所からでも、knowledge の規約を dev-docs の画面で読み、MCP で検索・取得したいときに実行する。
+  - id: prerequisite-01
+    group: 前提
+    name: "前提: dev-docs のプラグインの導入"
+    body: |-
+      - 端末に uv・git・Claude Code がある
+      - dev-docs のリポジトリをクローンし、プラグイン `dev-docs` をユーザースコープで入れてある（dev-docs の [dev-docsを入れる](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/dev-docs%E3%82%92%E5%85%A5%E3%82%8C%E3%82%8B.md) の手順 1〜2）
+  - id: step-global-setup-01
+    group: 手順 > 端末を準備する
+    name: global-setup の実行
+    body: |-
+      ```text
+      /dev-docs:global-setup {dev-docs のクローンの絶対パス}
+      ```
+
+      端末の設定の場所を聞かれたら、既定の `~/.config/dev-docs/settings.yaml` を選ぶ。
+      既に端末の設定がある端末でも同じコマンドを実行する。既にある `sources[]` の行は消えない。
+  - id: step-global-setup-02
+    group: 手順 > 端末を準備する
+    name: MCP のつなぎ直し
+    body: |-
+      Claude Code で `/mcp` を開き、`dev-docs` につなぎ直す。
+      つなぎ直さないと、そのセッションから文書の MCP のツールを呼べない。
+  - id: step-clone-01
+    group: 手順 > knowledge を clone する
+    name: リポジトリの clone
+    body: |-
+      ```bash
+      git clone https://github.com/shuhei1101/knowledge.git {clone する先}
+      ```
+
+      clone した先の絶対パスを次の手順で使う。
+      既に clone してある端末では、その場所を使う。
+  - id: step-setup-01
+    group: 手順 > knowledge を配信元に登録する
+    name: setup の実行
+    body: |-
+      ```text
+      /dev-docs:setup {knowledge のクローンの絶対パス}
+      ```
+
+      点検で knowledge の `dev-docs.yaml`・スキーマ・`scripts/` に違反があると、キーのパスと理由を示して止まり、`sources[]` に行が追加されない。
+  - id: step-setup-02
+    group: 手順 > knowledge を配信元に登録する
+    name: 読み書きできる範囲の回答
+    body: |-
+      聞かれた `scope.read` には全ての作業場所を置くフォルダの glob、`scope.write` には knowledge のクローンのパスを答える。
+      記載する内容の表を了承すると、端末の設定の `sources[]` に次の行が追加される。
+
+      ```yaml
+      sources:
+        - id: knowledge
+          config: {knowledge のクローンの絶対パス}/dev-docs.yaml
+          scope:
+            read: ["{作業場所を置くフォルダ}/**"]
+            write: ["{knowledge のクローンの絶対パス}"]
+      ```
+
+      worktree（`.claude/worktrees/*`）の中の作業場所はクローンにいるものとして判定するので、`scope.write` に worktree を並べなくてよい。
+      `scope.read` に当たらない作業場所からは、knowledge の文書を読めない。
+  - id: step-screen-01
+    group: 手順 > 画面で読む
+    name: 画面を開く
+    body: |-
+      ブラウザで `http://127.0.0.1:8781/knowledge` を開き、種類のタブとサイドバーから文書を選ぶ。
+      ポートを `DEV_DOCS_PORT` で変えた端末では、その番号にする。
+      画面の操作は dev-docs の [画面で読む](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E7%94%BB%E9%9D%A2%E3%81%A7%E8%AA%AD%E3%82%80.md) にある。
+  - id: step-mcp-01
+    group: 手順 > MCP で検索・取得する
+    name: source に knowledge を渡す
+    body: |-
+      Claude Code から文書の MCP の `search_docs` に `source: knowledge` と語・タグを渡して検索し、当たった文書の ID を渡して本文を取得する。
+      `source` を省くと作業中の配信元を指すので、knowledge のクローンの外では knowledge の文書が返らない。
+      ツールの引数は dev-docs の [文書のMCP](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/%E6%96%87%E6%9B%B8%E3%81%AEMCP.md) にある。
+  - id: step-mcp-02
+    group: 手順 > MCP で検索・取得する
+    name: 書き込みは scope.write の中から
+    body: |-
+      `write_docs`・`delete_docs` は、knowledge のクローンか worktree の中の作業場所から呼ぶ。
+      それ以外の作業場所から呼ぶと、書き込まずに断られる。
+      スキーマと検査のスクリプト（`scripts/`）に通らない内容は、書き込まずに `isError` で返る。
+  - id: reflection-01
+    group: 反映
+    name: 反映は即時
+    body: |-
+      - 端末の設定の `sources[]`: `即時`（`/dev-docs:setup` が最後に管理の MCP の `reload` を呼ぶ）
+      - knowledge の `dev-docs.yaml`・スキーマ・`scripts/`: 管理の MCP の `reload` を呼ぶまで、変える前の設定で配信する（dev-docs の [配信元を配信する](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E9%85%8D%E4%BF%A1%E5%85%83%E3%82%92%E9%85%8D%E4%BF%A1%E3%81%99%E3%82%8B.md) の「設定を変えたら確かめる」）
+  - id: check-served-01
+    group: 確認 > knowledge が配信中になっている
+    name: 設定画面の状態の確認
+    body: |-
+      ブラウザで `http://127.0.0.1:8781/_settings` を開く。
+
+      knowledge の行の状態が `配信中` と出る。
+  - id: check-search-01
+    group: 確認 > クローンの外から knowledge の文書を引ける
+    name: クローンの外からの検索の確認
+    body: |-
+      knowledge のクローンの外の作業場所で Claude Code を起動し、`search_docs` に `source: knowledge` を渡す。
+
+      knowledge の規約が、名前・説明・タグつきで返る。
+  - id: rollback-01
+    group: 元に戻す
+    name: 元に戻す
+    body: |-
+      設定画面（`/_settings`）で、knowledge の行のごみ箱のボタンを押す。
+      端末の設定から knowledge の行が削除され、配信から外れる。
+      行を残したまま配信を止めるときは、鉛筆のボタンで `配信` のスイッチを外す。
+
+      | 残るもの | 扱い |
+      | --- | --- |
+      | knowledge のクローン | 要らなければ削除する |
+      | dev-docs のプラグインと端末の設定 | ほかの配信元が使うので残す |
