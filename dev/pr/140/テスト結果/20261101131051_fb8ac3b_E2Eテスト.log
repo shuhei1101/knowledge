@@ -1,0 +1,24 @@
+$ KNOWLEDGE_E2E_DEV_DOCS_CLONE=/mnt/c/Users/shuhe/repo/dev-docs/.claude/worktrees/develop uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/e2e --run-e2e
+# dev-docs: develop ac77ed3
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/fix-dev-docs-yaml-tags-name-metadata
+configfile: pytest.ini
+collected 17 items
+
+tests/e2e/単一ユースケース/test_エージェントがknowledgeの文書を書き込む.py . [  5%]
+..                                                                       [ 17%]
+tests/e2e/単一ユースケース/test_エージェントがknowledgeの文書を検索・取得する.py . [ 23%]
+.                                                                        [ 29%]
+tests/e2e/単一ユースケース/test_利用者がGitHubPagesでknowledgeの公開文書を読む.py . [ 35%]
+..                                                                       [ 47%]
+tests/e2e/単一ユースケース/test_利用者がdev-docsにknowledgeを登録する.py . [ 52%]
+.                                                                        [ 58%]
+tests/e2e/単一ユースケース/test_利用者が画面でknowledgeの文書を読む.py . [ 64%]
+.                                                                        [ 70%]
+tests/e2e/単一ユースケース/test_開発者が文書の違反を検査する.py ...      [ 88%]
+tests/e2e/複合ユースケース/test_利用者が端末にknowledgeを導入して規約を引く.py . [ 94%]
+.                                                                        [100%]
+
+======================== 17 passed in 584.67s (0:09:44) ========================
+exit 0
