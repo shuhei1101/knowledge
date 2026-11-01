@@ -1,0 +1,1 @@
+# dev-docs.yaml の tags を - name: の要素で持つ種類に tags: tags[].name の対応を記載する
