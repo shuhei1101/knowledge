@@ -26,6 +26,9 @@ documents:
     validators: [knowledge-checks]
     converter: knowledge-markdown
     alias_type: doc
+    metadata:
+      tags: tags[].name
+      main_tags: tags[main].name
   - id: template
     title: テンプレート
     paths: ["docs/template/*.yaml"]
@@ -33,6 +36,9 @@ documents:
     validators: [knowledge-checks]
     converter: knowledge-markdown
     alias_type: doc
+    metadata:
+      tags: tags[].name
+      main_tags: tags[main].name
   - id: flowchart
     title: 判定フローチャート
     paths: ["docs/flowchart/*.yaml"]
@@ -40,6 +46,9 @@ documents:
     validators: [knowledge-checks]
     converter: knowledge-markdown
     alias_type: doc
+    metadata:
+      tags: tags[].name
+      main_tags: tags[main].name
   - id: guide
     title: 使い方
     paths: ["docs/guide/*.yaml"]
@@ -47,12 +56,18 @@ documents:
     validators: [knowledge-checks]
     converter: knowledge-markdown
     alias_type: doc
+    metadata:
+      tags: tags[].name
+      main_tags: tags[main].name
   - id: changelog
     title: 変更履歴
     paths: [docs/changelog.yaml]
     schema: schemas/changelog.schema.yaml
     validators: [knowledge-checks]
     converter: knowledge-markdown
+    metadata:
+      tags: tags[].name
+      main_tags: tags[main].name
   - id: skill
     title: スキル
     paths: ["docs/skill/*.yaml"]
@@ -60,6 +75,9 @@ documents:
     validators: [knowledge-checks]
     converter: knowledge-markdown
     alias_type: skill
+    metadata:
+      tags: tags[].name
+      main_tags: tags[main].name
   - id: hooks
     title: フック
     paths: [hooks/files.yaml]
