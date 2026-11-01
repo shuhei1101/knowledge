@@ -29,7 +29,8 @@ def _rule(body: str) -> dict[str, Any]:
         "kind": "rule",
         "name": "E2E の規約",
         "description": "E2E で書き込む規約を定め、E2E のときに読む。",
-        "tags": [{"name": "scope:dev", "main": True}],
+        "tags": ["scope:dev"],
+        "main_tags": ["scope:dev"],
         "status": "current",
         "visibility": "internal",
         "rev": 1,
@@ -67,7 +68,11 @@ def test_normal(
     assert not result.is_error
     assert result.data["applied"] is True
     assert result.data["results"][0]["status"] == "created"
-    assert YAML(typ="safe").load((worktree / _DOC_FILE).read_text(encoding="utf-8")) == document
+    written = YAML(typ="safe").load((worktree / _DOC_FILE).read_text(encoding="utf-8"))
+    assert {key: value for key, value in written.items() if key not in {"tags", "main_tags"}} == {
+        key: value for key, value in document.items() if key not in {"tags", "main_tags"}
+    }
+    assert written["tags"] == [{"name": "scope:dev", "main": True}]
 
 
 def test_error_when_validator_reports_violation(

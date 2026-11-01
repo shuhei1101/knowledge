@@ -11,8 +11,9 @@ type KnowledgeClone = Callable[..., Path]
 type Serve = Callable[..., Any]
 type KnowledgeRow = Callable[..., Any]
 
-# 規約を引くタグと、files.yaml の行の Markdown を引く名前
+# 規約を引くタグと、そのタグを主題に持つ規約、files.yaml の行の Markdown を引く名前
 _TAG = "topic:文章"
+_MAIN_RULE_ID = "convention-writing-style"
 _SKILL_NAME = "文章の点検"
 _SKILL_ID = "skills/text-review/SKILL"
 
@@ -27,7 +28,7 @@ def _search(
         cwd=str(cwd),
         filter={"field": field, "op": op, "values": [value]},
         view=view,
-        fields=["name", "description", "tags"],
+        fields=["name", "description", "tags", "main_tags"],
         format="json",
     )
 
@@ -42,7 +43,15 @@ def test_normal(
     other = tmp_path / "other-repo"
     other.mkdir()
     # 実行
-    rules = _search(served, other, "tags", "contains", _TAG)
+    rules = _search(served, other, "tags", "eq", _TAG)
+    counted = served.call(
+        "search_docs",
+        source="knowledge",
+        cwd=str(other),
+        view="count",
+        group_by="tags",
+        format="json",
+    )
     skills = _search(served, other, "name", "contains", _SKILL_NAME)
     body = _search(served, other, "id", "eq", _SKILL_ID, view="full")
     # 検証
@@ -51,6 +60,14 @@ def test_normal(
     assert items
     assert {item["values"]["kind"] for item in items} >= {"rule"}
     assert all(item["values"].keys() >= {"name", "description", "tags"} for item in items)
+    assert all(_TAG in item["values"]["tags"] for item in items)
+    assert all(isinstance(tag, str) for item in items for tag in item["values"]["tags"])
+    main_rule = next(item for item in items if item["id"] == _MAIN_RULE_ID)
+    assert main_rule["values"]["main_tags"] == [_TAG]
+    groups = counted.data["groups"]
+    assert not counted.is_error
+    assert _TAG in {group["value"] for group in groups}
+    assert not any("{'name'" in group["value"] for group in groups)
     assert [item["id"] for item in skills.data["items"]] == [_SKILL_ID]
     assert body.data["items"][0]["values"]["body"] == (
         clone / "skills" / "text-review" / "SKILL.md"
