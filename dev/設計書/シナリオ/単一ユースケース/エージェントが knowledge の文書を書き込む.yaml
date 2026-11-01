@@ -23,7 +23,7 @@ scenarios:
         M->>W: 文書を書き込む
         M-->>E: 書き込んだ文書
     expected:
-      - 作業ツリーの文書が渡した内容になる
+      - 作業ツリーの文書の `tags`・`main_tags` 以外の項目が渡した内容になる
       - '作業ツリーの文書の `tags` が `- name:` の要素で書かれ、`main_tags` で渡したタグの要素に `main: true` が付く（`[{name: scope:dev, main: true}]`）'
       - 応答が `isError` でない
     test: test_normal
