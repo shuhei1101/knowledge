@@ -1,0 +1,78 @@
+id: "IF-72-4"
+title: "文書の検査のワークフロー"
+entry:
+  kind: trigger
+  value: '`.github/workflows/docs-check.yml`。`pull_request`（base が `develop`・`master`・`release/**`）と、`develop`・`master` への `push`'
+flows:
+  - name: 正常系
+    summary: 違反の無い PR でジョブが成功する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: PR
+        description: 違反の無い文書だけを持つ PR
+    flow: |-
+      sequenceDiagram
+        participant G as GitHub Actions
+        participant W as 文書の検査のワークフロー
+        participant S as 全ての文書の検査
+        G->>W: pull_request で起動する
+        W->>W: Python 3.14 と依存と maid を入れる
+        W->>S: リポジトリの直下で起動する
+        S-->>W: 終了コード 0
+        W-->>G: 成功
+    expected:
+      - ジョブが成功で終わる
+  - name: 異常系（違反がある・ジョブの失敗）
+    summary: 違反のある PR で、全ての違反をログに出してジョブが失敗する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: PR
+        description: 違反のある文書を含む PR
+    flow: |-
+      sequenceDiagram
+        participant G as GitHub Actions
+        participant W as 文書の検査のワークフロー
+        participant S as 全ての文書の検査
+        G->>W: pull_request で起動する
+        W->>S: リポジトリの直下で起動する
+        S-->>W: 終了コード 1 と違反の行
+        W-->>G: 失敗
+    expected:
+      - ジョブが失敗で終わる
+      - ジョブのログに全ての違反の行が出る
+  - name: 異常系（maid を入れられない・ジョブの失敗）
+    summary: maid が入らなければ文書の検査を始めずに失敗する
+    setup:
+      - name: Mock
+        description: maid を入れるステップを飛ばし、PATH から maid を外す
+    flow: |-
+      sequenceDiagram
+        participant G as GitHub Actions
+        participant W as 文書の検査のワークフロー
+        participant S as 全ての文書の検査
+        G->>W: pull_request で起動する
+        W->>S: リポジトリの直下で起動する
+        S-->>W: 終了コード 2 と理由
+        W-->>G: 失敗
+    expected:
+      - ジョブが失敗で終わる
+      - ジョブのログに maid が PATH から引けないことが出る
+lead: PR ごとに Python 3.14 と maid を入れ、「全ての文書の検査」を走らせて、その終了コードをジョブの合否にする。
+idempotent: true
+side_effects: 'なし（リポジトリに書き込まない。`permissions` は `contents: read` だけ）'
+callers:
+  - SC-72-6#scenarios[正常シナリオ]
+exclusivity: 同じ PR の前の実行は、新しい push で取り消す（`concurrency` の `cancel-in-progress`）
+constraints:
+  - item: ランナー
+    constraint: '`ubuntu-latest`'
+    decided_by: NFR-72-1#requirements[スクリプトが動く OS]
+  - item: 所要時間
+    constraint: '5 分（ジョブの `timeout-minutes: 5`）'
+    decided_by: NFR-72-1#requirements[CI の 1 回の所要時間]
+  - item: maid の入れ方
+    constraint: ランナーのグローバル（`npm install -g @probelabs/maid`）。バージョンは開発コマンドの環境構築と同じものに固定する
+notes:
+  確かめ方: '結合テストのファイルは持たない（GitHub Actions の上でしかジョブの成否を確かめられない）。ジョブが起動する「全ての文書の検査」の合否は IF-72-3 の結合テストが確かめ、ジョブの成否は作業 PR の Actions の実行結果で確かめる。PR #72 では、正常系を run 41183934226（599084c、success）、異常系（違反がある・ジョブの失敗）を run 41181644561（3b3ba6c、違反 13 件で終了コード 1、failure）で確かめた。異常系（maid を入れられない）は、`npm install -g` のステップが失敗すればジョブが止まる Actions の既定の動きにより、実行しては確かめていない'

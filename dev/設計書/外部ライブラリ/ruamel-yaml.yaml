@@ -1,0 +1,37 @@
+id: "LIB-72-1"
+title: "ruamel-yaml"
+kind: "ライブラリ"
+version:
+  current: 0.19.1
+  checked_on: '2026-10-31'
+  pinning: dev-docs 本体と同じ `==0.19.1` に固定する
+  source: '`scripts/*.py` の PEP 723 のメタデータと `scripts/*.py.lock`'
+catalogs:
+  - name: API
+    version: 0.19.1
+    entries:
+      - name: YAML(typ="rt").load
+        kind: 関数
+        purpose: 標準入力の文書の YAML を、行・列の情報つきの `CommentedMap`・`CommentedSeq` として読む
+      - name: CommentedMap.lc.value
+        kind: 関数
+        purpose: キーの値が始まる行・列（0 始まり）を取り、違反を文書の行に戻す
+      - name: CommentedSeq.lc.item
+        kind: 関数
+        purpose: 配列の要素が始まる行・列（0 始まり）を取る
+lead: YAML 1.2 のパーサー兼エミッター（import 名は `ruamel.yaml`）。round-trip（rt）モードで読むと、マッピングと配列の要素の行・列を `.lc` で取れる。
+purl: pkg:pypi/ruamel.yaml
+dependency_scope: 必須
+adoption: 採用
+used_in:
+  - scripts/
+verification:
+  state: 済
+  date: '2026-10-31'
+  detail: Python 3.14.3 と ruamel.yaml 0.19.1 で、`YAML(typ="rt").load` した `items[0]` の `.lc.value("body")` が `(3, 10)` を、`.lc.line` が `2` を返すことを確かめた（いずれも 0 始まり）
+license: MIT（商用利用可）
+official_url: https://pypi.org/project/ruamel.yaml/
+docs_url: https://yaml.dev/doc/ruamel.yaml/
+selection:
+  candidates: PyYAML（PoC で使用）、ruamel.yaml
+  decision: dev-docs 本体と同じ YAML 1.2 の解釈になり、違反の `path` が dev-docs の項目のパスと一致する。PyYAML は YAML 1.1 の解釈で、`yes`・`on` を真偽値として読むなど dev-docs と食い違う（[reviewer の合格](https://github.com/shuhei1101/knowledge/pull/72#discussion_r4430689450)）
