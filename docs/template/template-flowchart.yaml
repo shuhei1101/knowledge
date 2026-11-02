@@ -12,11 +12,11 @@ tags:
   - name: topic:ブロック
   - name: topic:判定フローチャート
     main: true
-  - name: tool:mermaid
+  - name: tool:mdmark
   - name: action:判定
 status: current
 visibility: internal
-rev: 4
+rev: 5
 items:
   - id: overview
     name: 概要
@@ -24,6 +24,8 @@ items:
       判定フローチャートを作るときの書式定義。
 
       判定フローチャートは **決めたい内容が複数の判定軸で決まる** 場面で使う。
+
+      図は mdmark のフロー図の部品で描く。
 
       新規作成時は文書の `description` に概要を記載する。
   - id: file-naming-01
@@ -47,8 +49,8 @@ items:
       | --- | --- | --- |
       | タイトル（メタデータ `name`・`description`） | - | 必須 |
       | `overview` の項目 | - | 必須 |
-      | Mermaid ブロックを `body` に持つ項目 | - | 必須 |
-      | `※n` の注記の項目 | - | Mermaid に `※n` がある場合のみ |
+      | フロー図の部品の定義を `body` に持つ項目 | - | 必須 |
+      | `※n` の注記の項目 | - | 図に `※n` がある場合のみ |
   - id: title-01
     name: "`タイトル`"
     body: |-
@@ -63,8 +65,8 @@ items:
 
       - メタデータ `name` はページタイトル + `判定フローチャート` 接尾辞
       - `overview` の項目の本文に、このページの `description` と同じ 1 行を置く
-  - id: mermaid-block-01
-    name: "`Mermaid ブロック`"
+  - id: flow-block-01
+    name: "`フロー図の部品`"
     body: |-
       ### 記述例
 
@@ -73,12 +75,34 @@ items:
         group: "{対象作業} 判定フローチャート"
         name: 判定フロー
         body: |-
-          ```mermaid
-          flowchart TD
-            START([...])
-            Q0{...?}
-            ...
+          <!-- flow -->
+
+          ```json
+          {
+            "title": "{対象作業}",
+            "scope": "{判定する場面}",
+            "updated": "YYYY-MM-DD",
+            "width": 948,
+            "height": 636,
+            "nodes": [
+              {"id": "start", "kind": "start", "x": 414, "y": 24, "w": 120, "h": 120, "name": "新規に｛対象｝を書きたい"},
+              {"id": "q0", "kind": "question", "x": 334, "y": 200, "w": 280, "h": 120, "name": "Q0 の判定文"},
+              {"id": "a1", "kind": "action", "x": 684, "y": 232, "w": 240, "h": 56, "name": "不合格時のアクション"},
+              {"id": "q1", "kind": "question", "x": 334, "y": 376, "w": 280, "h": 124, "name": "Q1 の判定文 ※1"},
+              {"id": "r1", "kind": "result", "x": 24, "y": 410, "w": 240, "h": 56, "name": "最終結果 1"},
+              {"id": "r2", "kind": "result", "x": 354, "y": 556, "w": 240, "h": 56, "name": "最終結果 2 ※2"}
+            ],
+            "wires": [
+              {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[474, 144], [474, 200]]},
+              {"id": "j-q0-q1", "from": "q0", "to": "q1", "line": "flow", "points": [[474, 320], [474, 376]], "label": "NO", "labelAt": [474, 348]},
+              {"id": "j-q0-a1", "from": "q0", "to": "a1", "line": "flow", "points": [[614, 260], [684, 260]], "label": "YES", "labelAt": [649, 260]},
+              {"id": "j-q1-r1", "from": "q1", "to": "r1", "line": "flow", "points": [[334, 438], [264, 438]], "label": "YES", "labelAt": [299, 438]},
+              {"id": "j-q1-r2", "from": "q1", "to": "r2", "line": "flow", "points": [[474, 500], [474, 556]], "label": "NO", "labelAt": [474, 528]}
+            ]
+          }
           ```
+
+          <!-- /flow -->
       - id: "{対象}-flow-02"
         group: "{対象作業} 判定フローチャート"
         name: ※1 用語名
@@ -90,3 +114,53 @@ items:
         body: |-
           - **※2 用語名**: 定義（1 行）
       ````
+
+      ### 補足
+
+      - `title` はメタデータ `name` から ` 判定フローチャート` を除いた名前、`scope` は判定する場面にする
+      - ノードの位置・大きさと線の `points` の書き方は、mdmark の使い方『図を描く』の「判定フローチャートを書く」に従う
+  - id: node-kind-01
+    group: ノード種類
+    name: ノードの種類の表
+    body: |-
+      | `kind` | ノード | 使い方 |
+      | --- | --- | --- |
+      | `start` | 開始ノード | 1 個だけ |
+      | `question` | 判定ノード | 菱形。YES / NO で分岐する |
+      | `action` | アクションノード | 不合格時の対応 |
+      | `result` | 終端ノード | 判定通過時の最終結果 |
+  - id: edge-order-01
+    group: 配置（一本道の時のみ）
+    name: 一本道の配置
+    body: |-
+      - YES / NO の一方だけが次質問に進み、もう一方が終端 / アクションに離脱する一本道の判定が連続する場合、次質問を真下に置き、離脱する線（終端 / アクション側）を前の判定と逆の側（左右）に出す
+  - id: edge-order-02
+    group: 配置（一本道の時のみ）
+    name: 両方が分岐するときの扱い
+    body: |-
+      - YES / NO 両方が次質問に分岐する場合、両方が終端 / アクションの場合は本ルール適用不要
+  - id: label-01
+    group: ラベル
+    name: 線のラベル
+    body: |-
+      - 線の `label` は `YES` / `NO` の 1 単語だけにする（補足は判定ノードの `name` に含める）
+  - id: label-02
+    group: ラベル
+    name: 判定文は疑問形
+    body: |-
+      - 判定文は疑問形（`〜か`）で統一
+  - id: term-01
+    group: 用語
+    name: 用語のマーカー
+    body: |-
+      - ノードの `name` に `※N` のマーカーを付けて、図の直下に `- **※N 用語名**: 定義` の 1 行を並べる
+  - id: term-02
+    group: 用語
+    name: ※N の採番
+    body: |-
+      - 番号は 図中の登場順で採番、初出だけに ※N を付ける
+  - id: caution-01
+    group: 注意
+    name: 括弧は全角
+    body: |-
+      - ノード内の括弧は全角を使う。
