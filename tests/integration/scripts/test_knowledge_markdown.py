@@ -1,8 +1,11 @@
 """文書の Markdown への変換（scripts/knowledge_markdown.py）の結合テスト。"""
 
+import shutil
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
+
+from ruamel.yaml import YAML
 
 # conftest の fixture の型。子プロセスの結果は conftest の Completed
 type RunScript = Callable[..., Any]
@@ -14,6 +17,26 @@ _ROOT = Path(__file__).resolve().parents[3]
 _BODY_OVERVIEW = "エージェントが書く文章の確認と、語の選び方の決まり。"
 _BODY_LABEL = "文章でない所は、IT の分野で定着した語で書く。\n\n<!-- table: data -->\n\n| 語 | 例 |\n| --- | --- |\n| 送信 | `送る` |\n\n<!-- /table -->"
 _BODY_PRINCIPLE = "対応表に無い語は、[語の選び方](id:flowchart-word-choice) で判断する。"
+
+
+# 埋め込みのマーカーの行と、コードブロックの中の同じマーカーを持つ本文
+_BODY_EMBED = (
+    "<!-- embed: word-list-ai-slop -->\n\n"
+    "NG の単語と置き換え先は、対応表に従う。\n\n"
+    "```markdown\n<!-- embed: word-list-ai-slop -->\n```"
+)
+
+# 埋め込む対応表
+_WORD_LIST = _ROOT / "docs" / "word-list" / "word-list-ai-slop.yaml"
+
+
+def _embed_rule(body: str) -> str:
+    """本文 1 つの項目を持つ規約の文書の YAML を作る。"""
+    return (
+        "id: a\nkind: rule\nname: 規約\ndescription: 説明\n"
+        "items:\n  - id: t-01\n    name: 表\n    body: |-\n"
+        f"{_indent(body)}\n"
+    )
 
 
 def _indent(text: str) -> str:
@@ -125,3 +148,52 @@ def test_error_when_invalid_yaml(run_script: RunScript) -> None:
     # 検証
     assert result.exit_code == 1
     assert " 行目: YAML として読めません" in result.stderr
+
+
+def test_normal_when_embed_marker(run_script: RunScript) -> None:
+    """項目の本文の埋め込みのマーカーを、ID の対応表の NG・OK の表に置き換える（正常系）。"""
+    # 準備
+    entries = YAML(typ="safe").load(_WORD_LIST.read_text(encoding="utf-8"))["entries"]
+    # 実行
+    result = run_script("knowledge_markdown", _ROOT, _embed_rule(_BODY_EMBED))
+    # 検証
+    table = result.stdout.split("| NG | OK |\n| --- | --- |\n", 1)[1].split("\n\n", 1)[0]
+    assert result.exit_code == 0
+    assert len(table.split("\n")) == len(entries)
+    assert result.stdout.count("<!-- embed: word-list-ai-slop -->") == 1
+    assert "```markdown\n<!-- embed: word-list-ai-slop -->\n```" in result.stdout
+    assert all(
+        str(entry["pattern"]) not in result.stdout for entry in entries if "pattern" in entry
+    )
+    assert all(
+        hit not in result.stdout
+        for entry in entries
+        for hit in entry.get("examples", {}).get("hit", [])
+    )
+
+
+def test_normal_when_embed_target_missing(run_script: RunScript) -> None:
+    """ID の対応表が無いマーカーは、変換を失敗させずに展開できない理由を出す（正常系）。"""
+    # 実行
+    result = run_script("knowledge_markdown", _ROOT, _embed_rule("<!-- embed: missing -->"))
+    # 検証
+    assert result.exit_code == 0
+    assert "> [!WARNING]\n> 埋め込めません: missing の対応表がありません" in result.stdout
+
+
+def test_error_when_word_list_unreadable(run_script: RunScript, tmp_path: Path) -> None:
+    """対応表のファイルが読めなければ変換せずに終わる（異常系）。"""
+    # 準備
+    shutil.copytree(_ROOT / "schemas", tmp_path / "schemas")
+    shutil.copy(_ROOT / "dev-docs.yaml", tmp_path / "dev-docs.yaml")
+    (tmp_path / "docs" / "word-list").mkdir(parents=True)
+    (tmp_path / "docs" / "word-list" / "broken.yaml").write_text(
+        "entries:\n  - ng: [\n", encoding="utf-8"
+    )
+    # 実行
+    result = run_script("knowledge_markdown", tmp_path, _embed_rule("<!-- embed: x -->"))
+    # 検証
+    assert result.exit_code == 1
+    assert result.stdout == ""
+    assert "docs/word-list/broken.yaml の " in result.stderr
+    assert " 行目が読めません" in result.stderr
