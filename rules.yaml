@@ -176,6 +176,10 @@ rules:
   - rule: docs/rule/dev-tag-term-registration.yaml
     paths:
       - "**/terms.yaml"
+  - rule: docs/rule/dev-filter-condition.yaml
+    paths:
+      - "**/*{filter,condition}*.{py,ts,tsx}"
+    on: [write]
   - rule: docs/rule/dev-coding-general.yaml
     paths:
       - "**/*.{py,html,js,css,j2,ts,tsx,yaml,yml}*"

@@ -1,0 +1,94 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-filter-condition
+kind: rule
+name: フィルター・照合条件の構造
+description: 検索の絞り込みや文書・ルールを当てる照合条件を AND・OR・NOT の入れ子で記載するときの、条件と束の構造・否定の書き方・入れ子の深さ・値の正規化を定め、フィルターや照合条件を設計・実装するときに読む。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-03'
+sources:
+  - title: 'dev-docs: 文書の MCP'
+    url: https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/%E6%96%87%E6%9B%B8%E3%81%AEMCP.md
+    note: search_docs の filter
+  - title: 'alias-inject: エイリアスのスキーマ'
+    url: https://github.com/shuhei1101/alias-inject/blob/develop/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/%E3%82%A8%E3%82%A4%E3%83%AA%E3%82%A2%E3%82%B9%E3%81%AE%E3%82%B9%E3%82%AD%E3%83%BC%E3%83%9E.md
+    note: 照合条件 inject_when
+  - title: 'Notion API: Filter database entries'
+    url: https://developers.notion.com/reference/post-database-query-filter
+    note: 束は 2 レイヤーまで。束の否定は無い
+  - title: 'Elasticsearch: Boolean query'
+    url: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html
+    note: must・should・must_not
+  - title: 'MongoDB: Query and Projection Operators'
+    url: https://www.mongodb.com/docs/manual/reference/operator/query/
+    note: $and・$or・$nor・$not
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      検索の絞り込みと、文書・ルールを当てる照合条件を、AND・OR・NOT の入れ子で記載するときの共通の構造。
+      ツールの引数・設定ファイル・文書のメタデータに記載する条件に当てる。
+      画面の条件ビルダーの構造は規約 [タグの絞り込みと保存ビュー](id:ui-tag-filter) に従い、保存するときにこの構造へ変換する。
+  - id: structure-01
+    group: 構造
+    name: 条件と束
+    body: |-
+      <!-- table: data -->
+
+      | 要素 | キー | 意味 |
+      | --- | --- | --- |
+      | 条件 | `field`・`op`・`values`・`match`・`case_sensitive` | 1 つの項目を比べる。`op` は dev-docs の `filter` の比べ方の名前（`eq`・`ne`・`contains`・`not_contains` など）を使い、ツールが受け付ける比べ方はその一部に限ってよい。`values` が複数のときは `match: any`（どれか。既定）か `all`（全て） |
+      | AND の束 | `and` | 条件か束の配列の全てに当たる |
+      | OR の束 | `or` | 条件か束の配列のどれかに当たる |
+      | NOT の束 | `not` | 中の 1 つの条件か束に当たらない |
+
+      <!-- /table -->
+
+      - 束は `and`・`or`・`not` のどれか 1 つのキーだけを持つ
+  - id: rules-01
+    group: 決まり
+    name: 記載の決まり
+    body: |-
+      <!-- table: data -->
+
+      | 決まり | 内容 |
+      | --- | --- |
+      | 否定の書き方 | 1 つの条件の否定は否定の比べ方（`ne`・`not_contains`）、束の否定は `not` |
+      | 入れ子の深さ | 最上位の束を 1 レイヤーとして 3 レイヤーまで。超えるなら条件を分けて登録する |
+      | 値の正規化 | NFKC と英字の大文字小文字を統一して比べる（`case_sensitive: true` で解除） |
+      | 空の束 | 記載しない。検査で弾く |
+      | 省略形 | 条件を 1 つだけ記載するときは束で包まない |
+
+      <!-- /table -->
+  - id: example-01
+    group: 例
+    name: 照合条件の例
+    body: |-
+      alias-inject の照合条件 `inject_when` で、「React」か「tsx」を含み「Python」を含まない本文でだけ文書を案内する例。
+
+      ```yaml
+      inject_when:
+        and:
+          - field: text
+            op: contains
+            values: [React, tsx]
+          - field: text
+            op: not_contains
+            values: [Python]
+      ```
+tags:
+  - name: scope:dev
+  - name: topic:フィルター
+    main: true
+  - name: topic:条件
+  - name: topic:クエリ
+  - name: topic:構造
+  - name: topic:階層
+  - name: topic:エイリアス
+  - name: action:検索
+  - name: action:絞り込み
+  - name: action:照合
+  - name: action:比較
+  - name: action:設計
+  - name: action:実装

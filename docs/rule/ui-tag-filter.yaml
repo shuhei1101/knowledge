@@ -37,8 +37,8 @@ tags:
   - name: action:選択
 status: current
 visibility: internal
-rev: 4
-last_reviewed: '2026-10-30'
+rev: 5
+last_reviewed: '2026-11-03'
 items:
   - id: overview
     name: 概要
@@ -131,6 +131,7 @@ items:
     name: スキーマは相互に変換できる形にする
     body: |-
       - 条件のスキーマは、react-querybuilder の `{combinator, rules, not}` と相互に変換できる形にする。
+        保存する条件は、規約 [フィルター・照合条件の構造](id:dev-filter-condition) の構造に変換する。
   - id: saved-view-01
     group: 保存ビュー
     name: 個人ビューは自動、共有ビューは明示的に保存する
