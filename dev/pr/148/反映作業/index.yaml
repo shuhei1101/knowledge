@@ -1,28 +1,28 @@
 slop-check の導入と knowledge の更新:
-  説明: 端末の Claude Code の設定ディレクトリごとに、マーケットプレイス knowledge を更新し、プラグイン slop-check を導入して有効にし、プラグイン knowledge を更新して SessionStart の注入を止める。マーケットプレイスは master を配るため、release が master へ入った後に行う
+  説明: 端末の Claude Code の設定ディレクトリごとに、マーケットプレイス knowledge を更新し、プラグイン slop-check を導入して有効にし、プラグイン knowledge を更新して SessionStart の注入を止める。マーケットプレイスは master を配るため、release が master へ入った後に行う。切り戻しは slop-check を外すだけで、knowledge の更新は戻さない（SessionStart の注入が担った語の選び方は、CLAUDE.md の AI Slop対策の削除の切り戻しで CLAUDE.md へ戻る）
   タグ: [プラグイン]
   実行者: tester
   時期: master へ入った後
   回数: 1 回限り
   可逆: true
-  疎通確認: null
-  実行: null
-  確認: null
-  切り戻し: null
+  疎通確認: slop-check の導入と knowledge の更新/疎通確認.py
+  実行: slop-check の導入と knowledge の更新/実行.py
+  確認: slop-check の導入と knowledge の更新/確認.py
+  切り戻し: slop-check の導入と knowledge の更新/切り戻し.py
   失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
   確認方法: 各設定ディレクトリで `claude plugin list` に slop-check@knowledge が有効として出て、プラグインのキャッシュの knowledge の hooks/hooks.json に SessionStart の行が無い
   状態: "-"
 CLAUDE.md の AI Slop対策の削除:
-  説明: 端末の Claude Code の設定ディレクトリ（`~/.claude*`）ごとの `CLAUDE.md` から「## AI Slop対策（和語、漢語、外来語について）」のセクションを削除する。実行の前に各 `CLAUDE.md` のバックアップを取り、切り戻しはバックアップで書き戻す。slop-check の通知が効いてから削除するため、slop-check の導入の後に行う
+  説明: 端末の Claude Code の設定ディレクトリ（`~/.claude*`）ごとの `CLAUDE.md` から「## AI Slop対策（和語、漢語、外来語について）」のセクションを削除する。設定ディレクトリの `CLAUDE.md` は実体（`~/.claude/CLAUDE.md`）へのシンボリックリンクのため、実体を書き換えてリンクはそのまま残す。実行の前に実体のバックアップ（`CLAUDE.md.bak-pr148`）を同じフォルダへ配置し、切り戻しはバックアップで書き戻す。slop-check の通知が効いてから削除するため、slop-check の導入の後に行う
   タグ: [設定ファイル]
   実行者: tester
   時期: master へ入った後
   回数: 1 回限り
   可逆: true
-  疎通確認: null
-  実行: null
-  確認: null
-  切り戻し: null
+  疎通確認: CLAUDE.md の AI Slop対策の削除/疎通確認.py
+  実行: CLAUDE.md の AI Slop対策の削除/実行.py
+  確認: CLAUDE.md の AI Slop対策の削除/確認.py
+  切り戻し: CLAUDE.md の AI Slop対策の削除/切り戻し.py
   失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
   確認方法: 各設定ディレクトリの `CLAUDE.md` に「AI Slop対策」の見出しが無く、他のセクションがバックアップと一致する
   状態: "-"
