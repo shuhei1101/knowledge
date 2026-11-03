@@ -24,3 +24,7 @@ files:
     name: Pages の成果物の作成
     description: dev-docs.yaml が指す visibility が public の文書を変換し、参照をリンクに書き換えて mdmark の build で 1 枚の HTML にまとめる。Pages に出す文書の範囲やリンクの書き換えを変えるときに読む。
     tags: [topic:変換, topic:ci, tool:mdmark]
+  - path: build_word_list.py
+    name: 対応表のコピーの作成
+    description: 正本の対応表の YAML から、プラグイン slop-check のフックが読む JSON のコピーを書き出す。対応表の正本を変えたときや、コピーに残すキーを変えるときに読む。
+    tags: [topic:対応表, topic:変換, tool:ruamel.yaml]
