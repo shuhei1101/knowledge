@@ -45,6 +45,42 @@ def test_normal_when_violations(run_script: RunScript, repo_factory: RepoFactory
     assert lines[-1] == "2 件の文書を検査し、違反は 2 件でした"
 
 
+def test_normal_when_word_list_copy_stale(run_script: RunScript, repo_factory: RepoFactory) -> None:
+    """対応表のコピーが正本から作り直したものと違えば、違反として出す（正常系）。"""
+    # 準備
+    word_list = (
+        "id: word-list-ai-slop\n"
+        "kind: word-list\n"
+        "name: 対応表\n"
+        "description: 対応表の文書\n"
+        "entries:\n"
+        "  - id: naosu\n"
+        "    ng: 直す\n"
+        "    ok: [修正]\n"
+        "  - id: tasu\n"
+        "    ng: 足す\n"
+        "    ok: [追加]\n"
+    )
+    # コピーは正本の 1 行を除いたもの
+    stale = '{\n  "entries": [\n    {\n      "id": "naosu",\n      "ng": "直す",\n      "ok": [\n        "修正"\n      ]\n    }\n  ]\n}\n'
+    root = repo_factory(
+        {
+            "docs/word-list/word-list-ai-slop.yaml": word_list,
+            "plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json": stale,
+        }
+    )
+    # 実行
+    result = run_script("check_all", root)
+    # 検証
+    assert result.exit_code == 1
+    line = next(
+        line
+        for line in result.stdout.splitlines()
+        if line.startswith("plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json")
+    )
+    assert "scripts/build_word_list.py" in line
+
+
 def test_error_when_maid_missing(run_script: RunScript, repo_factory: RepoFactory) -> None:
     """maid が PATH から引けなければ検査を始めずに終わる（異常系）。"""
     # 準備

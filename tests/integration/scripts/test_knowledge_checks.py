@@ -92,6 +92,56 @@ def test_normal_when_violations(run_script: RunScript, repo_factory: RepoFactory
     assert violations[3]["rule"].startswith("14 行目: mermaid: ")
 
 
+def test_normal_when_word_list_examples_fail(
+    run_script: RunScript, repo_factory: RepoFactory
+) -> None:
+    """対応表の行の examples が照合と合わなければ、1 件 1 違反で返す（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    (root / "docs" / "word-list").mkdir()
+    stdin = (
+        "id: self\n"
+        "kind: word-list\n"
+        "entries:\n"
+        "  - id: naosu\n"
+        "    ng: 直す\n"
+        "    ok: [修正]\n"
+        "    pattern: 直す\n"
+        "    examples:\n"
+        "      hit: [直した]\n"
+        "      pass: [修正]\n"
+        "  - id: katachi\n"
+        "    ng: 形\n"
+        "    ok: [構造]\n"
+        "    pattern: 形\n"
+        "    examples:\n"
+        "      hit: [この形]\n"
+        "      pass: [形式]\n"
+        "  - id: broken\n"
+        "    ng: 形\n"
+        "    ok: [構造]\n"
+        "    pattern: 形(\n"
+        "    examples:\n"
+        "      hit: [形]\n"
+        "      pass: [形式]\n"
+    )
+    lines = stdin.splitlines()
+    # 実行
+    result = run_script("knowledge_checks", root, stdin)
+    # 検証
+    assert result.exit_code == 0
+    violations = json.loads(result.stdout)
+    assert [violation["path"] for violation in violations] == [
+        "entries[0].examples.hit[0]",
+        "entries[1].examples.pass[0]",
+        "entries[2].pattern",
+    ]
+    # rule の先頭の行番号が、文書の中の該当する行を指す
+    for violation, text in zip(violations, ["直した", "形式", "形("], strict=True):
+        number = int(violation["rule"].split(" 行目")[0])
+        assert text in lines[number - 1]
+
+
 def test_normal_when_timed_out(
     run_checks_with_limit: RunChecksWithLimit, repo_factory: RepoFactory
 ) -> None:
