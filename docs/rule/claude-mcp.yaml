@@ -74,7 +74,7 @@ tags:
   - name: action:適用
 status: current
 visibility: internal
-rev: 11
+rev: 12
 last_reviewed: '2026-11-03'
 sources:
   - title: "Anthropic: Writing effective tools for agents"
@@ -128,7 +128,8 @@ items:
     name: 常駐サーバーの起動方法
     body: |-
       - 常駐サーバをどう起動するかを決める。既に常駐しているプロセス（アプリ本体・compose のサービス）に相乗りさせると、起動するものが増えない
-      - 常駐の MCP サーバーは、プラグインで配る。
+      - 起動する場所が決まらないセッションで使う MCP は、プラグインで配る。
+        渡し方は判定フローチャート [MCP・フックの渡し方](id:flowchart-mcp-hook-delivery) で決める。
       - 起動と管理は systemd --user を主にする。
         立て方は、tmux・systemd の規約で定める。
       - SessionStart のフックは、落ちていたときの起動の補助にする。
