@@ -69,7 +69,7 @@ items:
 
       | 置き場所 | 書くこと | 書かないこと |
       | --- | --- | --- |
-      | SessionStart のフック | 起動時の処理と、MCP を持たないプラグインの常に守る決まりの `additionalContext` だけ（判定は [エージェントに渡す文・処理の置き場所](id:flowchart-session-context-placement)） | 固定の使い方・手順・CLAUDE.md のコピー・セッションごとに変わる事実（ツールで取得させる） |
+      | SessionStart のフック | 起動時の処理と、MCP を持たないプラグインの常に守る決まりの `additionalContext` だけ（判定は [エージェントに渡す文・処理の置き場所](id:flowchart-session-context-placement)） | MCP を持つプラグインの使い方・手順（instructions に置く）・CLAUDE.md のコピー・セッションごとに変わる事実（ツールで取得させる） |
       | MCP の instructions | 扱う作業の分類、いつこの MCP を探すか、grep・Read との使い分け、ツール間の順序 | ツールの description の繰り返し・宣伝 |
       | ツールの description | 何をする・いつ使う・いつ使わない・何を返さない・引数の意味 | ほかのツールの説明 |
       | CLAUDE.md | プロジェクト固有の約束事（文書の場所など） | MCP の使い方 |
