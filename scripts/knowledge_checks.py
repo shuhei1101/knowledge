@@ -352,10 +352,6 @@ def check_mermaid(doc: CommentedMap, executable: str, deadline: float) -> list[V
     return violations
 
 
-if __name__ == "__main__":
-    sys.exit(main())
-
-
 def _examples(entry: CommentedMap, key: str) -> list[tuple[int, str]]:
     """examples の hit か pass の文を添字と並べて返す。無ければ空。"""
     examples = _field(entry, "examples")
@@ -411,3 +407,8 @@ def check_word_list(doc: CommentedMap) -> list[Violation]:
                     }
                 )
     return violations
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
