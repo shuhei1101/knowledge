@@ -405,7 +405,7 @@ functions:
       description: ヒットがあれば `True`
     process: |-
       1. `entry.allow` の各文字列の出現の範囲を求める
-      2. `entry.matcher.finditer(text)` のヒットごとに、ヒットの範囲を含む `allow` の出現の範囲があれば除き、残れば `True`
+      2. `entry.matcher.finditer(text)` のヒットごとに、ヒットの開始位置を含む `allow` の出現の範囲があれば除き、残れば `True`
     unit_tests:
       - name: test_entry_hits
         case: 正常

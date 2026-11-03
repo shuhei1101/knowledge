@@ -3,7 +3,7 @@ version: "3"
 name: knowledge
 description: どのプロジェクトでも共通で使うコーディング規約・テンプレート・判定フローチャート・使い方
 instructions: |-
-  規約（rule）・テンプレート（template）・判定フローチャート（flowchart）・使い方（guide）・変更履歴（changelog）・スキル（skill）は `docs/` の YAML が正本で、種類ごとの行に分かれる。
+  規約（rule）・テンプレート（template）・判定フローチャート（flowchart）・使い方（guide）・変更履歴（changelog）・スキル（skill）・単語の対応表（word-list）は `docs/` の YAML が正本で、種類ごとの行に分かれる。
   本文は `items[]` の各項目が持ち、`[名前](id:{文書の ID}#{項目の ID})` で他の文書・項目を指す。`related[].when` がその文書を読むときを表す。
   `hooks/`・`skills/`・`scripts/` のファイルは、各フォルダの `files.yaml` が名前・概要文・タグを持つ。
   書き込みのときは knowledge-checks が、項目の ID の重複・参照先の実在・mermaid の文法を検査する。
@@ -78,6 +78,15 @@ documents:
     metadata:
       tags: tags[].name
       main_tags: tags[main].name
+  - id: word-list
+    title: 単語の対応表
+    paths: ["docs/word-list/*.yaml"]
+    schema: schemas/word-list.schema.yaml
+    validators: [knowledge-checks]
+    converter: knowledge-markdown
+    metadata:
+      tags: tags[].name
+      main_tags: tags[main].name
   - id: hooks
     title: フック
     paths: [hooks/files.yaml]
@@ -102,6 +111,10 @@ nav:
       items:
         - auto:
             document: rule
+        - group: 単語の対応表
+          items:
+            - auto:
+                document: word-list
     - title: テンプレート
       items:
         - auto:
