@@ -411,4 +411,3 @@ def check_word_list(doc: CommentedMap) -> list[Violation]:
 
 if __name__ == "__main__":
     sys.exit(main())
-

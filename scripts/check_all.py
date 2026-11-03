@@ -252,4 +252,3 @@ def check_word_list_copy(root: Path) -> list[tuple[str, int, str, str]]:
 
 if __name__ == "__main__":
     sys.exit(main())
-
