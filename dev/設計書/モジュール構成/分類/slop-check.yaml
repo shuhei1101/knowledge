@@ -1,0 +1,50 @@
+id: "MOD-148-1"
+title: "slop-check / hooks"
+lead: プラグイン slop-check の PostToolUse のフック。Python の標準ライブラリだけで書いた単一ファイルのスクリプトを `python3` で起動し、プラグインのフォルダの対応表の JSON のコピーを読む。
+directory: |-
+  ```
+  plugins/slop-check/
+  ├── .claude-plugin/
+  │   └── plugin.json                       # プラグイン slop-check の定義
+  └── hooks/
+      ├── hooks.json                        # PostToolUse の matcher とコマンド
+      └── post-tool-use/
+          ├── slop_check.py                 # 書き込んだ中身の照合（フックの入口と照合）
+          └── word-list-ai-slop.json        # 対応表のコピー（scripts/build_word_list.py が書き出す）
+  tests/
+  ├── unit/slop-check/test_slop_check.py    # slop_check.py の単体テスト
+  └── integration/slop-check/test_slop_check.py  # 書き込んだ中身の照合の結合テスト
+  ```
+diagrams:
+  - name: 全体
+    diagram: |-
+      classDiagram
+          direction LR
+          class hook["書き込んだ中身の照合"]
+          hook : main()
+          hook : extract_text()
+          hook : find_hits()
+          hook : build_notice()
+          class entry["対応表の行"]
+          entry : id
+          entry : pattern
+          entry : allow
+          class checks["文書の違反の検査"]
+          checks : check_word_list()
+          class build["対応表のコピーの作成"]
+          build : render_copy()
+          class checkall["全ての文書の検査"]
+          checkall : check_word_list_copy()
+          hook ..> entry
+          checks ..> hook
+          checkall ..> build
+notes:
+  起動の方式: |-
+    `hooks.json` の `PostToolUse` に、`matcher` を対象のツールの正規表現（`TARGET_MATCHER`）にして `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-use/slop_check.py` を登録する。
+    依存を持たないため、PEP 723 のメタデータと `uv` を使わない。書き込むたびに起動するため、uv の依存の解決を起動の時間に入れない（MOD-72-1 の測った値で 0.3〜0.6 秒）。
+  照合の共有: |-
+    照合は `slop_check.py` が持ち、`scripts/knowledge_checks.py` の対応表の `examples` の検査は `slop_check.py` の `compile_entry`・`entry_hits` を使う。
+    `knowledge_checks.py` は、リポジトリの直下からの `plugins/slop-check/hooks/post-tool-use` を `sys.path` の先頭に入れてから import する。
+  テストと静的検査: |-
+    単体テストは `tests/unit/slop-check/test_slop_check.py`、結合テストは `tests/integration/slop-check/` に置く。
+    pytest の `pythonpath` に `plugins/slop-check/hooks/post-tool-use` を加え、ruff の `T20` を外す対象と pyright の対象に `plugins/slop-check/hooks/post-tool-use/*.py` を加える。

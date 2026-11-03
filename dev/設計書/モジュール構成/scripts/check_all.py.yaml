@@ -54,7 +54,8 @@ functions:
       4. 検査する文書を引き（検査する文書の列挙）、並列に読む（ファイルの並列の読み込み）
       5. スキーマの検査器を作り（スキーマの検査器の作成）、ID の索引を 1 度だけ作る（ID の索引の作成）
       6. 文書ごとに検査し（文書 1 件の検査）、違反を `{ファイルのパス}:{行}: {項目のパス}: {内容}` の 1 行ずつ、文書のパスの順に標準出力へ出す
-      7. 最後に `{文書の数} 件の文書を検査し、違反は {違反の数} 件でした` を出し、違反があれば `1`、無ければ `0` を返す
+      7. 対応表のコピーを検査し（対応表のコピーの検査）、違反を同じ形の行で出す
+      8. 最後に `{文書の数} 件の文書を検査し、違反は {違反の数} 件でした` を出し、違反があれば `1`、無ければ `0` を返す
          - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返す
     unit_tests:
       - name: test_main
@@ -88,6 +89,45 @@ functions:
       - MOD-72-4#functions[build_id_index]
     refs:
       - IF-72-3#
+  - name: check_word_list_copy
+    title: 対応表のコピーの検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: 正本から作り直したコピーの中身が、置いてあるコピーと一致するかを確かめる
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`SOURCE`・`COPY` の起点'
+    returns:
+      type: list[tuple[str, int, str, str]]
+      description: （ファイルのパス、行、項目のパス、内容）。一致すれば空
+    process: |-
+      1. 正本が無ければ空を返す（正本の違反は文書の検査で出る）
+      2. 正本を読み（文書の読み込み）、コピーの中身を作る（コピーの中身の作成）
+         - 読めない正本の場合、空を返す
+      3. `COPY` を UTF-8 で読み、作った中身と一致しなければ `(COPY, 1, "$", "対応表のコピーが正本と一致しません。uv run --frozen --script scripts/build_word_list.py で作り直してください")` を返す（コピーが無いときも同じ）
+    unit_tests:
+      - name: test_check_word_list_copy
+        case: 正常
+        summary: 一致する
+        condition: 正本と、コピーの中身の作成で作ったコピー
+        mock: なし（一時ディレクトリ）
+        expected: 空
+      - name: test_check_word_list_copy_when_stale
+        case: 正常
+        summary: 一致しない
+        condition: 正本と、1 行を消したコピー
+        mock: なし（一時ディレクトリ）
+        expected: 1 件で、パスが `COPY`、内容に `build_word_list.py` がある
+    callees:
+      - MOD-148-3#functions[render_copy]
+      - MOD-72-2#functions[load_document]
+    refs:
+      - IF-72-3#constraints[対応表のコピー]
   - name: list_targets
     title: 検査する文書の列挙
     kind: 関数
@@ -246,6 +286,6 @@ functions:
       - MOD-72-2#functions[format_path]
       - MOD-72-4#functions[check_document]
 notes:
-  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と `jsonschema>=4.26.0`（LIB-72-2）を書き、`knowledge_checks.py` を同じフォルダから import する。
+  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と `jsonschema>=4.26.0`（LIB-72-2）を書き、`knowledge_checks.py`・`build_word_list.py` を同じフォルダから import する。
 test_files:
   - tests/unit/scripts/test_check_all.py
