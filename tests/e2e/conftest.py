@@ -308,6 +308,12 @@ def knowledge_clone(tmp_path: Path) -> Callable[..., Path]:
 
 
 @pytest.fixture
+def git() -> Callable[..., str]:
+    """フォルダで git を実行し、標準出力を返す関数を返す。"""
+    return run_git
+
+
+@pytest.fixture
 def knowledge_worktree() -> Callable[[Path], Path]:
     """knowledge のクローンに、develop から切った作業ブランチの worktree を作る関数を返す。"""
 
