@@ -42,4 +42,6 @@ Red の後に、`tests/unit/slop-check/test_slop_check.py` に `from __future__ 
 
 ### 結合
 
-なし（結合テスト作成で記入する）
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| `tests/integration/slop-check/test_slop_check.py` | 全実行 | 新規 | ✅ | 10 テスト pass（IF-148-1 の flows）<br>`テスト結果/20261103210038_cebcea2_結合テスト.log` |

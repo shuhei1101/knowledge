@@ -1,0 +1,43 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/integration
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0 -- /home/shuhei2441/.cache/uv/builds-v0/.tmpmpQOBO/bin/python
+cachedir: .pytest_cache
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check
+configfile: pytest.ini
+collecting ... collected 33 items
+
+tests/integration/scripts/test_build_pages.py::test_normal PASSED        [  3%]
+tests/integration/scripts/test_build_pages.py::test_error_when_converter_fails PASSED [  6%]
+tests/integration/scripts/test_build_pages.py::test_error_when_reference_missing PASSED [  9%]
+tests/integration/scripts/test_build_pages.py::test_error_when_mdmark_fails PASSED [ 12%]
+tests/integration/scripts/test_build_pages.py::test_error_when_no_public PASSED [ 15%]
+tests/integration/scripts/test_build_pages.py::test_error_when_config_missing PASSED [ 18%]
+tests/integration/scripts/test_build_word_list.py::test_normal PASSED    [ 21%]
+tests/integration/scripts/test_build_word_list.py::test_error_when_source_missing PASSED [ 24%]
+tests/integration/scripts/test_check_all.py::test_normal PASSED          [ 27%]
+tests/integration/scripts/test_check_all.py::test_normal_when_violations PASSED [ 30%]
+tests/integration/scripts/test_check_all.py::test_normal_when_word_list_copy_stale PASSED [ 33%]
+tests/integration/scripts/test_check_all.py::test_error_when_maid_missing PASSED [ 36%]
+tests/integration/scripts/test_check_all.py::test_error_when_config_missing PASSED [ 39%]
+tests/integration/scripts/test_knowledge_checks.py::test_normal PASSED   [ 42%]
+tests/integration/scripts/test_knowledge_checks.py::test_normal_when_violations PASSED [ 45%]
+tests/integration/scripts/test_knowledge_checks.py::test_normal_when_word_list_examples_fail PASSED [ 48%]
+tests/integration/scripts/test_knowledge_checks.py::test_normal_when_timed_out PASSED [ 51%]
+tests/integration/scripts/test_knowledge_checks.py::test_normal_when_invalid_yaml PASSED [ 54%]
+tests/integration/scripts/test_knowledge_checks.py::test_error_when_maid_missing PASSED [ 57%]
+tests/integration/scripts/test_knowledge_markdown.py::test_normal PASSED [ 60%]
+tests/integration/scripts/test_knowledge_markdown.py::test_normal_when_kind_specific_keys PASSED [ 63%]
+tests/integration/scripts/test_knowledge_markdown.py::test_error_when_schema_missing PASSED [ 66%]
+tests/integration/scripts/test_knowledge_markdown.py::test_error_when_invalid_yaml PASSED [ 69%]
+tests/integration/slop-check/test_slop_check.py::test_normal PASSED      [ 72%]
+tests/integration/slop-check/test_slop_check.py::test_normal_when_no_word_hits PASSED [ 75%]
+tests/integration/slop-check/test_slop_check.py::test_normal_when_edit PASSED [ 78%]
+tests/integration/slop-check/test_slop_check.py::test_normal_when_edited_file_unreadable PASSED [ 81%]
+tests/integration/slop-check/test_slop_check.py::test_normal_when_notebook_edit PASSED [ 84%]
+tests/integration/slop-check/test_slop_check.py::test_normal_when_mcp_tool PASSED [ 87%]
+tests/integration/slop-check/test_slop_check.py::test_normal_when_tool_not_target PASSED [ 90%]
+tests/integration/slop-check/test_slop_check.py::test_normal_when_writing_word_list PASSED [ 93%]
+tests/integration/slop-check/test_slop_check.py::test_error_when_word_list_missing PASSED [ 96%]
+tests/integration/slop-check/test_slop_check.py::test_error_when_input_invalid PASSED [100%]
+
+============================= 33 passed in 18.82s ==============================
