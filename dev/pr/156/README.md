@@ -1,0 +1,1 @@
+# MCP・フックの渡し方と SessionStart・instructions の使い分けの判定フローチャートを追加し、claude の規約を改める
