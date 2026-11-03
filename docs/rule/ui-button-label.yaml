@@ -1,0 +1,71 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: ui-button-label
+kind: rule
+name: ボタンのラベル
+description: ボタンをアイコンだけにするか文字を出すかの使い分けと、ツールチップ・アイコン・文言の決まりを定め、画面のボタンを設計・実装するときに読む。
+tags:
+  - name: scope:ui
+  - name: topic:ボタン
+    main: true
+  - name: topic:ラベル
+  - name: topic:アイコン
+  - name: topic:ツールチップ
+  - name: topic:文言
+  - name: action:表示
+  - name: action:統一
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-03'
+related:
+  - to: ui-operation-accessibility
+    type: references
+    when: アイコンだけのボタンの読み上げ用の名前と、押す部品の大きさを確かめるとき
+sources:
+  - id: HIG
+    title: "Apple Human Interface Guidelines: Buttons"
+    url: https://developer.apple.com/design/human-interface-guidelines/buttons
+  - id: HIG
+    title: "Apple Human Interface Guidelines: Toolbars"
+    url: https://developer.apple.com/design/human-interface-guidelines/toolbars
+  - id: HIG
+    title: "Apple Human Interface Guidelines: Alerts"
+    url: https://developer.apple.com/design/human-interface-guidelines/alerts
+  - id: HIG
+    title: "Apple Human Interface Guidelines: Menus"
+    url: https://developer.apple.com/design/human-interface-guidelines/menus
+  - id: MD
+    title: "Material Web: Icon button"
+    url: https://github.com/material-components/material-web/blob/main/docs/components/icon-button.md
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 共通（単体 HTML・React）
+      ボタンをアイコンだけにするか文字を出すかの使い分けと、ツールチップ・アイコン・文言の決まり。
+      出典の略号は HIG = Apple Human Interface Guidelines、MD = Material Web（リンクはメタデータの `sources`）。
+  - id: icon-or-text-01
+    group: アイコンと文字の使い分け
+    name: アイコンと文字の使い分けの決まり
+    body: |-
+      | 要素 | 出典 |
+      | --- | --- |
+      | アイコンだけにしてよいのは、標準的で意味が 1 つに決まる操作（閉じる・戻る・検索・メニュー・コピー など）と、ツールバー・表の行のように場所が詰まっている操作に限る | HIG / MD |
+      | 主要な操作・破壊的な操作・確認ダイアログのボタン・合うアイコンが無い操作は、文字を出す。アイコンは併用してよい | HIG |
+      | 同じグループの中では、アイコンの有無を統一する | HIG |
+  - id: tooltip-01
+    group: ツールチップ
+    name: アイコンだけのボタンのツールチップ
+    body: |-
+      - アイコンだけのボタンにはツールチップを付け、ホバーとフォーカスで出す（HIG）。
+  - id: icon-01
+    group: アイコン
+    name: 同じ操作は同じアイコン
+    body: |-
+      - 同じ操作には、画面全体で同じアイコンを当てる（HIG）。
+      - アイコンのセットは、規約『[情報の階層と見た目](id:ui-information-hierarchy#visual-consistency-01)』に従って 1 つにする。
+  - id: wording-01
+    group: 文言
+    name: ボタンの文言の参照
+    body: |-
+      - ボタンの文言は、規約『[入力と文言](id:ui-input-wording#wording-01)』の文言の決まり・[語と書式の決まり](id:ui-input-wording#wording-term-format-02)・[操作の語の対応表](id:ui-input-wording#wording-operation-02)に従う。
