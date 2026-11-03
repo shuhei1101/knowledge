@@ -1,0 +1,1 @@
+# E2E が組み立てる files.yaml の行の文書の ID とページの path を、dev-docs の拡張子付きの ID に合わせる
