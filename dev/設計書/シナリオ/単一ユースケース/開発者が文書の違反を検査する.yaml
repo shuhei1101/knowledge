@@ -47,6 +47,29 @@ scenarios:
       - CI のジョブが失敗で終わる
       - ログに 2 つの違反の両方が、文書のパス・項目・行・内容つきで出る
     test: test_error_when_documents_have_violations
+  - name: 異常シナリオ（対応表の examples が意図どおりにヒットしない）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: PR
+        description: '`examples.hit` の文に `pattern` がヒットしない行を持つ単語の対応表を含む PR'
+        notes: '`ng: 直す`・`pattern: ''直す''`・`examples.hit: [直した]`'
+    flow: |-
+      sequenceDiagram
+        participant G as GitHub Actions
+        participant C as 検査のワークフロー
+        participant V as 検査のスクリプト
+        G->>C: ワークフローを起動する
+        loop 全ての文書
+          C->>C: スキーマの検査
+          C->>V: 標準入力に文書の YAML
+          V-->>C: 終了コード 0 と違反の配列
+        end
+        C-->>G: 違反の配列が空でない文書の全ての違反を出して失敗
+    expected:
+      - CI のジョブが失敗で終わる
+      - ログに、対応表のパス・ヒットしなかった `examples.hit` の要素のパス・行・ヒットすべき文がヒットしなかったことが出る
+    test: test_error_when_word_list_examples_fail
   - name: 異常シナリオ（maid が入っていない）
     setup:
       - name: Mock

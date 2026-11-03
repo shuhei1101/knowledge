@@ -46,6 +46,27 @@ scenarios:
       - 作業ツリーの文書が変わらない
       - 応答が `isError` で、違反の `path` が mermaid を持つ項目のパス、`rule` に文書の行と maid の内容が入る
     test: test_error_when_validator_reports_violation
+  - name: 異常シナリオ（対応表の examples が意図どおりにヒットしない）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 書き込む内容
+        description: スキーマには合うが、`examples.pass` の文に `pattern` がヒットする行を持つ単語の対応表の YAML
+        notes: '`ng: 形`・`pattern: ''形''`・`examples.pass: [形式]`'
+    flow: |-
+      sequenceDiagram
+        participant E as エージェント
+        participant M as dev-docs の文書の MCP
+        participant V as knowledge の検査のスクリプト
+        E->>M: write_docs に source knowledge と対応表
+        M->>V: 標準入力に対応表の YAML
+        V->>V: 各行の照合を examples.hit と examples.pass に当てる
+        V-->>M: 終了コード 0 と違反の配列
+        M-->>E: isError と違反の一覧
+    expected:
+      - 作業ツリーの対応表が変わらない
+      - 応答が `isError` で、違反の `path` がヒットした `examples.pass` の要素のパス、`rule` にヒットしてはいけない文がヒットしたことが入る
+    test: test_error_when_word_list_examples_fail
   - name: 異常シナリオ（作業場所が scope.write の外）
     setup:
       - name: Mock
