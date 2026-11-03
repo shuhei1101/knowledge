@@ -63,8 +63,8 @@ tags:
   - name: action:集計
 status: current
 visibility: internal
-rev: 7
-last_reviewed: '2026-10-30'
+rev: 8
+last_reviewed: '2026-11-03'
 related:
   - to: claude-plugin
     type: references
@@ -290,8 +290,8 @@ items:
     group: MCP からの書き込み
     name: expected_version の必須化
     body: |-
-      - 書き込みに項目の `expected_version`（`rev`）を必須にし、合わなければ書かずに、再読み込みして再度呼び出すよう返す
-        バージョンはファイルではなく項目ごとに持つ
+      - 書き込みに、読んだときの文書のバージョン（中身から作る値）を `expected_version` として必須にし、合わなければ書かずに、再読み込みして再度呼び出すよう返す
+        バージョンはファイルではなく文書ごとに持つ
         この決まりは YAML の正本の項目を書き換えるときに当て、DB への追記には当てない
   - id: mcp-write-05
     group: MCP からの書き込み
