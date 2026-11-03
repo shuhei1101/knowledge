@@ -52,7 +52,7 @@ identifier: build-word-list
 idempotent: true
 side_effects: '`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を書き換える'
 callers:
-  - IF-148-1#constraints[対応表のコピー]
+  - IF-72-3#constraints[対応表のコピー]
 exclusivity: 制限なし（同じ正本からは同じバイト列を書き出す）
 request:
   - name: cwd

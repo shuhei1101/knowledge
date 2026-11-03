@@ -153,6 +153,24 @@ flows:
       - 終了コードが 0
       - 標準出力が空
     test: test_normal_when_tool_not_target
+  - name: 正常系（対応表を書き込む）
+    summary: 対応表の正本とコピーへの書き込みは照合せずに何も出力しない
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '`tool_name` が `Write`、`tool_input.file_path` が `docs/word-list/word-list-ai-slop.yaml` で終わるパス、`tool_input.content` が「ng: 直す」'
+    flow: |-
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        C->>H: 標準入力に PostToolUse の入力
+        H->>H: 書き込む先が対応表
+        H-->>C: 終了コード 0 と出力なし
+    expected:
+      - 終了コードが 0
+      - 標準出力が空
+    test: test_normal_when_writing_word_list
   - name: 異常系（対応表が読めない・終了コード 0）
     summary: 対応表のコピーが無いか JSON として読めなければ、何も出力せずに理由を標準エラーへ出す
     setup:
@@ -280,6 +298,9 @@ constraints:
   - item: 対象のツール
     constraint: '`Write`・`Edit`・`NotebookEdit` と、`mcp__` で始まり最後の `__` の後ろが次のツール名の MCP ツール。dev-docs の `write_docs`。ai-monitor の `comment`・`reply_comment`・`reply_review_thread`・`create_review_comment`・`create_file_comment`・`create_issue`・`create_draft_pr`・`update_body`・`update_title`・`add_notice_row`・`notify`・`create_defect_issue`・`create_monitor_rule_issue`・`create_plugin_rule_issue`。MindStella の `add`・`batch`・`update`・`reply`・`new_thread`・`edit_option`・`update_thread`'
     notes: MCP ツールはサーバーの部分（`mcp__` と最後の `__` の間）に `dev-docs`・`ai-monitor`・`mindstella` を含むかも合わせて見る。`hooks.json` の `matcher` も同じ一覧の正規表現にする
+  - item: 照合しない書き込む先
+    constraint: '対応表の正本とコピーへの書き込みは照合しない。Write・Edit・NotebookEdit は `file_path`（NotebookEdit は `notebook_path`）が `docs/word-list/` の下の `.yaml` か `hooks/post-tool-use/word-list-` で始まる `.json` のとき。`write_docs` は `operations[]` の全ての `id` が `word-list-` で始まるか、`kind` が `word-list` のとき'
+    notes: NG の単語を例文に持つ設計書は除かず、通知の文の但し書きに任せる
   - item: 取り出す中身
     constraint: 'Write は `content`。Edit は `file_path` のファイル全体（読めなければ `new_string`）。NotebookEdit は `new_source`。MCP ツールは `tool_input` の中の全ての文字列の値を改行でつないだもの。ただし、キーが `id`・`ids`・`path`・`paths`・`file_path`・`url`・`source`・`kind`・`op`・`cwd`・`worktree`・`branch`・`sender`・`receiver`・`labels` か、`_id` で終わる値は除く'
   - item: 照合
