@@ -29,10 +29,11 @@ layers:
     parallel: false
     external_cost: なし（maid は差し替えのスクリプトを使う）
   - name: 結合テスト（バック）
-    description: pytest で `tests/integration/` を実行する。入口のスクリプトを dev-docs・CI と同じ `uv run --frozen --script` で子プロセスとして起動し、標準入力・標準出力・終了コードを確かめる。
+    description: pytest で `tests/integration/` を実行する。入口のスクリプトを dev-docs・CI と同じ `uv run --frozen --script` で子プロセスとして起動し、標準入力・標準出力・終了コードを確かめる。slop-check のフックは `hooks.json` と同じく PATH の `python3` で起動する。
     prerequisites:
       - uv と Python 3.14 が入っている
       - 開発コマンドの環境構築（クローン直後）を流してあり、maid が PATH にある
+      - python3（3.12 以上）が PATH にある
       - リポジトリの直下で実行する
     run_all: |-
       ```bash
