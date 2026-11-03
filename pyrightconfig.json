@@ -1,18 +1,35 @@
 {
-  "include": ["scripts", "tests"],
-  "extraPaths": ["scripts"],
+  "include": [
+    "scripts",
+    "tests",
+    "plugins/slop-check/hooks/post-tool-use"
+  ],
+  "extraPaths": [
+    "scripts",
+    "plugins/slop-check/hooks/post-tool-use"
+  ],
   "typeCheckingMode": "strict",
   "pythonVersion": "3.14",
   "executionEnvironments": [
     {
+      "root": "plugins/slop-check/hooks/post-tool-use",
+      "pythonVersion": "3.12"
+    },
+    {
       "root": "tests",
-      "extraPaths": ["scripts"],
+      "extraPaths": [
+        "scripts",
+        "plugins/slop-check/hooks/post-tool-use"
+      ],
       "reportUnknownMemberType": "warning",
       "reportUnknownVariableType": "warning",
       "reportUnknownArgumentType": "warning"
     },
     {
-      "root": "scripts"
+      "root": "scripts",
+      "extraPaths": [
+        "plugins/slop-check/hooks/post-tool-use"
+      ]
     }
   ]
 }

@@ -158,6 +158,27 @@ def test_check_document(tmp_path: Path, fake_maid_factory: FakeMaidFactory) -> N
     ]
 
 
+def test_check_document_when_word_list(tmp_path: Path, fake_maid_factory: FakeMaidFactory) -> None:
+    """対応表の examples の違反をつなぐ（正常系）。"""
+    # 準備
+    text = (
+        "id: self\n"
+        "kind: word-list\n"
+        "entries:\n"
+        "  - id: naosu\n"
+        "    ng: 直す\n"
+        "    ok: [修正]\n"
+        "    examples:\n"
+        "      hit: [修正した]\n"
+        "      pass: []\n"
+    )
+    maid = fake_maid_factory(stdout='{"valid": true, "errors": []}', exit_code=0)
+    # 実行
+    result = check_document(text, tmp_path, maid, time.monotonic() + 10.0, index={})
+    # 検証
+    assert [violation["path"] for violation in result] == ["entries[0].examples.hit[0]"]
+
+
 def test_check_document_when_broken(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """読めない YAML（正常系）。"""
     # 準備
@@ -384,3 +405,64 @@ def test_check_mermaid_when_bad_output(fake_maid_factory: FakeMaidFactory) -> No
     # 検証
     assert len(result) == 1
     assert result[0]["fix"] == "開発コマンドの環境構築で入れた maid のバージョンを確かめる"
+
+
+def test_check_word_list() -> None:
+    """hit・pass・正規表現の違反（正常系）。"""
+    # 準備
+    doc = load_document(
+        "kind: word-list\n"
+        "entries:\n"
+        "  - id: naosu\n"
+        "    ng: 直す\n"
+        "    ok: [修正]\n"
+        "    pattern: 直す\n"
+        "    examples:\n"
+        "      hit: [直した]\n"
+        "      pass: [修正]\n"
+        "  - id: katachi\n"
+        "    ng: 形\n"
+        "    ok: [構造]\n"
+        "    pattern: 形\n"
+        "    examples:\n"
+        "      hit: [この形]\n"
+        "      pass: [形式]\n"
+        "  - id: broken\n"
+        "    ng: 形\n"
+        "    ok: [構造]\n"
+        "    pattern: 形(\n"
+        "    examples:\n"
+        "      hit: [形]\n"
+        "      pass: [形式]\n"
+    )
+    # 実行
+    result = knowledge_checks.check_word_list(doc)
+    # 検証
+    assert [violation["path"] for violation in result] == [
+        "entries[0].examples.hit[0]",
+        "entries[1].examples.pass[0]",
+        "entries[2].pattern",
+    ]
+    assert result[0]["rule"] == "8 行目: 「直した」にヒットしません"
+    assert result[1]["rule"] == "16 行目: 「形式」にヒットします"
+    assert result[2]["rule"].startswith("20 行目: 正規表現として読めません: ")
+
+
+def test_check_word_list_when_valid() -> None:
+    """examples が照合と合う（正常系）。"""
+    # 準備
+    doc = load_document(
+        "kind: word-list\n"
+        "entries:\n"
+        "  - id: katachi\n"
+        "    ng: 形\n"
+        "    ok: [構造]\n"
+        "    pattern: '(?<![㐀-鿿々])形(?![㐀-鿿々])'\n"
+        "    examples:\n"
+        "      hit: [この形で]\n"
+        "      pass: [形式, 円形]\n"
+    )
+    # 実行
+    result = knowledge_checks.check_word_list(doc)
+    # 検証
+    assert result == []

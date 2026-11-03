@@ -13,6 +13,7 @@
 | [knowledge_checks.py](./knowledge_checks.py.yaml) | validators の knowledge-checks |
 | [knowledge_markdown.py](./knowledge_markdown.py.yaml) | converters の knowledge-markdown |
 | [check_all.py](./check_all.py.yaml) | CI と手元から呼ぶ全ての文書の検査 |
+| [build_word_list.py](./build_word_list.py.yaml) | 手元から呼ぶ対応表のコピーの作成 |
 | [build_pages.py](./build_pages.py.yaml) | CI と手元から呼ぶ Pages の成果物の作成 |
 
 <!-- /table -->

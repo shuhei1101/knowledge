@@ -8,6 +8,7 @@
 """dev-docs.yaml の documents[] が指す全ての文書にスキーマの検査と文書の違反の検査を当て、終了コードで合否を返す。
 
 CI と手元から、リポジトリの直下で起動する。違反は 1 件 1 行で「{ファイルのパス}:{行}: {項目のパス}: {内容}」と出す。
+対応表のコピーが正本と一致するかも確かめる。
 
 Usage:
 # 全ての文書を検査する（違反があれば終了コード 1）
@@ -45,6 +46,7 @@ from _common import (
     strings,
 )
 from _maid import find_maid
+from build_word_list import COPY, SOURCE, render_copy
 from knowledge_checks import build_id_index, check_document
 
 if TYPE_CHECKING:
@@ -120,6 +122,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             ):
                 print(f"{target.path}:{line}: {path}: {message}")
                 count += 1
+        # 対応表のコピーが正本と一致するか
+        for file_path, line, path, message in check_word_list_copy(root):
+            print(f"{file_path}:{line}: {path}: {message}")
+            count += 1
         print(f"{len(targets)} 件の文書を検査し、違反は {count} 件でした")
     except Exception:  # noqa: BLE001 - 想定していない例外は traceback を出して終了コードで返す
         traceback.print_exc()
@@ -219,6 +225,29 @@ def check_target(
             line, rule = _split_line(violation["rule"])
             results.append((line, violation["path"], rule))
     return results
+
+
+def check_word_list_copy(root: Path) -> list[tuple[str, int, str, str]]:
+    """正本から作り直したコピーの中身が、置いてあるコピーと一致するかを確かめる。"""
+    # 正本が無い・読めないときの違反は文書の検査で出る
+    try:
+        doc = load_document((root / SOURCE).read_text(encoding="utf-8"))
+    except OSError, UnicodeDecodeError, DocumentError:
+        return []
+    try:
+        current = (root / COPY).read_text(encoding="utf-8")
+    except OSError, UnicodeDecodeError:
+        current = None
+    if current == render_copy(doc):
+        return []
+    return [
+        (
+            str(COPY),
+            1,
+            "$",
+            "対応表のコピーが正本と一致しません。uv run --frozen --script scripts/build_word_list.py で作り直してください",
+        )
+    ]
 
 
 if __name__ == "__main__":

@@ -7,3 +7,4 @@
 | ページ | 概要 |
 | --- | --- |
 | [scripts](./scripts.yaml) | 検査と変換のスクリプトの構成・起動の方式・テストの置き場所 |
+| [slop-check](./slop-check.yaml) | プラグイン slop-check のフックの構成・起動の方式・照合の共有 |

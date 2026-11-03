@@ -18,6 +18,12 @@ overview:
     - id: ci
       label: CI
       kind: system
+    - id: slopcheck
+      label: slop-check
+      kind: system
+    - id: claudecode
+      label: Claude Code
+      kind: external
     - id: devdocs
       label: dev-docs
       kind: external
@@ -70,6 +76,15 @@ overview:
     - from: user
       to: pages
       label: 公開の文書
+    - from: agent
+      to: claudecode
+      label: 書き込むツール
+    - from: claudecode
+      to: slopcheck
+      label: PostToolUse
+    - from: scripts
+      to: slopcheck
+      label: 対応表のコピーの作成
   subgraphs:
     - id: knowledge
       label: knowledge
@@ -77,11 +92,12 @@ overview:
         - content
         - scripts
         - ci
+        - slopcheck
 repository:
   style: モノレポ
   repositories:
     - name: shuhei1101/knowledge
-  layout: 文書は `docs/`、スキーマは `schemas/`、スクリプトは `scripts/`、CI は `.github/workflows/`、配信の設定は直下の `dev-docs.yaml`。設計書は `dev/設計書/`。フック用のプラグインは `hooks/`・`skills/`・`.claude-plugin/`（変更しない）
+  layout: 文書は `docs/`、スキーマは `schemas/`、スクリプトは `scripts/`、CI は `.github/workflows/`、配信の設定は直下の `dev-docs.yaml`。設計書は `dev/設計書/`。プラグイン knowledge は `hooks/`・`skills/`・`.claude-plugin/`、プラグイン slop-check は `plugins/slop-check/`（マーケットプレイスは直下の `.claude-plugin/marketplace.json`）
 subsystems:
   - name: 文書
     scope: docs
@@ -98,9 +114,14 @@ subsystems:
     role: PR ごとに全ての文書へスキーマの検査と検査のスクリプトを当て、違反があれば失敗させる。master への push で公開の文書だけを HTML にして GitHub Pages へ配信する
     runtime: GitHub Actions のワークフロー
     runs_on: GitHub Actions
+  - name: slop-check
+    scope: slopcheck
+    role: 書き込むツールの実行の後に、書き込んだ中身を対応表のコピーで照合し、ヒットした単語と置き換え先の通知を返す（書き込みは止めない）。対応表の正本は文書の `docs/word-list/`、コピーは検査と変換のスクリプトが作る
+    runtime: Python 3.12 以上（標準ライブラリだけ）
+    runs_on: Claude Code が PostToolUse で起動する子プロセス（端末の python3）
 lead: |-
   knowledge は規約・テンプレートなどの文書を YAML で持ち、dev-docs の配信元として画面と文書の MCP から読まれる。
-  サーバーと MCP は dev-docs が持ち、knowledge は文書・スキーマ・検査と変換のスクリプト・CI だけを持つ。
+  サーバーと MCP は dev-docs が持ち、knowledge は文書・スキーマ・検査と変換のスクリプト・CI と、書き込んだ中身を照合するプラグイン slop-check だけを持つ。
 external_systems:
   - name: dev-docs
     purpose: knowledge の文書を画面と文書の MCP で配信し、書き込みのときに検査のスクリプト、配信のときに変換のスクリプトを呼ぶ
@@ -134,3 +155,9 @@ external_systems:
     protocol: Pages の成果物（`actions/upload-pages-artifact`・`actions/deploy-pages`）
     notes:
       事前確認: 要。配信の前に `actions/configure-pages` で Pages の設定を読み、配信元が GitHub Actions でなければ配信せずに失敗させる
+  - name: Claude Code
+    purpose: 書き込むツールの実行の後に、プラグイン slop-check の PostToolUse のフックを起動し、標準出力の `additionalContext` をエージェントのコンテキストへ入れる
+    direction: 双方向
+    protocol: フック（子プロセス、標準入力に PostToolUse の入力の JSON、標準出力に `hookSpecificOutput` の JSON）
+    notes:
+      事前確認: 不要。Claude Code がフックを呼ぶ側で、slop-check から Claude Code を呼ばない

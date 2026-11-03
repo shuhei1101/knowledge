@@ -7,4 +7,5 @@
 | ページ | 概要 |
 | --- | --- |
 | [scripts](./scripts/) | 検査と変換のスクリプト |
+| [slop-check](./slop-check/) | プラグイン slop-check |
 | [ci](./ci/) | CI のワークフロー |

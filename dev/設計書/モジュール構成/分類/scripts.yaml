@@ -14,6 +14,8 @@ directory: |-
   ├── check_all.py.lock
   ├── build_pages.py              # Pages の成果物の作成（CI と手元の CLI）
   ├── build_pages.py.lock
+  ├── build_word_list.py          # 対応表のコピーの作成（手元の CLI）
+  ├── build_word_list.py.lock
   └── files.yaml                  # scripts/ のファイルの一覧（dev-docs の files の行）
   tests/
   ├── unit/scripts/               # 1 物理ファイル = 1 テストファイル（test_common.py など）
@@ -36,6 +38,9 @@ diagrams:
           class pages["Pages の成果物の作成"]
           pages : main()
           pages : rewrite_references()
+          class build["対応表のコピーの作成"]
+          build : main()
+          build : render_copy()
           class common["共通"]
           common : load_document()
           common : iter_strings()
@@ -50,6 +55,8 @@ diagrams:
           checkall ..> common
           checkall ..> maidcall
           pages ..> common
+          build ..> common
+          checkall ..> build
 notes:
   起動の方式: |-
     各入口のスクリプトは PEP 723 のインラインのメタデータ（`requires-python = ">=3.14"` と依存）を持ち、`uv lock --script` のロック（`{スクリプト}.py.lock`）で版を固定する。

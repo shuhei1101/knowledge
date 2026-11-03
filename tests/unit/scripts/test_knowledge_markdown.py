@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 import knowledge_markdown
-from knowledge_markdown import convert, load_schema, render_items, render_value
+from knowledge_markdown import convert, load_schema, render_items, render_value, render_word_list
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -206,6 +206,37 @@ def test_convert_when_no_title_in_schema() -> None:
     assert "## extra\n\n追加の値" in result
 
 
+def test_convert_when_word_list() -> None:
+    """対応表の entries（正常系）。"""
+    # 準備
+    doc = {
+        "id": "a",
+        "kind": "word-list",
+        "name": "名前",
+        "description": "説明",
+        "items": [],
+        "entries": [
+            {
+                "id": "kata",
+                "ng": "形",
+                "ok": ["スキーマ"],
+                "pattern": "(?<![㐀-鿿々])形",
+                "allow": ["形容詞"],
+                "examples": {"hit": ["形を決める"], "pass": ["円形"]},
+            }
+        ],
+    }
+    # 実行
+    result = convert(
+        doc, {"title": "単語の対応表", "properties": {"entries": {"title": "対応表の行"}}}
+    )
+    # 検証
+    assert "## 対応表の行\n\n<!-- table: data -->\n\n| NG | OK |" in result
+    assert "| 形 | スキーマ |" in result
+    assert "(?<!" not in result
+    assert "形を決める" not in result
+
+
 def test_render_items() -> None:
     """同じ段を繰り返さない（正常系）。"""
     # 準備
@@ -283,3 +314,27 @@ def test_render_value_when_object() -> None:
     result = render_value({"a": 1})
     # 検証
     assert result == "- a: 1"
+
+
+def test_render_word_list() -> None:
+    """NG・OK の表にする（正常系）。"""
+    # 準備
+    entries = [
+        {
+            "ng": "形",
+            "ok": ["スキーマ", "構造"],
+            "note": "図形は除く",
+            "pattern": "(?<![㐀-鿿々])形",
+            "examples": {"hit": ["形を決める"], "pass": ["円形"]},
+        },
+        {"ng": "節", "ok": ["セクション"]},
+    ]
+    # 実行
+    result = render_word_list(entries)
+    # 検証
+    assert result.startswith("<!-- table: data -->")
+    assert result.endswith("<!-- /table -->")
+    assert "| NG | OK |" in result
+    assert "| 形 | スキーマ・構造（図形は除く） |" in result
+    assert "| 節 | セクション |" in result
+    assert "(?<!" not in result

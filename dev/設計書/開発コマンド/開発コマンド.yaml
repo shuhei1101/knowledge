@@ -18,6 +18,7 @@ categories:
       uv sync --script scripts/knowledge_markdown.py
       uv sync --script scripts/check_all.py
       uv sync --script scripts/build_pages.py
+      uv sync --script scripts/build_word_list.py
       ```
     verification:
       state: 済
@@ -32,6 +33,7 @@ categories:
       uv sync --script scripts/knowledge_markdown.py
       uv sync --script scripts/check_all.py
       uv sync --script scripts/build_pages.py
+      uv sync --script scripts/build_word_list.py
       ```
     verification:
       state: 済
@@ -87,15 +89,22 @@ categories:
       ```bash
       ! find _site -type f \( -name '*.yaml' -o -name '*.yml' \) | grep .
       ```
+
+      3. 対応表の正本（`docs/word-list/word-list-ai-slop.yaml`）を変えたら、slop-check のフックが読むコピーを作り直し、正本と一緒に commit する（IF『対応表のコピーの作成』）
+
+      ```bash
+      uv run --frozen --script scripts/build_word_list.py
+      ```
     refs:
       - IF-137-1#
       - IF-137-2#constraints[YAML の検査]
       - LIB-137-1#
+      - IF-148-2#
     verification:
       state: 済
-      date: '2026-10-31'
-      detail: WSL2 の Ubuntu（Node 24.14.0）で 2 つのコマンドを実行した。公開の 5 文書が `_site/index.html` にまとまり（約 11 秒、終了コード 0）、YAML の検査は何も出さず終了コード 0 を返した
-    effects: 約 11 秒（初回は `npx` が mdmark と依存を取る）。`_site` は中身を消してから書く
+      date: '2026-11-03'
+      detail: WSL2 の Ubuntu（Node 24.14.0）で 1・2 のコマンドを実行した。公開の 5 文書が `_site/index.html` にまとまり（約 11 秒、終了コード 0）、YAML の検査は何も出さず終了コード 0 を返した（2026-10-31）。3 のコマンドは worktree で実行し、終了コード 0 で、正本から作り直したコピーが commit 済みのコピーと一致した（2026-11-03）
+    effects: 1 は約 11 秒（初回は `npx` が mdmark と依存を取る）。`_site` は中身を消してから書く。3 は `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を上書きする
   - name: 取り込み前の検査
     prerequisites:
       - 環境構築（クローン直後）を流してある
