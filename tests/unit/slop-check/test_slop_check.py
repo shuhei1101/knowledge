@@ -1,5 +1,7 @@
 """plugins/slop-check/hooks/post-tool-use/slop_check.py の単体テスト。"""
 
+from __future__ import annotations
+
 import io
 import json
 import re
