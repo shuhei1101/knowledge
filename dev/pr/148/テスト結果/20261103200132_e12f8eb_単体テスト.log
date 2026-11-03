@@ -1,0 +1,28 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/unit
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check
+configfile: pytest.ini
+collected 97 items / 2 errors
+
+==================================== ERRORS ====================================
+_________ ERROR collecting tests/unit/scripts/test_build_word_list.py __________
+ImportError while importing test module '/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/scripts/test_build_word_list.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/scripts/test_build_word_list.py:6: in <module>
+    from build_word_list import main, render_copy
+E   ModuleNotFoundError: No module named 'build_word_list'
+__________ ERROR collecting tests/unit/slop-check/test_slop_check.py ___________
+ImportError while importing test module '/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/slop-check/test_slop_check.py:11: in <module>
+    import slop_check
+E   ModuleNotFoundError: No module named 'slop_check'
+=========================== short test summary info ============================
+ERROR tests/unit/scripts/test_build_word_list.py
+ERROR tests/unit/slop-check/test_slop_check.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!!
+============================== 2 errors in 1.26s ===============================
+exit: 2
