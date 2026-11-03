@@ -227,7 +227,9 @@ def test_convert_when_word_list() -> None:
         ],
     }
     # 実行
-    result = convert(doc, {"title": "単語の対応表", "properties": {"entries": {"title": "対応表の行"}}})
+    result = convert(
+        doc, {"title": "単語の対応表", "properties": {"entries": {"title": "対応表の行"}}}
+    )
     # 検証
     assert "## 対応表の行\n\n<!-- table: data -->\n\n| NG | OK |" in result
     assert "| 形 | スキーマ |" in result
@@ -336,4 +338,3 @@ def test_render_word_list() -> None:
     assert "| 形 | スキーマ・構造（図形は除く） |" in result
     assert "| 節 | セクション |" in result
     assert "(?<!" not in result
-
