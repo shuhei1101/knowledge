@@ -14,6 +14,9 @@ rules:
   - rule: docs/template/template-checksheet.yaml
     paths:
       - "**/docs/checksheet/*.yaml"
+  - rule: docs/template/template-decision-table.yaml
+    paths:
+      - "**/docs/decision-table/*.yaml"
   - rule: docs/template/template-flowchart.yaml
     paths:
       - "**/判定フローチャート/**/*.{md,yaml}"
@@ -65,6 +68,15 @@ rules:
       - "**/.claude/commands/**"
     tools:
       - "mcp__*__write_design_doc*"
+  - rule: docs/flowchart/flowchart-rule-form-choice.yaml
+    paths:
+      - "**/docs/rule/*.yaml"
+      - "**/docs/flowchart/*.yaml"
+      - "**/docs/decision-table/*.yaml"
+      - "**/docs/checksheet/*.yaml"
+      - "**/規約/**/*.md"
+      - "**/判定フローチャート/**/*.{md,yaml}"
+      - "**/チェックシート/**/*.md"
   - rule: docs/flowchart/flowchart-presentation-choice.yaml
     paths:
       - "**/*.md"

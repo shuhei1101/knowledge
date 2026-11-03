@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=../../schemas/decision-table.schema.yaml
+id: decision-table-alias-exclusion
+kind: decision-table
+name: エイリアスを登録しない条件 判定表
+description: 文書 1 件を指す名前を、エイリアスとして登録するか、登録しないかを判定し、判定フローチャート『エイリアスの登録』で文書 1 件を指す名前と分かったときに読む。
+tags:
+  - name: scope:判定表
+  - name: topic:判定表
+  - name: topic:エイリアス
+    main: true
+  - name: topic:文書
+  - name: topic:用語
+  - name: topic:条件
+  - name: action:判定
+  - name: action:登録
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: 文書 1 件を指す名前を、エイリアスとして登録するか、登録しないかを判定し、判定フローチャート『エイリアスの登録』で文書 1 件を指す名前と分かったときに読む。
+  - id: alias-exclusion-table-01
+    group: エイリアスを登録しない条件 判定表
+    name: 判定表
+    body: |-
+      上の行から順に当て、1 つでも当たれば、その行の結果にする。
+      どれにも当たらなければ「aliases に登録する」にする。
+
+      | 条件 | 結果 | 補足 |
+      | --- | --- | --- |
+      | 会話・Issue・本文で、実際にその名前で呼ばれていない ※1 | 登録しない | - |
+      | 複数の文書や用語に当てはまる一般語で ※2、特定の文脈でだけその文書を指すことも無い ※3 | 登録しない | 特定の文脈でだけ指すなら、文書に照合条件を記載して ※4 次の行へ進む |
+      | 1〜2 文字か、ほかの単語の一部としてよく出る語である ※5 | 登録しない | - |
+      | 正規化で吸収できる表記ゆれである ※6 | 登録しない | - |
+      | ほかの文書・用語の name か aliases に既にある | 登録しない | 指す文書を 1 件に決めて片方だけに登録する |
+  - id: alias-exclusion-table-02
+    group: エイリアスを登録しない条件 判定表
+    name: ※1 その名前で呼ばれた
+    body: '- **※1 その名前で呼ばれた**: その文書を指す単語として使われた実例が、会話・Issue・本文に残っている。作成したばかりの文書は、作成のきっかけの会話・Issue で呼んだ名前を実例にする'
+  - id: alias-exclusion-table-03
+    group: エイリアスを登録しない条件 判定表
+    name: ※2 一般語
+    body: '- **※2 一般語**: 文書に固有でなく、別の意味の文章でも使われる単語。登録すると、関係ない入力にもその文書の文脈が注入される。例: 設定・手順'
+  - id: alias-exclusion-table-04
+    group: エイリアスを登録しない条件 判定表
+    name: ※3 特定の文脈
+    body: '- **※3 特定の文脈**: 照合した本文に出る別の単語で、その名前がこの文書を指す場面を区切れる。例: 「フォルダ構成」は、「React」か「tsx」を含み「Python」を含まない本文でだけ React の規約『フォルダ構成』を指す'
+  - id: alias-exclusion-table-05
+    group: エイリアスを登録しない条件 判定表
+    name: ※4 照合条件
+    body: '- **※4 照合条件**: 文書の照合条件（alias-inject の `inject_when`）に、※3 の文脈を規約 [フィルター・照合条件の構造](id:dev-filter-condition) の構造で記載する。照合条件は文書に 1 つで、その文書の name と aliases の全てに効く。候補がタイトルなら、照合条件の記載で判定を終える'
+  - id: alias-exclusion-table-06
+    group: エイリアスを登録しない条件 判定表
+    name: ※5 1〜2 文字の語・ほかの単語の一部
+    body: '- **※5 1〜2 文字の語・ほかの単語の一部**: 照合で別の単語の中でも当たる単語。例: 「印」は「印刷」に当たる'
+  - id: alias-exclusion-table-07
+    group: エイリアスを登録しない条件 判定表
+    name: ※6 正規化で吸収できる表記ゆれ
+    body: '- **※6 正規化で吸収できる表記ゆれ**: [一致前の正規化](id:dev-tag-term-registration#matching-01)（NFKC・英字の大文字小文字・前後の空白）で同じ単語になる表記の違い。例: 「ＡＰＩ」と「API」は片方だけ登録する'
