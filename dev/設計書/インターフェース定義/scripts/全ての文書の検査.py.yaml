@@ -49,6 +49,30 @@ flows:
       - 終了コードが 1
       - 標準出力に 2 つの文書の違反が、ファイルのパス・行・項目のパス・内容つきで 1 行ずつ出る
     test: test_normal_when_violations
+  - name: 正常系（対応表のコピーが正本と違う・終了コード 1）
+    summary: 対応表のコピーが正本から作り直したものと違えば、違反として出す
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`docs/word-list/word-list-ai-slop.yaml` と、その 1 行を消したコピー `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を持つ一時フォルダ'
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>F: dev-docs.yaml の documents を読む
+        loop 全ての文書
+          S->>S: スキーマの検査と文書の違反の検査
+        end
+        S->>F: 正本と対応表のコピーを読む
+        S->>S: 正本から作り直したコピーと比べる
+        S-->>C: 終了コード 1 とコピーの違反の行
+    expected:
+      - 終了コードが 1
+      - 標準出力に、コピーのパスと、「対応表のコピーの作成」を実行する案内の行が出る
+    test: test_normal_when_word_list_copy_stale
   - name: 異常系（maid が無い・終了コード 2）
     summary: maid が PATH から引けなければ検査を始めずに終わる
     setup:
@@ -120,6 +144,9 @@ exceptions:
 constraints:
   - item: 検査の範囲
     constraint: '`dev-docs.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も当てる'
+  - item: 対応表のコピー
+    constraint: '`docs/word-list/word-list-ai-slop.yaml` から「対応表のコピーの作成」と同じ書式で作り直したバイト列が、`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` と一致する。違えばコピーのパスで違反 1 件にする'
+    decided_by: IF-148-2#constraints[コピーの書式]
   - item: 1 文書あたりの処理時間
     constraint: 「文書の違反の検査」と同じ 20 秒。超えたブロックは時間切れの違反にする
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
