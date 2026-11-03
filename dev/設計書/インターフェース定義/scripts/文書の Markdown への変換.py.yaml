@@ -132,12 +132,36 @@ flows:
       - 終了コードが 1
       - 標準エラーに読めない行が出る
     test: test_error_when_invalid_yaml
+  - name: 異常系（対応表が読めない・終了コード 1）
+    summary: 埋め込みのマーカーがあり、対応表を引く dev-docs.yaml か対応表のファイルが読めなければ変換せずに終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '項目の本文に `<!-- embed: word-list-ai-slop -->` の行を持つ rule の文書'
+      - name: 配信元の対応表
+        description: '`dev-docs.yaml` の `word-list` の行の `paths` に当たるファイルの 1 つが、括弧の閉じていない YAML'
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の Markdown への変換
+        participant F as 配信元のファイル
+        D->>S: 標準入力に文書の YAML
+        S->>F: dev-docs.yaml の word-list の行の対応表を読む
+        F-->>S: 読めないファイル
+        S-->>D: 終了コード 1 と標準エラーの理由
+    expected:
+      - 終了コードが 1
+      - 標準出力が空
+      - 標準エラーに読めないファイルのパスと行が出る
+    test: test_error_when_word_list_unreadable
 lead: 標準入力の文書 1 件を、項目の `group` の階層を見出しにした mdmark の記法の Markdown にして標準出力へ返す。
 identifier: knowledge-markdown
 idempotent: true
 side_effects: なし（ファイルを書き換えない）
 callers:
   - SC-72-3#scenarios[正常シナリオ]
+  - SC-72-3#scenarios[正常シナリオ（対応表を更新した後に開き直す）]
 exclusivity: 制限なし
 request:
   - name: stdin
@@ -158,7 +182,7 @@ response:
     description: mdmark の記法の Markdown。並びは「`# {name}`・`description`・`overview` の項目の本文・項目の節・種類に固有のキーの節・`## 関連`・`## 出典`」
   - name: exit_code
     type: Literal[0, 1]
-    description: 0 = 変換できた。1 = YAML として読めないか、`kind` のスキーマが `schemas/` に無い
+    description: 0 = 変換できた。1 = YAML として読めないか、`kind` のスキーマが `schemas/` に無いか、埋め込みのマーカーがある文書で対応表を読めない
   - name: stderr
     type: str
     description: 終了コード 1 のときの理由（1 行）。dev-docs が画面の変換の失敗（`exit`）の理由に載せる
@@ -191,7 +215,7 @@ exceptions:
   - name: なし（正常終了）
     condition: 変換できた
   - name: 終了コード 1
-    condition: 標準入力が YAML として読めないか、`kind` に当たる `schemas/{kind}.schema.yaml` が無い
+    condition: 標準入力が YAML として読めないか、`kind` に当たる `schemas/{kind}.schema.yaml` が無い。埋め込みのマーカーがある文書で、`dev-docs.yaml` か `word-list` の行の `paths` に当たるファイルが読めない
 constraints:
   - item: 処理時間
     constraint: 起動から 20 秒
