@@ -1,0 +1,160 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: convention-doc-presentation
+kind: rule
+name: 表し方の優先順位
+description: 人が読む文書・設計書の中身を図・表・箇条書き・文のどれで表すかの優先順位と、図・表・箇条書きと文・ページの分け方・本文に出さないものの決まりを定め、文書・設計書を記載するときと文書を描くビュワーの変換を作るときに読む。
+tags:
+  - name: scope:規約
+  - name: topic:表し方
+    main: true
+  - name: topic:優先順位
+  - name: topic:文書
+  - name: topic:設計書
+  - name: topic:図
+  - name: topic:フロー
+  - name: topic:シーケンス
+  - name: topic:構成
+  - name: topic:er図
+  - name: topic:状態遷移
+  - name: topic:ツリー
+  - name: topic:グラフ
+  - name: topic:判定フローチャート
+  - name: topic:テーブル
+  - name: topic:箇条書き
+  - name: topic:手順
+  - name: topic:文章
+  - name: topic:改行
+  - name: topic:ページ
+  - name: topic:サイドバー
+  - name: topic:見出し
+  - name: topic:ラベル
+  - name: topic:id
+  - name: topic:メタデータ
+  - name: topic:リンク
+  - name: tool:mdmark
+  - name: tool:mermaid
+  - name: action:選択
+  - name: action:描画
+  - name: action:変換
+  - name: action:分割
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-10-31'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      人が読む文書・設計書の中身を、図・表・箇条書き・文のどれで表すかの決まり。
+      文書を描くビュワーの変換も、この決まりで描く。
+  - id: principle-01
+    group: 原則
+    name: 図 → 表 → 箇条書き → 文の順
+    body: |-
+      - 図 → 表 → 箇条書き → 文の順に選ぶ。上の表し方で表せるものを下の表し方で記載しない
+  - id: principle-02
+    group: 原則
+    name: 下の表し方で重ねない
+    body: |-
+      - 上の表し方で表したものを、下の表し方で追記しない。図の元のデータの表は既定で閉じる
+  - id: principle-03
+    group: 原則
+    name: 見出し・図・表と本文を重ねない
+    body: |-
+      - 見出し・図・表を読めば分かることを、本文で繰り返さない（タイトル・リードをラベル付きでもう一度出さない）
+  - id: diagram-01
+    group: 図
+    name: 伝えるものと図の種類
+    body: |-
+      <!-- table: data -->
+
+      | 伝えるもの | 図 |
+      | --- | --- |
+      | 処理の順番・分岐 | フロー図 |
+      | 判定の分岐（質問に答えて結果を選ぶ） | 判定フローチャート（描き方は [テンプレート: 判定フローチャート](id:template-flowchart)） |
+      | 登場するものどうしのやり取りの順番 | シーケンス図 |
+      | システム・部品のつながり | 構成図 |
+      | テーブルどうしの関係 | ER 図 |
+      | 状態と移り変わり | 状態遷移図 |
+      | フォルダ・ファイルの並び | ファイルツリー |
+      | 数の比較・推移 | グラフ |
+
+      <!-- /table -->
+  - id: diagram-02
+    group: 図
+    name: mdmark の部品で描く
+    body: |-
+      - 図は mdmark の部品で描く。Mermaid は使わない
+  - id: diagram-03
+    group: 図
+    name: 図の中のラベル
+    body: |-
+      - 図の中のラベルは読む人の言葉にする。内部の ID（`SRV`・`D-313` など）を出さない
+  - id: table-01
+    group: 表
+    name: 2 件以上は表にする
+    body: |-
+      - 同じ属性を持つ項目が 2 件以上あれば表にする
+  - id: table-02
+    group: 表
+    name: 属性が 3 つ以上なら項目と値の表
+    body: |-
+      - 1 つの項目の属性が 3 つ以上並ぶときは、`**キー**: 値` を並べず「項目 / 値」の 2 列の表にする
+  - id: table-03
+    group: 表
+    name: 空の列と補足の列
+    body: |-
+      - どの行も空の列は出さない。補足の列は既定で隠す
+  - id: table-04
+    group: 表
+    name: はみ出す表
+    body: |-
+      - はみ出す表は先頭の列をピン止めし、説明の列は幅を広く取る。はみ出した分は横にスクロールさせる
+  - id: table-05
+    group: 表
+    name: 真偽の値
+    body: |-
+      - 真偽の値は `true` / `false` でなく ✓ と空欄で出す
+  - id: list-and-sentence-01
+    group: 箇条書きと文
+    name: 順番のある手順
+    body: |-
+      - 順番のある手順は番号付きの箇条書きかステップの部品（[ドキュメントの部品](id:doc-parts)）にする
+  - id: list-and-sentence-02
+    group: 箇条書きと文
+    name: 1 文 1 行
+    body: |-
+      - 文の改行は [Markdown 編集規約](id:markdown-editing#line-length-01) に従う。YAML の長い文はブロックスカラー（`|`）で改行する
+  - id: list-and-sentence-03
+    group: 箇条書きと文
+    name: 長い理由は折りたたむ
+    body: |-
+      - 理由・根拠など、読まなくても概要が分かる長い文は折りたたむ
+  - id: page-split-01
+    group: ページの分け方
+    name: 中身ごとの分け方
+    body: |-
+      <!-- table: data -->
+
+      | 中身 | 分け方 |
+      | --- | --- |
+      | 独立して読まれ、要素ごとにリンクしたい要素（非機能要件・テストのレイヤー） | 1 要素 1 ページにし、サイドバーのグループで束ねる |
+      | 1 つのものの部分（モジュールのクラス・ER のテーブル） | 1 ページのまま、セクションを既定で閉じる |
+      | フォルダで分かれたファイル | サイドバーをフォルダで束ねる。タイトルにフォルダ名を付けない |
+
+      <!-- /table -->
+  - id: hidden-content-01
+    group: 本文に出さないもの
+    name: 内部向けのメタデータ
+    body: |-
+      - 内部向けのメタデータ（索引に載せるかなど）は本文に出さない
+  - id: hidden-content-02
+    group: 本文に出さないもの
+    name: 検討事項の ID
+    body: |-
+      - 検討事項の ID（`D-313`）を文の中に記載しない。参照は関連のキーに移し、リンクで出す
+  - id: hidden-content-03
+    group: 本文に出さないもの
+    name: Issue 番号と文書のパス
+    body: |-
+      - Issue 番号・文書のパスは生の文字で出さず、タイトル付きのリンクにする

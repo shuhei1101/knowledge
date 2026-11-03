@@ -37,7 +37,7 @@ tags:
   - name: action:開発
 status: current
 visibility: internal
-rev: 8
+rev: 9
 last_reviewed: '2026-10-30'
 sources:
   - title: "Anthropic: Effective context engineering for AI agents"
@@ -234,29 +234,41 @@ items:
     body: |-
       - 除外の条件に当たらないファイルは全て載せ、1 行を 1 ファイルにする
 
-      ```mermaid
-      flowchart TD
-        START([files.yaml に載せるか決めたいファイルがある])
-        Q0{生成物・ロック・バイナリ・ベンダーのコードに当たるか? ※1}
-        Q1{再エクスポートや空の __init__ だけのファイルか?}
-        Q2{テストか?}
-        Q3{対応する設計書があるか?}
+      <!-- flow -->
 
-        R1([載せない])
-        R2([載せる。related の tests で対象のコードを指す])
-        R3([載せる。related の implements でその設計書を指す])
-        R4([載せる])
-
-        START --> Q0
-        Q0 -->|YES| R1
-        Q0 -->|NO| Q1
-        Q1 -->|NO| Q2
-        Q1 -->|YES| R1
-        Q2 -->|YES| R2
-        Q2 -->|NO| Q3
-        Q3 -->|YES| R3
-        Q3 -->|NO| R4
+      ```json
+      {
+        "title": "files.yaml に載せるファイル",
+        "scope": "files.yaml に載せるかを決めたいファイルがあるとき",
+        "updated": "2026-11-02",
+        "width": 1028,
+        "height": 1136,
+        "nodes": [
+          {"id": "start", "kind": "start", "x": 424, "y": 24, "w": 180, "h": 180, "name": "files.yaml に載せるか決めたいファイルがある"},
+          {"id": "q0", "kind": "question", "x": 334, "y": 260, "w": 360, "h": 164, "name": "生成物・ロック・バイナリ・ベンダーのコードに当たるか ※1"},
+          {"id": "q1", "kind": "question", "x": 334, "y": 480, "w": 360, "h": 164, "name": "再エクスポートや空の __init__ だけのファイルか"},
+          {"id": "r1", "kind": "result", "x": 764, "y": 534, "w": 240, "h": 56, "name": "載せない"},
+          {"id": "q2", "kind": "question", "x": 374, "y": 700, "w": 280, "h": 120, "name": "テストか"},
+          {"id": "r2", "kind": "result", "x": 24, "y": 714, "w": 240, "h": 92, "name": "載せる。related の tests で対象のコードを指す"},
+          {"id": "q3", "kind": "question", "x": 374, "y": 876, "w": 280, "h": 124, "name": "対応する設計書があるか"},
+          {"id": "r3", "kind": "result", "x": 764, "y": 892, "w": 240, "h": 92, "name": "載せる。related の implements でその設計書を指す"},
+          {"id": "r4", "kind": "result", "x": 394, "y": 1056, "w": 240, "h": 56, "name": "載せる"}
+        ],
+        "wires": [
+          {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[514, 204], [514, 260]]},
+          {"id": "j-q0-r1", "from": "q0", "to": "r1", "line": "flow", "points": [[694, 342], [884, 342], [884, 534]], "label": "YES", "labelAt": [789, 342]},
+          {"id": "j-q0-q1", "from": "q0", "to": "q1", "line": "flow", "points": [[514, 424], [514, 480]], "label": "NO", "labelAt": [514, 452]},
+          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[514, 644], [514, 700]], "label": "NO", "labelAt": [514, 672]},
+          {"id": "j-q1-r1", "from": "q1", "to": "r1", "line": "flow", "points": [[694, 562], [764, 562]], "label": "YES", "labelAt": [729, 562]},
+          {"id": "j-q2-r2", "from": "q2", "to": "r2", "line": "flow", "points": [[374, 760], [264, 760]], "label": "YES", "labelAt": [319, 760]},
+          {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[514, 820], [514, 876]], "label": "NO", "labelAt": [514, 848]},
+          {"id": "j-q3-r3", "from": "q3", "to": "r3", "line": "flow", "points": [[654, 938], [764, 938]], "label": "YES", "labelAt": [709, 938]},
+          {"id": "j-q3-r4", "from": "q3", "to": "r4", "line": "flow", "points": [[514, 1000], [514, 1056]], "label": "NO", "labelAt": [514, 1028]}
+        ]
+      }
       ```
+
+      <!-- /flow -->
 
       - **※1 除外の条件の見分け方**: Q0・Q1 の除外の条件は、dev-docs の [文書のメタデータ](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/%E3%82%B3%E3%82%A2%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%97%E3%83%88/%E6%96%87%E6%9B%B8%E3%81%AE%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF.md) の「載せるファイルの判定」に従う
   - id: files-yaml-02
