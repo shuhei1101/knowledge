@@ -37,8 +37,8 @@ tags:
   - name: action:開発
 status: current
 visibility: internal
-rev: 9
-last_reviewed: '2026-10-30'
+rev: 10
+last_reviewed: '2026-11-03'
 sources:
   - title: "Anthropic: Effective context engineering for AI agents"
     url: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
@@ -129,7 +129,7 @@ items:
       | `tags` | タグ（[タグと用語の登録](id:dev-tag-term-registration)）。各要素は `name` と、主題なら `main: true` | 必須 |
       | `status` | 状態（英語の定数） | 必須 |
       | `visibility` | 公開範囲（`public` / `internal`） | 必須 |
-      | `rev` | 変更ごとに増えるバージョン。書き込みのツールが付ける | 必須 |
+      | `rev` | 変更ごとに増えるバージョン。書き込む側が 1 つ上げる | 必須 |
       | `aliases` | 本文や会話でこの文書を呼ぶ別の名前 | 任意 |
       | `related` | 関連（`## 関連`） | 任意 |
       | `sources` | 参考にした出典（URL・ライブラリとバージョン・確かめた日）。本文には決めたことだけを記載する | 任意 |
