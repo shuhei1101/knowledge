@@ -299,7 +299,11 @@ def _outside_fences(body: str) -> Iterator[tuple[int, str]]:
             fence = opened.group("mark")
         elif fence is not None:
             # 開きと同じ文字で、開き以上の長さの行で閉じる
-            if opened and opened.group("mark")[0] == fence[0] and len(opened.group("mark")) >= len(fence):
+            if (
+                opened
+                and opened.group("mark")[0] == fence[0]
+                and len(opened.group("mark")) >= len(fence)
+            ):
                 fence = None
         else:
             yield index, line

@@ -29,11 +29,7 @@ _RULE_SCHEMA = "title: 規約\nproperties:\n  arguments:\n    title: 引数\n"
 _HEADING = re.compile(r"^#{1,6} .*$", re.MULTILINE)
 
 # word-list の行だけを持つ dev-docs.yaml
-_CONFIG = (
-    "documents:\n"
-    "  - id: word-list\n"
-    "    paths: [\"docs/word-list/*.yaml\"]\n"
-)
+_CONFIG = 'documents:\n  - id: word-list\n    paths: ["docs/word-list/*.yaml"]\n'
 
 # ID が x の対応表の文書
 _WORD_LIST = (
@@ -519,7 +515,7 @@ def test_load_word_lists_when_no_row(tmp_path: Path) -> None:
     """word-list の行が無い（正常系）。"""
     # 準備
     (tmp_path / "dev-docs.yaml").write_text(
-        "documents:\n  - id: rule\n    paths: [\"docs/rule/*.yaml\"]\n", encoding="utf-8"
+        'documents:\n  - id: rule\n    paths: ["docs/rule/*.yaml"]\n', encoding="utf-8"
     )
     # 実行
     result = load_word_lists(tmp_path)
