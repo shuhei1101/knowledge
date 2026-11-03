@@ -36,7 +36,7 @@
 
 | ファイル | メソッド | 変更種別 | 結果 | 補足 |
 | --- | --- | --- | --- | --- |
-| `tests/unit/slop-check/test_slop_check.py` | 全実行 | 新規 | ✅ | 31 テスト pass（Python 3.14 と 3.12 の両方）<br>`テスト結果/20261103201719_6d83121_単体テスト.log` |
+| `tests/unit/slop-check/test_slop_check.py` | 全実行 | 新規 | ✅ | 31 テスト pass（Python 3.14 と 3.12 の両方）<br>`テスト結果/20261103204557_0e6be1c_単体テスト.log` |
 
 Red の後に、`tests/unit/slop-check/test_slop_check.py` に `from __future__ import annotations` を追加した（`8b5d9e0`）。Python 3.12 では `TYPE_CHECKING` の下で import した `Path` の型注釈が関数の定義のときに評価され、`NameError` で読み込めなかったため。期待値は変えていない。
 
