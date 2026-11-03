@@ -25,7 +25,7 @@ scenarios:
         C-->>E: 書き込みの結果と通知の文
     expected:
       - ファイルが書き込む中身のとおりに書き込まれる
-      - 'フックの出力の `hookSpecificOutput.additionalContext` に通知の文が入り、表に `| 直す | 修正 |` と `| 形 | スキーマ・構造 |` の 2 行だけが対応表の並びの順で出る'
+      - 'フックの出力の `hookSpecificOutput.additionalContext` に通知の文が入り、表に `| 直す | 修正 |` と `| 形 | スキーマ・構造（形状の意味なら「形状」） |` の 2 行だけが対応表の並びの順で出る'
       - 通知の文に、規約『文章の書き方』と規約『入力と文言』を `search_docs` で読む行が入る
       - フックの出力に `decision` が無く、終了コードが 0
     test: test_normal
@@ -35,7 +35,7 @@ scenarios:
         description: 差し替えない
       - name: 書き込む中身
         description: 対応表の単語を含まない文と、`allow` に当たる複合語・前後に漢字が続く漢字 1 文字の単語だけを含む文
-        notes: 'Write の `content` に「設定を修正して書き直す。形式と円形を確認する。」'
+        notes: 'Write の `content` に「設定を修正して割り当てる。形式と円形を確認する。」'
     flow: |-
       sequenceDiagram
         participant E as エージェント
