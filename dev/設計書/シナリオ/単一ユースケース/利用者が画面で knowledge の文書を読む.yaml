@@ -23,7 +23,31 @@ scenarios:
     expected:
       - 全ての種類の文書が HTTP 200 で開け、本文が空でない
       - タブとサイドバーの並びが `dev-docs.yaml` の `nav` と一致する
+      - '規約『文章の書き方』（`docs/rule/convention-writing-style`）の本文で、埋め込みのマーカー `<!-- embed: word-list-ai-slop -->` の位置に対応表の `| NG | OK |` の表が出て、マーカーと「埋め込めません」の注意書きが残らない'
     test: test_normal
+  - name: 正常シナリオ（対応表を更新した後に開き直す）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 配信中の knowledge
+        description: 規約『文章の書き方』を 1 回開いた後に、対応表 `docs/word-list/word-list-ai-slop.yaml` の `entries` へ 1 行追加する（規約の文書は変えない）
+    flow: |-
+      sequenceDiagram
+        actor U as 利用者
+        participant D as dev-docs の画面
+        participant V as knowledge の変換のスクリプト
+        U->>D: 規約『文章の書き方』を開く
+        D->>V: 標準入力に規約の YAML
+        V-->>D: mdmark の記法の Markdown
+        D-->>U: 対応表の表を持つ本文
+        Note over U,D: 対応表の entries へ 1 行追加する
+        U->>D: 規約『文章の書き方』を開き直す
+        D->>V: 標準入力に規約の YAML
+        V-->>D: mdmark の記法の Markdown
+        D-->>U: 追加した行を含む本文
+    expected:
+      - 開き直した本文の対応表の表に、追加した行の NG の単語が出る
+    test: test_normal_when_word_list_updated
   - name: 異常シナリオ（変換のスクリプトが失敗する）
     setup:
       - name: Mock
