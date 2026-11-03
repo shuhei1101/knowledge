@@ -298,3 +298,51 @@ def test_check_target_when_broken(repo_factory: RepoFactory) -> None:
     assert result[0][0] >= 3
     assert result[0][1] == "$"
     assert result[0][2].startswith("YAML として読めません: ")
+
+
+# 1 行の正本の対応表
+_WORD_LIST_SOURCE = (
+    "id: word-list-ai-slop\n"
+    "kind: word-list\n"
+    "entries:\n"
+    "  - id: han\n"
+    "    ng: 版\n"
+    "    ok: [バージョン]\n"
+)
+
+
+def test_check_word_list_copy(repo_factory: RepoFactory) -> None:
+    """一致する（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "docs/word-list/word-list-ai-slop.yaml": _WORD_LIST_SOURCE,
+            "plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json": (
+                '{\n  "entries": [\n    {\n      "id": "han",\n      "ng": "版",\n'
+                '      "ok": [\n        "バージョン"\n      ]\n    }\n  ]\n}\n'
+            ),
+        }
+    )
+    # 実行
+    result = check_all.check_word_list_copy(root)
+    # 検証
+    assert result == []
+
+
+def test_check_word_list_copy_when_stale(repo_factory: RepoFactory) -> None:
+    """一致しない（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "docs/word-list/word-list-ai-slop.yaml": _WORD_LIST_SOURCE,
+            "plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json": '{\n  "entries": []\n}\n',
+        }
+    )
+    # 実行
+    result = check_all.check_word_list_copy(root)
+    # 検証
+    assert len(result) == 1
+    assert result[0][0] == "plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json"
+    assert result[0][1] == 1
+    assert result[0][2] == "$"
+    assert "build_word_list.py" in result[0][3]
