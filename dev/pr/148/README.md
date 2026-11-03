@@ -1,0 +1,1 @@
+# AI slop の単語の対応表と、書き込んだ中身を対応表で調べて通知するプラグイン slop-check を追加し、SessionStart の注入を廃止する
