@@ -1,0 +1,1 @@
+# 規約『YAML』の mcp-write-04 の expected_version の記述を dev-docs の write_docs の挙動と一致させる
