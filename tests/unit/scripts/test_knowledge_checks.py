@@ -158,6 +158,27 @@ def test_check_document(tmp_path: Path, fake_maid_factory: FakeMaidFactory) -> N
     ]
 
 
+def test_check_document_when_word_list(tmp_path: Path, fake_maid_factory: FakeMaidFactory) -> None:
+    """対応表の examples の違反をつなぐ（正常系）。"""
+    # 準備
+    text = (
+        "id: self\n"
+        "kind: word-list\n"
+        "entries:\n"
+        "  - id: naosu\n"
+        "    ng: 直す\n"
+        "    ok: [修正]\n"
+        "    examples:\n"
+        "      hit: [修正した]\n"
+        "      pass: []\n"
+    )
+    maid = fake_maid_factory(stdout='{"valid": true, "errors": []}', exit_code=0)
+    # 実行
+    result = check_document(text, tmp_path, maid, time.monotonic() + 10.0, index={})
+    # 検証
+    assert [violation["path"] for violation in result] == ["entries[0].examples.hit[0]"]
+
+
 def test_check_document_when_broken(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """読めない YAML（正常系）。"""
     # 準備
