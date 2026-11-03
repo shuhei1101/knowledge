@@ -297,7 +297,7 @@ exceptions:
 constraints:
   - item: 対象のツール
     constraint: '`Write`・`Edit`・`NotebookEdit` と、`mcp__` で始まり最後の `__` の後ろが次のツール名の MCP ツール。dev-docs の `write_docs`。ai-monitor の `comment`・`reply_comment`・`reply_review_thread`・`create_review_comment`・`create_file_comment`・`create_issue`・`create_draft_pr`・`update_body`・`update_title`・`add_notice_row`・`notify`・`create_defect_issue`・`create_monitor_rule_issue`・`create_plugin_rule_issue`。MindStella の `add`・`batch`・`update`・`reply`・`new_thread`・`edit_option`・`update_thread`'
-    notes: MCP ツールはサーバーの部分（`mcp__` と最後の `__` の間）に `dev-docs`・`ai-monitor`・`mindstella` を含むかも合わせて見る。`hooks.json` の `matcher` も同じ一覧の正規表現にする
+    notes: MCP ツールはサーバーの部分（`mcp__` と最後の `__` の間）に `dev-docs`・`ai-monitor`・`mindstella` を含むかも合わせて見る。`hooks.json` の `matcher` は `Write|Edit|NotebookEdit|mcp__.*` にし、MCP ツールの対象の判定はフックだけが持つ
   - item: 照合しない書き込む先
     constraint: '対応表の正本とコピーへの書き込みは照合しない。Write・Edit・NotebookEdit は `file_path`（NotebookEdit は `notebook_path`）が `docs/word-list/` の下の `.yaml` か `hooks/post-tool-use/word-list-` で始まる `.json` のとき。`write_docs` は `operations[]` の全ての `id` が `word-list-` で始まるか、`kind` が `word-list` のとき'
     notes: NG の単語を例文に持つ設計書は除かず、通知の文の但し書きに任せる

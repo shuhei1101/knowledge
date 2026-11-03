@@ -483,6 +483,6 @@ functions:
         mock: なし
         expected: '`| 形 | スキーマ・構造（形状の意味なら「形状」） |` の行を持ち、`NOTICE_HEAD` で始まり `NOTICE_TAIL` で終わる'
 notes:
-  依存: Python の標準ライブラリだけ（`argparse`・`json`・`os`・`re`・`sys`・`traceback`・`dataclasses`・`pathlib`）。`requires-python` は MOD-72-1 と同じ 3.14 を前提にし、PEP 723 のメタデータは持たない。
+  依存: Python の標準ライブラリだけ（`argparse`・`json`・`os`・`re`・`sys`・`traceback`・`dataclasses`・`pathlib`）。PEP 723 のメタデータは持たない。端末の `python3`（2026-11-03 に WSL2 で測った値は 3.12.3）を下限にし、3.13 以降の構文・API を使わない
 test_files:
   - tests/unit/slop-check/test_slop_check.py
