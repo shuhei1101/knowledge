@@ -1,0 +1,97 @@
+# yaml-language-server: $schema=../../schemas/flowchart.schema.yaml
+id: flowchart-alias-registration
+kind: flowchart
+name: エイリアスの登録 判定フローチャート
+description: 文書を指す名前を、エイリアスとして登録するか、用語の登録の判定へ進むか、登録しないかを判定し、文書を作成・改名したときや文書が別の名前で呼ばれたときに読む。
+tags:
+  - name: scope:判定フローチャート
+  - name: topic:フロー
+  - name: topic:フローチャート
+  - name: topic:判定フローチャート
+  - name: topic:エイリアス
+    main: true
+  - name: topic:文書
+  - name: topic:用語
+  - name: action:判定
+  - name: action:登録
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: 文書を指す名前を、エイリアスとして登録するか、用語の登録の判定へ進むか、登録しないかを判定し、文書を作成・改名したときや文書が別の名前で呼ばれたときに読む。
+  - id: alias-registration-flow-01
+    group: エイリアスの登録 判定フローチャート
+    name: 判定フロー
+    body: |-
+      <!-- flow -->
+
+      ```json
+      {
+        "title": "エイリアスの登録",
+        "scope": "文書にエイリアスを登録するかを決めるとき",
+        "updated": "2026-11-03",
+        "width": 1028,
+        "height": 1772,
+        "nodes": [
+          {"id": "start", "kind": "start", "x": 434, "y": 24, "w": 160, "h": 140, "name": "文書を作成・改名した、または文書が別の名前で呼ばれた"},
+          {"id": "a1", "kind": "action", "x": 394, "y": 220, "w": 240, "h": 92, "name": "タイトルと違う呼び名の候補を書き出す ※1"},
+          {"id": "q1", "kind": "question", "x": 354, "y": 368, "w": 320, "h": 164, "name": "その名前が指すのは文書 1 件か ※2"},
+          {"id": "r-term", "kind": "result", "x": 764, "y": 414, "w": 240, "h": 72, "name": "判定フローチャート『用語の登録』へ進む"},
+          {"id": "q2", "kind": "question", "x": 354, "y": 588, "w": 320, "h": 164, "name": "会話・Issue・本文で、実際にその名前で呼ばれたか ※3"},
+          {"id": "r1", "kind": "result", "x": 24, "y": 642, "w": 240, "h": 56, "name": "登録しない"},
+          {"id": "q3", "kind": "question", "x": 354, "y": 808, "w": 320, "h": 164, "name": "複数の文書や用語に当てはまる一般語か ※4"},
+          {"id": "r2", "kind": "result", "x": 764, "y": 862, "w": 240, "h": 56, "name": "登録しない"},
+          {"id": "q4", "kind": "question", "x": 354, "y": 1028, "w": 320, "h": 164, "name": "1〜2 文字か、ほかの単語の一部としてよく出る語か ※5"},
+          {"id": "r3", "kind": "result", "x": 24, "y": 1082, "w": 240, "h": 56, "name": "登録しない"},
+          {"id": "q5", "kind": "question", "x": 354, "y": 1248, "w": 320, "h": 164, "name": "正規化で吸収できる表記ゆれか ※6"},
+          {"id": "r4", "kind": "result", "x": 764, "y": 1302, "w": 240, "h": 56, "name": "登録しない"},
+          {"id": "q6", "kind": "question", "x": 354, "y": 1468, "w": 320, "h": 164, "name": "ほかの文書・用語の name か aliases に既にあるか"},
+          {"id": "r5", "kind": "result", "x": 24, "y": 1510, "w": 240, "h": 80, "name": "登録しない。指す文書を 1 件に決めて片方だけに登録する"},
+          {"id": "r6", "kind": "result", "x": 394, "y": 1688, "w": 240, "h": 56, "name": "aliases に登録する"}
+        ],
+        "wires": [
+          {"id": "j-start-a1", "from": "start", "to": "a1", "line": "flow", "points": [[514, 164], [514, 220]]},
+          {"id": "j-a1-q1", "from": "a1", "to": "q1", "line": "flow", "points": [[514, 312], [514, 368]]},
+          {"id": "j-q1-r-term", "from": "q1", "to": "r-term", "line": "flow", "points": [[674, 450], [764, 450]], "label": "NO", "labelAt": [719, 450]},
+          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[514, 532], [514, 588]], "label": "YES", "labelAt": [514, 560]},
+          {"id": "j-q2-r1", "from": "q2", "to": "r1", "line": "flow", "points": [[354, 670], [264, 670]], "label": "NO", "labelAt": [309, 670]},
+          {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[514, 752], [514, 808]], "label": "YES", "labelAt": [514, 780]},
+          {"id": "j-q3-r2", "from": "q3", "to": "r2", "line": "flow", "points": [[674, 890], [764, 890]], "label": "YES", "labelAt": [719, 890]},
+          {"id": "j-q3-q4", "from": "q3", "to": "q4", "line": "flow", "points": [[514, 972], [514, 1028]], "label": "NO", "labelAt": [514, 1000]},
+          {"id": "j-q4-r3", "from": "q4", "to": "r3", "line": "flow", "points": [[354, 1110], [264, 1110]], "label": "YES", "labelAt": [309, 1110]},
+          {"id": "j-q4-q5", "from": "q4", "to": "q5", "line": "flow", "points": [[514, 1192], [514, 1248]], "label": "NO", "labelAt": [514, 1220]},
+          {"id": "j-q5-r4", "from": "q5", "to": "r4", "line": "flow", "points": [[674, 1330], [764, 1330]], "label": "YES", "labelAt": [719, 1330]},
+          {"id": "j-q5-q6", "from": "q5", "to": "q6", "line": "flow", "points": [[514, 1412], [514, 1468]], "label": "NO", "labelAt": [514, 1440]},
+          {"id": "j-q6-r5", "from": "q6", "to": "r5", "line": "flow", "points": [[354, 1550], [264, 1550]], "label": "YES", "labelAt": [309, 1550]},
+          {"id": "j-q6-r6", "from": "q6", "to": "r6", "line": "flow", "points": [[514, 1632], [514, 1688]], "label": "NO", "labelAt": [514, 1660]}
+        ]
+      }
+      ```
+
+      <!-- /flow -->
+  - id: alias-registration-flow-02
+    group: エイリアスの登録 判定フローチャート
+    name: ※1 候補
+    body: '- **※1 候補**: 略称・英語名・旧名（改名したときの前のタイトル）・本文や会話でその文書を呼んだ名前。候補ごとに次の判定へ進む'
+  - id: alias-registration-flow-03
+    group: エイリアスの登録 判定フローチャート
+    name: ※2 文書 1 件か
+    body: '- **※2 文書 1 件か**: 名前が指すのが概念・もの（例: 「ワークスペース」）なら用語（[用語の登録](id:flowchart-term-registration) へ進む）、特定の文書（例: 「索引の手順」）ならエイリアス'
+  - id: alias-registration-flow-04
+    group: エイリアスの登録 判定フローチャート
+    name: ※3 その名前で呼ばれた
+    body: '- **※3 その名前で呼ばれた**: その文書を指す単語として使われた実例が、会話・Issue・本文に残っている。作成したばかりの文書は、作成のきっかけの会話・Issue で呼んだ名前を実例にする'
+  - id: alias-registration-flow-05
+    group: エイリアスの登録 判定フローチャート
+    name: ※4 一般語
+    body: '- **※4 一般語**: 文書に固有でなく、別の意味の文章でも使われる単語。登録すると、関係ない入力にもその文書の文脈が注入される。例: 設定・手順'
+  - id: alias-registration-flow-06
+    group: エイリアスの登録 判定フローチャート
+    name: ※5 1〜2 文字の語・ほかの単語の一部
+    body: '- **※5 1〜2 文字の語・ほかの単語の一部**: 照合で別の単語の中でも当たる単語。例: 「印」は「印刷」に当たる'
+  - id: alias-registration-flow-07
+    group: エイリアスの登録 判定フローチャート
+    name: ※6 正規化で吸収できる表記ゆれ
+    body: '- **※6 正規化で吸収できる表記ゆれ**: [一致前の正規化](id:dev-tag-term-registration#matching-01)（NFKC・英字の大文字小文字・前後の空白）で同じ単語になる表記の違い。例: 「ＡＰＩ」と「API」は片方だけ登録する'
