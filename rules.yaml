@@ -142,6 +142,19 @@ rules:
       - "**/CLAUDE.md"
       - "**/skills/**/SKILL.md"
       - "**/content/prompts/**"
+  - rule: docs/flowchart/flowchart-session-context-placement.yaml
+    paths:
+      - "**/hooks/**"
+      - "**/mcp/**"
+      - "**/mcp_server.py*"
+      - "**/.mcp.json"
+      - "**/content/prompts/**"
+  - rule: docs/flowchart/flowchart-mcp-hook-delivery.yaml
+    paths:
+      - "**/.mcp.json"
+      - "**/plugins/**"
+      - "**/.claude-plugin/**"
+      - "**/.claude/settings.json"
   - rule: docs/rule/claude-rule-writing.yaml
     paths:
       - "**/.claude/rules/**/*.md"
