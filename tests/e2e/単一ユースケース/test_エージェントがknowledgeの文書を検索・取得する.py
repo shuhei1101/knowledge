@@ -15,7 +15,7 @@ type KnowledgeRow = Callable[..., Any]
 _TAG = "topic:文章"
 _MAIN_RULE_ID = "convention-writing-style"
 _SKILL_NAME = "文章の点検"
-_SKILL_ID = "skills/text-review/SKILL"
+_SKILL_ID = "skills/text-review/SKILL.md"
 
 
 def _search(
