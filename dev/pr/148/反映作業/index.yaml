@@ -1,0 +1,14 @@
+slop-check の導入と knowledge の更新:
+  説明: 端末の Claude Code の設定ディレクトリごとに、マーケットプレイス knowledge を更新し、プラグイン slop-check を導入して有効にし、プラグイン knowledge を更新して SessionStart の注入を止める。マーケットプレイスは master を配るため、release が master へ入った後に行う
+  タグ: [プラグイン]
+  実行者: tester
+  時期: master へ入った後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: 各設定ディレクトリで `claude plugin list` に slop-check@knowledge が有効として出て、プラグインのキャッシュの knowledge の hooks/hooks.json に SessionStart の行が無い
+  状態: "-"
