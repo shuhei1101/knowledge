@@ -33,6 +33,12 @@ HIDDEN_KEYS = frozenset(
 # 出す場所が決まっていて、種類に固有のキーの節にしないキー
 LAYOUT_KEYS = frozenset({"name", "description", "items", "related", "sources"})
 
+# entries を NG・OK の表にする文書の kind
+WORD_LIST_KIND = "word-list"
+
+# 対応表の entries のキー
+_WORD_LIST_ENTRIES = "entries"
+
 # 見出しの最も深い数
 _MAX_HEADING = 6
 
@@ -154,7 +160,12 @@ def convert(doc: Mapping[str, Any], schema: Mapping[str, Any]) -> str:
     for key, value in doc.items():
         if key in HIDDEN_KEYS or key in LAYOUT_KEYS:
             continue
-        blocks.extend((f"## {_schema_title(schema, str(key))}", render_value(value)))
+        # 対応表の行は照合の値を出さずに NG・OK の表にする
+        if doc.get("kind") == WORD_LIST_KIND and key == _WORD_LIST_ENTRIES:
+            block = render_word_list(_mappings(value))
+        else:
+            block = render_value(value)
+        blocks.extend((f"## {_schema_title(schema, str(key))}", block))
 
     if related := _mappings(doc.get("related")):
         blocks.extend(("## 関連", "\n".join(_related_line(row) for row in related)))
@@ -237,6 +248,17 @@ def render_value(value: object) -> str:
         return "\n".join(f"- {key}: {_inline(item)}" for key, item in mapping.items())
     # 数・真偽値: その値の段落
     return str(value)
+
+
+def render_word_list(entries: Sequence[Mapping[str, Any]]) -> str:
+    """対応表の entries を、slop-check の通知と同じ書式の NG・OK の表にする。"""
+    lines = ["| NG | OK |", "| --- | --- |"]
+    for entry in entries:
+        ok = "・".join(str(word) for word in as_list(entry.get("ok")) or [])
+        if entry.get("note"):
+            ok += f"（{entry['note']}）"
+        lines.append(f"| {_cell(entry.get('ng'))} | {_cell(ok)} |")
+    return "<!-- table: data -->\n\n" + "\n".join(lines) + "\n\n<!-- /table -->"
 
 
 def _inline(value: object) -> str:
