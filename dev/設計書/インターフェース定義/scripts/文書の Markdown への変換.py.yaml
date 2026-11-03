@@ -2,7 +2,7 @@ id: "IF-72-2"
 title: "文書の Markdown への変換"
 entry:
   kind: operation
-  value: '`dev-docs.yaml` の `converters[]` の `knowledge-markdown`（`documents[]` の `docs/` の種類（`rule`・`template`・`flowchart`・`guide`・`changelog`・`skill`）の行が `converter` で指す。files.yaml の行は `converter` を持たない。dev-docs が配信元の直下で子プロセスとして起動する）'
+  value: '`dev-docs.yaml` の `converters[]` の `knowledge-markdown`（`documents[]` の `docs/` の種類（`rule`・`template`・`flowchart`・`guide`・`changelog`・`skill`・`word-list`）の行が `converter` で指す。files.yaml の行は `converter` を持たない。dev-docs が配信元の直下で子プロセスとして起動する。`cache: false` で、dev-docs は変換の結果を控えずに文書を開くたびに起動する）'
 flows:
   - name: 正常系
     summary: 規約を、group の階層を見出しにした Markdown にする
@@ -48,6 +48,52 @@ flows:
       - '`arguments` が `## {arguments の title}` の下の `<!-- table: data -->` の表になる'
       - '`preconditions` が `## {preconditions の title}` の下の箇条書きになる'
     test: test_normal_when_kind_specific_keys
+  - name: 正常系（埋め込みのマーカーがある）
+    summary: 項目の本文の埋め込みのマーカーを、ID の対応表の NG・OK の表に置き換える
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '項目の本文に `<!-- embed: word-list-ai-slop -->` の行と、コードブロックの中の同じマーカーを持つ rule の文書'
+        notes: develop の `convention-writing-style.yaml` の `word-choice-table-02` と同じ書き方
+      - name: 配信元の対応表
+        description: '`dev-docs.yaml` の `documents[]` の `word-list` の行の `paths` に当たる、`id: word-list-ai-slop` の対応表'
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の Markdown への変換
+        participant F as 配信元のファイル
+        D->>S: 標準入力に文書の YAML
+        S->>F: kind のスキーマを読む
+        S->>F: dev-docs.yaml の word-list の行の対応表を読む
+        S->>S: マーカーの行を ID の対応表の NG・OK の表に置き換える
+        S-->>D: 終了コード 0 と Markdown
+    expected:
+      - 終了コードが 0
+      - 'マーカーの行の位置に `| NG | OK |` の表があり、対応表の `entries` の行数だけ行がある'
+      - 'コードブロックの中のマーカーは書き換えずに残る'
+      - '`pattern`・`allow`・`examples` の値が出ない'
+    test: test_normal_when_embed_marker
+  - name: 正常系（埋め込む対応表が無い）
+    summary: ID の対応表が無いマーカーは、変換を失敗させずに展開できない理由を出す
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '項目の本文に `<!-- embed: missing -->` の行を持つ rule の文書'
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の Markdown への変換
+        participant F as 配信元のファイル
+        D->>S: 標準入力に文書の YAML
+        S->>F: dev-docs.yaml の word-list の行の対応表を読む
+        F-->>S: ID が missing の対応表が無い
+        S-->>D: 終了コード 0 と、マーカーの位置に注意書きを持つ Markdown
+    expected:
+      - 終了コードが 0
+      - 'マーカーの行の位置に `> [!WARNING]` の注意書きがあり、`missing` の対応表が無いことが出る'
+    test: test_normal_when_embed_target_missing
   - name: 異常系（スキーマが無い・終了コード 1）
     summary: kind のスキーマが無ければ変換せずに終わる
     setup:
@@ -104,7 +150,7 @@ request:
     type: Path
     required: true
     location: argument
-    description: knowledge の配信元の直下。`schemas/{kind}.schema.yaml` を読み、種類に固有のキーの見出しにスキーマの `title` を使う
+    description: knowledge の配信元の直下。`schemas/{kind}.schema.yaml` を読み、種類に固有のキーの見出しにスキーマの `title` を使う。埋め込みのマーカーがあるときは `dev-docs.yaml` の `documents[]` の `word-list` の行の `paths` に当たる対応表を読む
     notes: 子プロセスの作業ディレクトリとして受け取る
 response:
   - name: stdout
@@ -140,7 +186,7 @@ response_example: |-
 
   - [flowchart-word-choice](id:flowchart-word-choice)（references）: 迷ったとき
   ```
-response_notes: '項目の本文は書かれた Markdown のまま出し、`<!-- table: data -->` などの mdmark のマーカーと `id:` のリンクを書き換えない'
+response_notes: '項目の本文は書かれた Markdown のまま出し、`<!-- table: data -->` などの mdmark のマーカーと `id:` のリンクを書き換えない。書き換えるのは埋め込みのマーカーの行だけ'
 exceptions:
   - name: なし（正常終了）
     condition: 変換できた
@@ -152,6 +198,8 @@ constraints:
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
   - item: 項目の見出し
     constraint: 項目はファイルの並びどおりに出す。`group` を ` > ` で分けた各段を `##` から 1 つずつ深い見出しにし、直前の項目と同じ段は繰り返さない。項目の `name` はその 1 つ下の見出しにする。`overview` は見出しを付けず、`description` の直後に本文だけを置く
+  - item: 埋め込みのマーカー
+    constraint: '項目の本文のうちコードブロックの外で、前後の空白を除いて `<!-- embed: {文書の ID} -->` だけの行を、`kind: word-list` で `id` が一致する文書の `entries` の NG・OK の表（対応表の文書の `entries` の節と同じ書式）に置き換える。`{文書の ID}` に `/`・`#` を含むマーカーは dev-docs のパスの書き方として書き換えずに残す。ID の対応表が無い場合は `> [!WARNING]` の注意書きに置き換え、終了コードは 0 のまま'
   - item: 出さないキー
     constraint: '`id`・`kind`・`tags`・`status`・`visibility`・`rev`・`last_reviewed`・`aliases` は本文に出さない（dev-docs の画面がメタデータとして出す）'
   - item: 種類に固有のキー
