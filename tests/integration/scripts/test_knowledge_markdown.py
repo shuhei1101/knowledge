@@ -3,9 +3,9 @@
 import shutil
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
-from ruamel.yaml import YAML
+from _common import load_safe
 
 # conftest の fixture の型。子プロセスの結果は conftest の Completed
 type RunScript = Callable[..., Any]
@@ -153,7 +153,8 @@ def test_error_when_invalid_yaml(run_script: RunScript) -> None:
 def test_normal_when_embed_marker(run_script: RunScript) -> None:
     """項目の本文の埋め込みのマーカーを、ID の対応表の NG・OK の表に置き換える（正常系）。"""
     # 準備
-    entries = YAML(typ="safe").load(_WORD_LIST.read_text(encoding="utf-8"))["entries"]
+    word_list = cast("dict[str, Any]", load_safe(_WORD_LIST.read_text(encoding="utf-8")))
+    entries = cast("list[dict[str, Any]]", word_list["entries"])
     # 実行
     result = run_script("knowledge_markdown", _ROOT, _embed_rule(_BODY_EMBED))
     # 検証
