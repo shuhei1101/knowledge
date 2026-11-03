@@ -440,11 +440,11 @@ def _representative_pages(clone: Path) -> dict[str, str]:
     pages: dict[str, str] = {}
     for document in config["documents"]:
         files = sorted(file for pattern in document["paths"] for file in clone.glob(pattern))
-        # files.yaml の行の文書は、先頭の行のファイルをページにする
+        # files.yaml の行の文書は、先頭の行のファイルをページにする（文書の ID は拡張子付きのパス）
         if "records" in document:
             record = load_yaml(files[0])[document["records"]][0]
             body = files[0].parent / str(record[document["body_file"]])
-            pages[document["id"]] = f"{_page_path(clone, files[0])}/{_page_path(clone, body)}"
+            pages[document["id"]] = f"{_page_path(clone, files[0])}/{body.relative_to(clone)}"
         else:
             pages[document["id"]] = _page_path(clone, files[0])
     return pages

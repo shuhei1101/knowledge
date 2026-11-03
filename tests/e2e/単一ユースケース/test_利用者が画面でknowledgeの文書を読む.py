@@ -21,7 +21,7 @@ _HEADER = re.compile(r"\A.*?^# ///$\n", re.MULTILINE | re.DOTALL)
 # 終了コード 1 で終わる変換のスクリプトの本体
 _FAILING_BODY = 'import sys\n\nprint("変換に失敗しました", file=sys.stderr)\nsys.exit(1)\n'
 # 変換を通さず本文を出す files.yaml の行のページ
-_SKILL_PAGE = "skills/files/skills/text-review/SKILL"
+_SKILL_PAGE = "skills/files/skills/text-review/SKILL.md"
 # 埋め込みのマーカーを持つ規約のページ
 _WRITING_STYLE_PAGE = "docs/rule/convention-writing-style"
 # 埋め込む対応表のファイル
@@ -47,10 +47,10 @@ def _load(file: Path) -> dict[str, Any]:
 def _document_pages(clone: Path, document: dict[str, Any]) -> list[str]:
     """文書の行が持つ全てのページの path を、path の順に返す。"""
     files = [file for pattern in document["paths"] for file in clone.glob(pattern)]
-    # files.yaml の行の文書は、行ごとのファイルがページになる
+    # files.yaml の行の文書は、行ごとのファイルがページになる（文書の ID は拡張子付きのパス）
     if "records" in document:
         paths = [
-            f"{file.relative_to(clone).with_suffix('')}/{(file.parent / str(record[document['body_file']])).relative_to(clone).with_suffix('')}"
+            f"{file.relative_to(clone).with_suffix('')}/{(file.parent / str(record[document['body_file']])).relative_to(clone)}"
             for file in files
             for record in _load(file)[document["records"]]
         ]
