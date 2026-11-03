@@ -8,9 +8,9 @@
 
 | 対象 | 方針 | 補足 |
 | --- | --- | --- |
-| プラグインの定義 | マーケットプレイスの `plugins[]` に `slop-check` を追加し、PostToolUse のフックを 1 つ登録する | 置き場所は要件.md の `未確定`（インターフェース定義設計） |
-| フックの契機 | `matcher` を Write・Edit・NotebookEdit と、書き込む MCP ツールにする | 対象の MCP ツールは要件.md の `未確定`（インターフェース定義設計） |
-| 中身の取り出し | Write は `tool_input.content`、Edit は `tool_input.file_path` の修正後のファイル全体、NotebookEdit は修正後のノートブックのセルの文、MCP ツールはツールごとに決めた引数の文字列 | Edit で修正後のファイルを読めないときは `new_string` を調べる |
+| プラグインの定義 | マーケットプレイスの `plugins[]` に `slop-check` を追加し、PostToolUse のフックを 1 つ登録する | `plugins/slop-check/` に置く（要件.md） |
+| フックの契機 | `matcher` を Write・Edit・NotebookEdit と、書き込む MCP ツールにする。登録するコマンドは `hooks/post-tool-use/` に置く | 対象の MCP ツールはインターフェース定義『書き込んだ中身の照合』の制約「対象のツール」 |
+| 中身の取り出し | Write は `tool_input.content`、Edit は `tool_input.file_path` の修正後のファイル全体、NotebookEdit は `tool_input.new_source`、MCP ツールは識別子のキーを除いた全ての文字列の値 | Edit で修正後のファイルを読めないときは `new_string` を調べる |
 | 照合 | 対応表の各行を、`pattern` があればその正規表現、無ければ `ng` の文字列で中身に当てる。ヒットした位置を含む文字列が `allow` に当たるときは除く | 1 回の書き込みで同じ行が複数ヒットしても、表には 1 行だけ出す |
 | 通知 | ヒットした行があれば、要件.md の要望 3 の通知の文を `hookSpecificOutput.additionalContext` で返す。書き込みは止めない（`decision` を返さない） | 表の行は対応表の並びの順 |
 | ヒットしないとき | 何も出力せずに終了コード 0 で終わる | |
@@ -35,6 +35,7 @@
 | --- | --- | --- |
 | 単一ユースケース設計 | `5c44b22..fc5916c` | 新規の単一 UC『エージェントが書き込んだ中身の AI slop の単語を通知される』 |
 | 単一ユースケース設計 | `ebe80af..9545ed5` | レビューの指摘の修正（例文と期待値） |
+| インターフェース定義設計 | `dc7842e..90a9338` | 新規『書き込んだ中身の照合』 |
 
 ## テスト結果
 
