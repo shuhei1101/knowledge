@@ -17,6 +17,12 @@ constants:
     usecase: 文書の Markdown への変換
     summary: 出す場所が決まっていて、種類に固有のキーの節にしないキー
     value: frozenset({"name", "description", "items", "related", "sources"})
+  - name: WORD_LIST_KIND
+    title: 対応表の種類
+    container: scripts/knowledge_markdown.py
+    usecase: 文書の Markdown への変換
+    summary: '`entries` を NG・OK の表にする文書の `kind`'
+    value: '"word-list"'
 functions:
   - name: main
     title: 文書の Markdown への変換の入口
@@ -148,6 +154,7 @@ functions:
       2. `id` が `overview` の項目があれば、その本文を見出しを付けずに置く
       3. 残りの項目を見出しつきで並べる（項目の見出しの組み立て）
       4. `HIDDEN_KEYS`・`LAYOUT_KEYS` に無いキーを文書の並びで `## {スキーマの title（無ければキー）}` の節にする（値の組み立て）
+         - `kind` が `WORD_LIST_KIND` の文書の `entries` の場合、対応表の組み立てを使う
       5. `related` があれば `## 関連` に、各行を `- [{to}](id:{to})（{type}）: {when}` で並べる
       6. `sources` があれば `## 出典` に、各行を `- {id}: [{title}]({url})（{note}）` で並べる（`id`・`url`・`note` が無い行はその部分を省く）
       7. ブロックごとに空行を 1 つ挟んでつなぐ。項目の本文は文字を書き換えない（mdmark のマーカーと `id:` のリンクを含む）
@@ -176,6 +183,12 @@ functions:
         condition: スキーマに `properties.extra` が無い文書のキー `extra`
         mock: なし
         expected: '`## extra` の節'
+      - name: test_convert_when_word_list
+        case: 正常
+        summary: 対応表の entries
+        condition: '`kind` が `word-list` で、`entries` に `pattern`・`allow`・`examples` を持つ 1 行の文書'
+        mock: なし
+        expected: '`## {entries の title}` の下に `| NG | OK |` の表があり、`pattern`・`examples` の値は出ない'
   - name: render_items
     title: 項目の見出しの組み立て
     kind: 関数
@@ -264,6 +277,34 @@ functions:
         condition: '`{"a": 1}`'
         mock: なし
         expected: '`- a: 1`'
+  - name: render_word_list
+    title: 対応表の組み立て
+    kind: 関数
+    container: scripts/knowledge_markdown.py
+    usecase: 文書の Markdown への変換
+    scope: public
+    summary: 対応表の `entries` を NG・OK の表にする
+    args:
+      - name: entries
+        title: 対応表の行
+        type: Sequence[Mapping[str, Any]]
+        required: true
+        description: '`word-list` の文書の `entries`'
+    returns:
+      type: str
+      description: '`<!-- table: data -->` と `<!-- /table -->` で囲んだ表'
+    process: |-
+      1. 列を `NG`・`OK` の 2 つにする（`pattern`・`allow`・`examples` は出さない）
+      2. 行ごとに `ng` を NG の列に、`ok` を「・」でつないだ文字列を OK の列に置く（slop-check の通知の表と同じ書式）
+         - `note` がある場合、OK の列の末尾に `（{note}）` を付ける
+      3. セルの `|` は `\|`、改行は `<br>` にする
+    unit_tests:
+      - name: test_render_word_list
+        case: 正常
+        summary: NG・OK の表にする
+        condition: '`{"ng": "形", "ok": ["スキーマ", "構造"], "note": "図形は除く", "pattern": "x", "examples": {...}}` と `{"ng": "節", "ok": ["セクション"]}` の 2 行'
+        mock: なし
+        expected: '`| NG | OK |` の表で、`| 形 | スキーマ・構造（図形は除く） |` と `| 節 | セクション |` の行があり、`pattern` の値は出ない'
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を書き、`_common.py` を同じフォルダから import する。
 test_files:
