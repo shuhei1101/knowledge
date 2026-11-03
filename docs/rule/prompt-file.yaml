@@ -32,8 +32,8 @@ tags:
   - name: action:配置
 status: current
 visibility: internal
-rev: 6
-last_reviewed: '2026-10-31'
+rev: 7
+last_reviewed: '2026-11-03'
 items:
   - id: overview
     name: 概要
@@ -122,42 +122,37 @@ items:
     body: |-
       ```yaml
       # yaml-language-server: $schema=https://raw.githubusercontent.com/shuhei1101/knowledge/{タグ}/schemas/prompt.schema.yaml
-      id: session-context
-      name: SessionStart の配信元の一覧
+      id: new-file-guide
+      name: 新しいファイルの作り方
       kind: hook
       lang: ja
-      description: 作業場所から使える配信元を、セッションの始めに伝える
+      description: 新しいファイルを空で作ってから書く決まりを、セッションの始めに伝える
       vars:
-        sources:
-          type: array
+        write_tool:
+          type: string
           required: true
-          description: 作業場所から使える配信元
-          example: [{id: knowledge, access: read}]
-          items:
-            type: object
-            description: 配信元 1 件
-            properties:
-              id: {type: string, required: true, description: 配信元の ID}
-              access: {type: string, required: true, enum: [read, read_write], description: 権限}
+          description: 空のファイルを作るツールの名前
+          example: Write
+        edit_tool:
+          type: string
+          description: 中身を書くツールの名前
+          example: Edit
       examples:
-        - id: no-source
-          name: 配信元が無い
-          values: {sources: []}
+        - id: no-edit-tool
+          name: 中身も同じツールで書く
+          values: {write_tool: Write}
       parts:
-        - id: sources
-          when: "{{ sources | length > 0 }}"
+        - id: new-file
           texts:
             - lang: ja
               text: |
-                次の配信元を使えます。
-                {% for s in sources %}- {{ s.id }}（{{ s.access }}）
-                {% endfor %}
-        - id: no-source
-          when: "{{ sources | length == 0 }}"
+                新しいファイルは、まず {{ write_tool }} で空の内容で作り、案内されたルールを読んでから中身を書いてください。
+        - id: edit-tool
+          when: "{{ edit_tool }}"
           texts:
             - lang: ja
               text: |
-                使える配信元はありません。
+                中身は {{ edit_tool }} で書いてください。
       ```
   - id: structure-07
     group: 構造
