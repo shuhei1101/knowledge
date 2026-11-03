@@ -6,7 +6,8 @@
 # ///
 """標準入力の文書 1 件に、スキーマで見られない決まりを当て、違反の配列の JSON を標準出力へ出す。
 
-dev-docs の validators の knowledge-checks。項目の ID の重複・id: の参照と related の to の実在・mermaid の文法を検査する。
+dev-docs の validators の knowledge-checks。項目の ID の重複・id: の参照と related の to の実在・mermaid の文法と、
+対応表の examples が照合と合うかを検査する。
 作業ディレクトリは配信元（knowledge のリポジトリ）の直下にする。
 
 Usage:
@@ -33,11 +34,18 @@ from _common import (
     Violation,
     format_path,
     iter_strings,
+    line_of,
     load_document,
     read_texts,
     value_line,
 )
 from _maid import MIN_REMAINING_SEC, MaidOutputError, find_maid, run_maid
+
+# 対応表の照合は slop-check のフックが持つものを使う
+sys.path.insert(
+    0, str(Path(__file__).resolve().parents[1] / "plugins/slop-check/hooks/post-tool-use")
+)
+from slop_check import compile_entry, entry_hits
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -50,6 +58,9 @@ FENCE = re.compile(r"^ {0,3}(`{3,})\s*(\S*)")
 
 # mermaid のブロックとして取り出す囲みのバッククォートの数。これより多い囲みは記述例として見ない
 _MERMAID_TICKS = 3
+
+# 対応表の文書の種類
+_WORD_LIST_KIND = "word-list"
 
 # maid が PATH に無いときに標準エラーへ出す理由
 _MAID_MISSING = (
@@ -112,11 +123,15 @@ def check_document(
         ]
     if index is None:
         index = build_id_index(root)
-    return [
+    violations = [
         *check_duplicate_ids(doc),
         *check_references(doc, index),
         *check_mermaid(doc, executable, deadline),
     ]
+    # 対応表は examples の検査を後ろにつなぐ
+    if _field(doc, "kind") == _WORD_LIST_KIND:
+        violations.extend(check_word_list(doc))
+    return violations
 
 
 def _field(node: CommentedMap, key: str) -> object:
@@ -339,3 +354,60 @@ def check_mermaid(doc: CommentedMap, executable: str, deadline: float) -> list[V
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+def _examples(entry: CommentedMap, key: str) -> list[tuple[int, str]]:
+    """examples の hit か pass の文を添字と並べて返す。無ければ空。"""
+    examples = _field(entry, "examples")
+    if not isinstance(examples, CommentedMap):
+        return []
+    values = _field(examples, key)
+    if not isinstance(values, CommentedSeq):
+        return []
+    return [
+        (position, value)
+        for position, value in enumerate(cast("list[object]", values))
+        if isinstance(value, str)
+    ]
+
+
+def check_word_list(doc: CommentedMap) -> list[Violation]:
+    """対応表の各行の照合を examples の hit と pass に当て、合わないものを違反にする。"""
+    violations: list[Violation] = []
+    for position, entry in _rows(doc, "entries"):
+        try:
+            matcher = compile_entry(cast("Mapping[str, object]", entry))
+        except re.error as error:
+            # 読めない正規表現: その行の examples は当てない
+            line = line_of(doc, ["entries", position, "pattern"])
+            violations.append(
+                {
+                    "path": format_path(["entries", position, "pattern"]),
+                    "rule": f"{line} 行目: 正規表現として読めません: {error}",
+                    "fix": "Python の re で読める正規表現にする",
+                }
+            )
+            continue
+        # hit の文: ヒットしなければ違反
+        for index, example in _examples(entry, "hit"):
+            if not entry_hits(example, matcher):
+                parts = ["entries", position, "examples", "hit", index]
+                violations.append(
+                    {
+                        "path": format_path(parts),
+                        "rule": f"{line_of(doc, parts)} 行目: 「{example}」にヒットしません",
+                        "fix": "pattern を修正するか、hit の例を修正する",
+                    }
+                )
+        # pass の文: ヒットすれば違反
+        for index, example in _examples(entry, "pass"):
+            if entry_hits(example, matcher):
+                parts = ["entries", position, "examples", "pass", index]
+                violations.append(
+                    {
+                        "path": format_path(parts),
+                        "rule": f"{line_of(doc, parts)} 行目: 「{example}」にヒットします",
+                        "fix": "pattern か allow を修正するか、pass の例を修正する",
+                    }
+                )
+    return violations
