@@ -20,8 +20,8 @@
 | markdownlint | markdownlint-cli2 を CI で動かす。区切り線（`---`）・太字（MD036 など）を『Markdown 編集規約』に合わせて設定する | 1 文 1 行は日本語の「。」に対応するカスタムルールが要るため、対応できるかを外部ライブラリの調査で確かめる |
 | textlint | textlint と textlint-rule-preset-ja-technical-writing を CI で動かす | 単語の対応表は slop-check（#135）が持つため、prh は入れない |
 | yamllint | yamllint を CI で動かし、引用符の無い値の取り違え（`#` 以降がコメントになるなど）を検出する | 設定は `.yamllint.yaml` |
-| 当てる範囲 | 要件.md の `### 検査ツール` の `未確定` の決定に合わせる | 案 A なら、`check_all.py` が文書の YAML を変換のスクリプトで Markdown にしてから markdownlint・textlint を呼ぶ |
-| PoC 検証 | 次の 4 点を確かめてから設計を続ける。1 文 1 行（日本語の「。」）を検出する markdownlint のカスタムルールを作れるか。文中の太字を検出できるか（組み込みの MD036 は段落全体が太字のときだけ）。yamllint の `comments` を `level: error` にして終了コード 1 になるか。文書を変換した Markdown の違反の行を、元の文書の YAML の行へ対応させられるか | 結果は `## PoC 結果` に記録する |
+| 当てる範囲 | 要件.md の `### 検査ツール` の `未確定` の決定に合わせる | 案 A なら、`check_all.py` が文書の Markdown の項目を取り出して markdownlint・textlint を呼ぶ（PoC 検証の結果で確定） |
+| PoC 検証 | PoC PR（`poc/rules/lint-cli`）で次を確かめる。行の対応: 文書の Markdown の項目を 1 項目ずつ一時の `.md` にして当て、CLI の行に `iter_strings` の項目の開始行を足して元の YAML の行で出せるか。1 文 1 行: まず既存の `textlint-rule-one-sentence-per-line` に当て、成功条件（`A です。B です。` を違反にし、`。` で終わる行・コードブロック・表のセルは違反にしない）を満たさないときだけカスタムルールを作る。文中の太字: markdownlint のカスタムルール（既存のルールが無い）。既存の違反: `docs/` の全ての文書に当てた違反の件数をルールごとに記録し、断片であることが原因のルール（MD041 など）を無効にした後の件数で、この PR で修正できる量かを判断する。所要時間: 今の `check_all.py` を実測し、既存の検査と 3 つの CLI の合計が 5 分（ジョブの `timeout-minutes`）以内か。yamllint の `comments` を `level: error` にした終了コード 1 は、レビューで確認済みのため検証しない | 結果は `## PoC 結果` に記録する。PoC は `check_all.py` の外から CLI を呼ぶため、結論に効く違いは所要時間（並列の読み込みを通さない）だけで、行の対応・検出の可否は構成によらない。項目ごとに当てる方式が成り立ったら、シナリオの `minimal_guarantee`・異常シナリオの `expected` と要件.md の案 A の「文書を変換した Markdown」を「文書の Markdown の項目」に修正する |
 | 既存の違反 | 追加した検査で既存の文書に出る違反は、この PR で修正する。修正しきれないルールは設定で無効にし、理由をコメントで残す | ジョブが落ちたままマージしない |
 
 ## 設計書の確定コミット
