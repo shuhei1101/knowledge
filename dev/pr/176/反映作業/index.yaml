@@ -1,0 +1,14 @@
+knowledge の索引の登録:
+  説明: 利用者の全ての Claude Code の設定（`~/.claude*/settings.json` の 10 個）が参照する rule-inject の索引に、knowledge のメインのクローンの `rules.yaml`（master）を追加する。端末の rule-inject が設定ファイルを読むなら `~/.config/rule-inject/settings.yaml` の `global.indexes` に追加して各設定の `env` に `RULE_INJECT_CONFIG` を置き、読まないなら各設定の `RULE_INJECT_INDEXES_USER` にカンマ区切りで追加する（どちらにするかはインターフェース定義設計で決める）
+  タグ: [設定の更新, ルール注入]
+  実行者: tester
+  時期: master へ入った後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: 10 個の設定のそれぞれで、rule-inject が読む索引（設定ファイルの `global.indexes` か `RULE_INJECT_INDEXES_USER`）に `/mnt/c/Users/shuhe/repo/knowledge/rules.yaml` が含まれている
+  状態: "-"
