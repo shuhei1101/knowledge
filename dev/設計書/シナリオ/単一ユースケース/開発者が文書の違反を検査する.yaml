@@ -32,7 +32,7 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: PR
-        description: 本文に太字を含む文書と、引用符の無い値に ` #` を含む YAML を 1 つずつ含む PR
+        description: 本文に段落全体が太字の段落（`**太字だけの段落**`）を含む文書と、値の後ろに空白 1 つで ` #` を続けた行（`key: foo #bar`）を含む YAML を 1 つずつ含む PR
     flow: |-
       sequenceDiagram
         participant G as GitHub Actions
@@ -42,7 +42,8 @@ scenarios:
         C-->>G: 全ての書式の違反を出して失敗
     expected:
       - CI のジョブが失敗で終わる
-      - ログに 2 つの違反の両方が、文書のパス・行・検査のツールのルール名・内容つきで出る
+      - ログに 2 つの違反の両方が、文書のパス・行・検査のツールのルール名（`MD036`・`comments`）・内容つきで出る
+      - 文書を変換した Markdown の違反の行は、元の文書の YAML の行で出る
     test: test_error_when_documents_have_lint_violations
   - name: 異常シナリオ（違反のある文書を含む）
     setup:
@@ -66,7 +67,7 @@ scenarios:
       - CI のジョブが失敗で終わる
       - ログに 2 つの違反の両方が、文書のパス・項目・行・内容つきで出る
     test: test_error_when_documents_have_violations
-  - name: 異常シナリオ（maid が入っていない）
+  - name: 異常シナリオ（検査の CLI が入っていない）
     setup:
       - name: Mock
         description: ランナーの PATH から maid を外す
@@ -75,20 +76,21 @@ scenarios:
         participant G as GitHub Actions
         participant C as 検査のワークフロー
         G->>C: ワークフローを起動する
-        C->>C: Python と maid が入ったかを確かめる
-        C-->>G: maid が無いことを出して失敗
+        C->>C: Python と maid・markdownlint・textlint・yamllint が入ったかを確かめる
+        C-->>G: PATH に無い CLI の名前を出して失敗
     expected:
       - CI のジョブが、文書の検査を始めずに失敗で終わる
-      - ログに maid が PATH から引けないことが出る
-    test: test_error_when_maid_missing
+      - ログに、PATH から引けない CLI の名前（maid）が出る
+    test: test_error_when_check_cli_missing
 lead: PR ごとに CI が knowledge の全ての文書へスキーマの検査と検査のスクリプトを当て、違反があれば失敗させる。
 issue: 51
 primary_actor: 開発者
 trigger: 開発者が knowledge に PR を出すか push する
 preconditions:
   - '`.github/workflows/` に検査のワークフローがある'
+  - 'リポジトリの直下の `.yamllint.yaml` が `comments` を `level: error` にしている'
 success_guarantee: 違反が無ければ CI が成功する。
-minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反）が 1 つでもあれば CI が失敗し、全ての違反の文書のパス・項目・行・内容がログに出る。検査に要るランタイムが欠けていれば検査を始めずに失敗する。
+minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反）が 1 つでもあれば CI が失敗し、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名）がログに出る。文書を変換した Markdown の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに失敗する。
 notes:
   E2E テストの動かし方: CI のジョブが走らせるコマンド（`uv run --frozen --script scripts/check_all.py`）を、knowledge のクローンで子プロセスとして起動し、ジョブの成否はその終了コード、ログはその標準出力で確かめる。maid が入っていない場合は PATH から maid を外して起動する。ワークフローの YAML そのものは、IF-72-4 のとおり作業 PR の Actions の実行結果で確かめる
 test_file: tests/e2e/単一ユースケース/test_開発者が文書の違反を検査する.py
