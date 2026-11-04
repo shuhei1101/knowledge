@@ -28,7 +28,7 @@
 
 | 検証構成 | 成功条件 | 結果 | PoC PR | 補足 |
 | --- | --- | --- | --- | --- |
-| 行の対応（Markdown の項目を 1 項目ずつ `.md` にし、CLI の行に `iter_strings` の開始行を足す） | `body` の 3 行目の太字だけの段落の MD036 が元の YAML の行で出る | ✅ YAML の 26 行目で出た | [#177](https://github.com/shuhei1101/knowledge/pull/177)（closed） | 採用 |
+| 行の対応（Markdown の項目を 1 項目ずつ `.md` にし、CLI の行に `iter_strings` の開始行を足す） | `body` の 3 行目の太字だけの段落の MD036 が元の YAML の行で出る | ✅ YAML の 26 行目で出た | [#177](https://github.com/shuhei1101/knowledge/pull/177)（open） | 採用 |
 | 1 文 1 行（`textlint-rule-one-sentence-per-line` v2.0.0） | `A です。B です。` を違反にし、`。` で終わる行・コードブロック・表のセルは違反にしない | ✅ 1 行目だけ違反 | 同上 | 採用。カスタムルールは作らない |
 | 文中の太字（markdownlint-cli2 v0.24.0 のカスタムルール `no-inline-strong`） | 文中の `**太字**` を違反にし、インラインコードの中の `**` は違反にしない | ✅ 文中と段落全体の太字が違反、インラインコードは違反なし | 同上 | 採用 |
 | 所要時間（`docs/` の 263 件・Markdown の項目 2,155 件） | 既存の検査と 3 つの CLI の合計が 5 分以内 | ✅ 51 秒（既存の検査 4 秒、markdownlint 9 秒、textlint 34 秒、yamllint 3 秒、書き出し 3 秒） | 同上 | WSL の `/mnt/c` での実測 |
