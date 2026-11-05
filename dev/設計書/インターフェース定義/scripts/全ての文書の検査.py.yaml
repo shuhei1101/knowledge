@@ -10,7 +10,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml`・`schemas/rule.schema.yaml`・違反の無い `docs/rule/` の文書 2 件を持つ一時フォルダ'
+        description: '`dev-docs.yaml`・`schemas/rule.schema.yaml`・lint の違反と警告も無い `docs/rule/` の文書 2 件（`body` の文は「。」で終える）を持つ一時フォルダ'
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
@@ -128,7 +128,7 @@ flows:
     summary: maid・markdownlint-cli2・textlint のどれかが引けなければ検査を始めずに終わる
     setup:
       - name: Mock
-        description: PATH から maid を外す。一時フォルダには `scripts/lint/node_modules/.bin/` を置かない
+        description: PATH から maid を外し、`--lint-dir` に存在しないフォルダを指定する
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
@@ -173,7 +173,14 @@ request:
     required: true
     location: argument
     description: knowledge のリポジトリの直下。`dev-docs.yaml` を読む
-    notes: 引数は取らず、作業ディレクトリとして受け取る
+    notes: 作業ディレクトリとして受け取る
+  - name: --lint-dir
+    type: Path
+    required: false
+    default: '`check_all.py` と同じフォルダの `lint/`'
+    location: argument
+    description: lint の設定と npm の依存（`node_modules/.bin/`）を持つフォルダ
+    notes: 起動したフォルダによらず、同じ設定と CLI を使う
 response:
   - name: stdout
     type: str
@@ -191,7 +198,7 @@ exceptions:
   - name: 終了コード 1
     condition: 違反が 1 件以上ある。全ての文書を検査し終えてから返す
   - name: 終了コード 2
-    condition: maid が PATH から引けないか、markdownlint-cli2・textlint が `scripts/lint/node_modules/.bin/` に無いか、`dev-docs.yaml` が無い・YAML として読めない
+    condition: maid が PATH から引けないか、markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`dev-docs.yaml` が無い・YAML として読めない
 constraints:
   - item: 検査の範囲
     constraint: '`dev-docs.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も当てる'
@@ -202,9 +209,9 @@ constraints:
   - item: lint の CLI の呼び出し
     constraint: markdownlint-cli2・textlint は全ての一時の `.md` をまとめて 1 回ずつ呼ぶ。yamllint は Python のライブラリとして同じプロセスで呼ぶ
   - item: lint の設定
-    constraint: '設定は `scripts/lint/` の `.markdownlint-cli2.jsonc`・`.textlintrc.json`・`.yamllint.yaml` を CLI に指定する。CLI が `warning` で返した違反を警告、`error` で返した違反を違反にする'
+    constraint: '設定は `--lint-dir` の `.markdownlint-cli2.jsonc`・`.textlintrc.json`・`.yamllint.yaml` を CLI に指定する。CLI が `warning` で返した違反を警告、`error` で返した違反を違反にする'
   - item: 警告にするルール
-    constraint: '`one-sentence-per-line`・`no-inline-strong`・`MD031`・`MD032`・`MD040`・`preset-ja-technical-writing` のルール。#145 の移行で既存の違反を修正した後に、設定で `error` へ切り替える'
+    constraint: '`one-sentence-per-line`・`no-inline-strong`・`MD031`・`MD032`・`MD040`と、`preset-ja-technical-writing` の中の全てのルール（textlint の設定でプリセットの中のルールごとに `severity` を指定する）。#145 の移行で既存の違反を修正した後に、設定で `error` へ切り替える'
   - item: 対応表のコピー
     constraint: '`docs/word-list/word-list-ai-slop.yaml` から「対応表のコピーの作成」と同じ書式で作り直したバイト列が、`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` と一致する。違えばコピーのパスで違反 1 件にする'
     decided_by: IF-148-2#constraints[コピーの書式]

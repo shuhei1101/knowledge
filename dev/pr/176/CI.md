@@ -22,6 +22,7 @@
 | yamllint | yamllint を CI で動かし、引用符の無い値の取り違え（`#` 以降がコメントになるなど）を検出する | 設定は `.yamllint.yaml` |
 | 当てる範囲 | `check_all.py` が文書の Markdown の項目を 1 項目ずつ取り出して markdownlint・textlint を呼ぶ | `## PoC 結果` |
 | PoC 検証 | PoC PR（`poc/rules/lint-cli`）で次を確かめる。行の対応: 文書の Markdown の項目を 1 項目ずつ一時の `.md` にして当て、CLI の行に `iter_strings` の項目の開始行を足して元の YAML の行で出せるか。1 文 1 行: まず既存の `textlint-rule-one-sentence-per-line` に当て、成功条件（`A です。B です。` を違反にし、`。` で終わる行・コードブロック・表のセルは違反にしない）を満たさないときだけカスタムルールを作る。文中の太字: markdownlint のカスタムルール（既存のルールが無い）。既存の違反: `docs/` の全ての文書に当てた違反の件数をルールごとに記録し、断片であることが原因のルール（MD041 など）を無効にした後の件数で、この PR で修正できる量かを判断する。所要時間: 今の `check_all.py` を実測し、既存の検査と 3 つの CLI の合計が 5 分（ジョブの `timeout-minutes`）以内か。yamllint の `comments` を `level: error` にした終了コード 1 は、レビューで確認済みのため検証しない | 結果は `## PoC 結果` に記録する。PoC は `check_all.py` の外から CLI を呼ぶため、結論に効く違いは所要時間（並列の読み込みを通さない）だけで、行の対応・検出の可否は構成によらない。項目ごとに当てる方式が成り立ったら、シナリオの `minimal_guarantee`・異常シナリオの `expected` と要件.md の案 A の「文書を変換した Markdown」を「文書の Markdown の項目」に修正する |
+| 結合テスト | `tests/integration/scripts/conftest.py` の `repo_factory` が作る文書の `body` を、lint の違反と警告が出ない文（「。」で終える）にする。lint の CLI が無い異常系は `--lint-dir` に存在しないフォルダを指定する | IF-72-3 の正常系の `リポジトリ` |
 | 既存の違反 | yamllint の 6 件と、markdownlint の記法が原因の違反（`## PoC 結果`）の設定はこの PR で修正する。文の違反があるルールは警告にし、#145 の移行の後に失敗させる設定へ切り替える | 要件.md の `### 検査ツール` |
 
 ## PoC 結果
