@@ -1,3 +1,17 @@
+ai-monitor#2705 の統合と close:
+  説明: 作業 PR が develop へマージされた後に、ai-monitor#2705 へ人が読むテンプレートの生成を #163 へ統合した旨をコメントし、not planned で close する。正本を knowledge に置くこの PR の決定で、正本を ai-monitor に置いて書き出す #2705 と向きが逆になる
+  タグ: [Issue, close]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: ai-monitor#2705 の統合と close/疎通確認.sh
+  実行: ai-monitor#2705 の統合と close/実行.sh
+  確認: ai-monitor#2705 の統合と close/確認.sh
+  切り戻し: ai-monitor#2705 の統合と close/切り戻し.sh
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: ai-monitor#2705 が closed で、`shuhei1101/knowledge#163` を含むコメントがある
+  状態: "-"
 設計書のスキーマのタグの作成:
   説明: release が master へ入った後に、そのマージの commit へ設計書のスキーマのタグ `design-schemas/v1.0.0` を作成して push する。各プロジェクトの `dev-docs.yaml` の `schema:` がこのタグで `schemas/design/` を指す
   タグ: [タグ, スキーマ]
