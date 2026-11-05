@@ -38,7 +38,7 @@ properties:
     title: 実装
     description: 部品の実装の場所。リポジトリの直下からのファイルのパスに、`#` と部品の名前（マクロ・コンポーネント）を続ける。
     examples:
-    - "src/ai_monitor/features/plan/screen/templates/macros.html#status_badge"
+    - "src/app/components/macros.html#status_badge"
   story:
     type: string
     title: Storybook
@@ -360,7 +360,7 @@ examples:
 - id: CMP-1
   title: 列見出し
   lead: 表の列見出しの中身。見出しの文字（押すと並べ替え）と、絞り込み・固定のボタンを並べる。
-  implementation: src/ai_monitor/features/plan/screen/templates/macros.html#header_controls
+  implementation: src/app/components/macros.html#header_controls
   story: Plan/HeaderControls
   test_file: tests/integration/storybook/test_計画画面の部品.py
   args:

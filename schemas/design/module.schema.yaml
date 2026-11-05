@@ -1195,12 +1195,12 @@ examples:
   title: 設計書 / 種別とSchema
   lead: 種別の Schema を読み込んで種別の一覧と `$ref` の解決先を持ち、設計書のパスから種別を解決する。
   test_files:
-  - tests/unit/ai_monitor/features/design_docs/test_schemas.py
+  - tests/unit/features/schemas/test_loader.py
   functions:
   - name: read_schema_files
     title: Schemaのファイルの読み込み
     kind: 関数
-    container: features/design_docs/schemas.py
+    container: features/schemas/loader.py
     usecase: 共通
     role: 読み込み
     summary: 作業ツリーの Schema のファイルを名前 → 中身で読む
@@ -1228,7 +1228,7 @@ examples:
     - name: test_read_schema_files_when_missing
       case: 異常
       summary: フォルダが無い
-      condition: '`dev/テンプレート` の無い一時ディレクトリ'
+      condition: '`{root}/{TEMPLATES_DIR}` の無い一時ディレクトリ'
       mock: なし（一時ディレクトリ）
       expected: '`FileNotFoundError`'
       exception: フォルダが無い
