@@ -428,9 +428,8 @@ def _check_schema_refs(
         )
         for index, example in enumerate(cast("list[object]", examples)):
             try:
-                errors = cast(
-                    "list[ValidationError]", list(validator.iter_errors(cast("Any", example)))
-                )  # pyright: ignore[reportUnknownMemberType]
+                found = validator.iter_errors(cast("Any", example))  # pyright: ignore[reportUnknownMemberType]
+                errors = cast("list[ValidationError]", list(found))
             except Unresolvable:
                 # 解決できない $ref は $ref の検査が出す
                 continue
