@@ -53,7 +53,7 @@ constants:
     title: 拡張したメタスキーマのパス
     container: scripts/check_all.py
     usecase: 全ての文書の検査
-    summary: JSON Schema 2020-12 のメタスキーマに `x-rules`・`x-bad-examples` の形を足した、拡張したメタスキーマの、リポジトリの直下からのパス
+    summary: 'JSON Schema 2020-12 のメタスキーマに `x-rules`・`x-bad-examples` の形を足した、拡張したメタスキーマの、リポジトリの直下からのパス。ファイルは `$dynamicAnchor: meta` と絶対 URI の `$id`（`urn:knowledge:schemas:meta`）を持つ。`$id` が無いと `$dynamicRef` が拡張したメタスキーマへ戻らず、深い位置のキーを検査しない'
     value: PurePosixPath("schemas/meta.schema.yaml")
 functions:
   - name: main
@@ -243,7 +243,7 @@ functions:
         summary: 正しい拡張したメタスキーマ
         condition: 'リポジトリの `schemas/meta.schema.yaml`'
         mock: なし
-        expected: '検査器が、文字列の `x-rules` と `value` の無い `x-bad-examples` の要素と `type: strin` に誤りを返し、`examples`・`x-bad-examples` の値の中と `properties` の `x-rules` という名前の項目には誤りを返さない'
+        expected: '検査器が、最上位と `properties` の下の文字列の `x-rules` と `value` の無い `x-bad-examples` の要素と `type: strin` に誤りを返し、`examples`・`x-bad-examples` の値の中と `properties` の `x-rules` という名前の項目には誤りを返さない'
       - name: test_load_meta_validator_when_missing
         case: 異常
         summary: ファイルが無い
