@@ -16,8 +16,8 @@ tags:
   - name: action:管理
 status: current
 visibility: internal
-rev: 5
-last_reviewed: '2026-11-05'
+rev: 6
+last_reviewed: '2026-11-06'
 items:
   - id: overview
     name: 概要
@@ -192,7 +192,7 @@ items:
           | `.env` | コピー | `cp {メインリポジトリ}/.env .` | worktree 側で書き換えてもメインに影響しない |
           | `config/local.yaml` | リンク | `ln -s {メインリポジトリ}/config/local.yaml config/` | メインと同じ実体を見る |
           | `data/` | 作らない | - | 実行時の状態はメインリポジトリだけが持つ |
-          | `~/.config/{アプリ名}/settings.yaml` | 対象外 | - | ホーム配下にあり worktree に依存しない |
+          | `${XDG_CONFIG_HOME:-~/.config}/{アプリ名}/settings.yaml` | 対象外 | - | ホーム配下にあり worktree に依存しない |
       ```
 
       ### 補足

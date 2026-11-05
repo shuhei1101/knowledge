@@ -35,8 +35,8 @@ tags:
   - name: action:適用
 status: current
 visibility: internal
-rev: 8
-last_reviewed: '2026-11-05'
+rev: 9
+last_reviewed: '2026-11-06'
 items:
   - id: plugin-division-01
     group: プラグインの分け方
@@ -128,21 +128,24 @@ items:
     group: 設定ファイル
     name: 設定ファイルの全体方針
     body: |-
-      プラグインのフック・スクリプト・MCP サーバーが読む、利用者の環境ごと・プロジェクトごとに変わる設定は、`env` に設定ファイルのパスだけを書き、本体を `~/.config` の YAML に書いて受け取る。
+      プラグインのフック・スクリプト・MCP サーバーが読む、利用者の環境ごと・プロジェクトごとに変わる設定は、本体を `${XDG_CONFIG_HOME:-~/.config}` の YAML に書いて受け取る。
   - id: settings-file-02
     group: 設定ファイル
     name: env に置く設定の指定
     body: |-
-      - ユーザースコープの `~/.claude/settings.json` の `env` に、`{プラグイン名のアッパースネークケース}_CONFIG` でパスを書く
+      - 既定のパス（`settings-file-03`）と違う場所に配置するときだけ、ユーザースコープの `~/.claude/settings.json` の `env` に、`{ツール名}_CONFIG` でパスを書く
+        - `{ツール名}` はプラグイン名を大文字にし、`-` を `_` にした名前
         - プラグインは値の先頭の `~` をホームに展開して読む
         - `env` のプロジェクトスコープ（`.claude/settings.json` / `.claude/settings.local.json`）には書かない。プロジェクトごとの違いは YAML の `projects` に書く
-        - `env` にパスが無いときは、設定なし（プラグインの既定値）で動く
+        - `env` にパスが無いときは既定のパスを読み、ファイルも無いときは設定なし（プラグインの既定値）で動く
         - MCP サーバーは常駐で `env` が渡らないため、サーバーを起動する環境に同じ環境変数を渡す。`match` に使う起動したプロジェクトの直下は、[MCP サーバー作成ルール](id:claude-mcp) の常駐サーバーの決まりどおり PreToolUse フックでツールの引数に入れて受ける
   - id: settings-file-03
     group: 設定ファイル
     name: 設定の本体の置き場所
     body: |-
-      - 本体は `~/.config/{プラグイン名}/settings.yaml` に置く（判定フローチャート『[設定値の置き場所](id:flowchart-config-location)』の環境の値と同じ）
+      - 本体は `${XDG_CONFIG_HOME:-~/.config}/{プラグイン名}/settings.yaml` に置く（判定フローチャート『[設定値の置き場所](id:flowchart-config-location)』の環境の値と同じ）
+      - 実行中に書き換わる状態・ログは `${XDG_STATE_HOME:-~/.local/state}/{プラグイン名}` に配置する
+        - 場所を変えるときだけ `env` の `{ツール名}_STATE_DIR` で上書きする
   - id: settings-file-04
     group: 設定ファイル
     name: サンプルファイルの用意
@@ -194,7 +197,7 @@ items:
     group: 設定ファイル
     name: YAML を読めない仕組みも読む値は env に置く
     body: |-
-      - 設定ファイルを持つプラグインでも、`.mcp.json` など YAML を読めない仕組みも読む値は、ユーザースコープの `env` に置く（例: [MCP サーバー作成ルール](id:claude-mcp) の `## 登録` の `{リポジトリ}_PORT`）
+      - 設定ファイルを持つプラグインでも、`.mcp.json` など YAML を読めない仕組みも読む値は、ユーザースコープの `env` に置く（例: [MCP サーバー作成ルール](id:claude-mcp) の `## 登録` の `{ツール名}_PORT`）
         - サーバーと `.mcp.json` の両方が同じ `env` を読む
         - 同じ値を設定ファイルと `env` の 2 か所に記載しない
   - id: no-version-01
@@ -210,3 +213,9 @@ items:
       自動で効かないとき（`local` で作業ツリーを修正したとき 等）は、設定 `rule_inject.source` によらず、変更の commit を載せた後に MCP ツール `update_plugins` を実行して認証領域へ反映する。
       どちらの出所でも実体は認証領域の cache（`{認証領域}/plugins/cache/{マーケットプレース名}/{名前}/{version}`）の複製で、修正した作業ツリーがそのまま読まれることはない。
       `update_plugins` は Claude 種別のアカウントの認証領域ごとに `claude plugin marketplace update` → `claude plugin update` の順で実行する。
+  - id: mcp-delivery-01
+    group: MCP の配り方
+    name: プラグインの .mcp.json で配る
+    body: |-
+      MCP を持つプラグインは、プラグインの `.mcp.json` で配る。
+      接続先の記載方法は [MCP サーバー作成ルール](id:claude-mcp) の `## 登録`、配り方の選び方は判定フローチャート [MCP・フックの渡し方](id:flowchart-mcp-hook-delivery) に従う。

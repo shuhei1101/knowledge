@@ -74,8 +74,8 @@ tags:
   - name: action:適用
 status: current
 visibility: internal
-rev: 13
-last_reviewed: '2026-11-05'
+rev: 14
+last_reviewed: '2026-11-06'
 sources:
   - title: "Anthropic: Writing effective tools for agents"
     url: https://www.anthropic.com/engineering/writing-tools-for-agents
@@ -243,7 +243,7 @@ items:
         "mcpServers": {
           "{リポジトリ}": {
             "type": "http",
-            "url": "http://127.0.0.1:${{リポジトリ}_PORT:-{既定のポート}}/mcp",
+            "url": "http://127.0.0.1:${{ツール名}_PORT:-{既定のポート}}/mcp",
             "alwaysLoad": true
           }
         }
@@ -258,22 +258,23 @@ items:
     group: 登録
     name: url の形式
     body: |-
-      - `url` は `http://127.0.0.1:${{リポジトリ}_PORT:-{既定のポート}}/mcp` の形式で書く。`{リポジトリ}_PORT` と `{既定のポート}` は台帳（`~/.config/mcp-ports.yaml`）の `env` と `port`
+      - `url` は `http://127.0.0.1:${{ツール名}_PORT:-{既定のポート}}/mcp` の形式で書く。`{ツール名}_PORT` と `{既定のポート}` は台帳（`${XDG_CONFIG_HOME:-~/.config}/mcp-ports.yaml`）の `env` と `port`
+        - `{ツール名}` は、ツール名を大文字にし、`-` を `_` にした名前
   - id: registration-09
     group: 登録
     name: ポートの上書き
     body: |-
-      - ポートがぶつかるときだけ、`~/.claude/settings.json` の `env` に `{リポジトリ}_PORT` を書いて上書きする
+      - ポートがぶつかるときだけ、`~/.claude/settings.json` の `env` に `{ツール名}_PORT` を書いて上書きする
   - id: registration-10
     group: 登録
     name: サーバー側のポート
     body: |-
-      - サーバーは起動時に同じ `{リポジトリ}_PORT` を読み、無ければ台帳（`~/.config/mcp-ports.yaml`）の `port` で待ち受ける。上書きするときは、サーバーを起動する環境にも同じ値を渡す
+      - サーバーは起動時に同じ `{ツール名}_PORT` を読み、無ければ台帳（`${XDG_CONFIG_HOME:-~/.config}/mcp-ports.yaml`）の `port` で待ち受ける。上書きするときは、サーバーを起動する環境にも同じ値を渡す
   - id: registration-11
     group: 登録
     name: ポート台帳の案内
     body: |-
-      既定のポートの台帳は、端末のローカルの `~/.config/mcp-ports.yaml` に置く。
+      既定のポートの台帳は、端末のローカルの `${XDG_CONFIG_HOME:-~/.config}/mcp-ports.yaml` に置く。
       `ports[]` の各行が `repo`・`env`・`port` を持つ。
       新しいサーバーは、空いている番号で行を追加する。
   - id: verification-01
