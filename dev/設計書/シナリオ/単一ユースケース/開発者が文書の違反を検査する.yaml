@@ -28,6 +28,9 @@ scenarios:
         loop schemas/ の直下のスキーマ
           C->>C: メタスキーマ・x-rules・x-bad-examples の検査
         end
+        loop 設計書の種類のテンプレート
+          C->>C: スキーマから組み立てた items と、テンプレートの items を比べる
+        end
         C->>C: YAML に yamllint、Markdown と文書の Markdown の項目に markdownlint と textlint
         C-->>G: 成功
     expected:
@@ -95,6 +98,25 @@ scenarios:
       - CI のジョブが失敗で終わる
       - ログに 3 つの誤りの全てが、スキーマのパス・行・項目・内容つきで出る
     test: test_error_when_design_schemas_are_invalid
+  - name: 異常シナリオ（テンプレートがスキーマとずれている）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: PR
+        description: '`schemas/design/er.schema.yaml` のキーの `x-rules` に 1 件追加し、生成のコマンドを実行していない PR'
+    flow: |-
+      sequenceDiagram
+        participant G as GitHub Actions
+        participant C as 検査のワークフロー
+        G->>C: ワークフローを起動する
+        loop 設計書の種類のテンプレート
+          C->>C: スキーマから組み立てた items と、テンプレートの items を比べる
+        end
+        C-->>G: ずれたテンプレートと生成のコマンドを出して失敗
+    expected:
+      - CI のジョブが失敗で終わる
+      - ログに、ずれたテンプレートのパス（`docs/template/template-er.yaml`）・生成元のスキーマのパス・生成のコマンドが出る
+    test: test_error_when_templates_out_of_date
   - name: 異常シナリオ（検査の CLI が入っていない）
     setup:
       - name: Mock
@@ -118,7 +140,7 @@ preconditions:
   - '`.github/workflows/` に検査のワークフローがある'
   - 'リポジトリの直下の `.yamllint.yaml` が `comments` を `level: error` にしている'
 success_guarantee: 違反が無ければ CI が成功する。
-minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反・設計書のスキーマの誤り）が 1 つでもあれば CI が失敗し、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名）がログに出る。文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに失敗する。
+minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反・設計書のスキーマの誤り・スキーマとずれたテンプレート）が 1 つでもあれば CI が失敗し、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名）がログに出る。文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに失敗する。
 notes:
   E2E テストの動かし方: CI のジョブが走らせるコマンド（`uv run --frozen --script scripts/check_all.py`）を、knowledge のクローンで子プロセスとして起動し、ジョブの成否はその終了コード、ログはその標準出力で確かめる。maid が入っていない場合は PATH から maid を外して起動する。ワークフローの YAML そのものは、IF-72-4 のとおり作業 PR の Actions の実行結果で確かめる
 test_file: tests/e2e/単一ユースケース/test_開発者が文書の違反を検査する.py
