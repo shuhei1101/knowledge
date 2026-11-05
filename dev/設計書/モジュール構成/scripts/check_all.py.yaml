@@ -204,8 +204,10 @@ functions:
       4. ファイルごとに次を当て、誤りごとに `(パス, 行, 項目のパス, 内容)` を加える。行は項目の行の引き当て、項目のパスは項目のパスの組み立てで求める
          1. メタスキーマ: `Draft202012Validator(Draft202012Validator.META_SCHEMA)` の `iter_errors` の誤りを `metaschema: {message}` にする
             - メタスキーマの誤りがあるファイルの場合、そのファイルの 2・3 は当てない
-         2. `$ref`: スキーマの値を辿り（`examples`・`enum`・`const`・`default` の値の中は辿らない）、文字列の `$ref` ごとに、ファイル名を基準の URI にして登録から引く。引けなければ `$ref` のキーの位置で `$ref: {値} を解決できません` にする
-         3. `examples`: 2 と同じ辿り方で、配列の `examples` を持つスキーマごとに、`{"$ref": "{ファイル名}#{JSON Pointer}"}` を登録つきの `Draft202012Validator` にし、要素ごとの `iter_errors` の誤りを、要素の位置に誤りの位置を続けた位置で `examples: {message}` にする
+         2. `$ref`: スキーマを辿り、文字列の `$ref` ごとに、ファイル名を基準の URI にして登録から引く。引けなければ `$ref` のキーの位置で `$ref: {値} を解決できません` にする
+            - スキーマのキーワードとしての `examples`・`enum`・`const`・`default` の値の中は辿らない
+            - `properties`・`patternProperties`・`$defs`・`dependentSchemas` の値（名前 → スキーマの対応）のキーは名前として扱い、キーワードと見なさずに値のスキーマを辿る（`default`・`examples` という名前のプロパティも辿る）
+         3. `examples`: 2 と同じ辿り方で、キーワードとしての配列の `examples` を持つスキーマごとに、`{"$ref": "{ファイル名}#{JSON Pointer}"}` を登録つきの `Draft202012Validator` にし、要素ごとの `iter_errors` の誤りを、要素の位置に誤りの位置を続けた位置で `examples: {message}` にする
             - 検査の途中で `$ref` を解決できない場合、その要素の誤りは出さない（2 が出す）
       5. ファイルのパス・行の順に並べて返す
     unit_tests:
@@ -227,6 +229,12 @@ functions:
         condition: '`properties.id` が `common.schema.yaml#/$defs/id` を `$ref` で指し、`pattern` に合わない値を `properties.id.examples` に持つスキーマ'
         mock: なし（一時ディレクトリ）
         expected: '1 件で、項目のパスが `properties.id.examples[0]`、内容が `examples: ` で始まる'
+      - name: test_check_design_schemas_when_property_named_default
+        case: 正常
+        summary: default という名前のプロパティ
+        condition: '`properties.default` が `type: string` で、文字列でない値を `properties.default.examples` に持つスキーマ'
+        mock: なし（一時ディレクトリ）
+        expected: '1 件で、項目のパスが `properties.default.examples[0]`、内容が `examples: ` で始まる'
       - name: test_check_design_schemas_when_folder_missing
         case: 正常
         summary: フォルダが無い
