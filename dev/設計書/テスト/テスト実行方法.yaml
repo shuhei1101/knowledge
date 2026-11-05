@@ -8,7 +8,7 @@ layers:
       - リポジトリの直下で実行する
     run_all: |-
       ```bash
-      uvx ruff@0.17.3 check scripts tests plugins && uvx ruff@0.17.3 format --check scripts tests plugins && uv run --no-project --python 3.14 --with pyright==1.1.414 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pyright
+      uvx ruff@0.17.3 check scripts tests plugins && uvx ruff@0.17.3 format --check scripts tests plugins && uv run --no-project --python 3.14 --with pyright==1.1.414 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pyright
       ```
     external_cost: なし
   - name: 単体テスト（バック）
@@ -18,13 +18,13 @@ layers:
       - リポジトリの直下で実行する
     run_all: |-
       ```bash
-      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
       ```
     run_one:
       label: ファイル
       command: |-
         ```bash
-        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest {テストファイルパス}
+        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest {テストファイルパス}
         ```
     parallel: false
     external_cost: なし（maid は差し替えのスクリプトを使う）
@@ -37,13 +37,13 @@ layers:
       - リポジトリの直下で実行する
     run_all: |-
       ```bash
-      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/integration
+      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/integration
       ```
     run_one:
       label: ファイル
       command: |-
         ```bash
-        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest {テストファイルパス}
+        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest {テストファイルパス}
         ```
     duration: 約 4 秒
     parallel: false
@@ -61,13 +61,13 @@ layers:
       - 誤実行を防ぐため `--run-e2e` を必須にする（無いと全件 skip する）
     run_all: |-
       ```bash
-      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/e2e --run-e2e
+      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/e2e --run-e2e
       ```
     run_one:
       label: ケース
       command: |-
         ```bash
-        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest {E2Eテストファイルパス}::{テスト関数名} --run-e2e
+        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest {E2Eテストファイルパス}::{テスト関数名} --run-e2e
         ```
     carry_over: |-
       対象ケースの実行が 1 ターンより長くかかる場合に使う。
