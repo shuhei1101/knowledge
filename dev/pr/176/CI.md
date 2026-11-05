@@ -69,4 +69,14 @@
 
 ## テスト結果
 
-未実施。
+### 単体
+
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| `tests/unit/scripts/test_lint.py` | 全実行 | 新規 | ✅ | 11 テスト pass<br>`テスト結果/20261105110351_e4ce8f1_単体テスト.log` |
+| [tests/unit/scripts/test_check_all.py](https://github.com/shuhei1101/knowledge/blob/develop/tests/unit/scripts/test_check_all.py) | 全実行 | 変更 | ✅ | `test_main_when_maid_missing` を `test_main_when_check_cli_missing` にし、`test_main_when_lint_findings`・`test_main_when_only_warnings`・`test_check_lints` を追加 |
+| `tests/unit/` の他のファイル | 全実行 | 実行のみ | ✅ | 単体テストは全体で 162 件（Python 3.14）と slop-check の 31 件（Python 3.12）が pass |
+
+lint は `テスト結果/20261105110351_e4ce8f1_lint.log`（ruff の check・format と pyright で 0 errors）。
+実装の中で、`.yamllint.yaml` に `truthy` の `check-keys: false` を追加した（rule-inject の索引・`dev-docs.yaml` の `on` のキーを違反にしない）。
+単体テストの設定のコピーも同じ内容に修正した（テストの期待値は変えていない）。
