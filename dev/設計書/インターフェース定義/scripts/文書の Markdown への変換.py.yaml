@@ -70,9 +70,9 @@ flows:
         S-->>D: 終了コード 0 と Markdown
     expected:
       - 終了コードが 0
-      - 'マーカーの行の位置に `| NG | OK |` の表があり、対応表の `entries` の行数だけ行がある'
+      - 'マーカーの行の位置に `| NG | OK |` の表があり、各行が対応表の `entries` の行の `ng`・`ok`・`note` から作る行と同じ順に一致する'
       - 'コードブロックの中のマーカーは書き換えずに残る'
-      - '`pattern`・`allow`・`examples` の値が出ない'
+      - 'NG・OK の表の外に `pattern`・`allow`・`examples` の値が出ない'
     test: test_normal_when_embed_marker
   - name: 正常系（埋め込む対応表が無い）
     summary: ID の対応表が無いマーカーは、変換を失敗させずに展開できない理由を出す
