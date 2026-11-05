@@ -1,0 +1,1 @@
+# 文書のスキーマの Markdown の本文のキーに contentMediaType: text/markdown を追加する
