@@ -25,6 +25,9 @@ scenarios:
         loop 全ての設計書のスキーマ（knowledge の正本）
           C->>C: メタスキーマ・$ref・examples・x-rules・x-bad-examples の検査
         end
+        loop schemas/ の直下のスキーマ
+          C->>C: メタスキーマ・x-rules・x-bad-examples の検査
+        end
         C->>C: YAML に yamllint、Markdown と文書の Markdown の項目に markdownlint と textlint
         C-->>G: 成功
     expected:
@@ -83,6 +86,9 @@ scenarios:
         G->>C: ワークフローを起動する
         loop 全ての設計書のスキーマ（knowledge の正本）
           C->>C: メタスキーマ・$ref・examples・x-rules・x-bad-examples の検査
+        end
+        loop schemas/ の直下のスキーマ
+          C->>C: メタスキーマ・x-rules・x-bad-examples の検査
         end
         C-->>G: 全てのスキーマの誤りを出して失敗
     expected:
