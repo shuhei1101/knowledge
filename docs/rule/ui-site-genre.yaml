@@ -3,6 +3,16 @@ id: ui-site-genre
 kind: rule
 name: サイトのジャンル
 description: サイトのジャンルごとの雰囲気の例を示し、デザインの方向を探って候補を出し分けるときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 画面
+    - UI
+    - フロントエンド
+    - tsx
+    - HTML
+    - コンポーネント
 tags:
   - name: scope:ui
   - name: topic:サイト

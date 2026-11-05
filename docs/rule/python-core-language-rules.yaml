@@ -3,6 +3,15 @@ id: python-core-language-rules
 kind: rule
 name: 言語ルール
 description: コメント・識別子・出力の言語、文字列フォーマット、import、例外、エンコーディングの決まりを定め、Python のコードを記載するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: topic:utf-8

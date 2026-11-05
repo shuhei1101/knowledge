@@ -3,6 +3,14 @@ id: react-screen-list
 kind: rule
 name: 一覧画面
 description: 一覧画面の必須の要素と、URL の状態・データ取得との関係を定め、一覧画面を実装するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - React
+    - tsx
+    - jsx
+    - Vite
 tags:
   - name: scope:react
   - name: topic:フロントエンド

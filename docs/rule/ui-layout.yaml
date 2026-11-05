@@ -3,6 +3,16 @@ id: ui-layout
 kind: rule
 name: レイアウト
 description: 画面の骨格と部品のレスポンシブの基準・タップ領域・共通の枠・画面型の構成・CSS の落とし穴のチェックリストを定め、画面のレイアウトやスマホ対応を設計・実装するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 画面
+    - UI
+    - フロントエンド
+    - tsx
+    - HTML
+    - コンポーネント
 tags:
   - name: scope:ui
   - name: tool:css

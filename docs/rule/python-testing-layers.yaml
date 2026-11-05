@@ -3,6 +3,15 @@ id: python-testing-layers
 kind: rule
 name: テストの種類と配置
 description: 単体・結合・外部疎通・E2E の 4 種類のテストについて、単位ごとの方針・ファイル配置・実行方法を定め、Python のテストを作る・実行するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: topic:testing

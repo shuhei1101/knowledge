@@ -3,6 +3,16 @@ id: react-component-page-header
 kind: rule
 name: "`<PageHeader>` — ページタイトル + actions"
 description: ページタイトルとアクションを表示する PageHeader の Props と使い方を定め、画面の見出し部分を実装するときに読む。
+aliases:
+  - ページヘッダー
+inject_when:
+  field: text
+  op: contains
+  values:
+    - React
+    - tsx
+    - jsx
+    - Vite
 tags:
   - name: scope:react
   - name: topic:フロントエンド

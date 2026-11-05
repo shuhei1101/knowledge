@@ -3,6 +3,13 @@ id: next-frontend-pwa
 kind: rule
 name: PWA / Offline
 description: PWA の manifest・Apple 対応・Service Worker の決まりを定め、アプリを PWA 対応にするときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Next.js
+    - App Router
+    - next.config
 tags:
   - name: scope:next
   - name: topic:フロントエンド

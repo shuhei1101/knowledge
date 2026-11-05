@@ -3,6 +3,16 @@ id: ui-token
 kind: rule
 name: デザイントークン
 description: デザイン値を集約するトークンの名前（shadcn の名前）・3 ティア・段階（Tailwind の既定）・CSS のレイヤーを定め、画面の色や余白などのデザイン値を定義・参照するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 画面
+    - UI
+    - フロントエンド
+    - tsx
+    - HTML
+    - コンポーネント
 tags:
   - name: scope:ui
   - name: tool:css

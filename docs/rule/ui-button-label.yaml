@@ -3,6 +3,16 @@ id: ui-button-label
 kind: rule
 name: ボタンのラベル
 description: ボタンをアイコンだけにするか文字を出すかの使い分けと、ツールチップ・アイコン・文言の決まりを定め、画面のボタンを設計・実装するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 画面
+    - UI
+    - フロントエンド
+    - tsx
+    - HTML
+    - コンポーネント
 tags:
   - name: scope:ui
   - name: topic:ボタン
