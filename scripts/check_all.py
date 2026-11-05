@@ -167,12 +167,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             ):
                 print(f"{target.path}:{line}: {path}: {message}")
                 count += 1
-        # 設計書のスキーマが、メタスキーマ・$ref・examples の検査を通るか
-        for file_path, line, path, message in check_design_schemas(root):
-            print(f"{file_path}:{line}: {path}: {message}")
-            count += 1
-        # 対応表のコピーが正本と一致するか
-        for file_path, line, path, message in check_word_list_copy(root):
+        # 設計書のスキーマがメタスキーマ・$ref・examples の検査を通るかと、対応表のコピーが正本と一致するか
+        for file_path, line, path, message in (
+            *check_design_schemas(root),
+            *check_word_list_copy(root),
+        ):
             print(f"{file_path}:{line}: {path}: {message}")
             count += 1
         # lint の違反は失敗させるルールだけを数え、警告にしたルールは警告として数える
@@ -415,7 +414,11 @@ def _check_schema_refs(
                 resolver.lookup(ref)
             except Unresolvable:
                 ref_parts = [*parts, "$ref"]
-                yield line_of(doc, ref_parts), format_path(ref_parts), f"$ref: {ref} を解決できません"
+                yield (
+                    line_of(doc, ref_parts),
+                    format_path(ref_parts),
+                    f"$ref: {ref} を解決できません",
+                )
         examples = schema.get("examples")
         # examples: その examples を持つスキーマを $ref で指した検査器で、要素ごとに検査する
         if not isinstance(examples, list):
@@ -425,7 +428,9 @@ def _check_schema_refs(
         )
         for index, example in enumerate(cast("list[object]", examples)):
             try:
-                errors = cast("list[ValidationError]", list(validator.iter_errors(example)))  # pyright: ignore[reportUnknownMemberType]
+                errors = cast(
+                    "list[ValidationError]", list(validator.iter_errors(cast("Any", example)))
+                )  # pyright: ignore[reportUnknownMemberType]
             except Unresolvable:
                 # 解決できない $ref は $ref の検査が出す
                 continue
