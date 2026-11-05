@@ -4,13 +4,13 @@ default_on: [write, mcp]
 rules:
   - rule: docs/template/template-container.yaml
     paths:
-      - "**/dev/設計書/コンテナ構成/**/*.md"
+      - "**/dev/設計書/コンテナ構成/**/*.{md,yaml}"
   - rule: docs/template/template-test-fixture.yaml
     paths:
-      - "**/dev/設計書/テストフィクスチャ.md"
+      - "**/dev/設計書/テストフィクスチャ.{md,yaml}"
   - rule: docs/template/template-design-policy.yaml
     paths:
-      - "**/dev/設計書/デザイン方針.md"
+      - "**/dev/設計書/デザイン方針.{md,yaml}"
   - rule: docs/template/template-checksheet.yaml
     paths:
       - "**/docs/checksheet/*.yaml"
@@ -38,8 +38,7 @@ rules:
       - "**/docs/skill/*.yaml"
   - rule: docs/rule/convention-writing-style.yaml
     paths:
-      - "**/*.md"
-      - "**/docs/**/*.yaml"
+      - "**/docs/**/*.{md,yaml}"
     tools:
       - "mcp__*__comment"
       - "mcp__*__reply_comment"
@@ -103,53 +102,30 @@ rules:
       - "mcp__*__reply_review_thread"
   - rule: docs/rule/convention-keep-existing-text.yaml
     paths:
-      - "**/*"
-  - rule: docs/flowchart/flowchart-config-location.yaml
-    paths:
-      - "**/config/defaults.yaml*"
-      - "**/settings.local.yaml*"
-      - "**/settings.sample.yaml*"
-  - rule: docs/rule/claude-code-tool-usage.yaml
-    paths:
-      - "*"
+      - "**/*.{md,yaml}"
   - rule: docs/rule/claude-json.yaml
     paths:
-      - "**/hooks/**"
-      - "**/settings.json"
+      - "**/.claude/settings*.json"
+      - "**/hooks/hooks.json"
   - rule: docs/rule/claude-common.yaml
     paths:
-      - "**/skills/**/SKILL.md"
-      - "**/rules/**/*.md"
-      - "**/hooks/**/*.md"
-      - "**/mcp/**"
+      - "**/skills/*/SKILL.md"
+      - "**/.claude/rules/**/*.md"
       - "**/CLAUDE.md"
-      - "**/mcp_server.py*"
-      - "**/.mcp.json"
-      - "**/agents/**/*.md"
+      - "**/agents/*.md"
   - rule: docs/rule/claude-plugin.yaml
     paths:
-      - "**/plugins/**"
-      - "**/.claude-plugin/**"
-  - rule: docs/rule/claude-mcp.yaml
-    paths:
-      - "**/mcp/**"
-      - "**/mcp_server.py*"
-      - "**/.mcp.json"
-  - rule: docs/rule/claude-skills-usage.yaml
-    paths:
-      - "**/skills/*.md"
-  - rule: docs/rule/claude-subagent.yaml
-    paths:
-      - "**/agents/**/*.md"
+      - "**/.claude-plugin/*.json"
   - rule: docs/rule/claude-hook.yaml
     paths:
       - "**/.claude/hooks/**"
       - "**/settings.json"
+      - "**/hooks/hooks.json"
   - rule: docs/rule/claude-context-placement.yaml
     paths:
       - "**/hooks/**"
       - "**/mcp/**"
-      - "**/mcp_server.py*"
+      - "**/mcp_server.py"
       - "**/.mcp.json"
       - "**/CLAUDE.md"
       - "**/skills/**/SKILL.md"
@@ -158,7 +134,7 @@ rules:
     paths:
       - "**/hooks/**"
       - "**/mcp/**"
-      - "**/mcp_server.py*"
+      - "**/mcp_server.py"
       - "**/.mcp.json"
       - "**/content/prompts/**"
   - rule: docs/flowchart/flowchart-mcp-hook-delivery.yaml
@@ -170,21 +146,9 @@ rules:
   - rule: docs/rule/claude-rule-writing.yaml
     paths:
       - "**/.claude/rules/**/*.md"
-  - rule: docs/rule/dev-yaml.yaml
-    paths:
-      - "**/*.{py,html,js,css,j2,ts,tsx,yaml,yml}*"
   - rule: docs/rule/dev-rule-index-registration.yaml
     paths:
-      - "**/docs/**/*.md"
       - "**/rules*.yaml"
-      - "**/docs/**/*.yaml"
-  - rule: docs/rule/dev-document-management.yaml
-    paths:
-      - "**/docs/**/*.yaml"
-      - "**/schemas/*.schema.yaml"
-  - rule: docs/flowchart/flowchart-yaml-file-unit.yaml
-    paths:
-      - "**/docs/**/*.yaml"
   - rule: docs/rule/dev-tag-term-registration.yaml
     paths:
       - "**/terms.yaml"
@@ -194,7 +158,7 @@ rules:
     on: [write]
   - rule: docs/rule/dev-coding-general.yaml
     paths:
-      - "**/*.{py,html,js,css,j2,ts,tsx,yaml,yml}*"
+      - "**/*.{py,ts,tsx,js,jsx,mjs}"
   - rule: docs/rule/typescript-core-style.yaml
     paths:
       - "**/*.{ts,tsx}"
@@ -204,22 +168,12 @@ rules:
     exclude:
       - "**/docs/_layouts/**"
       - "**/docs/_includes/**"
-  - rule: docs/rule/dev-precheck.yaml
-    paths:
-      - "**/*.{py,js,ts,tsx}*"
-      - "**/dev/設計書/アーキテクチャ図.md"
-      - "**/dev/設計書/非機能要件.md"
-      - "**/dev/設計書/インターフェース定義/**"
   - rule: docs/rule/dev-content-location.yaml
     paths:
       - "**/content/**"
   - rule: docs/rule/html-core-server-rendering.yaml
     paths:
       - "**/templates/**/*.{html,j2}"
-  - rule: docs/rule/markdown-editing.yaml
-    paths:
-      - "**/*.md"
-      - "**/docs/**/*.yaml"
   - rule: docs/rule/react-state-effect.yaml
     paths:
       - "**/frontend/src/features/**/*.tsx"
@@ -249,8 +203,11 @@ rules:
     on: [write]
   - rule: docs/rule/prompt-file.yaml
     paths:
-      - "**/prompts/**"
-      - "**/prompt/**"
+      - "**/prompts/**/*.{yaml,md,j2}"
+    exclude:
+      - "**/src/**"
+      - "**/frontend/**"
+      - "**/tests/**"
   - rule: docs/rule/python-architecture-composition-root.yaml
     paths:
       - "**/main.py"
