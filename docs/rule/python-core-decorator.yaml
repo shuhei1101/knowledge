@@ -60,7 +60,7 @@ items:
 
       ```python
       @with_timeout(seconds=<全体の待ち>)                         # 3. 全体の待ちで打ち切り
-      @stamina.retry(on=retry_on_llm_error, attempts=<試行回数>)  # 2. 試行回数までリトライ（フック関数は llm/例外とリトライ）
+      @stamina.retry(on=retry_on_llm_error, attempts=<試行回数>)  # 2. 試行回数までリトライ（引数とフック関数は llm/例外とリトライ）
       @catch_and_map(openai.APIStatusError, to=LlmServerError)        # 1. vendor 例外を変換
       async def chat(req: ChatRequest) -> ChatResponse: ...
       ```
