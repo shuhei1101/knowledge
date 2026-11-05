@@ -76,8 +76,6 @@ properties:
     type: string
     title: 上流リポジトリ
     description: GitHub の `owner/repo`。規約『不具合の報告』の上流 Issue の検索がここから引く。
-    x-rules:
-      - GitHub に無い製品は持たない。
     pattern: ^[^/\s]+/[^/\s]+$
   verification:
     type: object

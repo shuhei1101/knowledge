@@ -16,7 +16,7 @@ properties:
     title: タイトル
     description: 項目の日本語の名前。画面の見出しと表の列名になる。
     x-rules:
-      - 項目の中身を表す語にし、文にしない。
+      - 項目の中身を表す語にする。
     examples:
       - 冒頭リード
     x-bad-examples:
@@ -27,7 +27,6 @@ properties:
     title: 説明
     description: その項目に何を記載するかの 1〜2 文。
     x-rules:
-      - 3 文以上にしない。
       - 書き方の決まりは `x-rules` に、良い例は `examples` に、悪い例は `x-bad-examples` に分ける。
       - 機械で判定できる決まりは `pattern`・`enum`・`maxLength` などの制約にする。
     examples:
@@ -52,7 +51,7 @@ properties:
       minLength: 1
     x-rules:
       - 1 件を 1 文にする。
-      - 正の指示で記載する。
+      - 正の指示で記載し、否定は実行しうる操作を止めるときだけにする。
     examples:
       - - 初回に記載した内容のまま保つ。
         - 対象そのものが変わったときだけ書き換える。

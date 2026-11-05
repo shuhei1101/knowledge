@@ -66,7 +66,6 @@ properties:
     description: 部品が受け取る値。引数 1 つ = 1 要素。
     x-rules:
       - オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 要素に展開する。
-      - 引数を持たない部品は持たない。
     x-heading: 引数
     x-shape: table
     x-key: name
@@ -136,8 +135,6 @@ properties:
     type: array
     title: スロット
     description: 使う側が中身を差し込む場所。スロット 1 つ = 1 要素。
-    x-rules:
-      - スロットを持たない部品は持たない。
     x-heading: スロット
     x-shape: table
     x-key: name
@@ -179,8 +176,6 @@ properties:
     type: array
     title: イベント
     description: 部品が使う側へ知らせる操作。イベント 1 つ = 1 要素。
-    x-rules:
-      - イベントを持たない部品は持たない。
     x-heading: イベント
     x-shape: table
     x-key: name
@@ -322,8 +317,6 @@ properties:
     type: array
     title: 使う部品
     description: この部品が中で使う別の部品。
-    x-rules:
-      - 使わない部品は持たない。
     x-heading: 使う部品
     x-shape: table
     items:
