@@ -214,7 +214,7 @@ $defs:
         type: boolean
   inject_when:
     title: 照合条件
-    description: alias-inject が文書の name・aliases を照合した本文に、この条件が当たるときだけ文書を案内する。条件 1 つか、`and`・`or`・`not` のどれか 1 つを持つ束で、入れ子は 3 レイヤーまで。
+    description: alias-inject が文書の name・aliases を照合した本文に、この条件が当たるときだけ文書を案内する。条件 1 つか、`and`・`or`・`not` のどれか 1 つを持つ束で、束の入れ子は 3 レイヤーまで。
     oneOf:
       - $ref: '#/$defs/inject_condition'
       - type: object
@@ -226,7 +226,7 @@ $defs:
             type: array
             minItems: 1
             items:
-              $ref: '#/$defs/inject_when'
+              $ref: '#/$defs/inject_when_2'
       - type: object
         additionalProperties: false
         required:
@@ -236,14 +236,14 @@ $defs:
             type: array
             minItems: 1
             items:
-              $ref: '#/$defs/inject_when'
+              $ref: '#/$defs/inject_when_2'
       - type: object
         additionalProperties: false
         required:
           - not
         properties:
           not:
-            $ref: '#/$defs/inject_when'
+            $ref: '#/$defs/inject_when_2'
     examples:
       - field: text
         op: contains
@@ -260,6 +260,85 @@ $defs:
             op: not_contains
             values:
               - Python
+      - or:
+          - and:
+              - not:
+                  field: text
+                  op: contains
+                  values:
+                    - Python
+              - field: text
+                op: contains
+                values:
+                  - React
+          - field: text
+            op: contains
+            values:
+              - tsx
+  inject_when_2:
+    title: 照合条件（2 レイヤー目）
+    description: 照合条件の束の要素。条件 1 つか、束の要素が 3 レイヤー目の束。
+    oneOf:
+      - $ref: '#/$defs/inject_condition'
+      - type: object
+        additionalProperties: false
+        required:
+          - and
+        properties:
+          and:
+            type: array
+            minItems: 1
+            items:
+              $ref: '#/$defs/inject_when_3'
+      - type: object
+        additionalProperties: false
+        required:
+          - or
+        properties:
+          or:
+            type: array
+            minItems: 1
+            items:
+              $ref: '#/$defs/inject_when_3'
+      - type: object
+        additionalProperties: false
+        required:
+          - not
+        properties:
+          not:
+            $ref: '#/$defs/inject_when_3'
+  inject_when_3:
+    title: 照合条件（3 レイヤー目）
+    description: 照合条件の束の要素。条件 1 つか、要素が条件だけの束。
+    oneOf:
+      - $ref: '#/$defs/inject_condition'
+      - type: object
+        additionalProperties: false
+        required:
+          - and
+        properties:
+          and:
+            type: array
+            minItems: 1
+            items:
+              $ref: '#/$defs/inject_condition'
+      - type: object
+        additionalProperties: false
+        required:
+          - or
+        properties:
+          or:
+            type: array
+            minItems: 1
+            items:
+              $ref: '#/$defs/inject_condition'
+      - type: object
+        additionalProperties: false
+        required:
+          - not
+        properties:
+          not:
+            $ref: '#/$defs/inject_condition'
   metadata:
     title: メタデータ
     description: 全ての文書が持つメタデータのキー。種類のスキーマが `kind` と `last_reviewed` の要否を決める。
