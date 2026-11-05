@@ -31,6 +31,7 @@ from typing import TYPE_CHECKING, Any, cast
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError, ValidationError
 from referencing import Registry, Resource
+from referencing.exceptions import Unresolvable
 from referencing.jsonschema import DRAFT202012
 from ruamel.yaml.error import YAMLError
 
@@ -64,13 +65,26 @@ from build_word_list import COPY, SOURCE, render_copy
 from knowledge_checks import build_id_index, check_document
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Mapping, Sequence
+    from collections.abc import Iterable, Iterator, Mapping, Sequence
+
+    from ruamel.yaml.comments import CommentedMap
+
+    from _common import PathPart
 
 # validators[] の文書の違反の検査の id
 CHECKS_ID = "knowledge-checks"
 
 # documents[] に無く、yamllint を当てるリポジトリの直下のファイル
 YAMLLINT_EXTRA = ("dev-docs.yaml", "rules.yaml")
+
+# 設計書のスキーマ（knowledge の正本）を置くフォルダ
+DESIGN_SCHEMAS_DIR = PurePosixPath("schemas/design")
+
+# スキーマのキーワードのうち、値がスキーマではなくデータのもの
+_DATA_KEYWORDS = frozenset({"examples", "enum", "const", "default"})
+
+# スキーマのキーワードのうち、値が名前 → スキーマの対応のもの
+_NAMED_SCHEMA_KEYWORDS = frozenset({"properties", "patternProperties", "$defs", "dependentSchemas"})
 
 # yamllint を当てる文書の拡張子
 _YAML_SUFFIXES = (".yaml", ".yml")
@@ -153,8 +167,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             ):
                 print(f"{target.path}:{line}: {path}: {message}")
                 count += 1
-        # 対応表のコピーが正本と一致するか
-        for file_path, line, path, message in check_word_list_copy(root):
+        # 設計書のスキーマがメタスキーマ・$ref・examples の検査を通るかと、対応表のコピーが正本と一致するか
+        for file_path, line, path, message in (
+            *check_design_schemas(root),
+            *check_word_list_copy(root),
+        ):
             print(f"{file_path}:{line}: {path}: {message}")
             count += 1
         # lint の違反は失敗させるルールだけを数え、警告にしたルールは警告として数える
@@ -309,6 +326,120 @@ def check_lints(
     for path, text in yaml_files:
         findings.extend(run_yamllint(path, text, config))
     return sorted(findings, key=lambda finding: (str(finding.path), finding.line))
+
+
+def check_design_schemas(root: Path) -> list[tuple[str, int, str, str]]:
+    """schemas/design/ の設計書のスキーマに、メタスキーマ・$ref・examples の検査を当てる。"""
+    folder = root / DESIGN_SCHEMAS_DIR
+    # フォルダが無いリポジトリは検査しない
+    if not folder.is_dir():
+        return []
+
+    results: list[tuple[str, int, str, str]] = []
+    docs: dict[str, CommentedMap] = {}
+    for path in sorted(folder.glob("*.schema.yaml")):
+        relative = str(DESIGN_SCHEMAS_DIR / path.name)
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError, UnicodeDecodeError:
+            results.append((relative, 1, "$", "ファイルを UTF-8 で読めません"))
+            continue
+        try:
+            docs[path.name] = load_document(text)
+        except DocumentError as error:
+            results.append((relative, error.line, "$", f"YAML として読めません: {error.message}"))
+
+    # schemas/*.schema.yaml とは別に、ファイル名を URI にして登録する（同じ名前の common.schema.yaml を取り違えない）
+    registry = Registry[Any]().with_resources(
+        (name, cast("Resource[Any]", DRAFT202012.create_resource(doc)))
+        for name, doc in docs.items()
+    )
+    meta = Draft202012Validator(Draft202012Validator.META_SCHEMA)
+    for name, doc in docs.items():
+        relative = str(DESIGN_SCHEMAS_DIR / name)
+        meta_errors = cast("list[ValidationError]", list(meta.iter_errors(doc)))  # pyright: ignore[reportUnknownMemberType]
+        for error in meta_errors:
+            parts = list(error.absolute_path)
+            results.append(
+                (relative, line_of(doc, parts), format_path(parts), f"metaschema: {error.message}")
+            )
+        # メタスキーマに合わないスキーマは、$ref・examples を辿れないので後の検査を当てない
+        if meta_errors:
+            continue
+        for line, path, message in _check_schema_refs(name, doc, registry):
+            results.append((relative, line, path, message))
+    return sorted(results, key=lambda result: (result[0], result[1]))
+
+
+def _iter_schemas(
+    node: object, parts: tuple[PathPart, ...] = ()
+) -> Iterator[tuple[tuple[PathPart, ...], Mapping[str, object]]]:
+    """スキーマを辿り、スキーマのマッピングごとに（項目のパス、マッピング）を返す。"""
+    if isinstance(node, list):
+        for index, value in enumerate(cast("list[object]", node)):
+            yield from _iter_schemas(value, (*parts, index))
+        return
+    schema = as_mapping(node)
+    if schema is None:
+        return
+    yield parts, schema
+    for key, value in schema.items():
+        # データの値（examples・enum・const・default）の中はスキーマではない
+        if key in _DATA_KEYWORDS:
+            continue
+        named = as_mapping(value) if key in _NAMED_SCHEMA_KEYWORDS else None
+        # 名前 → スキーマの対応: キーは名前なので、キーワードと見なさずに値のスキーマを辿る
+        if named is not None:
+            for child_name, child in named.items():
+                yield from _iter_schemas(child, (*parts, key, child_name))
+        else:
+            yield from _iter_schemas(value, (*parts, key))
+
+
+def _json_pointer(parts: Sequence[PathPart]) -> str:
+    """項目のパスを JSON Pointer にする。"""
+    return "".join("/" + str(part).replace("~", "~0").replace("/", "~1") for part in parts)
+
+
+def _check_schema_refs(
+    name: str, doc: CommentedMap, registry: Registry[Any]
+) -> Iterator[tuple[int, str, str]]:
+    """スキーマ 1 件の $ref の解決と examples の検査の誤りを（行、項目のパス、内容）で返す。"""
+    resolver = registry.resolver(base_uri=name)
+    for parts, schema in _iter_schemas(doc):
+        ref = schema.get("$ref")
+        # $ref: ファイル名を基準の URI にして登録から引く
+        if isinstance(ref, str):
+            try:
+                resolver.lookup(ref)
+            except Unresolvable:
+                ref_parts = [*parts, "$ref"]
+                yield (
+                    line_of(doc, ref_parts),
+                    format_path(ref_parts),
+                    f"$ref: {ref} を解決できません",
+                )
+        examples = schema.get("examples")
+        # examples: その examples を持つスキーマを $ref で指した検査器で、要素ごとに検査する
+        if not isinstance(examples, list):
+            continue
+        validator = Draft202012Validator(
+            {"$ref": f"{name}#{_json_pointer(parts)}"}, registry=registry
+        )
+        for index, example in enumerate(cast("list[object]", examples)):
+            try:
+                found = validator.iter_errors(cast("Any", example))  # pyright: ignore[reportUnknownMemberType]
+                errors = cast("list[ValidationError]", list(found))
+            except Unresolvable:
+                # 解決できない $ref は $ref の検査が出す
+                continue
+            for error in errors:
+                error_parts = [*parts, "examples", index, *error.absolute_path]
+                yield (
+                    line_of(doc, error_parts),
+                    format_path(error_parts),
+                    f"examples: {error.message}",
+                )
 
 
 def check_word_list_copy(root: Path) -> list[tuple[str, int, str, str]]:

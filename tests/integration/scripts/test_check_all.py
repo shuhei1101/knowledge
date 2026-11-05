@@ -25,6 +25,62 @@ def test_normal(run_script: RunScript, repo_factory: RepoFactory) -> None:
     assert result.stdout.splitlines()[-1] == "2 件の文書を検査し、違反は 0 件、警告は 0 件でした"
 
 
+def test_normal_when_design_schemas_invalid(
+    run_script: RunScript, repo_factory: RepoFactory
+) -> None:
+    """全ての設計書のスキーマを検査し終えてから、全ての誤りを違反として出して終了コード 1 で終わる（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/common.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: 共通\n"
+                "$defs:\n"
+                "  id:\n"
+                "    type: string\n"
+            ),
+            # 3 行目の type が無い型の名前
+            "schemas/design/bad-type.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\ntitle: 型\ntype: strin\n"
+            ),
+            # 5 行目の $ref が共通の型に無い $defs を指す
+            "schemas/design/bad-ref.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: 参照\n"
+                "properties:\n"
+                "  id:\n"
+                "    $ref: common.schema.yaml#/$defs/missing\n"
+            ),
+            # 10 行目の examples[0] が required の id を持たない
+            "schemas/design/bad-example.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: シナリオ\n"
+                "type: object\n"
+                "required:\n"
+                "  - id\n"
+                "properties:\n"
+                "  id:\n"
+                "    $ref: common.schema.yaml#/$defs/id\n"
+                "examples:\n"
+                "  - title: x\n"
+            ),
+        }
+    )
+    # 実行
+    result = run_script("check_all", root)
+    # 検証
+    lines = result.stdout.splitlines()
+    assert result.exit_code == 1
+    assert len(lines) == 4
+    assert lines[0].startswith("schemas/design/bad-example.schema.yaml:10: examples[0]: examples: ")
+    assert lines[1].startswith(
+        "schemas/design/bad-ref.schema.yaml:5: properties.id.$ref: "
+        "$ref: common.schema.yaml#/$defs/missing "
+    )
+    assert lines[2].startswith("schemas/design/bad-type.schema.yaml:3: type: metaschema: ")
+    assert lines[3] == "0 件の文書を検査し、違反は 3 件、警告は 0 件でした"
+
+
 def test_normal_when_violations(run_script: RunScript, repo_factory: RepoFactory) -> None:
     """全ての文書を検査し終えてから、全ての違反を出して終了コード 1 で終わる（正常系）。"""
     # 準備
