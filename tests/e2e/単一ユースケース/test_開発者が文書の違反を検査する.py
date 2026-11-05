@@ -20,6 +20,8 @@ _COMMENT = "docs/rule/e2e-comment.yaml"
 # 自分の examples に合わない設計書のスキーマと、無い $defs を $ref で指す設計書のスキーマの置き場所
 _BAD_EXAMPLE = "schemas/design/e2e-bad-example.schema.yaml"
 _BAD_REF = "schemas/design/e2e-bad-ref.schema.yaml"
+# x-rules が配列でない設計書のスキーマの置き場所
+_BAD_RULES = "schemas/design/e2e-bad-rules.schema.yaml"
 # 太字だけの段落
 _BOLD_PARAGRAPH = "**太字だけの段落**"
 # 最後の行の集計
@@ -136,7 +138,7 @@ def test_error_when_documents_have_lint_violations(
 def test_error_when_design_schemas_are_invalid(
     knowledge_clone: KnowledgeClone, run_check_all: RunCheckAll
 ) -> None:
-    """誤りのある設計書のスキーマを含めば、2 つの誤りをスキーマのパス・行・項目・内容つきで出して失敗する（異常シナリオ）。"""
+    """誤りのある設計書のスキーマを含めば、3 つの誤りをスキーマのパス・行・項目・内容つきで出して失敗する（異常シナリオ）。"""
     # 準備
     clone = knowledge_clone(
         {
@@ -161,6 +163,12 @@ def test_error_when_design_schemas_are_invalid(
                 "  summary:\n"
                 "    $ref: common.schema.yaml#/$defs/e2e-missing\n"
             ),
+            # 3 行目の x-rules が配列でない
+            _BAD_RULES: (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: 決まりの誤り\n"
+                "x-rules: 文字列\n"
+            ),
         }
     )
     # 実行
@@ -171,7 +179,11 @@ def test_error_when_design_schemas_are_invalid(
     assert result.returncode == 1
     assert summary is not None
     assert int(summary.group(2)) == len(_violation_lines(lines))
-    assert _violation_paths(lines) == {_BAD_EXAMPLE, _BAD_REF}
+    assert _violation_paths(lines) == {_BAD_EXAMPLE, _BAD_REF, _BAD_RULES}
+    assert any(
+        line.startswith(f"{_BAD_RULES}:3: x-rules: metaschema: ")
+        for line in _violation_lines(lines)
+    )
     assert any(
         line.startswith(f"{_BAD_EXAMPLE}:10: examples[0]: examples: ")
         for line in _violation_lines(lines)

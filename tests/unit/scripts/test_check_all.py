@@ -3,9 +3,11 @@
 import re
 from collections.abc import Callable, Mapping
 from pathlib import Path, PurePosixPath
+from typing import TYPE_CHECKING
+
+import pytest
 
 import check_all
-import pytest
 from _lint import LintFinding, LintSource
 from check_all import (
     MetaSchemaError,
@@ -15,7 +17,9 @@ from check_all import (
     check_target,
     list_targets,
 )
-from jsonschema import Draft202012Validator
+
+if TYPE_CHECKING:
+    from jsonschema import Draft202012Validator
 
 # リポジトリの直下
 _REPO = Path(__file__).resolve().parents[3]
@@ -800,7 +804,9 @@ def test_load_meta_validator() -> None:
     # 実行
     validator = check_all.load_meta_validator(_REPO)
     # 検証
-    paths = sorted(".".join(map(str, error.absolute_path)) for error in validator.iter_errors(invalid))
+    paths = sorted(
+        ".".join(map(str, error.absolute_path)) for error in validator.iter_errors(invalid)
+    )
     assert paths == [
         "$defs.b.type",
         "$defs.b.x-bad-examples.0",

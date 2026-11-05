@@ -39,7 +39,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml` と、`schemas/design/` に誤りのある設計書のスキーマ 4 件と、それらが `$ref` で指す `common.schema.yaml` と、`schemas/meta.schema.yaml` と、`x-rules` に文字列を書いた `schemas/rule.schema.yaml` を持つ一時フォルダ'
+        description: '`dev-docs.yaml` と、`schemas/design/` に誤りのある設計書のスキーマ 4 件と、それらが `$ref` で指す `common.schema.yaml` と、`schemas/meta.schema.yaml` と、`x-rules` に文字列を書いた `schemas/template.schema.yaml` を持つ一時フォルダ'
         notes: '4 件は、`type` に `strin` を書いたスキーマ（メタスキーマの違反）、`x-rules` に文字列を書いたスキーマ（メタスキーマの違反）、`common.schema.yaml#/$defs/missing` を指すスキーマ（解決できない `$ref`）、`required` のキーを持たない `examples[0]` を持つスキーマ（`examples` の違反）'
     flow: |-
       sequenceDiagram
@@ -59,7 +59,7 @@ flows:
         S-->>C: 終了コード 1 と全ての違反の行
     expected:
       - 終了コードが 1
-      - '標準出力に `schemas/design/{ファイル名}:{行}: {項目のパス}: {内容}` の行が 4 件と、`schemas/rule.schema.yaml:{行}: x-rules: metaschema: {内容}` の行が出る'
+      - '標準出力に `schemas/design/{ファイル名}:{行}: {項目のパス}: {内容}` の行が 4 件と、`schemas/template.schema.yaml:{行}: x-rules: metaschema: {内容}` の行が出る'
       - メタスキーマの違反の行は `type`・`x-rules` のキーの行、解決できない `$ref` の行は `$ref` のキーの行、`examples` の違反の行は `examples[0]` の要素の先頭の行
     test: test_normal_when_design_schemas_invalid
   - name: 正常系（リポジトリのスキーマ）
