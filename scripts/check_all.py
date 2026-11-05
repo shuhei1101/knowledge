@@ -159,16 +159,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             return _EXIT_NOT_STARTED
         clis = {name: path for name, path in lint_clis.items() if path is not None}
         root = Path.cwd()
+        # dev-docs.yaml か拡張したメタスキーマを使えなければ検査を始めない
         try:
             rows = load_config(root)
-        except ConfigError as error:
-            print(error.message, file=sys.stderr)
-            return _EXIT_NOT_STARTED
-
-        # 拡張したメタスキーマを使えなければ検査を始めない
-        try:
             meta = load_meta_validator(root)
-        except MetaSchemaError as error:
+        except (ConfigError, MetaSchemaError) as error:
             print(error.message, file=sys.stderr)
             return _EXIT_NOT_STARTED
 
@@ -405,9 +400,7 @@ def _check_meta(doc: CommentedMap, meta: Draft202012Validator) -> list[tuple[int
     return results
 
 
-def check_design_schemas(
-    root: Path, meta: Draft202012Validator
-) -> list[tuple[str, int, str, str]]:
+def check_design_schemas(root: Path, meta: Draft202012Validator) -> list[tuple[str, int, str, str]]:
     """schemas/design/ の設計書のスキーマに、拡張したメタスキーマ・$ref・examples の検査を当てる。"""
     # フォルダが無いリポジトリは検査しない
     if not (root / DESIGN_SCHEMAS_DIR).is_dir():
