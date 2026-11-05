@@ -1,0 +1,89 @@
+id: "LIB-176-2"
+title: "textlint"
+kind: "CLI"
+version:
+  current: 15.8.0
+  latest: 15.8.0
+  checked_on: '2026-11-05'
+  source: '`scripts/lint/package-lock.json`'
+  pinning: 完全なバージョンで固定する。ルールのパッケージも同じ `package-lock.json` で固定する
+catalogs:
+  - name: コマンド
+    version: 15.8.0
+    entries:
+      - name: textlint --config {設定} --format json {ファイル}...
+        kind: コマンド
+        purpose: 指定した Markdown のファイルの文章を検査し、違反を JSON で標準出力へ出す
+        params:
+          - name: --config
+            type: str
+            required: false
+            description: 設定ファイル（`.textlintrc.json`）のパス
+          - name: --format
+            type: Literal['json']
+            required: false
+            description: 結果を JSON で出す
+          - name: '{ファイル}'
+            type: str
+            required: true
+            description: 検査するファイルのパスか glob。複数を並べられる
+        returns:
+          - name: exit_code
+            type: Literal[0, 1, 2]
+            description: 0 = error の違反なし、1 = error の違反あり、2 = 設定などの誤りで検査できなかった
+          - name: '[].filePath'
+            type: str
+            description: 検査したファイルの絶対パス
+          - name: '[].messages[].line'
+            type: int
+            description: ファイルの中の行（1 始まり）
+          - name: '[].messages[].ruleId'
+            type: str
+            description: ルールの名前。プリセットのルールは `{プリセット}/{ルール}`
+          - name: '[].messages[].severity'
+            type: Literal[1, 2]
+            description: 1 = warning、2 = error
+          - name: '[].messages[].message'
+            type: str
+            description: 違反の内容
+  - name: ルール
+    version: 15.8.0
+    entries:
+      - name: textlint-rule-preset-ja-technical-writing
+        kind: プリセット
+        purpose: 日本語の技術文書の決まり（文の長さ・句読点・助詞の重複など）をまとめて当てる
+        description: 12.0.2。MIT。upstream は textlint-ja/textlint-rule-preset-ja-technical-writing
+      - name: textlint-rule-one-sentence-per-line
+        kind: ルール
+        purpose: 1 行に 2 文以上ある行を違反にする
+        description: 2.0.0。Apache-2.0。upstream は Lab41/textlint-rule-one-sentence-per-line
+  - name: 設定
+    version: 15.8.0
+    entries:
+      - name: rules.{ルール}.severity
+        kind: 設定
+        purpose: ルールの違反を warning として出す
+        description: '`"severity": "warning"` を付けたルールの違反は、終了コードに数えない'
+lead: 自然言語の文章をルールのプラグインで検査する lint の CLI。Markdown を読み、違反を行つきで出す。
+purl: pkg:npm/textlint@15.8.0
+dependency_scope: 開発のみ
+adoption: 採用
+used_in:
+  - scripts/
+  - .github/workflows/
+upstream: textlint/textlint
+verification:
+  state: 未確認
+  detail: PoC（#177）で 15.8.0 と 2 つのルールの JSON の出力と、`one-sentence-per-line` の判定を確かめた。`severity` の指定と終了コードは未確認
+license: MIT（商用利用可）
+official_url: https://www.npmjs.com/package/textlint
+docs_url: https://textlint.org/docs/
+selection:
+  candidates: textlint、RedPen
+  decision: 規約『文章の書き方』が出典にする preset-ja-technical-writing を、そのまま当てられる
+install: |-
+  ```bash
+  npm ci --prefix scripts/lint
+  ```
+
+  `scripts/lint/node_modules/.bin/textlint` から呼ぶ
