@@ -32,7 +32,7 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: PR
-        description: 本文に段落全体が太字の段落（`**太字だけの段落**`）を含む文書と、値の後ろに空白 1 つで ` #` を続けた行（`key: foo #bar`）を含む YAML を 1 つずつ含む PR
+        description: '本文に段落全体が太字の段落（`**太字だけの段落**`）を含む文書と、既存のキーの引用符の無い値の後ろに空白 1 つで ` #` を続けた行（`description: {値} #bar`）を含む YAML を 1 つずつ含む PR'
     flow: |-
       sequenceDiagram
         participant G as GitHub Actions

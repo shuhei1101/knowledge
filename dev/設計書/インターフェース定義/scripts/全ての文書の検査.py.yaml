@@ -81,7 +81,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`items[].body` の 3 行目が太字だけの段落の文書と、引用符の無い値 `key: foo #bar` を持つ文書を 1 つずつ持つ一時フォルダ'
+        description: '`items[].body` の 3 行目が太字だけの段落の文書と、既存のキーの引用符の無い値に ` #bar` を付けた文書（`description: B の文書 #bar`）を 1 つずつ持つ一時フォルダ'
         notes: 太字だけの段落は markdownlint の `MD036`、`#bar` は yamllint の `comments` に当たる
     flow: |-
       sequenceDiagram
@@ -100,7 +100,7 @@ flows:
     expected:
       - 終了コードが 1
       - '標準出力に `{文書のパス}:{行}: items[0].body: markdownlint/MD036: {内容}` の行が出て、行は文書の YAML の中の太字の段落の行'
-      - '標準出力に `{文書のパス}:{行}: -: yamllint/comments: {内容}` の行が出て、行は `key: foo #bar` の行'
+      - '標準出力に `{文書のパス}:{行}: -: yamllint/comments: {内容}` の行が出て、行は ` #bar` を付けた行'
     test: test_normal_when_lint_violations
   - name: 正常系（警告のルールの違反だけがある・終了コード 0）
     summary: 警告にしたルールの違反は警告の行として出し、終了コードには数えない
