@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
 id: dev-local-server
 kind: rule
 name: ローカルサーバーの立て方
@@ -6,6 +7,18 @@ aliases:
   - tmux
   - dev サーバー
   - 常駐サーバー
+tags:
+  - name: scope:dev
+  - name: topic:サーバー
+    main: true
+  - name: topic:セッション
+  - name: topic:ポート
+  - name: topic:ログ
+  - name: topic:worktree
+  - name: tool:tmux
+  - name: tool:systemd
+  - name: action:起動
+  - name: action:停止
 status: current
 visibility: internal
 rev: 1
@@ -101,15 +114,3 @@ items:
       - `tmux kill-server`・`pkill tmux`・`tmux new-session` として見えるプロセスの kill（tmux サーバー本体で、全てのセッションが終わる）
       - `pkill -f vite` のような名前での一括の kill（他の worktree のサーバーも終わる）
       - tmux・systemd の外での `nohup`・`setsid`・`&` による常駐
-tags:
-  - name: scope:dev
-  - name: topic:サーバー
-    main: true
-  - name: topic:セッション
-  - name: topic:ポート
-  - name: topic:ログ
-  - name: topic:worktree
-  - name: tool:tmux
-  - name: tool:systemd
-  - name: action:起動
-  - name: action:停止

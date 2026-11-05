@@ -23,7 +23,6 @@ tags:
     main: true
   - name: action:検証
   - name: action:秘匿
-  - name: action:読み込み
 status: current
 visibility: internal
 rev: 6
@@ -43,6 +42,7 @@ items:
     name: 例外を握りつぶさない
     body: |-
       - 例外をもし実装する場合、握りつぶさないこと（エラーで画面が落ちてよい）
+        - ログを出して再送出するための捕捉はOK
   - id: fallback-01
     group: フォールバック仕様
     name: フォールバック値を設けない
