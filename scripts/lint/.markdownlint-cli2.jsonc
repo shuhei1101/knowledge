@@ -1,0 +1,23 @@
+// 全ての文書の検査（scripts/check_all.py）が文書の Markdown の項目に当てる markdownlint-cli2 の設定
+{
+  "config": {
+    "default": true,
+    // 文書の項目は断片で、1 行目が見出しとは限らない
+    "MD041": false,
+    // 1 行の長さは制限しない（1 文 1 行は textlint の one-sentence-per-line）
+    "MD013": false,
+    // 表のセルの改行の <br> は『Markdown 編集規約』が許す
+    "MD033": { "allowed_elements": ["br"] },
+    // 表の空白の揃え方・番号付きリストの番号・書き方の例のコード・部品の記法は記法の違いで、違反にしない
+    "MD060": false,
+    "MD029": false,
+    "MD038": false,
+    "MD052": false,
+    // 既存の文書に違反があるルールは警告にする。#145 の移行の後に error へ切り替える
+    "MD031": "warning",
+    "MD032": "warning",
+    "MD040": "warning",
+    "no-inline-strong": "warning"
+  },
+  "customRules": ["./no-inline-strong.mjs"]
+}

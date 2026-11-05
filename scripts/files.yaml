@@ -28,3 +28,58 @@ files:
     name: 対応表のコピーの作成
     description: 正本の対応表の YAML から、プラグイン slop-check のフックが読む JSON のコピーを書き出す。対応表の正本を変えたときや、コピーに残すキーを変えるときに読む。
     tags: [topic:対応表, topic:変換, tool:ruamel.yaml]
+  - path: _lint.py
+    name: lint の呼び出し
+    description: markdownlint-cli2・textlint・yamllint の在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応を受け持つ。lint の CLI のバージョンを上げるときや、CLI の出力の読み方を変えるときに読む。
+    tags:
+      - topic:検査
+      - topic:lint
+      - tool:markdownlint
+      - tool:textlint
+      - tool:yamllint
+    id: scripts/_lint.py
+  - path: lint/no-inline-strong.mjs
+    name: 文中の太字の検査
+    description: markdownlint のカスタムルールとして、太字（strong）を違反にする。太字の検査の対象や違反の内容を変えるときに読む。
+    tags:
+      - topic:検査
+      - topic:lint
+      - topic:markdown
+      - tool:markdownlint
+    id: scripts/lint/no-inline-strong.mjs
+  - path: lint/.markdownlint-cli2.jsonc
+    name: markdownlint の設定
+    description: 全ての文書の検査が文書の Markdown の項目に当てる markdownlint-cli2 のルールの有効・無効と警告を定める。Markdown の検査のルールを変えるときや、警告のルールを失敗させる設定へ切り替えるときに読む。
+    tags:
+      - topic:検査
+      - topic:lint
+      - topic:設定
+      - tool:markdownlint
+    id: scripts/lint/.markdownlint-cli2.jsonc
+  - path: lint/.textlintrc.json
+    name: textlint の設定
+    description: 全ての文書の検査が文書の Markdown の項目に当てる textlint のルールと警告を定める。文章の検査のルールを変えるときや、警告のルールを失敗させる設定へ切り替えるときに読む。
+    tags:
+      - topic:検査
+      - topic:lint
+      - topic:設定
+      - tool:textlint
+    id: scripts/lint/.textlintrc.json
+  - path: lint/.yamllint.yaml
+    name: yamllint の設定
+    description: 全ての文書の検査が文書の YAML に当てる yamllint のルールを定める。YAML の書き方の検査のルールを変えるときに読む。
+    tags:
+      - topic:検査
+      - topic:lint
+      - topic:設定
+      - tool:yamllint
+    id: scripts/lint/.yamllint.yaml
+  - path: lint/package.json
+    name: lint の npm の依存
+    description: 全ての文書の検査が呼ぶ markdownlint-cli2・textlint とルールのバージョンを定める（ロックは package-lock.json）。lint の CLI やルールのバージョンを上げるときに読む。
+    tags:
+      - topic:検査
+      - topic:lint
+      - topic:依存
+      - tool:npm
+    id: scripts/lint/package.json
