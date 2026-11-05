@@ -1,5 +1,5 @@
 設計書のスキーマのタグの更新:
-  説明: release が master へ入った後に、`design-schemas/v*` の最新のタグがこの PR の squash commit を含むかを確かめ、含まなければ、そのマージの commit へ次の版のタグを作成して push する。同じ release で `design-schemas/v1.0.0` を作成して含まれるときはタグを作成しない。インターフェース定義の `status_codes` と `exceptions` の併記を禁じる制約を足したので、上げる桁はメジャーにする
+  説明: release が master へ入った後に、`design-schemas/v*` の最新のタグがこの PR の squash commit を含むかを確かめ、含まなければ、そのマージの commit へ `design-schemas/v2.0.0` を作成して push する。同じ release で `design-schemas/v1.0.0` を作成して含まれるときはタグを作成しない。制約を狭めた（`status_codes` と `exceptions` の併記の禁止・`test_files` の件数）のでメジャーを上げる
   タグ: [タグ, スキーマ]
   実行者: tester
   時期: master へ入った後
