@@ -127,11 +127,13 @@ properties:
     title: 手順
     description: 手順のフローチャート。上から下へ。分岐はそのまま描く。mdmark の `flow` で記載する。
     type: string
+    contentMediaType: text/markdown
     minLength: 1
   sequence:
     title: 外部とのやり取り
     description: 正常の流れで、相手との呼び出しと返りの順番。mdmark の `sequence` で記載する。
     type: string
+    contentMediaType: text/markdown
     minLength: 1
   branches:
     title: 分かれる結末
