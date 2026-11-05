@@ -22,7 +22,7 @@ tags:
   - name: action:登録
 status: current
 visibility: internal
-rev: 10
+rev: 11
 last_reviewed: '2026-11-04'
 sources:
   - title: "W3C: SKOS Reference"
@@ -39,6 +39,7 @@ items:
     name: 概要
     body: |-
       文書にタグ・用語・エイリアスを付けるときと、用語集に登録するとき、description を書くときの決まり。
+      文書を書き込むたびに要る、タグを付ける・付けない条件と description の書き方は、規約 [文書のタグと description の記載](id:dev-doc-tag-description) に分けた。
   - id: tag-form-01
     group: タグの形
     name: タグは自由な文字列
@@ -102,18 +103,6 @@ items:
     name: 見出しの識別子
     body: |-
       - 見出しの識別子（関数名・ファイル名。`list_changes`・`describe()`・`dev-docs.yaml`）はタグにせず、概念の語にしてから付ける（`dev-docs.yaml` → `topic:設定`）
-  - id: description-01
-    group: description の書き方
-    name: 1 文で受け持つことと読むときを記載する
-    body: |-
-      - `description` は文書の種類を問わず 1 文で、「何を受け持つか／何について書いてあるか」と「どんなときに読むか」を記載する
-        例: `タスクの保存と取得を受け持ち、保存先や検索の条件を変えるときに読む`
-  - id: description-02
-    group: description の書き方
-    name: 書かないもの
-    body: |-
-      - 関数の一覧・実装の手順は書かない
-      - 既存の文書を YAML にするときも、同じ書き方にする
   - id: description-03
     group: description の書き方
     name: 点検の表
@@ -134,24 +123,6 @@ items:
       | 用語の選び方 | 規約 [文章の書き方](id:convention-writing-style#word-choice-table-02) の対応表に沿う（和語と、外来語を無理に訳した和語を使わない） |
 
       <!-- /table -->
-  - id: tag-attach-01
-    group: タグを付ける条件
-    name: タグを付ける条件
-    body: |-
-      付ける前に、使われているタグを検索の集計（dev-docs の `group_by: tags`）で件数つきで引き、使い回せるタグ（`tag-attach-02`）があれば使い回す。
-      付けるかは判定フローチャート [タグの付与](id:flowchart-tag-attach) で決める。
-      次の表は例。
-
-      <!-- table: data -->
-
-      | 条件 | 例 |
-      | --- | --- |
-      | その語で探した人に、この文書が出てほしいときは、その語のタグを付ける。当てはまるものは全部付ける | 「索引の点検」を扱う設計書に `topic:索引`・`action:点検` |
-      | 上位の広いタグがあるときは、広いタグも一緒に付ける | FastAPI の規約に `tool:fastapi` と広い `scope:python` |
-      | 最も分量の多い主題に `main: true` を付ける | 「索引の点検」が中心の設計書に `topic:索引` を `main: true` で付ける |
-      | 2 つ以上の文書で同じ主題が出て一緒に引きたいときは、既存の文書にもさかのぼって付ける | `topic:タグ` を付け始めたら過去の調査 2 件にも付ける |
-
-      <!-- /table -->
   - id: tag-attach-02
     group: タグを付ける条件
     name: 既存のタグに寄せる
@@ -159,21 +130,6 @@ items:
       - 使われているタグに寄せるのは、同じ概念の言い方・活用の違い（「強い／強く」など）だけ
         意味が近いだけの別の概念は、別のタグにしてよい
         タグの種類の上限は持たない
-  - id: tag-not-attach-01
-    group: タグを付けない条件
-    name: タグを付けない条件
-    body: |-
-      <!-- table: data -->
-
-      | 条件 | 例 |
-      | --- | --- |
-      | 例として名前が出ただけで、その話題を調べる人の役に立たない | 例の一覧に並べただけの「Mermaid」 |
-      | そのタグ 1 つでは何の話か決まらない評価・状態の語 | 「重要」「初心者向け」「ベストプラクティス」 |
-      | 状態・フェーズなど別のキーで表せるもの | 「決定済み」は `status` で表す |
-      | 使われているタグと同じ概念の言い方・活用の違い。新設せず、使われているタグを引いて同じ語を使う | `topic:用語集` があるのに `topic:glossary` を作らない |
-      | 見出しによく出る一般語 | 機能・手段・背景・仕組み・案・一覧・リクエスト・レスポンス・例・前提・流れ・要点・補足・決めたこと・残る検討事項・やりたいこと |
-
-      <!-- /table -->
   - id: term-register-01
     group: 用語を登録する条件
     name: 用語を登録する条件

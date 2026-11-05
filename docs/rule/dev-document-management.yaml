@@ -125,8 +125,8 @@ items:
       | `id` | 変わらない ID | 必須 |
       | `kind` | 文書の種類（英語の定数） | 必須 |
       | `name` | タイトル | 必須 |
-      | `description` | 本文を読まずに中身が分かる 1 文。書き方は [タグと用語の登録](id:dev-tag-term-registration) | 必須 |
-      | `tags` | タグ（[タグと用語の登録](id:dev-tag-term-registration)）。各要素は `name` と、主題なら `main: true` | 必須 |
+      | `description` | 本文を読まずに中身が分かる 1 文。書き方は [文書のタグと description の記載](id:dev-doc-tag-description) | 必須 |
+      | `tags` | タグ（[文書のタグと description の記載](id:dev-doc-tag-description)）。各要素は `name` と、主題なら `main: true` | 必須 |
       | `status` | 状態（英語の定数） | 必須 |
       | `visibility` | 公開範囲（`public` / `internal`） | 必須 |
       | `rev` | 変更ごとに増えるバージョン。書き込む側が 1 つ上げる | 必須 |
@@ -281,7 +281,7 @@ items:
       | --- | --- | --- |
       | `path` | files.yaml のフォルダからの相対パス。1 行 1 ファイル | glob |
       | `name` | 何のファイルかを表す日本語の名詞句（例 `タスクのリポジトリ`） | クラス名・ファイル名の繰り返し |
-      | `description` | [タグと用語の登録](id:dev-tag-term-registration) の description の書き方 | 関数の一覧・実装の手順 |
+      | `description` | [文書のタグと description の記載](id:dev-doc-tag-description) の description の書き方 | 関数の一覧・実装の手順 |
       | `tags` | [タグと用語の登録](id:dev-tag-term-registration) の `tag-scope-02` のソースコードの行（`topic:`・`tool:`） | `kind:`・`scope:`・状態・評価の語 |
       | `related` | `implements`・`tests`・`see_also` | import で分かる依存 |
       | `status` | `deprecated` など検索で外したい状態だけ | - |
