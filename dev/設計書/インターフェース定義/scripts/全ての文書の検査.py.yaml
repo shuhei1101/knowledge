@@ -22,6 +22,10 @@ flows:
         loop 全ての文書
           S->>S: スキーマの検査と文書の違反の検査
         end
+        S->>F: schemas/design/ の設計書のスキーマを読む
+        loop 全ての設計書のスキーマ
+          S->>S: メタスキーマ・$ref・examples の検査
+        end
         S->>S: 文書の Markdown の項目を 1 項目ずつ一時の .md に書き出す
         S->>S: markdownlint-cli2・textlint を 1 回ずつ呼び、yamllint を当てる
         S-->>C: 終了コード 0 と件数の行
@@ -29,6 +33,31 @@ flows:
       - 終了コードが 0
       - 標準出力の最後の行が、文書 2 件・違反 0 件・警告 0 件を示す
     test: test_normal
+  - name: 正常系（設計書のスキーマに誤りがある・終了コード 1）
+    summary: 全ての設計書のスキーマを検査し終えてから、全ての誤りを違反として出して終了コード 1 で終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`dev-docs.yaml` と、`schemas/design/` に誤りのある設計書のスキーマ 3 件と、それらが `$ref` で指す `common.schema.yaml` を持つ一時フォルダ'
+        notes: '3 件は、`type` に `strin` を書いたスキーマ（メタスキーマの違反）、`common.schema.yaml#/$defs/missing` を指すスキーマ（解決できない `$ref`）、`required` のキーを持たない `examples[0]` を持つスキーマ（`examples` の違反）'
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>F: dev-docs.yaml の documents を読む
+        S->>F: schemas/design/ の設計書のスキーマを読む
+        loop 全ての設計書のスキーマ
+          S->>S: メタスキーマ・$ref・examples の検査
+        end
+        S-->>C: 終了コード 1 と全ての違反の行
+    expected:
+      - 終了コードが 1
+      - '標準出力に `schemas/design/{ファイル名}:{行}: {項目のパス}: {内容}` の行が 3 件出る'
+      - メタスキーマの違反の行は `type` のキーの行、解決できない `$ref` の行は `$ref` のキーの行、`examples` の違反の行は `examples[0]` の要素の先頭の行
+    test: test_normal_when_design_schemas_invalid
   - name: 正常系（違反がある・終了コード 1）
     summary: 全ての文書を検査し終えてから、全ての違反を出して終了コード 1 で終わる
     setup:
@@ -160,7 +189,7 @@ flows:
       - 終了コードが 2
       - 標準エラーに `dev-docs.yaml` が無いことが出る
     test: test_error_when_config_missing
-lead: '`dev-docs.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を当て、全ての違反を出して終了コードで合否を返す。'
+lead: '`dev-docs.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を当て、`schemas/design/` の設計書のスキーマにスキーマ自身の検査を当て、全ての違反を出して終了コードで合否を返す。'
 identifier: check-all
 idempotent: true
 side_effects: なし（ファイルを書き換えない）
@@ -196,12 +225,23 @@ exceptions:
   - name: なし（正常終了）
     condition: 全ての文書に違反が無い（終了コード 0）。警告にしたルールの違反だけのときを含む
   - name: 終了コード 1
-    condition: 違反が 1 件以上ある。全ての文書を検査し終えてから返す
+    condition: 違反（設計書のスキーマの誤りを含む）が 1 件以上ある。全ての文書と設計書のスキーマを検査し終えてから返す
   - name: 終了コード 2
     condition: maid が PATH から引けないか、markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`dev-docs.yaml` が無い・YAML として読めない
 constraints:
   - item: 検査の範囲
     constraint: '`dev-docs.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も当てる'
+  - item: 設計書のスキーマの検査の範囲
+    constraint: '`schemas/design/*.schema.yaml` の全てのファイル（knowledge の正本）。`dev/テンプレート/` のコピーは検査しない。`schemas/design/` が無ければ検査しない'
+  - item: 設計書のスキーマの検査
+    constraint: |-
+      ファイルごとに次の 3 つを当て、誤り 1 件を違反 1 件にする。
+      メタスキーマ: JSON Schema 2020-12 のメタスキーマに合うか。
+      `$ref`: 全ての `$ref` が、`schemas/design/` のファイル名を URI にして登録したスキーマの中で解決できるか。
+      `examples`: 全ての深さの `examples` の要素が、その `examples` を持つスキーマに合うか（`$ref` は同じ登録から解く）。
+      `schemas/*.schema.yaml`（knowledge の文書の種類のスキーマ）とは別に登録し、同じファイル名（`common.schema.yaml`）を取り違えない
+  - item: 設計書のスキーマの違反の行
+    constraint: '行はスキーマの YAML の中の誤りのある位置の行。メタスキーマの違反は誤りのあるキー、`$ref` の違反は `$ref` のキー、`examples` の違反は誤りのある要素（要素の中の項目が誤りなら、その項目）の行。項目のパスは同じ位置を `format_path` の書き方で出す'
   - item: lint の当て先
     constraint: 'markdownlint-cli2・textlint は、`documents[]` の YAML の文書の Markdown の項目（パスの末尾が `body` の文字列）を 1 項目 1 ファイルの一時の `.md` にして当て、`.md` の文書にはそのまま当てる。yamllint は `documents[]` の YAML の文書と、直下の `dev-docs.yaml`・`rules.yaml` に当てる'
   - item: lint の行
