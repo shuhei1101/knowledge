@@ -6,13 +6,47 @@ from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING
 
 import check_all
-from check_all import Target, build_validators, check_target, list_targets
+from _lint import LintFinding
+from check_all import Target, build_validators, check_lints, check_target, list_targets
 
 if TYPE_CHECKING:
     import pytest
 
 type FakeMaidFactory = Callable[..., str]
 type RepoFactory = Callable[[Mapping[str, str]], Path]
+
+# 両方とも引けたときの lint の CLI の在りか
+_CLIS = {"markdownlint-cli2": "/bin/markdownlint-cli2", "textlint": "/bin/textlint"}
+
+# 失敗させるルールの違反と、警告にしたルールの違反
+_ERROR_FINDING = LintFinding(
+    PurePosixPath("docs/rule/rule-a.yaml"),
+    8,
+    "items[0].body",
+    "markdownlint",
+    "MD036",
+    "Emphasis used instead of a heading",
+    False,
+)
+_WARNING_FINDING = LintFinding(
+    PurePosixPath("docs/rule/rule-a.yaml"),
+    8,
+    "items[0].body",
+    "textlint",
+    "one-sentence-per-line",
+    "1 行に 2 文があります",
+    True,
+)
+
+# scripts/lint/.yamllint.yaml と同じ内容の設定
+_YAMLLINT_CONFIG = (
+    "extends: default\n"
+    "rules:\n"
+    "  comments:\n"
+    "    level: error\n"
+    "  document-start: disable\n"
+    "  line-length: disable\n"
+)
 
 # 違反の無い規約の文書
 _VALID_A = (
@@ -61,11 +95,16 @@ def test_main(
     monkeypatch.chdir(root)
     maid = fake_maid_factory()
     monkeypatch.setattr(check_all, "find_maid", lambda: maid)
+    monkeypatch.setattr(check_all, "find_lint_clis", lambda _lint_dir: _CLIS)
+    monkeypatch.setattr(check_all, "check_lints", lambda *_args: [])
     # 実行
     code = check_all.main([])
     # 検証
     assert code == 0
-    assert capsys.readouterr().out.splitlines()[-1] == "2 件の文書を検査し、違反は 0 件でした"
+    assert (
+        capsys.readouterr().out.splitlines()[-1]
+        == "2 件の文書を検査し、違反は 0 件、警告は 0 件でした"
+    )
 
 
 def test_main_when_violations(
@@ -97,6 +136,8 @@ def test_main_when_violations(
     monkeypatch.chdir(root)
     maid = fake_maid_factory()
     monkeypatch.setattr(check_all, "find_maid", lambda: maid)
+    monkeypatch.setattr(check_all, "find_lint_clis", lambda _lint_dir: _CLIS)
+    monkeypatch.setattr(check_all, "check_lints", lambda *_args: [])
     # 実行
     code = check_all.main([])
     # 検証
@@ -106,21 +147,78 @@ def test_main_when_violations(
     assert re.search(r"^docs/rule/rule-c\.yaml:8: items\[1\]\.id: ", out, re.MULTILINE)
 
 
-def test_main_when_maid_missing(
+def test_main_when_lint_findings(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    repo_factory: RepoFactory,
+    fake_maid_factory: FakeMaidFactory,
+) -> None:
+    """lint の違反と警告（正常系）。"""
+    # 準備
+    root = repo_factory({"docs/rule/rule-a.yaml": _VALID_A, "docs/rule/rule-b.yaml": _VALID_B})
+    monkeypatch.chdir(root)
+    maid = fake_maid_factory()
+    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
+    monkeypatch.setattr(check_all, "find_lint_clis", lambda _lint_dir: _CLIS)
+    monkeypatch.setattr(
+        check_all, "check_lints", lambda *_args: [_ERROR_FINDING, _WARNING_FINDING]
+    )
+    # 実行
+    code = check_all.main([])
+    # 検証
+    lines = capsys.readouterr().out.splitlines()
+    assert code == 1
+    assert (
+        "docs/rule/rule-a.yaml:8: items[0].body: markdownlint/MD036: "
+        "Emphasis used instead of a heading"
+    ) in lines
+    assert (
+        "docs/rule/rule-a.yaml:8: items[0].body: warning: textlint/one-sentence-per-line: "
+        "1 行に 2 文があります"
+    ) in lines
+    assert lines[-1] == "2 件の文書を検査し、違反は 1 件、警告は 1 件でした"
+
+
+def test_main_when_only_warnings(
+    monkeypatch: pytest.MonkeyPatch,
+    repo_factory: RepoFactory,
+    fake_maid_factory: FakeMaidFactory,
+) -> None:
+    """警告だけ（正常系）。"""
+    # 準備
+    root = repo_factory({"docs/rule/rule-a.yaml": _VALID_A, "docs/rule/rule-b.yaml": _VALID_B})
+    monkeypatch.chdir(root)
+    maid = fake_maid_factory()
+    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
+    monkeypatch.setattr(check_all, "find_lint_clis", lambda _lint_dir: _CLIS)
+    monkeypatch.setattr(check_all, "check_lints", lambda *_args: [_WARNING_FINDING])
+    # 実行
+    code = check_all.main([])
+    # 検証
+    assert code == 0
+
+
+def test_main_when_check_cli_missing(
+    tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
     repo_factory: RepoFactory,
 ) -> None:
-    """maid が無い（正常系）。"""
+    """検査の CLI が無い（正常系）。"""
     # 準備
     root = repo_factory({"docs/rule/rule-a.yaml": _VALID_A})
     monkeypatch.chdir(root)
     monkeypatch.setattr(check_all, "find_maid", lambda: None)
     # 実行
-    code = check_all.main([])
+    code = check_all.main(["--lint-dir", str(tmp_path / "missing")])
     # 検証
+    err_lines = capsys.readouterr().err.splitlines()
     assert code == 2
-    assert "maid" in capsys.readouterr().err
+    assert [line.split(" ", 1)[0] for line in err_lines] == [
+        "maid",
+        "markdownlint-cli2",
+        "textlint",
+    ]
 
 
 def test_main_when_config_missing(
@@ -134,6 +232,7 @@ def test_main_when_config_missing(
     monkeypatch.chdir(tmp_path)
     maid = fake_maid_factory()
     monkeypatch.setattr(check_all, "find_maid", lambda: maid)
+    monkeypatch.setattr(check_all, "find_lint_clis", lambda _lint_dir: _CLIS)
     # 実行
     code = check_all.main([])
     # 検証
@@ -346,3 +445,46 @@ def test_check_word_list_copy_when_stale(repo_factory: RepoFactory) -> None:
     assert result[0][1] == 1
     assert result[0][2] == "$"
     assert "build_word_list.py" in result[0][3]
+
+
+def test_check_lints(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, repo_factory: RepoFactory
+) -> None:
+    """3 つの lint の違反を並べる（正常系）。"""
+    # 準備
+    doc = (
+        "id: rule-a\n"
+        "kind: rule\n"
+        "name: 規約 A\n"
+        "description: 説明\n"
+        "items:\n"
+        "  - id: overview\n"
+        "    name: 概要\n"
+        "    body: |-\n"
+        "      本文。\n"
+        "\n"
+        "      **太字だけの段落**\n"
+    )
+    root = repo_factory({"docs/rule/rule-a.yaml": doc, "rules.yaml": "key: foo #bar\n"})
+    lint_dir = tmp_path / "lint"
+    lint_dir.mkdir()
+    (lint_dir / ".yamllint.yaml").write_text(_YAMLLINT_CONFIG, encoding="utf-8")
+    target = Target(PurePosixPath("docs/rule/rule-a.yaml"), "schemas/rule.schema.yaml", True)
+    texts = {root / "docs/rule/rule-a.yaml": doc}
+    monkeypatch.setattr(
+        check_all,
+        "run_markdown_lints",
+        lambda sources, *_args: [
+            LintFinding(
+                sources[0].path, 11, sources[0].item_path, "markdownlint", "MD036", "太字", False
+            )
+        ],
+    )
+    # 実行
+    result = check_lints(root, [target], texts, lint_dir, _CLIS)
+    # 検証
+    assert [(str(f.path), f.tool, f.rule) for f in result] == [
+        ("docs/rule/rule-a.yaml", "markdownlint", "MD036"),
+        ("rules.yaml", "yamllint", "comments"),
+        ("rules.yaml", "yamllint", "comments"),
+    ]
