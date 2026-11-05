@@ -1,0 +1,10 @@
+$ uvx ruff@0.17.3 check scripts tests plugins && uvx ruff@0.17.3 format --check scripts tests plugins && uv run --no-project --python 3.14 --with pyright==1.1.414 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pyright
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+All checks passed!
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+36 files already formatted
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/docs-schema-x-rules-bad-examples/tests/unit/scripts/test_lint.py:228:36 - warning: Type of "enabled_rules" is partially unknown
+    Type of "enabled_rules" is "(filepath: Unknown) -> list[ModuleType]" (reportUnknownMemberType)
+0 errors, 12 warnings, 0 informations
