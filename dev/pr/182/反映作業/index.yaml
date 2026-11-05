@@ -1,0 +1,14 @@
+設計書のスキーマのタグの作成:
+  説明: release が master へ入った後に、そのマージの commit へ設計書のスキーマのタグ `design-schemas/v1.0.0` を作成して push する。各プロジェクトの `dev-docs.yaml` の `schema:` がこのタグで `schemas/design/` を指す
+  タグ: [タグ, スキーマ]
+  実行者: tester
+  時期: master へ入った後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`git ls-remote --tags origin design-schemas/v1.0.0` が、master の release のマージの commit を返す"
+  状態: "-"
