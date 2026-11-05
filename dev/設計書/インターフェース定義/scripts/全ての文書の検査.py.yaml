@@ -209,7 +209,7 @@ constraints:
   - item: lint の CLI の呼び出し
     constraint: markdownlint-cli2・textlint は全ての一時の `.md` をまとめて 1 回ずつ呼ぶ。yamllint は Python のライブラリとして同じプロセスで呼ぶ
   - item: lint の設定
-    constraint: '設定は `--lint-dir` の `.markdownlint-cli2.jsonc`・`.textlintrc.json`・`.yamllint.yaml` を CLI に指定する。CLI が `warning` で返した違反を警告、`error` で返した違反を違反にする'
+    constraint: '設定は `--lint-dir` の `.markdownlint-cli2.jsonc`・`.textlintrc.json`・`.yamllint.yaml` を CLI に指定する。CLI が `warning` で返した違反を警告、`error` で返した違反を違反にする。`.yamllint.yaml` は `extends: default` に、`comments` を `level: error`、`document-start`・`line-length` を無効にする'
   - item: 警告にするルール
     constraint: '`one-sentence-per-line`・`no-inline-strong`・`MD031`・`MD032`・`MD040`と、`preset-ja-technical-writing` の中の全てのルール（textlint の設定でプリセットの中のルールごとに `severity` を指定する）。#145 の移行で既存の違反を修正した後に、設定で `error` へ切り替える'
   - item: 対応表のコピー

@@ -70,25 +70,25 @@ functions:
         case: 正常
         summary: 違反の無いリポジトリ
         condition: '`dev-docs.yaml`・`schemas/rule.schema.yaml`・違反の無い `docs/rule/` の文書 2 件を持つ一時フォルダ'
-        mock: maid の在りかの確認を、正しい図と答えるスクリプトのパスに差し替える。lint の検査を空を返す関数に差し替える
+        mock: maid の在りかの確認を、正しい図と答えるスクリプトのパスに差し替える。lint の CLI の在りかの確認を両方とも引けたパスに、lint の検査を空を返す関数に差し替える
         expected: '`0` を返し、標準出力の最後の行が `2 件の文書を検査し、違反は 0 件、警告は 0 件でした`'
       - name: test_main_when_violations
         case: 正常
         summary: 違反がある
         condition: '`description` の無い文書と、項目の ID が重複した文書'
-        mock: maid の在りかの確認を差し替える
+        mock: maid と lint の CLI の在りかの確認を差し替える。lint の検査を空を返す関数に差し替える
         expected: '`1` を返し、2 つの文書の違反が `{パス}:{行}: {項目のパス}: ` で始まる行で出る'
       - name: test_main_when_lint_findings
         case: 正常
         summary: lint の違反と警告
         condition: 違反の無いリポジトリ
-        mock: maid の在りかの確認を差し替える。lint の検査を、違反 1 件と `warning` の違反 1 件を返す関数に差し替える
+        mock: maid と lint の CLI の在りかの確認を差し替える。lint の検査を、違反 1 件と `warning` の違反 1 件を返す関数に差し替える
         expected: '`1` を返し、`markdownlint/MD036: ` の行と `warning: textlint/one-sentence-per-line: ` の行が出て、最後の行が違反 1 件・警告 1 件'
       - name: test_main_when_only_warnings
         case: 正常
         summary: 警告だけ
         condition: 違反の無いリポジトリ
-        mock: lint の検査を、`warning` の違反 1 件だけを返す関数に差し替える
+        mock: maid と lint の CLI の在りかの確認を差し替える。lint の検査を、`warning` の違反 1 件だけを返す関数に差し替える
         expected: '`0` を返す'
       - name: test_main_when_check_cli_missing
         case: 正常
@@ -100,7 +100,7 @@ functions:
         case: 正常
         summary: dev-docs.yaml が無い
         condition: '`dev-docs.yaml` を持たない一時フォルダ'
-        mock: maid の在りかの確認を差し替える
+        mock: maid と lint の CLI の在りかの確認を差し替える
         expected: '`2` を返し、標準エラーに `dev-docs.yaml` が出る'
     callees:
       - MOD-72-3#functions[find_maid]
@@ -155,9 +155,9 @@ functions:
       - name: test_check_lints
         case: 正常
         summary: 3 つの lint の違反を並べる
-        condition: '`body` が太字だけの段落の文書と、`key: foo #bar` を持つ `rules.yaml`'
+        condition: '`body` が太字だけの段落の文書と、`key: foo #bar` を持つ `rules.yaml`。`lint_dir` に `extends: default`・`comments: {level: error}`・`document-start: disable`・`line-length: disable`（`scripts/lint/.yamllint.yaml` と同じ内容） の `.yamllint.yaml`'
         mock: Markdown の lint の呼び出しを、受け取った `sources` の 1 件目に `MD036` の違反を返す関数に差し替える
-        expected: 文書の `MD036` と、`rules.yaml` の `comments` の 2 件がパスの順に並ぶ
+        expected: 文書の `MD036` の 1 件と、`rules.yaml` の `comments` の 2 件の 3 件がパスの順に並ぶ
     callees:
       - MOD-176-1#functions[collect_sources]
       - MOD-176-1#functions[run_markdown_lints]

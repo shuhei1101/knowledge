@@ -250,9 +250,9 @@ functions:
       - name: test_load_yamllint_config
         case: 正常
         summary: 設定を読む
-        condition: '`extends: default` と `comments: {level: error}` を書いた `.yamllint.yaml`'
+        condition: '`extends: default`・`comments: {level: error}`・`document-start: disable`・`line-length: disable`（`scripts/lint/.yamllint.yaml` と同じ内容） を書いた `.yamllint.yaml`'
         mock: なし（一時ディレクトリ）
-        expected: '`comments` のルールが有効'
+        expected: '`comments` のルールが有効で、`document-start`・`line-length` が無効'
     refs:
       - LIB-176-3#
   - name: run_yamllint
@@ -288,13 +288,13 @@ functions:
       - name: test_run_yamllint
         case: 正常
         summary: コメントの違反
-        condition: '`key: foo #bar` の 1 行と、`comments` を `level: error` にした設定'
+        condition: '`key: foo #bar` の 1 行と、`extends: default`・`comments: {level: error}`・`document-start: disable`・`line-length: disable`（`scripts/lint/.yamllint.yaml` と同じ内容） の設定'
         mock: なし
-        expected: '`line` が 1・`rule` が `comments`・`warning` が `False` の 1 件'
+        expected: '`line` が 1・`rule` が `comments`・`warning` が `False` の 2 件（コメントの前の空白と、`#` の後の空白）'
       - name: test_run_yamllint_when_clean
         case: 正常
         summary: 違反の無い YAML
-        condition: '`key: value` の 1 行'
+        condition: '`key: value` の 1 行と、`test_run_yamllint` と同じ設定'
         mock: なし
         expected: 空
     refs:
