@@ -20,15 +20,15 @@
 | markdownlint | markdownlint-cli2 を CI で動かす。区切り線（`---`）・太字（MD036 など）を『Markdown 編集規約』に合わせて設定する | 1 文 1 行は textlint の `textlint-rule-one-sentence-per-line`、文中の太字は markdownlint のカスタムルール（`## PoC 結果`） |
 | textlint | textlint と textlint-rule-preset-ja-technical-writing を CI で動かす | 単語の対応表は slop-check（#135）が持つため、prh は入れない |
 | yamllint | yamllint を CI で動かし、引用符の無い値の取り違え（`#` 以降がコメントになるなど）を検出する | 設定は `.yamllint.yaml` |
-| 当てる範囲 | 要件.md の `### 検査ツール` の `未確定` の決定に合わせる | 案 A なら、`check_all.py` が文書の Markdown の項目を取り出して markdownlint・textlint を呼ぶ（PoC 検証の結果で確定） |
+| 当てる範囲 | `check_all.py` が文書の Markdown の項目を 1 項目ずつ取り出して markdownlint・textlint を呼ぶ | `## PoC 結果` |
 | PoC 検証 | PoC PR（`poc/rules/lint-cli`）で次を確かめる。行の対応: 文書の Markdown の項目を 1 項目ずつ一時の `.md` にして当て、CLI の行に `iter_strings` の項目の開始行を足して元の YAML の行で出せるか。1 文 1 行: まず既存の `textlint-rule-one-sentence-per-line` に当て、成功条件（`A です。B です。` を違反にし、`。` で終わる行・コードブロック・表のセルは違反にしない）を満たさないときだけカスタムルールを作る。文中の太字: markdownlint のカスタムルール（既存のルールが無い）。既存の違反: `docs/` の全ての文書に当てた違反の件数をルールごとに記録し、断片であることが原因のルール（MD041 など）を無効にした後の件数で、この PR で修正できる量かを判断する。所要時間: 今の `check_all.py` を実測し、既存の検査と 3 つの CLI の合計が 5 分（ジョブの `timeout-minutes`）以内か。yamllint の `comments` を `level: error` にした終了コード 1 は、レビューで確認済みのため検証しない | 結果は `## PoC 結果` に記録する。PoC は `check_all.py` の外から CLI を呼ぶため、結論に効く違いは所要時間（並列の読み込みを通さない）だけで、行の対応・検出の可否は構成によらない。項目ごとに当てる方式が成り立ったら、シナリオの `minimal_guarantee`・異常シナリオの `expected` と要件.md の案 A の「文書を変換した Markdown」を「文書の Markdown の項目」に修正する |
-| 既存の違反 | 追加した検査で既存の文書に出る違反は、この PR で修正する。修正しきれないルールは設定で無効にし、理由をコメントで残す | ジョブが落ちたままマージしない |
+| 既存の違反 | yamllint の 6 件と、markdownlint の記法が原因の違反（`## PoC 結果`）の設定はこの PR で修正する。文の違反があるルールは警告にし、#145 の移行の後に失敗させる設定へ切り替える | 要件.md の `### 検査ツール` |
 
 ## PoC 結果
 
 | 検証構成 | 成功条件 | 結果 | PoC PR | 補足 |
 | --- | --- | --- | --- | --- |
-| 行の対応（Markdown の項目を 1 項目ずつ `.md` にし、CLI の行に `iter_strings` の開始行を足す） | `body` の 3 行目の太字だけの段落の MD036 が元の YAML の行で出る | ✅ YAML の 26 行目で出た | [#177](https://github.com/shuhei1101/knowledge/pull/177)（open） | 採用 |
+| 行の対応（Markdown の項目を 1 項目ずつ `.md` にし、CLI の行に `iter_strings` の開始行を足す） | `body` の 3 行目の太字だけの段落の MD036 が元の YAML の行で出る | ✅ YAML の 26 行目で出た | [#177](https://github.com/shuhei1101/knowledge/pull/177)（closed） | 採用 |
 | 1 文 1 行（`textlint-rule-one-sentence-per-line` v2.0.0） | `A です。B です。` を違反にし、`。` で終わる行・コードブロック・表のセルは違反にしない | ✅ 1 行目だけ違反 | 同上 | 採用。カスタムルールは作らない |
 | 文中の太字（markdownlint-cli2 v0.24.0 のカスタムルール `no-inline-strong`） | 文中の `**太字**` を違反にし、インラインコードの中の `**` は違反にしない | ✅ 文中と段落全体の太字が違反、インラインコードは違反なし | 同上 | 採用 |
 | 所要時間（`docs/` の 263 件・Markdown の項目 2,155 件） | 既存の検査と 3 つの CLI の合計が 5 分以内 | ✅ 51 秒（既存の検査 4 秒、markdownlint 9 秒、textlint 34 秒、yamllint 3 秒、書き出し 3 秒） | 同上 | WSL の `/mnt/c` での実測 |
@@ -44,13 +44,14 @@
 | 記法が原因 | MD029（番号付きリストの番号） | 38 | 無効にする |
 | 記法が原因 | MD038（書き方の例のコード `` `## ` `` など） | 25 | 無効にする |
 | 記法が原因 | MD052（`[!code ++]` などの部品の記法） | 6 | 無効にする |
-| 文の違反 | one-sentence-per-line | 218 | 要件.md の `### 検査ツール` の `未確定` |
+| 文の違反 | one-sentence-per-line | 218 | 警告にする（要件.md の `### 検査ツール`） |
 | 文の違反 | no-inline-strong | 200 | 同上 |
 | 文の違反 | MD032・MD040・MD031 | 127 | 同上 |
 | 文の違反 | ja-technical-writing（ja-no-mixed-period・sentence-length・no-doubled-joshi など） | 307 | 同上 |
 
 結論: 成立（行の対応・検出・所要時間）。
 既存の違反は約 850 件で、263 件の文書の大半に及ぶため、この PR では修正しきれない。
+文の違反があるルールは警告にする（要件.md の `### 検査ツール`）。
 最小再現コードの要点は PoC PR の `poc/run.py`（`collect` が `iter_strings` で `body` の項目と開始行を取り出して 1 項目 1 ファイルに書き、`main` が CLI の行に開始行を足して `{ファイル}:{行}: {項目のパス}: {ルール}: {内容}` で出す）と `poc/no-inline-strong.mjs`（micromark のトークンの `strong` を違反にする 20 行）。
 
 ## 設計書の確定コミット
