@@ -1,0 +1,186 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-schemas-move-design-schemas
+configfile: pytest.ini
+collected 169 items
+
+tests/unit/scripts/test_build_pages.py ...................               [ 11%]
+tests/unit/scripts/test_build_word_list.py ...                           [ 13%]
+tests/unit/scripts/test_check_all.py .................FFFFFFF            [ 27%]
+tests/unit/scripts/test_common.py ....................                   [ 39%]
+tests/unit/scripts/test_knowledge_checks.py ......................       [ 52%]
+tests/unit/scripts/test_knowledge_markdown.py .......................... [ 67%]
+.......                                                                  [ 71%]
+tests/unit/scripts/test_lint.py ...........                              [ 78%]
+tests/unit/scripts/test_maid.py ......                                   [ 81%]
+tests/unit/slop-check/test_slop_check.py ............................... [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_check_design_schemas ___________________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x7c180e166610>
+
+    def test_check_design_schemas(repo_factory: RepoFactory) -> None:
+        """誤りの無いスキーマ（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {
+                "schemas/design/common.schema.yaml": _DESIGN_COMMON,
+                "schemas/design/scenario.schema.yaml": _DESIGN_SCENARIO,
+            }
+        )
+        # 実行
+>       result = check_all.check_design_schemas(root)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'check_all' has no attribute 'check_design_schemas'
+
+tests/unit/scripts/test_check_all.py:583: AttributeError
+____________________ test_check_design_schemas_when_invalid ____________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x7c180e14d850>
+
+    def test_check_design_schemas_when_invalid(repo_factory: RepoFactory) -> None:
+        """3 種の誤り（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {
+                "schemas/design/common.schema.yaml": _DESIGN_COMMON,
+                "schemas/design/bad-example.schema.yaml": _DESIGN_BAD_EXAMPLE,
+                "schemas/design/bad-ref.schema.yaml": _DESIGN_BAD_REF,
+                "schemas/design/bad-type.schema.yaml": _DESIGN_BAD_TYPE,
+            }
+        )
+        # 実行
+>       result = check_all.check_design_schemas(root)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'check_all' has no attribute 'check_design_schemas'
+
+tests/unit/scripts/test_check_all.py:600: AttributeError
+________________ test_check_design_schemas_when_nested_examples ________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x7c180e14df30>
+
+    def test_check_design_schemas_when_nested_examples(repo_factory: RepoFactory) -> None:
+        """入れ子の examples（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {
+                "schemas/design/common.schema.yaml": _DESIGN_COMMON,
+                "schemas/design/scenario.schema.yaml": (
+                    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                    "title: シナリオ\n"
+                    "properties:\n"
+                    "  id:\n"
+                    "    $ref: common.schema.yaml#/$defs/id\n"
+                    "    examples:\n"
+                    "      - sc-1\n"
+                ),
+            }
+        )
+        # 実行
+>       result = check_all.check_design_schemas(root)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'check_all' has no attribute 'check_design_schemas'
+
+tests/unit/scripts/test_check_all.py:629: AttributeError
+____________ test_check_design_schemas_when_property_named_default _____________
+
+repo_factory = <function repo_factory.<locals>._create at 0x7c180e14e770>
+
+    def test_check_design_schemas_when_property_named_default(repo_factory: RepoFactory) -> None:
+        """default という名前のプロパティ（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {
+                "schemas/design/component.schema.yaml": (
+                    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                    "title: 部品設計\n"
+                    "properties:\n"
+                    "  default:\n"
+                    "    type: string\n"
+                    "    examples:\n"
+                    "      - 1\n"
+                ),
+            }
+        )
+        # 実行
+>       result = check_all.check_design_schemas(root)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'check_all' has no attribute 'check_design_schemas'
+
+tests/unit/scripts/test_check_all.py:657: AttributeError
+________________ test_check_design_schemas_when_folder_missing _________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x7c180e14eda0>
+
+    def test_check_design_schemas_when_folder_missing(repo_factory: RepoFactory) -> None:
+        """フォルダが無い（正常系）。"""
+        # 準備
+        root = repo_factory({})
+        # 実行
+>       result = check_all.check_design_schemas(root)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'check_all' has no attribute 'check_design_schemas'
+
+tests/unit/scripts/test_check_all.py:673: AttributeError
+____________________ test_check_design_schemas_when_broken _____________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x7c180e14f530>
+
+    def test_check_design_schemas_when_broken(repo_factory: RepoFactory) -> None:
+        """読めない YAML（正常系）。"""
+        # 準備
+        root = repo_factory({"schemas/design/common.schema.yaml": "title: [\n"})
+        # 実行
+>       result = check_all.check_design_schemas(root)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'check_all' has no attribute 'check_design_schemas'
+
+tests/unit/scripts/test_check_all.py:683: AttributeError
+____________________ test_main_when_design_schemas_invalid _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7c180e14fd80>
+capsys = <_pytest.capture.CaptureFixture object at 0x7c180e184750>
+repo_factory = <function repo_factory.<locals>._create at 0x7c180e18c1a0>
+fake_maid_factory = <function fake_maid_factory.<locals>._create at 0x7c180e18c3b0>
+
+    def test_main_when_design_schemas_invalid(
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        repo_factory: RepoFactory,
+        fake_maid_factory: FakeMaidFactory,
+    ) -> None:
+        """設計書のスキーマに誤りがある（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {
+                "docs/rule/rule-a.yaml": _VALID_A,
+                "docs/rule/rule-b.yaml": _VALID_B,
+                "schemas/design/common.schema.yaml": _DESIGN_COMMON,
+                "schemas/design/scenario.schema.yaml": _DESIGN_BAD_EXAMPLE,
+            }
+        )
+        monkeypatch.chdir(root)
+        maid = fake_maid_factory()
+        monkeypatch.setattr(check_all, "find_maid", lambda: maid)
+        monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+        monkeypatch.setattr(check_all, "check_lints", _no_lints)
+        # 実行
+        code = check_all.main([])
+        # 検証
+        out = capsys.readouterr().out
+>       assert code == 1
+E       assert 0 == 1
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-schemas-move-design-schemas/tests/unit/scripts/test_check_all.py:716: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/scripts/test_check_all.py::test_check_design_schemas - Attr...
+FAILED tests/unit/scripts/test_check_all.py::test_check_design_schemas_when_invalid
+FAILED tests/unit/scripts/test_check_all.py::test_check_design_schemas_when_nested_examples
+FAILED tests/unit/scripts/test_check_all.py::test_check_design_schemas_when_property_named_default
+FAILED tests/unit/scripts/test_check_all.py::test_check_design_schemas_when_folder_missing
+FAILED tests/unit/scripts/test_check_all.py::test_check_design_schemas_when_broken
+FAILED tests/unit/scripts/test_check_all.py::test_main_when_design_schemas_invalid
+======================== 7 failed, 162 passed in 15.28s ========================
+exit: 1
