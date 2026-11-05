@@ -134,7 +134,7 @@ items:
     name: env に置く設定の指定
     body: |-
       - 既定のパス（`settings-file-03`）と違う場所に配置するときだけ、ユーザースコープの `~/.claude/settings.json` の `env` に、`{ツール名}_CONFIG` でパスを書く
-        - `{ツール名}` はプラグイン名を大文字にし、`-` を `_` にした名前
+        - 環境変数の名前の付け方は [設定値の置き場所](id:flowchart-config-location) に従う
         - プラグインは値の先頭の `~` をホームに展開して読む
         - `env` のプロジェクトスコープ（`.claude/settings.json` / `.claude/settings.local.json`）には書かない。プロジェクトごとの違いは YAML の `projects` に書く
         - `env` にパスが無いときは既定のパスを読み、ファイルも無いときは設定なし（プラグインの既定値）で動く
@@ -169,14 +169,6 @@ items:
     body: |-
       - 単純な値 1 つ（プロジェクトごとに変えない、キーと値で書ける値）だけを受け取るプラグインは、ユーザースコープの `env` で直接受け取ってよい
         - 受け取る値が増えたり、プロジェクトごとに変える値ができたりしたら、設定ファイルへ移す（`settings-file-08` に当たる値は移さない）
-
-      ```json
-      {
-        "env": {
-          "DOC_TERMS_CONFIG": "~/.config/doc-terms/settings.yaml"
-        }
-      }
-      ```
 
       ```yaml
       global:
