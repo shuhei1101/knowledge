@@ -23,6 +23,8 @@ _BOLD_PARAGRAPH = "**太字だけの段落**"
 _SUMMARY = re.compile(r"^(\d+) 件の文書を検査し、違反は (\d+) 件、警告は (\d+) 件でした$")
 # 警告の行の目印
 _WARNING = ": warning: "
+# 標準エラーの、CLI の欠けの行の目印
+_CLI_MISSING = "がありません。"
 
 
 def _violation_documents() -> dict[str, str]:
@@ -139,6 +141,8 @@ def test_error_when_check_cli_missing(
     # 検証
     assert result.returncode == 2
     assert result.stdout == ""
-    assert result.stderr.splitlines() == [
+    # uv が依存を入れたときの行はキャッシュの状態で出るため、CLI の欠けの行だけを比べる
+    missing = [line for line in result.stderr.splitlines() if _CLI_MISSING in line]
+    assert missing == [
         "maid がありません。開発コマンドの『環境構築（クローン直後）』で入れてください"
     ]
