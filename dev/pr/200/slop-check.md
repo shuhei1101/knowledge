@@ -16,3 +16,19 @@
 | 対応表のコピー | 対応表の行を追加した後に `uv run --frozen --script scripts/build_word_list.py` で再生成し、原本と一緒に commit する | `check_all.py` がコピーと原本の一致を検査する |
 | 照合 | 変更しない。ヒットさせる範囲は対応表の行の `pattern`・`allow` が持つ | - |
 | E2E | 単一ユースケース『エージェントが書き込んだ中身の AI slop の単語を通知される』の E2E を実行のみで回す | - |
+
+## テスト結果
+
+コードは変更せず、対応表のコピーの再生成が既存のテストを壊さないかを回帰確認した。
+
+### 単体
+
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| [tests/unit/slop-check/](https://github.com/shuhei1101/knowledge/tree/develop/tests/unit/slop-check) | 全実行 | 実行のみ | ✅ | 31 テスト pass（Python 3.12）<br>`テスト結果/20261106052216_24078cc_単体テスト.log` |
+
+### 結合
+
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| [tests/integration/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/develop/tests/integration/slop-check/test_slop_check.py) | 全実行 | 実行のみ | ✅ | `テスト結果/20261106053150_24078cc_結合テスト.log` |
