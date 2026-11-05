@@ -35,6 +35,11 @@ _FAKE_MAID = textwrap.dedent(
 # 正しい図と答える maid の標準出力
 VALID_MAID_OUTPUT = json.dumps({"valid": True, "errors": []})
 
+# リポジトリの拡張したメタスキーマ
+META_SCHEMA = (Path(__file__).resolve().parents[3] / "schemas/meta.schema.yaml").read_text(
+    encoding="utf-8"
+)
+
 # 規約の文書のスキーマが $ref で指す共通のスキーマ
 COMMON_SCHEMA = textwrap.dedent(
     """\
@@ -141,6 +146,7 @@ def repo_factory(tmp_path: Path) -> RepoFactory:
         (root / "docs").mkdir()
         (root / "schemas" / "common.schema.yaml").write_text(COMMON_SCHEMA, encoding="utf-8")
         (root / "schemas" / "rule.schema.yaml").write_text(RULE_SCHEMA, encoding="utf-8")
+        (root / "schemas" / "meta.schema.yaml").write_text(META_SCHEMA, encoding="utf-8")
         (root / "dev-docs.yaml").write_text(DEV_DOCS_YAML, encoding="utf-8")
         # 渡したファイルで既定のファイルを上書きできる
         for relative, text in files.items():
