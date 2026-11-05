@@ -26,6 +26,12 @@ constants:
     usecase: 全ての文書の検査
     summary: '`validators[]` の文書の違反の検査の `id`'
     value: '"knowledge-checks"'
+  - name: YAMLLINT_EXTRA
+    title: yamllint だけを当てるファイル
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    summary: '`documents[]` に無く、yamllint を当てるリポジトリの直下のファイル'
+    value: ("dev-docs.yaml", "rules.yaml")
 functions:
   - name: main
     title: 全ての文書の検査の入口
@@ -41,41 +47,55 @@ functions:
         type: Sequence[str] | None
         required: false
         default: None
-        description: コマンドの引数。`None` は `sys.argv[1:]`。引数は取らない（`--help` だけ）
+        description: コマンドの引数。`None` は `sys.argv[1:]`。`--lint-dir`（既定は `DEFAULT_LINT_DIR`）だけを取る
     returns:
       type: int
       description: 終了コード。`0` = 違反なし、`1` = 違反が 1 件以上か想定していない例外、`2` = 検査を始めなかった
     process: |-
       1. argparse で引数を読み、標準出力を UTF-8 にする
-      2. maid の在りかを確かめる（maid の在りかの確認）
-         - 引けない場合、標準エラーへ `maid が PATH にありません。開発コマンドの『環境構築（クローン直後）』で maid を入れてください` を出し `2` を返す
+      2. maid と lint の CLI の在りかを確かめる（maid の在りかの確認・lint の CLI の在りかの確認）
+         - 引けない CLI がある場合、引けない CLI ごとに標準エラーへ `{CLI} がありません。開発コマンドの『環境構築（クローン直後）』で入れてください` を出し `2` を返す
       3. 作業ディレクトリの `dev-docs.yaml` の `documents[]` を読む（dev-docs.yaml の読み込み）
          - 読めない dev-docs.yaml の場合、標準エラーへ理由を出し `2` を返す
       4. 検査する文書を引き（検査する文書の列挙）、並列に読む（ファイルの並列の読み込み）
       5. スキーマの検査器を作り（スキーマの検査器の作成）、ID の索引を 1 度だけ作る（ID の索引の作成）
       6. 文書ごとに検査し（文書 1 件の検査）、違反を `{ファイルのパス}:{行}: {項目のパス}: {内容}` の 1 行ずつ、文書のパスの順に標準出力へ出す
       7. 対応表のコピーを検査し（対応表のコピーの検査）、違反を同じ形の行で出す
-      8. 最後に `{文書の数} 件の文書を検査し、違反は {違反の数} 件でした` を出し、違反があれば `1`、無ければ `0` を返す
+      8. lint を当てる（lint の検査）。違反を `{ファイルのパス}:{行}: {項目のパス}: {tool}/{rule}: {message}`、`warning` の違反は `{内容}` の前に `warning: ` を付けた行で、文書のパスと行の順に出す
+         - 読めない lint の出力の場合、標準エラーへ理由を出し `1` を返す
+      9. 最後に `{文書の数} 件の文書を検査し、違反は {違反の数} 件、警告は {警告の数} 件でした` を出し、違反があれば `1`、無ければ `0` を返す（警告は数えない）
          - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返す
     unit_tests:
       - name: test_main
         case: 正常
         summary: 違反の無いリポジトリ
         condition: '`dev-docs.yaml`・`schemas/rule.schema.yaml`・違反の無い `docs/rule/` の文書 2 件を持つ一時フォルダ'
-        mock: maid の在りかの確認を、正しい図と答えるスクリプトのパスに差し替える
-        expected: '`0` を返し、標準出力の最後の行が `2 件の文書を検査し、違反は 0 件でした`'
+        mock: maid の在りかの確認を、正しい図と答えるスクリプトのパスに差し替える。lint の検査を空を返す関数に差し替える
+        expected: '`0` を返し、標準出力の最後の行が `2 件の文書を検査し、違反は 0 件、警告は 0 件でした`'
       - name: test_main_when_violations
         case: 正常
         summary: 違反がある
         condition: '`description` の無い文書と、項目の ID が重複した文書'
         mock: maid の在りかの確認を差し替える
         expected: '`1` を返し、2 つの文書の違反が `{パス}:{行}: {項目のパス}: ` で始まる行で出る'
-      - name: test_main_when_maid_missing
+      - name: test_main_when_lint_findings
         case: 正常
-        summary: maid が無い
+        summary: lint の違反と警告
         condition: 違反の無いリポジトリ
-        mock: maid の在りかの確認を `None` に差し替える
-        expected: '`2` を返し、標準エラーに `maid` が出る'
+        mock: maid の在りかの確認を差し替える。lint の検査を、違反 1 件と `warning` の違反 1 件を返す関数に差し替える
+        expected: '`1` を返し、`markdownlint/MD036: ` の行と `warning: textlint/one-sentence-per-line: ` の行が出て、最後の行が違反 1 件・警告 1 件'
+      - name: test_main_when_only_warnings
+        case: 正常
+        summary: 警告だけ
+        condition: 違反の無いリポジトリ
+        mock: lint の検査を、`warning` の違反 1 件だけを返す関数に差し替える
+        expected: '`0` を返す'
+      - name: test_main_when_check_cli_missing
+        case: 正常
+        summary: 検査の CLI が無い
+        condition: 違反の無いリポジトリ
+        mock: maid の在りかの確認を `None` に、`--lint-dir` を存在しないフォルダにする
+        expected: '`2` を返し、標準エラーに `maid`・`markdownlint-cli2`・`textlint` の行が 1 行ずつ出る'
       - name: test_main_when_config_missing
         case: 正常
         summary: dev-docs.yaml が無い
@@ -84,11 +104,67 @@ functions:
         expected: '`2` を返し、標準エラーに `dev-docs.yaml` が出る'
     callees:
       - MOD-72-3#functions[find_maid]
+      - MOD-176-1#functions[find_lint_clis]
       - MOD-72-2#functions[load_config]
       - MOD-72-2#functions[read_texts]
       - MOD-72-4#functions[build_id_index]
     refs:
       - IF-72-3#
+  - name: check_lints
+    title: lint の検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: サービス
+    scope: public
+    summary: 全ての文書の Markdown に markdownlint-cli2・textlint、YAML のファイルに yamllint を当てる
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`YAMLLINT_EXTRA` の起点'
+      - name: targets
+        title: 検査する文書
+        type: Sequence[Target]
+        required: true
+        description: '`list_targets` が返した文書'
+      - name: texts
+        title: 中身
+        type: Mapping[Path, str | None]
+        required: true
+        description: '`read_texts` が返した中身'
+      - name: lint_dir
+        title: lint のフォルダ
+        type: Path
+        required: true
+        description: '`--lint-dir` の値'
+      - name: clis
+        title: CLI の実行ファイル
+        type: Mapping[str, str]
+        required: true
+        description: '`find_lint_clis` が返した絶対パス'
+    returns:
+      type: list[LintFinding]
+      description: 文書のパスと行の順の違反
+    process: |-
+      1. 中身の読めた文書ごとに Markdown を取り出し（lint を当てる Markdown の取り出し）、まとめて Markdown の lint を呼ぶ（Markdown の lint の呼び出し）
+      2. yamllint の設定を読み（yamllint の設定の読み込み）、拡張子が `.yaml`・`.yml` の文書と、`YAMLLINT_EXTRA` のうち在るファイルに yamllint を当てる（yamllint の呼び出し）
+      3. パスと行の順に並べて返す
+    unit_tests:
+      - name: test_check_lints
+        case: 正常
+        summary: 3 つの lint の違反を並べる
+        condition: '`body` が太字だけの段落の文書と、`key: foo #bar` を持つ `rules.yaml`'
+        mock: Markdown の lint の呼び出しを、受け取った `sources` の 1 件目に `MD036` の違反を返す関数に差し替える
+        expected: 文書の `MD036` と、`rules.yaml` の `comments` の 2 件がパスの順に並ぶ
+    callees:
+      - MOD-176-1#functions[collect_sources]
+      - MOD-176-1#functions[run_markdown_lints]
+      - MOD-176-1#functions[load_yamllint_config]
+      - MOD-176-1#functions[run_yamllint]
+    refs:
+      - IF-72-3#constraints[lint の当て先]
   - name: check_word_list_copy
     title: 対応表のコピーの検査
     kind: 関数
@@ -286,6 +362,6 @@ functions:
       - MOD-72-2#functions[format_path]
       - MOD-72-4#functions[check_document]
 notes:
-  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と `jsonschema>=4.26.0`（LIB-72-2）を書き、`knowledge_checks.py`・`build_word_list.py` を同じフォルダから import する。
+  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と `jsonschema>=4.26.0`（LIB-72-2）と `yamllint==1.38.0`（LIB-176-3）を書き、`knowledge_checks.py`・`build_word_list.py`・`_lint.py` を同じフォルダから import する。
 test_files:
   - tests/unit/scripts/test_check_all.py
