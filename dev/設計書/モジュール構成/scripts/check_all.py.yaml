@@ -243,7 +243,7 @@ functions:
         summary: 正しい拡張したメタスキーマ
         condition: 'リポジトリの `schemas/meta.schema.yaml`'
         mock: なし
-        expected: 検査器が、文字列の `x-rules` と `value` の無い `x-bad-examples` の要素と `type: strin` に誤りを返し、`examples`・`x-bad-examples` の値の中と `properties` の `x-rules` という名前の項目には誤りを返さない
+        expected: '検査器が、文字列の `x-rules` と `value` の無い `x-bad-examples` の要素と `type: strin` に誤りを返し、`examples`・`x-bad-examples` の値の中と `properties` の `x-rules` という名前の項目には誤りを返さない'
       - name: test_load_meta_validator_when_missing
         case: 異常
         summary: ファイルが無い
