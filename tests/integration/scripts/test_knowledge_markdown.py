@@ -44,6 +44,39 @@ def _indent(text: str) -> str:
     return "\n".join(f"      {line}" if line else "" for line in text.split("\n"))
 
 
+def _split_word_list_table(stdout: str) -> tuple[list[str], str]:
+    """変換の出力を、NG・OK の表の行の並びと、表の外の残りに分ける。"""
+    before, after = stdout.split("| NG | OK |\n| --- | --- |\n", 1)
+    table, rest = after.split("\n\n", 1)
+    return table.split("\n"), before + rest
+
+
+def _word_list_rows(entries: list[dict[str, Any]]) -> list[str]:
+    """対応表の行の ng・ok・note から、NG・OK の表の行を作る。セルの | は \\| にする。"""
+    rows: list[str] = []
+    for entry in entries:
+        ok = "・".join(str(word) for word in entry.get("ok", []))
+        # note がある行: OK の列の末尾に括弧書きで付ける
+        if entry.get("note"):
+            ok += f"（{entry['note']}）"
+        ng = str(entry["ng"]).replace("|", "\\|")
+        ok = ok.replace("|", "\\|")
+        rows.append(f"| {ng} | {ok} |")
+    return rows
+
+
+def _leaked_match_values(entries: list[dict[str, Any]], stdin: str, outside: str) -> list[str]:
+    """照合の値（pattern・allow・examples）のうち、入力の文書に無く表の外に出た値を返却する。"""
+    values: list[str] = []
+    for entry in entries:
+        examples = entry.get("examples", {})
+        values += [str(entry["pattern"])] if "pattern" in entry else []
+        values += [str(value) for value in entry.get("allow", [])]
+        values += [str(value) for value in examples.get("hit", []) + examples.get("pass", [])]
+    # 入力の本文に含まれる値は、変換が追加した値でなくても表の外に出るため除く
+    return [value for value in values if value not in stdin and value in outside]
+
+
 def test_normal(run_script: RunScript) -> None:
     """規約を、group の階層を見出しにした Markdown にする（正常系）。"""
     # 準備
@@ -155,22 +188,16 @@ def test_normal_when_embed_marker(run_script: RunScript) -> None:
     # 準備
     word_list = cast("dict[str, Any]", load_safe(_WORD_LIST.read_text(encoding="utf-8")))
     entries = cast("list[dict[str, Any]]", word_list["entries"])
+    stdin = _embed_rule(_BODY_EMBED)
     # 実行
-    result = run_script("knowledge_markdown", _ROOT, _embed_rule(_BODY_EMBED))
+    result = run_script("knowledge_markdown", _ROOT, stdin)
     # 検証
-    table = result.stdout.split("| NG | OK |\n| --- | --- |\n", 1)[1].split("\n\n", 1)[0]
+    table, outside = _split_word_list_table(result.stdout)
     assert result.exit_code == 0
-    assert len(table.split("\n")) == len(entries)
+    assert table == _word_list_rows(entries)
     assert result.stdout.count("<!-- embed: word-list-ai-slop -->") == 1
     assert "```markdown\n<!-- embed: word-list-ai-slop -->\n```" in result.stdout
-    assert all(
-        str(entry["pattern"]) not in result.stdout for entry in entries if "pattern" in entry
-    )
-    assert all(
-        hit not in result.stdout
-        for entry in entries
-        for hit in entry.get("examples", {}).get("hit", [])
-    )
+    assert _leaked_match_values(entries, stdin, outside) == []
 
 
 def test_normal_when_embed_target_missing(run_script: RunScript) -> None:
