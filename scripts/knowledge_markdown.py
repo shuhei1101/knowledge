@@ -35,9 +35,20 @@ from _common import (
     load_safe,
 )
 
-# dev-docs の画面がメタデータとして出すキー。aliases は検索の別名で、本文の読み手に役立たない
+# dev-docs の画面がメタデータとして出すキー。aliases は検索の別名、inject_when は alias-inject の照合条件で、
+# 本文の読み手に役立たない
 HIDDEN_KEYS = frozenset(
-    {"id", "kind", "tags", "status", "visibility", "rev", "last_reviewed", "aliases"}
+    {
+        "id",
+        "kind",
+        "tags",
+        "status",
+        "visibility",
+        "rev",
+        "last_reviewed",
+        "aliases",
+        "inject_when",
+    }
 )
 
 # 出す場所が決まっていて、種類に固有のキーの節にしないキー
