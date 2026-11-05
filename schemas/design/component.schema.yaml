@@ -1,6 +1,8 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 title: 部品設計
-description: 画面の要素が使う部品 1 つの仕様（引数・スロット・イベント・CSS カスタムプロパティ・状態）。1 ファイル = 1 部品。状態 1 つが Storybook のストーリー 1 つに当たる。
+description: 画面の要素が使う部品 1 つの仕様（引数・スロット・イベント・CSS カスタムプロパティ・状態）。状態 1 つが Storybook のストーリー 1 つに当たる。
+x-rules:
+  - 1 ファイル = 1 部品にする。
 x-kind: component
 x-folder: dev/設計書/部品設計
 x-id-prefix: CMP
@@ -19,7 +21,9 @@ properties:
   id:
     $ref: common.schema.yaml#/$defs/id
     title: ID
-    description: 設計書の変わらない ID。設計書を作るときに振り、改名・移動でも変わらない。他の設計書からは `{ID}#{項目のパス}` で指す。
+    description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
+    x-rules:
+      - 設計書を作るときに振り、改名・移動でも変えない。
   title:
     type: string
     title: タイトル
@@ -42,7 +46,9 @@ properties:
   story:
     type: string
     title: Storybook
-    description: Storybook のストーリーのタイトル（`{分類}/{部品}` を英数字で。例 `Plan/StatusBadge`）。日本語の名前は `title` から足す。
+    description: Storybook のストーリーのタイトル。
+    x-rules:
+      - 日本語の名前は `title` から足す。
     pattern: ^[A-Za-z][A-Za-z0-9]*(/[A-Za-z][A-Za-z0-9]*)+$
     examples:
     - "Plan/StatusBadge"
@@ -57,10 +63,10 @@ properties:
   args:
     type: array
     title: 引数
-    description: |-
-      部品が受け取る値。引数 1 つ = 1 要素。
-      オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 要素に展開する。
-      引数を持たない部品は持たない。
+    description: 部品が受け取る値。引数 1 つ = 1 要素。
+    x-rules:
+      - オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 要素に展開する。
+      - 引数を持たない部品は持たない。
     x-heading: 引数
     x-shape: table
     x-key: name
@@ -114,7 +120,7 @@ properties:
         enabled_when:
           type: string
           title: 有効になる条件
-          description: 他の引数の値によって意味を持つときの条件（例 `filterable` が `true` のとき）。
+          description: 他の引数の値によって意味を持つときの条件。
           examples:
           - "`filterable` が `true` のとき"
         description:
@@ -129,7 +135,9 @@ properties:
   slots:
     type: array
     title: スロット
-    description: 使う側が中身を差し込む場所。スロット 1 つ = 1 要素。スロットを持たない部品は持たない。
+    description: 使う側が中身を差し込む場所。スロット 1 つ = 1 要素。
+    x-rules:
+      - スロットを持たない部品は持たない。
     x-heading: スロット
     x-shape: table
     x-key: name
@@ -170,7 +178,9 @@ properties:
   events:
     type: array
     title: イベント
-    description: 部品が使う側へ知らせる操作。イベント 1 つ = 1 要素。イベントを持たない部品は持たない。
+    description: 部品が使う側へ知らせる操作。イベント 1 つ = 1 要素。
+    x-rules:
+      - イベントを持たない部品は持たない。
     x-heading: イベント
     x-shape: table
     x-key: name
@@ -244,9 +254,9 @@ properties:
   states:
     type: array
     title: 状態
-    description: |-
-      確かめる状態（通常・無効・読み込み中・エラー・長文など）。状態 1 つ = Storybook のストーリー 1 つ。
-      dev-docs の画面では、その状態で上書きする引数が件数で出る。
+    description: 確かめる状態（通常・無効・読み込み中・エラー・長文など）。状態 1 つ = Storybook のストーリー 1 つ。
+    x-rules:
+      - dev-docs の画面では、その状態で上書きする引数が件数で出る。
     x-heading: 状態
     x-shape: table
     x-key: name
@@ -311,7 +321,9 @@ properties:
   uses:
     type: array
     title: 使う部品
-    description: この部品が中で使う別の部品。使わない部品は持たない。
+    description: この部品が中で使う別の部品。
+    x-rules:
+      - 使わない部品は持たない。
     x-heading: 使う部品
     x-shape: table
     items:

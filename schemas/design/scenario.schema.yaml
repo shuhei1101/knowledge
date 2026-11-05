@@ -1,8 +1,9 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 title: シナリオ
-description: |-
-  単一ユースケース（ユーザーの 1 操作）または複合ユースケース（単一ユースケースの連鎖）の正常・異常シナリオ。
-  1 ファイル = 1 ユースケース = テストの 1 ファイル。外部 API は Mock 前提。
+description: 単一ユースケース（ユーザーの 1 操作）または複合ユースケース（単一ユースケースの連鎖）の正常・異常シナリオ。
+x-rules:
+  - 1 ファイル = 1 ユースケース = テストの 1 ファイルにする。
+  - 外部 API は Mock 前提で書く。
 x-kind: scenario
 x-folder: dev/設計書/シナリオ
 x-id-prefix: SC
@@ -19,7 +20,9 @@ properties:
   id:
     $ref: common.schema.yaml#/$defs/id
     title: ID
-    description: 設計書の変わらない ID。設計書を作るときに振り、改名・移動でも変わらない。他の設計書からは `{ID}#{項目のパス}` で指す。
+    description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
+    x-rules:
+      - 設計書を作るときに振り、改名・移動でも変えない。
   title:
     type: string
     title: タイトル
@@ -27,10 +30,13 @@ properties:
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
-    description: |-
-      対象を 1〜3 行で説明する。
-      初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。
-      対象そのものが変わったときだけ書き換える。
+    description: 対象を 1〜3 行で説明する。
+    x-rules:
+      - 初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。
+      - 対象そのものが変わったときだけ書き換える。
+    x-bad-examples:
+      - value: 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。
+        reason: 仕様を冒頭リードに記載している。仕様は各項目へ分ける
   issue:
     type: integer
     title: 対応 Issue
@@ -113,9 +119,9 @@ properties:
         setup:
           type: array
           title: セットアップ
-          description: |-
-            事前に要るデータ・状態と、分岐・異常を決定的に誘発する入力。
-            `Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず置く。
+          description: 事前に要るデータ・状態と、分岐・異常を決定的に誘発する入力。
+          x-rules:
+            - '`Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず置く。'
           x-heading: セットアップ
           x-shape: table
           minItems: 1
@@ -129,7 +135,9 @@ properties:
               name:
                 type: string
                 title: セットアップ
-                description: 前提を作る Factory 関数名か状態の名前。`Mock` の行を必ず置く。
+                description: 前提を作る Factory 関数名か状態の名前。
+                x-rules:
+                  - '`Mock` の行を必ず置く。'
               description:
                 type: string
                 title: 説明
@@ -141,10 +149,11 @@ properties:
         flow:
           $ref: common.schema.yaml#/$defs/mermaid
           title: フロー
-          description: |-
-            単一ユースケースは `sequenceDiagram`、複合ユースケースは単一ユースケースを箱として連鎖させる `flowchart TD`。
-            1 図 = 結末 1 本の一本道。ユーザー視点で観測できる境界まで書く。
-            複合ユースケースの箱のノード名は `{UC名}:{シナリオ名}` にし、`click` で単一ユースケースの節へリンクする。
+          description: 単一ユースケースは `sequenceDiagram`、複合ユースケースは単一ユースケースを箱として連鎖させる `flowchart TD`。
+          x-rules:
+            - 1 図 = 結末 1 本の一本道にする。
+            - ユーザー視点で観測できる境界まで書く。
+            - 複合ユースケースの箱のノード名は `{UC名}:{シナリオ名}` にし、`click` で単一ユースケースの節へリンクする。
           x-heading: フロー
         expected:
           type: array

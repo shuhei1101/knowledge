@@ -1,9 +1,10 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 title: 目次
-description: |-
-  フォルダ 1 つの直下の目次。`dev/` と `docs/` の各フォルダに `index.yaml` として置く。
-  README は `index.yaml` から生成して commit する。`index.yaml` を置かないフォルダは文書の索引から外れる。
-  画面では辿れるようにしつつ、文書の索引には載せないフォルダは `docs_index: false` を付ける。
+description: フォルダ 1 つの直下の目次。`dev/` と `docs/` の各フォルダに `index.yaml` として置く。
+x-rules:
+  - README は `index.yaml` から生成して commit する。
+  - '`index.yaml` を置かないフォルダは文書の索引から外れる。'
+  - '画面では辿れるようにしつつ、文書の索引には載せないフォルダは `docs_index: false` を付ける。'
 x-kind: index
 type: object
 additionalProperties: false
@@ -14,26 +15,31 @@ properties:
   title:
     type: string
     title: タイトル
-    description: '`dev/` と `docs/` の直下だけが持つ見出し。それ以外のフォルダはフォルダの名前を見出しにする。'
+    description: '`dev/` と `docs/` の直下だけが持つ見出し。'
+    x-rules:
+      - それ以外のフォルダはフォルダの名前を見出しにする。
   summary:
     $ref: common.schema.yaml#/$defs/summary
     title: 概要
-    description: フォルダの 1 行の説明。親の `index.yaml` のこのフォルダの行の `summary` と同じ文言にする。
+    description: フォルダの 1 行の説明。
+    x-rules:
+      - 親の `index.yaml` のこのフォルダの行の `summary` と同じ文言にする。
   docs_index:
     type: boolean
     title: 文書の索引に載せるか
-    description: |-
-      `false` のとき、このフォルダの配下のページを文書の索引に載せない（ビュワーの上タブ・サイドバーには出す）。
-      ルール注入が案内する規約のように、索引で並べると起動プロンプトが太るだけのフォルダに付ける。
+    description: '`false` のとき、このフォルダの配下のページを文書の索引に載せない（ビュワーの上タブ・サイドバーには出す）。'
+    x-rules:
+      - ルール注入が案内する規約のように、索引で並べると起動プロンプトが太るだけのフォルダに付ける。
     default: true
   columns:
     type: array
     title: 列
-    description: |-
-      目次の表の列の並びと列名。`page`・`summary`・`group` 以外のキーは、各行が同じキーで値を持つ（例: 実行条件の列の `condition`）。
-      省略したときは、`group` を持つ行があれば `分類`・`ページ`・`概要`、無ければ `ページ`・`概要` の並びにする。
-      ページ名は `page` の列だけが持つ。ページ名を値にする列と、全行が同じ値になる列は置かない。
-      並びは `ページ`・`概要` の順にし、他の列はその後ろに置く（`分類` を持つ目次は `分類` を先頭に置く）。
+    description: '目次の表の列の並びと列名。`page`・`summary`・`group` 以外のキーは、各行が同じキーで値を持つ（例: 実行条件の列の `condition`）。'
+    x-rules:
+      - 省略したときは、`group` を持つ行があれば `分類`・`ページ`・`概要`、無ければ `ページ`・`概要` の並びにする。
+      - ページ名は `page` の列だけが持つ。
+      - ページ名を値にする列と、全行が同じ値になる列は置かない。
+      - 並びは `ページ`・`概要` の順にし、他の列はその後ろに置く（`分類` を持つ目次は `分類` を先頭に置く）。
     minItems: 2
     items:
       type: object
@@ -54,9 +60,10 @@ properties:
   items:
     type: array
     title: 目次
-    description: |-
-      フォルダの直下のページとサブフォルダ。深い階層はサブフォルダの `index.yaml` が持つ。
-      並びがサイドバーの並びになる（利用頻度・重要度の高い順。同じ種類を連続させる）。
+    description: フォルダの直下のページとサブフォルダ。並びがサイドバーの並びになる。
+    x-rules:
+      - 深い階層はサブフォルダの `index.yaml` が持つ。
+      - 利用頻度・重要度の高い順に並べ、同じ種類を連続させる。
     x-heading: 目次
     x-shape: table
     x-key: page
@@ -82,7 +89,9 @@ properties:
         group:
           type: string
           title: 分類
-          description: 行をまとまりで見せるときの分類。サイドバーの見出しになる。行のページ名と同じ値にしない。
+          description: 行をまとまりで見せるときの分類。サイドバーの見出しになる。
+          x-rules:
+            - 行のページ名と同じ値にしない。
 examples:
 - summary: 実体ファイルの書式定義
   items:

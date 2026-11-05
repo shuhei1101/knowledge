@@ -1,8 +1,9 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 title: インターフェース定義
-description: |-
-  1 操作（API エンドポイント / MCP ツール / 画面操作 / 周期・イベント起動の処理）の入出力・制約・正常系と異常系のフロー。
-  1 ファイル = 1 操作 = 結合テストの 1 ファイル。外部依存は Mock 前提。
+description: 1 操作（API エンドポイント / MCP ツール / 画面操作 / 周期・イベント起動の処理）の入出力・制約・正常系と異常系のフロー。
+x-rules:
+  - 1 ファイル = 1 操作 = 結合テストの 1 ファイルにする。
+  - 外部依存は Mock 前提で書く。
 x-kind: interface
 x-folder: dev/設計書/インターフェース定義
 x-id-prefix: IF
@@ -11,6 +12,10 @@ x-test-file: test_file
 x-test-file-optional: true
 type: object
 additionalProperties: false
+not:
+  required:
+    - status_codes
+    - exceptions
 required:
 - id
 - title
@@ -20,7 +25,9 @@ properties:
   id:
     $ref: common.schema.yaml#/$defs/id
     title: ID
-    description: 設計書の変わらない ID。設計書を作るときに振り、改名・移動でも変わらない。他の設計書からは `{ID}#{項目のパス}` で指す。
+    description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
+    x-rules:
+      - 設計書を作るときに振り、改名・移動でも変えない。
   title:
     type: string
     title: タイトル
@@ -48,7 +55,11 @@ properties:
       value:
         type: string
         title: 値
-        description: 例 `POST /auth/signin` / `add_labels` / heartbeat 周期（`heartbeat_interval_sec` ごと）。
+        description: 操作を指す値。
+        examples:
+          - POST /auth/signin
+          - add_labels
+          - heartbeat 周期（`heartbeat_interval_sec` ごと）
       api:
         type: string
         title: 呼び出し API
@@ -56,10 +67,13 @@ properties:
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
-    description: |-
-      対象を 1〜3 行で説明する。
-      初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。
-      対象そのものが変わったときだけ書き換える。
+    description: 対象を 1〜3 行で説明する。
+    x-rules:
+      - 初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。
+      - 対象そのものが変わったときだけ書き換える。
+    x-bad-examples:
+      - value: 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。
+        reason: 仕様を冒頭リードに記載している。仕様は各項目へ分ける
   test_file:
     type: string
     title: 対応テストファイル
@@ -207,7 +221,9 @@ properties:
   status_codes:
     type: array
     title: ステータスコード
-    description: HTTP を返す操作の出口。`exceptions` とどちらか片方だけを持つ。異常の行は異常系のフローと 1:1。
+    description: HTTP を返す操作の出口。
+    x-rules:
+      - 異常の行は異常系のフローと 1:1 にする。
     x-heading: ステータスコード
     x-shape: table
     x-key: code
@@ -287,9 +303,10 @@ properties:
   flows:
     type: array
     title: フロー
-    description: |-
-      正常系と異常系のフロー。1 フロー = 結合テストの 1 ケース。並びは正常 → 異常。
-      フロー一覧は各フローの名前と概要から生成する。
+    description: 正常系と異常系のフロー。1 フロー = 結合テストの 1 ケース。
+    x-rules:
+      - 並びは正常 → 異常にする。
+      - フロー一覧は各フローの名前と概要から生成する。
     x-heading: フロー
     x-shape: sections
     x-key: name
@@ -316,9 +333,9 @@ properties:
         setup:
           type: array
           title: セットアップ
-          description: |-
-            事前に要るデータ・状態と、分岐・異常を決定的に誘発する入力。
-            `Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず置く。
+          description: 事前に要るデータ・状態と、分岐・異常を決定的に誘発する入力。
+          x-rules:
+            - '`Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず置く。'
           x-heading: セットアップ
           x-shape: table
           minItems: 1
@@ -332,7 +349,9 @@ properties:
               name:
                 type: string
                 title: セットアップ
-                description: 前提を作る Factory 関数名か状態の名前。`Mock` の行を必ず置く。
+                description: 前提を作る Factory 関数名か状態の名前。
+                x-rules:
+                  - '`Mock` の行を必ず置く。'
               description:
                 type: string
                 title: 説明
@@ -344,10 +363,10 @@ properties:
         flow:
           $ref: common.schema.yaml#/$defs/mermaid
           title: フロー
-          description: |-
-            Mermaid の `sequenceDiagram`。1 図 = 結末 1 本の一本道。
-            登場人物は呼び出し元（バックエンドは `participant クライアント`、フロントエンドは `actor ユーザー`）・インターフェース・外部システムの境界だけ。
-            読み取りと応答は点線 `-->>`、書き込み・操作は実線 `->>`。
+          description: Mermaid の `sequenceDiagram`。1 図 = 結末 1 本の一本道。
+          x-rules:
+            - 登場人物は呼び出し元（バックエンドは `participant クライアント`、フロントエンドは `actor ユーザー`）・インターフェース・外部システムの境界だけにする。
+            - 読み取りと応答は点線 `-->>`、書き込み・操作は実線 `->>` にする。
           x-heading: フロー
         expected:
           type: array

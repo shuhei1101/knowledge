@@ -1,10 +1,13 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 title: モジュール構成
-description: |-
-  物理ファイル 1 つ分の構成要素（データモデル / クラス / 関数 / 関数型 / 定数 / 画面・コンポーネント / フック / ストア / スタイル）。
-  1 ファイル = 物理ファイル 1 つ。全ての要素の `container` は同じ物理ファイルを指し、`test_files` はその物理ファイルの単体テストのファイル 1 つだけを持つ。置き場所は `モジュール構成/{container}.yaml`。
-  設計書の中を横断する一覧（ユースケース・役割・コンテナ・種別・名前・概要）は、各要素の項目から生成する。
-  分類の構成図・ディレクトリ構成と分類全体の決まりは、分類ごとの束ねる設計書に置く。束ねる設計書は `モジュール構成/分類/` の下に置き、要素を持たず `diagrams`・`directory`・`notes` だけを持つ。
+description: 物理ファイル 1 つ分の構成要素（データモデル / クラス / 関数 / 関数型 / 定数 / 画面・コンポーネント / フック / ストア / スタイル）。設計書の中を横断する一覧（ユースケース・役割・コンテナ・種別・名前・概要）は、各要素の項目から生成する。
+x-rules:
+  - 1 ファイル = 物理ファイル 1 つにする。
+  - 全ての要素の `container` は同じ物理ファイルを指す。
+  - '`test_files` はその物理ファイルの単体テストのファイル 1 つだけを持つ。'
+  - 置き場所は `モジュール構成/{container}.yaml` にする。
+  - 分類の構成図・ディレクトリ構成と分類全体の決まりは、分類ごとの束ねる設計書に置く。
+  - 束ねる設計書は `モジュール構成/分類/` の下に置き、要素を持たず `diagrams`・`directory`・`notes` だけを持つ。
 x-kind: module
 x-folder: dev/設計書/モジュール構成
 x-id-prefix: MOD
@@ -20,7 +23,9 @@ properties:
   id:
     $ref: common.schema.yaml#/$defs/id
     title: ID
-    description: 設計書の変わらない ID。設計書を作るときに振り、改名・移動でも変わらない。他の設計書からは `{ID}#{項目のパス}` で指す。
+    description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
+    x-rules:
+      - 設計書を作るときに振り、改名・移動でも変えない。
   title:
     type: string
     title: タイトル
@@ -29,10 +34,13 @@ properties:
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
-    description: |-
-      対象を 1〜3 行で説明する。
-      初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。
-      対象そのものが変わったときだけ書き換える。
+    description: 対象を 1〜3 行で説明する。
+    x-rules:
+      - 初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。
+      - 対象そのものが変わったときだけ書き換える。
+    x-bad-examples:
+      - value: 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。
+        reason: 仕様を冒頭リードに記載している。仕様は各項目へ分ける
   test_files:
     type: array
     title: 対応テストファイル
@@ -59,7 +67,10 @@ properties:
   diagrams:
     type: array
     title: 構成図
-    description: 矢印で繋がる塊 1 つ = 1 枚。1 枚のノードが 15 を超えるときは切り口で分ける。載せる要素が無いときは持たない。
+    description: 矢印で繋がる塊 1 つ = 1 枚の図。
+    x-rules:
+      - 1 枚のノードが 15 を超えるときは切り口で分ける。
+      - 載せる要素が無いときは持たない。
     x-heading: 構成図
     x-shape: sections
     x-key: name
@@ -77,9 +88,11 @@ properties:
         diagram:
           $ref: common.schema.yaml#/$defs/mermaid
           title: 図
-          description: |-
-            Mermaid の `classDiagram`（次の行に `direction`）。図の中の名前は論理名で書く。
-            定数・先頭 `_` の要素と、他の要素と矢印で繋がらない要素は載せない。
+          description: Mermaid の `classDiagram`。
+          x-rules:
+            - 次の行に `direction` を書く。
+            - 図の中の名前は論理名で書く。
+            - 定数・先頭 `_` の要素と、他の要素と矢印で繋がらない要素は載せない。
   data_models:
     type: array
     title: データモデル
@@ -107,7 +120,9 @@ properties:
         container: &id003
           type: string
           title: コンテナ
-          description: 所属ファイル（例 `oauth/service.ts`）。
+          description: 所属ファイル。
+          examples:
+            - oauth/service.ts
         usecase: &id004
           type: string
           title: ユースケース
@@ -239,7 +254,9 @@ properties:
               member:
                 type: string
                 title: メンバー名
-                description: コード上の識別子。`Literal` のように無いときは書かない。
+                description: コード上の識別子。
+                x-rules:
+                  - '`Literal` のように無いときは書かない。'
               title:
                 type: string
                 title: 論理名
@@ -360,7 +377,10 @@ properties:
   constants:
     type: array
     title: 定数
-    description: 定数。単純な即値は `value` だけを持ち、辞書・配列は `entries` を持つ。設定値はここではなく設計書『設定』に書く。
+    description: 定数。
+    x-rules:
+      - 単純な即値は `value` だけを持ち、辞書・配列は `entries` を持つ。
+      - 設定値はここではなく設計書『設定』に書く。
     x-heading: 定数
     x-shape: sections
     x-key: name
@@ -754,9 +774,14 @@ properties:
               name:
                 type: string
                 title: テスト名
-                description: |-
-                  テスト関数の名前。`test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）。
-                  期待値は名前に入れない。先頭が `_` の関数は `_` を外す。
+                description: テスト関数の名前。
+                x-rules:
+                  - '`test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）にする。'
+                  - 期待値は名前に入れない。
+                  - 先頭が `_` の関数は `_` を外す。
+                x-bad-examples:
+                  - value: test_main_returns_1
+                    reason: 期待値が名前に入っている
                 pattern: ^test_[a-z0-9_]+$
                 x-test-function: true
               case:
@@ -1054,16 +1079,18 @@ $defs:
       process:
         $ref: common.schema.yaml#/$defs/markdown
         title: 処理
-        description: |-
-          番号付きのステップ。1 ステップ = 意味のある処理の単位。
-          呼び出す関数は文末の括弧内に論理名で添える。
-          択一の分岐は 1 つの番号の下に `- {条件}の場合、{内容}` で並べる。
-          ログは配下に `- `[{レベル}]` {出力する事実}（{値}）` で書く。
+        description: 番号付きのステップ。1 ステップ = 意味のある処理の単位。
+        x-rules:
+          - 呼び出す関数は文末の括弧内に論理名で添える。
+          - 択一の分岐は 1 つの番号の下に `- {条件}の場合、{内容}` で並べる。
+          - ログは配下に `- `[{レベル}]` {出力する事実}（{値}）` で書く。
         x-heading: 処理
       exceptions:
         type: array
         title: 例外
-        description: 送出する例外。送出しない関数は持たない。
+        description: 送出する例外。
+        x-rules:
+          - 送出しない関数は持たない。
         x-heading: 例外
         x-shape: table
         x-key: name
@@ -1081,7 +1108,9 @@ $defs:
             condition:
               type: string
               title: 発生条件
-              description: 送出する条件。同じ例外を複数の箇所から送るときは箇所ごとに別の要素にする。
+              description: 送出する条件。
+              x-rules:
+                - 同じ例外を複数の箇所から送るときは箇所ごとに別の要素にする。
             message:
               type: string
               title: メッセージ
@@ -1114,9 +1143,11 @@ $defs:
       unit_tests:
         type: array
         title: 単体テスト
-        description: |-
-          条件分岐の単位で 1 行以上。自関数で送出する例外は異常の行にする。
-          キャッチせずに伝播する例外には行を置かない。
+        description: 単体テストのケース。
+        x-rules:
+          - 条件分岐の単位で 1 行以上にする。
+          - 自関数で送出する例外は異常の行にする。
+          - キャッチせずに伝播する例外には行を置かない。
         x-heading: 単体テスト
         x-shape: table
         x-key: name
