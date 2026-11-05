@@ -1,0 +1,95 @@
+id: "IF-137-2"
+title: "公開文書の配信のワークフロー"
+entry:
+  kind: trigger
+  value: '`.github/workflows/pages.yml`。`master` への `push` と、手動の起動（`workflow_dispatch`）'
+flows:
+  - name: 正常系
+    summary: 公開の文書の HTML を作って Pages へ配信する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: master
+        description: '違反の無い文書と、`visibility: public` の文書を 1 件以上持つ'
+    flow: |-
+      sequenceDiagram
+        participant G as GitHub Actions
+        participant W as 公開文書の配信のワークフロー
+        participant S as Pages の成果物の作成
+        participant P as GitHub Pages
+        G->>W: master への push で起動する
+        W->>W: Node 24 と uv を入れる
+        W->>S: リポジトリの直下で --out _site を付けて起動する
+        S-->>W: 終了コード 0
+        W->>W: _site に .yaml と .yml が無いことを確かめる
+        W->>W: _site を Pages の成果物として上げる
+        W->>P: 成果物を配信する
+        P-->>W: サイトの URL
+        W-->>G: 成功
+    expected:
+      - '`build` と `deploy` のジョブが成功で終わる'
+      - '`deploy` のジョブの出力にサイトの URL（`https://shuhei1101.github.io/knowledge/`）が出る'
+  - name: 異常系（成果物を作れない・ジョブの失敗）
+    summary: Pages の成果物の作成が失敗すれば、配信せずに失敗する
+    setup:
+      - name: Mock
+        description: 変換のスクリプトを、終了コード 1 で終わるものに差し替える
+    flow: |-
+      sequenceDiagram
+        participant G as GitHub Actions
+        participant W as 公開文書の配信のワークフロー
+        participant S as Pages の成果物の作成
+        participant P as GitHub Pages
+        G->>W: master への push で起動する
+        W->>S: リポジトリの直下で --out _site を付けて起動する
+        S-->>W: 終了コード 1 と標準エラー
+        W-->>G: build が失敗し、deploy は動かない
+        Note over P: 前に配信したサイトのまま
+    expected:
+      - '`build` のジョブが失敗で終わり、`deploy` のジョブは動かない'
+      - ジョブのログに失敗した文書のパスと変換のスクリプトの標準エラーが出る
+  - name: 異常系（成果物に YAML が混じる・ジョブの失敗）
+    summary: 出力のフォルダに YAML があれば、配信せずに失敗する
+    setup:
+      - name: Mock
+        description: Pages の成果物の作成の後に、出力のフォルダへ YAML のファイルを 1 つ置く
+    flow: |-
+      sequenceDiagram
+        participant G as GitHub Actions
+        participant W as 公開文書の配信のワークフロー
+        participant S as Pages の成果物の作成
+        participant P as GitHub Pages
+        G->>W: master への push で起動する
+        W->>S: リポジトリの直下で --out _site を付けて起動する
+        S-->>W: 終了コード 0
+        W->>W: _site に .yaml がある
+        W-->>G: 混じったパスを出して build が失敗し、deploy は動かない
+        Note over P: 前に配信したサイトのまま
+    expected:
+      - '`build` のジョブが失敗で終わり、`deploy` のジョブは動かない'
+      - ジョブのログに混じった YAML のパスが出る
+lead: 「Pages の成果物の作成」で公開の文書だけを 1 枚の HTML にし、出力に YAML が無いことを確かめてから GitHub Pages へ配信する。
+idempotent: true
+permissions: '`contents: read`・`pages: write`・`id-token: write`'
+side_effects: GitHub Pages のサイトを成果物で置き換える（リポジトリには書き込まない）
+callers:
+  - SC-137-1#scenarios[正常シナリオ]
+  - SC-137-1#scenarios[異常シナリオ（変換のスクリプトが失敗する）]
+  - SC-137-1#scenarios[異常シナリオ（成果物に YAML が混じる）]
+exclusivity: '配信は 1 つずつ流す。実行中の配信は取り消さず、後から来た実行を待たせる（`concurrency` の group が `pages`、`cancel-in-progress: false`）'
+constraints:
+  - item: ランナー
+    constraint: '`ubuntu-latest`'
+    decided_by: NFR-72-1#requirements[スクリプトが動く OS]
+  - item: 所要時間
+    constraint: 'ジョブごとに 5 分（`timeout-minutes: 5`）'
+    decided_by: NFR-72-1#requirements[CI の 1 回の所要時間]
+  - item: ジョブの構成
+    constraint: '成果物を作る `build` と、配信する `deploy`（`needs: build`、environment は `github-pages`）の 2 つ。`build` が失敗したら `deploy` は動かない'
+  - item: YAML の検査
+    constraint: 成果物を上げる前に、リポジトリの直下で `! find _site -type f \( -name '*.yaml' -o -name '*.yml' \) | grep .` を bash で実行する。当たったパスを 1 行ずつ標準出力へ出して終了コード 1、無ければ 0
+    notes: E2E テストはこのコマンドの行をそのまま子プロセスで起動する。ワークフローとテストのどちらかを変えるときは両方を揃える
+  - item: 使う Action
+    constraint: '`actions/checkout`・`actions/setup-node`（Node 24）・`astral-sh/setup-uv`・`actions/configure-pages`・`actions/upload-pages-artifact`・`actions/deploy-pages`'
+notes:
+  確かめ方: 結合テストのファイルは持たない（GitHub Actions の上でしかジョブの成否と配信を確かめられない）。ジョブが起動する「Pages の成果物の作成」の合否はその結合テストが、YAML の検査のステップを含む成果物の作り方はシナリオの E2E テストが確かめる。Pages への配信そのものは、反映作業『Pages の配信元の切り替え』の確認方法で確かめる

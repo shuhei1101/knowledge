@@ -1,0 +1,125 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: 単語の対応表
+description: 使うべきでない単語と置き換え先の対応表。プラグイン slop-check が書き込んだ中身の照合に使い、規約は本文にこの表を埋め込む。行を追加するときは `entries[].pattern` の説明に従う。
+allOf:
+  - $ref: common.schema.yaml#/$defs/metadata
+properties:
+  kind:
+    title: 種類
+    description: 文書の種類。この種類では `word-list` に固定する。
+    const: word-list
+  entries:
+    title: 対応表の行
+    description: 単語ごとの行。並びが通知の表の並びになる。
+    type: array
+    minItems: 1
+    items:
+      $ref: '#/$defs/entry'
+required:
+  - last_reviewed
+  - entries
+unevaluatedProperties: false
+$defs:
+  entry:
+    title: 対応表の行
+    description: 1 つの単語と置き換え先。
+    type: object
+    additionalProperties: false
+    required:
+      - id
+      - ng
+      - ok
+    properties:
+      id:
+        title: 行の ID
+        description: 対応表の中で一意な、ローマ字の小文字とハイフンの識別子。
+        $ref: common.schema.yaml#/$defs/id
+        examples:
+          - naosu
+      ng:
+        title: NG
+        description: 通知の NG の列に出す単語。動詞は終止形で記載する。括弧の補足は入れず `note` に記載する。
+        type: string
+        minLength: 1
+        examples:
+          - 直す
+      ok:
+        title: OK
+        description: 置き換え先。合うものから並べる。動詞は名詞で記載し、文では「する」を付けて使う。
+        type: array
+        minItems: 1
+        items:
+          type: string
+          minLength: 1
+        examples:
+          - [スキーマ, 構造]
+      pattern:
+        title: 照合の正規表現
+        description: |-
+          ヒットさせる正規表現（Python の `re`）。省くと `ng` の文字列をそのまま探す。YAML ではシングルクォートで囲む。
+          漢字 1 文字の単語は、前を否定の後読み、後ろを否定の先読みにして前後に漢字が続かないときだけヒットさせる（`(?<![㐀-鿿々])形(?![㐀-鿿々])`）。
+          動詞は語幹の後ろに活用語尾を `(?:...)` で並べ、語幹の前に漢字の否定の後読みを付ける（`(?<![㐀-鿿々])直(?:さ|し|す|せ|そ|っ)`）。
+          ひらがなが続く複合語は正規表現で除かず `allow` に入れる。漢字の範囲は `[㐀-鿿々]` で記載する（`\p{Han}` は使えない）。
+        type: string
+        format: regex
+        minLength: 1
+        examples:
+          - (?<![㐀-鿿々])形(?![㐀-鿿々])
+      allow:
+        title: 除く文字列
+        description: ヒットの開始位置を含むこの文字列の出現があれば、そのヒットを除く。ひらがなが続く複合語に使う。
+        type: array
+        items:
+          type: string
+          minLength: 1
+        examples:
+          - [割り当て]
+      note:
+        title: 補足
+        description: 通知の表で OK の後ろに括弧で添える補足。
+        type: string
+        minLength: 1
+        examples:
+          - 形状の意味なら「形状」
+      examples:
+        title: 照合の例
+        description: 検査で照合を当てる文。`hit` は全件ヒットし、`pass` は 1 件もヒットしないこと。
+        type: object
+        additionalProperties: false
+        required:
+          - hit
+          - pass
+        properties:
+          hit:
+            title: ヒットすべき文
+            type: array
+            minItems: 1
+            items:
+              type: string
+          pass:
+            title: ヒットしてはいけない文
+            type: array
+            minItems: 1
+            items:
+              type: string
+    allOf:
+      - if:
+          properties:
+            ng:
+              pattern: ^[㐀-鿿々]$
+        then:
+          required:
+            - pattern
+      - if:
+          properties:
+            ng:
+              pattern: '[（(]'
+        then:
+          required:
+            - pattern
+      - if:
+          required:
+            - pattern
+        then:
+          required:
+            - examples

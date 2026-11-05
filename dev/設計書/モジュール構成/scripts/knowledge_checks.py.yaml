@@ -116,6 +116,7 @@ functions:
          - 読めない文書の場合、`path: $`・`{行} 行目: YAML として読めません: {理由}`・`YAML の文法の誤りを修正する` の 1 件を返す
       2. `index` が `None` なら ID の索引を作る（ID の索引の作成）
       3. 項目の ID の重複・参照・mermaid を順に検査し、違反をつないで返す（項目の ID の重複の検査・参照の検査・mermaid の検査）
+      4. 最上位の `kind` が `word-list` なら、対応表の examples の検査の違反を後ろにつなぐ
     unit_tests:
       - name: test_check_document
         case: 正常
@@ -123,6 +124,12 @@ functions:
         condition: '項目の ID が重なり、`[B](id:missing)` と `related` の `to: missing` と `end` の抜けた subgraph を持つ文書。`index` に `a` だけ'
         mock: 'maid を、`line: 2` の誤りを返すスクリプトに差し替える'
         expected: 4 件で、`path` が `items[1].id`・`items[2].body`・`related[0].to`・`items[3].body` の順
+      - name: test_check_document_when_word_list
+        case: 正常
+        summary: 対応表の examples の違反をつなぐ
+        condition: '`kind: word-list` で、`examples.hit` の文が `ng` にヒットしない 1 行を持つ文書'
+        mock: 'maid を、誤りの無い結果を返すスクリプトに差し替える'
+        expected: '`path` が `entries[0].examples.hit[0]` の 1 件'
       - name: test_check_document_when_broken
         case: 正常
         summary: 読めない YAML
@@ -131,6 +138,47 @@ functions:
         expected: '`path` が `$` の 1 件で、`rule` が `行目: YAML として読めません` を含む。索引を作らず maid も呼ばない'
     callees:
       - MOD-72-2#functions[load_document]
+  - name: check_word_list
+    title: 対応表の examples の検査
+    kind: 関数
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    scope: public
+    summary: 対応表の各行の照合を examples の hit と pass に当て、合わないものを違反にする
+    args:
+      - name: doc
+        title: 文書
+        type: CommentedMap
+        required: true
+        description: '`kind` が `word-list` の文書'
+    returns:
+      type: list[Violation]
+      description: 行の並び、行の中は hit → pass の順の違反
+    process: |-
+      1. `entries[n]` ごとに照合の行を作る（MOD-148-2 の対応表の行の作成）
+         - `re.error` の場合、`path: entries[{n}].pattern`・`{行} 行目: 正規表現として読めません: {理由}`・`Python の re で読める正規表現にする` の違反にし、その行の `examples` を当てない
+      2. `examples.hit[m]` に行の照合（MOD-148-2）を当て、ヒットしなければ `path: entries[{n}].examples.hit[{m}]`・`{行} 行目: 「{例}」にヒットしません`・`pattern を修正するか、hit の例を修正する` にする
+      3. `examples.pass[m]` がヒットすれば `path: entries[{n}].examples.pass[{m}]`・`{行} 行目: 「{例}」にヒットします`・`pattern か allow を修正するか、pass の例を修正する` にする
+      4. 行は項目の行の引き当て（`line_of`）で求める
+    unit_tests:
+      - name: test_check_word_list
+        case: 正常
+        summary: hit・pass・正規表現の違反
+        condition: '`hit: [直した]` の `直す` の行（`pattern: 直す`）、`pass: [形式]` の `形` の行（`pattern: 形`）、`pattern: "形("` の行'
+        mock: なし
+        expected: 3 件で、`path` が `entries[0].examples.hit[0]`・`entries[1].examples.pass[0]`・`entries[2].pattern`
+      - name: test_check_word_list_when_valid
+        case: 正常
+        summary: examples が照合と合う
+        condition: '`pattern: (?<![㐀-鿿々])形(?![㐀-鿿々])`・`hit: [この形で]`・`pass: [形式, 円形]` の行'
+        mock: なし
+        expected: 空
+    callees:
+      - MOD-148-2#functions[compile_entry]
+      - MOD-148-2#functions[entry_hits]
+      - MOD-72-2#functions[line_of]
+    refs:
+      - IF-72-1#constraints[対応表の `examples`]
   - name: build_id_index
     title: ID の索引の作成
     kind: 関数
@@ -353,6 +401,8 @@ functions:
     refs:
       - MOD-72-3#constants[MIN_REMAINING_SEC]
 notes:
-  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を書き、`_common.py`・`_maid.py` を同じフォルダから import する。
+  依存: |-
+    PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を書き、`_common.py`・`_maid.py` を同じフォルダから import する。
+    `slop_check.py`（MOD-148-2）は、`Path(__file__).resolve().parents[1] / "plugins/slop-check/hooks/post-tool-use"` を `sys.path` の先頭に入れてから import する（MOD-148-1 の照合の共有）。
 test_files:
   - tests/unit/scripts/test_knowledge_checks.py

@@ -22,8 +22,8 @@ tags:
   - name: action:登録
 status: current
 visibility: internal
-rev: 7
-last_reviewed: '2026-10-30'
+rev: 10
+last_reviewed: '2026-11-04'
 sources:
   - title: "W3C: SKOS Reference"
     url: https://www.w3.org/TR/skos-reference
@@ -114,6 +114,26 @@ items:
     body: |-
       - 関数の一覧・実装の手順は書かない
       - 既存の文書を YAML にするときも、同じ書き方にする
+  - id: description-03
+    group: description の書き方
+    name: 点検の表
+    body: |-
+      書いた `description` を次の表で点検する。
+
+      <!-- table: data -->
+
+      | 点検項目 | 基準 |
+      | --- | --- |
+      | 文の数 | 1 文（句点は文末の 1 つだけ） |
+      | 文字数 | 40〜120 字。120 字を超えたら、受け持つことの列挙を代表の 2〜3 件に削るか、文書を分ける |
+      | 要素 | 「何を受け持つか（定めるか）」と「どんなときに読むか」の両方がある |
+      | タイトルの言い直し | タイトルを言い換えただけの文で始めない。「〜について」「〜の文書」で終えない |
+      | 検索で当てたい単語 | その文書を探す人が使う単語（タグの topic・action に当たる単語）を含む |
+      | 書かないもの | 関数の一覧・実装の手順・検討事項の ID・Issue 番号・ファイルのパス・更新の経緯（「〜を追加した」） |
+      | 変わる値 | 時期や実装で変わる値（タイムアウトの秒数・閾値・バージョン・モデル名）と、後から増えうるものの個数を書かない。規約 [文章の書き方](id:convention-writing-style#writing-style-check-01) の確認表と同じ |
+      | 用語の選び方 | 規約 [文章の書き方](id:convention-writing-style#word-choice-table-02) の対応表に沿う（和語と、外来語を無理に訳した和語を使わない） |
+
+      <!-- /table -->
   - id: tag-attach-01
     group: タグを付ける条件
     name: タグを付ける条件
@@ -196,7 +216,7 @@ items:
     group: エイリアスを登録する条件
     name: エイリアスを登録する条件
     body: |-
-      登録するかは判定フローチャート [エイリアスを登録するかを決める](https://github.com/shuhei1101/alias-inject/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E3%82%A8%E3%82%A4%E3%83%AA%E3%82%A2%E3%82%B9%E3%82%92%E7%99%BB%E9%8C%B2%E3%81%99%E3%82%8B%E3%81%8B%E3%82%92%E6%B1%BA%E3%82%81%E3%82%8B.md) で決める。
+      登録するかは判定フローチャート [エイリアスの登録](id:flowchart-alias-registration) と判定表 [エイリアスを登録しない条件](id:decision-table-alias-exclusion) で決める。
       次の表は例。
 
       <!-- table: data -->
@@ -211,14 +231,14 @@ items:
     group: エイリアスを登録しない条件
     name: エイリアスを登録しない条件
     body: |-
-      登録しないかも判定フローチャート [エイリアスを登録するかを決める](https://github.com/shuhei1101/alias-inject/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E3%82%A8%E3%82%A4%E3%83%AA%E3%82%A2%E3%82%B9%E3%82%92%E7%99%BB%E9%8C%B2%E3%81%99%E3%82%8B%E3%81%8B%E3%82%92%E6%B1%BA%E3%82%81%E3%82%8B.md) で決める。
+      登録しないかも判定フローチャート [エイリアスの登録](id:flowchart-alias-registration) と判定表 [エイリアスを登録しない条件](id:decision-table-alias-exclusion) で決める。
       次の表は例。
 
       <!-- table: data -->
 
       | 条件 | 例 |
       | --- | --- |
-      | 複数の文書や用語に当てはまる一般語（ツールチップが誤った紐付けになる） | 「設定」「手順」 |
+      | 複数の文書や用語に当てはまる一般語（ツールチップが誤った紐付けになる）。特定の文脈でだけその文書を指すなら、照合条件を付けて登録する | 「設定」「手順」 |
       | 1〜2 文字の語や、ほかの語の一部としてよく出る語 | 「印」（「印刷」に当たる） |
       | 正規化で吸収できる表記ゆれ | 「ＡＰＩ」と「API」の両方は登録しない |
 

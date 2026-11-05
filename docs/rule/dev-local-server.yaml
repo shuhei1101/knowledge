@@ -1,0 +1,116 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-local-server
+kind: rule
+name: ローカルサーバーの立て方
+description: 開発のローカルサーバーを tmux で起動するときのセッション名・ポート・ログ・起動の確認・停止と、常駐サーバーの systemd --user を定め、dev サーバーや常駐サーバーを起動・停止するときに読む。
+aliases:
+  - tmux
+  - dev サーバー
+  - 常駐サーバー
+tags:
+  - name: scope:dev
+  - name: topic:サーバー
+    main: true
+  - name: topic:セッション
+  - name: topic:ポート
+  - name: topic:ログ
+  - name: topic:worktree
+  - name: tool:tmux
+  - name: tool:systemd
+  - name: action:起動
+  - name: action:停止
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-05'
+sources:
+  - title: tmux(1)
+    url: https://man7.org/linux/man-pages/man1/tmux.1.html
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      開発のローカルサーバー（dev サーバー・プレビュー・Storybook・MCP サーバー）の立て方。
+      dev サーバーは tmux、必ず動いていてほしい常駐サーバー（MCP・gateway など）は systemd --user で起動する。
+  - id: naming-01
+    group: セッション名
+    name: セッション名の付け方
+    body: |-
+      - セッション名は `{リポジトリ}-{worktree}-{役割}`。メインリポジトリでは `{worktree}` を省く（例: `app-server`・`app-feat-preview-storybook`）
+      - 役割は `server`・`vite`・`api`・`storybook`・`mcp`・`docs` など
+      - 文字は `[A-Za-z0-9_-]` だけにし、worktree 名の `/`・`.` は `-` に置き換える
+      - 1 セッションに 1 サーバー。一緒に起動・停止するものだけ、1 セッションでウィンドウを分ける
+      - AI Monitor が自動で起動するセッションは、AI Monitor の命名のままにする
+  - id: port-01
+    group: ポート
+    name: ポートの決め方
+    body: |-
+      - worktree の dev サーバーは、OS が選ぶ空きポートを `{worktree}/.dev/{役割}.port` に記録する
+      - 固定ポートは、メインリポジトリのサーバーと常駐サーバーだけにする
+      - ポートを指定して起動するときは、使用中なら別のポートへ移らずに終わる指定（Vite の `--strictPort`・Storybook の `--exact-port`）を付ける
+      - 使用中かは `ss -ltnH "( sport = :{ポート} )"` で確認する（空なら空いている）
+  - id: log-01
+    group: ログ
+    name: ログとポートの置き場所
+    body: |-
+      - ログとポートは worktree の直下の `.dev/` に置き、`.dev/` を gitignore する
+      - 起動コマンドを `set -o pipefail; {コマンド} 2>&1 | tee -a {worktree}/.dev/{役割}.log` で包む
+      - ログは `tail -n 80 .dev/{役割}.log`、直近の画面は `tmux capture-pane -p -t "={セッション名}" -S -80` で確認する
+  - id: start-01
+    group: 起動
+    name: tmux での起動
+    body: |-
+      ```bash
+      S=app-feat-x-vite
+      WT=/path/to/app/.claude/worktrees/feat-x
+      PORT=$(python3 -c 'import socket;s=socket.socket();s.bind(("127.0.0.1",0));print(s.getsockname()[1])')
+      mkdir -p "$WT/.dev"; echo "$PORT" > "$WT/.dev/vite.port"
+
+      tmux has-session -t "=$S" 2>/dev/null && { echo "既にある: $S"; exit 0; }
+      tmux new-session -d -s "$S" -c "$WT" -e "PORT=$PORT" \
+        "set -o pipefail; $WT/node_modules/.bin/vite --host 127.0.0.1 --port $PORT --strictPort 2>&1 | tee -a $WT/.dev/vite.log"
+      ```
+
+      - `has-session`・`kill-session`・`capture-pane` の `-t` には `=` を付けて完全一致で指定する
+      - 実行ファイルはフルパス（`.venv/bin/python`・`node_modules/.bin/...`）で指定し、環境変数は `-e` で渡す
+      - 起動は Bash の通常の実行で行い、`run_in_background` は使わない（Claude Code の終了時に片付けられる）
+      - プロセスが終わったらセッションも閉じる（tmux の既定）。`has-session` を生死の判定に使う
+  - id: start-02
+    group: 起動
+    name: 既にあるとき
+    body: |-
+      - `has-session` で動いていればそのまま使い、ポートは `.dev/{役割}.port` から読む
+      - ポートが応答しなければ、`kill-session` してから起動し直す
+  - id: ready-01
+    group: 起動の確認
+    name: 起動の確認
+    body: |-
+      ```bash
+      curl -fsS -o /dev/null --retry 30 --retry-delay 1 --retry-connrefused --retry-max-time 60 \
+        "http://127.0.0.1:$PORT/" && echo ready || { tmux has-session -t "=$S" || echo exited; tail -n 40 "$WT/.dev/vite.log"; }
+      ```
+
+      - 確認の URL は役割ごとに決める（FastAPI は `/health`、Storybook は `/index.json`、Vite は `/`）
+      - `sleep` のループではなく curl の再試行で待ち、上限は 60 秒にする
+  - id: stop-01
+    group: 再起動・停止・後片付け
+    name: 再起動と停止
+    body: |-
+      - 同じコマンドで再起動するときは `tmux respawn-pane -k -t "={セッション名}"`、条件を変えるときは `kill-session` してから起動する
+      - 停止は `tmux kill-session -t "={セッション名}"` の後に、`ss -ltnH` でポートの解放を確認する
+      - worktree を削除する前に、その worktree の名前を持つセッションを `tmux ls` で確認し、別のコマンドで閉じる
+      - ポートが解放されないときだけ、`ss -ltnpH` で PID を、`ps -o args= -p {PID}` で中身を確認してから、別のコマンドで kill する
+  - id: resident-01
+    group: 常駐サーバー
+    name: systemd --user での常駐
+    body: |-
+      - 必ず動いていてほしい常駐サーバーは、`~/.config/systemd/user/{サービス名}.service` の unit で起動し、`systemctl --user enable --now {サービス名}` で WSL の起動時に自動で起動する
+      - ログは `journalctl --user -u {サービス名}` で確認する
+      - SessionStart のフックでの起動は、落ちていたときの補助にする
+  - id: forbidden-01
+    group: 禁止事項
+    name: 実行しない操作
+    body: |-
+      - `tmux kill-server`・`pkill tmux`・`tmux new-session` として見えるプロセスの kill（tmux サーバー本体で、全てのセッションが終わる）
+      - `pkill -f vite` のような名前での一括の kill（他の worktree のサーバーも終わる）
+      - tmux・systemd の外での `nohup`・`setsid`・`&` による常駐

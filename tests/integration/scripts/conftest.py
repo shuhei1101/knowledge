@@ -15,8 +15,8 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPTS = REPO_ROOT / "scripts"
 
-# 子プロセスを待つ上限の秒数。スクリプトの処理時間の上限（20 秒）に起動の時間を加えた値
-_WAIT_SEC = 60
+# 子プロセスを待つ上限の秒数。スクリプトの処理時間の上限（20 秒）に、起動と lint の CLI の起動（WSL の /mnt/c で 1 回 50 秒前後）の時間を加えた値
+_WAIT_SEC = 120
 
 # 打ち切られるまで返らない maid の差し替えの本体
 _HANGING_MAID = textwrap.dedent(
@@ -134,10 +134,21 @@ def _run(command: Sequence[str], cwd: Path, stdin: str, path: str) -> Completed:
 def run_script() -> RunScript:
     """入口のスクリプトを dev-docs・CI と同じ `uv run --frozen --script` で起動する関数を返す。"""
 
-    def _start(name: str, cwd: Path, stdin: str = "", *, without_maid: bool = False) -> Completed:
+    def _start(
+        name: str,
+        cwd: Path,
+        stdin: str = "",
+        *,
+        without_maid: bool = False,
+        args: Sequence[str] = (),
+        path_prefix: Path | None = None,
+    ) -> Completed:
         # maid を外すときは、maid を持つフォルダを PATH から除く
         path = _path_without_maid() if without_maid else os.environ.get("PATH", "")
-        command = ["uv", "run", "--frozen", "--script", str(SCRIPTS / f"{name}.py")]
+        # 差し替えのコマンドを置いたフォルダは PATH の先頭に置く
+        if path_prefix is not None:
+            path = os.pathsep.join([str(path_prefix), path])
+        command = ["uv", "run", "--frozen", "--script", str(SCRIPTS / f"{name}.py"), *args]
         return _run(command, cwd, stdin, path)
 
     return _start

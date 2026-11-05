@@ -47,12 +47,97 @@ tags:
   - name: action:読み取り
 status: current
 visibility: public
-rev: 5
+rev: 6
 items:
   - id: overview
     name: 概要
     body: |-
       リリースごとに入った PR の一覧。
+  - id: v0-3-0-01
+    group: v0.3.0
+    name: tmux のサーバーと rules.yaml の登録の基準
+    body: |-
+      [#176](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/176/README.md) tmux でのサーバーの立て方の規約を新設し、rules.yaml の登録の基準と claude・dev・テンプレートの規約を見直す
+  - id: v0-3-0-02
+    group: v0.3.0
+    name: 決まりの表し方の判定フローチャートと判定表
+    body: |-
+      [#174](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/174/README.md) 判断・作業の決まりの表し方を選ぶ判定フローチャートと、判定表のテンプレートを追加する
+  - id: v0-3-0-03
+    group: v0.3.0
+    name: 1 単語だけを配置する箇所の和語の動詞
+    body: |-
+      [#169](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/169/README.md) 表のセル・ラベルなど 1 単語だけを配置する箇所の和語の動詞を AI slop の対応表に追加する
+  - id: v0-3-0-04
+    group: v0.3.0
+    name: E2E の files.yaml の行の ID と path
+    body: |-
+      [#168](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/168/README.md) E2E が組み立てる files.yaml の行の文書の ID とページの path を、dev-docs の拡張子付きの ID に合わせる
+  - id: v0-3-0-05
+    group: v0.3.0
+    name: 埋め込みのマーカーの展開
+    body: |-
+      [#162](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/162/README.md) 規約の本文の埋め込みのマーカーを、dev-docs の画面で対応表の NG・OK の表に展開する
+  - id: v0-3-0-06
+    group: v0.3.0
+    name: フィルター・照合条件の共通の構造
+    body: |-
+      [#164](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/164/README.md) フィルター・照合条件の AND・OR・NOT の共通の構造を規約にし、判定フローチャート『エイリアスの登録』に照合条件を付ける分岐を追加する
+  - id: v0-3-0-07
+    group: v0.3.0
+    name: AI slop の対応表と slop-check
+    body: |-
+      [#148](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/148/README.md) AI slop の単語の対応表と、書き込んだ中身を対応表で調べて通知するプラグイン slop-check を追加し、SessionStart の注入を廃止する
+  - id: v0-3-0-08
+    group: v0.3.0
+    name: MCP・フックの渡し方の判定フローチャート
+    body: |-
+      [#156](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/156/README.md) MCP・フックの渡し方と SessionStart・instructions の使い分けの判定フローチャートを追加し、claude の規約を改める
+  - id: v0-3-0-09
+    group: v0.3.0
+    name: expected_version の記述
+    body: |-
+      [#155](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/155/README.md) 規約『YAML』の mcp-write-04 の expected_version の記述を dev-docs の write_docs の挙動と一致させる
+  - id: v0-3-0-10
+    group: v0.3.0
+    name: rev の記述
+    body: |-
+      [#152](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/152/README.md) 規約『ドキュメント管理』とスキーマの rev の記述を dev-docs の write_docs の挙動と一致させる
+  - id: v0-3-0-11
+    group: v0.3.0
+    name: ドキュメントの部品の参照先
+    body: |-
+      [#150](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/150/README.md) 規約『ドキュメントの部品』の概要が指す書き方の参照先を、実在するものへ修正する
+  - id: v0-3-0-12
+    group: v0.3.0
+    name: エイリアスの判定フローチャートと description のチェックシート
+    body: |-
+      [#149](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/149/README.md) エイリアスの判定フローチャートと description のチェックシートを追加する
+  - id: v0-3-0-13
+    group: v0.3.0
+    name: 表し方の優先順位
+    body: |-
+      [#134](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/134/README.md) 規約『表し方の優先順位』と判定フローチャート『表し方の選び方』を追加し、判定フローチャートを mdmark の部品で描く書き方へ改める
+  - id: v0-3-0-14
+    group: v0.3.0
+    name: ボタンのラベル
+    body: |-
+      [#143](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/143/README.md) ボタンのラベルの規約（アイコンと文字の使い分け・ツールチップ・文言）を追加する
+  - id: v0-3-0-15
+    group: v0.3.0
+    name: MCP のポートの台帳
+    body: |-
+      [#141](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/141/README.md) MCP のポートの台帳を規約から削除し、端末のローカルの ~/.config/mcp-ports.yaml を参照する
+  - id: v0-3-0-16
+    group: v0.3.0
+    name: dev-docs.yaml の tags の対応
+    body: |-
+      [#140](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/140/README.md) dev-docs.yaml の tags を - name: の要素で持つ種類に tags: tags[].name の対応を記載する
+  - id: v0-3-0-17
+    group: v0.3.0
+    name: GitHub Pages の公開分の配信
+    body: |-
+      [#137](https://github.com/shuhei1101/knowledge/blob/v0.3.0/dev/pr/137/README.md) GitHub Pages を Actions のワークフローで公開分の文書だけ配信する形へ切り替える
   - id: v0-2-0-01
     group: v0.2.0
     name: dev-docs の配信元

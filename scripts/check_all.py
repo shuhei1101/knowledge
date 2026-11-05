@@ -3,15 +3,19 @@
 # dependencies = [
 #     "jsonschema>=4.26.0",
 #     "ruamel.yaml==0.19.1",
+#     "yamllint==1.38.0",
 # ]
 # ///
 """dev-docs.yaml の documents[] が指す全ての文書にスキーマの検査と文書の違反の検査を当て、終了コードで合否を返す。
 
 CI と手元から、リポジトリの直下で起動する。違反は 1 件 1 行で「{ファイルのパス}:{行}: {項目のパス}: {内容}」と出す。
+対応表のコピーが正本と一致するかも確かめ、文書に markdownlint-cli2・textlint・yamllint を当てる。
 
 Usage:
 # 全ての文書を検査する（違反があれば終了コード 1）
 uv run --frozen --script scripts/check_all.py
+# lint の設定と npm の依存を別のフォルダから使う
+uv run --frozen --script scripts/check_all.py [--lint-dir {フォルダ}]
 """
 
 import argparse
@@ -32,26 +36,44 @@ from ruamel.yaml.error import YAMLError
 
 from _common import (
     LIMIT_SEC,
+    ConfigError,
     DocumentError,
-    as_list,
     as_mapping,
     format_path,
     line_of,
+    list_row_files,
+    load_config,
     load_document,
     load_safe,
     read_texts,
+    strings,
+)
+from _lint import (
+    DEFAULT_LINT_DIR,
+    LintFinding,
+    LintOutputError,
+    LintSource,
+    collect_sources,
+    find_lint_clis,
+    load_yamllint_config,
+    run_markdown_lints,
+    run_yamllint,
 )
 from _maid import find_maid
+from build_word_list import COPY, SOURCE, render_copy
 from knowledge_checks import build_id_index, check_document
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping, Sequence
 
-# リポジトリの直下の dev-docs の配信の設定
-CONFIG = "dev-docs.yaml"
-
 # validators[] の文書の違反の検査の id
 CHECKS_ID = "knowledge-checks"
+
+# documents[] に無く、yamllint を当てるリポジトリの直下のファイル
+YAMLLINT_EXTRA = ("dev-docs.yaml", "rules.yaml")
+
+# yamllint を当てる文書の拡張子
+_YAML_SUFFIXES = (".yaml", ".yml")
 
 # 互いに $ref で引き合うスキーマの置き場所と名前
 _SCHEMAS_GLOB = "schemas/*.schema.yaml"
@@ -59,10 +81,8 @@ _SCHEMAS_GLOB = "schemas/*.schema.yaml"
 # 文書の違反の検査の rule の先頭の「{行} 行目: 」
 _RULE_LINE = re.compile(r"^(\d+) 行目: (.*)$", re.DOTALL)
 
-# maid が PATH に無いときに標準エラーへ出す理由
-_MAID_MISSING = (
-    "maid が PATH にありません。開発コマンドの『環境構築（クローン直後）』で maid を入れてください"
-)
+# 検査の CLI が引けないときに標準エラーへ出す理由
+_CLI_MISSING = "{name} がありません。開発コマンドの『環境構築（クローン直後）』で入れてください"
 
 # 終了コード。1 = 違反がある・想定していない例外、2 = 検査を始めなかった
 _EXIT_VIOLATIONS = 1
@@ -81,14 +101,6 @@ class Target:
     checks: bool
 
 
-class ConfigError(Exception):
-    """dev-docs.yaml が無い・読めない・documents が配列でない。"""
-
-    def __init__(self, message: str) -> None:
-        super().__init__(message)
-        self.message = message
-
-
 def _use_utf8(stream: object) -> None:
     """標準出力を UTF-8 にする（Windows の既定のエンコーディングで書かない）。"""
     if isinstance(stream, io.TextIOWrapper):
@@ -98,15 +110,28 @@ def _use_utf8(stream: object) -> None:
 def main(argv: Sequence[str] | None = None) -> int:
     """全ての文書を検査し、違反を 1 件 1 行で出して終了コードで合否を返す。"""
     parser = argparse.ArgumentParser(description="dev-docs.yaml が指す全ての文書の違反を出す")
-    parser.parse_args(argv)
+    parser.add_argument(
+        "--lint-dir",
+        type=Path,
+        default=DEFAULT_LINT_DIR,
+        help="lint の設定と npm の依存（node_modules/.bin/）を持つフォルダ",
+    )
+    args = parser.parse_args(argv)
+    lint_dir = cast("Path", args.lint_dir)
     _use_utf8(sys.stdout)
 
     try:
-        # maid が無ければ検査を始めない
+        # 検査の CLI が 1 つでも無ければ検査を始めない
         executable = find_maid()
-        if executable is None:
-            print(_MAID_MISSING, file=sys.stderr)
+        lint_clis = find_lint_clis(lint_dir)
+        missing = [
+            name for name, found in {"maid": executable, **lint_clis}.items() if found is None
+        ]
+        if executable is None or missing:
+            for name in missing:
+                print(_CLI_MISSING.format(name=name), file=sys.stderr)
             return _EXIT_NOT_STARTED
+        clis = {name: path for name, path in lint_clis.items() if path is not None}
         root = Path.cwd()
         try:
             rows = load_config(root)
@@ -128,7 +153,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             ):
                 print(f"{target.path}:{line}: {path}: {message}")
                 count += 1
-        print(f"{len(targets)} 件の文書を検査し、違反は {count} 件でした")
+        # 対応表のコピーが正本と一致するか
+        for file_path, line, path, message in check_word_list_copy(root):
+            print(f"{file_path}:{line}: {path}: {message}")
+            count += 1
+        # lint の違反は失敗させるルールだけを数え、警告にしたルールは警告として数える
+        try:
+            findings = check_lints(root, targets, texts, lint_dir, clis)
+        except LintOutputError as error:
+            print(error.message, file=sys.stderr)
+            return _EXIT_VIOLATIONS
+        warnings = _print_lints(findings)
+        count += len(findings) - warnings
+        print(f"{len(targets)} 件の文書を検査し、違反は {count} 件、警告は {warnings} 件でした")
     except Exception:  # noqa: BLE001 - 想定していない例外は traceback を出して終了コードで返す
         traceback.print_exc()
         return _EXIT_VIOLATIONS
@@ -136,31 +173,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _EXIT_VIOLATIONS if count else 0
 
 
-def load_config(root: Path) -> list[Mapping[str, Any]]:
-    """dev-docs.yaml の documents[] の行を読む。"""
-    path = root / CONFIG
-    if not path.is_file():
-        message = f"{CONFIG} がありません"
-        raise ConfigError(message)
-    try:
-        doc = load_document(path.read_text(encoding="utf-8"))
-    except DocumentError as error:
-        message = f"{CONFIG} の {error.line} 行目が読めません: {error.message}"
-        raise ConfigError(message) from error
-    documents = as_list(cast("Mapping[str, object]", doc).get("documents"))
-    rows = [as_mapping(row) for row in documents] if documents is not None else [None]
-    if not all(row is not None for row in rows):
-        message = f"{CONFIG} に documents の配列がありません"
-        raise ConfigError(message)
-    return [row for row in rows if row is not None]
-
-
-def _strings(value: object) -> list[str]:
-    """文字列の配列の値から文字列だけを返す。配列でなければ空。"""
-    elements = as_list(value)
-    if elements is None:
-        return []
-    return [element for element in elements if isinstance(element, str)]
+def _print_lints(findings: Sequence[LintFinding]) -> int:
+    """lint の違反を 1 件 1 行で出し、警告にしたルールの違反の数を返す。"""
+    warnings = 0
+    for finding in findings:
+        prefix = "warning: " if finding.warning else ""
+        print(
+            f"{finding.path}:{finding.line}: {finding.item_path}: "
+            f"{prefix}{finding.tool}/{finding.rule}: {finding.message}"
+        )
+        if finding.warning:
+            warnings += 1
+    return warnings
 
 
 def list_targets(root: Path, rows: Sequence[Mapping[str, Any]]) -> list[Target]:
@@ -172,17 +196,9 @@ def list_targets(root: Path, rows: Sequence[Mapping[str, Any]]) -> list[Target]:
         # 無効な行と、スキーマを持たない行は検査しない
         if row.get("enabled") is False or not isinstance(schema, str) or not schema:
             continue
-        exclude = _strings(row.get("exclude"))
-        checks = CHECKS_ID in _strings(row.get("validators"))
-        for pattern in _strings(row.get("paths")):
-            for file in root.glob(pattern):
-                # ファイル名が exclude のどれかに当たるものを除く（dev-docs と同じ判定）
-                if not file.is_file() or any(
-                    PurePosixPath(file.name).full_match(name) for name in exclude
-                ):
-                    continue
-                relative = PurePosixPath(file.relative_to(root).as_posix())
-                targets.setdefault(relative, Target(path=relative, schema=schema, checks=checks))
+        checks = CHECKS_ID in strings(row.get("validators"))
+        for relative in list_row_files(root, row):
+            targets.setdefault(relative, Target(path=relative, schema=schema, checks=checks))
     return sorted(targets.values(), key=lambda target: target.path)
 
 
@@ -262,6 +278,60 @@ def check_target(
             line, rule = _split_line(violation["rule"])
             results.append((line, violation["path"], rule))
     return results
+
+
+def check_lints(
+    root: Path,
+    targets: Sequence[Target],
+    texts: Mapping[Path, str | None],
+    lint_dir: Path,
+    clis: Mapping[str, str],
+) -> list[LintFinding]:
+    """全ての文書の Markdown に markdownlint-cli2・textlint、YAML のファイルに yamllint を当てる。"""
+    sources: list[LintSource] = []
+    yaml_files: list[tuple[PurePosixPath, str]] = []
+    for target in targets:
+        text = texts.get(root / target.path)
+        # 読めなかった文書の違反は文書 1 件の検査が出す
+        if text is None:
+            continue
+        sources.extend(collect_sources(target.path, text))
+        if target.path.suffix in _YAML_SUFFIXES:
+            yaml_files.append((target.path, text))
+    # documents[] に無い直下の設定ファイルは、在るものだけに当てる
+    for name in YAMLLINT_EXTRA:
+        path = root / name
+        if path.is_file():
+            yaml_files.append((PurePosixPath(name), path.read_text(encoding="utf-8")))
+
+    findings = run_markdown_lints(sources, lint_dir, clis)
+    config = load_yamllint_config(lint_dir)
+    for path, text in yaml_files:
+        findings.extend(run_yamllint(path, text, config))
+    return sorted(findings, key=lambda finding: (str(finding.path), finding.line))
+
+
+def check_word_list_copy(root: Path) -> list[tuple[str, int, str, str]]:
+    """正本から作り直したコピーの中身が、置いてあるコピーと一致するかを確かめる。"""
+    # 正本が無い・読めないときの違反は文書の検査で出る
+    try:
+        doc = load_document((root / SOURCE).read_text(encoding="utf-8"))
+    except OSError, UnicodeDecodeError, DocumentError:
+        return []
+    try:
+        current = (root / COPY).read_text(encoding="utf-8")
+    except OSError, UnicodeDecodeError:
+        current = None
+    if current == render_copy(doc):
+        return []
+    return [
+        (
+            str(COPY),
+            1,
+            "$",
+            "対応表のコピーが正本と一致しません。uv run --frozen --script scripts/build_word_list.py で作り直してください",
+        )
+    ]
 
 
 if __name__ == "__main__":

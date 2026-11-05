@@ -44,6 +44,8 @@ POLL_INTERVAL_SEC = 0.2
 HTTP_TIMEOUT_SEC = 60
 # 子プロセスを待つ秒数
 PROCESS_WAIT_SEC = 120
+# 全ての文書の検査を待つ秒数（CI のジョブの timeout-minutes の 5 分）
+CHECK_ALL_WAIT_SEC = 300
 MCP_HEADERS = {
     "Accept": "application/json, text/event-stream",
     "Content-Type": "application/json",
@@ -308,6 +310,12 @@ def knowledge_clone(tmp_path: Path) -> Callable[..., Path]:
 
 
 @pytest.fixture
+def git() -> Callable[..., str]:
+    """フォルダで git を実行し、標準出力を返す関数を返す。"""
+    return run_git
+
+
+@pytest.fixture
 def knowledge_worktree() -> Callable[[Path], Path]:
     """knowledge のクローンに、develop から切った作業ブランチの worktree を作る関数を返す。"""
 
@@ -377,13 +385,55 @@ def _register(served: Served, path: Path, row: SourceRow) -> Registration:
     return Registration(check, reload, status)
 
 
+# CI のジョブの、lint の CLI を入れるコマンド
+LINT_INSTALL = ("npm", "ci", "--prefix", "scripts/lint", "--no-audit", "--no-fund")
+
+
 def _run_check_all(folder: Path, *, without_maid: bool = False) -> subprocess.CompletedProcess[str]:
-    """CI のジョブと同じコマンドで、全ての文書の検査を子プロセスとして起動する。"""
+    """CI のジョブと同じく lint の CLI を入れてから、同じコマンドで全ての文書の検査を子プロセスとして起動する。"""
+    subprocess.run(  # noqa: S603 - 引数は配列で渡し、シェルを通さない
+        LINT_INSTALL,
+        cwd=folder,
+        capture_output=True,
+        check=True,
+        timeout=PROCESS_WAIT_SEC,
+    )
     path = path_without_maid() if without_maid else os.environ.get("PATH", "")
     return subprocess.run(
         ["uv", "run", "--frozen", "--script", "scripts/check_all.py"],  # noqa: S607 - uv は PATH から引く
         cwd=folder,
         env={**os.environ, "PATH": path},
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+        timeout=CHECK_ALL_WAIT_SEC,
+    )
+
+
+# 配信のワークフローの、成果物を作るコマンドと、出力に YAML が無いことを確かめるコマンド
+PAGES_BUILD = ("uv", "run", "--frozen", "--script", "scripts/build_pages.py", "--out", "_site")
+PAGES_YAML_CHECK = "! find _site -type f \\( -name '*.yaml' -o -name '*.yml' \\) | grep ."
+
+
+def _run_pages_build(folder: Path) -> subprocess.CompletedProcess[str]:
+    """配信のワークフローと同じコマンドで、Pages の成果物を作るスクリプトを子プロセスとして起動する。"""
+    return subprocess.run(  # noqa: S603 - 引数は配列で渡し、シェルを通さない
+        PAGES_BUILD,
+        cwd=folder,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+        timeout=PROCESS_WAIT_SEC,
+    )
+
+
+def _run_pages_yaml_check(folder: Path) -> subprocess.CompletedProcess[str]:
+    """配信のワークフローと同じコマンドを bash で起動し、出力に YAML が無いことを確かめる。"""
+    return subprocess.run(  # noqa: S603 - ワークフローと同じ固定のコマンドの行を bash に渡す
+        ["bash", "-c", PAGES_YAML_CHECK],  # noqa: S607 - bash は PATH から引く
+        cwd=folder,
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -403,11 +453,11 @@ def _representative_pages(clone: Path) -> dict[str, str]:
     pages: dict[str, str] = {}
     for document in config["documents"]:
         files = sorted(file for pattern in document["paths"] for file in clone.glob(pattern))
-        # files.yaml の行の文書は、先頭の行のファイルをページにする
+        # files.yaml の行の文書は、先頭の行のファイルをページにする（文書の ID は拡張子付きのパス）
         if "records" in document:
             record = load_yaml(files[0])[document["records"]][0]
             body = files[0].parent / str(record[document["body_file"]])
-            pages[document["id"]] = f"{_page_path(clone, files[0])}/{_page_path(clone, body)}"
+            pages[document["id"]] = f"{_page_path(clone, files[0])}/{body.relative_to(clone)}"
         else:
             pages[document["id"]] = _page_path(clone, files[0])
     return pages
@@ -435,3 +485,15 @@ def run_check_all() -> Callable[..., subprocess.CompletedProcess[str]]:
 def representative_pages() -> Callable[[Path], dict[str, str]]:
     """文書の行ごとの先頭の文書のページの path を返す関数を返す。"""
     return _representative_pages
+
+
+@pytest.fixture
+def run_pages_build() -> Callable[[Path], subprocess.CompletedProcess[str]]:
+    """配信のワークフローと同じコマンドで Pages の成果物を作る関数を返す。"""
+    return _run_pages_build
+
+
+@pytest.fixture
+def run_pages_yaml_check() -> Callable[[Path], subprocess.CompletedProcess[str]]:
+    """配信のワークフローと同じコマンドで出力に YAML が無いことを確かめる関数を返す。"""
+    return _run_pages_yaml_check

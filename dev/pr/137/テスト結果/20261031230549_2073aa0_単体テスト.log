@@ -1,0 +1,16 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/unit
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy
+configfile: pytest.ini
+collected 91 items
+
+tests/unit/scripts/test_build_pages.py ...................               [ 20%]
+tests/unit/scripts/test_check_all.py ............                        [ 34%]
+tests/unit/scripts/test_common.py ..................                     [ 53%]
+tests/unit/scripts/test_knowledge_checks.py ...................          [ 74%]
+tests/unit/scripts/test_knowledge_markdown.py .................          [ 93%]
+tests/unit/scripts/test_maid.py ......                                   [100%]
+
+============================== 91 passed in 3.51s ==============================
+exit=0

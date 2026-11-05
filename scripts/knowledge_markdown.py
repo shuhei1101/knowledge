@@ -17,13 +17,23 @@ uv run --frozen --script scripts/knowledge_markdown.py < docs/rule/dev-yaml.yaml
 import argparse
 import io
 import json
+import re
 import sys
 import traceback
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 from pathlib import Path
 from typing import Any, cast
 
-from _common import DocumentError, as_list, as_mapping, load_document, load_safe
+from _common import (
+    ConfigError,
+    DocumentError,
+    as_list,
+    as_mapping,
+    list_row_files,
+    load_config,
+    load_document,
+    load_safe,
+)
 
 # dev-docs の画面がメタデータとして出すキー。aliases は検索の別名で、本文の読み手に役立たない
 HIDDEN_KEYS = frozenset(
@@ -32,6 +42,24 @@ HIDDEN_KEYS = frozenset(
 
 # 出す場所が決まっていて、種類に固有のキーの節にしないキー
 LAYOUT_KEYS = frozenset({"name", "description", "items", "related", "sources"})
+
+# entries を NG・OK の表にする文書の kind
+WORD_LIST_KIND = "word-list"
+
+# 対応表の entries のキー
+_WORD_LIST_ENTRIES = "entries"
+
+# 埋め込む対応表のファイルを引く dev-docs.yaml の documents[] の行の id
+WORD_LIST_ROW = "word-list"
+
+# 埋め込みのマーカー。/・# を含む dev-docs のパスの書き方には当たらない
+EMBED_MARKER = re.compile(r"<!--\s*embed:\s*(?P<id>[^\s/#]+)\s*-->")
+
+# コードブロックの開きと閉じ
+FENCE = re.compile(r"^\s{0,3}(?P<mark>`{3,}|~{3,})")
+
+# 文書の ID から対応表の entries への対応
+type WordLists = Mapping[str, Sequence[Mapping[str, Any]]]
 
 # 見出しの最も深い数
 _MAX_HEADING = 6
@@ -75,7 +103,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         except FileNotFoundError as error:
             print(error, file=sys.stderr)
             return _EXIT_FAILED
-        sys.stdout.write(convert(doc, schema))
+        # マーカーのある文書だけ対応表を読む
+        try:
+            word_lists = load_word_lists(Path.cwd()) if has_embed(doc) else {}
+        except ConfigError as error:
+            print(error.message, file=sys.stderr)
+            return _EXIT_FAILED
+        sys.stdout.write(convert(doc, schema, word_lists))
     except Exception:  # noqa: BLE001 - 想定していない例外は traceback を出して終了コードで返す
         traceback.print_exc()
         return _EXIT_FAILED
@@ -136,7 +170,7 @@ def _mappings(value: object) -> list[Mapping[str, Any]]:
     ]
 
 
-def convert(doc: Mapping[str, Any], schema: Mapping[str, Any]) -> str:
+def convert(doc: Mapping[str, Any], schema: Mapping[str, Any], word_lists: WordLists) -> str:
     """文書を「タイトル・概要・項目・種類に固有のキー・関連・出典」の並びの Markdown にする。"""
     blocks = [f"# {doc.get('name', '')}"]
     description = doc.get("description")
@@ -147,14 +181,19 @@ def convert(doc: Mapping[str, Any], schema: Mapping[str, Any]) -> str:
     items = _mappings(doc.get("items"))
     overview = next((item for item in items if item.get("id") == _OVERVIEW_ID), None)
     if overview is not None and isinstance(overview.get("body"), str) and overview["body"]:
-        blocks.append(overview["body"])
-    blocks.extend(render_items([item for item in items if item is not overview]))
+        blocks.append(expand_embeds(overview["body"], word_lists))
+    blocks.extend(render_items([item for item in items if item is not overview], word_lists))
 
     # 共通のメタデータ以外のキーは、文書の並びで種類に固有の節にする
     for key, value in doc.items():
         if key in HIDDEN_KEYS or key in LAYOUT_KEYS:
             continue
-        blocks.extend((f"## {_schema_title(schema, str(key))}", render_value(value)))
+        # 対応表の行は照合の値を出さずに NG・OK の表にする
+        if doc.get("kind") == WORD_LIST_KIND and key == _WORD_LIST_ENTRIES:
+            block = render_word_list(_mappings(value))
+        else:
+            block = render_value(value)
+        blocks.extend((f"## {_schema_title(schema, str(key))}", block))
 
     if related := _mappings(doc.get("related")):
         blocks.extend(("## 関連", "\n".join(_related_line(row) for row in related)))
@@ -168,7 +207,7 @@ def _heading(depth: int, text: object) -> str:
     return f"{'#' * min(depth, _MAX_HEADING)} {text}"
 
 
-def render_items(items: Sequence[Mapping[str, Any]]) -> list[str]:
+def render_items(items: Sequence[Mapping[str, Any]], word_lists: WordLists) -> list[str]:
     """項目を group の階層と name を見出しにしたブロックの並びにする。"""
     blocks: list[str] = []
     # 直前の項目の group の段の並び
@@ -191,7 +230,7 @@ def render_items(items: Sequence[Mapping[str, Any]]) -> list[str]:
         blocks.append(_heading(_ITEM_HEADING + len(levels), item.get("name", "")))
         body = item.get("body")
         if isinstance(body, str) and body:
-            blocks.append(body)
+            blocks.append(expand_embeds(body, word_lists))
         previous = levels
     return blocks
 
@@ -237,6 +276,90 @@ def render_value(value: object) -> str:
         return "\n".join(f"- {key}: {_inline(item)}" for key, item in mapping.items())
     # 数・真偽値: その値の段落
     return str(value)
+
+
+def render_word_list(entries: Sequence[Mapping[str, Any]]) -> str:
+    """対応表の entries を、slop-check の通知と同じ書式の NG・OK の表にする。"""
+    lines = ["| NG | OK |", "| --- | --- |"]
+    for entry in entries:
+        ok = "・".join(str(word) for word in as_list(entry.get("ok")) or [])
+        if entry.get("note"):
+            ok += f"（{entry['note']}）"
+        lines.append(f"| {_cell(entry.get('ng'))} | {_cell(ok)} |")
+    return "<!-- table: data -->\n\n" + "\n".join(lines) + "\n\n<!-- /table -->"
+
+
+def _outside_fences(body: str) -> Iterator[tuple[int, str]]:
+    """本文の行のうちコードブロックの外の行を、行の位置と行の組で返す。"""
+    fence: str | None = None
+    for index, line in enumerate(body.split("\n")):
+        opened = FENCE.match(line)
+        if fence is None and opened:
+            # コードブロックの開き
+            fence = opened.group("mark")
+        elif fence is not None:
+            # 開きと同じ文字で、開き以上の長さの行で閉じる
+            if (
+                opened
+                and opened.group("mark")[0] == fence[0]
+                and len(opened.group("mark")) >= len(fence)
+            ):
+                fence = None
+        else:
+            yield index, line
+
+
+def _embed_id(line: str) -> str | None:
+    """行が埋め込みのマーカーだけなら、指す文書の ID を返す。"""
+    matched = EMBED_MARKER.fullmatch(line.strip())
+    return matched.group("id") if matched else None
+
+
+def has_embed(doc: Mapping[str, Any]) -> bool:
+    """項目の本文のどれかが、コードブロックの外に埋め込みのマーカーの行を持つかを返す。"""
+    for item in _mappings(doc.get("items")):
+        body = item.get("body")
+        if isinstance(body, str) and any(
+            _embed_id(line) is not None for _, line in _outside_fences(body)
+        ):
+            return True
+    return False
+
+
+def load_word_lists(root: Path) -> dict[str, list[Mapping[str, Any]]]:
+    """dev-docs.yaml の word-list の行の対応表を読み、文書の ID から entries への対応にする。"""
+    row = next((row for row in load_config(root) if row.get("id") == WORD_LIST_ROW), None)
+    if row is None:
+        return {}
+    word_lists: dict[str, list[Mapping[str, Any]]] = {}
+    for relative in list_row_files(root, row):
+        try:
+            doc = load_document((root / relative).read_text(encoding="utf-8"))
+        except DocumentError as error:
+            message = f"{relative} の {error.line} 行目が読めません: {error.message}"
+            raise ConfigError(message) from error
+        # 対応表の種類の文書だけを ID で引けるようにする
+        mapping = cast("Mapping[str, Any]", doc)
+        if mapping.get("kind") == WORD_LIST_KIND and isinstance(mapping.get("id"), str):
+            word_lists[mapping["id"]] = _mappings(mapping.get(_WORD_LIST_ENTRIES))
+    return word_lists
+
+
+def expand_embeds(body: str, word_lists: WordLists) -> str:
+    """本文のコードブロックの外の埋め込みのマーカーの行を、対応表の表か注意書きに置き換える。"""
+    lines = body.split("\n")
+    for index, line in _outside_fences(body):
+        target = _embed_id(line)
+        if target is None:
+            continue
+        # ID の対応表があれば表、無ければ展開できない理由の注意書き
+        entries = word_lists.get(target)
+        lines[index] = (
+            render_word_list(entries)
+            if entries is not None
+            else f"> [!WARNING]\n> 埋め込めません: {target} の対応表がありません"
+        )
+    return "\n".join(lines)
 
 
 def _inline(value: object) -> str:

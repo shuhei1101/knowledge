@@ -1,0 +1,45 @@
+$ uvx ruff@0.17.3 check scripts tests
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+tests/unit/scripts/test_build_word_list.py:3:1: I001 [*] Import block is un-sorted or un-formatted
+tests/unit/slop-check/test_slop_check.py:3:1: I001 [*] Import block is un-sorted or un-formatted
+Found 2 errors.
+[*] 2 fixable with `--fix`.
+exit: 1
+$ uvx ruff@0.17.3 format --check scripts tests
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+28 files already formatted
+exit: 0
+$ uv run --no-project --python 3.14 --with pyright==1.1.414 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pyright
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:161:5 - warning: Type of "code" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:161:12 - warning: Type of "main" is unknown (reportUnknownMemberType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:179:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:195:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:221:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:240:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:251:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:261:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:274:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:289:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:307:5 - warning: Type of "plain_entry" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:308:5 - warning: Type of "pattern_entry" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:345:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:347:13 - warning: Type of "id" is unknown (reportUnknownMemberType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:347:26 - warning: Type of "entry" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:364:5 - warning: Type of "entry" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:368:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:376:5 - warning: Type of "entry" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:386:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:394:5 - warning: Type of "entry" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:398:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:406:5 - warning: Type of "entries" is partially unknown
+    Type of "entries" is "list[Unknown]" (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:428:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:430:13 - warning: Type of "id" is unknown (reportUnknownMemberType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:430:26 - warning: Type of "entry" is unknown (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:436:5 - warning: Type of "hits" is partially unknown
+    Type of "hits" is "list[Unknown]" (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-word-list-ai-slop-check/tests/unit/slop-check/test_slop_check.py:448:5 - warning: Type of "result" is unknown (reportUnknownVariableType)
+9 errors, 75 warnings, 0 informations
+exit: 1

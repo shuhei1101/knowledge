@@ -9,6 +9,7 @@ scenarios:
         description: knowledge の worktree
       - name: 書き込む内容
         description: スキーマに合い、ID の重複・参照切れ・mermaid の誤りが無い規約の YAML
+        notes: '`tags` はタグの名前の配列（`["scope:dev"]`）、`main_tags` は主題のタグの名前（`["scope:dev"]`）で渡す'
     flow: |-
       sequenceDiagram
         participant E as エージェント
@@ -22,7 +23,8 @@ scenarios:
         M->>W: 文書を書き込む
         M-->>E: 書き込んだ文書
     expected:
-      - 作業ツリーの文書が渡した内容になる
+      - 作業ツリーの文書の `tags`・`main_tags` 以外の項目が渡した内容になる
+      - '作業ツリーの文書の `tags` が `- name:` の要素で書かれ、`main_tags` で渡したタグの要素に `main: true` が付く（`[{name: scope:dev, main: true}]`）'
       - 応答が `isError` でない
     test: test_normal
   - name: 異常シナリオ（検査のスクリプトが違反を返す）

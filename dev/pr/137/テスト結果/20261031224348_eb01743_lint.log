@@ -1,0 +1,30 @@
+$ uvx ruff@0.17.3 check scripts tests && uvx ruff@0.17.3 format --check scripts tests && uv run --no-project --python 3.14 --with pyright==1.1.414 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pyright
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+All checks passed!
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+24 files already formatted
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/e2e/単一ユースケース/test_エージェントがknowledgeの文書を書き込む.py
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/e2e/単一ユースケース/test_エージェントがknowledgeの文書を書き込む.py:70:12 - warning: Type of "load" is partially unknown
+    Type of "load" is "(stream: Unknown) -> Any" (reportUnknownMemberType)
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/e2e/単一ユースケース/test_利用者が画面でknowledgeの文書を読む.py
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/e2e/単一ユースケース/test_利用者が画面でknowledgeの文書を読む.py:28:35 - warning: Type of "load" is partially unknown
+    Type of "load" is "(stream: Unknown) -> Any" (reportUnknownMemberType)
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/e2e/conftest.py
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/e2e/conftest.py:109:35 - warning: Type of "load" is partially unknown
+    Type of "load" is "(stream: Unknown) -> Any" (reportUnknownMemberType)
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/unit/scripts/test_check_all.py
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/unit/scripts/test_check_all.py:226:28 - warning: Type of "iter_errors" is partially unknown
+    Type of "iter_errors" is "Overload[(instance: str | int | float | bool | Mapping[str, _JsonParameter] | Sequence[_JsonParameter] | None) -> Generator[Any, None, None], (instance: Unknown, _schema: bool | Mapping[str, Any] | None) -> Generator[Any, None, None]]" (reportUnknownMemberType)
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/unit/scripts/test_common.py
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/unit/scripts/test_common.py:33:12 - warning: Type of "lc" is unknown (reportUnknownMemberType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/unit/scripts/test_common.py:33:12 - warning: Type of "key" is unknown (reportUnknownMemberType)
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/unit/scripts/test_knowledge_markdown.py
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/unit/scripts/test_knowledge_markdown.py:195:5 - warning: Type of "doc" is partially unknown
+    Type of "doc" is "dict[str, str | list[Unknown]]" (reportUnknownVariableType)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-ci-pages-public-docs-deploy/tests/unit/scripts/test_knowledge_markdown.py:204:22 - warning: Argument type is partially unknown
+    Argument corresponds to parameter "doc" in function "convert"
+    Argument type is "dict[str, str | list[Unknown]]" (reportUnknownArgumentType)
+0 errors, 8 warnings, 0 informations
+exit=0

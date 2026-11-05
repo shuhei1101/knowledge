@@ -12,6 +12,7 @@ type KnowledgeClone = Callable[..., Path]
 type Serve = Callable[..., Any]
 type KnowledgeRow = Callable[..., Any]
 type RepresentativePages = Callable[[Path], dict[str, str]]
+type Git = Callable[..., str]
 
 # リポジトリの直下
 _ROOT = Path(__file__).resolve().parents[3]
@@ -20,7 +21,22 @@ _HEADER = re.compile(r"\A.*?^# ///$\n", re.MULTILINE | re.DOTALL)
 # 終了コード 1 で終わる変換のスクリプトの本体
 _FAILING_BODY = 'import sys\n\nprint("変換に失敗しました", file=sys.stderr)\nsys.exit(1)\n'
 # 変換を通さず本文を出す files.yaml の行のページ
-_SKILL_PAGE = "skills/files/skills/text-review/SKILL"
+_SKILL_PAGE = "skills/files/skills/text-review/SKILL.md"
+# 埋め込みのマーカーを持つ規約のページ
+_WRITING_STYLE_PAGE = "docs/rule/convention-writing-style"
+# 埋め込む対応表のファイル
+_WORD_LIST = Path("docs") / "word-list" / "word-list-ai-slop.yaml"
+# 埋め込んだ表の見出しの行
+_TABLE_HEADER = "| NG | OK |"
+# 対応表へ追加する行。既存の行と重ならない NG の単語にする
+_ADDED_ENTRY = (
+    "  - id: e2e-added\n"
+    "    ng: E2Eで追加した単語\n"
+    "    ok: [置き換え先]\n"
+    "    examples:\n"
+    "      hit: [E2Eで追加した単語を使う]\n"
+    "      pass: [置き換え先を使う]\n"
+)
 
 
 def _load(file: Path) -> dict[str, Any]:
@@ -31,10 +47,10 @@ def _load(file: Path) -> dict[str, Any]:
 def _document_pages(clone: Path, document: dict[str, Any]) -> list[str]:
     """文書の行が持つ全てのページの path を、path の順に返す。"""
     files = [file for pattern in document["paths"] for file in clone.glob(pattern)]
-    # files.yaml の行の文書は、行ごとのファイルがページになる
+    # files.yaml の行の文書は、行ごとのファイルがページになる（文書の ID は拡張子付きのパス）
     if "records" in document:
         paths = [
-            f"{file.relative_to(clone).with_suffix('')}/{(file.parent / str(record[document['body_file']])).relative_to(clone).with_suffix('')}"
+            f"{file.relative_to(clone).with_suffix('')}/{(file.parent / str(record[document['body_file']])).relative_to(clone)}"
             for file in files
             for record in _load(file)[document["records"]]
         ]
@@ -92,6 +108,29 @@ def test_normal(
     assert [_actual_items(tab["items"]) for tab in tabs] == [
         _expected_items(clone, tab["items"]) for tab in nav
     ]
+    writing_style = served.open_page("knowledge", _WRITING_STYLE_PAGE).body["markdown"]
+    assert _TABLE_HEADER in writing_style
+    assert "<!-- embed: word-list-ai-slop -->" not in writing_style
+    assert "埋め込めません" not in writing_style
+
+
+def test_normal_when_word_list_updated(
+    knowledge_clone: KnowledgeClone, serve: Serve, knowledge_row: KnowledgeRow, git: Git
+) -> None:
+    """対応表を更新した後に開き直すと、追加した行が規約の表に出る（正常シナリオ（対応表を更新した後に開き直す））。"""
+    # 準備
+    clone = knowledge_clone()
+    served = serve([knowledge_row(clone)])
+    before = served.open_page("knowledge", _WRITING_STYLE_PAGE).body["markdown"]
+    word_list = clone / _WORD_LIST
+    word_list.write_text(word_list.read_text(encoding="utf-8") + _ADDED_ENTRY, encoding="utf-8")
+    git(clone, "commit", "--quiet", "--all", "-m", "e2e で対応表へ 1 行追加する")
+    # 実行
+    after = served.open_page("knowledge", _WRITING_STYLE_PAGE).body["markdown"]
+    # 検証
+    assert _TABLE_HEADER in before
+    assert "E2Eで追加した単語" not in before
+    assert "| E2Eで追加した単語 | 置き換え先 |" in after
 
 
 def test_error_when_converter_fails(

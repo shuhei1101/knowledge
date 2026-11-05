@@ -1,0 +1,6 @@
+# フックは端末の python3（3.12 以上）で起動するため、3.12 の構文に合わせる
+extend = "../../ruff.toml"
+target-version = "py312"
+
+[lint.per-file-ignores]
+"hooks/post-tool-use/*.py" = ["T20"]   # フックは print で出力する
