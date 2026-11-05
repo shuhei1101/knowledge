@@ -3,6 +3,13 @@ id: html-css-layers
 kind: rule
 name: レイヤー構成
 description: エントリ CSS の冒頭で @layer の順序を固定する決まりを定め、単体 HTML の CSS をレイヤーに分けるときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - HTML
+    - CSS
+    - カスタムエレメント
 tags:
   - name: scope:html
   - name: tool:css

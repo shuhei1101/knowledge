@@ -7,10 +7,10 @@ constants:
     container: scripts/knowledge_markdown.py
     usecase: 文書の Markdown への変換
     summary: dev-docs の画面がメタデータとして出すキー
-    value: frozenset({"id", "kind", "tags", "status", "visibility", "rev", "last_reviewed", "aliases"})
+    value: frozenset({"id", "kind", "tags", "status", "visibility", "rev", "last_reviewed", "aliases", "inject_when"})
     refs:
       - IF-72-2#constraints[出さないキー]
-    reason: '`aliases` は dev-docs の検索の別名で、本文の読み手に役立たない'
+    reason: '`aliases` は dev-docs の検索の別名、`inject_when` は alias-inject の照合条件で、本文の読み手に役立たない'
   - name: LAYOUT_KEYS
     title: 構成が決まっているキー
     container: scripts/knowledge_markdown.py
@@ -210,6 +210,12 @@ functions:
         condition: '`overview`・`group` が `語の選び方` と `語の選び方 > 原則` の項目・`related` 1 行・`sources` 1 行を持つ rule の文書'
         mock: なし
         expected: '`# {name}`・`description`・`overview` の本文・`## 語の選び方`・`### 原則`・`## 関連`・`## 出典` の順で、`tags`・`rev` は出ない'
+      - name: test_convert_when_hidden_metadata
+        case: 正常
+        summary: 本文に出さないキー
+        condition: '`aliases`（文字列の配列）と `inject_when`（`or` の束）を持つ rule の文書'
+        mock: なし
+        expected: '`aliases`・`inject_when` の値と、それらの節の見出しが出ない'
       - name: test_convert_when_body_has_markers
         case: 正常
         summary: 本文を書き換えない

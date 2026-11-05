@@ -3,6 +3,16 @@ id: ui-input-wording
 kind: rule
 name: 入力と文言
 description: 入力・送信・エラー・通知の振る舞いと、画面に出す言葉（語・操作の語・状態名・空の表示）を定め、フォームや画面の文言を設計・実装するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 画面
+    - UI
+    - フロントエンド
+    - tsx
+    - HTML
+    - コンポーネント
 tags:
   - name: scope:ui
   - name: topic:エラー

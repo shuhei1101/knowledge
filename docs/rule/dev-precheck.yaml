@@ -3,6 +3,13 @@ id: dev-precheck
 kind: rule
 name: 事前確認
 description: 費用や時間のかかる処理の前に、この先の処理が成り立つかを確かめる決まりを定め、費用や時間のかかる処理を実装するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 費用
+    - 時間のかかる
+    - 成り立つか
 tags:
   - name: scope:dev
   - name: topic:コスト

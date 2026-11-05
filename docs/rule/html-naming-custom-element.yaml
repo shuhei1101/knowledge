@@ -3,6 +3,13 @@ id: html-naming-custom-element
 kind: rule
 name: カスタムエレメント命名
 description: カスタムエレメントの名前に app- 接頭辞を付ける決まりを定め、カスタムエレメントに名前を付けるときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - HTML
+    - CSS
+    - カスタムエレメント
 tags:
   - name: scope:html
   - name: topic:naming

@@ -3,6 +3,16 @@ id: react-data-mutation
 kind: rule
 name: ミューテーション
 description: useMutation を第一選択にする決まりと、楽観更新の許可リスト、成功と失敗の通知、命名を定め、サーバーのデータを書き換える操作を React に実装するときに読む。
+aliases:
+  - useMutationパターン
+inject_when:
+  field: text
+  op: contains
+  values:
+    - React
+    - tsx
+    - jsx
+    - Vite
 tags:
   - name: scope:react
   - name: topic:フロントエンド

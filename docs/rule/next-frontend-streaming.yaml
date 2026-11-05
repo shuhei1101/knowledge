@@ -3,6 +3,13 @@ id: next-frontend-streaming
 kind: rule
 name: Streaming / Suspense
 description: Suspense 境界と loading.tsx、View Transitions の使い方を定め、画面のストリーミング表示や遷移アニメーションを実装するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Next.js
+    - App Router
+    - next.config
 tags:
   - name: scope:next
   - name: topic:フロントエンド

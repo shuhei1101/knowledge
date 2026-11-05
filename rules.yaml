@@ -155,6 +155,16 @@ rules:
   - rule: docs/rule/dev-tag-term-registration.yaml
     paths:
       - "**/terms.yaml"
+  - rule: docs/rule/dev-doc-tag-description.yaml
+    paths:
+      - "**/terms.yaml"
+      - "**/docs/**/*.yaml"
+    tools:
+      - "mcp__*__write_docs"
+      - "mcp__*__write_design_doc*"
+      - "mcp__*_mindstella__add"
+      - "mcp__*_mindstella__update"
+      - "mcp__*_mindstella__batch"
   - rule: docs/rule/dev-filter-condition.yaml
     paths:
       - "**/*{filter,condition}*.{py,ts,tsx}"

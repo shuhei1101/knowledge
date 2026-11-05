@@ -3,6 +3,13 @@ id: next-frontend-asset
 kind: rule
 name: Assets (Image / Font / Static)
 description: next/image・next/font・SVG・CDN の使い方の決まりを定め、画像・フォント・SVG を画面に組み込むときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Next.js
+    - App Router
+    - next.config
 tags:
   - name: scope:next
   - name: topic:フロントエンド

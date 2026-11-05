@@ -3,6 +3,17 @@ id: python-scripts-python-script
 kind: rule
 name: 単一ファイルスクリプト
 description: pyproject.toml を作らない単一ファイルの Python スクリプトの配置と必須要素を定め、簡易な Python スクリプトを作るときに読む。
+aliases:
+  - scripts/Pythonスクリプト
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: topic:スクリプト

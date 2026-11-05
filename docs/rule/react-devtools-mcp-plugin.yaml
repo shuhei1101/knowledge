@@ -3,6 +3,14 @@ id: react-devtools-mcp-plugin
 kind: rule
 name: 最初に入れる MCP とプラグイン
 description: React のフロントエンドの開発で、最初に入れる MCP とプラグインを定め、React の開発環境を立ち上げるときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - React
+    - tsx
+    - jsx
+    - Vite
 tags:
   - name: scope:react
   - name: topic:devtools

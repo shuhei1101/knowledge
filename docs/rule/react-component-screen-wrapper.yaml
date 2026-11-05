@@ -3,6 +3,16 @@ id: react-component-screen-wrapper
 kind: rule
 name: "`<ScreenWrapper>` — Screen の必須外殻"
 description: 全 Screen の最外殻である ScreenWrapper の挙動と使い方を定め、新しい Screen を実装するときに読む。
+aliases:
+  - スクリーンラッパー
+inject_when:
+  field: text
+  op: contains
+  values:
+    - React
+    - tsx
+    - jsx
+    - Vite
 tags:
   - name: scope:react
   - name: topic:フロントエンド

@@ -275,6 +275,30 @@ def test_convert_when_body_has_markers() -> None:
     assert body in result
 
 
+def test_convert_when_hidden_metadata() -> None:
+    """本文に出さないキー（正常系）。"""
+    # 準備
+    doc = {
+        "id": "a",
+        "kind": "rule",
+        "name": "名前",
+        "description": "説明",
+        "aliases": ["別名の値"],
+        "inject_when": {
+            "or": [
+                {"field": "text", "op": "contains", "values": ["照合の値"]},
+            ]
+        },
+        "items": [],
+    }
+    # 実行
+    result = convert(doc, {"title": "規約", "properties": {}}, {})
+    # 検証
+    assert _HEADING.findall(result) == ["# 名前"]
+    assert "別名の値" not in result
+    assert "照合の値" not in result
+
+
 def test_convert_when_extra_keys() -> None:
     """種類に固有のキーを節にする（正常系）。"""
     # 準備

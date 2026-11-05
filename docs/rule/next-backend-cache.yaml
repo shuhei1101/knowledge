@@ -3,6 +3,16 @@ id: next-backend-cache
 kind: rule
 name: Caching（Next.js 16）
 description: Next.js 16 の cacheComponents・use cache・cacheLife・cacheTag の使い方と、invalidate API の使い分けを定め、データ取得のキャッシュを設定・無効化するときに読む。
+aliases:
+  - キャッシュ
+  - backend/キャッシュ
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Next.js
+    - App Router
+    - next.config
 tags:
   - name: scope:next
   - name: topic:バックエンド

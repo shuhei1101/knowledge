@@ -3,6 +3,15 @@ id: python-architecture-composition-root
 kind: rule
 name: composition root — 関数の配線
 description: main.py で関数の依存を配線する composition root の基本パターンと、FastAPI・CLI・テストでの扱いを定め、依存の配線を実装する・テストで差し替えるときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: topic:architecture

@@ -3,6 +3,15 @@ id: python-performance-cheatsheet
 kind: rule
 name: パフォーマンスチートシート
 description: 最適化の前に計測する原則と、計測ツールの使い分け、ホットパスのチェックリストを定め、Python のコードの性能を改善するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: topic:performance

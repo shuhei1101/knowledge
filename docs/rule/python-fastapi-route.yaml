@@ -3,6 +3,17 @@ id: python-fastapi-route
 kind: rule
 name: ルーター実装パターン
 description: ルーターを薄く保つ責務、配置、記載方法、エラー処理の決まりを定め、FastAPI のルーターを実装するときに読む。
+aliases:
+  - fastapi/ルート定義
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: tool:fastapi

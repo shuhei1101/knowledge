@@ -3,6 +3,15 @@ id: dev-yaml
 kind: rule
 name: YAML
 description: YAML の正本の持ち方、スキーマの定義、検査、書き込み、MCP からの書き込みと読み取り、設定ファイルの決まりを定め、YAML の文書やスキーマ、設定ファイルを扱うときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - スキーマ
+    - schema
+    - 正本
+    - 設定ファイル
+    - yaml-language-server
 tags:
   - name: scope:dev
   - name: topic:バックエンド

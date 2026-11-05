@@ -3,6 +3,13 @@ id: html-components-prefetch-catalog
 kind: rule
 name: 共通層の先読み
 description: 画面を実装する前に共通層を先読みして再利用する決まりを定め、単体 HTML の画面を実装し始めるときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - HTML
+    - CSS
+    - カスタムエレメント
 tags:
   - name: scope:html
   - name: topic:部品

@@ -225,7 +225,7 @@ constraints:
   - item: 埋め込みのマーカー
     constraint: '項目の本文のうちコードブロックの外で、前後の空白を除いて `<!-- embed: {文書の ID} -->` だけの行を、`kind: word-list` で `id` が一致する文書の `entries` の NG・OK の表（対応表の文書の `entries` の節と同じ書式）に置き換える。`{文書の ID}` に `/`・`#` を含むマーカーは dev-docs のパスの書き方として書き換えずに残す。ID の対応表が無い場合は `> [!WARNING]` の注意書きに置き換え、終了コードは 0 のまま'
   - item: 出さないキー
-    constraint: '`id`・`kind`・`tags`・`status`・`visibility`・`rev`・`last_reviewed`・`aliases` は本文に出さない（dev-docs の画面がメタデータとして出す）'
+    constraint: '`id`・`kind`・`tags`・`status`・`visibility`・`rev`・`last_reviewed`・`aliases` は本文に出さない（dev-docs の画面がメタデータとして出す）。alias-inject の照合条件の `inject_when` も本文に出さない'
   - item: 種類に固有のキー
     constraint: '共通のメタデータ以外のキー（スキルの `arguments` など）は `## {スキーマの title}` の節にし、文字列は段落、文字列の配列は箇条書き、オブジェクトの配列は `<!-- table: data -->` の表で出す'
 test_file: tests/integration/scripts/test_knowledge_markdown.py

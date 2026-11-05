@@ -3,6 +3,14 @@ id: testing-core-fixture
 kind: rule
 name: Test Fixtures（Data Factory）
 description: テストの Data Factory である fixture の構成・命名・cleanup の戦略・E2E 専用の seed API を定め、TypeScript のテストデータを準備する fixture を作るときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Vitest
+    - Playwright
+    - TypeScript
+    - '.ts'
 tags:
   - name: scope:testing
   - name: topic:testing

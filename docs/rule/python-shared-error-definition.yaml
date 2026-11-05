@@ -3,6 +3,17 @@ id: python-shared-error-definition
 kind: rule
 name: 例外階層
 description: ドメイン例外を AppError 継承の単一階層にする設計原則と、例外を処理する場所を定め、Python に例外クラスを追加する・例外処理を実装するときに読む。
+aliases:
+  - shared/エラー定義
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: topic:cli
