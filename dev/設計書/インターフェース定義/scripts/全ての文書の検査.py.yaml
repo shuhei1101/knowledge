@@ -10,7 +10,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml`・`schemas/rule.schema.yaml`・lint の違反と警告も無い `docs/rule/` の文書 2 件（`body` の文は「。」で終える）を持つ一時フォルダ'
+        description: '`dev-docs.yaml`・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・lint の違反と警告も無い `docs/rule/` の文書 2 件（`body` の文は「。」で終える）を持つ一時フォルダ'
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
@@ -90,7 +90,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: スキーマに合わない文書（`description` が無い）と、項目の ID が重複した文書を 1 つずつ持つ一時フォルダ
+        description: スキーマに合わない文書（`description` が無い）と、項目の ID が重複した文書を 1 つずつ持ち、`schemas/meta.schema.yaml` を持つ一時フォルダ
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
@@ -112,7 +112,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`docs/word-list/word-list-ai-slop.yaml` と、その 1 行を消したコピー `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を持つ一時フォルダ'
+        description: '`docs/word-list/word-list-ai-slop.yaml` と、その 1 行を消したコピー `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` と、`schemas/meta.schema.yaml` を持つ一時フォルダ'
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
@@ -136,7 +136,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`items[].body` の 3 行目が太字だけの段落の文書と、既存のキーの引用符の無い値に ` #bar` を付けた文書（`description: B の文書 #bar`）を 1 つずつ持つ一時フォルダ'
+        description: '`items[].body` の 3 行目が太字だけの段落の文書と、既存のキーの引用符の無い値に ` #bar` を付けた文書（`description: B の文書 #bar`）を 1 つずつ持ち、`schemas/meta.schema.yaml` を持つ一時フォルダ'
         notes: 太字だけの段落は markdownlint の `MD036`、`#bar` は yamllint の `comments` に当たる
     flow: |-
       sequenceDiagram
@@ -163,7 +163,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`items[].body` に `A です。B です。` の 1 行を持つ文書だけの一時フォルダ'
+        description: '`items[].body` に `A です。B です。` の 1 行を持つ文書と `schemas/meta.schema.yaml` だけを持つ一時フォルダ'
         notes: textlint の `one-sentence-per-line` は警告にしたルール
     flow: |-
       sequenceDiagram
