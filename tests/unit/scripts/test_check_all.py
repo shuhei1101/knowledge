@@ -160,9 +160,7 @@ def test_main_when_lint_findings(
     maid = fake_maid_factory()
     monkeypatch.setattr(check_all, "find_maid", lambda: maid)
     monkeypatch.setattr(check_all, "find_lint_clis", lambda _lint_dir: _CLIS)
-    monkeypatch.setattr(
-        check_all, "check_lints", lambda *_args: [_ERROR_FINDING, _WARNING_FINDING]
-    )
+    monkeypatch.setattr(check_all, "check_lints", lambda *_args: [_ERROR_FINDING, _WARNING_FINDING])
     # 実行
     code = check_all.main([])
     # 検証
