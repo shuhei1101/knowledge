@@ -44,6 +44,8 @@ POLL_INTERVAL_SEC = 0.2
 HTTP_TIMEOUT_SEC = 60
 # 子プロセスを待つ秒数
 PROCESS_WAIT_SEC = 120
+# 全ての文書の検査を待つ秒数（CI のジョブの timeout-minutes の 5 分）
+CHECK_ALL_WAIT_SEC = 300
 MCP_HEADERS = {
     "Accept": "application/json, text/event-stream",
     "Content-Type": "application/json",
@@ -383,8 +385,19 @@ def _register(served: Served, path: Path, row: SourceRow) -> Registration:
     return Registration(check, reload, status)
 
 
+# CI のジョブの、lint の CLI を入れるコマンド
+LINT_INSTALL = ("npm", "ci", "--prefix", "scripts/lint", "--no-audit", "--no-fund")
+
+
 def _run_check_all(folder: Path, *, without_maid: bool = False) -> subprocess.CompletedProcess[str]:
-    """CI のジョブと同じコマンドで、全ての文書の検査を子プロセスとして起動する。"""
+    """CI のジョブと同じく lint の CLI を入れてから、同じコマンドで全ての文書の検査を子プロセスとして起動する。"""
+    subprocess.run(  # noqa: S603 - 引数は配列で渡し、シェルを通さない
+        LINT_INSTALL,
+        cwd=folder,
+        capture_output=True,
+        check=True,
+        timeout=PROCESS_WAIT_SEC,
+    )
     path = path_without_maid() if without_maid else os.environ.get("PATH", "")
     return subprocess.run(
         ["uv", "run", "--frozen", "--script", "scripts/check_all.py"],  # noqa: S607 - uv は PATH から引く
@@ -394,7 +407,7 @@ def _run_check_all(folder: Path, *, without_maid: bool = False) -> subprocess.Co
         text=True,
         encoding="utf-8",
         check=False,
-        timeout=PROCESS_WAIT_SEC,
+        timeout=CHECK_ALL_WAIT_SEC,
     )
 
 
