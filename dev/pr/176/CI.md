@@ -84,6 +84,13 @@
 | --- | --- | --- | --- | --- |
 | [tests/integration/scripts/test_check_all.py](https://github.com/shuhei1101/knowledge/blob/develop/tests/integration/scripts/test_check_all.py) | 全実行 | 変更 | ✅ | 7 テスト pass。`test_normal_when_lint_violations`・`test_normal_when_only_warnings` を追加し、`test_error_when_maid_missing` を `test_error_when_check_cli_missing` に、`test_normal`・`test_normal_when_violations` の文書と最後の行の期待値を IF-72-3 のとおりに修正。lint の CLI の起動で 1 件 30〜50 秒かかるため、子プロセスを待つ上限（`conftest.py` の `_WAIT_SEC`）を 120 秒にした<br>`テスト結果/20261105113412_f45d8af_結合テスト.log` |
 | `tests/integration/` の他のファイル | 全実行 | 実行のみ | ❌ | 31 件中 30 件 pass。`test_knowledge_markdown.py` の `test_normal_when_embed_marker` は develop でも失敗する既存の不具合で、この PR の変更と関係しない（要件.md の `## スコープ外`） |
+
+### E2E
+
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| `tests/e2e/単一ユースケース/test_開発者が文書の違反を検査する.py` | `test_error_when_check_cli_missing` | 変更 | ✅ | レビューの指摘で、標準エラー全体の比較を、CLI の欠けの行だけの比較に修正した（uv が依存を入れたときの `Installed … packages` の行がキャッシュの状態で出るため）。全件の実行は tester が担う |
+
 （ruff の check・format と pyright で 0 errors）。
 実装の中で、`.yamllint.yaml` に `truthy` の `check-keys: false` を追加した（rule-inject の索引・`dev-docs.yaml` の `on` のキーを違反にしない）。
 単体テストの設定のコピーも同じ内容に修正した（テストの期待値は変えていない）。
