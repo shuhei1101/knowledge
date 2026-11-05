@@ -17,8 +17,8 @@ tags:
   - name: action:合成
 status: current
 visibility: internal
-rev: 5
-last_reviewed: '2026-10-30'
+rev: 6
+last_reviewed: '2026-11-06'
 items:
   - id: recommended-decorator-01
     group: 推奨デコレータ
@@ -49,8 +49,8 @@ items:
       | --------------------------------------- | --------------------------------------------------------------- |
       | `@catch_and_log(*exc_types, level=...)` | 指定例外をログに出して再送出する                                |
       | `@catch_and_map(SrcError, to=DstError)` | 例外型を変換（vendor 例外 → ドメイン例外）。`raise from` で連鎖 |
-      | `@stamina.retry(on=<フック関数>, attempts=4)` | 指数バックオフでリトライ（引数は [llm/例外とリトライ](id:python-llm-exception-retry)）      |
-      | `@with_timeout(seconds=60)`             | `asyncio.timeout` ラッパー。超過で `IntegrationTimeoutError`    |
+      | `@stamina.retry(on=<フック関数>, attempts=<試行回数>)` | 指数バックオフでリトライ（引数は [llm/例外とリトライ](id:python-llm-exception-retry)）      |
+      | `@with_timeout(seconds=<全体の待ち>)` | `asyncio.timeout` ラッパー。超過で `IntegrationTimeoutError`（値は [llm/例外とリトライ](id:python-llm-exception-retry#timeout-01)） |
       | `@measure_time(metric="...")`           | 実行時間メトリクス                                              |
   - id: composition-01
     group: 合成
@@ -59,8 +59,8 @@ items:
       外側から順に適用、読み方は下から上:
 
       ```python
-      @with_timeout(seconds=60)                                   # 3. 全体 60 秒で打ち切り
-      @stamina.retry(on=retry_on_llm_error, attempts=4)  # 2. 3 回までリトライ（フック関数は llm/例外とリトライ）
+      @with_timeout(seconds=<全体の待ち>)                         # 3. 全体の待ちで打ち切り
+      @stamina.retry(on=retry_on_llm_error, attempts=<試行回数>)  # 2. 試行回数までリトライ（引数とフック関数は llm/例外とリトライ）
       @catch_and_map(openai.APIStatusError, to=LlmServerError)        # 1. vendor 例外を変換
       async def chat(req: ChatRequest) -> ChatResponse: ...
       ```

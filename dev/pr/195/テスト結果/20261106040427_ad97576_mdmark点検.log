@@ -1,0 +1,29 @@
+$ uv run --with pyyaml python /tmp/mdcheck195.py  # 対象のキーの全ての値を mdmark check --text - に通す（mdmark は origin/develop 95957699 をビルドした dist/cli.js）
+# import sys, glob, subprocess, yaml, collections, json
+# cli = "/tmp/mdmark-src-195/dist/cli.js"
+# targets = []
+# for kind in ["rule","template","flowchart","decision-table","guide","word-list"]:
+#     for f in sorted(glob.glob(f"docs/{kind}/*.yaml")):
+#         d = yaml.safe_load(open(f, encoding="utf-8"))
+#         for i, it in enumerate(d.get("items") or []):
+#             targets.append((f, f"items[{i}].body ({it.get('id')})", it["body"]))
+# d = yaml.safe_load(open("docs/changelog.yaml", encoding="utf-8"))
+# for i, it in enumerate(d.get("items") or []):
+#     targets.append(("docs/changelog.yaml", f"items[{i}].body ({it.get('id')})", it["body"]))
+# for f in sorted(glob.glob("docs/skill/*.yaml")):
+#     d = yaml.safe_load(open(f, encoding="utf-8"))
+#     for k in ["flow","sequence"]:
+#         if k in d: targets.append((f, k, d[k]))
+# kinds = collections.Counter(); rows = []
+# for f, p, text in targets:
+#     r = subprocess.run(["node", cli, "check", "--text", "-"], input=text, capture_output=True, text=True)
+#     for line in r.stdout.splitlines():
+#         if line.startswith("-:"):
+#             k = line.split(": ")[1]; kinds[k] += 1; rows.append(f"{f} {p} {line}")
+#     if not r.stdout.strip().splitlines() or not r.stdout.strip().splitlines()[-1].startswith("ずれ"):
+#         rows.append(f"{f} {p} NO-SUMMARY exit={r.returncode} {r.stderr[:200]}")
+# print(f"values={len(targets)}"); print(dict(kinds))
+# print("\n".join(rows))
+values=2191
+{'unknown_mark': 1}
+docs/rule/convention-writing-style.yaml items[7].body (word-choice-table-02) -:1: unknown_mark: 印 `embed` は知らない印で、描くときに取り除かれます。名前を直すか、拡張・`libraries`・`check.ignore` に足してください。
