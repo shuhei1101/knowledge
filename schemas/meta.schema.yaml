@@ -3,8 +3,8 @@ $id: urn:knowledge:schemas:meta
 $dynamicAnchor: meta
 title: スキーマの書き方
 description: |-
-  YAML のスキーマが各項目に持つキーの書き方。全ての文書の検査がスキーマをこのメタスキーマで検査する。
-  JSON Schema 2020-12 のメタスキーマに `x-` のキーの形を足す。
+  YAML のスキーマのファイルの書き方と、各項目に持つキーの書き方。全ての文書の検査がスキーマをこのメタスキーマで検査する。
+  JSON Schema 2020-12 のメタスキーマに、`$schema` を 2020-12 に限る制約と `x-` のキーの形を足す。
 x-rules:
   - ファイル名は `{種類}.schema.yaml`（例 `プロンプト.schema.yaml`）にする。
   - 各項目に `title`・`description` を付け、スキーマを読めば各項目に何を書くかが分かるようにする。
