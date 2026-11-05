@@ -77,6 +77,12 @@
 | [tests/unit/scripts/test_check_all.py](https://github.com/shuhei1101/knowledge/blob/develop/tests/unit/scripts/test_check_all.py) | 全実行 | 変更 | ✅ | `test_main_when_maid_missing` を `test_main_when_check_cli_missing` にし、`test_main_when_lint_findings`・`test_main_when_only_warnings`・`test_check_lints` を追加 |
 | `tests/unit/` の他のファイル | 全実行 | 実行のみ | ✅ | 単体テストは全体で 162 件（Python 3.14）と slop-check の 31 件（Python 3.12）が pass |
 
-lint は `テスト結果/20261105110351_e4ce8f1_lint.log`（ruff の check・format と pyright で 0 errors）。
+### 結合
+
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| [tests/integration/scripts/test_check_all.py](https://github.com/shuhei1101/knowledge/blob/develop/tests/integration/scripts/test_check_all.py) | 全実行 | 変更 | ✅ | 7 テスト pass。`test_normal_when_lint_violations`・`test_normal_when_only_warnings` を追加し、`test_error_when_maid_missing` を `test_error_when_check_cli_missing` に、`test_normal`・`test_normal_when_violations` の文書と最後の行の期待値を IF-72-3 のとおりに修正。lint の CLI の起動で 1 件 30〜50 秒かかるため、子プロセスを待つ上限（`conftest.py` の `_WAIT_SEC`）を 120 秒にした<br>`テスト結果/20261105113412_f45d8af_結合テスト.log` |
+| `tests/integration/` の他のファイル | 全実行 | 実行のみ | ❌ | 31 件中 30 件 pass。`test_knowledge_markdown.py` の `test_normal_when_embed_marker` は develop でも失敗する既存の不具合で、この PR の変更と関係しない（要件.md の `## スコープ外`） |
+（ruff の check・format と pyright で 0 errors）。
 実装の中で、`.yamllint.yaml` に `truthy` の `check-keys: false` を追加した（rule-inject の索引・`dev-docs.yaml` の `on` のキーを違反にしない）。
 単体テストの設定のコピーも同じ内容に修正した（テストの期待値は変えていない）。
