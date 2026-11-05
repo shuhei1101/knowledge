@@ -4,7 +4,6 @@ description: 物理ファイル 1 つ分の構成要素（データモデル / �
 x-rules:
   - 1 ファイル = 物理ファイル 1 つにする。
   - 全ての要素の `container` は同じ物理ファイルを指す。
-  - '`test_files` はその物理ファイルの単体テストのファイル 1 つだけを持つ。'
   - 置き場所は `モジュール構成/{container}.yaml` にする。
   - 分類の構成図・ディレクトリ構成と分類全体の決まりは、分類ごとの束ねる設計書に置く。
   - 束ねる設計書は `モジュール構成/分類/` の下に置き、要素を持たず `diagrams`・`directory`・`notes` だけを持つ。
@@ -47,6 +46,7 @@ properties:
     description: |-
       属する物理ファイルごとの単体テストのファイル（1 物理ファイル = 1 テストファイル）。
       テストを作ったときに記入する（設計の時点では空でよい）。
+    maxItems: 1
     items:
       type: string
       pattern: ^tests/.+
@@ -70,7 +70,6 @@ properties:
     description: 矢印で繋がる塊 1 つ = 1 枚の図。
     x-rules:
       - 1 枚のノードが 15 を超えるときは切り口で分ける。
-      - 載せる要素が無いときは持たない。
     x-heading: 構成図
     x-shape: sections
     x-key: name
@@ -255,8 +254,6 @@ properties:
                 type: string
                 title: メンバー名
                 description: コード上の識別子。
-                x-rules:
-                  - '`Literal` のように無いときは書かない。'
               title:
                 type: string
                 title: 論理名
@@ -1089,8 +1086,6 @@ $defs:
         type: array
         title: 例外
         description: 送出する例外。
-        x-rules:
-          - 送出しない関数は持たない。
         x-heading: 例外
         x-shape: table
         x-key: name
