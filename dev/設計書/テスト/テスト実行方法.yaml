@@ -53,10 +53,10 @@ layers:
   - name: 非機能要件テスト
     run_all: 未確定
   - name: E2E テスト
-    description: pytest で `tests/e2e/` を実行する。knowledge の HEAD を一時フォルダへクローンして develop を踏ませ、端末の dev-docs をテストごとに子プロセスで起動して、管理の MCP・文書の MCP・画面の API を HTTP で呼んで確かめる。文書の違反の検査は、CI のジョブと同じ `uv run --frozen --script scripts/check_all.py` をクローンで子プロセスとして起動する。
+    description: pytest で `tests/e2e/` を実行する。knowledge の HEAD を一時フォルダへクローンして develop を踏ませ、端末の dev-docs をテストごとに子プロセスで起動して、管理の MCP・文書の MCP・画面の API を HTTP で呼んで確かめる。文書の違反の検査は、CI のジョブと同じく、クローンで `npm ci --prefix scripts/lint` で lint の CLI を入れてから `uv run --frozen --script scripts/check_all.py` を子プロセスとして起動する。
     prerequisites:
       - '`/dev-docs:global-setup` を終えた端末。起動する dev-docs は、端末の設定（`~/.config/dev-docs/settings.yaml`）の `clone` を読み、その `.venv` の Python で起動する（環境変数 `KNOWLEDGE_E2E_DEV_DOCS_CLONE` を渡せばそちらを使う）。端末の設定は読むだけで書き換えず、テストは一時フォルダの設定（`DEV_DOCS_CONFIG`）と空いているポート（`DEV_DOCS_PORT`）で起動する'
-      - uv と Python 3.14・`git` が使え、開発コマンドの環境構築（クローン直後）を流してあり、maid が PATH にある
+      - uv と Python 3.14・`git`・npm が使え、開発コマンドの環境構築（クローン直後）を流してあり、maid が PATH にある
       - リポジトリの直下で実行する。テストは HEAD の commit をクローンするため、確かめる変更は commit しておく
       - 誤実行を防ぐため `--run-e2e` を必須にする（無いと全件 skip する）
     run_all: |-
