@@ -1,0 +1,89 @@
+id: dev-resource-values
+kind: rule
+name: 資源の値の決め方
+description: タイムアウト・リトライ回数・同時実行数・上限などの資源の値を導出の元の値から導く方法を定め、タイムアウト・リトライ・上限の値を記載するときに読む。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-05'
+sources:
+  - id: A
+    title: 'Anthropic: Token counting'
+    url: https://platform.claude.com/docs/en/build-with-claude/token-counting
+  - id: B
+    title: "Amazon Builders' Library: Timeouts, retries, and backoff with jitter"
+    url: https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter
+  - id: C
+    title: 'AWS Well-Architected REL05-BP05: Set client timeouts'
+    url: https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/rel_mitigate_interaction_failure_client_timeouts.html
+  - id: D
+    title: 'Zalando Engineering: All you need to know about timeouts'
+    url: https://engineering.zalando.com/posts/2023/07/all-you-need-to-know-about-timeouts.html
+  - id: E
+    title: 'Google SRE Book: Addressing Cascading Failures'
+    url: https://sre.google/sre-book/addressing-cascading-failures/
+  - id: F
+    title: 'gRPC: Deadlines'
+    url: https://grpc.io/docs/guides/deadlines/
+  - id: G
+    title: 'Azure Architecture Center: Transient fault handling'
+    url: https://learn.microsoft.com/en-us/azure/architecture/best-practices/transient-faults
+  - id: H
+    title: Netflix/concurrency-limits
+    url: https://github.com/Netflix/concurrency-limits
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      タイムアウト・リトライ回数・同時実行数・上限などの資源の値を導出の元の値から導く。
+      出典の略号はメタデータの `sources` の `id`。
+  - id: derivation-01
+    group: 導き方
+    name: 値の型ごとの導き方
+    body: |-
+      <!-- table: data -->
+
+      | 値の型 | 導き方 | 出典 |
+      | --- | --- | --- |
+      | 外部の上限がある量（トークン・件数・サイズ） | 外部の上限 − 固定の消費分（システムプロンプト・出力枠 等）− 安全率。送る前に手元で検査して弾く | A |
+      | 利用者・上流が応答を待つタイムアウト | 下流の実測レイテンシの p99.9（許せる誤タイムアウト率 0.1%）+ 余裕。分布が狭い（p99.9 と p50 が近い）ときも余裕を足す。実測が 1,000 回に満たなければ公開仕様の値を使い、測る作業を残す | B / C / D |
+      | 自分の処理の完了を待つだけのタイムアウト | ハングの検知だけが役目。実測の 10 倍か外側の作業の上限。進み具合の出力があれば、無出力の時間で止まったことを見る | - |
+      | 待つ相手がいない常駐の処理の待ち | タイムアウトを置かない | - |
+      | 入れ子の待ち | 外側 ≥ 内側の待ちの上限の合計 + 余裕。内側は外側の残り時間を超えない | E / F / G |
+      | リトライ | 1 層だけで行う。回数の上限を持ち、指数バックオフ + ジッターにする。`Retry-After` があれば従う。冪等でない操作は再試行しない。各回のタイムアウト + 間隔 × 回数が外側の待ちに収まるようにする | B / E / G |
+      | 同時実行数・周期 | 外部のレート上限 ÷ 同時に動く数 × 安全率、またはスループット × レイテンシ | H |
+      | 既定値 | ライブラリ・SDK の既定のタイムアウトに頼らず、明示する | C |
+
+      <!-- /table -->
+  - id: derivation-02
+    group: 導き方
+    name: 待ちの種類の判定
+    body: タイムアウトの待ちの種類は、判定フローチャート [タイムアウトの決め方](id:flowchart-timeout) で決める。
+  - id: derivation-03
+    group: 導き方
+    name: 回復の待ち方
+    body: 回復を待つのは 1 回のタイムアウトを延ばすことではなく、リトライ（バックオフ）とサーキットブレーカーで行う（B / G）。
+  - id: derivation-04
+    group: 導き方
+    name: 導出の元の値の記載
+    body: 値を書くときは、導出の元の値（外部の上限・実測・内側の待ち）と導き方を値と並べて書く。
+  - id: default-values-01
+    group: 既定値
+    name: 余裕と安全率の既定値
+    body: |-
+      | 項目 | 値 |
+      | --- | --- |
+      | 余裕（入れ子の待ち） | 内側の待ち以外の処理（記録・判定 等）の実測 p99.9。実測が無いときは内側の待ちの合計の 50% を仮に置き、測る作業を残す |
+      | 余裕（利用者・上流が応答を待つタイムアウト） | 下流の実測レイテンシの p99.9 の 50% |
+      | 安全率 | 20% |
+tags:
+  - name: scope:dev
+  - name: topic:タイムアウト
+    main: true
+  - name: topic:リトライ
+  - name: topic:上限
+  - name: topic:待ち時間
+  - name: topic:レート制限
+  - name: topic:数値
+  - name: topic:api
+  - name: action:計測

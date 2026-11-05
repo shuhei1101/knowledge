@@ -1,0 +1,88 @@
+id: flowchart-timeout
+kind: flowchart
+name: タイムアウトの決め方 判定フローチャート
+description: 下流・外部・自分の処理を待つ箇所に、タイムアウトを置くかと、実測・公開仕様・実測の 10 倍・無出力の時間のどれで値を決めるかを判定し、タイムアウトの値を決めるときに読む。
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      下流・外部・自分の処理を待つ箇所に、タイムアウトを置くかと、実測・公開仕様・実測の 10 倍・無出力の時間のどれで値を決めるかを判定し、タイムアウトの値を決めるときに読む。
+
+      値の導き方と既定値は規約 [資源の値の決め方](id:dev-resource-values) に従う。
+  - id: timeout-flow-01
+    group: タイムアウトの決め方 判定フローチャート
+    name: 判定フロー
+    body: |-
+      <!-- flow -->
+
+      ```json
+      {
+        "title": "タイムアウトの決め方",
+        "scope": "下流・外部・自分の処理を待つ箇所にタイムアウトを置くとき",
+        "updated": "2026-11-05",
+        "width": 1378,
+        "height": 912,
+        "nodes": [
+          {"id": "start", "kind": "start", "x": 414, "y": 24, "w": 120, "h": 120, "name": "待つ箇所がある"},
+          {"id": "q1", "kind": "question", "x": 334, "y": 200, "w": 280, "h": 120, "name": "待つ相手がいるか ※1"},
+          {"id": "r1", "kind": "result", "x": 24, "y": 232, "w": 240, "h": 56, "name": "タイムアウトを置かない"},
+          {"id": "q2", "kind": "question", "x": 334, "y": 376, "w": 280, "h": 164, "name": "利用者・上流が応答を待つか ※2"},
+          {"id": "q3", "kind": "question", "x": 764, "y": 376, "w": 280, "h": 164, "name": "実測が 1,000 回以上あるか"},
+          {"id": "r2", "kind": "result", "x": 784, "y": 596, "w": 240, "h": 72, "name": "実測の p99.9 + 50% ※3"},
+          {"id": "r3", "kind": "result", "x": 1114, "y": 422, "w": 240, "h": 72, "name": "公開仕様の値。計測の作業を残す"},
+          {"id": "q4", "kind": "question", "x": 334, "y": 596, "w": 280, "h": 164, "name": "進み具合の出力があるか ※4"},
+          {"id": "r4", "kind": "result", "x": 24, "y": 642, "w": 240, "h": 72, "name": "無出力の時間で止まったことを見る ※5"},
+          {"id": "r5", "kind": "result", "x": 354, "y": 816, "w": 240, "h": 72, "name": "実測の 10 倍か外側の作業の上限 ※6"}
+        ],
+        "wires": [
+          {"id": "j-start-q1", "from": "start", "to": "q1", "line": "flow", "points": [[474, 144], [474, 200]]},
+          {"id": "j-q1-r1", "from": "q1", "to": "r1", "line": "flow", "points": [[334, 260], [264, 260]], "label": "NO", "labelAt": [299, 260]},
+          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[474, 320], [474, 376]], "label": "YES", "labelAt": [474, 348]},
+          {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[614, 458], [764, 458]], "label": "YES", "labelAt": [689, 458]},
+          {"id": "j-q3-r2", "from": "q3", "to": "r2", "line": "flow", "points": [[904, 540], [904, 596]], "label": "YES", "labelAt": [904, 568]},
+          {"id": "j-q3-r3", "from": "q3", "to": "r3", "line": "flow", "points": [[1044, 458], [1114, 458]], "label": "NO", "labelAt": [1079, 458]},
+          {"id": "j-q2-q4", "from": "q2", "to": "q4", "line": "flow", "points": [[474, 540], [474, 596]], "label": "NO", "labelAt": [474, 568]},
+          {"id": "j-q4-r4", "from": "q4", "to": "r4", "line": "flow", "points": [[334, 678], [264, 678]], "label": "YES", "labelAt": [299, 678]},
+          {"id": "j-q4-r5", "from": "q4", "to": "r5", "line": "flow", "points": [[474, 760], [474, 816]], "label": "NO", "labelAt": [474, 788]}
+        ]
+      }
+      ```
+
+      <!-- /flow -->
+  - id: timeout-flow-02
+    group: タイムアウトの決め方 判定フローチャート
+    name: ※1 待つ相手
+    body: '- **※1 待つ相手**: 応答や完了を待つ処理・接続。常駐のワーカーの待ち受け・キューの受信のように、来るまで待つのが仕事の箇所は相手がいない'
+  - id: timeout-flow-03
+    group: タイムアウトの決め方 判定フローチャート
+    name: ※2 利用者・上流が応答を待つ
+    body: '- **※2 利用者・上流が応答を待つ**: 画面からの API・外部 API の呼び出し・MCP のツールの応答など、待たせすぎるとリトライやエラー表示に切り替えるべき箇所'
+  - id: timeout-flow-04
+    group: タイムアウトの決め方 判定フローチャート
+    name: ※3 置き方
+    body: '- **※3 置き方**: 値はライブラリの既定に頼らず、呼び出し箇所で明示する。値の横に導出の元の値と導き方（例: `# reload の実測 約 110 秒 × 10`）を記載する。環境ごとに変わる値は判定フローチャート [設定値の置き場所](id:flowchart-config-location) で置き場所を決める'
+  - id: timeout-flow-05
+    group: タイムアウトの決め方 判定フローチャート
+    name: ※4 自分の処理の完了を待つだけ
+    body: '- **※4 自分の処理の完了を待つだけ**: 反映作業のスクリプト・管理の操作（`reload` など）・バッチ・CLI・テスト。タイムアウトの役目はハングの検知だけ'
+  - id: timeout-flow-06
+    group: タイムアウトの決め方 判定フローチャート
+    name: ※5 無出力の時間
+    body: '- **※5 無出力の時間**: ログ・ハートビートが途絶えた時間で止まったと判定する。上限は出力の間隔の実測の 10 倍'
+  - id: timeout-flow-07
+    group: タイムアウトの決め方 判定フローチャート
+    name: ※6 外側の作業の上限
+    body: '- **※6 外側の作業の上限**: 実測が無ければ、外側の作業（ジョブ・CI の上限など）の上限を使う。内側のタイムアウトは外側より短くする'
+tags:
+  - name: scope:判定フローチャート
+  - name: topic:判定フローチャート
+  - name: topic:フローチャート
+  - name: topic:タイムアウト
+    main: true
+  - name: topic:待ち時間
+  - name: topic:api
+  - name: action:判定
+  - name: action:計測

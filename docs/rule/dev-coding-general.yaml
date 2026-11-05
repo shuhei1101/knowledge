@@ -25,7 +25,7 @@ tags:
   - name: action:秘匿
 status: current
 visibility: internal
-rev: 6
+rev: 7
 last_reviewed: '2026-11-05'
 items:
   - id: overview
@@ -49,6 +49,7 @@ items:
     body: |-
       - 特定の読み込みが失敗したときのフォールバック値などは極力設けない。
         - 読み込まれない=ソースコードや環境の不具合のため気づけるようにエラーとすべき
+      - 置くかは判定フローチャート [フォールバックを置くか](id:flowchart-fallback) で判定する
   - id: constant-01
     group: 定数関連
     name: 定数は外だしする
