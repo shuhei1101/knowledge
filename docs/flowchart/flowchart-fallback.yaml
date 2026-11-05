@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../../schemas/flowchart.schema.yaml
 id: flowchart-fallback
 kind: flowchart
 name: フォールバックを置くか 判定フローチャート
@@ -27,7 +28,7 @@ items:
           {"id": "q1", "kind": "question", "x": 334, "y": 200, "w": 280, "h": 164, "name": "開発中に気づくべき不具合か ※1"},
           {"id": "r1", "kind": "result", "x": 684, "y": 246, "w": 240, "h": 72, "name": "置かない。エラーにする"},
           {"id": "q2", "kind": "question", "x": 334, "y": 420, "w": 280, "h": 164, "name": "本番で起きうる外部の一時障害か ※2"},
-          {"id": "r2", "kind": "result", "x": 684, "y": 466, "w": 240, "h": 72, "name": "置かない。起きない失敗に備えない"},
+          {"id": "r2", "kind": "result", "x": 24, "y": 466, "w": 240, "h": 72, "name": "置かない。起きない失敗に備えない"},
           {"id": "q3", "kind": "question", "x": 334, "y": 640, "w": 280, "h": 164, "name": "代わりが仕様として等価か ※3"},
           {"id": "r3", "kind": "result", "x": 684, "y": 686, "w": 240, "h": 72, "name": "リトライだけ置き、尽きたらエラー ※4"},
           {"id": "r4", "kind": "result", "x": 354, "y": 860, "w": 240, "h": 72, "name": "フォールバックを置く ※5"}
@@ -36,7 +37,7 @@ items:
           {"id": "j-start-q1", "from": "start", "to": "q1", "line": "flow", "points": [[474, 144], [474, 200]]},
           {"id": "j-q1-r1", "from": "q1", "to": "r1", "line": "flow", "points": [[614, 282], [684, 282]], "label": "YES", "labelAt": [649, 282]},
           {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[474, 364], [474, 420]], "label": "NO", "labelAt": [474, 392]},
-          {"id": "j-q2-r2", "from": "q2", "to": "r2", "line": "flow", "points": [[614, 502], [684, 502]], "label": "NO", "labelAt": [649, 502]},
+          {"id": "j-q2-r2", "from": "q2", "to": "r2", "line": "flow", "points": [[334, 502], [264, 502]], "label": "NO", "labelAt": [299, 502]},
           {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[474, 584], [474, 640]], "label": "YES", "labelAt": [474, 612]},
           {"id": "j-q3-r3", "from": "q3", "to": "r3", "line": "flow", "points": [[614, 722], [684, 722]], "label": "NO", "labelAt": [649, 722]},
           {"id": "j-q3-r4", "from": "q3", "to": "r4", "line": "flow", "points": [[474, 804], [474, 860]], "label": "YES", "labelAt": [474, 832]}
