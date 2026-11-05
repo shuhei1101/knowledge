@@ -15,8 +15,8 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPTS = REPO_ROOT / "scripts"
 
-# 子プロセスを待つ上限の秒数。スクリプトの処理時間の上限（20 秒）に起動の時間を加えた値
-_WAIT_SEC = 60
+# 子プロセスを待つ上限の秒数。スクリプトの処理時間の上限（20 秒）に、起動と lint の CLI の起動（WSL の /mnt/c で 1 回 50 秒前後）の時間を加えた値
+_WAIT_SEC = 120
 
 # 打ち切られるまで返らない maid の差し替えの本体
 _HANGING_MAID = textwrap.dedent(

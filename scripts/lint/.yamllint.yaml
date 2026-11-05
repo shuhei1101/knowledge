@@ -1,0 +1,13 @@
+# 全ての文書の検査（scripts/check_all.py）が文書の YAML に当てる yamllint の設定
+extends: default
+rules:
+  # 引用符の無い値の # 以降がコメントになる取り違えを違反にする
+  comments:
+    level: error
+  # 文書は --- で始めない
+  document-start: disable
+  # 本文の 1 行の長さは Markdown の決まりで扱う
+  line-length: disable
+  # rule-inject の索引・dev-docs.yaml の on はキーで、真偽値ではない
+  truthy:
+    check-keys: false

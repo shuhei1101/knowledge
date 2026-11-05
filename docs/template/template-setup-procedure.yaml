@@ -16,7 +16,8 @@ tags:
   - name: action:管理
 status: current
 visibility: internal
-rev: 4
+rev: 5
+last_reviewed: '2026-11-05'
 items:
   - id: overview
     name: 概要
@@ -102,7 +103,7 @@ items:
         name: 待受ポートの確認
         body: |-
           ```bash
-          ss -tanH "( sport = :8000 )"
+          ss -ltnH "( sport = :8000 )"
           ```
 
           出力が空なら空いている。
@@ -112,7 +113,7 @@ items:
         name: tmux のセッションの終了
         body: |-
           ```bash
-          tmux kill-session -t {アプリ名}-server
+          tmux kill-session -t ={アプリ名}-server
           ```
 
           残っていると、次の起動で同じ名前のセッションを作れず、起動のコマンドが失敗する。
@@ -165,7 +166,7 @@ items:
         name: セッションの確認
         body: |-
           ```bash
-          tmux has-session -t {アプリ名}-server && echo running
+          tmux has-session -t ={アプリ名}-server && echo running
           ```
 
           `running` と出る。

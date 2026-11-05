@@ -22,8 +22,8 @@ tags:
   - name: action:起動
 status: current
 visibility: public
-rev: 4
-last_reviewed: '2026-10-31'
+rev: 5
+last_reviewed: '2026-11-05'
 related:
   - to: guide-setup-docs-mcp
     type: references
@@ -66,6 +66,14 @@ items:
 
       ほかの索引も使うときは、カンマで区切って並べる。
       絶対パスか `~` で始まるパスで書かないと索引が読まれず、規約が案内されない。
+
+      設定ファイルを読むバージョンの rule-inject（[rule-inject#52](https://github.com/shuhei1101/rule-inject/issues/52)）では、`~/.config/rule-inject/settings.yaml` の `global.indexes` に索引のパスを並べ、`env` の `RULE_INJECT_CONFIG` に設定ファイルのパスを書く。
+
+      ```yaml
+      global:
+        indexes:
+          - {clone した先の絶対パス}/rules.yaml
+      ```
   - id: reflection-01
     group: 反映
     name: 反映は再起動
@@ -80,5 +88,5 @@ items:
     group: 元に戻す
     name: 元に戻す
     body: |-
-      `~/.claude/settings.json` の `RULE_INJECT_INDEXES_USER` からこの索引のパスを削除し、Claude Code を再起動する。
+      `~/.claude/settings.json` の `RULE_INJECT_INDEXES_USER`（設定ファイルを使うときは `global.indexes`）からこの索引のパスを削除し、Claude Code を再起動する。
       clone した先は残るので、要らなければ削除する。

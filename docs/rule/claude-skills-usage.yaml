@@ -24,8 +24,8 @@ tags:
   - name: action:適用
 status: current
 visibility: internal
-rev: 4
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-11-05'
 sources:
   - title: "Claude Code: Skills"
     url: https://code.claude.com/docs/en/skills.md
@@ -71,3 +71,9 @@ items:
     body: |-
       - 値を渡したい場合は動的コンテキスト注入の `` !`echo "$VAR"` `` 形式を使う
         - 例: `` !`echo "$GH_KIT_LABEL_TYPE_FEAT"` `` はスキル読み込み時に `echo` が実行され、値（例: `type:feat`）が本文に埋め込まれる
+  - id: frontmatter-01
+    group: フロントマター
+    name: 呼ぶ場面と許可するツール
+    body: |-
+      - 呼ぶ場面は `description` と `when_to_use` に記載し、当てるファイルが決まるスキルは `paths` で絞る
+      - スキルが実行するコマンドは `allowed-tools` で許可する（`Bash(${CLAUDE_SKILL_DIR}/scripts/*)` など）

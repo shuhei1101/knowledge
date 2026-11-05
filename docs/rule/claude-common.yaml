@@ -21,8 +21,8 @@ tags:
   - name: action:配置
 status: current
 visibility: internal
-rev: 4
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-11-05'
 items:
   - id: concise-writing-01
     group: 簡潔に書く
@@ -51,14 +51,14 @@ items:
     group: スクリプトの配置場所
     name: スクリプトの配置先
     body: |-
-      - スクリプトは`{pluginsルート}/scripts/{任意のカテゴリフォルダ}/`配下に配置します。
+      - フック・MCP サーバーが呼ぶスクリプトは`{pluginsルート}/scripts/{任意のカテゴリフォルダ}/`配下に配置します。
         - スクリプトは機能ごとにフォルダを分けてください。
   - id: script-location-02
     group: スクリプトの配置場所
     name: スクリプト呼び出しの仲介
     body: |-
-      - スキルから特定スクリプトを呼ぶときにmcpを仲介すること
-        - トランスポートは規約『mcp』に従う。
+      - スキルの決まった処理は、スキルのフォルダの `scripts/` に置いて `${CLAUDE_SKILL_DIR}/scripts/{スクリプト}` で呼び、フロントマターの `allowed-tools` で許可する。複数のスキルが使う処理は、プラグインの `bin/` に置く
+      - MCP を仲介するのは、状態や並行を持つ処理か、rule-inject で止めたい操作だけ。トランスポートは規約『MCP サーバー作成ルール』に従う
   - id: main-agent-01
     group: メインエージェント / スキル / カスタムサブエージェントの関係 > メインエージェント
     name: メインエージェントの定義

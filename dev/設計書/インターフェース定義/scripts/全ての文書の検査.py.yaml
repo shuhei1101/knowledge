@@ -10,22 +10,24 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml`・`schemas/rule.schema.yaml`・違反の無い `docs/rule/` の文書 2 件を持つ一時フォルダ'
+        description: '`dev-docs.yaml`・`schemas/rule.schema.yaml`・lint の違反と警告も無い `docs/rule/` の文書 2 件（`body` の文は「。」で終える）を持つ一時フォルダ'
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>S: maid が PATH にあるかを確かめる
+        S->>S: maid・markdownlint-cli2・textlint があるかを確かめる
         S->>F: dev-docs.yaml の documents を読む
         loop 全ての文書
           S->>S: スキーマの検査と文書の違反の検査
         end
+        S->>S: 文書の Markdown の項目を 1 項目ずつ一時の .md に書き出す
+        S->>S: markdownlint-cli2・textlint を 1 回ずつ呼び、yamllint を当てる
         S-->>C: 終了コード 0 と件数の行
     expected:
       - 終了コードが 0
-      - 標準出力の最後の行が、文書 2 件・違反 0 件を示す
+      - 標準出力の最後の行が、文書 2 件・違反 0 件・警告 0 件を示す
     test: test_normal
   - name: 正常系（違反がある・終了コード 1）
     summary: 全ての文書を検査し終えてから、全ての違反を出して終了コード 1 で終わる
@@ -73,22 +75,71 @@ flows:
       - 終了コードが 1
       - 標準出力に、コピーのパスと、「対応表のコピーの作成」を実行する案内の行が出る
     test: test_normal_when_word_list_copy_stale
-  - name: 異常系（maid が無い・終了コード 2）
-    summary: maid が PATH から引けなければ検査を始めずに終わる
+  - name: 正常系（Markdown・YAML の書式の違反がある・終了コード 1）
+    summary: 失敗させるルールの lint の違反を、元の文書の YAML の行で出して終了コード 1 で終わる
     setup:
       - name: Mock
-        description: PATH から maid を外す
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`items[].body` の 3 行目が太字だけの段落の文書と、既存のキーの引用符の無い値に ` #bar` を付けた文書（`description: B の文書 #bar`）を 1 つずつ持つ一時フォルダ'
+        notes: 太字だけの段落は markdownlint の `MD036`、`#bar` は yamllint の `comments` に当たる
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>F: dev-docs.yaml の documents を読む
+        loop 全ての文書
+          S->>S: スキーマの検査と文書の違反の検査
+        end
+        S->>S: 文書の Markdown の項目を 1 項目ずつ一時の .md に書き出す
+        S->>S: markdownlint-cli2・textlint を 1 回ずつ呼び、yamllint を当てる
+        S->>S: CLI の行に項目の開始行を足して、元の文書の YAML の行にする
+        S-->>C: 終了コード 1 と全ての違反の行
+    expected:
+      - 終了コードが 1
+      - '標準出力に `{文書のパス}:{行}: items[0].body: markdownlint/MD036: {内容}` の行が出て、行は文書の YAML の中の太字の段落の行'
+      - '標準出力に `{文書のパス}:{行}: -: yamllint/comments: {内容}` の行が出て、行は ` #bar` を付けた行'
+    test: test_normal_when_lint_violations
+  - name: 正常系（警告のルールの違反だけがある・終了コード 0）
+    summary: 警告にしたルールの違反は警告の行として出し、終了コードには数えない
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`items[].body` に `A です。B です。` の 1 行を持つ文書だけの一時フォルダ'
+        notes: textlint の `one-sentence-per-line` は警告にしたルール
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>F: dev-docs.yaml の documents を読む
+        S->>S: 文書の Markdown の項目に markdownlint-cli2・textlint を呼ぶ
+        S-->>C: 終了コード 0 と警告の行
+    expected:
+      - 終了コードが 0
+      - '標準出力に `{文書のパス}:{行}: items[0].body: warning: textlint/one-sentence-per-line: {内容}` の行が出る'
+      - 標準出力の最後の行が、違反 0 件・警告 1 件を示す
+    test: test_normal_when_only_warnings
+  - name: 異常系（検査の CLI が無い・終了コード 2）
+    summary: maid・markdownlint-cli2・textlint のどれかが引けなければ検査を始めずに終わる
+    setup:
+      - name: Mock
+        description: PATH から maid を外し、`--lint-dir` に存在しないフォルダを指定する
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
         C->>S: リポジトリの直下で起動する
-        S->>S: maid が PATH に無い
+        S->>S: 検査の CLI が無い
         S-->>C: 終了コード 2 と標準エラーの理由
     expected:
       - 終了コードが 2
-      - 標準エラーに maid が PATH から引けないことが出る
-    test: test_error_when_maid_missing
+      - 標準エラーに、引けない CLI の名前と、開発コマンドの環境構築で入れる案内が CLI ごとに 1 行ずつ出る
+    test: test_error_when_check_cli_missing
   - name: 異常系（dev-docs.yaml が読めない・終了コード 2）
     summary: dev-docs.yaml が無いか読めなければ検査を始めずに終わる
     setup:
@@ -122,28 +173,45 @@ request:
     required: true
     location: argument
     description: knowledge のリポジトリの直下。`dev-docs.yaml` を読む
-    notes: 引数は取らず、作業ディレクトリとして受け取る
+    notes: 作業ディレクトリとして受け取る
+  - name: --lint-dir
+    type: Path
+    required: false
+    default: '`check_all.py` と同じフォルダの `lint/`'
+    location: argument
+    description: lint の設定と npm の依存（`node_modules/.bin/`）を持つフォルダ
+    notes: 起動したフォルダによらず、同じ設定と CLI を使う
 response:
   - name: stdout
     type: str
-    description: '違反 1 件を 1 行で `{ファイルのパス}:{行}: {項目のパス}: {内容}` の形で出し、最後に検査した文書の数と違反の数を 1 行で出す'
+    description: '違反 1 件を 1 行で `{ファイルのパス}:{行}: {項目のパス}: {内容}` の形で出し、最後に検査した文書の数と違反の数と警告の数を 1 行で出す。lint の違反の `{内容}` は `{CLI}/{ルール}: {内容}`、ファイル全体に当てた lint（yamllint と `.md` のファイル）の `{項目のパス}` は `-`。警告にしたルールの違反は `{内容}` の前に `warning: ` を付ける'
     example: "docs/rule/a.yaml:42: items[3].body: mermaid: Expected 'end' to close subgraph"
   - name: stderr
     type: str
     description: 終了コード 2 のときの理由
   - name: exit_code
     type: Literal[0, 1, 2]
-    description: 0 = 違反なし。1 = 違反が 1 件以上。2 = maid が PATH から引けないか `dev-docs.yaml` が読めず、検査を始めなかった
+    description: 0 = 違反なし（警告だけのときを含む）。1 = 違反が 1 件以上。2 = 検査の CLI が引けないか `dev-docs.yaml` が読めず、検査を始めなかった
 exceptions:
   - name: なし（正常終了）
-    condition: 全ての文書に違反が無い（終了コード 0）
+    condition: 全ての文書に違反が無い（終了コード 0）。警告にしたルールの違反だけのときを含む
   - name: 終了コード 1
     condition: 違反が 1 件以上ある。全ての文書を検査し終えてから返す
   - name: 終了コード 2
-    condition: maid が PATH から引けないか、`dev-docs.yaml` が無い・YAML として読めない
+    condition: maid が PATH から引けないか、markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`dev-docs.yaml` が無い・YAML として読めない
 constraints:
   - item: 検査の範囲
     constraint: '`dev-docs.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も当てる'
+  - item: lint の当て先
+    constraint: 'markdownlint-cli2・textlint は、`documents[]` の YAML の文書の Markdown の項目（パスの末尾が `body` の文字列）を 1 項目 1 ファイルの一時の `.md` にして当て、`.md` の文書にはそのまま当てる。yamllint は `documents[]` の YAML の文書と、直下の `dev-docs.yaml`・`rules.yaml` に当てる'
+  - item: lint の行
+    constraint: 一時の `.md` の違反の行は、CLI の行に `iter_strings` が返す項目の開始行を足して 1 を引いた、元の文書の YAML の行で出す
+  - item: lint の CLI の呼び出し
+    constraint: markdownlint-cli2・textlint は全ての一時の `.md` をまとめて 1 回ずつ呼ぶ。yamllint は Python のライブラリとして同じプロセスで呼ぶ
+  - item: lint の設定
+    constraint: '設定は `--lint-dir` の `.markdownlint-cli2.jsonc`・`.textlintrc.json`・`.yamllint.yaml` を CLI に指定する。CLI が `warning` で返した違反を警告、`error` で返した違反を違反にする。`.yamllint.yaml` は `extends: default` に、`comments` を `level: error`、`document-start`・`line-length` を無効、`truthy` の `check-keys` を `false`（rule-inject の索引の `on` のキーを違反にしない）にする'
+  - item: 警告にするルール
+    constraint: '`one-sentence-per-line`・`no-inline-strong`・`MD031`・`MD032`・`MD040`と、`preset-ja-technical-writing` の中の全てのルール（textlint の設定でプリセットの中のルールごとに `severity` を指定する）。#145 の移行で既存の違反を修正した後に、設定で `error` へ切り替える'
   - item: 対応表のコピー
     constraint: '`docs/word-list/word-list-ai-slop.yaml` から「対応表のコピーの作成」と同じ書式で作り直したバイト列が、`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` と一致する。違えばコピーのパスで違反 1 件にする'
     decided_by: IF-148-2#constraints[コピーの書式]
@@ -151,6 +219,6 @@ constraints:
     constraint: 「文書の違反の検査」と同じ 20 秒。超えたブロックは時間切れの違反にする
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
   - item: 全体の処理時間
-    constraint: CI のジョブの 5 分に収める（スクリプト自身は打ち切らない）
+    constraint: CI のジョブの 5 分に収める（スクリプト自身は打ち切らない）。PoC（#177）では `docs/` の 263 件で、既存の検査と lint の合計が 51 秒
     decided_by: NFR-72-1#requirements[CI の 1 回の所要時間]
 test_file: tests/integration/scripts/test_check_all.py

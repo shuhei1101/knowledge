@@ -1,0 +1,303 @@
+id: "MOD-176-1"
+title: "検査と変換のスクリプト / scripts / _lint.py"
+lead: 全ての文書の検査で当てる markdownlint-cli2（LIB-176-1）・textlint（LIB-176-2）・yamllint（LIB-176-3）の、在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応。
+data_models:
+  - name: LintSource
+    title: lint を当てる Markdown
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    role: DTO
+    summary: 一時の `.md` 1 つに書き出す、文書の Markdown の項目か `.md` の文書 1 つ
+    description: '`dataclass(frozen=True)`。'
+    properties:
+      - name: path
+        type: PurePosixPath
+        description: 文書のリポジトリの直下からのパス
+      - name: item_path
+        type: str
+        description: 項目のパス（`items[3].body`）。`.md` の文書は `-`
+      - name: start_line
+        type: int
+        description: 本文の 1 行目の文書の行（1 始まり。`iter_strings` の行）。`.md` の文書は 1
+      - name: text
+        type: str
+        description: 書き出す Markdown
+  - name: LintFinding
+    title: lint の違反
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    role: DTO
+    summary: 3 つの CLI のどれかが返した違反 1 件を、元の文書の行にしたもの
+    description: '`dataclass(frozen=True)`。'
+    properties:
+      - name: path
+        type: PurePosixPath
+        description: 文書のリポジトリの直下からのパス
+      - name: line
+        type: int
+        description: 元の文書の行（1 始まり）
+      - name: item_path
+        type: str
+        description: 項目のパス。ファイル全体に当てた lint は `-`
+      - name: tool
+        type: Literal['markdownlint', 'textlint', 'yamllint']
+        description: 違反を返した CLI
+      - name: rule
+        type: str
+        description: ルールの名前（`MD036`・`one-sentence-per-line`・`ja-technical-writing/ja-no-mixed-period`・`comments`）
+      - name: message
+        type: str
+        description: 違反の内容
+      - name: warning
+        type: bool
+        description: CLI が warning で返したか
+  - name: LintOutputError
+    title: 読めない lint の出力
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    role: 例外
+    summary: markdownlint-cli2・textlint の終了コードが 0・1 でないか、出力が読めない
+    inherits: Exception
+    properties:
+      - name: message
+        type: str
+        description: CLI の名前と終了コードと標準エラーの最後の 1 行
+constants:
+  - name: MARKDOWNLINT
+    title: markdownlint-cli2 のコマンド名
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    summary: '`{lint のフォルダ}/node_modules/.bin/` から引くコマンド名'
+    value: '"markdownlint-cli2"'
+  - name: TEXTLINT
+    title: textlint のコマンド名
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    summary: '`{lint のフォルダ}/node_modules/.bin/` から引くコマンド名'
+    value: '"textlint"'
+  - name: MARKDOWN_KEY
+    title: Markdown の項目のキー
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    summary: パスの末尾がこのキーの文字列を Markdown の項目として lint を当てる
+    value: '"body"'
+  - name: DEFAULT_LINT_DIR
+    title: lint のフォルダの既定
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    summary: 設定と npm の依存を持つフォルダ
+    value: Path(__file__).parent / "lint"
+functions:
+  - name: find_lint_clis
+    title: lint の CLI の在りかの確認
+    kind: 関数
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: lint のフォルダの `node_modules/.bin/` から markdownlint-cli2・textlint の実行ファイルを引く
+    args:
+      - name: lint_dir
+        title: lint のフォルダ
+        type: Path
+        required: true
+        description: '`--lint-dir` の値'
+    returns:
+      type: dict[str, str | None]
+      description: コマンド名 → 実行ファイルの絶対パス。引けなければ `None`
+    process: |-
+      1. `MARKDOWNLINT`・`TEXTLINT` ごとに `shutil.which(名前, path=lint_dir / "node_modules" / ".bin")` を引く
+    unit_tests:
+      - name: test_find_lint_clis
+        case: 正常
+        summary: 2 つとも引ける
+        condition: '`node_modules/.bin/` に実行権限のある `markdownlint-cli2`・`textlint` を置いた一時フォルダ'
+        mock: なし（一時ディレクトリ）
+        expected: 2 つとも絶対パス
+      - name: test_find_lint_clis_when_missing
+        case: 正常
+        summary: フォルダが無い
+        condition: 存在しないフォルダ
+        mock: なし
+        expected: 2 つとも `None`
+  - name: collect_sources
+    title: lint を当てる Markdown の取り出し
+    kind: 関数
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: 文書 1 件から、Markdown の項目か `.md` の文書の全体を取り出す
+    args:
+      - name: path
+        title: 文書のパス
+        type: PurePosixPath
+        required: true
+        description: リポジトリの直下からのパス
+      - name: text
+        title: 中身
+        type: str
+        required: true
+        description: '`read_texts` が返した中身'
+    returns:
+      type: list[LintSource]
+      description: 文書の並びどおりの Markdown
+    process: |-
+      1. `path` の拡張子が `.md` の場合、`LintSource(path, "-", 1, text)` の 1 件を返す
+      2. 文書として読む（文書の読み込み）
+         - 読めない文書の場合、空を返す（違反は文書 1 件の検査が出す）
+      3. 文字列の項目を列挙し（文字列の項目の列挙）、パスの末尾が `MARKDOWN_KEY` の項目ごとに `LintSource(path, 項目のパス, 行, 値)` を返す（項目のパスの組み立て）
+    unit_tests:
+      - name: test_collect_sources
+        case: 正常
+        summary: body の項目だけを取り出す
+        condition: '`name`・`body: |-` を持つ項目が 2 つある文書'
+        mock: なし
+        expected: 2 件で、`item_path` が `items[0].body`・`items[1].body`、`start_line` が `body:` の行 + 1
+      - name: test_collect_sources_when_markdown_file
+        case: 正常
+        summary: .md の文書
+        condition: '`README.md` と中身'
+        mock: なし
+        expected: '`item_path` が `-`・`start_line` が 1 の 1 件'
+      - name: test_collect_sources_when_broken
+        case: 正常
+        summary: 読めない YAML
+        condition: 括弧の閉じていない YAML
+        mock: なし
+        expected: 空
+    callees:
+      - MOD-72-2#functions[load_document]
+      - MOD-72-2#functions[iter_strings]
+      - MOD-72-2#functions[format_path]
+  - name: run_markdown_lints
+    title: Markdown の lint の呼び出し
+    kind: 関数
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    role: 外部呼び出し
+    scope: public
+    summary: 全ての Markdown を一時の `.md` に書き出し、markdownlint-cli2・textlint を 1 回ずつ呼んで、違反を元の文書の行で返す
+    args:
+      - name: sources
+        title: lint を当てる Markdown
+        type: Sequence[LintSource]
+        required: true
+        description: '`collect_sources` が返した全ての文書の分'
+      - name: lint_dir
+        title: lint のフォルダ
+        type: Path
+        required: true
+        description: 設定ファイルを持つフォルダ。CLI の作業ディレクトリにする
+      - name: clis
+        title: CLI の実行ファイル
+        type: Mapping[str, str]
+        required: true
+        description: '`find_lint_clis` が返した絶対パス'
+    returns:
+      type: list[LintFinding]
+      description: markdownlint の違反の後に textlint の違反。行は `start_line` + CLI の行 - 1
+    process: |-
+      1. `sources` が空の場合、空を返す
+      2. 一時フォルダに、`sources` の順の添字で `{添字:05d}.md` を書き出す
+      3. markdownlint-cli2 を、作業ディレクトリを `lint_dir`、引数を `--config {lint_dir}/.markdownlint-cli2.jsonc` と全ての `.md` の絶対パスにして呼ぶ
+         - 終了コードが 0・1 でない場合、`LintOutputError` を送出する
+         - 標準エラーの `{ファイル}:{行}[:{列}] {error|warning} {ルール名}/{別名} {内容}` の行ごとに、ファイル名の添字の `LintSource` で `LintFinding` を作る。`rule` はルール名、`warning` は `warning` の行
+      4. textlint を、作業ディレクトリを `lint_dir`、引数を `--config {lint_dir}/.textlintrc.json --format json` と全ての `.md` の絶対パスにして呼ぶ
+         - 終了コードが 0・1 でないか、標準出力が JSON として読めない場合、`LintOutputError` を送出する
+         - `[].messages[]` ごとに、`[].filePath` のファイル名の添字の `LintSource` で `LintFinding` を作る。`rule` は `ruleId`、`warning` は `severity` が 1
+      5. 一時フォルダを消して返す
+    unit_tests:
+      - name: test_run_markdown_lints
+        case: 正常
+        summary: 違反を元の文書の行で返す
+        condition: '`start_line` が 26 の 1 件'
+        mock: 'markdownlint-cli2 を、渡された 1 つ目の `.md` の 3 行目の `error MD036/no-emphasis-as-heading` を標準エラーへ出し終了コード 1 で終わるスクリプトに、textlint を、`severity` 1 の `one-sentence-per-line` の 1 行目を JSON で出し終了コード 0 で終わるスクリプトに差し替える'
+        expected: '`line` が 28・`rule` が `MD036`・`warning` が `False` の 1 件の後に、`line` が 26・`rule` が `one-sentence-per-line`・`warning` が `True` の 1 件'
+      - name: test_run_markdown_lints_when_empty
+        case: 正常
+        summary: 当てる Markdown が無い
+        condition: 空の `sources`
+        mock: CLI を、呼ばれたら印のファイルを作るスクリプトに差し替える
+        expected: 空で、印のファイルが無い
+      - name: test_run_markdown_lints_when_crashed
+        case: 異常
+        summary: CLI が落ちた
+        condition: 1 件
+        mock: textlint を、終了コード 2 で標準エラーに 1 行出すスクリプトに差し替える
+        expected: '`LintOutputError` で、メッセージに `textlint`・終了コード 2・標準エラーの行'
+        exception: 終了コードが 0・1 でない
+    refs:
+      - LIB-176-1#
+      - LIB-176-2#
+      - IF-72-3#constraints[lint の行]
+  - name: load_yamllint_config
+    title: yamllint の設定の読み込み
+    kind: 関数
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: lint のフォルダの `.yamllint.yaml` を読む
+    args:
+      - name: lint_dir
+        title: lint のフォルダ
+        type: Path
+        required: true
+        description: '`.yamllint.yaml` を持つフォルダ'
+    returns:
+      type: YamlLintConfig
+      description: yamllint の設定
+    process: 1. `YamlLintConfig(file=str(lint_dir / ".yamllint.yaml"))` を返す
+    unit_tests:
+      - name: test_load_yamllint_config
+        case: 正常
+        summary: 設定を読む
+        condition: '`extends: default`・`comments: {level: error}`・`document-start: disable`・`line-length: disable`・`truthy: {check-keys: false}`（`scripts/lint/.yamllint.yaml` と同じ内容） を書いた `.yamllint.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: '`comments` のルールが有効で、`document-start`・`line-length` が無効'
+    refs:
+      - LIB-176-3#
+  - name: run_yamllint
+    title: yamllint の呼び出し
+    kind: 関数
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    role: 外部呼び出し
+    scope: public
+    summary: YAML のファイル 1 つに yamllint を当て、違反を返す
+    args:
+      - name: path
+        title: ファイルのパス
+        type: PurePosixPath
+        required: true
+        description: リポジトリの直下からのパス
+      - name: text
+        title: 中身
+        type: str
+        required: true
+        description: ファイルの中身
+      - name: config
+        title: yamllint の設定
+        type: YamlLintConfig
+        required: true
+        description: '`load_yamllint_config` が 1 度だけ作った設定'
+    returns:
+      type: list[LintFinding]
+      description: 行の順の違反。`item_path` は `-`、`tool` は `yamllint`
+    process: |-
+      1. `yamllint.linter.run(text, config, str(path))` の違反ごとに `LintFinding` を作る。`rule` は違反の `rule`（YAML として読めない誤りで `None` のときは `syntax`）、`warning` は `level` が `warning`
+    unit_tests:
+      - name: test_run_yamllint
+        case: 正常
+        summary: コメントの違反
+        condition: '`key: foo #bar` の 1 行と、`extends: default`・`comments: {level: error}`・`document-start: disable`・`line-length: disable`・`truthy: {check-keys: false}`（`scripts/lint/.yamllint.yaml` と同じ内容） の設定'
+        mock: なし
+        expected: '`line` が 1・`rule` が `comments`・`warning` が `False` の 2 件（コメントの前の空白と、`#` の後の空白）'
+      - name: test_run_yamllint_when_clean
+        case: 正常
+        summary: 違反の無い YAML
+        condition: '`key: value` の 1 行と、`test_run_yamllint` と同じ設定'
+        mock: なし
+        expected: 空
+    refs:
+      - LIB-176-3#
+test_files:
+  - tests/unit/scripts/test_lint.py

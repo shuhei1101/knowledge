@@ -8,7 +8,7 @@ layers:
       - リポジトリの直下で実行する
     run_all: |-
       ```bash
-      uvx ruff@0.17.3 check scripts tests plugins && uvx ruff@0.17.3 format --check scripts tests plugins && uv run --no-project --python 3.14 --with pyright==1.1.414 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pyright
+      uvx ruff@0.17.3 check scripts tests plugins && uvx ruff@0.17.3 format --check scripts tests plugins && uv run --no-project --python 3.14 --with pyright==1.1.414 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pyright
       ```
     external_cost: なし
   - name: 単体テスト（バック）
@@ -18,13 +18,13 @@ layers:
       - リポジトリの直下で実行する
     run_all: |-
       ```bash
-      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
       ```
     run_one:
       label: ファイル
       command: |-
         ```bash
-        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest {テストファイルパス}
+        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest {テストファイルパス}
         ```
     parallel: false
     external_cost: なし（maid は差し替えのスクリプトを使う）
@@ -32,20 +32,20 @@ layers:
     description: pytest で `tests/integration/` を実行する。入口のスクリプトを dev-docs・CI と同じ `uv run --frozen --script` で子プロセスとして起動し、標準入力・標準出力・終了コードを確かめる。slop-check のフックは `hooks.json` と同じく PATH の `python3` で起動する。
     prerequisites:
       - uv と Python 3.14 が入っている
-      - 開発コマンドの環境構築（クローン直後）を流してあり、maid が PATH にある
+      - 開発コマンドの環境構築（クローン直後）を流してあり、maid が PATH にあり、`scripts/lint/node_modules/.bin/` に markdownlint-cli2・textlint がある
       - python3（3.12 以上）が PATH にある
       - リポジトリの直下で実行する
     run_all: |-
       ```bash
-      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/integration
+      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/integration
       ```
     run_one:
       label: ファイル
       command: |-
         ```bash
-        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest {テストファイルパス}
+        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest {テストファイルパス}
         ```
-    duration: 約 4 秒
+    duration: 約 4 分（WSL の `/mnt/c`。全ての文書の検査のフローは、lint の CLI の起動で 1 件 30〜50 秒かかる）
     parallel: false
     external_cost: なし（maid は手元の PATH のものを使う。時間切れのフローだけ差し替えのスクリプトを使う）
   - name: 外部疎通テスト
@@ -53,21 +53,21 @@ layers:
   - name: 非機能要件テスト
     run_all: 未確定
   - name: E2E テスト
-    description: pytest で `tests/e2e/` を実行する。knowledge の HEAD を一時フォルダへクローンして develop を踏ませ、端末の dev-docs をテストごとに子プロセスで起動して、管理の MCP・文書の MCP・画面の API を HTTP で呼んで確かめる。文書の違反の検査は、CI のジョブと同じ `uv run --frozen --script scripts/check_all.py` をクローンで子プロセスとして起動する。
+    description: pytest で `tests/e2e/` を実行する。knowledge の HEAD を一時フォルダへクローンして develop を踏ませ、端末の dev-docs をテストごとに子プロセスで起動して、管理の MCP・文書の MCP・画面の API を HTTP で呼んで確かめる。文書の違反の検査は、CI のジョブと同じく、クローンで `npm ci --prefix scripts/lint` で lint の CLI を入れてから `uv run --frozen --script scripts/check_all.py` を子プロセスとして起動する。
     prerequisites:
       - '`/dev-docs:global-setup` を終えた端末。起動する dev-docs は、端末の設定（`~/.config/dev-docs/settings.yaml`）の `clone` を読み、その `.venv` の Python で起動する（環境変数 `KNOWLEDGE_E2E_DEV_DOCS_CLONE` を渡せばそちらを使う）。端末の設定は読むだけで書き換えず、テストは一時フォルダの設定（`DEV_DOCS_CONFIG`）と空いているポート（`DEV_DOCS_PORT`）で起動する'
-      - uv と Python 3.14・`git` が使え、開発コマンドの環境構築（クローン直後）を流してあり、maid が PATH にある
+      - uv と Python 3.14・`git`・npm が使え、開発コマンドの環境構築（クローン直後）を流してあり、maid が PATH にある
       - リポジトリの直下で実行する。テストは HEAD の commit をクローンするため、確かめる変更は commit しておく
       - 誤実行を防ぐため `--run-e2e` を必須にする（無いと全件 skip する）
     run_all: |-
       ```bash
-      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest tests/e2e --run-e2e
+      uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/e2e --run-e2e
       ```
     run_one:
       label: ケース
       command: |-
         ```bash
-        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 pytest {E2Eテストファイルパス}::{テスト関数名} --run-e2e
+        uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest {E2Eテストファイルパス}::{テスト関数名} --run-e2e
         ```
     carry_over: |-
       対象ケースの実行が 1 ターンより長くかかる場合に使う。
