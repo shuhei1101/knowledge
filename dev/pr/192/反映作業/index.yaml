@@ -1,0 +1,14 @@
+設計書のスキーマのタグの更新:
+  説明: release が master へ入った後に、`design-schemas/v*` の最新のタグがこの PR の squash commit を含むかを確かめ、含まなければ、そのマージの commit へ次の版のタグを作成して push する。同じ release で `design-schemas/v1.0.0` を作成して含まれるときはタグを作成しない。上げる桁は、制約を狭めたときはメジャー、それ以外はパッチにする
+  タグ: [タグ, スキーマ]
+  実行者: tester
+  時期: master へ入った後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグの commit の履歴に、この PR の squash commit が含まれる"
+  状態: "-"
