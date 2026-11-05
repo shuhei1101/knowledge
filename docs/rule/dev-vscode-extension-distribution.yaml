@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-vscode-extension-distribution
+kind: rule
+name: VS Code 拡張機能の配布
+description: VS Code 拡張機能のバージョンの更新・.vsix の作成・Marketplace と Open VSX への公開・利用者への入れ替えの依頼・ID の扱いを定め、VS Code 拡張機能のコードを変更するときと公開するときに読む。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-05'
+sources:
+  - title: 'VS Code: Publishing Extensions'
+    url: https://code.visualstudio.com/api/working-with-extensions/publishing-extension
+    note: vsce package・publish と、Marketplace の拡張機能の ID
+  - title: 'Open VSX: Publishing Extensions'
+    url: https://github.com/eclipse/openvsx/wiki/Publishing-Extensions
+    note: ovsx publish
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      VS Code 拡張機能のバージョン・.vsix・公開・利用者への入れ替えの依頼の決まり。
+      Claude プラグインは [version を置かない](id:claude-plugin#no-version-01) に従い、この規約を当てない。
+  - id: version-01
+    group: バージョン
+    name: コードを変えた PR でバージョンを上げる
+    body: '- 拡張機能のコード（`package.json` の `contributes` を含む）を変えた PR で、`package.json` の `version` を上げる'
+  - id: vsix-01
+    group: .vsix
+    name: タグで .vsix を作る
+    body: '- タグ（例: `vscode-v{X}.{Y}.{Z}`）の push で CI が .vsix を作り、そのタグの GitHub Release に添える'
+  - id: publish-01
+    group: 公開
+    name: Marketplace と Open VSX への公開
+    body: '- Marketplace と Open VSX へ公開する
+
+      - 自動にできる公開先は CI で公開し、できない公開先は手動で公開する'
+  - id: reinstall-01
+    group: 利用者への入れ替えの依頼
+    name: 公開が自動でない間の入れ替え
+    body: '- 公開が自動でない間は、反映作業で .vsix を作り、利用者に `code --install-extension {.vsix のパス}` での入れ替えを依頼する'
+  - id: extension-id-01
+    group: 拡張機能の ID
+    name: 公開後に ID を変えない
+    body: "- 拡張機能の ID（`publisher.name`）は公開した後に変えない\n  - 変えると別の拡張機能として載る"
+tags:
+  - name: scope:dev
+  - name: topic:拡張機能
+    main: true
+  - name: topic:バージョン
+  - name: topic:ci
+  - name: topic:リリース
+  - name: tool:vscode
+  - name: tool:github
+  - name: action:公開
+  - name: action:配布

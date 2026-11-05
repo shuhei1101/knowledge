@@ -159,6 +159,11 @@ rules:
   - rule: docs/rule/dev-coding-general.yaml
     paths:
       - "**/*.{py,ts,tsx,js,jsx,mjs}"
+  - rule: docs/rule/dev-vscode-extension-distribution.yaml
+    paths:
+      - "**/.vscodeignore"
+      - "**/vscode/package.json"
+      - "**/.github/workflows/vscode-*.yml"
   - rule: docs/rule/typescript-core-style.yaml
     paths:
       - "**/*.{ts,tsx}"
