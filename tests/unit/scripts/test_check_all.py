@@ -515,3 +515,206 @@ def test_check_lints(
         ("rules.yaml", "yamllint", "comments"),
         ("rules.yaml", "yamllint", "comments"),
     ]
+
+
+# 設計書のスキーマが $ref で指す共通の型
+_DESIGN_COMMON = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: 共通\n"
+    "$defs:\n"
+    "  id:\n"
+    "    type: string\n"
+    "    pattern: ^[A-Z]+-\\d+$\n"
+)
+
+# 共通の型を $ref で指し、合う examples を持つ設計書のスキーマ
+_DESIGN_SCENARIO = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: シナリオ\n"
+    "type: object\n"
+    "required:\n"
+    "  - id\n"
+    "properties:\n"
+    "  id:\n"
+    "    $ref: common.schema.yaml#/$defs/id\n"
+    "examples:\n"
+    "  - id: SC-1\n"
+)
+
+# required の id を持たない examples[0] を持つ設計書のスキーマ（10 行目が要素）
+_DESIGN_BAD_EXAMPLE = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: シナリオ\n"
+    "type: object\n"
+    "required:\n"
+    "  - id\n"
+    "properties:\n"
+    "  id:\n"
+    "    $ref: common.schema.yaml#/$defs/id\n"
+    "examples:\n"
+    "  - title: x\n"
+)
+
+# 共通の型に無い $defs を指す設計書のスキーマ（5 行目が $ref）
+_DESIGN_BAD_REF = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: 参照\n"
+    "properties:\n"
+    "  id:\n"
+    "    $ref: common.schema.yaml#/$defs/missing\n"
+)
+
+# type に無い型の名前を書いた設計書のスキーマ（3 行目が type）
+_DESIGN_BAD_TYPE = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\ntitle: 型\ntype: strin\n"
+)
+
+
+def test_check_design_schemas(repo_factory: RepoFactory) -> None:
+    """誤りの無いスキーマ（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/common.schema.yaml": _DESIGN_COMMON,
+            "schemas/design/scenario.schema.yaml": _DESIGN_SCENARIO,
+        }
+    )
+    # 実行
+    result = check_all.check_design_schemas(root)
+    # 検証
+    assert result == []
+
+
+def test_check_design_schemas_when_invalid(repo_factory: RepoFactory) -> None:
+    """3 種の誤り（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/common.schema.yaml": _DESIGN_COMMON,
+            "schemas/design/bad-example.schema.yaml": _DESIGN_BAD_EXAMPLE,
+            "schemas/design/bad-ref.schema.yaml": _DESIGN_BAD_REF,
+            "schemas/design/bad-type.schema.yaml": _DESIGN_BAD_TYPE,
+        }
+    )
+    # 実行
+    result = check_all.check_design_schemas(root)
+    # 検証
+    assert len(result) == 3
+    assert result[0][:3] == ("schemas/design/bad-example.schema.yaml", 10, "examples[0]")
+    assert result[0][3].startswith("examples: ")
+    assert result[1][:3] == ("schemas/design/bad-ref.schema.yaml", 5, "properties.id.$ref")
+    assert result[1][3].startswith("$ref: common.schema.yaml#/$defs/missing ")
+    assert result[2][:3] == ("schemas/design/bad-type.schema.yaml", 3, "type")
+    assert result[2][3].startswith("metaschema: ")
+
+
+def test_check_design_schemas_when_nested_examples(repo_factory: RepoFactory) -> None:
+    """入れ子の examples（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/common.schema.yaml": _DESIGN_COMMON,
+            "schemas/design/scenario.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: シナリオ\n"
+                "properties:\n"
+                "  id:\n"
+                "    $ref: common.schema.yaml#/$defs/id\n"
+                "    examples:\n"
+                "      - sc-1\n"
+            ),
+        }
+    )
+    # 実行
+    result = check_all.check_design_schemas(root)
+    # 検証
+    assert len(result) == 1
+    assert result[0][:3] == (
+        "schemas/design/scenario.schema.yaml",
+        7,
+        "properties.id.examples[0]",
+    )
+    assert result[0][3].startswith("examples: ")
+
+
+def test_check_design_schemas_when_property_named_default(repo_factory: RepoFactory) -> None:
+    """default という名前のプロパティ（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/component.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: 部品設計\n"
+                "properties:\n"
+                "  default:\n"
+                "    type: string\n"
+                "    examples:\n"
+                "      - 1\n"
+            ),
+        }
+    )
+    # 実行
+    result = check_all.check_design_schemas(root)
+    # 検証
+    assert len(result) == 1
+    assert result[0][:3] == (
+        "schemas/design/component.schema.yaml",
+        7,
+        "properties.default.examples[0]",
+    )
+    assert result[0][3].startswith("examples: ")
+
+
+def test_check_design_schemas_when_folder_missing(repo_factory: RepoFactory) -> None:
+    """フォルダが無い（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    # 実行
+    result = check_all.check_design_schemas(root)
+    # 検証
+    assert result == []
+
+
+def test_check_design_schemas_when_broken(repo_factory: RepoFactory) -> None:
+    """読めない YAML（正常系）。"""
+    # 準備
+    root = repo_factory({"schemas/design/common.schema.yaml": "title: [\n"})
+    # 実行
+    result = check_all.check_design_schemas(root)
+    # 検証
+    assert len(result) == 1
+    assert result[0][0] == "schemas/design/common.schema.yaml"
+    assert result[0][2] == "$"
+    assert result[0][3].startswith("YAML として読めません: ")
+
+
+def test_main_when_design_schemas_invalid(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    repo_factory: RepoFactory,
+    fake_maid_factory: FakeMaidFactory,
+) -> None:
+    """設計書のスキーマに誤りがある（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "docs/rule/rule-a.yaml": _VALID_A,
+            "docs/rule/rule-b.yaml": _VALID_B,
+            "schemas/design/common.schema.yaml": _DESIGN_COMMON,
+            "schemas/design/scenario.schema.yaml": _DESIGN_BAD_EXAMPLE,
+        }
+    )
+    monkeypatch.chdir(root)
+    maid = fake_maid_factory()
+    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
+    monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+    monkeypatch.setattr(check_all, "check_lints", _no_lints)
+    # 実行
+    code = check_all.main([])
+    # 検証
+    out = capsys.readouterr().out
+    assert code == 1
+    assert re.search(
+        r"^schemas/design/scenario\.schema\.yaml:10: examples\[0\]: examples: ", out, re.MULTILINE
+    )
+    assert out.splitlines()[-1] == "2 件の文書を検査し、違反は 1 件、警告は 0 件でした"
