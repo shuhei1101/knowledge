@@ -32,8 +32,8 @@ tags:
   - name: action:運用
 status: current
 visibility: internal
-rev: 5
-last_reviewed: '2026-10-24'
+rev: 6
+last_reviewed: '2026-11-06'
 items:
   - id: overview
     name: 概要
@@ -74,7 +74,7 @@ items:
     group: 読み込み
     name: 秘匿値の secrets_dir
     body: |-
-      - 秘匿値だけ `~/.config/{project}/secrets/` に分けるときは `secrets_dir` で読む
+      - 秘匿値だけ `${XDG_CONFIG_HOME:-~/.config}/{project}/secrets/` に分けるときは `secrets_dir` で読む
   - id: type-validation-01
     group: 型と検証
     name: API キーは SecretStr
