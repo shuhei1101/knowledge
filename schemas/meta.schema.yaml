@@ -1,0 +1,149 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: urn:knowledge:schemas:meta
+$dynamicAnchor: meta
+title: スキーマの書き方
+description: |-
+  YAML のスキーマが各項目に持つキーの書き方。全ての文書の検査がスキーマをこのメタスキーマで検査する。
+  JSON Schema 2020-12 のメタスキーマに `x-` のキーの形を足す。
+type:
+  - object
+  - boolean
+allOf:
+  - $ref: https://json-schema.org/draft/2020-12/schema
+properties:
+  title:
+    type: string
+    title: タイトル
+    description: 項目の日本語の名前。画面の見出しと表の列名になる。
+    x-rules:
+      - 項目の中身を表す語にする。
+    examples:
+      - 冒頭リード
+    x-bad-examples:
+      - value: このキーには冒頭リードを記載する
+        reason: 文になっていて、見出しと列名に使えない
+  description:
+    type: string
+    title: 説明
+    description: その項目に何を記載するかの 1〜2 文。
+    x-rules:
+      - 書き方の決まりは `x-rules` に、良い例は `examples` に、悪い例は `x-bad-examples` に分ける。
+      - 機械で判定できる決まりは `pattern`・`enum`・`maxLength` などの制約にする。
+    examples:
+      - 対象を 1〜3 行で説明する。
+    x-bad-examples:
+      - value: 対象を説明する。後から情報を足さない。対象が変わったときだけ書き換える。
+        reason: 書き方の決まりが混ざっている。後の 2 文は `x-rules` に分ける
+  examples:
+    type: array
+    title: 良い例
+    description: そのスキーマに合う値の例。
+    x-rules:
+      - 値をそのままコピーして使える形にする。
+      - 全ての文書の検査がスキーマに合うかを検査するので、スキーマに合わない値は `x-bad-examples` に分ける。
+  x-rules:
+    type: array
+    title: 決まり
+    description: 機械で判定できない書き方の決まり。
+    minItems: 1
+    items:
+      type: string
+      minLength: 1
+    x-rules:
+      - 1 件を 1 文にする。
+      - 正の指示で記載し、否定は実行しうる操作を止めるときだけにする。
+    examples:
+      - - 初回に記載した内容のまま保つ。
+        - 対象そのものが変わったときだけ書き換える。
+    x-bad-examples:
+      - value: 初回に記載した内容のまま保ち、対象そのものが変わったときだけ書き換える
+        reason: 1 件が配列でなく文字列で、2 つの決まりが 1 文に入っている
+  x-bad-examples:
+    type: array
+    title: 悪い例
+    description: 書いてはいけない値と、その理由。
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - value
+        - reason
+      properties:
+        value:
+          title: 値
+          description: 悪い例の値。スキーマに合わない値でもよい。
+        reason:
+          type: string
+          title: 理由
+          description: その値が悪い理由。
+          minLength: 1
+    x-rules:
+      - 間違えやすい値を選ぶ。
+    examples:
+      - - value: 対象を説明する
+          reason: 句点が無い
+  x-kind:
+    type: string
+    title: 種類
+    description: 設計書の種類。`write_docs` の `kind` と `describe` の種類の名前になる。
+  x-folder:
+    type: string
+    title: 置くフォルダ
+    description: 設計書を置くフォルダの、リポジトリの直下からのパス。
+  x-id-prefix:
+    type: string
+    title: ID の接頭辞
+    description: 設計書の `id` の接頭辞。
+    pattern: ^[A-Z]+$
+  x-cross:
+    type: string
+    title: 横断のキー
+    description: 種類をまたいで一覧にする、最上位のキーの名前。
+  x-heading:
+    type: string
+    title: 見出し
+    description: 画面でその項目の見出しにする語。
+  x-shape:
+    type: string
+    title: 表し方
+    description: 画面でその項目を表す形。
+    enum:
+      - table
+      - sections
+      - list
+      - attributes
+      - diagram
+    x-rules:
+      - 表し方は規約『表し方の優先順位』の順で選ぶ。
+  x-diagram:
+    type: string
+    title: 図の種類
+    description: '`x-shape: diagram` の項目の図の種類。'
+    enum:
+      - architecture
+      - dataflow
+      - er
+      - state
+  x-key:
+    type: string
+    title: 要素のキー
+    description: 配列の要素を名前で指すときのキー。`flows[正常系]` のように参照で使う。
+  x-unique-in-kind:
+    type: boolean
+    title: 種類の中で一意
+    description: 同じ種類の設計書の中で、`x-key` の値が重ならないようにするか。
+  x-test-file:
+    type: string
+    title: テストのファイルのキー
+    description: 設計書のテストのファイルを記録するキーの名前。
+  x-test-file-optional:
+    type: boolean
+    title: テストのファイルを省けるか
+    description: '`x-test-file` のキーを省いてよいか。'
+  x-test-function:
+    title: テスト関数のキー
+    description: テスト関数の名前を持つ項目の印。`true` か、テストのファイルを記録するキーの名前。
+    type:
+      - boolean
+      - string

@@ -1,12 +1,33 @@
 """全ての文書の検査（scripts/check_all.py）の結合テスト。"""
 
-from collections.abc import Callable
+import shutil
+from collections.abc import Callable, Iterator
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
+
+from ruamel.yaml import YAML
 
 # conftest の fixture の型。子プロセスの結果は conftest の Completed
 type RunScript = Callable[..., Any]
 type RepoFactory = Callable[[dict[str, str]], Path]
+
+# リポジトリの直下
+_REPO = Path(__file__).resolve().parents[3]
+# description の文の数の上限
+_MAX_SENTENCES = 2
+
+
+def _descriptions(node: object) -> Iterator[str]:
+    """スキーマの全ての深さの description の文字列を返す。値の例の中は辿らない。"""
+    if isinstance(node, dict):
+        for key, value in cast("dict[str, object]", node).items():
+            if key == "description" and isinstance(value, str):
+                yield value
+            elif key not in {"examples", "x-bad-examples", "enum", "const", "default"}:
+                yield from _descriptions(value)
+    elif isinstance(node, list):
+        for value in cast("list[object]", node):
+            yield from _descriptions(value)
 
 
 def test_normal(run_script: RunScript, repo_factory: RepoFactory) -> None:
@@ -64,6 +85,14 @@ def test_normal_when_design_schemas_invalid(
                 "examples:\n"
                 "  - title: x\n"
             ),
+            # 3 行目の x-rules が配列でない
+            "schemas/design/bad-rules.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: 決まり\n"
+                "x-rules: 文字列\n"
+            ),
+            # 2 行目の x-rules が配列でない
+            "schemas/template.schema.yaml": "title: テンプレート\nx-rules: 文字列\n",
         }
     )
     # 実行
@@ -71,14 +100,37 @@ def test_normal_when_design_schemas_invalid(
     # 検証
     lines = result.stdout.splitlines()
     assert result.exit_code == 1
-    assert len(lines) == 4
+    assert len(lines) == 6
     assert lines[0].startswith("schemas/design/bad-example.schema.yaml:10: examples[0]: examples: ")
     assert lines[1].startswith(
         "schemas/design/bad-ref.schema.yaml:5: properties.id.$ref: "
         "$ref: common.schema.yaml#/$defs/missing "
     )
-    assert lines[2].startswith("schemas/design/bad-type.schema.yaml:3: type: metaschema: ")
-    assert lines[3] == "0 件の文書を検査し、違反は 3 件、警告は 0 件でした"
+    assert lines[2].startswith("schemas/design/bad-rules.schema.yaml:3: x-rules: metaschema: ")
+    assert lines[3].startswith("schemas/design/bad-type.schema.yaml:3: type: metaschema: ")
+    assert lines[4].startswith("schemas/template.schema.yaml:2: x-rules: metaschema: ")
+    assert lines[5] == "0 件の文書を検査し、違反は 5 件、警告は 0 件でした"
+
+
+def test_normal_when_repository_schemas(run_script: RunScript, tmp_path: Path) -> None:
+    """リポジトリの全てのスキーマが違反なしで通り、description が全て 2 文以内になっている（正常系）。"""
+    # 準備
+    root = tmp_path / "repo"
+    root.mkdir()
+    shutil.copytree(_REPO / "schemas", root / "schemas")
+    (root / "dev-docs.yaml").write_text("documents: []\n", encoding="utf-8")
+    # 実行
+    result = run_script("check_all", root)
+    # 検証
+    assert result.exit_code == 0
+    assert result.stdout.splitlines() == ["0 件の文書を検査し、違反は 0 件、警告は 0 件でした"]
+    too_long = [
+        (path.name, text)
+        for path in sorted((_REPO / "schemas/design").glob("*.schema.yaml"))
+        for text in _descriptions(YAML(typ="safe").load(path.read_text(encoding="utf-8")))
+        if text.count("。") > _MAX_SENTENCES
+    ]
+    assert too_long == []
 
 
 def test_normal_when_violations(run_script: RunScript, repo_factory: RepoFactory) -> None:
@@ -227,3 +279,15 @@ def test_error_when_config_missing(run_script: RunScript, tmp_path: Path) -> Non
     # 検証
     assert result.exit_code == 2
     assert "dev-docs.yaml" in result.stderr
+
+
+def test_error_when_meta_schema_unusable(run_script: RunScript, repo_factory: RepoFactory) -> None:
+    """拡張したメタスキーマを使えなければ検査を始めずに終わる（異常系）。"""
+    # 準備
+    root = repo_factory({})
+    (root / "schemas/meta.schema.yaml").unlink()
+    # 実行
+    result = run_script("check_all", root)
+    # 検証
+    assert result.exit_code == 2
+    assert "schemas/meta.schema.yaml" in result.stderr

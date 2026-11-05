@@ -23,7 +23,10 @@ scenarios:
           V-->>C: 終了コード 0 と空の違反の配列
         end
         loop 全ての設計書のスキーマ（knowledge の正本）
-          C->>C: メタスキーマ・$ref・examples の検査
+          C->>C: メタスキーマ・$ref・examples・x-rules・x-bad-examples の検査
+        end
+        loop schemas/ の直下のスキーマ
+          C->>C: メタスキーマ・x-rules・x-bad-examples の検査
         end
         C->>C: YAML に yamllint、Markdown と文書の Markdown の項目に markdownlint と textlint
         C-->>G: 成功
@@ -75,19 +78,22 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: PR
-        description: 自分の `examples` に合わない設計書のスキーマと、無い `$defs` を `$ref` で指す設計書のスキーマを 1 つずつ含む PR
+        description: 自分の `examples` に合わない設計書のスキーマと、無い `$defs` を `$ref` で指す設計書のスキーマと、`x-rules` が配列でない設計書のスキーマを 1 つずつ含む PR
     flow: |-
       sequenceDiagram
         participant G as GitHub Actions
         participant C as 検査のワークフロー
         G->>C: ワークフローを起動する
         loop 全ての設計書のスキーマ（knowledge の正本）
-          C->>C: メタスキーマ・$ref・examples の検査
+          C->>C: メタスキーマ・$ref・examples・x-rules・x-bad-examples の検査
+        end
+        loop schemas/ の直下のスキーマ
+          C->>C: メタスキーマ・x-rules・x-bad-examples の検査
         end
         C-->>G: 全てのスキーマの誤りを出して失敗
     expected:
       - CI のジョブが失敗で終わる
-      - ログに 2 つの誤りの両方が、スキーマのパス・行・項目・内容つきで出る
+      - ログに 3 つの誤りの全てが、スキーマのパス・行・項目・内容つきで出る
     test: test_error_when_design_schemas_are_invalid
   - name: 異常シナリオ（検査の CLI が入っていない）
     setup:

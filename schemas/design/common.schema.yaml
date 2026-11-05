@@ -1,28 +1,28 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 title: 共通の型
-description: |-
-  種別をまたいで使う型。各種別の Schema から `common.schema.yaml#/$defs/{名前}` の `$ref` で使う。
-  項目のキーは英語で書き、画面に出す日本語の名前は `title` で持つ。
+description: 種別をまたいで使う型。各種別の Schema から `common.schema.yaml#/$defs/{名前}` の `$ref` で使う。
+x-rules:
+  - 項目のキーは英語で書き、画面に出す日本語の名前は `title` で持つ。
 $defs:
   markdown:
     type: string
     title: 本文
-    description: |-
-      Markdown で書く本文。
-      他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。
-      定数は `!{名前}` で埋め込める。
+    description: Markdown で書く本文。定数は `!{名前}` で埋め込める。
+    x-rules:
+      - 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。
   summary:
     type: string
     title: 概要
-    description: 1 行の要約。改行を含めない。
+    description: 1 行の要約。
     minLength: 1
     pattern: "^[^\\n]+$"
   id:
     type: string
     title: ID
-    description: |-
-      設計書の変わらない ID。最上位の `id` に持ち、設計書を改名・移動しても変えない。
-      `{種別の接頭辞}-{連番}`、または設計書を作った PR の番号を挟んだ `{種別の接頭辞}-{PR の番号}-{PR の中の連番}` で振る。
+    description: 設計書の変わらない ID。最上位の `id` に持つ。
+    x-rules:
+      - 設計書を改名・移動しても変えない。
+      - '`{種別の接頭辞}-{連番}`、または設計書を作った PR の番号を挟んだ `{種別の接頭辞}-{PR の番号}-{PR の中の連番}` で振る。'
     pattern: "^[A-Z]+-\\d+(-\\d+)?$"
     examples:
       - "IF-12"
@@ -30,13 +30,18 @@ $defs:
   ref:
     type: string
     title: 参照
-    description: |-
-      設計書の項目を指す。`{ID}#{項目のパス}` で書く。
-      ID は指す設計書の最上位の `id`。同じ設計書の中は `#{項目のパス}` だけでよい。
-      リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。
-      設計書全体を指すときは `#` の後を空にする。
-      辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 段になる（`notes[main.py の補足]`）。
-      同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として読む。
+    description: 設計書の項目を指す。`{ID}#{項目のパス}` で書く。
+    x-rules:
+      - ID は指す設計書の最上位の `id` にする。
+      - 同じ設計書の中は `#{項目のパス}` だけでよい。
+      - リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。
+      - 設計書全体を指すときは `#` の後を空にする。
+      - 辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 段になる（`notes[main.py の補足]`）。
+      - 同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。
+      - 同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として読む。
+    x-bad-examples:
+      - value: IF-12#flows[0]
+        reason: リストの項目を番号で指している
     pattern: "^(?:[A-Z]+-\\d+(?:-\\d+)?)?#(?:[^\\s\\[]|\\[[^\\]]*\\])*$"
     examples:
       - "IF-12#flows[正常系]"
@@ -51,14 +56,12 @@ $defs:
   status:
     type: string
     title: 状態
-    description: 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。
+    description: 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。書かなければ実装済みとして扱う。
     enum: [planned, implemented, deprecated, removed]
   visibility:
     type: string
     title: 公開
-    description: |-
-      Pages に出すか。`user`（ユーザー向け。Pages に出す）/ `developer`（開発者向け。dev-docs の画面だけで出す）。
-      書かなければ親の値を引き継ぎ、最上位の既定は `developer`。
+    description: Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。書かなければ親の値を引き継ぎ、最上位の既定は `developer`。
     enum: [user, developer]
   implementation:
     type: string
@@ -81,7 +84,9 @@ $defs:
       version:
         type: string
         title: バージョン
-        description: 入ったバージョンのタグ（例 `v0.3.0`）。
+        description: 入ったバージョンのタグ。
+        examples:
+          - v0.3.0
       pr:
         type: integer
         title: PR
@@ -95,17 +100,17 @@ $defs:
   notes:
     type: object
     title: 補足
-    description: |-
-      項目に分けられない残り。節の名前 → 本文。
-      同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補になる。
+    description: 項目に分けられない残り。節の名前 → 本文。
+    x-rules:
+      - 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。
     additionalProperties:
       $ref: "#/$defs/markdown"
   mermaid:
     $ref: "#/$defs/markdown"
     title: 図
-    description: |-
-      手で書く Mermaid の図。```mermaid のコードブロックで書く。
-      図の構文は検証で `mermaid.parse()` に通す。
+    description: 手で書く Mermaid の図。図の構文は検証で `mermaid.parse()` に通す。
+    x-rules:
+      - '```mermaid のコードブロックで書く。'
   glossary:
     type: array
     title: 用語
@@ -131,9 +136,9 @@ $defs:
   flowchart:
     type: object
     title: フローチャート
-    description: |-
-      `flowchart` の元のデータ。図はこのノード・辺・枠・リンクから生成する。
-      使う項目の `x-shape: diagram` と `x-diagram` で図の種類を決める。
+    description: '`flowchart` の元のデータ。図はこのノード・辺・枠・リンクから生成する。'
+    x-rules:
+      - '使う項目の `x-shape: diagram` と `x-diagram` で図の種類を決める。'
     additionalProperties: false
     required: [nodes, edges]
     properties:
@@ -172,7 +177,7 @@ $defs:
             line:
               type: string
               title: 線
-              description: 線の種類。書かなければ `solid`（`-->`）。`dotted`（`-.->`）/ `thick`（`==>`）/ `open`（`---`）。
+              description: 線の種類（`solid`（`-->`）/ `dotted`（`-.->`）/ `thick`（`==>`）/ `open`（`---`））。書かなければ `solid`。
               enum: [solid, dotted, thick, open]
       subgraphs:
         type: array
@@ -222,7 +227,7 @@ $defs:
       id:
         type: string
         title: ID
-        description: 図の中で一意なノードの ID。空白と記号を含めない。
+        description: 図の中で一意なノードの ID。
         pattern: "^[^\\s\\[\\](){}<>|\"]+$"
       label:
         type: string
@@ -231,9 +236,7 @@ $defs:
       shape:
         type: string
         title: 形
-        description: |-
-          ノードの形。書かなければ `rect`。
-          `rect`（四角）/ `round`（角丸）/ `stadium`（開始・終端 `([…])`）/ `diamond`（判定）/ `circle`（処理）/ `cylinder`（データストア）/ `hexagon` / `parallelogram`（入出力ポート）/ `subroutine`。
+        description: ノードの形（`rect`（四角）/ `round`（角丸）/ `stadium`（開始・終端 `([…])`）/ `diamond`（判定）/ `circle`（処理）/ `cylinder`（データストア）/ `hexagon` / `parallelogram`（入出力ポート）/ `subroutine`）。書かなければ `rect`。
         enum: [rect, round, stadium, diamond, circle, cylinder, hexagon, parallelogram, subroutine]
       kind:
         type: string
@@ -243,9 +246,10 @@ $defs:
   state_transitions:
     type: object
     title: 状態遷移
-    description: |-
-      状態の一覧と遷移の表。`stateDiagram-v2` の図はここから生成する。
-      状態の名前は図のノードになるので、空白と記号を含めない。含める場合は `node` に図のノード名を書く。
+    description: 状態の一覧と遷移の表。`stateDiagram-v2` の図はここから生成する。
+    x-rules:
+      - 状態の名前は図のノードになるので、空白と記号を含めない。
+      - 含める場合は `node` に図のノード名を書く。
     additionalProperties: false
     required: [states, initial, transitions]
     properties:
@@ -267,7 +271,9 @@ $defs:
             identifier:
               type: string
               title: 識別子
-              description: 実装上の値・ラベル・フラグ（例 `status = draft`）。
+              description: 実装上の値・ラベル・フラグ。
+              examples:
+                - status = draft
             sub_identifier:
               type: string
               title: 備考識別子
@@ -279,7 +285,9 @@ $defs:
             entry_value:
               type: string
               title: 入る値
-              description: この状態に入ったときに入る値（例 `started_at` が入る）。
+              description: この状態に入ったときに入る値。
+              examples:
+                - '`started_at` が入る'
             on_enter:
               type: string
               title: 入る時の処理
@@ -405,7 +413,9 @@ $defs:
                   comment:
                     type: string
                     title: 注記
-                    description: "外部キーの参照先（例 `参照: ユーザー.ID`）。"
+                    description: 外部キーの参照先。
+                    examples:
+                      - '参照: ユーザー.ID'
       relations:
         type: array
         title: 関連

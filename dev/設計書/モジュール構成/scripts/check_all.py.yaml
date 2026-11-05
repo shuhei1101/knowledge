@@ -1,6 +1,6 @@
 id: "MOD-72-6"
 title: "検査と変換のスクリプト / scripts / check_all.py"
-lead: CI と手元から呼ぶ「全ての文書の検査」。`dev-docs.yaml` の `documents[]` が指す全ての文書に、スキーマの検査と文書の違反の検査を当て、`schemas/design/` の設計書のスキーマにスキーマ自身の検査を当て、終了コードで合否を返す（IF-72-3）。
+lead: CI と手元から呼ぶ「全ての文書の検査」。`dev-docs.yaml` の `documents[]` が指す全ての文書に、スキーマの検査と文書の違反の検査を当て、`schemas/design/` の設計書のスキーマと `schemas/` の直下のスキーマにスキーマ自身の検査を当て、終了コードで合否を返す（IF-72-3）。
 data_models:
   - name: Target
     title: 検査する文書
@@ -19,6 +19,17 @@ data_models:
       - name: checks
         type: bool
         description: 行の `validators` に `knowledge-checks` を持つか
+  - name: MetaSchemaError
+    title: 使えない拡張したメタスキーマ
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: 例外
+    summary: '`schemas/meta.schema.yaml` が無い・読めない・JSON Schema 2020-12 のメタスキーマに合わない'
+    inherits: Exception
+    properties:
+      - name: message
+        type: str
+        description: 標準エラーへ出す理由の 1 行
 constants:
   - name: CHECKS_ID
     title: 文書の違反の検査の ID
@@ -38,6 +49,12 @@ constants:
     usecase: 全ての文書の検査
     summary: 設計書のスキーマ（knowledge の正本）を置くフォルダの、リポジトリの直下からのパス
     value: PurePosixPath("schemas/design")
+  - name: META_SCHEMA_PATH
+    title: 拡張したメタスキーマのパス
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    summary: 'JSON Schema 2020-12 のメタスキーマに `x-rules`・`x-bad-examples` の形を足した、拡張したメタスキーマの、リポジトリの直下からのパス。ファイルは `$dynamicAnchor: meta` と絶対 URI の `$id`（`urn:knowledge:schemas:meta`）を持つ。`$id` が無いと `$dynamicRef` が拡張したメタスキーマへ戻らず、深い位置のキーを検査しない'
+    value: PurePosixPath("schemas/meta.schema.yaml")
 functions:
   - name: main
     title: 全ての文書の検査の入口
@@ -63,20 +80,22 @@ functions:
          - 引けない CLI がある場合、引けない CLI ごとに標準エラーへ `{CLI} がありません。開発コマンドの『環境構築（クローン直後）』で入れてください` を出し `2` を返す
       3. 作業ディレクトリの `dev-docs.yaml` の `documents[]` を読む（dev-docs.yaml の読み込み）
          - 読めない dev-docs.yaml の場合、標準エラーへ理由を出し `2` を返す
-      4. 検査する文書を引き（検査する文書の列挙）、並列に読む（ファイルの並列の読み込み）
-      5. スキーマの検査器を作り（スキーマの検査器の作成）、ID の索引を 1 度だけ作る（ID の索引の作成）
-      6. 文書ごとに検査し（文書 1 件の検査）、違反を `{ファイルのパス}:{行}: {項目のパス}: {内容}` の 1 行ずつ、文書のパスの順に標準出力へ出す
-      7. 設計書のスキーマを検査し（設計書のスキーマの検査）、違反を同じ形の行で出す
-      8. 対応表のコピーを検査し（対応表のコピーの検査）、違反を同じ形の行で出す
-      9. lint を当てる（lint の検査）。違反を `{ファイルのパス}:{行}: {項目のパス}: {tool}/{rule}: {message}`、`warning` の違反は `{内容}` の前に `warning: ` を付けた行で、文書のパスと行の順に出す
+      4. 拡張したメタスキーマの検査器を作る（拡張したメタスキーマの読み込み）
+         - 使えない拡張したメタスキーマの場合、標準エラーへ理由を出し `2` を返す
+      5. 検査する文書を引き（検査する文書の列挙）、並列に読む（ファイルの並列の読み込み）
+      6. スキーマの検査器を作り（スキーマの検査器の作成）、ID の索引を 1 度だけ作る（ID の索引の作成）
+      7. 文書ごとに検査し（文書 1 件の検査）、違反を `{ファイルのパス}:{行}: {項目のパス}: {内容}` の 1 行ずつ、文書のパスの順に標準出力へ出す
+      8. 設計書のスキーマと `schemas/` の直下のスキーマを検査し（設計書のスキーマの検査・文書の種類のスキーマの検査）、違反を同じ形の行で出す
+      9. 対応表のコピーを検査し（対応表のコピーの検査）、違反を同じ形の行で出す
+      10. lint を当てる（lint の検査）。違反を `{ファイルのパス}:{行}: {項目のパス}: {tool}/{rule}: {message}`、`warning` の違反は `{内容}` の前に `warning: ` を付けた行で、文書のパスと行の順に出す
          - 読めない lint の出力の場合、標準エラーへ理由を出し `1` を返す
-      10. 最後に `{文書の数} 件の文書を検査し、違反は {違反の数} 件、警告は {警告の数} 件でした` を出し、違反があれば `1`、無ければ `0` を返す（警告は数えない）
+      11. 最後に `{文書の数} 件の文書を検査し、違反は {違反の数} 件、警告は {警告の数} 件でした` を出し、違反があれば `1`、無ければ `0` を返す（警告は数えない）
          - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返す
     unit_tests:
       - name: test_main
         case: 正常
         summary: 違反の無いリポジトリ
-        condition: '`dev-docs.yaml`・`schemas/rule.schema.yaml`・違反の無い `docs/rule/` の文書 2 件を持つ一時フォルダ'
+        condition: '`dev-docs.yaml`・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・違反の無い `docs/rule/` の文書 2 件を持つ一時フォルダ'
         mock: maid の在りかの確認を、正しい図と答えるスクリプトのパスに差し替える。lint の CLI の在りかの確認を両方とも引けたパスに、lint の検査を空を返す関数に差し替える
         expected: '`0` を返し、標準出力の最後の行が `2 件の文書を検査し、違反は 0 件、警告は 0 件でした`'
       - name: test_main_when_violations
@@ -91,6 +110,12 @@ functions:
         condition: 違反の無いリポジトリに、`examples[0]` が `required` のキーを持たない `schemas/design/scenario.schema.yaml` を加える
         mock: maid と lint の CLI の在りかの確認を差し替える。lint の検査を空を返す関数に差し替える
         expected: '`1` を返し、`schemas/design/scenario.schema.yaml:{行}: examples[0]: examples: ` で始まる行が出て、最後の行が違反 1 件'
+      - name: test_main_when_document_schemas_invalid
+        case: 正常
+        summary: '`schemas/` の直下のスキーマに誤りがある'
+        condition: 違反の無いリポジトリの `schemas/rule.schema.yaml` に、文字列の `x-rules` を加える
+        mock: maid と lint の CLI の在りかの確認を差し替える。lint の検査を空を返す関数に差し替える
+        expected: '`1` を返し、`schemas/rule.schema.yaml:{行}: x-rules: metaschema: ` で始まる行が出る'
       - name: test_main_when_lint_findings
         case: 正常
         summary: lint の違反と警告
@@ -109,6 +134,12 @@ functions:
         condition: 違反の無いリポジトリ
         mock: maid の在りかの確認を `None` に、`--lint-dir` を存在しないフォルダにする
         expected: '`2` を返し、標準エラーに `maid`・`markdownlint-cli2`・`textlint` の行が 1 行ずつ出る'
+      - name: test_main_when_meta_schema_unusable
+        case: 正常
+        summary: 拡張したメタスキーマが無い
+        condition: '`schemas/meta.schema.yaml` を持たないリポジトリ'
+        mock: maid と lint の CLI の在りかの確認を差し替える
+        expected: '`2` を返し、標準エラーに `schemas/meta.schema.yaml` が出る'
       - name: test_main_when_config_missing
         case: 正常
         summary: dev-docs.yaml が無い
@@ -116,6 +147,7 @@ functions:
         mock: maid と lint の CLI の在りかの確認を差し替える
         expected: '`2` を返し、標準エラーに `dev-docs.yaml` が出る'
     callees:
+      - '#functions[load_meta_validator]'
       - MOD-72-3#functions[find_maid]
       - MOD-176-1#functions[find_lint_clis]
       - MOD-72-2#functions[load_config]
@@ -178,6 +210,114 @@ functions:
       - MOD-176-1#functions[run_yamllint]
     refs:
       - IF-72-3#constraints[lint の当て先]
+  - name: load_meta_validator
+    title: 拡張したメタスキーマの読み込み
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: サービス
+    scope: public
+    summary: '`META_SCHEMA_PATH` を読み、スキーマの検査器を作る'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`META_SCHEMA_PATH` の起点'
+    returns:
+      type: Draft202012Validator
+      description: 拡張したメタスキーマの検査器
+    process: |-
+      1. `META_SCHEMA_PATH` を UTF-8 で読み、YAML として読む（YAML の読み込み）
+         - 読めないファイル・YAML の場合、`MetaSchemaError` を送出する
+      2. `Draft202012Validator.check_schema` で、それ自身が JSON Schema 2020-12 のメタスキーマに合うかを確かめる
+         - 合わない場合、`MetaSchemaError` を送出する
+      3. 検査器を返す
+    exceptions:
+      - name: MetaSchemaError
+        condition: 拡張したメタスキーマが無い・読めない・JSON Schema 2020-12 のメタスキーマに合わない
+        message: 'schemas/meta.schema.yaml を使えません: {理由}'
+    unit_tests:
+      - name: test_load_meta_validator
+        case: 正常
+        summary: 正しい拡張したメタスキーマ
+        condition: 'リポジトリの `schemas/meta.schema.yaml`'
+        mock: なし
+        expected: '検査器が、最上位と `properties` の下の文字列の `x-rules` と `value` の無い `x-bad-examples` の要素と `type: strin` に誤りを返し、`examples`・`x-bad-examples` の値の中と `properties` の `x-rules` という名前の項目には誤りを返さない'
+      - name: test_load_meta_validator_when_missing
+        case: 異常
+        summary: ファイルが無い
+        condition: '`schemas/meta.schema.yaml` を持たない一時フォルダ'
+        mock: なし（一時ディレクトリ）
+        expected: '`MetaSchemaError` を送出し、`message` が `schemas/meta.schema.yaml を使えません: ` で始まる'
+      - name: test_load_meta_validator_when_broken
+        case: 異常
+        summary: 読めない YAML
+        condition: 括弧の閉じていない `schemas/meta.schema.yaml`
+        mock: なし（一時ディレクトリ）
+        expected: '`MetaSchemaError` を送出する'
+      - name: test_load_meta_validator_when_invalid
+        case: 異常
+        summary: メタスキーマに合わない
+        condition: '`type: strin` を持つ `schemas/meta.schema.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: '`MetaSchemaError` を送出する'
+    callees:
+      - MOD-72-2#functions[load_safe]
+    refs:
+      - IF-72-3#exceptions[終了コード 2]
+  - name: check_document_schemas
+    title: 文書の種類のスキーマの検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: サービス
+    scope: public
+    summary: '`schemas/*.schema.yaml` に拡張したメタスキーマの検査を当てる'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`schemas/` の起点'
+      - name: meta
+        title: 拡張したメタスキーマの検査器
+        type: Draft202012Validator
+        required: true
+        description: 拡張したメタスキーマの読み込みの返り値
+    returns:
+      type: list[tuple[str, int, str, str]]
+      description: （ファイルのパス、行、項目のパス、内容）。ファイルのパスの順。誤りが無ければ空
+    process: |-
+      1. `schemas/*.schema.yaml` をファイル名の順に、設計書のスキーマの検査の 2 と同じ扱いで読む
+      2. ファイルごとに `meta` の `iter_errors` の誤りを `(パス, 行, 項目のパス, "metaschema: {message}")` にする
+      3. ファイルのパス・行の順に並べて返す
+    unit_tests:
+      - name: test_check_document_schemas
+        case: 正常
+        summary: 誤りの無いスキーマ
+        condition: '`x-rules` を持つ `schemas/template.schema.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: 空
+      - name: test_check_document_schemas_when_invalid
+        case: 正常
+        summary: '`x-rules` の形が違う'
+        condition: 文字列の `x-rules` を持つ `schemas/rule.schema.yaml`
+        mock: なし（一時ディレクトリ）
+        expected: '1 件で、項目のパスが `x-rules`、内容が `metaschema: ` で始まり、行が `x-rules` のキーの行'
+      - name: test_check_document_schemas_when_broken
+        case: 正常
+        summary: 読めない YAML
+        condition: 括弧の閉じていない `schemas/rule.schema.yaml`
+        mock: なし（一時ディレクトリ）
+        expected: '`$` の 1 件で、内容が `YAML として読めません: ` で始まる'
+    callees:
+      - MOD-72-2#functions[load_document]
+      - MOD-72-2#functions[line_of]
+      - MOD-72-2#functions[format_path]
+    refs:
+      - IF-72-3#constraints[文書の種類のスキーマの検査]
+      - IF-72-3#constraints[スキーマの違反の行]
   - name: check_design_schemas
     title: 設計書のスキーマの検査
     kind: 関数
@@ -185,13 +325,18 @@ functions:
     usecase: 全ての文書の検査
     role: サービス
     scope: public
-    summary: '`schemas/design/` の設計書のスキーマに、メタスキーマ・`$ref`・`examples` の検査を当てる'
+    summary: '`schemas/design/` の設計書のスキーマに、拡張したメタスキーマ・`$ref`・`examples` の検査を当てる'
     args:
       - name: root
         title: リポジトリの直下
         type: Path
         required: true
         description: '`DESIGN_SCHEMAS_DIR` の起点'
+      - name: meta
+        title: 拡張したメタスキーマの検査器
+        type: Draft202012Validator
+        required: true
+        description: 拡張したメタスキーマの読み込みの返り値
     returns:
       type: list[tuple[str, int, str, str]]
       description: （ファイルのパス、行、項目のパス、内容）。ファイルのパスの順。誤りが無ければ空
@@ -202,10 +347,10 @@ functions:
          - 読めない YAML の場合、`(パス, {行}, "$", "YAML として読めません: {理由}")` を加えて、そのファイルは以降の検査から外す
       3. 読めたファイルを、ファイル名を URI にした `referencing.Registry` に入れる（`build_validators` の `schemas/*.schema.yaml` の登録とは別の登録）
       4. ファイルごとに次を当て、誤りごとに `(パス, 行, 項目のパス, 内容)` を加える。行は項目の行の引き当て、項目のパスは項目のパスの組み立てで求める
-         1. メタスキーマ: `Draft202012Validator(Draft202012Validator.META_SCHEMA)` の `iter_errors` の誤りを `metaschema: {message}` にする
+         1. メタスキーマ: `meta` の `iter_errors` の誤りを `metaschema: {message}` にする
             - メタスキーマの誤りがあるファイルの場合、そのファイルの 2・3 は当てない
          2. `$ref`: スキーマを辿り、文字列の `$ref` ごとに、ファイル名を基準の URI にして登録から引く。引けなければ `$ref` のキーの位置で `$ref: {値} を解決できません` にする
-            - スキーマのキーワードとしての `examples`・`enum`・`const`・`default` の値の中は辿らない
+            - スキーマのキーワードとしての `examples`・`enum`・`const`・`default`・`x-bad-examples` の値の中は辿らない
             - `properties`・`patternProperties`・`$defs`・`dependentSchemas` の値（名前 → スキーマの対応）のキーは名前として扱い、キーワードと見なさずに値のスキーマを辿る（`default`・`examples` という名前のプロパティも辿る）
          3. `examples`: 2 と同じ辿り方で、キーワードとしての配列の `examples` を持つスキーマごとに、`{"$ref": "{ファイル名}#{JSON Pointer}"}` を登録つきの `Draft202012Validator` にし、要素ごとの `iter_errors` の誤りを、要素の位置に誤りの位置を続けた位置で `examples: {message}` にする
             - 検査の途中で `$ref` を解決できない場合、その要素の誤りは出さない（2 が出す）
@@ -223,6 +368,18 @@ functions:
         condition: '`type: strin` を持つスキーマ、`common.schema.yaml#/$defs/missing` を指すスキーマ、`required` のキーを持たない `examples[0]` を持つスキーマと、`common.schema.yaml`'
         mock: なし（一時ディレクトリ）
         expected: '3 件で、内容がそれぞれ `metaschema: `・`$ref: `・`examples: ` で始まり、行がそれぞれ `type` のキー・`$ref` のキー・`examples[0]` の要素の行'
+      - name: test_check_design_schemas_when_x_keys_invalid
+        case: 正常
+        summary: '`x-rules`・`x-bad-examples` の形が違う'
+        condition: '`properties.id` に文字列の `x-rules` を持ち、`$defs.a` に `reason` の無い `x-bad-examples` の要素を持つスキーマ'
+        mock: なし（一時ディレクトリ）
+        expected: '2 件で、項目のパスがそれぞれ `properties.id.x-rules`・`$defs.a.x-bad-examples[0]`、内容が `metaschema: ` で始まる'
+      - name: test_check_design_schemas_when_x_keys_in_data
+        case: 正常
+        summary: 値の中と同じ名前の項目
+        condition: '`x-bad-examples` の `value` に `$ref` と文字列の `x-rules` を持つオブジェクトを書き、`properties` に `x-rules` という名前の項目を持つスキーマ'
+        mock: なし（一時ディレクトリ）
+        expected: 空
       - name: test_check_design_schemas_when_nested_examples
         case: 正常
         summary: 入れ子の examples
@@ -253,7 +410,8 @@ functions:
       - MOD-72-2#functions[format_path]
     refs:
       - IF-72-3#constraints[設計書のスキーマの検査]
-      - IF-72-3#constraints[設計書のスキーマの違反の行]
+      - IF-72-3#constraints[スキーマの違反の行]
+      - IF-72-3#constraints[`x-rules`・`x-bad-examples` の形]
   - name: check_word_list_copy
     title: 対応表のコピーの検査
     kind: 関数

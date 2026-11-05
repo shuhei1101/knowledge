@@ -17,7 +17,9 @@ properties:
   id:
     $ref: common.schema.yaml#/$defs/id
     title: ID
-    description: 設計書の変わらない ID。設計書を作るときに振り、改名・移動でも変わらない。他の設計書からは `{ID}#{項目のパス}` で指す。
+    description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
+    x-rules:
+      - 設計書を作るときに振り、改名・移動でも変えない。
   title:
     type: string
     title: タイトル
@@ -25,9 +27,10 @@ properties:
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
-    description: |-
-      API が何をするものかを 1〜3 行で要約する。自プロジェクトでの用途は書かない。
-      初回に書いた内容のまま保ち、後から情報を足さない。
+    description: API が何をするものかを 1〜3 行で要約する。
+    x-rules:
+      - 自プロジェクトでの用途は書かない。
+      - 初回に書いた内容のまま保ち、後から情報を足さない。
   used_in:
     type: array
     title: 使用箇所
@@ -194,7 +197,9 @@ properties:
   pricing_url:
     type: string
     title: 課金の公式ページ
-    description: 課金単価を書くときは必ず持つ。
+    description: 課金の公式ページの URL。
+    x-rules:
+      - 課金単価を書くときは必ず持つ。
   error_format:
     $ref: common.schema.yaml#/$defs/markdown
     title: エラー応答の形式
@@ -431,7 +436,10 @@ properties:
   issues:
     type: array
     title: 不具合一覧
-    description: 仕様どおりに使っても期待どおり動かない事象。こちらの使い方の誤りだったものは書かない。解消を確かめたら消す。
+    description: 仕様どおりに使っても期待どおり動かない事象。
+    x-rules:
+      - こちらの使い方の誤りだったものは書かない。
+      - 解消を確かめたら消す。
     x-heading: 不具合一覧
     x-shape: sections
     x-key: title

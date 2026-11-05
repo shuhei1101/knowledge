@@ -5,12 +5,24 @@ from collections.abc import Callable, Mapping
 from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING
 
+import pytest
+
 import check_all
 from _lint import LintFinding, LintSource
-from check_all import Target, build_validators, check_lints, check_target, list_targets
+from check_all import (
+    MetaSchemaError,
+    Target,
+    build_validators,
+    check_lints,
+    check_target,
+    list_targets,
+)
 
 if TYPE_CHECKING:
-    import pytest
+    from jsonschema import Draft202012Validator
+
+# リポジトリの直下
+_REPO = Path(__file__).resolve().parents[3]
 
 type FakeMaidFactory = Callable[..., str]
 type RepoFactory = Callable[[Mapping[str, str]], Path]
@@ -37,6 +49,11 @@ _WARNING_FINDING = LintFinding(
     "1 行に 2 文があります",
     True,
 )
+
+
+def _meta() -> Draft202012Validator:
+    """リポジトリの拡張したメタスキーマの検査器を返す。"""
+    return check_all.load_meta_validator(_REPO)
 
 
 def _find_clis(_lint_dir: Path) -> dict[str, str | None]:
@@ -578,7 +595,7 @@ def test_check_design_schemas(repo_factory: RepoFactory) -> None:
         }
     )
     # 実行
-    result = check_all.check_design_schemas(root)
+    result = check_all.check_design_schemas(root, _meta())
     # 検証
     assert result == []
 
@@ -595,7 +612,7 @@ def test_check_design_schemas_when_invalid(repo_factory: RepoFactory) -> None:
         }
     )
     # 実行
-    result = check_all.check_design_schemas(root)
+    result = check_all.check_design_schemas(root, _meta())
     # 検証
     assert len(result) == 3
     assert result[0][:3] == ("schemas/design/bad-example.schema.yaml", 10, "examples[0]")
@@ -624,7 +641,7 @@ def test_check_design_schemas_when_nested_examples(repo_factory: RepoFactory) ->
         }
     )
     # 実行
-    result = check_all.check_design_schemas(root)
+    result = check_all.check_design_schemas(root, _meta())
     # 検証
     assert len(result) == 1
     assert result[0][:3] == (
@@ -652,7 +669,7 @@ def test_check_design_schemas_when_property_named_default(repo_factory: RepoFact
         }
     )
     # 実行
-    result = check_all.check_design_schemas(root)
+    result = check_all.check_design_schemas(root, _meta())
     # 検証
     assert len(result) == 1
     assert result[0][:3] == (
@@ -668,7 +685,7 @@ def test_check_design_schemas_when_folder_missing(repo_factory: RepoFactory) -> 
     # 準備
     root = repo_factory({})
     # 実行
-    result = check_all.check_design_schemas(root)
+    result = check_all.check_design_schemas(root, _meta())
     # 検証
     assert result == []
 
@@ -678,7 +695,7 @@ def test_check_design_schemas_when_broken(repo_factory: RepoFactory) -> None:
     # 準備
     root = repo_factory({"schemas/design/common.schema.yaml": "title: [\n"})
     # 実行
-    result = check_all.check_design_schemas(root)
+    result = check_all.check_design_schemas(root, _meta())
     # 検証
     assert len(result) == 1
     assert result[0][0] == "schemas/design/common.schema.yaml"
@@ -716,3 +733,198 @@ def test_main_when_design_schemas_invalid(
         r"^schemas/design/scenario\.schema\.yaml:10: examples\[0\]: examples: ", out, re.MULTILINE
     )
     assert out.splitlines()[-1] == "2 件の文書を検査し、違反は 1 件、警告は 0 件でした"
+
+
+# properties の下に文字列の x-rules を持ち、$defs の下に reason の無い x-bad-examples の要素を持つスキーマ
+_DESIGN_BAD_X_KEYS = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: 決まり\n"
+    "properties:\n"
+    "  id:\n"
+    "    x-rules: 1 件の文字列\n"
+    "$defs:\n"
+    "  a:\n"
+    "    x-bad-examples:\n"
+    "      - value: 悪い例\n"
+)
+
+
+def test_check_design_schemas_when_x_keys_invalid(repo_factory: RepoFactory) -> None:
+    """x-rules・x-bad-examples の形が違う（正常系）。"""
+    # 準備
+    root = repo_factory({"schemas/design/bad-x.schema.yaml": _DESIGN_BAD_X_KEYS})
+    # 実行
+    result = check_all.check_design_schemas(root, _meta())
+    # 検証
+    assert sorted(item[2] for item in result) == [
+        "$defs.a.x-bad-examples[0]",
+        "properties.id.x-rules",
+    ]
+    assert all(item[3].startswith("metaschema: ") for item in result)
+
+
+def test_check_design_schemas_when_x_keys_in_data(repo_factory: RepoFactory) -> None:
+    """値の中と同じ名前の項目（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/data.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: 値の中\n"
+                "properties:\n"
+                "  x-rules:\n"
+                "    type: string\n"
+                "x-bad-examples:\n"
+                "  - value:\n"
+                "      $ref: missing.schema.yaml\n"
+                "      x-rules: 文字列\n"
+                "    reason: 理由\n"
+            ),
+        }
+    )
+    # 実行
+    result = check_all.check_design_schemas(root, _meta())
+    # 検証
+    assert result == []
+
+
+def test_load_meta_validator() -> None:
+    """正しい拡張したメタスキーマ（正常系）。"""
+    # 準備
+    invalid = {
+        "x-rules": "最上位",
+        "properties": {"a": {"x-rules": "properties の下"}},
+        "$defs": {"b": {"x-bad-examples": [{"reason": "value が無い"}], "type": "strin"}},
+    }
+    valid = {
+        "properties": {"x-rules": {"type": "string"}},
+        "examples": [{"x-rules": "値"}],
+        "x-bad-examples": [{"value": {"x-rules": "値"}, "reason": "理由"}],
+    }
+    # 実行
+    validator = check_all.load_meta_validator(_REPO)
+    # 検証
+    paths = sorted(
+        ".".join(map(str, error.absolute_path)) for error in validator.iter_errors(invalid)
+    )
+    assert paths == [
+        "$defs.b.type",
+        "$defs.b.x-bad-examples.0",
+        "properties.a.x-rules",
+        "x-rules",
+    ]
+    assert list(validator.iter_errors(valid)) == []
+
+
+def test_load_meta_validator_when_missing(tmp_path: Path) -> None:
+    """ファイルが無い（異常系）。"""
+    # 実行・検証
+    with pytest.raises(MetaSchemaError) as caught:
+        check_all.load_meta_validator(tmp_path)
+    assert caught.value.message.startswith("schemas/meta.schema.yaml を使えません: ")
+
+
+def test_load_meta_validator_when_broken(repo_factory: RepoFactory) -> None:
+    """読めない YAML（異常系）。"""
+    # 準備
+    root = repo_factory({"schemas/meta.schema.yaml": "title: [\n"})
+    # 実行・検証
+    with pytest.raises(MetaSchemaError):
+        check_all.load_meta_validator(root)
+
+
+def test_load_meta_validator_when_invalid(repo_factory: RepoFactory) -> None:
+    """メタスキーマに合わない（異常系）。"""
+    # 準備
+    root = repo_factory({"schemas/meta.schema.yaml": "type: strin\n"})
+    # 実行・検証
+    with pytest.raises(MetaSchemaError):
+        check_all.load_meta_validator(root)
+
+
+def test_check_document_schemas(repo_factory: RepoFactory) -> None:
+    """誤りの無いスキーマ（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {"schemas/template.schema.yaml": "title: テンプレート\nx-rules:\n  - 1 文の決まり。\n"}
+    )
+    # 実行
+    result = check_all.check_document_schemas(root, _meta())
+    # 検証
+    assert result == []
+
+
+def test_check_document_schemas_when_invalid(repo_factory: RepoFactory) -> None:
+    """x-rules の形が違う（正常系）。"""
+    # 準備
+    root = repo_factory({"schemas/rule.schema.yaml": "title: 規約\nx-rules: 文字列\n"})
+    # 実行
+    result = check_all.check_document_schemas(root, _meta())
+    # 検証
+    assert len(result) == 1
+    assert result[0][:3] == ("schemas/rule.schema.yaml", 2, "x-rules")
+    assert result[0][3].startswith("metaschema: ")
+
+
+def test_check_document_schemas_when_broken(repo_factory: RepoFactory) -> None:
+    """読めない YAML（正常系）。"""
+    # 準備
+    root = repo_factory({"schemas/rule.schema.yaml": "title: [\n"})
+    # 実行
+    result = check_all.check_document_schemas(root, _meta())
+    # 検証
+    assert len(result) == 1
+    assert result[0][2] == "$"
+    assert result[0][3].startswith("YAML として読めません: ")
+
+
+def test_main_when_document_schemas_invalid(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    repo_factory: RepoFactory,
+    fake_maid_factory: FakeMaidFactory,
+) -> None:
+    """schemas/ の直下のスキーマに誤りがある（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "docs/rule/rule-a.yaml": _VALID_A,
+            "docs/rule/rule-b.yaml": _VALID_B,
+            "schemas/template.schema.yaml": "title: テンプレート\nx-rules: 文字列\n",
+        }
+    )
+    monkeypatch.chdir(root)
+    maid = fake_maid_factory()
+    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
+    monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+    monkeypatch.setattr(check_all, "check_lints", _no_lints)
+    # 実行
+    code = check_all.main([])
+    # 検証
+    assert code == 1
+    assert re.search(
+        r"^schemas/template\.schema\.yaml:2: x-rules: metaschema: ",
+        capsys.readouterr().out,
+        re.MULTILINE,
+    )
+
+
+def test_main_when_meta_schema_unusable(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    repo_factory: RepoFactory,
+    fake_maid_factory: FakeMaidFactory,
+) -> None:
+    """拡張したメタスキーマが無い（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    (root / "schemas/meta.schema.yaml").unlink()
+    monkeypatch.chdir(root)
+    maid = fake_maid_factory()
+    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
+    monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+    # 実行
+    code = check_all.main([])
+    # 検証
+    assert code == 2
+    assert "schemas/meta.schema.yaml" in capsys.readouterr().err

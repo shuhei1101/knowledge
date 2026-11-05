@@ -30,9 +30,12 @@ rules:
   - rule: docs/template/template-reference.yaml
     paths:
       - "**/docs/reference/*.yaml"
-  - rule: docs/template/template-template.yaml
+  - rule: schemas/template.schema.yaml
     paths:
       - "**/docs/template/*.yaml"
+  - rule: schemas/meta.schema.yaml
+    paths:
+      - "**/schemas/**/*.schema.yaml"
   - rule: docs/template/template-skill.yaml
     paths:
       - "**/docs/skill/*.yaml"

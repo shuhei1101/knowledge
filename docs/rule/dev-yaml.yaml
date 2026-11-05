@@ -63,7 +63,7 @@ tags:
   - name: action:集計
 status: current
 visibility: internal
-rev: 10
+rev: 11
 last_reviewed: '2026-11-06'
 related:
   - to: claude-plugin
@@ -193,7 +193,7 @@ items:
     group: スキーマ
     name: title と description の付与
     body: |-
-      - 各項目に `title`・`description` を付け、スキーマを読めば各項目に何を書くかが分かるようにする
+      - 各項目に `title`・`description` を付け、スキーマを読めば各項目に何を書くかが分かるようにする。各キーの書き方は knowledge の `schemas/meta.schema.yaml` に従う
   - id: schema-05
     group: スキーマ
     name: 共通の型の $defs

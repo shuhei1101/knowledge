@@ -1,8 +1,9 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 title: データフロー
-description: |-
-  1 つのデータがシステムをどう流れるか（DFD）。1 ファイル = データ 1 つ。
-  図は各レベルのノードと辺から生成する。実装の関数とは 1:1 に対応させない。
+description: 1 つのデータがシステムをどう流れるか（DFD）。図は各レベルのノードと辺から生成する。
+x-rules:
+  - 1 ファイル = データ 1 つにする。
+  - 実装の関数とは 1:1 に対応させない。
 x-kind: dataflow
 x-folder: dev/設計書/データフロー
 x-id-prefix: DF
@@ -17,7 +18,9 @@ properties:
   id:
     $ref: common.schema.yaml#/$defs/id
     title: ID
-    description: 設計書の変わらない ID。設計書を作るときに振り、改名・移動でも変わらない。他の設計書からは `{ID}#{項目のパス}` で指す。
+    description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
+    x-rules:
+      - 設計書を作るときに振り、改名・移動でも変えない。
   title:
     type: string
     title: タイトル
@@ -26,10 +29,13 @@ properties:
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
-    description: |-
-      対象を 1〜3 行で説明する。
-      初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。
-      対象そのものが変わったときだけ書き換える。
+    description: 対象を 1〜3 行で説明する。
+    x-rules:
+      - 初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。
+      - 対象そのものが変わったときだけ書き換える。
+    x-bad-examples:
+      - value: 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。
+        reason: 仕様を冒頭リードに記載している。仕様は各項目へ分ける
   source:
     type: string
     title: 発生源
@@ -62,9 +68,12 @@ properties:
         diagram:
           $ref: common.schema.yaml#/$defs/flowchart
           title: 図
-          description: |-
-            ノードの `kind` で外部の相手・処理・データストアを分け、辺のラベルに流れるデータの名前を書く。
-            処理は動詞句、データは名詞で書く。1 図の処理は 3〜7 個。信頼境界は枠で描く。
+          description: ノードの `kind` で外部の相手・処理・データストアを分けた図。
+          x-rules:
+            - 辺のラベルに流れるデータの名前を書く。
+            - 処理は動詞句、データは名詞で書く。
+            - 1 図の処理は 3〜7 個にする。
+            - 信頼境界は枠で描く。
           x-shape: diagram
           x-diagram: dataflow
   dictionary:
