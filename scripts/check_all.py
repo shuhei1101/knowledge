@@ -80,8 +80,11 @@ YAMLLINT_EXTRA = ("dev-docs.yaml", "rules.yaml")
 # 設計書のスキーマ（knowledge の正本）を置くフォルダ
 DESIGN_SCHEMAS_DIR = PurePosixPath("schemas/design")
 
+# JSON Schema 2020-12 のメタスキーマに x-rules・x-bad-examples の形を足したメタスキーマ
+META_SCHEMA_PATH = PurePosixPath("schemas/meta.schema.yaml")
+
 # スキーマのキーワードのうち、値がスキーマではなくデータのもの
-_DATA_KEYWORDS = frozenset({"examples", "enum", "const", "default"})
+_DATA_KEYWORDS = frozenset({"examples", "enum", "const", "default", "x-bad-examples"})
 
 # スキーマのキーワードのうち、値が名前 → スキーマの対応のもの
 _NAMED_SCHEMA_KEYWORDS = frozenset({"properties", "patternProperties", "$defs", "dependentSchemas"})
@@ -101,6 +104,15 @@ _CLI_MISSING = "{name} がありません。開発コマンドの『環境構築
 # 終了コード。1 = 違反がある・想定していない例外、2 = 検査を始めなかった
 _EXIT_VIOLATIONS = 1
 _EXIT_NOT_STARTED = 2
+
+
+class MetaSchemaError(Exception):
+    """schemas/meta.schema.yaml が無い・読めない・メタスキーマに合わない。"""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+        # 標準エラーへ出す理由の 1 行
+        self.message = message
 
 
 @dataclass(frozen=True)
@@ -153,6 +165,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(error.message, file=sys.stderr)
             return _EXIT_NOT_STARTED
 
+        # 拡張したメタスキーマを使えなければ検査を始めない
+        try:
+            meta = load_meta_validator(root)
+        except MetaSchemaError as error:
+            print(error.message, file=sys.stderr)
+            return _EXIT_NOT_STARTED
+
         targets = list_targets(root, rows)
         texts = read_texts([root / target.path for target in targets])
         validators = build_validators(root, dict.fromkeys(target.schema for target in targets))
@@ -167,9 +186,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             ):
                 print(f"{target.path}:{line}: {path}: {message}")
                 count += 1
-        # 設計書のスキーマがメタスキーマ・$ref・examples の検査を通るかと、対応表のコピーが正本と一致するか
+        # スキーマが自身の検査を通るかと、対応表のコピーが正本と一致するか
         for file_path, line, path, message in (
-            *check_design_schemas(root),
+            *check_design_schemas(root, meta),
+            *check_document_schemas(root, meta),
             *check_word_list_copy(root),
         ):
             print(f"{file_path}:{line}: {path}: {message}")
@@ -328,17 +348,41 @@ def check_lints(
     return sorted(findings, key=lambda finding: (str(finding.path), finding.line))
 
 
-def check_design_schemas(root: Path) -> list[tuple[str, int, str, str]]:
-    """schemas/design/ の設計書のスキーマに、メタスキーマ・$ref・examples の検査を当てる。"""
-    folder = root / DESIGN_SCHEMAS_DIR
-    # フォルダが無いリポジトリは検査しない
-    if not folder.is_dir():
-        return []
+def load_meta_validator(root: Path) -> Draft202012Validator:
+    """schemas/meta.schema.yaml を読み、スキーマの検査器を作る。"""
+    try:
+        schema = load_safe((root / META_SCHEMA_PATH).read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(cast("Mapping[str, Any]", schema))
+    except (OSError, UnicodeDecodeError, YAMLError) as error:
+        message = f"{META_SCHEMA_PATH} を使えません: {error}"
+        raise MetaSchemaError(message) from error
+    except SchemaError as error:
+        message = f"{META_SCHEMA_PATH} を使えません: {error.message}"
+        raise MetaSchemaError(message) from error
+    return Draft202012Validator(cast("Mapping[str, Any]", schema))
 
+
+def check_document_schemas(
+    root: Path, meta: Draft202012Validator
+) -> list[tuple[str, int, str, str]]:
+    """schemas/*.schema.yaml に、拡張したメタスキーマの検査を当てる。"""
+    docs, results = _read_schemas(root, PurePosixPath("schemas"))
+    for name, doc in docs.items():
+        relative = str(PurePosixPath("schemas") / name)
+        results.extend(
+            (relative, line, path, message) for line, path, message in _check_meta(doc, meta)
+        )
+    return sorted(results, key=lambda result: (result[0], result[1]))
+
+
+def _read_schemas(
+    root: Path, folder: PurePosixPath
+) -> tuple[dict[str, CommentedMap], list[tuple[str, int, str, str]]]:
+    """フォルダの *.schema.yaml を読み、読めたスキーマと読めなかったファイルの違反を返す。"""
     results: list[tuple[str, int, str, str]] = []
     docs: dict[str, CommentedMap] = {}
-    for path in sorted(folder.glob("*.schema.yaml")):
-        relative = str(DESIGN_SCHEMAS_DIR / path.name)
+    for path in sorted((root / folder).glob("*.schema.yaml")):
+        relative = str(folder / path.name)
         try:
             text = path.read_text(encoding="utf-8")
         except OSError, UnicodeDecodeError:
@@ -348,23 +392,40 @@ def check_design_schemas(root: Path) -> list[tuple[str, int, str, str]]:
             docs[path.name] = load_document(text)
         except DocumentError as error:
             results.append((relative, error.line, "$", f"YAML として読めません: {error.message}"))
+    return docs, results
+
+
+def _check_meta(doc: CommentedMap, meta: Draft202012Validator) -> list[tuple[int, str, str]]:
+    """スキーマ 1 件のメタスキーマの違反を、行・項目のパス・内容の組で返す。"""
+    errors = cast("list[ValidationError]", list(meta.iter_errors(doc)))  # pyright: ignore[reportUnknownMemberType]
+    results: list[tuple[int, str, str]] = []
+    for error in errors:
+        parts = list(error.absolute_path)
+        results.append((line_of(doc, parts), format_path(parts), f"metaschema: {error.message}"))
+    return results
+
+
+def check_design_schemas(
+    root: Path, meta: Draft202012Validator
+) -> list[tuple[str, int, str, str]]:
+    """schemas/design/ の設計書のスキーマに、拡張したメタスキーマ・$ref・examples の検査を当てる。"""
+    # フォルダが無いリポジトリは検査しない
+    if not (root / DESIGN_SCHEMAS_DIR).is_dir():
+        return []
+
+    docs, results = _read_schemas(root, DESIGN_SCHEMAS_DIR)
 
     # schemas/*.schema.yaml とは別に、ファイル名を URI にして登録する（同じ名前の common.schema.yaml を取り違えない）
     registry = Registry[Any]().with_resources(
         (name, cast("Resource[Any]", DRAFT202012.create_resource(doc)))
         for name, doc in docs.items()
     )
-    meta = Draft202012Validator(Draft202012Validator.META_SCHEMA)
     for name, doc in docs.items():
         relative = str(DESIGN_SCHEMAS_DIR / name)
-        meta_errors = cast("list[ValidationError]", list(meta.iter_errors(doc)))  # pyright: ignore[reportUnknownMemberType]
-        for error in meta_errors:
-            parts = list(error.absolute_path)
-            results.append(
-                (relative, line_of(doc, parts), format_path(parts), f"metaschema: {error.message}")
-            )
+        meta_results = _check_meta(doc, meta)
+        results.extend((relative, line, path, message) for line, path, message in meta_results)
         # メタスキーマに合わないスキーマは、$ref・examples を辿れないので後の検査を当てない
-        if meta_errors:
+        if meta_results:
             continue
         for line, path, message in _check_schema_refs(name, doc, registry):
             results.append((relative, line, path, message))
