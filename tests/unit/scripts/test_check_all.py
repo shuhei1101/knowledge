@@ -565,9 +565,7 @@ _DESIGN_BAD_REF = (
 )
 
 # type に無い型の名前を書いた設計書のスキーマ（3 行目が type）
-_DESIGN_BAD_TYPE = (
-    "$schema: https://json-schema.org/draft/2020-12/schema\ntitle: 型\ntype: strin\n"
-)
+_DESIGN_BAD_TYPE = "$schema: https://json-schema.org/draft/2020-12/schema\ntitle: 型\ntype: strin\n"
 
 
 def test_check_design_schemas(repo_factory: RepoFactory) -> None:
