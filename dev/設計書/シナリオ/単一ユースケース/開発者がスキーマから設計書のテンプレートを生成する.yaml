@@ -6,7 +6,7 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: スキーマ
-        description: '`schemas/design/er.schema.yaml` のキーの `x-rules` に 1 件追加し、他のスキーマは変えていない knowledge のクローン'
+        description: '15 件のテンプレートがスキーマから生成した状態の knowledge のクローンで、`schemas/design/er.schema.yaml` のキーの `x-rules` に 1 件追加し、他のスキーマは変えていないもの'
     flow: |-
       sequenceDiagram
         actor D as 開発者
@@ -14,13 +14,13 @@ scenarios:
         participant S as 設計書のスキーマ
         participant T as テンプレートの文書
         D->>G: 生成のコマンドを実行する
+        G->>S: 全てのスキーマを読み込み、$ref を解決する
+        G->>T: 全ての種類のスキーマに対応するテンプレートの文書があるかを確認し、読み込む
         loop 設計書の種類のスキーマ
-          G->>S: スキーマを読み込み、$ref を解決する
-          G->>T: 対応するテンプレートの文書を読み込む
           G->>G: 概要・キーの表・決まりと悪い例・記載例の items を組み立てる
-          alt 組み立てた items が今の items と違う
-            G->>T: items だけを置き換えて書き出す
-          end
+        end
+        loop 組み立てた items が今の items と違うテンプレート
+          G->>T: items だけを置き換えて書き出す
         end
         G-->>D: 書き換えたテンプレートのパスを出して終了コード 0
     expected:
