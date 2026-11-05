@@ -44,6 +44,8 @@ _YAMLLINT_CONFIG = textwrap.dedent(
         level: error
       document-start: disable
       line-length: disable
+      truthy:
+        check-keys: false
     """
 )
 

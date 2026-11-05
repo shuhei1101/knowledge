@@ -6,7 +6,7 @@ from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING
 
 import check_all
-from _lint import LintFinding
+from _lint import LintFinding, LintSource
 from check_all import Target, build_validators, check_lints, check_target, list_targets
 
 if TYPE_CHECKING:
@@ -38,6 +38,26 @@ _WARNING_FINDING = LintFinding(
     True,
 )
 
+
+def _find_clis(_lint_dir: Path) -> dict[str, str | None]:
+    """lint の CLI の在りかの確認の差し替え。両方とも引けたパスを返す。"""
+    return dict(_CLIS)
+
+
+def _no_lints(*_args: object) -> list[LintFinding]:
+    """lint の検査の差し替え。違反を返さない。"""
+    return []
+
+
+def _lints_returning(findings: list[LintFinding]) -> Callable[..., list[LintFinding]]:
+    """lint の検査の差し替え。渡した違反を返す関数を返す。"""
+
+    def _check(*_args: object) -> list[LintFinding]:
+        return findings
+
+    return _check
+
+
 # scripts/lint/.yamllint.yaml と同じ内容の設定
 _YAMLLINT_CONFIG = (
     "extends: default\n"
@@ -46,6 +66,8 @@ _YAMLLINT_CONFIG = (
     "    level: error\n"
     "  document-start: disable\n"
     "  line-length: disable\n"
+    "  truthy:\n"
+    "    check-keys: false\n"
 )
 
 # 違反の無い規約の文書
@@ -95,8 +117,8 @@ def test_main(
     monkeypatch.chdir(root)
     maid = fake_maid_factory()
     monkeypatch.setattr(check_all, "find_maid", lambda: maid)
-    monkeypatch.setattr(check_all, "find_lint_clis", lambda _lint_dir: _CLIS)
-    monkeypatch.setattr(check_all, "check_lints", lambda *_args: [])
+    monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+    monkeypatch.setattr(check_all, "check_lints", _no_lints)
     # 実行
     code = check_all.main([])
     # 検証
@@ -136,8 +158,8 @@ def test_main_when_violations(
     monkeypatch.chdir(root)
     maid = fake_maid_factory()
     monkeypatch.setattr(check_all, "find_maid", lambda: maid)
-    monkeypatch.setattr(check_all, "find_lint_clis", lambda _lint_dir: _CLIS)
-    monkeypatch.setattr(check_all, "check_lints", lambda *_args: [])
+    monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+    monkeypatch.setattr(check_all, "check_lints", _no_lints)
     # 実行
     code = check_all.main([])
     # 検証
@@ -159,8 +181,10 @@ def test_main_when_lint_findings(
     monkeypatch.chdir(root)
     maid = fake_maid_factory()
     monkeypatch.setattr(check_all, "find_maid", lambda: maid)
-    monkeypatch.setattr(check_all, "find_lint_clis", lambda _lint_dir: _CLIS)
-    monkeypatch.setattr(check_all, "check_lints", lambda *_args: [_ERROR_FINDING, _WARNING_FINDING])
+    monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+    monkeypatch.setattr(
+        check_all, "check_lints", _lints_returning([_ERROR_FINDING, _WARNING_FINDING])
+    )
     # 実行
     code = check_all.main([])
     # 検証
@@ -188,8 +212,8 @@ def test_main_when_only_warnings(
     monkeypatch.chdir(root)
     maid = fake_maid_factory()
     monkeypatch.setattr(check_all, "find_maid", lambda: maid)
-    monkeypatch.setattr(check_all, "find_lint_clis", lambda _lint_dir: _CLIS)
-    monkeypatch.setattr(check_all, "check_lints", lambda *_args: [_WARNING_FINDING])
+    monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+    monkeypatch.setattr(check_all, "check_lints", _lints_returning([_WARNING_FINDING]))
     # 実行
     code = check_all.main([])
     # 検証
@@ -230,7 +254,7 @@ def test_main_when_config_missing(
     monkeypatch.chdir(tmp_path)
     maid = fake_maid_factory()
     monkeypatch.setattr(check_all, "find_maid", lambda: maid)
-    monkeypatch.setattr(check_all, "find_lint_clis", lambda _lint_dir: _CLIS)
+    monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
     # 実行
     code = check_all.main([])
     # 検証
@@ -445,6 +469,15 @@ def test_check_word_list_copy_when_stale(repo_factory: RepoFactory) -> None:
     assert "build_word_list.py" in result[0][3]
 
 
+def _first_source_md036(sources: list[LintSource], *_args: object) -> list[LintFinding]:
+    """Markdown の lint の呼び出しの差し替え。1 件目の Markdown に MD036 の違反を返す。"""
+    return [
+        LintFinding(
+            sources[0].path, 11, sources[0].item_path, "markdownlint", "MD036", "太字", False
+        )
+    ]
+
+
 def test_check_lints(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, repo_factory: RepoFactory
 ) -> None:
@@ -472,11 +505,7 @@ def test_check_lints(
     monkeypatch.setattr(
         check_all,
         "run_markdown_lints",
-        lambda sources, *_args: [
-            LintFinding(
-                sources[0].path, 11, sources[0].item_path, "markdownlint", "MD036", "太字", False
-            )
-        ],
+        _first_source_md036,
     )
     # 実行
     result = check_lints(root, [target], texts, lint_dir, _CLIS)
