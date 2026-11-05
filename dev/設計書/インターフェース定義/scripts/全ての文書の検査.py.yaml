@@ -68,7 +68,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: knowledge のリポジトリの `schemas/`
+        description: knowledge のリポジトリの `schemas/` のコピーと、`documents` が空の `dev-docs.yaml` を持つ一時フォルダ
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
@@ -81,7 +81,8 @@ flows:
         end
         S-->>C: スキーマの違反なし
     expected:
-      - '`schemas/` の下のファイルの違反の行が出ない'
+      - 終了コードが 0
+      - 標準出力が、文書 0 件・違反 0 件・警告 0 件を示す 1 行だけ
       - '`schemas/design/` の全てのキーの `description` の「。」が 2 個以下'
     test: test_normal_when_repository_schemas
   - name: 正常系（違反がある・終了コード 1）

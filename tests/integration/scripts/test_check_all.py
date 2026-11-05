@@ -1,5 +1,6 @@
 """全ての文書の検査（scripts/check_all.py）の結合テスト。"""
 
+import shutil
 from collections.abc import Callable, Iterator
 from pathlib import Path
 from typing import Any, cast
@@ -111,12 +112,18 @@ def test_normal_when_design_schemas_invalid(
     assert lines[5] == "0 件の文書を検査し、違反は 5 件、警告は 0 件でした"
 
 
-def test_normal_when_repository_schemas(run_script: RunScript) -> None:
+def test_normal_when_repository_schemas(run_script: RunScript, tmp_path: Path) -> None:
     """リポジトリの全てのスキーマが違反なしで通り、description が全て 2 文以内になっている（正常系）。"""
+    # 準備
+    root = tmp_path / "repo"
+    root.mkdir()
+    shutil.copytree(_REPO / "schemas", root / "schemas")
+    (root / "dev-docs.yaml").write_text("documents: []\n", encoding="utf-8")
     # 実行
-    result = run_script("check_all", _REPO)
+    result = run_script("check_all", root)
     # 検証
-    assert [line for line in result.stdout.splitlines() if line.startswith("schemas/")] == []
+    assert result.exit_code == 0
+    assert result.stdout.splitlines() == ["0 件の文書を検査し、違反は 0 件、警告は 0 件でした"]
     too_long = [
         (path.name, text)
         for path in sorted((_REPO / "schemas/design").glob("*.schema.yaml"))
