@@ -33,8 +33,8 @@ tags:
   - name: action:表示
 status: current
 visibility: internal
-rev: 4
-last_reviewed: '2026-10-30'
+rev: 5
+last_reviewed: '2026-11-06'
 items:
   - id: overview
     name: 概要
@@ -65,7 +65,7 @@ items:
     group: Instructor（複数プロバイダーが要るリポジトリだけ）
     name: response_model で呼び出す
     body: |-
-      - `client.chat.completions.create(response_model=MySchema, max_retries=3, ...)` で
+      - `client.chat.completions.create(response_model=MySchema, max_retries=<検証の再試行回数>, ...)` で（値は [llm/例外とリトライ](id:python-llm-exception-retry#timeout-01)）
         - JSON 受信 → Pydantic 検証 → 失敗時は LLM に修正させて再試行
   - id: instructor-05
     group: Instructor（複数プロバイダーが要るリポジトリだけ）

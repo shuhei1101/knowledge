@@ -26,8 +26,8 @@ tags:
   - name: action:合成
 status: current
 visibility: internal
-rev: 4
-last_reviewed: '2026-10-30'
+rev: 5
+last_reviewed: '2026-11-06'
 items:
   - id: overview
     name: 概要
@@ -53,7 +53,7 @@ items:
     group: stamina によるリトライ
     name: stamina.retry の引数
     body: |-
-      - `@stamina.retry(on=<フック関数>, attempts=4, timeout=60.0, wait_initial=1.0, wait_max=30.0, wait_jitter=0.2)`（初回 + リトライ 3 回。`timeout` は外側の `@with_timeout` の秒数に揃える）
+      - `@stamina.retry(on=<フック関数>, attempts=<試行回数>, timeout=<全試行の待ち>, wait_initial=<最初の間隔>, wait_max=<間隔の上限>, wait_jitter=<ジッタ>)`（初回 + リトライ `<試行回数>` − 1 回。値は [クライアントとデコレータのタイムアウト](id:python-llm-exception-retry#timeout-01) の表で導く）
   - id: stamina-retry-02
     group: stamina によるリトライ
     name: 指数バックオフとジッター
@@ -83,7 +83,29 @@ items:
     group: タイムアウト
     name: クライアントとデコレータのタイムアウト
     body: |-
-      クライアントレベル（`AsyncOpenAI(timeout=30)`）+ デコレータレベル（`@with_timeout(seconds=60)`）の 2 レイヤー。
+      クライアントレベル（`AsyncOpenAI(timeout=<各回の待ち>)`）+ stamina レベル（`@stamina.retry(timeout=<全試行の待ち>)`）+ デコレータレベル（`@with_timeout(seconds=<全体の待ち>)`）の 3 レイヤー。
+
+      値は規約 [資源の値の決め方](id:dev-resource-values) の入れ子の待ちとリトライの導き方で、次の表のとおりに導く。
+      出典の略号はメタデータの `sources` の `id`。
+
+      <!-- table: data -->
+
+      | 値 | 指定先 | 導き方 |
+      | --- | --- | --- |
+      | `<各回の待ち>` | クライアントの `timeout` | [タイムアウトの決め方](id:flowchart-timeout) で決める。公開仕様の値は、非ストリーミングの 1 回の呼び出しの上限（A / B） |
+      | `<検証の再試行回数>` | Instructor の `max_retries` | 検証の失敗が解消するまでの実測の回数。実測が無ければ 1 にして測る作業を残す |
+      | `<1 回の試行の待ち>` | - | `<各回の待ち>` ×（`<検証の再試行回数>` + 1）。Instructor を使用しないときは `<各回の待ち>` |
+      | `<最初の間隔>`・`<ジッタ>` | stamina の `wait_initial`・`wait_jitter` | 上流の回復の実測から導く。実測が無ければ stamina の既定値（C）を明示して測る作業を残す |
+      | `<間隔の上限>` | stamina の `wait_max` | バックオフと `retry_after` を受けて待つ間隔の上限。上流の回復の実測から導く。実測が無ければ stamina の既定値（C）を明示して測る作業を残す |
+      | `<試行回数>` | stamina の `attempts` | 上流の失敗が解消するまでの実測の試行回数。実測が無ければ SDK の既定の再試行回数 + 1（A / B）にして測る作業を残す |
+      | `<全試行の待ち>` | stamina の `timeout` | `<1 回の試行の待ち>` × `<試行回数>` + `<間隔の上限>` ×（`<試行回数>` − 1） |
+      | `<全体の待ち>` | `@with_timeout` の `seconds` | `<全試行の待ち>` + [余裕](id:dev-resource-values#default-values-01) |
+
+      <!-- /table -->
+
+      - 呼び出し元の待ちは、利用者・上流の待ちか外側の作業の上限
+      - `<全体の待ち>` が呼び出し元の待ちを超えるときは、`<試行回数>` を保ったまま呼び出し元の待ちから `<各回の待ち>` を逆算する。逆算した値が 0 以下か実測の p99.9 より短いときだけ `<試行回数>` を減らす
+      - stamina の `timeout` は実行中の試行を打ち切らないため、打ち切りは `@with_timeout` が担う（C）
   - id: composition-01
     group: 合成
     name: デコレータの重ね方の参照
@@ -94,3 +116,13 @@ items:
     name: サーキットブレーカーの参照
     body: |-
       外部規約『事前確認』の `## 処理ごとの確かめ方` に従う。
+sources:
+  - id: A
+    title: 'Anthropic: Claude API errors (Long requests)'
+    url: https://platform.claude.com/docs/en/api/errors
+  - id: B
+    title: 'OpenAI Python SDK: Timeouts'
+    url: https://github.com/openai/openai-python
+  - id: C
+    title: 'stamina: API Reference'
+    url: https://stamina.hynek.me/en/stable/api.html
