@@ -24,7 +24,7 @@ flows:
         end
         S->>F: schemas/design/ の設計書のスキーマを読む
         loop 全ての設計書のスキーマ
-          S->>S: メタスキーマ・$ref・examples の検査
+          S->>S: 拡張したメタスキーマ・$ref・examples の検査
         end
         S->>S: 文書の Markdown の項目を 1 項目ずつ一時の .md に書き出す
         S->>S: markdownlint-cli2・textlint を 1 回ずつ呼び、yamllint を当てる
@@ -39,8 +39,8 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml` と、`schemas/design/` に誤りのある設計書のスキーマ 3 件と、それらが `$ref` で指す `common.schema.yaml` を持つ一時フォルダ'
-        notes: '3 件は、`type` に `strin` を書いたスキーマ（メタスキーマの違反）、`common.schema.yaml#/$defs/missing` を指すスキーマ（解決できない `$ref`）、`required` のキーを持たない `examples[0]` を持つスキーマ（`examples` の違反）'
+        description: '`dev-docs.yaml` と、`schemas/design/` に誤りのある設計書のスキーマ 4 件と、それらが `$ref` で指す `common.schema.yaml` と、`meta.schema.yaml` を持つ一時フォルダ'
+        notes: '4 件は、`type` に `strin` を書いたスキーマ（メタスキーマの違反）、`x-rules` に文字列を書いたスキーマ（メタスキーマの違反）、`common.schema.yaml#/$defs/missing` を指すスキーマ（解決できない `$ref`）、`required` のキーを持たない `examples[0]` を持つスキーマ（`examples` の違反）'
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
@@ -50,14 +50,36 @@ flows:
         S->>F: dev-docs.yaml の documents を読む
         S->>F: schemas/design/ の設計書のスキーマを読む
         loop 全ての設計書のスキーマ
-          S->>S: メタスキーマ・$ref・examples の検査
+          S->>S: 拡張したメタスキーマ・$ref・examples の検査
         end
         S-->>C: 終了コード 1 と全ての違反の行
     expected:
       - 終了コードが 1
-      - '標準出力に `schemas/design/{ファイル名}:{行}: {項目のパス}: {内容}` の行が 3 件出る'
-      - メタスキーマの違反の行は `type` のキーの行、解決できない `$ref` の行は `$ref` のキーの行、`examples` の違反の行は `examples[0]` の要素の先頭の行
+      - '標準出力に `schemas/design/{ファイル名}:{行}: {項目のパス}: {内容}` の行が 4 件出る'
+      - メタスキーマの違反の行は `type`・`x-rules` のキーの行、解決できない `$ref` の行は `$ref` のキーの行、`examples` の違反の行は `examples[0]` の要素の先頭の行
     test: test_normal_when_design_schemas_invalid
+  - name: 正常系（リポジトリのスキーマ）
+    summary: リポジトリの全てのスキーマが違反なしで通り、設計書のスキーマの `description` が全て 2 文以内になっている
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: knowledge のリポジトリの `schemas/`
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>F: schemas/design/ と schemas/ の直下のスキーマを読む
+        loop 全てのスキーマ
+          S->>S: 拡張したメタスキーマの検査
+        end
+        S-->>C: スキーマの違反なし
+    expected:
+      - '`schemas/` の下のファイルの違反の行が出ない'
+      - '`schemas/design/` の全てのキーの `description` の「。」が 2 個以下'
+    test: test_normal_when_repository_schemas
   - name: 正常系（違反がある・終了コード 1）
     summary: 全ての文書を検査し終えてから、全ての違反を出して終了コード 1 で終わる
     setup:
@@ -236,10 +258,17 @@ constraints:
   - item: 設計書のスキーマの検査
     constraint: |-
       ファイルごとに次の 3 つを当て、誤り 1 件を違反 1 件にする。
-      メタスキーマ: JSON Schema 2020-12 のメタスキーマに合うか。
+      メタスキーマ: `schemas/design/meta.schema.yaml`（JSON Schema 2020-12 のメタスキーマを `allOf` で指して `x-rules`・`x-bad-examples` の形を足した拡張したメタスキーマ）に合うか。
       `$ref`: 全ての `$ref` が、`schemas/design/` のファイル名を URI にして登録したスキーマの中で解決できるか。
       `examples`: 全ての深さの `examples` の要素が、その `examples` を持つスキーマに合うか（`$ref` は同じ登録から解く）。
       `schemas/*.schema.yaml`（knowledge の文書の種類のスキーマ）とは別に登録し、同じファイル名（`common.schema.yaml`）を取り違えない
+  - item: 文書の種類のスキーマの検査
+    constraint: '`schemas/*.schema.yaml` にも拡張したメタスキーマを当てる。`$ref`・`examples` の検査は当てない'
+  - item: '`x-rules`・`x-bad-examples` の形'
+    constraint: |-
+      スキーマの全ての深さのキーに当てる。`examples`・`x-bad-examples` の値の中と、`properties` の中の同じ名前の項目には当てない。
+      `x-rules`: 空でない文字列の、1 件以上の配列。
+      `x-bad-examples`: `value`（悪い例の値。型を問わない）と `reason`（空でない文字列）だけを持つオブジェクトの、1 件以上の配列
   - item: 設計書のスキーマの違反の行
     constraint: '行はスキーマの YAML の中の誤りのある位置の行。メタスキーマの違反は誤りのあるキー、`$ref` の違反は `$ref` のキー、`examples` の違反は誤りのある要素（要素の中の項目が誤りなら、その項目）の行。項目のパスは同じ位置を `format_path` の書き方で出す'
   - item: lint の当て先
