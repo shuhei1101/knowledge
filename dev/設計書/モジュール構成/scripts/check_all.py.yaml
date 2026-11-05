@@ -350,7 +350,7 @@ functions:
          1. メタスキーマ: `meta` の `iter_errors` の誤りを `metaschema: {message}` にする
             - メタスキーマの誤りがあるファイルの場合、そのファイルの 2・3 は当てない
          2. `$ref`: スキーマを辿り、文字列の `$ref` ごとに、ファイル名を基準の URI にして登録から引く。引けなければ `$ref` のキーの位置で `$ref: {値} を解決できません` にする
-            - スキーマのキーワードとしての `examples`・`enum`・`const`・`default` の値の中は辿らない
+            - スキーマのキーワードとしての `examples`・`enum`・`const`・`default`・`x-bad-examples` の値の中は辿らない
             - `properties`・`patternProperties`・`$defs`・`dependentSchemas` の値（名前 → スキーマの対応）のキーは名前として扱い、キーワードと見なさずに値のスキーマを辿る（`default`・`examples` という名前のプロパティも辿る）
          3. `examples`: 2 と同じ辿り方で、キーワードとしての配列の `examples` を持つスキーマごとに、`{"$ref": "{ファイル名}#{JSON Pointer}"}` を登録つきの `Draft202012Validator` にし、要素ごとの `iter_errors` の誤りを、要素の位置に誤りの位置を続けた位置で `examples: {message}` にする
             - 検査の途中で `$ref` を解決できない場合、その要素の誤りは出さない（2 が出す）
