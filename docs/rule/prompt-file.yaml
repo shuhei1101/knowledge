@@ -32,8 +32,8 @@ tags:
   - name: action:配置
 status: current
 visibility: internal
-rev: 7
-last_reviewed: '2026-11-03'
+rev: 8
+last_reviewed: '2026-11-06'
 items:
   - id: overview
     name: 概要
@@ -267,7 +267,7 @@ items:
     group: 検査
     name: スキーマと検査の参照先
     body: |-
-      スキーマの書き方と検査の通し方は [YAML](id:dev-yaml) の `## スキーマ` と `## 検査` に従う。
+      スキーマの書き方は knowledge の `schemas/meta.schema.yaml` に、適用する範囲と検査の通し方は [YAML](id:dev-yaml) の `## スキーマ` と `## 検査` に従う。
       スキーマには、`when` の式の書き方・`vars.*.type` に書ける型・`output` の意味を書く。
   - id: schema-ref-01
     group: スキーマの指し方
