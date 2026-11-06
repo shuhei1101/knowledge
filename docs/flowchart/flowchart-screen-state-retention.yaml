@@ -1,0 +1,133 @@
+id: flowchart-screen-state-retention
+kind: flowchart
+name: 画面の状態の保持先 判定フローチャート
+description: 画面の一時的な状態を URL・サーバー・Web Storage・Cookie・ルーターの機能・メモリのどこに保持するかをスタックによらず判定し、画面の状態の保持先を決めるときに読む。
+aliases:
+  - 画面の状態の保持先
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 画面
+    - UI
+    - フロントエンド
+    - tsx
+    - HTML
+    - コンポーネント
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: ui-input-wording
+    type: references
+    when: スクロール位置とタブの切り替えの決まりを実装するとき
+  - to: react-state-url-state
+    type: references
+    when: React で URL の状態とスクロール位置の復元を実装するとき
+sources:
+  - title: 'TanStack Router: Scroll Restoration'
+    url: https://tanstack.com/router/latest/docs/framework/react/guide/scroll-restoration
+    note: 既定のキーは履歴の項目ごとの __TSR_key
+  - title: 'MDN: Window.sessionStorage'
+    url: https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage
+    note: タブごとのセッションで、再読み込みを越えて残り、タブを閉じると消える
+  - title: 'MDN: History.scrollRestoration'
+    url: https://developer.mozilla.org/en-US/docs/Web/API/History/scrollRestoration
+  - title: 'web.dev: Back/forward cache'
+    url: https://web.dev/articles/bfcache
+    note: bfcache は SPA の中の移動では有効でない。unload を使用しない
+  - title: 'OWASP: HTML5 Security Cheat Sheet'
+    url: https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html
+    note: 機密を Web Storage に配置しない
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      画面の一時的な状態を URL・サーバー・Web Storage・Cookie・ルーターの機能・メモリのどこに保持するかをスタックによらず判定し、画面の状態の保持先を決めるときに読む。
+      React のフロントエンドの値の置き場所は、この判定の後に [React の状態の置き場所](id:flowchart-react-state-placement) で決める。
+  - id: screen-state-retention-flow-01
+    group: 画面の状態の保持先 判定フローチャート
+    name: 判定フロー
+    body: |-
+      <!-- flow -->
+
+      ```json
+      {
+        "title": "画面の状態の保持先",
+        "scope": "画面の一時的な状態をどこに保持するかを決めるとき",
+        "updated": "2026-11-06",
+        "width": 1824,
+        "height": 1600,
+        "nodes": [
+          {"id": "start", "kind": "start", "x": 940, "y": 24, "w": 120, "h": 120, "name": "画面の状態の保持先を決めたい"},
+          {"id": "q0", "kind": "question", "x": 860, "y": 200, "w": 280, "h": 164, "name": "機密（トークン・個人情報）か"},
+          {"id": "r0", "kind": "result", "x": 1210, "y": 236, "w": 240, "h": 92, "name": "URL と Web Storage に配置しない。認証は httpOnly の Cookie"},
+          {"id": "q1", "kind": "question", "x": 860, "y": 420, "w": 280, "h": 164, "name": "URL を共有・ブックマークすると、同じ表示になってほしいか"},
+          {"id": "q2", "kind": "question", "x": 420, "y": 420, "w": 280, "h": 164, "name": "何を見ているか（画面・項目）か"},
+          {"id": "r1", "kind": "result", "x": 440, "y": 640, "w": 240, "h": 56, "name": "URL のパス"},
+          {"id": "r2", "kind": "result", "x": 110, "y": 474, "w": 240, "h": 56, "name": "URL のクエリ ※1"},
+          {"id": "q3", "kind": "question", "x": 860, "y": 640, "w": 280, "h": 164, "name": "端末を変えても残したいか"},
+          {"id": "r3", "kind": "result", "x": 1210, "y": 694, "w": 240, "h": 56, "name": "サーバー"},
+          {"id": "q4", "kind": "question", "x": 860, "y": 860, "w": 280, "h": 164, "name": "ブラウザを閉じても残す、端末ごとの好みか"},
+          {"id": "r4", "kind": "result", "x": 550, "y": 896, "w": 240, "h": 92, "name": "localStorage。最初の描画で要るなら Cookie"},
+          {"id": "q5", "kind": "question", "x": 860, "y": 1080, "w": 280, "h": 164, "name": "そのタブで画面を離れて戻ったときに戻したいか"},
+          {"id": "q6", "kind": "question", "x": 1210, "y": 1080, "w": 280, "h": 164, "name": "戻る・進むの履歴の項目ごとに違ってよいか（スクロール位置など）"},
+          {"id": "r5", "kind": "result", "x": 1230, "y": 1300, "w": 240, "h": 92, "name": "ルーターの機能か history.state ※2"},
+          {"id": "r6", "kind": "result", "x": 1560, "y": 1116, "w": 240, "h": 92, "name": "sessionStorage（画面とタブを表すキー） ※3"},
+          {"id": "q7", "kind": "question", "x": 860, "y": 1300, "w": 280, "h": 164, "name": "再読み込みを越えて残したいか"},
+          {"id": "r7", "kind": "result", "x": 550, "y": 1354, "w": 240, "h": 56, "name": "sessionStorage"},
+          {"id": "r8", "kind": "result", "x": 880, "y": 1520, "w": 240, "h": 56, "name": "メモリ"}
+        ],
+        "wires": [
+          {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[1000, 144], [1000, 200]]},
+          {"id": "j-q0-r0", "from": "q0", "to": "r0", "line": "flow", "points": [[1140, 282], [1210, 282]], "label": "YES", "labelAt": [1175, 282]},
+          {"id": "j-q0-q1", "from": "q0", "to": "q1", "line": "flow", "points": [[1000, 364], [1000, 420]], "label": "NO", "labelAt": [1000, 392]},
+          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[860, 502], [700, 502]], "label": "YES", "labelAt": [780, 502]},
+          {"id": "j-q1-q3", "from": "q1", "to": "q3", "line": "flow", "points": [[1000, 584], [1000, 640]], "label": "NO", "labelAt": [1000, 612]},
+          {"id": "j-q2-r1", "from": "q2", "to": "r1", "line": "flow", "points": [[560, 584], [560, 640]], "label": "YES", "labelAt": [560, 612]},
+          {"id": "j-q2-r2", "from": "q2", "to": "r2", "line": "flow", "points": [[420, 502], [350, 502]], "label": "NO", "labelAt": [385, 502]},
+          {"id": "j-q3-r3", "from": "q3", "to": "r3", "line": "flow", "points": [[1140, 722], [1210, 722]], "label": "YES", "labelAt": [1175, 722]},
+          {"id": "j-q3-q4", "from": "q3", "to": "q4", "line": "flow", "points": [[1000, 804], [1000, 860]], "label": "NO", "labelAt": [1000, 832]},
+          {"id": "j-q4-r4", "from": "q4", "to": "r4", "line": "flow", "points": [[860, 942], [790, 942]], "label": "YES", "labelAt": [825, 942]},
+          {"id": "j-q4-q5", "from": "q4", "to": "q5", "line": "flow", "points": [[1000, 1024], [1000, 1080]], "label": "NO", "labelAt": [1000, 1052]},
+          {"id": "j-q5-q6", "from": "q5", "to": "q6", "line": "flow", "points": [[1140, 1162], [1210, 1162]], "label": "YES", "labelAt": [1175, 1162]},
+          {"id": "j-q5-q7", "from": "q5", "to": "q7", "line": "flow", "points": [[1000, 1244], [1000, 1300]], "label": "NO", "labelAt": [1000, 1272]},
+          {"id": "j-q6-r5", "from": "q6", "to": "r5", "line": "flow", "points": [[1350, 1244], [1350, 1300]], "label": "YES", "labelAt": [1350, 1272]},
+          {"id": "j-q6-r6", "from": "q6", "to": "r6", "line": "flow", "points": [[1490, 1162], [1560, 1162]], "label": "NO", "labelAt": [1525, 1162]},
+          {"id": "j-q7-r7", "from": "q7", "to": "r7", "line": "flow", "points": [[860, 1382], [790, 1382]], "label": "YES", "labelAt": [825, 1382]},
+          {"id": "j-q7-r8", "from": "q7", "to": "r8", "line": "flow", "points": [[1000, 1464], [1000, 1520]], "label": "NO", "labelAt": [1000, 1492]}
+        ]
+      }
+      ```
+
+      <!-- /flow -->
+  - id: screen-state-retention-flow-02
+    group: 画面の状態の保持先 判定フローチャート
+    name: ※1 URL のクエリに配置する値
+    body: '- **※1 URL のクエリに配置する値**: タブ・絞り込み・並べ替え・ページ。戻る・進むで 1 つずつ戻る。外から入る値なので検証する。スクロール位置・入力途中の値は出さない'
+  - id: screen-state-retention-flow-03
+    group: 画面の状態の保持先 判定フローチャート
+    name: ※2 ルーターの機能
+    body: '- **※2 ルーターの機能**: 戻る・進むで戻すスクロール位置は、ルーターの機能で履歴の項目ごとに持つ（React は [URL の状態](id:react-state-url-state#scroll-restoration-01)）。history.state には小さな値か Storage のキーだけを持つ。スクロール位置の決まりは [入力と文言](id:ui-input-wording#scroll-restoration-01) に従う'
+  - id: screen-state-retention-flow-04
+    group: 画面の状態の保持先 判定フローチャート
+    name: ※3 入り直したときの復元
+    body: '- **※3 入り直したときの復元**: URL にも値を持つ状態は URL を優先する。sessionStorage の値は URL に値が無いときだけ使用し、使用したら URL に replace で書き戻す'
+tags:
+  - name: scope:判定フローチャート
+  - name: topic:判定フローチャート
+  - name: topic:フローチャート
+  - name: topic:画面
+  - name: topic:url
+  - name: topic:スクロール
+  - name: topic:履歴
+  - name: topic:タブ
+  - name: topic:ブラウザ
+  - name: topic:セッション
+  - name: topic:cookie
+  - name: topic:機密
+  - name: topic:サーバー
+  - name: action:保持
+    main: true
+  - name: action:保存
+  - name: action:判定

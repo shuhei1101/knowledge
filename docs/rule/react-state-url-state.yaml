@@ -36,14 +36,16 @@ tags:
   - name: action:読み取り
 status: current
 visibility: internal
-rev: 6
-last_reviewed: '2026-10-30'
+rev: 7
+last_reviewed: '2026-11-06'
 sources:
   - title: "TanStack Router: Search Params"
     url: https://tanstack.com/router/latest/docs/framework/react/guide/search-params
   - title: "nuqs: Adapters"
     url: https://nuqs.dev/docs/adapters
     note: TanStack Router 用のアダプターが実験段階であることを確認した
+  - title: 'TanStack Router: Scroll Restoration'
+    url: https://tanstack.com/router/latest/docs/framework/react/guide/scroll-restoration
 items:
   - id: overview
     name: 概要
@@ -51,6 +53,8 @@ items:
       対象: React
       利用者が画面で見ているものに影響する状態（タブ・フィルタ・ソート・ページ・選択中の ID）は、URL の search に置く。
       共有・戻る / 進む・リロードでの復元・deep link が機能する。
+      戻る / 進むで復元するのは、同じ履歴の項目に戻ったときだけ。
+      リンクで入り直したときの復元は [画面の状態の保持先](id:flowchart-screen-state-retention) で決める。
       置くか置かないかは [状態の置き場所](id:flowchart-react-state-placement) が決める。
   - id: define-01
     group: 定義
@@ -96,3 +100,11 @@ items:
     name: Tabs に URL の状態を渡す
     body: |-
       - shadcn の `<Tabs>` の `value`・`onValueChange` に、URL の状態を渡す。
+  - id: scroll-restoration-01
+    group: スクロール位置
+    name: scrollRestoration で復元する
+    body: |-
+      - スクロール位置は URL に配置せず、`createRouter` の `scrollRestoration: true` で履歴の項目ごとに復元する。
+      - ページの中のスクロール領域には、`data-scroll-restoration-id` で固定の ID を付ける。
+        付けない領域は CSS セレクターで識別され、構造が変わると戻らない。
+      - 決まりは [入力と文言](id:ui-input-wording#scroll-restoration-01) に従う。
