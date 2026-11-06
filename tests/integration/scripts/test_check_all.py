@@ -113,11 +113,12 @@ def test_normal_when_design_schemas_invalid(
 
 
 def test_normal_when_repository_schemas(run_script: RunScript, tmp_path: Path) -> None:
-    """リポジトリの全てのスキーマが違反なしで通り、description が全て 2 文以内になっている（正常系）。"""
+    """リポジトリの全てのスキーマと設計書のテンプレートが違反なしで通り、description が全て 2 文以内になっている（正常系）。"""
     # 準備
     root = tmp_path / "repo"
     root.mkdir()
     shutil.copytree(_REPO / "schemas", root / "schemas")
+    shutil.copytree(_REPO / "docs" / "template", root / "docs" / "template")
     (root / "dev-docs.yaml").write_text("documents: []\n", encoding="utf-8")
     # 実行
     result = run_script("check_all", root)
