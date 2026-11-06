@@ -212,6 +212,21 @@ rules:
       - "**/*.test.tsx"
       - "**/*.test.ts"
       - "**/*.stories.tsx"
+  - rule: docs/rule/react-core-tailwind.yaml
+    paths:
+      - "**/frontend/src/shared/styles/*.css"
+  - rule: docs/rule/react-core-build.yaml
+    paths:
+      - "**/package.json"
+      - "**/tsconfig*.json"
+    exclude:
+      - "**/node_modules/**"
+  - rule: docs/rule/react-devtools-lint-format.yaml
+    paths:
+      - "**/eslint.config.js"
+      - "**/tsconfig*.json"
+    exclude:
+      - "**/node_modules/**"
   - rule: docs/rule/dev-design-principles.yaml
     paths:
       - "**/*.{py,ts,tsx}"

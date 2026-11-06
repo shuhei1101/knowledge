@@ -34,8 +34,8 @@ tags:
   - name: action:選択
 status: current
 visibility: internal
-rev: 6
-last_reviewed: '2026-11-03'
+rev: 7
+last_reviewed: '2026-11-06'
 sources:
   - id: I
     title: pbakaus/impeccable
@@ -76,6 +76,24 @@ sources:
   - id: APG
     title: "WAI-ARIA Authoring Practices Guide: Button Pattern"
     url: https://www.w3.org/WAI/ARIA/apg/patterns/button/
+  - id: TR
+    title: 'TanStack Router: Scroll Restoration'
+    url: https://tanstack.com/router/latest/docs/framework/react/guide/scroll-restoration
+  - id: MDN
+    title: 'MDN: History.scrollRestoration'
+    url: https://developer.mozilla.org/en-US/docs/Web/API/History/scrollRestoration
+  - id: WD
+    title: 'web.dev: Back/forward cache'
+    url: https://web.dev/articles/bfcache
+  - id: NN
+    title: "NN/g: Designing Scroll Behavior: When to Save a User's Place"
+    url: https://www.nngroup.com/articles/saving-scroll-position/
+  - id: BY
+    title: 'Baymard: Back Button Expectations'
+    url: https://baymard.com/blog/back-button-expectations
+  - id: OW
+    title: 'OWASP: HTML5 Security Cheat Sheet'
+    url: https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html
 items:
   - id: overview
     name: 概要
@@ -83,7 +101,7 @@ items:
       対象: 共通（単体 HTML・React）
       入力・送信・エラー・通知の振る舞いと、画面に出す言葉。
       画面の状態をどこに保持するか。
-      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、GOV = GOV.UK Design System、C = IBM Carbon Design System、MS = Microsoft Japanese Localization Style Guide、SH = SmartHR Design System、BK = 公用文作成の考え方、APG = WAI-ARIA Authoring Practices Guide（リンクはメタデータの `sources`）。
+      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、GOV = GOV.UK Design System、C = IBM Carbon Design System、MS = Microsoft Japanese Localization Style Guide、SH = SmartHR Design System、BK = 公用文作成の考え方、APG = WAI-ARIA Authoring Practices Guide、TR = TanStack Router、MDN = MDN Web Docs、WD = web.dev、NN = Nielsen Norman Group、BY = Baymard Institute、OW = OWASP（リンクはメタデータの `sources`）。
   - id: input-submit-01
     group: 入力と送信
     name: 入力と送信の決まり
@@ -207,14 +225,38 @@ items:
     group: 状態の保持
     name: 状態の保持
     body: |-
+      保持先の判定は判定フローチャート [画面の状態の保持先](id:flowchart-screen-state-retention) で行う。
+
       | 保持するもの | 置き場所 | 出典 |
       | --- | --- | --- |
       | 共有したいもの（タブ・ビュー・絞り込み・並べ替え） | URL | - |
-      | 端末ごとの好み（列の表示・密度） | localStorage | - |
-      | 1 回の作業中だけのもの（入力途中の下書き・スクロール位置） | sessionStorage | - |
+      | 端末ごとの好み（列の表示・密度） | localStorage（最初の描画で要るなら Cookie） | - |
+      | 1 回の作業中だけのもの（入力途中の下書き） | sessionStorage | - |
+      | 戻る・進むで戻すページ全体のスクロール位置 | ルーターの機能（履歴の項目ごと） | TR |
+      | ページの中のスクロール領域（一覧・詳細パネル・タブの中身）の位置 | sessionStorage（領域ごとのキー） | TR |
+      | そのタブで別の画面からリンクで入り直したときに戻したいもの（最後のタブ・絞り込み） | sessionStorage。URL に値があれば URL を優先し、sessionStorage の値を使用したら URL に `replace` で書き戻す | - |
+      | 機密（トークン・個人情報） | URL と Web Storage に配置しない | OW |
       | 保存ビュー | サーバー（画面が書き込みの経路を持たないときは localStorage） | - |
   - id: state-retention-02
     group: 状態の保持
     name: 未保存のまま離れるときの警告
     body: |-
       未保存の入力があるまま画面を離れるときは警告する（V）。
+  - id: scroll-restoration-01
+    group: 状態の保持
+    name: スクロール位置とタブの切り替え
+    body: |-
+      <!-- table: data -->
+
+      | 対象 | 決まり | 出典 |
+      | --- | --- | --- |
+      | ページ全体 | ルーターの機能で履歴の項目ごとに保存して復元する。戻る・進むでは戻し、リンクで新しく入ったときは一番上から表示する | TR |
+      | ページの中のスクロール領域（一覧・詳細パネル・タブの中身） | 領域ごとに固定のキーを付けて保存して復元する。中身が変わる領域は、キーに項目の ID とタブを含める（例: `detail:{itemId}:{tab}`） | TR |
+      | タブの中のスクロール位置 | タブの値を含むキーで保存し、切り替える前に保存して、表示した後に戻す | - |
+      | 保存する時期 | 移動の前・タブを切り替える前・`pagehide`。スクロールのたびに書き込むときは間引く | TR / WD |
+      | 復元する時期 | データを描画した後 | TR |
+      | 戻さないもの | 中身が大きく変わった一覧と、時間が経ってから戻った一覧は戻さず、一番上から表示する | NN |
+      | しないこと | `history.scrollRestoration` を自分で変更しない（ルーターが管理する）。`unload` を使用しない。スクロール位置を URL に出さない | MDN / WD |
+      | 履歴に追加する単位 | 絞り込み・並べ替えの変更と、オーバーレイを開く操作は履歴に 1 つ追加し、戻るで 1 つずつ戻す | BY |
+
+      <!-- /table -->
