@@ -174,7 +174,21 @@ def test_normal(run_script: RunScript, tmp_path: Path) -> None:
         "key-rules-01",
         "example-sample-01",
     ]
+    assert doc["items"][0]["body"] == "データストアの構造をまとめる。"
     assert doc["items"][1]["body"] == "- 1 ファイル = 分類 1 つにする。"
+    assert doc["items"][2]["body"] == (
+        "<!-- table: data -->\n"
+        "\n"
+        "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
+        "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
+        "| id | ID | string | 必須 | - | - | 変わらない ID。 | - |\n"
+        "| lead | 冒頭リード | string | - | - | minLength: `1` | 1 行の説明。 | - |\n"
+        "| kind | 種別 | string | - | `db` / `json` | - | - | - |\n"
+        "| tables | テーブル | array | - | - | - | - | - |\n"
+        "| tables[].name | 物理名 | string | 必須 | - | pattern: `^[a-z_]+$` | - | `tasks` |\n"
+        "\n"
+        "<!-- /table -->"
+    )
     assert doc["items"][3]["body"] == (
         "<!-- table: data -->\n"
         "\n"
