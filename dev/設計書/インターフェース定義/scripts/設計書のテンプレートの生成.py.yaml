@@ -1,0 +1,187 @@
+id: "IF-201-1"
+title: "設計書のテンプレートの生成"
+entry:
+  kind: operation
+  value: リポジトリの直下で起動するコマンド（CLI）。開発者の手元から呼ぶ
+flows:
+  - name: 正常系
+    summary: スキーマが変わったテンプレートだけ、items を組み立て直して書き出す
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`schemas/design/` に `er.schema.yaml`・`config.schema.yaml`・`common.schema.yaml`・`index.schema.yaml` を、`docs/template/` に `template-er.yaml`・`template-config.yaml` を持つ一時フォルダ。`template-config.yaml` は今のスキーマから生成した状態で、`template-er.yaml` は `items` が古い'
+        notes: '`er.schema.yaml` はトップの `x-rules`、キーの `$ref`・`enum`・`x-rules`・`x-bad-examples`・入れ子の配列、トップの `examples` を 1 件持つ'
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant G as 設計書のテンプレートの生成
+        participant F as リポジトリ
+        C->>G: リポジトリの直下で起動する
+        G->>F: schemas/design/ の全てのスキーマを読み込む
+        F-->>G: スキーマ
+        G->>G: 全ての $ref を解決する
+        G->>F: 種類のスキーマに対応する全てのテンプレートの文書を読み込む
+        F-->>G: テンプレートの文書
+        G->>G: 種類ごとに items を組み立てる
+        G->>F: items が違う template-er.yaml の items だけを置き換えて書き出す
+        G-->>C: 書き換えたテンプレートのパスと終了コード 0
+    expected:
+      - 終了コードが 0
+      - 標準出力が `docs/template/template-er.yaml` の 1 行だけ
+      - '`template-er.yaml` の `items` が、`overview`・`rules-01`・`item-list-01`・`key-rules-01`・`example-sample-01` の 5 項目で、各項目の本文が「組み立てる items」の約束どおり'
+      - '`template-er.yaml` の `items` 以外のキーの値・並び・コメントが、実行の前と同じ'
+      - '`template-config.yaml` のバイト列が実行の前と同じ'
+      - 続けてもう一度起動すると、標準出力が空で、どのファイルのバイト列も変わらない
+    test: test_normal
+  - name: 異常系（$ref を解決できない・終了コード 2）
+    summary: 解決できない $ref があれば、どのテンプレートも書き換えずに終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: 正常系の一時フォルダで、`config.schema.yaml` のキーの `$ref` を `common.schema.yaml#/$defs/無い型` にし、`template-er.yaml` の `items` が古いもの
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant G as 設計書のテンプレートの生成
+        participant F as リポジトリ
+        C->>G: リポジトリの直下で起動する
+        G->>F: schemas/design/ の全てのスキーマを読み込む
+        F-->>G: スキーマ
+        G->>G: 全ての $ref を解決する
+        G-->>C: 解決できない $ref のパスと終了コード 2
+    expected:
+      - 終了コードが 2
+      - 標準エラーに `schemas/design/config.schema.yaml` と、解決できない `$ref` の値が出る
+      - '`template-er.yaml`・`template-config.yaml` のバイト列が実行の前と同じ'
+    test: test_error_when_ref_unresolvable
+  - name: 異常系（スキーマが読めない・終了コード 2）
+    summary: YAML として読めないスキーマがあれば、どのテンプレートも書き換えずに終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: 正常系の一時フォルダで、`config.schema.yaml` を YAML として読めない中身（閉じていない引用符）にし、`template-er.yaml` の `items` が古いもの
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant G as 設計書のテンプレートの生成
+        participant F as リポジトリ
+        C->>G: リポジトリの直下で起動する
+        G->>F: schemas/design/ の全てのスキーマを読み込む
+        F-->>G: 読めないスキーマ
+        G-->>C: 読めないスキーマのパスと終了コード 2
+    expected:
+      - 終了コードが 2
+      - 標準エラーに `schemas/design/config.schema.yaml` が出る
+      - '`template-er.yaml`・`template-config.yaml` のバイト列が実行の前と同じ'
+    test: test_error_when_schema_unreadable
+  - name: 異常系（対応するテンプレートが無い・終了コード 2）
+    summary: 種類のスキーマに対応するテンプレートの文書が無ければ、どのテンプレートも書き換えずに終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: 正常系の一時フォルダから `template-config.yaml` を削除し、`template-er.yaml` の `items` が古いもの
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant G as 設計書のテンプレートの生成
+        participant F as リポジトリ
+        C->>G: リポジトリの直下で起動する
+        G->>F: schemas/design/ の全てのスキーマを読み込む
+        F-->>G: スキーマ
+        G->>G: 全ての $ref を解決する
+        G->>F: 種類のスキーマに対応する全てのテンプレートの文書を読み込む
+        F-->>G: template-config.yaml が無い
+        G-->>C: 無いテンプレートの ID とスキーマのパスと終了コード 2
+    expected:
+      - 終了コードが 2
+      - 標準エラーに `template-config` と `schemas/design/config.schema.yaml` が出る
+      - '`template-er.yaml` のバイト列が実行の前と同じ'
+    test: test_error_when_template_missing
+lead: '`schemas/design/` の設計書の種類のスキーマから、`docs/template/` の対応するテンプレートの文書の `items` を組み立てて書き出す。'
+identifier: build-templates
+idempotent: true
+side_effects: '`docs/template/` の設計書の種類のテンプレートの文書のうち、組み立てた `items` が今の `items` と違うものを書き換える'
+callers:
+  - SC-201-1#scenarios[正常シナリオ]
+exclusivity: 制限なし（同じスキーマからは同じバイト列を書き出す）
+request:
+  - name: cwd
+    type: Path
+    required: true
+    location: argument
+    description: knowledge のリポジトリの直下
+    notes: 引数は取らず、作業ディレクトリとして受け取る
+response:
+  - name: stdout
+    type: str
+    description: 書き換えたテンプレートのパスを 1 行に 1 件、パスの昇順で出す。書き換えが無ければ空
+    example: docs/template/template-er.yaml
+  - name: stderr
+    type: str
+    description: 終了コード 2 のときの理由（原因のファイルのパスを含む）
+  - name: exit_code
+    type: Literal[0, 2]
+    description: 0 = 全てのテンプレートが組み立てた items と一致した（書き換えたものを含む）。2 = スキーマかテンプレートが読めず、どのファイルも書き換えなかった
+exceptions:
+  - name: なし（正常終了）
+    condition: 全ての種類のスキーマの items を組み立て、違うものを書き出した
+  - name: 終了コード 2
+    condition: スキーマが無い・YAML として読めない、`$ref` を解決できない、種類のスキーマに対応するテンプレートの文書が無い・YAML として読めない
+constraints:
+  - item: 生成の対象
+    constraint: '`schemas/design/*.schema.yaml` のうち、`x-kind` を持ち、テンプレートの対応表に行がある種類のスキーマ。`common.schema.yaml` は `$ref` の解決にだけ使用し、`index.schema.yaml` は対応表に行が無いので生成しない'
+  - item: テンプレートの対応表
+    constraint: |-
+      `x-kind` → テンプレートの ID の固定の対応。
+      `architecture` → `template-architecture`、`component` → `template-component`、`config` → `template-config`、`dataflow` → `template-dataflow`、`dev_command` → `template-dev-command`、`er` → `template-er`、`external_api` → `template-external-api`、`interface` → `template-interface`、`library` → `template-external-library`、`module` → `template-module`、`nonfunctional` → `template-nonfunctional`、`scenario` → `template-scenario`、`screen` → `template-screen-design`、`state_transition` → `template-state-transition`、`test_procedure` → `template-test-procedure`。
+      テンプレートの文書のパスは `docs/template/{テンプレートの ID}.yaml`
+    notes: 対応表に無い `x-kind` の種類のスキーマを `schemas/design/` に追加したら、対応表とテンプレートの文書も追加する
+  - item: 書き出しの順序
+    constraint: 全てのスキーマの読み込み・`$ref` の解決・全てのテンプレートの文書の読み込み・全ての種類の `items` の組み立てを終えてから書き出す。書き出しの前に 1 件でも失敗したら、どのファイルも書き換えない
+  - item: 組み立てる items
+    constraint: |-
+      次の並びの項目にする。中身が無い項目は配置しない。
+      `overview`（概要）: スキーマのトップの `description`。
+      `rules-01`（決まり）: スキーマのトップの `x-rules` の箇条書き。
+      `item-list-01`（項目）: キーの表（「キーの表」の約束）。
+      `key-rules-01`（キーごとの決まり）: `x-rules` か `x-bad-examples` を持つキーの表（「キーごとの決まりの表」の約束）。
+      `example-sample-01` から連番（記載例）: スキーマのトップの `examples` の要素ごとに、要素を YAML にした `yaml` のコードフェンス。要素が 2 件以上のときの名前は `記載例 1`・`記載例 2` のように番号を付ける
+    notes: '`item-list-01`・`example-sample-01` は今のテンプレートの項目の ID と同じにして、生成の前後の差分を本文だけにする'
+  - item: キーの表
+    constraint: |-
+      列は `名前`・`title`・`型`・`必須`・`選択肢`・`制約`・`description`・`examples`。
+      行は `properties` を深さ優先でスキーマの並びのとおりにたどり、オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` の名前にする。
+      `$ref` は解決した先のキーを使用し、`title`・`description`・`examples` はキーの側の値があればそれを優先する。
+      `型` は `type`（解決した先を含む）。`type` が配列なら要素を ` / ` でつなぎ、`type` が無く `anyOf`・`oneOf` だけを持つなら各要素の `type` を ` / ` でつなぐ。`必須` は親の `required` に名前があれば `必須`、`選択肢` は `enum` の要素を ` / ` でつなぐ。
+      `制約` は `const`・`pattern`・`format`・`minLength`・`maxLength`・`minItems`・`maxItems`・`minimum`・`maximum` を `{キー}: {値}` で `, ` でつなぐ。
+      `if`・`then`・`else`・`allOf`・`anyOf` の条件つきの必須は `必須` にせず、条件は `description` が持つ。
+      `x-hidden: true` のキーも行に出す（設計書を記載するときに要るため）。
+      表は `<!-- table: data -->` で包む
+  - item: キーごとの決まりの表
+    constraint: |-
+      列は `名前`・`決まり`・`悪い例`・`理由`。
+      行は「キーの表」と同じ並びと名前で、`x-rules` か `x-bad-examples` を持つキーだけにする。
+      `決まり` は `x-rules` を `<br>` でつなぎ、`悪い例`・`理由` は `x-bad-examples` の 1 件を 1 行にして、2 件目からは `名前`・`決まり` のセルを空にする。
+      表は `<!-- table: data -->` で包む
+  - item: 表のセルの書き方
+    constraint: |-
+      キーの表とキーごとの決まりの表に共通する。
+      値の無いセルは `-` にする。
+      文字列はそのまま、文字列でない値（数・真偽・オブジェクト・配列）は 1 行の YAML（フロースタイル）のインラインコードにする。
+      複数の要素を持つ値（`examples`・`enum`・型）は、要素ごとに上の書き方にして ` / ` でつなぐ。`x-rules` だけは `<br>` でつなぐ。
+      `examples`・`enum` の要素と `制約` の値は、文字列もインラインコードにする（`<color>`・`\[`・`*` のような値を Markdown として読ませない）。値がバッククォートを含むときは 2 つのバッククォートで囲む。
+      セルの中の改行は `<br>` にし、`|` は `\|` にする
+  - item: テンプレートの種類のスキーマとの関係
+    constraint: '`schemas/template.schema.yaml` の `items` の `x-rules`（セクション一覧・記述例・補足の構成）は手で記載するテンプレートの決まりで、生成する `items` には当てない。生成する `items` は `schemas/template.schema.yaml` のスキーマの検査（`id`・`name`・`body` の形）には合わせる'
+  - item: 書き出し
+    constraint: |-
+      往復の読み書きで、テンプレートの文書の `items` の値だけを置き換え、`items` 以外のキーの値・並び・先頭のコメント（`yaml-language-server` の行）を変えない。
+      `body` はブロックスカラー（`|-`）で書き出す。
+      組み立てた `items` が今の `items` と同じなら、ファイルを書き換えない
+  - item: 生成の検査
+    constraint: 'しない（スキーマの検査は「全ての文書の検査」、テンプレートの文書の検査は `write_docs` と「全ての文書の検査」が担う）'
+test_file: tests/integration/scripts/test_build_templates.py

@@ -486,6 +486,134 @@ def test_check_word_list_copy_when_stale(repo_factory: RepoFactory) -> None:
     assert "build_word_list.py" in result[0][3]
 
 
+# テンプレートの検査に使う ER 図のスキーマ
+_TEMPLATE_SOURCE_ER = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: ER 図\n"
+    "description: データストアの構造をまとめる。\n"
+    "x-kind: er\n"
+    "type: object\n"
+    "properties:\n"
+    "  id:\n"
+    "    $ref: common.schema.yaml#/$defs/id\n"
+    "    title: ID\n"
+    "    x-rules:\n"
+    "      - 改名でも変えない。\n"
+)
+
+# _TEMPLATE_SOURCE_ER の $ref の解決先
+_TEMPLATE_SOURCE_COMMON = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: 共通\n"
+    "$defs:\n"
+    "  id:\n"
+    "    type: string\n"
+    "    description: 変わらない ID。\n"
+)
+
+# _TEMPLATE_SOURCE_ER から生成した template-er.yaml
+_GENERATED_TEMPLATE_ER = (
+    "id: template-er\n"
+    "kind: template\n"
+    "items:\n"
+    "  - id: overview\n"
+    "    name: 概要\n"
+    "    body: |-\n"
+    "      データストアの構造をまとめる。\n"
+    "  - id: item-list-01\n"
+    "    name: 項目\n"
+    "    body: |-\n"
+    "      <!-- table: data -->\n"
+    "\n"
+    "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
+    "      | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+    "      | id | ID | string | - | - | - | 変わらない ID。 | - |\n"
+    "\n"
+    "      <!-- /table -->\n"
+    "  - id: key-rules-01\n"
+    "    name: キーごとの決まり\n"
+    "    body: |-\n"
+    "      <!-- table: data -->\n"
+    "\n"
+    "      | 名前 | 決まり | 悪い例 | 理由 |\n"
+    "      | --- | --- | --- | --- |\n"
+    "      | id | 改名でも変えない。 | - | - |\n"
+    "\n"
+    "      <!-- /table -->\n"
+)
+
+
+def test_check_design_templates(repo_factory: RepoFactory) -> None:
+    """一致する（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/common.schema.yaml": _TEMPLATE_SOURCE_COMMON,
+            "schemas/design/er.schema.yaml": _TEMPLATE_SOURCE_ER,
+            "docs/template/template-er.yaml": _GENERATED_TEMPLATE_ER,
+        }
+    )
+    # 実行
+    result = check_all.check_design_templates(root)
+    # 検証
+    assert result == []
+
+
+def test_check_design_templates_when_stale(repo_factory: RepoFactory) -> None:
+    """一致しない（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/common.schema.yaml": _TEMPLATE_SOURCE_COMMON,
+            "schemas/design/er.schema.yaml": _TEMPLATE_SOURCE_ER + "      - 2 つ目の決まり。\n",
+            "docs/template/template-er.yaml": _GENERATED_TEMPLATE_ER,
+        }
+    )
+    # 実行
+    result = check_all.check_design_templates(root)
+    # 検証
+    assert len(result) == 1
+    assert result[0][0] == "docs/template/template-er.yaml"
+    assert result[0][1] == 3
+    assert result[0][2] == "items"
+    assert "schemas/design/er.schema.yaml" in result[0][3]
+    assert "build_templates.py" in result[0][3]
+
+
+def test_check_design_templates_when_template_missing(repo_factory: RepoFactory) -> None:
+    """テンプレートが無い（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/common.schema.yaml": _TEMPLATE_SOURCE_COMMON,
+            "schemas/design/er.schema.yaml": _TEMPLATE_SOURCE_ER,
+        }
+    )
+    # 実行
+    result = check_all.check_design_templates(root)
+    # 検証
+    assert len(result) == 1
+    assert result[0][0] == "docs/template/template-er.yaml"
+
+
+def test_check_design_templates_when_ref_unresolvable(repo_factory: RepoFactory) -> None:
+    """$ref を解決できないスキーマ（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/common.schema.yaml": _TEMPLATE_SOURCE_COMMON,
+            "schemas/design/er.schema.yaml": _TEMPLATE_SOURCE_ER.replace(
+                "$defs/id", "$defs/無い型"
+            ),
+            "docs/template/template-er.yaml": "id: template-er\nkind: template\nitems: []\n",
+        }
+    )
+    # 実行
+    result = check_all.check_design_templates(root)
+    # 検証
+    assert result == []
+
+
 def _first_source_md036(sources: list[LintSource], *_args: object) -> list[LintFinding]:
     """Markdown の lint の呼び出しの差し替え。1 件目の Markdown に MD036 の違反を返す。"""
     return [

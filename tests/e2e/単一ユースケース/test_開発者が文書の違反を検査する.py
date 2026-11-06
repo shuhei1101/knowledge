@@ -22,6 +22,10 @@ _BAD_EXAMPLE = "schemas/design/e2e-bad-example.schema.yaml"
 _BAD_REF = "schemas/design/e2e-bad-ref.schema.yaml"
 # x-rules が配列でない設計書のスキーマの置き場所
 _BAD_RULES = "schemas/design/e2e-bad-rules.schema.yaml"
+# ER 図のスキーマと、そのテンプレート。スキーマの id のキーの x-rules の行
+_ER_SCHEMA = "schemas/design/er.schema.yaml"
+_ER_TEMPLATE = "docs/template/template-er.yaml"
+_ID_RULE = "      - 設計書を作るときに振り、改名・移動でも変えない。\n"
 # 太字だけの段落
 _BOLD_PARAGRAPH = "**太字だけの段落**"
 # 最後の行の集計
@@ -194,6 +198,26 @@ def test_error_when_design_schemas_are_invalid(
         )
         for line in _violation_lines(lines)
     )
+
+
+def test_error_when_templates_out_of_date(
+    knowledge_clone: KnowledgeClone, run_check_all: RunCheckAll
+) -> None:
+    """スキーマに決まりを追加して生成し直さなければ、ずれたテンプレートと生成のコマンドを出して失敗する（異常シナリオ）。"""
+    # 準備
+    schema = (_SOURCE.parents[2] / _ER_SCHEMA).read_text(encoding="utf-8")
+    clone = knowledge_clone(
+        {_ER_SCHEMA: schema.replace(_ID_RULE, f"{_ID_RULE}      - e2e で追加した決まり。\n", 1)}
+    )
+    # 実行
+    result = run_check_all(clone)
+    # 検証
+    lines = result.stdout.splitlines()
+    assert result.returncode == 1
+    assert _violation_paths(lines) == {_ER_TEMPLATE}
+    line = next(line for line in _violation_lines(lines) if line.startswith(f"{_ER_TEMPLATE}:"))
+    assert _ER_SCHEMA in line
+    assert "scripts/build_templates.py" in line
 
 
 def test_error_when_check_cli_missing(

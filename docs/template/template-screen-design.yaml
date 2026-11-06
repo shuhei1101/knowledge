@@ -28,27 +28,28 @@ items:
 
       | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
       | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `IF-12` / `IF-3038-1` |
       | title | タイトル | string | 必須 | - | - | 日本語の画面名。ファイル名に合わせる。 | - |
       | screen | 画面 | string | - | - | - | 画面の実装ファイルのパス。 | - |
       | mock | モック | string | - | - | - | 採用したモックの置き場所。 | - |
-      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。<br>初回に書いた内容のまま保ち、後から情報を追加しない（仕様は各項目に書く）。<br>対象そのものが変わったときだけ書き換える。 | - |
-      | test_file | 対応テストファイル | string | - | - | pattern: ^tests/.+ | 対応する結合テストのファイル。 | - |
-      | elements | 要素一覧 | array | 必須 | - | minItems: 1 | 画面の要素 1 つ = 1 要素。ダイアログの中の要素も並べ、位置の先頭にダイアログ名を書く。 | - |
-      | elements[].name | 要素 | string | 必須 | - | - | ボタン・入力欄・ラベル・テーブル等の日本語の論理名。画面の中で一意にする。 | - |
+      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
+      | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | 対応する結合テストのファイル（規約『V字モデル』）。 | - |
+      | elements | 要素一覧 | array | 必須 | - | minItems: `1` | 画面の要素 1 つ = 1 要素。 | - |
+      | elements[].name | 要素 | string | 必須 | - | - | ボタン・入力欄・ラベル・テーブル等の日本語の論理名。 | - |
       | elements[].id | 項目 ID | string | - | - | - | 画面の中で一意な識別子。テスト・実装から引く。 | - |
       | elements[].kind | 種類 | string | 必須 | - | - | `button` / `input` / `select` / `table` / `label` 等。 | - |
-      | elements[].component | 部品 | string | - | - | pattern: ^[^#\s]*#(?:[^\s\[]\|\[[^\]]*\])*$ | 使う部品の部品設計（`dev/設計書/部品設計/...#`）。部品を使わない要素は書かない。 | `dev/設計書/部品設計/計画画面/状態のバッジ.html#` |
+      | elements[].component | 部品 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 使う部品の部品設計（部品設計の `{ID}#`）。 | `CMP-5#` / `CMP-6#` |
       | elements[].args | 部品へ渡す引数 | array | - | - | - | 部品設計の引数へ渡す値。`component` を持つ要素だけが持ち、部品設計の必須の引数を全て並べる。 | - |
-      | elements[].args[].name | 引数 | string | 必須 | - | - | 部品設計の `args` の `name`。 | `status` |
-      | elements[].args[].value | 渡す値 | string | 必須 | - | - | 固定の値か取得元（`{インターフェース定義の論理名}.{フィールドのパス}`）。 | ``計画画面.行の材料[].status`` |
+      | elements[].args[].name | 引数 | string | 必須 | - | - | 部品設計の `args` の `name`。 | `status` / `filterable` |
+      | elements[].args[].value | 渡す値 | string | 必須 | - | - | 固定の値か取得元（`{インターフェース定義の論理名}.{フィールドのパス}`）。 | `` `計画画面.行の材料[].status` `` / `` ※2 で絞り込みを持つ列なら `true` `` |
       | elements[].slots | スロットに差し込む中身 | array | - | - | - | 部品設計のスロットへ差し込む要素か部品。`component` を持つ要素だけが持つ。 | - |
-      | elements[].slots[].name | スロット | string | 必須 | - | - | 部品設計の `slots` の `name`。 | `default` |
-      | elements[].slots[].value | 差し込む中身 | string | 必須 | - | - | 差し込む要素の名前か、部品の部品設計。 | `行の番号` |
-      | elements[].position | 位置 | string | - | - | - | `>` で区切った入れ子のパス（例 `削除確認ダイアログ > フッター`）。 | - |
+      | elements[].slots[].name | スロット | string | 必須 | - | - | 部品設計の `slots` の `name`。 | `default` / `actions` |
+      | elements[].slots[].value | 差し込む中身 | string | 必須 | - | - | 差し込む要素の名前か、部品の部品設計。 | `行の番号` / `CMP-3#` |
+      | elements[].position | 位置 | string | - | - | - | `>` で区切った入れ子のパス。 | `削除確認ダイアログ > フッター` |
       | elements[].description | 説明 | string | 必須 | - | - | - | - |
       | elements[].label | 表示文言 | string | - | - | - | 画面に固定で出る文字列。 | - |
       | elements[].placeholder | プレースホルダ | string | - | - | - | - | - |
-      | elements[].io | 入出力区分 | string | - | 入力 / 表示 / 入出力 | - | - | - |
+      | elements[].io | 入出力区分 | string | - | `入力` / `表示` / `入出力` | - | - | - |
       | elements[].type | 型 | string | - | - | - | 値を持つ要素の型（文字列 / 数値 / 日付 / 真偽値 等）。 | - |
       | elements[].visible_when | 表示条件 | string | - | - | - | `常時` か出し分けの条件。 | - |
       | elements[].enabled_when | 活性条件 | string | - | - | - | 表示はされるが操作できない条件。 | - |
@@ -64,14 +65,14 @@ items:
       | elements[].pattern | 形式 | string | - | - | - | 正規表現。 | - |
       | elements[].charset | 文字種の扱い | string | - | - | - | 受け付ける文字と、制限せず変換するか。 | - |
       | elements[].width | 表示幅 | string | - | - | - | - | - |
-      | elements[].display_format | 表示形式 | string | - | - | - | 日付・時刻・数値の表示の書式と、表示の例。 | - |
-      | elements[].align | 文字揃え | string | - | 左 / 中央 / 右 | - | - | - |
+      | elements[].display_format | 表示形式 | string | - | - | - | 日付・時刻・数値の表示の形と、表示の例。 | - |
+      | elements[].align | 文字揃え | string | - | `左` / `中央` / `右` | - | - | - |
       | elements[].tab_order | タブ順 | integer | - | - | - | - | - |
       | elements[].autofocus | 初期フォーカス | boolean | - | - | - | - | - |
-      | elements[].initial_state | 初期状態 | string | - | 活性 / 非活性 / 読み取り専用 | - | - | - |
+      | elements[].initial_state | 初期状態 | string | - | `活性` / `非活性` / `読み取り専用` | - | - | - |
       | elements[].initial_value | 初期値 | string | - | - | - | 表示時点の値（`空` / 取得値 等）。 | - |
       | elements[].hint | 補助文 | string | - | - | - | ラベルの下に出す説明。 | - |
-      | elements[].error_message | エラーの文言 | string | - | - | - | 項目ごとの誤りと修正方法。 | - |
+      | elements[].error_message | エラーの文言 | string | - | - | - | 項目ごとの誤りと直し方。 | - |
       | elements[].autocomplete | 入力の目的 | string | - | - | - | 自動入力の種類（HTML の `autocomplete`）。 | - |
       | elements[].inputmode | 入力モード | string | - | - | - | - | - |
       | elements[].prefix | 接頭辞 | string | - | - | - | - | - |
@@ -82,17 +83,17 @@ items:
       | elements[].source | 取得元 | string | - | - | - | `{インターフェース定義の論理名}.{フィールドのパス}`。 | - |
       | elements[].target | 送信先 | string | - | - | - | `{インターフェース定義の論理名}.{フィールドのパス}`。変換・合成・除外は括弧書きで添える。 | - |
       | elements[].action | アクション | string | - | - | - | 画面の中で閉じる動きは日本語で書く。送信・画面遷移は `action_ref` に参照で持つ。 | - |
-      | elements[].action_ref | アクションの参照 | string | - | - | pattern: ^[^#\s]*#(?:[^\s\[]\|\[[^\]]*\])*$ | 送信を伴う動きはインターフェース定義、画面遷移は遷移先の画面設計。 | `dev/設計書/インターフェース定義/バックエンド/タスク作成.py#flows[正常系]` |
+      | elements[].action_ref | アクションの参照 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 送信を伴う動きはインターフェース定義、画面遷移は遷移先の画面設計。 | `IF-12#flows[正常系]` / `#functions[resolve_base].exceptions` / `CFG-3#` / `#notes[main.py の補足]` / `#functions[main#3]` |
       | elements[].refs | 関連 | array | - | - | - | - | - |
       | elements[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
-      | elements[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
-      | elements[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
-      | elements[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | elements[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。書かなければ実装済みとして扱う。 | - |
+      | elements[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | elements[].implementation | 実装 | string | - | - | pattern: `^[^#\s]+(#\S+)?$` | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/schemas/loader.py#load_catalog` |
       | elements[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
-      | elements[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | elements[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ。 | `v0.3.0` |
       | elements[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
       | elements[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
-      | elements[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | elements[].notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
       | input_checks | 入力チェック | array | - | - | - | 1 要素 = 1 ケースの入力チェック。無い画面は持たない。 | - |
       | input_checks[].element | 要素 | string | 必須 | - | - | `elements` の要素の名前。 | - |
       | input_checks[].violation | 違反の条件 | string | 必須 | - | - | 1 要素に 1 つの違反。 | - |
@@ -100,13 +101,32 @@ items:
       | input_checks[].message | エラー文言 | string | 必須 | - | - | 画面に出る文字列そのまま。 | - |
       | input_checks[].position | 表示位置 | string | 必須 | - | - | - | - |
       | refs | 関連 | array | - | - | - | - | - |
-      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+
+      <!-- /table -->
+  - id: key-rules-01
+    name: キーごとの決まり
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | 決まり | 悪い例 | 理由 |
+      | --- | --- | --- | --- |
+      | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
+      | lead | 初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
+      | elements | ダイアログの中の要素も並べ、位置の先頭にダイアログ名を書く。<br>列の表示・非表示は dev-docs の画面の表の列の設定で切り替える。 | - | - |
+      | elements[].name | 画面の中で一意にする。 | - | - |
+      | elements[].component | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 段になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として読む。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | elements[].action_ref | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 段になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として読む。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | elements[].reason | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | elements[].notes | 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+      | notes | 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
 
       <!-- /table -->
   - id: example-sample-01
     name: 記載例
     body: |-
       ```yaml
+      id: SCR-1
       title: タスク作成画面
       screen: app/(authenticated)/tasks/new/page.tsx
       mock: dev/mock/pages/タスク作成/12/a-plan/
@@ -139,7 +159,7 @@ items:
         target: タスク作成.priority
       - name: 優先度のバッジ
         kind: label
-        component: dev/設計書/部品設計/共通/バッジ.html#
+        component: CMP-7#
         args:
         - name: kind
           value: 優先度選択の値（low は `muted`、high は `danger`）
@@ -150,13 +170,13 @@ items:
         visible_when: 常時
       - name: 保存ボタン
         kind: button
-        component: dev/設計書/部品設計/共通/ボタン.html#
+        component: CMP-3#
         position: フッター
         description: 入力内容でタスクを作成
         label: 保存
         visible_when: 常時
         enabled_when: 必須項目が入力済みで制限の違反が無いとき
-        action_ref: dev/設計書/インターフェース定義/バックエンド/タスク作成.py#
+        action_ref: IF-1#
       input_checks:
       - element: タスク名入力欄
         violation: 空

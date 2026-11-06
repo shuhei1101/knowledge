@@ -87,6 +87,7 @@ functions:
       7. 文書ごとに検査し（文書 1 件の検査）、違反を `{ファイルのパス}:{行}: {項目のパス}: {内容}` の 1 行ずつ、文書のパスの順に標準出力へ出す
       8. 設計書のスキーマと `schemas/` の直下のスキーマを検査し（設計書のスキーマの検査・文書の種類のスキーマの検査）、違反を同じ形の行で出す
       9. 対応表のコピーを検査し（対応表のコピーの検査）、違反を同じ形の行で出す
+         設計書のテンプレートを検査し（設計書のテンプレートの検査）、違反を同じ形の行で出す
       10. lint を当てる（lint の検査）。違反を `{ファイルのパス}:{行}: {項目のパス}: {tool}/{rule}: {message}`、`warning` の違反は `{内容}` の前に `warning: ` を付けた行で、文書のパスと行の順に出す
          - 読めない lint の出力の場合、標準エラーへ理由を出し `1` を返す
       11. 最後に `{文書の数} 件の文書を検査し、違反は {違反の数} 件、警告は {警告の数} 件でした` を出し、違反があれば `1`、無ければ `0` を返す（警告は数えない）
@@ -451,6 +452,63 @@ functions:
       - MOD-72-2#functions[load_document]
     refs:
       - IF-72-3#constraints[対応表のコピー]
+  - name: check_design_templates
+    title: 設計書のテンプレートの検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: 種類のスキーマから組み立てた items が、対応するテンプレートの文書の items と一致するかを確かめる
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`SCHEMAS_DIR`・`TEMPLATES_DIR` の起点'
+    returns:
+      type: list[tuple[str, int, str, str]]
+      description: （ファイルのパス、行、項目のパス、内容）。全て一致すれば空
+    process: |-
+      1. `schemas/design/` が無ければ空を返す
+      2. 設計書のスキーマを `$ref` を確かめずに読み込む（設計書のスキーマの読み込み）
+         - `BuildError` の場合、空を返す（読めないスキーマは設計書のスキーマの検査が違反にする）
+      3. 対応表に行がある種類のスキーマごとに、テンプレートの文書を読む（文書の読み込み）
+         - 無い・読めないテンプレートの場合、`(テンプレートのパス, 1, "$", "テンプレートがありません: {スキーマのパス}")` を足して次へ進む
+      4. items を組み立て（items の組み立て）、テンプレートの `items` を `id`・`name`・`body` の組の並びにしたものと比べる
+         - `BuildError` の場合、そのスキーマを比べない（`$ref` の誤りは設計書のスキーマの検査が違反にする）
+         - 違う場合、`(テンプレートのパス, items のキーの行, "items", "テンプレートがスキーマ {スキーマのパス} と一致しません。{COMMAND} で作り直してください")` を足す
+      5. 足した違反をパスの順に返す
+    unit_tests:
+      - name: test_check_design_templates
+        case: 正常
+        summary: 一致する
+        condition: '`er`・`common` のスキーマと、生成した `template-er.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: 空
+      - name: test_check_design_templates_when_stale
+        case: 正常
+        summary: 一致しない
+        condition: '`er.schema.yaml` のキーの `x-rules` に 1 件追加する前に生成した `template-er.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: '1 件で、パスが `docs/template/template-er.yaml`、行が `items:` の行、項目のパスが `items`、内容に `schemas/design/er.schema.yaml` と `build_templates.py` がある'
+      - name: test_check_design_templates_when_template_missing
+        case: 正常
+        summary: テンプレートが無い
+        condition: '`er`・`common` のスキーマだけで、`template-er.yaml` が無い'
+        mock: なし（一時ディレクトリ）
+        expected: 1 件で、パスが `docs/template/template-er.yaml`
+      - name: test_check_design_templates_when_ref_unresolvable
+        case: 正常
+        summary: $ref を解決できないスキーマ
+        condition: '`er.schema.yaml` のキーの `$ref` が無い `$defs` を指し、`template-er.yaml` は古い'
+        mock: なし（一時ディレクトリ）
+        expected: 空（設計書のスキーマの検査が違反にする）
+    callees:
+      - MOD-201-1#functions[load_schemas]
+      - MOD-201-1#functions[build_items]
+      - MOD-72-2#functions[load_document]
+    refs:
+      - IF-72-3#constraints[設計書のテンプレート]
   - name: list_targets
     title: 検査する文書の列挙
     kind: 関数

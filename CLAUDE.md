@@ -9,6 +9,7 @@
 設計書のスキーマの正本は [schemas/design/](./schemas/design/) にあり、各プロジェクトは `design-schemas/v{メジャー}.{マイナー}.{パッチ}` のタグで指す。
 スキーマを変える PR は、release が master へ入った後にタグを上げる反映作業を持つ。
 既存の設計書が検査を通らなくなる変更はメジャー、通ったままの変更はマイナー、検査の結果を変えない変更はパッチを上げる。
+[docs/template/](./docs/template/) の設計書の種類のテンプレートの本文はスキーマから生成する。スキーマを変えたら `uv run --frozen --script scripts/build_templates.py` を実行し、テンプレートを一緒に commit する。
 使い方は [使い方](./docs/guide/)。
 dev-docs では直下の [dev-docs.yaml](./dev-docs.yaml) で配信し、配信元の ID は `knowledge`。
 文書の検査と Markdown への変換のスクリプトは [scripts/](./scripts/) にあり、`dev-docs.yaml` の `validators[]`・`converters[]` と CI から呼ぶ。

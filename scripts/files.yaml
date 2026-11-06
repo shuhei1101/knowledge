@@ -28,6 +28,10 @@ files:
     name: 対応表のコピーの作成
     description: 正本の対応表の YAML から、プラグイン slop-check のフックが読む JSON のコピーを書き出す。対応表の正本を変えたときや、コピーに残すキーを変えるときに読む。
     tags: [topic:対応表, topic:変換, tool:ruamel.yaml]
+  - path: build_templates.py
+    name: 設計書のテンプレートの生成
+    description: 設計書のスキーマから、docs/template/ の対応するテンプレートの items を書き出す。テンプレートに出す項目や表の書き方を変えるときに読む。
+    tags: [topic:テンプレート, topic:スキーマ, topic:生成, tool:ruamel.yaml]
   - path: _lint.py
     name: lint の呼び出し
     description: markdownlint-cli2・textlint・yamllint の在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応を受け持つ。lint の CLI のバージョンを上げるときや、CLI の出力の読み方を変えるときに読む。

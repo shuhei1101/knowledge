@@ -63,12 +63,12 @@ flows:
       - メタスキーマの違反の行は `type`・`x-rules` のキーの行、解決できない `$ref` の行は `$ref` のキーの行、`examples` の違反の行は `examples[0]` の要素の先頭の行
     test: test_normal_when_design_schemas_invalid
   - name: 正常系（リポジトリのスキーマ）
-    summary: リポジトリの全てのスキーマが違反なしで通り、設計書のスキーマの `description` が全て 2 文以内になっている
+    summary: リポジトリの全てのスキーマと設計書のテンプレートが違反なしで通り、設計書のスキーマの `description` が全て 2 文以内になっている
     setup:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: knowledge のリポジトリの `schemas/` のコピーと、`documents` が空の `dev-docs.yaml` を持つ一時フォルダ
+        description: knowledge のリポジトリの `schemas/` と `docs/template/` のコピーと、`documents` が空の `dev-docs.yaml` を持つ一時フォルダ
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
@@ -78,6 +78,9 @@ flows:
         S->>F: schemas/design/ と schemas/ の直下のスキーマを読む
         loop 全てのスキーマ
           S->>S: 拡張したメタスキーマの検査
+        end
+        loop テンプレートの対応表に行がある種類のスキーマ
+          S->>S: 組み立てた items とテンプレートの items を比べる
         end
         S-->>C: スキーマの違反なし
     expected:
@@ -131,6 +134,35 @@ flows:
       - 終了コードが 1
       - 標準出力に、コピーのパスと、「対応表のコピーの作成」を実行する案内の行が出る
     test: test_normal_when_word_list_copy_stale
+  - name: 正常系（テンプレートがスキーマとずれている・終了コード 1）
+    summary: 設計書のテンプレートの items がスキーマから組み立てたものと違えば、違反として出す
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`schemas/design/er.schema.yaml`・`schemas/design/common.schema.yaml` と、`er.schema.yaml` のキーの `x-rules` を 1 件追加する前に生成した `docs/template/template-er.yaml` と、`schemas/meta.schema.yaml`・`schemas/template.schema.yaml` を持つ一時フォルダ'
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>F: dev-docs.yaml の documents を読む
+        loop 全ての文書
+          S->>S: スキーマの検査と文書の違反の検査
+        end
+        S->>F: schemas/design/ の設計書のスキーマを読む
+        loop 全ての設計書のスキーマ
+          S->>S: 拡張したメタスキーマ・$ref・examples の検査
+        end
+        loop テンプレートの対応表に行がある種類のスキーマ
+          S->>S: 「設計書のテンプレートの生成」と同じ組み立てで items を作り、テンプレートの items と比べる
+        end
+        S-->>C: 終了コード 1 とテンプレートの違反の行
+    expected:
+      - 終了コードが 1
+      - 標準出力に、`docs/template/template-er.yaml` のパスと、生成元の `schemas/design/er.schema.yaml` と、「設計書のテンプレートの生成」を実行する案内の行が出る
+    test: test_normal_when_templates_out_of_date
   - name: 正常系（Markdown・YAML の書式の違反がある・終了コード 1）
     summary: 失敗させるルールの lint の違反を、元の文書の YAML の行で出して終了コード 1 で終わる
     setup:
@@ -236,7 +268,7 @@ flows:
       - 終了コードが 2
       - 標準エラーに `dev-docs.yaml` が無いことが出る
     test: test_error_when_config_missing
-lead: '`dev-docs.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を当て、`schemas/design/` の設計書のスキーマにスキーマ自身の検査を当て、全ての違反を出して終了コードで合否を返す。'
+lead: '`dev-docs.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を当て、`schemas/design/` の設計書のスキーマにスキーマ自身の検査を当て、設計書のテンプレートがスキーマと一致するかを比べ、全ての違反を出して終了コードで合否を返す。'
 identifier: check-all
 idempotent: true
 side_effects: なし（ファイルを書き換えない）
@@ -309,6 +341,13 @@ constraints:
   - item: 対応表のコピー
     constraint: '`docs/word-list/word-list-ai-slop.yaml` から「対応表のコピーの作成」と同じ書式で作り直したバイト列が、`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` と一致する。違えばコピーのパスで違反 1 件にする'
     decided_by: IF-148-2#constraints[コピーの書式]
+  - item: 設計書のテンプレート
+    constraint: |-
+      テンプレートの対応表に行がある種類のスキーマごとに、「設計書のテンプレートの生成」と同じ組み立てで作った `items` が、`docs/template/{テンプレートの ID}.yaml` の `items` と一致する。
+      違えば、テンプレートのパスで違反 1 件にし、行は `items` のキーの行、内容に生成元のスキーマのパスと生成のコマンドを出す。
+      テンプレートの文書が無ければ、テンプレートのパスで違反 1 件にする。
+      `$ref` を解決できないスキーマは「設計書のスキーマの検査」が違反にするので、そのスキーマのテンプレートは比べない
+    decided_by: IF-201-1#constraints[組み立てる items]
   - item: 1 文書あたりの処理時間
     constraint: 「文書の違反の検査」と同じ 20 秒。超えたブロックは時間切れの違反にする
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]

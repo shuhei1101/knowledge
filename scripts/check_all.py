@@ -9,7 +9,7 @@
 """dev-docs.yaml の documents[] が指す全ての文書にスキーマの検査と文書の違反の検査を当て、終了コードで合否を返す。
 
 CI と手元から、リポジトリの直下で起動する。違反は 1 件 1 行で「{ファイルのパス}:{行}: {項目のパス}: {内容}」と出す。
-対応表のコピーが正本と一致するかも確かめ、文書に markdownlint-cli2・textlint・yamllint を当てる。
+対応表のコピーが正本と一致するか、設計書のテンプレートがスキーマと一致するかも確かめ、文書に markdownlint-cli2・textlint・yamllint を当てる。
 
 Usage:
 # 全ての文書を検査する（違反があれば終了コード 1）
@@ -28,6 +28,16 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, cast
 
+from build_templates import (
+    COMMAND,
+    SCHEMAS_DIR,
+    TEMPLATE_IDS,
+    TEMPLATES_DIR,
+    BuildError,
+    build_items,
+    load_schemas,
+    read_items,
+)
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError, ValidationError
 from referencing import Registry, Resource
@@ -41,6 +51,7 @@ from _common import (
     DocumentError,
     as_mapping,
     format_path,
+    key_line,
     line_of,
     list_row_files,
     load_config,
@@ -181,11 +192,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             ):
                 print(f"{target.path}:{line}: {path}: {message}")
                 count += 1
-        # スキーマが自身の検査を通るかと、対応表のコピーが正本と一致するか
+        # スキーマが自身の検査を通るかと、対応表のコピーと設計書のテンプレートが正本と一致するか
         for file_path, line, path, message in (
             *check_design_schemas(root, meta),
             *check_document_schemas(root, meta),
             *check_word_list_copy(root),
+            *check_design_templates(root),
         ):
             print(f"{file_path}:{line}: {path}: {message}")
             count += 1
@@ -517,6 +529,47 @@ def check_word_list_copy(root: Path) -> list[tuple[str, int, str, str]]:
             "対応表のコピーが正本と一致しません。uv run --frozen --script scripts/build_word_list.py で作り直してください",
         )
     ]
+
+
+def check_design_templates(root: Path) -> list[tuple[str, int, str, str]]:
+    """種類のスキーマから組み立てた items が、対応するテンプレートの items と一致するかを確かめる。"""
+    if not (root / SCHEMAS_DIR).is_dir():
+        return []
+    # 読めないスキーマ・解決できない $ref は設計書のスキーマの検査が違反にする
+    try:
+        schemas = load_schemas(root, check_refs=False)
+    except BuildError:
+        return []
+
+    results: list[tuple[str, int, str, str]] = []
+    for name, schema in schemas.docs.items():
+        template_id = TEMPLATE_IDS.get(cast("str", schema.get("x-kind")))
+        # 対応表に行が無いスキーマ（共通・目次）はテンプレートを持たない
+        if template_id is None:
+            continue
+        path = TEMPLATES_DIR / f"{template_id}.yaml"
+        schema_path = SCHEMAS_DIR / name
+        try:
+            doc = load_document((root / path).read_text(encoding="utf-8"))
+        except OSError, UnicodeDecodeError, DocumentError:
+            results.append((str(path), 1, "$", f"テンプレートがありません: {schema_path}"))
+            continue
+        try:
+            items = build_items(name, schemas)
+        except BuildError:
+            continue
+        if read_items(doc) == items:
+            continue
+        line = key_line(doc, "items") if "items" in doc else 1
+        results.append(
+            (
+                str(path),
+                line,
+                "items",
+                f"テンプレートがスキーマ {schema_path} と一致しません。{COMMAND} で作り直してください",
+            )
+        )
+    return sorted(results, key=lambda result: result[0])
 
 
 if __name__ == "__main__":
