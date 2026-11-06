@@ -8,6 +8,7 @@ from pathlib import Path, PurePosixPath
 import pytest
 
 from _lint import (
+    YAMLLINT_SCHEMAS_CONFIG,
     LintFinding,
     LintOutputError,
     LintSource,
@@ -46,6 +47,17 @@ _YAMLLINT_CONFIG = textwrap.dedent(
       line-length: disable
       truthy:
         check-keys: false
+    """
+)
+
+# scripts/lint/.yamllint-schemas.yaml と同じ内容の設定
+_YAMLLINT_SCHEMAS_CONFIG = textwrap.dedent(
+    """\
+    rules:
+      brackets:
+        forbid: non-empty
+      braces:
+        forbid: non-empty
     """
 )
 
@@ -229,6 +241,19 @@ def test_load_yamllint_config(tmp_path: Path) -> None:
     assert "comments" in enabled
     assert "document-start" not in enabled
     assert "line-length" not in enabled
+
+
+def test_load_yamllint_config_when_schemas(tmp_path: Path) -> None:
+    """スキーマの設定を読む（正常系）。"""
+    # 準備
+    (tmp_path / ".yamllint-schemas.yaml").write_text(_YAMLLINT_SCHEMAS_CONFIG, encoding="utf-8")
+    # 実行
+    config = load_yamllint_config(tmp_path, YAMLLINT_SCHEMAS_CONFIG)
+    # 検証
+    enabled = {rule.ID for rule in config.enabled_rules(None)}
+    assert {"brackets", "braces"} <= enabled
+    assert "indentation" not in enabled
+    assert "comments" not in enabled
 
 
 def test_run_yamllint(tmp_path: Path) -> None:

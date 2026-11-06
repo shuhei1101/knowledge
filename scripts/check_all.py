@@ -62,6 +62,7 @@ from _common import (
 )
 from _lint import (
     DEFAULT_LINT_DIR,
+    YAMLLINT_SCHEMAS_CONFIG,
     LintFinding,
     LintOutputError,
     LintSource,
@@ -352,7 +353,25 @@ def check_lints(
     config = load_yamllint_config(lint_dir)
     for path, text in yaml_files:
         findings.extend(run_yamllint(path, text, config))
+    # schemas/ のスキーマには、フロー形式を違反にする設定だけを当てる
+    schemas_config = load_yamllint_config(lint_dir, YAMLLINT_SCHEMAS_CONFIG)
+    for path, text in _read_schema_texts(root):
+        findings.extend(run_yamllint(path, text, schemas_config))
     return sorted(findings, key=lambda finding: (str(finding.path), finding.line))
+
+
+def _read_schema_texts(root: Path) -> list[tuple[PurePosixPath, str]]:
+    """schemas/ の直下と schemas/design/ のスキーマを、パスの順に読む。"""
+    paths = sorted([*root.glob(_SCHEMAS_GLOB), *(root / DESIGN_SCHEMAS_DIR).glob("*.schema.yaml")])
+    texts: list[tuple[PurePosixPath, str]] = []
+    for path in paths:
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError, UnicodeDecodeError:
+            # 読めないスキーマの違反は、設計書のスキーマの検査と文書の種類のスキーマの検査が出す
+            continue
+        texts.append((PurePosixPath(path.relative_to(root).as_posix()), text))
+    return texts
 
 
 def load_meta_validator(root: Path) -> Draft202012Validator:

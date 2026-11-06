@@ -78,6 +78,16 @@ files:
       - topic:設定
       - tool:yamllint
     id: scripts/lint/.yamllint.yaml
+  - path: lint/.yamllint-schemas.yaml
+    name: スキーマの yamllint の設定
+    description: 全ての文書の検査が schemas/ のスキーマに当てる yamllint のルール（フロー形式を違反にする brackets・braces）を定める。スキーマの書き方の検査のルールを変えるときに読む。
+    tags:
+      - topic:検査
+      - topic:lint
+      - topic:設定
+      - topic:スキーマ
+      - tool:yamllint
+    id: scripts/lint/.yamllint-schemas.yaml
   - path: lint/package.json
     name: lint の npm の依存
     description: 全ての文書の検査が呼ぶ markdownlint-cli2・textlint とルールのバージョンを定める（ロックは package-lock.json）。lint の CLI やルールのバージョンを上げるときに読む。

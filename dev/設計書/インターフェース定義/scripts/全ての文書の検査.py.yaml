@@ -190,6 +190,29 @@ flows:
       - '標準出力に `{文書のパス}:{行}: items[0].body: markdownlint/MD036: {内容}` の行が出て、行は文書の YAML の中の太字の段落の行'
       - '標準出力に `{文書のパス}:{行}: -: yamllint/comments: {内容}` の行が出て、行は ` #bar` を付けた行'
     test: test_normal_when_lint_violations
+  - name: 正常系（スキーマにフロー形式がある・終了コード 1）
+    summary: '`schemas/` のスキーマのフロー形式を yamllint の違反にし、`docs/` の文書のフロー形式は違反にしない'
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`required: [id, title]` の行を持つ `schemas/rule.schema.yaml` と、`tags: [{name: scope:規約}]` の行を持ち、そのスキーマに合う `docs/rule/` の文書と、`schemas/meta.schema.yaml` を持つ一時フォルダ'
+        notes: '`[id, title]` は `schemas/` に適用する yamllint の設定の `brackets` に当たる'
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>F: dev-docs.yaml の documents を読む
+        S->>F: schemas/ のスキーマを読む
+        S->>S: 文書に .yamllint.yaml、スキーマに .yamllint-schemas.yaml で yamllint を当てる
+        S-->>C: 終了コード 1 とスキーマの違反の行
+    expected:
+      - 終了コードが 1
+      - '標準出力に `schemas/rule.schema.yaml:{行}: -: yamllint/brackets: {内容}` の行が出て、行は `required: [id, title]` の行'
+      - 標準出力に `docs/rule/` の文書の yamllint の違反の行が出ない
+    test: test_normal_when_schemas_use_flow_style
   - name: 正常系（警告のルールの違反だけがある・終了コード 0）
     summary: 警告にしたルールの違反は警告の行として出し、終了コードには数えない
     setup:
@@ -329,13 +352,13 @@ constraints:
   - item: スキーマの違反の行
     constraint: '設計書のスキーマと `schemas/*.schema.yaml` の違反の行は、スキーマの YAML の中の誤りのある位置の行。メタスキーマの違反は誤りのあるキー、`$ref` の違反は `$ref` のキー、`examples` の違反は誤りのある要素（要素の中の項目が誤りなら、その項目）の行。項目のパスは同じ位置を `format_path` の書き方で出す'
   - item: lint の当て先
-    constraint: 'markdownlint-cli2・textlint は、`documents[]` の YAML の文書の Markdown の項目（パスの末尾が `body` の文字列）を 1 項目 1 ファイルの一時の `.md` にして当て、`.md` の文書にはそのまま当てる。yamllint は `documents[]` の YAML の文書と、直下の `dev-docs.yaml`・`rules.yaml` に当てる'
+    constraint: 'markdownlint-cli2・textlint は、`documents[]` の YAML の文書の Markdown の項目（パスの末尾が `body` の文字列）を 1 項目 1 ファイルの一時の `.md` にして当て、`.md` の文書にはそのまま当てる。yamllint は `documents[]` の YAML の文書と、直下の `dev-docs.yaml`・`rules.yaml` と、`schemas/*.schema.yaml`・`schemas/design/*.schema.yaml` に当てる'
   - item: lint の行
     constraint: 一時の `.md` の違反の行は、CLI の行に `iter_strings` が返す項目の開始行を足して 1 を引いた、元の文書の YAML の行で出す
   - item: lint の CLI の呼び出し
     constraint: markdownlint-cli2・textlint は全ての一時の `.md` をまとめて 1 回ずつ呼ぶ。yamllint は Python のライブラリとして同じプロセスで呼ぶ
   - item: lint の設定
-    constraint: '設定は `--lint-dir` の `.markdownlint-cli2.jsonc`・`.textlintrc.json`・`.yamllint.yaml` を CLI に指定する。CLI が `warning` で返した違反を警告、`error` で返した違反を違反にする。`.yamllint.yaml` は `extends: default` に、`comments` を `level: error`、`document-start`・`line-length` を無効、`truthy` の `check-keys` を `false`（rule-inject の索引の `on` のキーを違反にしない）にする'
+    constraint: '設定は `--lint-dir` の `.markdownlint-cli2.jsonc`・`.textlintrc.json`・`.yamllint.yaml` を CLI に指定する。CLI が `warning` で返した違反を警告、`error` で返した違反を違反にする。`.yamllint.yaml` は `extends: default` に、`comments` を `level: error`、`document-start`・`line-length` を無効、`truthy` の `check-keys` を `false`（rule-inject の索引の `on` のキーを違反にしない）にする。`schemas/` のスキーマには `.yamllint.yaml` の代わりに `.yamllint-schemas.yaml` を当て、`.yamllint-schemas.yaml` は `brackets`・`braces` の `forbid: non-empty` だけを持つ（`default` を継がない）'
   - item: 警告にするルール
     constraint: '`one-sentence-per-line`・`no-inline-strong`・`MD031`・`MD032`・`MD040`と、`preset-ja-technical-writing` の中の全てのルール（textlint の設定でプリセットの中のルールごとに `severity` を指定する）。#145 の移行で既存の違反を修正した後に、設定で `error` へ切り替える'
   - item: 対応表のコピー

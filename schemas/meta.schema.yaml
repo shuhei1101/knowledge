@@ -9,7 +9,6 @@ x-rules:
   - ファイル名は `{種類}.schema.yaml`（例 `プロンプト.schema.yaml`）にする。
   - 各項目に `title`・`description` を付け、スキーマを読めば各項目に何を書くかが分かるようにする。
   - 種類をまたぐ型は `共通.schema.yaml` の `$defs` に置き、各スキーマから `$ref` で指す。
-  - 'フロー形式（`{type: string, ...}`）を使わず、ブロック形式で書く。'
 type:
   - object
   - boolean

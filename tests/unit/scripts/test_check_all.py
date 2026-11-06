@@ -87,6 +87,11 @@ _YAMLLINT_CONFIG = (
     "    check-keys: false\n"
 )
 
+# scripts/lint/.yamllint-schemas.yaml と同じ内容の設定
+_YAMLLINT_SCHEMAS_CONFIG = (
+    "rules:\n  brackets:\n    forbid: non-empty\n  braces:\n    forbid: non-empty\n"
+)
+
 # 違反の無い規約の文書
 _VALID_A = (
     "id: rule-a\n"
@@ -645,6 +650,7 @@ def test_check_lints(
     lint_dir = tmp_path / "lint"
     lint_dir.mkdir()
     (lint_dir / ".yamllint.yaml").write_text(_YAMLLINT_CONFIG, encoding="utf-8")
+    (lint_dir / ".yamllint-schemas.yaml").write_text(_YAMLLINT_SCHEMAS_CONFIG, encoding="utf-8")
     target = Target(PurePosixPath("docs/rule/rule-a.yaml"), "schemas/rule.schema.yaml", True)
     texts = {root / "docs/rule/rule-a.yaml": doc}
     monkeypatch.setattr(
@@ -659,6 +665,73 @@ def test_check_lints(
         ("docs/rule/rule-a.yaml", "markdownlint", "MD036"),
         ("rules.yaml", "yamllint", "comments"),
         ("rules.yaml", "yamllint", "comments"),
+    ]
+
+
+# フロー形式のシーケンスを持つ、スキーマに合う規約の文書
+_FLOW_DOC = (
+    "id: rule-a\n"
+    "kind: rule\n"
+    "name: 規約 A\n"
+    "description: 説明\n"
+    "tags: [{name: scope:規約}]\n"
+    "items:\n"
+    "  - id: overview\n"
+    "    name: 概要\n"
+    "    body: 本文。\n"
+)
+
+
+def _schema_lint_dir(tmp_path: Path) -> Path:
+    """文書とスキーマの yamllint の設定を持つ lint のフォルダを作る。"""
+    lint_dir = tmp_path / "lint"
+    lint_dir.mkdir()
+    (lint_dir / ".yamllint.yaml").write_text(_YAMLLINT_CONFIG, encoding="utf-8")
+    (lint_dir / ".yamllint-schemas.yaml").write_text(_YAMLLINT_SCHEMAS_CONFIG, encoding="utf-8")
+    return lint_dir
+
+
+def test_check_lints_when_schemas_use_flow_style(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, repo_factory: RepoFactory
+) -> None:
+    """スキーマのフロー形式だけを違反にする（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "docs/rule/rule-a.yaml": _FLOW_DOC,
+            "schemas/rule.schema.yaml": "type: object\nrequired: [id, title]\n",
+            "schemas/design/common.schema.yaml": "properties: {id: {type: string}}\n",
+        }
+    )
+    lint_dir = _schema_lint_dir(tmp_path)
+    target = Target(PurePosixPath("docs/rule/rule-a.yaml"), "schemas/rule.schema.yaml", True)
+    texts = {root / "docs/rule/rule-a.yaml": _FLOW_DOC}
+    monkeypatch.setattr(check_all, "run_markdown_lints", _no_lints)
+    # 実行
+    result = check_lints(root, [target], texts, lint_dir, _CLIS)
+    # 検証
+    assert [(str(f.path), f.line, f.tool, f.rule) for f in result] == [
+        ("schemas/design/common.schema.yaml", 1, "yamllint", "braces"),
+        ("schemas/design/common.schema.yaml", 1, "yamllint", "braces"),
+        ("schemas/rule.schema.yaml", 2, "yamllint", "brackets"),
+    ]
+
+
+def test_check_lints_when_schema_unreadable(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, repo_factory: RepoFactory
+) -> None:
+    """UTF-8 で読めないスキーマを飛ばす（正常系）。"""
+    # 準備
+    root = repo_factory({"schemas/rule.schema.yaml": "type: object\nrequired: [id, title]\n"})
+    (root / "schemas/design").mkdir()
+    (root / "schemas/design/broken.schema.yaml").write_bytes(b"\xff")
+    lint_dir = _schema_lint_dir(tmp_path)
+    monkeypatch.setattr(check_all, "run_markdown_lints", _no_lints)
+    # 実行
+    result = check_lints(root, [], {}, lint_dir, _CLIS)
+    # 検証
+    assert [(str(f.path), f.tool, f.rule) for f in result] == [
+        ("schemas/rule.schema.yaml", "yamllint", "brackets"),
     ]
 
 

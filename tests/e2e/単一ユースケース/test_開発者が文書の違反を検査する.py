@@ -22,6 +22,11 @@ _BAD_EXAMPLE = "schemas/design/e2e-bad-example.schema.yaml"
 _BAD_REF = "schemas/design/e2e-bad-ref.schema.yaml"
 # x-rules が配列でない設計書のスキーマの置き場所
 _BAD_RULES = "schemas/design/e2e-bad-rules.schema.yaml"
+# フロー形式の行を持つスキーマと、同じフロー形式の値を持つ違反の無い文書の置き場所
+_FLOW_SCHEMA = "schemas/e2e-flow.schema.yaml"
+_FLOW_DOCUMENT = "docs/rule/e2e-flow.yaml"
+# 元の規約の inject_when の values のブロック形式のシーケンス
+_VALUES_BLOCK = "  values:\n    - 費用\n    - 時間のかかる\n    - 成り立つか\n"
 # ER 図のスキーマと、そのテンプレート。スキーマの id のキーの x-rules の行
 _ER_SCHEMA = "schemas/design/er.schema.yaml"
 _ER_TEMPLATE = "docs/template/template-er.yaml"
@@ -137,6 +142,43 @@ def test_error_when_documents_have_lint_violations(
     assert any(
         line.startswith(f"{_COMMENT}:{comment_line}: -: yamllint/comments: ") for line in violations
     )
+
+
+def test_error_when_schemas_use_flow_style(
+    knowledge_clone: KnowledgeClone, run_check_all: RunCheckAll
+) -> None:
+    """フロー形式のスキーマを含めば、スキーマのパス・行・ルール名つきで違反を出して失敗し、文書のフロー形式は違反にしない（異常シナリオ）。"""
+    # 準備
+    source = _SOURCE.read_text(encoding="utf-8")
+    # inject_when の values をフロー形式のシーケンスにする（スキーマには合う）
+    document = source.replace("id: dev-precheck", "id: e2e-flow", 1).replace(
+        _VALUES_BLOCK, "  values: [費用, 時間のかかる, 成り立つか]\n", 1
+    )
+    # 元の規約が書き換わって置換できないと、文書側の確かめが空振りする
+    assert "  values: [費用, 時間のかかる, 成り立つか]\n" in document
+    clone = knowledge_clone(
+        {
+            # 4 行目の required がフロー形式のシーケンス
+            _FLOW_SCHEMA: (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: フロー形式\n"
+                "type: object\n"
+                "required: [id, title]\n"
+            ),
+            _FLOW_DOCUMENT: document,
+        }
+    )
+    # 実行
+    result = run_check_all(clone)
+    # 検証
+    lines = result.stdout.splitlines()
+    summary = _SUMMARY.match(lines[-1])
+    violations = _violation_lines(lines)
+    assert result.returncode == 1
+    assert summary is not None
+    assert int(summary.group(2)) == len(violations)
+    assert _violation_paths(lines) == {_FLOW_SCHEMA}
+    assert any(line.startswith(f"{_FLOW_SCHEMA}:4: -: yamllint/brackets: ") for line in violations)
 
 
 def test_error_when_design_schemas_are_invalid(
