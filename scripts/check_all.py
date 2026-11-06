@@ -74,7 +74,7 @@ from _lint import (
 )
 from _maid import find_maid
 from build_word_list import COPY, SOURCE, render_copy
-from knowledge_checks import build_id_index, check_document
+from knowledge_checks import build_id_index, build_name_index, check_document
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Mapping, Sequence
@@ -182,14 +182,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         targets = list_targets(root, rows)
         texts = read_texts([root / target.path for target in targets])
         validators = build_validators(root, dict.fromkeys(target.schema for target in targets))
-        # ID の索引は全ての文書で 1 度だけ作る
+        # ID の索引と名前の索引は全ての文書で 1 度だけ作る
         index = build_id_index(root)
+        names = build_name_index(root, rows)
 
         count = 0
         for target in targets:
             text = texts[root / target.path]
             for line, path, message in check_target(
-                target, text, validators[target.schema], root, executable, index
+                target, text, validators[target.schema], root, executable, index, names
             ):
                 print(f"{target.path}:{line}: {path}: {message}")
                 count += 1
@@ -297,6 +298,7 @@ def check_target(
     root: Path,
     executable: str,
     index: Mapping[str, frozenset[str]],
+    names: Mapping[str, Sequence[tuple[str, str]]],
 ) -> list[tuple[int, str, str]]:
     """文書 1 件にスキーマの検査と文書の違反の検査を当て、（行、項目のパス、内容）で返す。"""
     if text is None:
@@ -319,7 +321,7 @@ def check_target(
     # 文書の違反の検査は、validators に knowledge-checks を持つ行の文書だけに当てる
     if target.checks:
         deadline = time.monotonic() + LIMIT_SEC
-        for violation in check_document(text, root, executable, deadline, index=index):
+        for violation in check_document(text, root, executable, deadline, index=index, names=names):
             line, rule = _split_line(violation["rule"])
             results.append((line, violation["path"], rule))
     return results
