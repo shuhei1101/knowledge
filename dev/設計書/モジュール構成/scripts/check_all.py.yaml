@@ -202,7 +202,7 @@ functions:
       - name: test_check_lints
         case: 正常
         summary: 3 つの lint の違反を並べる
-        condition: '`body` が太字だけの段落の文書と、`key: foo #bar` を持つ `rules.yaml`。`lint_dir` に `extends: default`・`comments: {level: error}`・`document-start: disable`・`line-length: disable`・`truthy: {check-keys: false}`（`scripts/lint/.yamllint.yaml` と同じ内容） の `.yamllint.yaml`'
+        condition: '`body` が太字だけの段落の文書と、`key: foo #bar` を持つ `rules.yaml`。`lint_dir` に `extends: default`・`comments: {level: error}`・`document-start: disable`・`line-length: disable`・`truthy: {check-keys: false}`（`scripts/lint/.yamllint.yaml` と同じ内容） の `.yamllint.yaml` と、`test_check_lints_when_schemas_use_flow_style` と同じ `.yamllint-schemas.yaml`'
         mock: Markdown の lint の呼び出しを、受け取った `sources` の 1 件目に `MD036` の違反を返す関数に差し替える
         expected: 文書の `MD036` の 1 件と、`rules.yaml` の `comments` の 2 件の 3 件がパスの順に並ぶ
       - name: test_check_lints_when_schemas_use_flow_style
