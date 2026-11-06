@@ -1,13 +1,12 @@
 #!/bin/sh
 set -eu
 
-# この PR の実行で作ったタグ（最新のタグのうち、この PR の変更を含む最も古いもの）を削除する
+# 実行.sh が作ったタグ（メッセージに (#201) を持つ design-schemas/v* のタグ）だけを削除する
 git fetch --quiet origin --tags
 TAG=""
-for candidate in $(git tag -l 'design-schemas/v*' --sort=v:refname); do
-  if git show "$candidate:schemas/design/index.schema.yaml" 2>/dev/null | grep -q 'x-hidden: true'; then
+for candidate in $(git tag -l 'design-schemas/v*'); do
+  if git tag -l --format='%(contents:subject)' "$candidate" | grep -qF '(#201)'; then
     TAG=$candidate
-    break
   fi
 done
 if [ -z "$TAG" ]; then

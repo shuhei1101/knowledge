@@ -27,18 +27,20 @@ if has_change "$LATEST"; then
 fi
 echo "前提確認: ok"
 
-# キーの追加だけなので、マイナーを上げてパッチを 0 にする
+# x-hidden は描画の注釈で、どの設計書の検査の結果も変えないので、パッチを上げる
 VERSION=${LATEST#design-schemas/v}
 MAJOR=${VERSION%%.*}
 REST=${VERSION#*.}
 MINOR=${REST%%.*}
-TAG="design-schemas/v$MAJOR.$((MINOR + 1)).0"
+PATCH=${REST#*.}
+TAG="design-schemas/v$MAJOR.$MINOR.$((PATCH + 1))"
 echo "$TAG → $SHA"
 if [ "${1:-}" = "--dry-run" ]; then
   echo "タグの更新: changed"
   exit 0
 fi
 
-git tag -a "$TAG" -m "設計書のスキーマ $TAG" "$SHA"
+# 切り戻しが、この実行で作ったタグだけを見分けられるよう、メッセージに PR の番号を入れる
+git tag -a "$TAG" -m "設計書のスキーマ $TAG (#201)" "$SHA"
 git push --quiet origin "refs/tags/$TAG"
 echo "タグの更新: changed"

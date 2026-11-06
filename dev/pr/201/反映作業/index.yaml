@@ -1,5 +1,5 @@
 設計書のスキーマのタグの更新:
-  説明: release が master へ入った後に、`design-schemas/v*` の最新のタグがこの PR の squash commit を含むかを確認し、含まなければ、そのマージの commit へ、最新のタグのマイナーを上げたタグを作成して push する（この PR のスキーマの変更は `docs_index` への `x-hidden` の追加だけで、既存の設計書は検査を通ったまま）
+  説明: release が master へ入った後に、`design-schemas/v*` の最新のタグがこの PR の squash commit を含むかを確認し、含まなければ、そのマージの commit へ、最新のタグのパッチを上げたタグを、メッセージに `(#201)` を入れて作成して push する（この PR のスキーマの変更は `docs_index` への `x-hidden` の追加だけで、`x-hidden` は描画の注釈のため、どの設計書の検査の結果も変えない）。切り戻しは、メッセージに `(#201)` を持つタグだけを削除する
   タグ: [タグ, スキーマ]
   実行者: tester
   時期: master へ入った後
