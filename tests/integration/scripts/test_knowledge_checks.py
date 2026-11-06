@@ -185,6 +185,27 @@ def test_normal_when_aliases_collide(run_script: RunScript, repo_factory: RepoFa
         assert text in lines[number - 1]
 
 
+def test_normal_when_aliases_duplicate(run_script: RunScript, repo_factory: RepoFactory) -> None:
+    """自分の name か前の aliases と正規化して一致する aliases を、1 件 1 違反で返す（正常系）。"""
+    # 準備
+    root = repo_factory({"dev-docs.yaml": _ALIAS_CONFIG, "docs/rule/a.yaml": _DOC_A})
+    stdin = "id: b\nname: Beta 規約\naliases:\n  - ベータ\n  - ' ｂｅｔａ 規約 '\n  - べーた\n  - ' ベータ '\n"
+    lines = stdin.splitlines()
+    # 実行
+    result = run_script("knowledge_checks", root, stdin)
+    # 検証
+    assert result.exit_code == 0
+    violations = json.loads(result.stdout)
+    assert [violation["path"] for violation in violations] == ["aliases[1]", "aliases[3]"]
+    assert "name" in violations[0]["rule"]
+    assert "aliases[0]" in violations[1]["rule"]
+    # rule の先頭の行番号が、文書の中の該当する行を指す
+    assert violations[0]["rule"].startswith("5 行目: ")
+    assert "ｂｅｔａ 規約" in lines[4]
+    assert violations[1]["rule"].startswith("7 行目: ")
+    assert " ベータ " in lines[6]
+
+
 def test_normal_when_config_missing(run_script: RunScript, repo_factory: RepoFactory) -> None:
     """dev-docs.yaml が無ければ aliases を照合せず、path: $ の違反とほかの検査の違反を返す（正常系）。"""
     # 準備
