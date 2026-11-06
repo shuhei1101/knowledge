@@ -1,6 +1,6 @@
 id: "MOD-72-4"
 title: "検査と変換のスクリプト / scripts / knowledge_checks.py"
-lead: dev-docs の validators の `knowledge-checks`。標準入力の文書 1 件に、項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・mermaid の文法を当て、違反の配列を返す（IF-72-1）。
+lead: dev-docs の validators の `knowledge-checks`。標準入力の文書 1 件に、項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複・mermaid の文法を当て、違反の配列を返す（IF-72-1）。
 constants:
   - name: ID_LINK
     title: 'id: の参照'
@@ -117,14 +117,14 @@ functions:
         description: 作った名前の索引。`None` ならこの関数で `dev-docs.yaml` を読んで作る。全ての文書の検査が 1 度だけ作って渡す
     returns:
       type: list[Violation]
-      description: 項目の ID の重複 → `id:` の参照 → `related` の `to` → `aliases` の衝突 → mermaid の順の違反
+      description: 項目の ID の重複 → `id:` の参照 → `related` の `to` → `aliases` の衝突 → 文書の中の `aliases` の重複 → mermaid の順の違反
     process: |-
       1. 文書を読む（文書の読み込み）
          - 読めない文書の場合、`path: $`・`{行} 行目: YAML として読めません: {理由}`・`YAML の文法の誤りを修正する` の 1 件を返す
       2. `index` が `None` なら ID の索引を作る（ID の索引の作成）
       3. `names` が `None` なら、`dev-docs.yaml` を読み（dev-docs.yaml の読み込み）、名前の索引を作る（名前の索引の作成）
          - `ConfigError` の場合、`aliases` の衝突の検査を当てず、`path: $`・`1 行目: {理由}。aliases の衝突を検査できません`・`配信元の直下に読める dev-docs.yaml を置く` の違反を 1 件加える
-      4. 項目の ID の重複・参照・`aliases` の衝突・mermaid を順に検査し、違反をつないで返す（項目の ID の重複の検査・参照の検査・aliases の衝突の検査・mermaid の検査）
+      4. 項目の ID の重複・参照・`aliases` の衝突・文書の中の `aliases` の重複・mermaid を順に検査し、違反をつないで返す（項目の ID の重複の検査・参照の検査・aliases の衝突の検査・文書の中の aliases の重複の検査・mermaid の検査）。文書の中の `aliases` の重複の検査は、手順 3 の `ConfigError` の場合も当てる
       5. 最上位の `kind` が `word-list` なら、対応表の examples の検査の違反を後ろにつなぐ
     unit_tests:
       - name: test_check_document
@@ -157,11 +157,18 @@ functions:
         condition: '`aliases: [アルファ]` を持つ文書。`index` に `{}`、`names` は渡さない。一時フォルダに `dev-docs.yaml` が無い'
         mock: 'maid を、誤りの無い結果を返すスクリプトに差し替える'
         expected: '`path` が `$` の 1 件で、`rule` が `dev-docs.yaml` と `aliases の衝突を検査できません` を含む'
+      - name: test_check_document_when_aliases_duplicate
+        case: 正常
+        summary: dev-docs.yaml が無くても文書の中の aliases の重複を検査する
+        condition: '`aliases: [アルファ, ｱﾙﾌｧ]` を持つ文書。`index` に `{}`、`names` は渡さない。一時フォルダに `dev-docs.yaml` が無い'
+        mock: 'maid を、誤りの無い結果を返すスクリプトに差し替える'
+        expected: 2 件で、`path` が `$`・`aliases[1]` の順
     callees:
       - MOD-72-2#functions[load_document]
       - MOD-72-2#functions[load_config]
       - '#functions[build_name_index]'
       - '#functions[check_aliases]'
+      - '#functions[check_alias_duplicates]'
   - name: check_word_list
     title: 対応表の examples の検査
     kind: 関数
@@ -356,6 +363,54 @@ functions:
       - MOD-72-2#functions[line_of]
     refs:
       - IF-72-1#constraints[`aliases` の衝突]
+  - name: check_alias_duplicates
+    title: 文書の中の aliases の重複の検査
+    kind: 関数
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    scope: public
+    summary: '`aliases` の要素が、自分の `name` か前の要素と正規化して一致したら違反にする'
+    args:
+      - name: doc
+        title: 文書
+        type: CommentedMap
+        required: true
+        description: 読んだ文書
+    returns:
+      type: list[Violation]
+      description: 一致した `aliases[n]` ごとの違反を、`n` の順に並べる
+    process: |-
+      1. `aliases` が配列でなければ空を返す
+      2. 最上位の `name` が文字列なら、名前の正規化を適用した値を控える。文字列でなければ控えず、前の要素だけと照合する
+      3. 文字列の `aliases[n]` を順に見て、名前の正規化を適用した値を照合する。文字列でない要素は照合の相手にも入れない
+         - 控えた `name` と一致する場合、`path: aliases[{n}]`・`{行} 行目: 別名 `{値}` が name と同じです`・`片方だけ登録する` の違反にする
+         - `name` と一致せず、前の要素 `aliases[m]` と一致する場合、`path: aliases[{n}]`・`{行} 行目: 別名 `{値}` が aliases[{m}] と重複しています`・`片方だけ登録する` の違反にする。`m` は最初に出た要素の添字
+         - どちらとも一致しない場合、値と添字を前の要素として控える
+         - 行は項目の行の引き当て（`line_of`）で求める
+    unit_tests:
+      - name: test_check_alias_duplicates
+        case: 正常
+        summary: name との一致と前の要素との重複
+        condition: '`name: Beta 規約`・`aliases: [ベータ, " ｂｅｔａ 規約 ", べーた, " ベータ "]`'
+        mock: なし
+        expected: 2 件で、`path` が `aliases[1]`・`aliases[3]`。`aliases[1]` の `rule` に `name`、`aliases[3]` の `rule` に `aliases[0]` がある
+      - name: test_check_alias_duplicates_when_no_name
+        case: 正常
+        summary: name を持たない文書
+        condition: '`name` の無い文書で、`aliases: [アルファ, ｱﾙﾌｧ]`'
+        mock: なし
+        expected: 1 件で、`path` が `aliases[1]`、`rule` に `aliases[0]` がある
+      - name: test_check_alias_duplicates_when_unique
+        case: 正常
+        summary: 重複が無い
+        condition: '`name: Alpha`・`aliases: [アルファ, ベータ]`'
+        mock: なし
+        expected: 空
+    callees:
+      - '#functions[normalize_name]'
+      - MOD-72-2#functions[line_of]
+    refs:
+      - IF-72-1#constraints[文書の中の `aliases` の重複]
   - name: check_duplicate_ids
     title: 項目の ID の重複の検査
     kind: 関数
