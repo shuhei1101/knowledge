@@ -352,7 +352,7 @@ functions:
       description: 表の Markdown
     process: |-
       1. 列を `名前`・`title`・`型`・`必須`・`選択肢`・`制約`・`description`・`examples` にする
-      2. `型` は `type`（配列なら要素を ` / ` でつなぐ。無ければ `anyOf`・`oneOf` の要素の `type` を ` / ` でつなぐ）、`制約` は `CONSTRAINT_KEYS` の順に `{キー}: {値}`（値はフロースタイルの 1 行の YAML）を `, ` でつなぐ。`examples` は要素ごとにインラインコードにして ` / ` でつなぐ
+      2. `型` は `type`（配列なら要素を ` / ` でつなぐ。無ければ `anyOf`・`oneOf` の要素の `type` を ` / ` でつなぐ）、`制約` は `CONSTRAINT_KEYS` の順に `{キー}: {値}`（値はインラインコード）を `, ` でつなぐ。`選択肢`（`enum`）と `examples` は要素ごとにインラインコードにして ` / ` でつなぐ
       3. 各セルをセルの書き方にする（セルの書き方）
     unit_tests:
       - name: test_render_key_table
@@ -360,7 +360,7 @@ functions:
         summary: 列と制約と型
         condition: '`type: [string, "null"]`・`pattern`・`minLength`・`enum`・`examples` 2 件を持つキー、`anyOf` だけを持つキー'
         mock: なし
-        expected: '型が `string / null` と `anyOf` の要素の型を ` / ` でつないだ値、制約が `pattern: …, minLength: …` の順、`examples` が要素ごとのインラインコードの行'
+        expected: '型が `string / null` と `anyOf` の要素の型を ` / ` でつないだ値、制約が `` pattern: `…`, minLength: `…` `` の順、`選択肢`・`examples` が要素ごとのインラインコードの行'
     refs:
       - IF-201-1#constraints[キーの表]
   - name: _render_key_rules
