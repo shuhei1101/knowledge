@@ -87,6 +87,12 @@ constants:
     usecase: 全ての文書の検査
     summary: 設定と npm の依存を持つフォルダ
     value: Path(__file__).parent / "lint"
+  - name: YAMLLINT_SCHEMAS_CONFIG
+    title: スキーマの yamllint の設定のファイル名
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    summary: '`schemas/` のスキーマに当てる、lint のフォルダの yamllint の設定。`brackets`・`braces` の `forbid: non-empty` だけを持つ'
+    value: '".yamllint-schemas.yaml"'
 functions:
   - name: find_lint_clis
     title: lint の CLI の在りかの確認
@@ -235,17 +241,23 @@ functions:
     container: scripts/_lint.py
     usecase: 全ての文書の検査
     scope: public
-    summary: lint のフォルダの `.yamllint.yaml` を読む
+    summary: lint のフォルダの yamllint の設定（既定は `.yamllint.yaml`）を読む
     args:
       - name: lint_dir
         title: lint のフォルダ
         type: Path
         required: true
-        description: '`.yamllint.yaml` を持つフォルダ'
+        description: yamllint の設定を持つフォルダ
+      - name: name
+        title: 設定のファイル名
+        type: str
+        required: false
+        default: '".yamllint.yaml"'
+        description: '`schemas/` のスキーマに当てる設定は `YAMLLINT_SCHEMAS_CONFIG`'
     returns:
       type: YamlLintConfig
       description: yamllint の設定
-    process: 1. `YamlLintConfig(file=str(lint_dir / ".yamllint.yaml"))` を返す
+    process: 1. `YamlLintConfig(file=str(lint_dir / name))` を返す
     unit_tests:
       - name: test_load_yamllint_config
         case: 正常
@@ -253,6 +265,12 @@ functions:
         condition: '`extends: default`・`comments: {level: error}`・`document-start: disable`・`line-length: disable`・`truthy: {check-keys: false}`（`scripts/lint/.yamllint.yaml` と同じ内容） を書いた `.yamllint.yaml`'
         mock: なし（一時ディレクトリ）
         expected: '`comments` のルールが有効で、`document-start`・`line-length` が無効'
+      - name: test_load_yamllint_config_when_schemas
+        case: 正常
+        summary: スキーマの設定を読む
+        condition: '`name` に `YAMLLINT_SCHEMAS_CONFIG` を渡し、`brackets: {forbid: non-empty}`・`braces: {forbid: non-empty}`（`scripts/lint/.yamllint-schemas.yaml` と同じ内容）を書いた `.yamllint-schemas.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: '`brackets`・`braces` のルールが有効で、`indentation`・`comments` が無効'
     refs:
       - LIB-176-3#
   - name: run_yamllint
