@@ -36,7 +36,7 @@ from _common import DocumentError, as_list, as_mapping, load_document, load_safe
 if TYPE_CHECKING:
     from collections.abc import Iterator, Mapping, Sequence
 
-    from referencing import Resolver
+    from referencing._core import Resolver
 
 # リポジトリの直下からの設計書のスキーマとテンプレートのフォルダ
 SCHEMAS_DIR = PurePosixPath("schemas/design")

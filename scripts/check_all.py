@@ -28,6 +28,16 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, cast
 
+from build_templates import (
+    COMMAND,
+    SCHEMAS_DIR,
+    TEMPLATE_IDS,
+    TEMPLATES_DIR,
+    BuildError,
+    build_items,
+    load_schemas,
+    read_items,
+)
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError, ValidationError
 from referencing import Registry, Resource
@@ -62,16 +72,6 @@ from _lint import (
     run_yamllint,
 )
 from _maid import find_maid
-from build_templates import (
-    COMMAND,
-    SCHEMAS_DIR,
-    TEMPLATE_IDS,
-    TEMPLATES_DIR,
-    BuildError,
-    build_items,
-    load_schemas,
-    read_items,
-)
 from build_word_list import COPY, SOURCE, render_copy
 from knowledge_checks import build_id_index, check_document
 
@@ -531,7 +531,6 @@ def check_word_list_copy(root: Path) -> list[tuple[str, int, str, str]]:
     ]
 
 
-
 def check_design_templates(root: Path) -> list[tuple[str, int, str, str]]:
     """種類のスキーマから組み立てた items が、対応するテンプレートの items と一致するかを確かめる。"""
     if not (root / SCHEMAS_DIR).is_dir():
@@ -571,6 +570,7 @@ def check_design_templates(root: Path) -> list[tuple[str, int, str, str]]:
             )
         )
     return sorted(results, key=lambda result: result[0])
+
 
 if __name__ == "__main__":
     sys.exit(main())
