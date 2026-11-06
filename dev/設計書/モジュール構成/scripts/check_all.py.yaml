@@ -196,7 +196,7 @@ functions:
     process: |-
       1. 中身の読めた文書ごとに Markdown を取り出し（lint を当てる Markdown の取り出し）、まとめて Markdown の lint を呼ぶ（Markdown の lint の呼び出し）
       2. yamllint の設定を読み（yamllint の設定の読み込み）、拡張子が `.yaml`・`.yml` の文書と、`YAMLLINT_EXTRA` のうち在るファイルに yamllint を当てる（yamllint の呼び出し）
-      3. `YAMLLINT_SCHEMAS_CONFIG` の設定を読み（yamllint の設定の読み込み）、`schemas/*.schema.yaml` と `DESIGN_SCHEMAS_DIR` の `*.schema.yaml` をパスの順に UTF-8 で読んで yamllint を当てる（yamllint の呼び出し）
+      3. `YAMLLINT_SCHEMAS_CONFIG` の設定を読み（yamllint の設定の読み込み）、`schemas/*.schema.yaml` と `DESIGN_SCHEMAS_DIR` の `*.schema.yaml` をパスの順に UTF-8 で読んで yamllint を当てる（yamllint の呼び出し）。UTF-8 で読めないファイルは、違反を設計書のスキーマの検査と文書の種類のスキーマの検査が出すため、yamllint を当てずに飛ばす
       4. パスと行の順に並べて返す
     unit_tests:
       - name: test_check_lints
@@ -210,7 +210,13 @@ functions:
         summary: スキーマのフロー形式だけを違反にする
         condition: '`tags: [{name: scope:規約}]` の行を持つ文書と、`required: [id, title]` の行を持つ `schemas/rule.schema.yaml` と、`properties: {id: {type: string}}` の行を持つ `schemas/design/common.schema.yaml`。`lint_dir` に `test_check_lints` と同じ `.yamllint.yaml` と、`brackets: {forbid: non-empty}`・`braces: {forbid: non-empty}`（`scripts/lint/.yamllint-schemas.yaml` と同じ内容）の `.yamllint-schemas.yaml`'
         mock: Markdown の lint の呼び出しを、空を返す関数に差し替える
-        expected: '`schemas/design/common.schema.yaml` の `braces` と `schemas/rule.schema.yaml` の `brackets` の違反がパスの順に並び、文書の違反は無い'
+        expected: '`schemas/design/common.schema.yaml` の `braces` の 2 件と `schemas/rule.schema.yaml` の `brackets` の 1 件の計 3 件がパスの順に並び、文書の違反は無い'
+      - name: test_check_lints_when_schema_unreadable
+        case: 正常
+        summary: UTF-8 で読めないスキーマを飛ばす
+        condition: '`test_check_lints_when_schemas_use_flow_style` と同じ `lint_dir` と、UTF-8 として不正なバイト列（`b"\\xff"`）の `schemas/design/broken.schema.yaml` と、`required: [id, title]` の行を持つ `schemas/rule.schema.yaml`'
+        mock: Markdown の lint の呼び出しを、空を返す関数に差し替える
+        expected: 例外を出さず、`schemas/rule.schema.yaml` の `brackets` の 1 件だけを返す
     callees:
       - MOD-176-1#functions[collect_sources]
       - MOD-176-1#functions[run_markdown_lints]
