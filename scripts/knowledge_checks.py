@@ -6,7 +6,7 @@
 # ///
 """標準入力の文書 1 件に、スキーマで見られない決まりを当て、違反の配列の JSON を標準出力へ出す。
 
-dev-docs の validators の knowledge-checks。項目の ID の重複・id: の参照と related の to の実在・aliases の衝突・mermaid の文法と、
+dev-docs の validators の knowledge-checks。項目の ID の重複・id: の参照と related の to の実在・aliases の衝突・文書の中の aliases の重複・mermaid の文法と、
 対応表の examples が照合と合うかを検査する。
 作業ディレクトリは配信元（knowledge のリポジトリ）の直下にする。
 
@@ -143,6 +143,8 @@ def check_document(
             )
     if names is not None:
         violations.extend(check_aliases(doc, names))
+    # 文書の中の重複は dev-docs.yaml を使用しないので、名前の索引の有無によらず適用する
+    violations.extend(check_alias_duplicates(doc))
     violations.extend(check_mermaid(doc, executable, deadline))
     # 対応表は examples の検査を後ろにつなぐ
     if _field(doc, "kind") == _WORD_LIST_KIND:
@@ -266,6 +268,47 @@ def check_aliases(
                 "fix": "指す文書を 1 件に決め、片方だけに登録する",
             }
         )
+    return violations
+
+
+def check_alias_duplicates(doc: CommentedMap) -> list[Violation]:
+    """aliases の要素が、自分の name か前の要素と正規化して一致したら違反にする。"""
+    value = _field(doc, "aliases")
+    if not isinstance(value, CommentedSeq):
+        return []
+    # name が文字列でなければ記録せず、前の要素だけと照合する
+    name = _field(doc, "name")
+    own_name = normalize_name(name) if isinstance(name, str) else None
+    # 正規化した値 → 最初に出た要素の添字
+    first: dict[str, int] = {}
+    violations: list[Violation] = []
+    for position, alias in enumerate(cast("list[object]", value)):
+        # 文字列でない要素は照合の相手にも入れない
+        if not isinstance(alias, str):
+            continue
+        key = normalize_name(alias)
+        line = line_of(doc, ["aliases", position])
+        # 自分の name と一致: 前の要素とも一致していても name との一致の 1 件にする
+        if key == own_name:
+            violations.append(
+                {
+                    "path": f"aliases[{position}]",
+                    "rule": f"{line} 行目: 別名 `{alias}` が name と同じです",
+                    "fix": "片方だけ登録する",
+                }
+            )
+        # 前の要素と一致: 最初に出た要素の添字を示す
+        elif key in first:
+            violations.append(
+                {
+                    "path": f"aliases[{position}]",
+                    "rule": f"{line} 行目: 別名 `{alias}` が aliases[{first[key]}] と重複しています",
+                    "fix": "片方だけ登録する",
+                }
+            )
+        # どちらとも一致しない: 前の要素として記録する
+        else:
+            first[key] = position
     return violations
 
 
