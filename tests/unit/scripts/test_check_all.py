@@ -602,7 +602,9 @@ def test_check_design_templates_when_ref_unresolvable(repo_factory: RepoFactory)
     root = repo_factory(
         {
             "schemas/design/common.schema.yaml": _TEMPLATE_SOURCE_COMMON,
-            "schemas/design/er.schema.yaml": _TEMPLATE_SOURCE_ER.replace("$defs/id", "$defs/無い型"),
+            "schemas/design/er.schema.yaml": _TEMPLATE_SOURCE_ER.replace(
+                "$defs/id", "$defs/無い型"
+            ),
             "docs/template/template-er.yaml": "id: template-er\nkind: template\nitems: []\n",
         }
     )

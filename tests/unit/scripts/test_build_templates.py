@@ -3,20 +3,20 @@
 from typing import TYPE_CHECKING
 
 import pytest
-
-from _common import load_document
 from build_templates import (
     BuildError,
+    KeyRow,
     _format_cell,  # pyright: ignore[reportPrivateUsage]
     _iter_keys,  # pyright: ignore[reportPrivateUsage]
     _render_key_rules,  # pyright: ignore[reportPrivateUsage]
     _render_key_table,  # pyright: ignore[reportPrivateUsage]
-    KeyRow,
     build_items,
     load_schemas,
     main,
     replace_items,
 )
+
+from _common import load_document
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -447,11 +447,7 @@ def test_build_items_when_many_examples(repo_factory: RepoFactory) -> None:
     """記載例が 2 件（正常系）。"""
     # 準備
     root = repo_factory(
-        {
-            "schemas/design/config.schema.yaml": (
-                _CONFIG + "examples:\n  - name: a\n  - name: b\n"
-            )
-        }
+        {"schemas/design/config.schema.yaml": (_CONFIG + "examples:\n  - name: a\n  - name: b\n")}
     )
     schemas = load_schemas(root)
     # 実行
