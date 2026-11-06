@@ -89,11 +89,7 @@ _YAMLLINT_CONFIG = (
 
 # scripts/lint/.yamllint-schemas.yaml と同じ内容の設定
 _YAMLLINT_SCHEMAS_CONFIG = (
-    "rules:\n"
-    "  brackets:\n"
-    "    forbid: non-empty\n"
-    "  braces:\n"
-    "    forbid: non-empty\n"
+    "rules:\n  brackets:\n    forbid: non-empty\n  braces:\n    forbid: non-empty\n"
 )
 
 # 違反の無い規約の文書
