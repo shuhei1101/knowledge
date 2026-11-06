@@ -1,0 +1,7 @@
+# 全ての文書の検査（scripts/check_all.py）が schemas/ のスキーマに当てる yamllint の設定
+# スキーマはブロック形式で書き、フロー形式（[...]・{...}）を違反にする。default は継がない
+rules:
+  brackets:
+    forbid: non-empty
+  braces:
+    forbid: non-empty

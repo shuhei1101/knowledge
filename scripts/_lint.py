@@ -35,6 +35,9 @@ _MARKDOWNLINT_CONFIG = ".markdownlint-cli2.jsonc"
 _TEXTLINT_CONFIG = ".textlintrc.json"
 _YAMLLINT_CONFIG = ".yamllint.yaml"
 
+# schemas/ のスキーマに当てる yamllint の設定。brackets・braces の forbid: non-empty だけを持つ
+YAMLLINT_SCHEMAS_CONFIG = ".yamllint-schemas.yaml"
+
 # ファイル全体に当てた lint の項目のパス
 _WHOLE_FILE = "-"
 
@@ -243,9 +246,9 @@ def run_markdown_lints(
     )
 
 
-def load_yamllint_config(lint_dir: Path) -> YamlLintConfig:
-    """lint のフォルダの .yamllint.yaml を読む。"""
-    return YamlLintConfig(file=str(lint_dir / _YAMLLINT_CONFIG))
+def load_yamllint_config(lint_dir: Path, name: str = _YAMLLINT_CONFIG) -> YamlLintConfig:
+    """lint のフォルダの yamllint の設定（既定は .yamllint.yaml）を読む。"""
+    return YamlLintConfig(file=str(lint_dir / name))
 
 
 def run_yamllint(path: PurePosixPath, text: str, config: YamlLintConfig) -> list[LintFinding]:
