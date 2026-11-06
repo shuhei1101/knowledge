@@ -251,6 +251,72 @@ def test_normal_when_word_list_copy_stale(run_script: RunScript, repo_factory: R
     assert "scripts/build_word_list.py" in line
 
 
+def test_normal_when_templates_out_of_date(
+    run_script: RunScript, repo_factory: RepoFactory
+) -> None:
+    """設計書のテンプレートの items がスキーマから組み立てたものと違えば、違反として出す（正常系）。"""
+    # 準備
+    common = (
+        "$schema: https://json-schema.org/draft/2020-12/schema\n"
+        "title: 共通\n"
+        "$defs:\n"
+        "  id:\n"
+        "    type: string\n"
+        "    description: 変わらない ID。\n"
+    )
+    # x-rules を 1 件追加したスキーマ。テンプレートは追加する前に生成したもの
+    er = (
+        "$schema: https://json-schema.org/draft/2020-12/schema\n"
+        "title: ER 図\n"
+        "description: データストアの構造をまとめる。\n"
+        "x-kind: er\n"
+        "type: object\n"
+        "properties:\n"
+        "  id:\n"
+        "    $ref: common.schema.yaml#/$defs/id\n"
+        "    title: ID\n"
+        "    x-rules:\n"
+        "      - 改名でも変えない。\n"
+    )
+    template = (
+        "id: template-er\n"
+        "kind: template\n"
+        "items:\n"
+        "  - id: overview\n"
+        "    name: 概要\n"
+        "    body: |-\n"
+        "      データストアの構造をまとめる。\n"
+        "  - id: item-list-01\n"
+        "    name: 項目\n"
+        "    body: |-\n"
+        "      <!-- table: data -->\n"
+        "\n"
+        "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
+        "      | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+        "      | id | ID | string | - | - | - | 変わらない ID。 | - |\n"
+        "\n"
+        "      <!-- /table -->\n"
+    )
+    root = repo_factory(
+        {
+            "schemas/design/common.schema.yaml": common,
+            "schemas/design/er.schema.yaml": er,
+            "docs/template/template-er.yaml": template,
+        }
+    )
+    # 実行
+    result = run_script("check_all", root)
+    # 検証
+    assert result.exit_code == 1
+    line = next(
+        line
+        for line in result.stdout.splitlines()
+        if line.startswith("docs/template/template-er.yaml:3: items: ")
+    )
+    assert "schemas/design/er.schema.yaml" in line
+    assert "scripts/build_templates.py" in line
+
+
 def test_error_when_check_cli_missing(
     run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
 ) -> None:
