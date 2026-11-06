@@ -362,9 +362,7 @@ def check_lints(
 
 def _read_schema_texts(root: Path) -> list[tuple[PurePosixPath, str]]:
     """schemas/ の直下と schemas/design/ のスキーマを、パスの順に読む。"""
-    paths = sorted(
-        [*root.glob(_SCHEMAS_GLOB), *(root / DESIGN_SCHEMAS_DIR).glob("*.schema.yaml")]
-    )
+    paths = sorted([*root.glob(_SCHEMAS_GLOB), *(root / DESIGN_SCHEMAS_DIR).glob("*.schema.yaml")])
     texts: list[tuple[PurePosixPath, str]] = []
     for path in paths:
         try:
