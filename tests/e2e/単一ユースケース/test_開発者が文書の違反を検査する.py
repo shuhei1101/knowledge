@@ -154,6 +154,8 @@ def test_error_when_schemas_use_flow_style(
     document = source.replace("id: dev-precheck", "id: e2e-flow", 1).replace(
         _VALUES_BLOCK, "  values: [費用, 時間のかかる, 成り立つか]\n", 1
     )
+    # 元の規約が書き換わって置換できないと、文書側の確かめが空振りする
+    assert "  values: [費用, 時間のかかる, 成り立つか]\n" in document
     clone = knowledge_clone(
         {
             # 4 行目の required がフロー形式のシーケンス
