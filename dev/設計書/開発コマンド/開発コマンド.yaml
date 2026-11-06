@@ -19,6 +19,7 @@ categories:
       uv sync --script scripts/check_all.py
       uv sync --script scripts/build_pages.py
       uv sync --script scripts/build_word_list.py
+      uv sync --script scripts/build_templates.py
       ```
 
       3. 全ての文書の検査が呼ぶ markdownlint-cli2・textlint とルールを、ロック（`scripts/lint/package-lock.json`）のバージョンで `scripts/lint/node_modules/` に入れる
@@ -28,8 +29,8 @@ categories:
       ```
     verification:
       state: 済
-      date: '2026-11-05'
-      detail: WSL2 で maid 0.0.29 を入れ、`maid - --format json` が 0.35 秒で終了コード 0 を返した。3 つのスクリプトの `uv sync --script` がロックの依存を入れた（2026-10-31）。worktree で `npm ci --prefix scripts/lint` を実行し、`scripts/lint/node_modules/.bin/` に `markdownlint-cli2`・`textlint` が入った（2026-11-05）
+      date: '2026-11-06'
+      detail: WSL2 で maid 0.0.29 を入れ、`maid - --format json` が 0.35 秒で終了コード 0 を返した。3 つのスクリプトの `uv sync --script` がロックの依存を入れた（2026-10-31）。worktree で `npm ci --prefix scripts/lint` を実行し、`scripts/lint/node_modules/.bin/` に `markdownlint-cli2`・`textlint` が入った（2026-11-05）。worktree で `uv sync --script scripts/build_templates.py` がロックの依存を入れた（2026-11-06）
   - name: 取り込み後の追従（pull 後）
     commands: |-
       1. ロック（`scripts/*.py.lock`）が変わったときは、入口のスクリプトごとに依存を入れ直す
@@ -40,6 +41,7 @@ categories:
       uv sync --script scripts/check_all.py
       uv sync --script scripts/build_pages.py
       uv sync --script scripts/build_word_list.py
+      uv sync --script scripts/build_templates.py
       ```
 
       2. `scripts/lint/package-lock.json` が変わったときは、lint の CLI とルールを入れ直す
@@ -50,7 +52,7 @@ categories:
     verification:
       state: 済
       date: '2026-11-05'
-      detail: 3 つのスクリプトで実行し、ロックの依存が入っていることを確かめた（2026-10-31）。2 は環境構築の 3 と同じコマンドで確かめた（2026-11-05）
+      detail: 3 つのスクリプトで実行し、ロックの依存が入っていることを確かめた（2026-10-31）。2 は環境構築の 3 と同じコマンドで確かめた（2026-11-05）。`build_templates.py` の 1 は環境構築の 2 と同じコマンドで確かめた（2026-11-06）
   - name: 依存の追加・更新・削除
     commands: |-
       依存はスクリプトの PEP 723 のメタデータとロック（`{スクリプト}.py.lock`）が持つ。`pyproject.toml` は作らない。
@@ -113,16 +115,23 @@ categories:
       ```bash
       uv run --frozen --script scripts/build_word_list.py
       ```
+
+      4. 設計書のスキーマ（`schemas/design/`）を変えたら、`docs/template/` の設計書の種類のテンプレートを作り直し、スキーマと一緒に commit する（IF『設計書のテンプレートの生成』）
+
+      ```bash
+      uv run --frozen --script scripts/build_templates.py
+      ```
     refs:
       - IF-137-1#
       - IF-137-2#constraints[YAML の検査]
       - LIB-137-1#
       - IF-148-2#
+      - IF-201-1#
     verification:
       state: 済
       date: '2026-11-03'
-      detail: WSL2 の Ubuntu（Node 24.14.0）で 1・2 のコマンドを実行した。公開の 5 文書が `_site/index.html` にまとまり（約 11 秒、終了コード 0）、YAML の検査は何も出さず終了コード 0 を返した（2026-10-31）。3 のコマンドは worktree で実行し、終了コード 0 で、正本から作り直したコピーが commit 済みのコピーと一致した（2026-11-03）
-    effects: 1 は約 11 秒（初回は `npx` が mdmark と依存を取る）。`_site` は中身を消してから書く。3 は `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を上書きする
+      detail: WSL2 の Ubuntu（Node 24.14.0）で 1・2 のコマンドを実行した。公開の 5 文書が `_site/index.html` にまとまり（約 11 秒、終了コード 0）、YAML の検査は何も出さず終了コード 0 を返した（2026-10-31）。3 のコマンドは worktree で実行し、終了コード 0 で、正本から作り直したコピーが commit 済みのコピーと一致した（2026-11-03）。4 のコマンドは worktree で実行し、終了コード 0 で 15 件のテンプレートを書き出し、続けて全ての文書の検査が違反 0 件で終わった（2026-11-06）
+    effects: 1 は約 11 秒（初回は `npx` が mdmark と依存を取る）。`_site` は中身を消してから書く。3 は `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を上書きする。4 は `docs/template/` の設計書の種類のテンプレートのうち、スキーマから組み立てた `items` と違うものの `items` だけを上書きする
   - name: 取り込み前の検査
     prerequisites:
       - 環境構築（クローン直後）を流してある
