@@ -53,7 +53,7 @@ functions:
       - name: test_main
         case: 正常
         summary: 違反の無い文書
-        condition: 標準入力に違反の無い文書。作業ディレクトリは空の `docs/` と、`documents: []` の `dev-docs.yaml` を持つ一時フォルダ
+        condition: '標準入力に違反の無い文書。作業ディレクトリは空の `docs/` と、`documents: []` の `dev-docs.yaml` を持つ一時フォルダ'
         mock: maid の在りかの確認を、正しい図と答えるスクリプトのパスに差し替える
         expected: '`0` を返し、標準出力が `[]`'
       - name: test_main_when_maid_missing
