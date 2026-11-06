@@ -6,14 +6,17 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 import knowledge_checks
-from _common import load_document
+from _common import load_config, load_document
 from knowledge_checks import (
     build_id_index,
+    build_name_index,
+    check_aliases,
     check_document,
     check_duplicate_ids,
     check_mermaid,
     check_references,
     mermaid_blocks,
+    normalize_name,
 )
 
 if TYPE_CHECKING:
@@ -53,6 +56,21 @@ _MERMAID_AT_40 = (
     "      ```\n"
 )
 
+# documents[] が空の dev-docs.yaml
+_EMPTY_CONFIG = 'version: "3"\nname: knowledge\ndocuments: []\n'
+
+# docs/rule/*.yaml の行だけが alias_type を持つ dev-docs.yaml
+_ALIAS_CONFIG = (
+    'version: "3"\n'
+    "name: knowledge\n"
+    "documents:\n"
+    "  - id: rule\n"
+    "    paths: [docs/rule/*.yaml]\n"
+    "    alias_type: doc\n"
+    "  - id: word-list\n"
+    "    paths: [docs/word-list/*.yaml]\n"
+)
+
 
 def test_main(
     tmp_path: Path,
@@ -64,6 +82,7 @@ def test_main(
     """違反の無い文書（正常系）。"""
     # 準備
     (tmp_path / "docs").mkdir()
+    (tmp_path / "dev-docs.yaml").write_text(_EMPTY_CONFIG, encoding="utf-8")
     monkeypatch.chdir(tmp_path)
     maid = fake_maid_factory()
     monkeypatch.setattr(knowledge_checks, "find_maid", lambda: maid)
@@ -148,7 +167,9 @@ def test_check_document(tmp_path: Path, fake_maid_factory: FakeMaidFactory) -> N
     stdout = '{"valid": false, "errors": [{"line": 2, "column": 1, "message": "Expected end"}]}'
     maid = fake_maid_factory(stdout=stdout, exit_code=1)
     # 実行
-    result = check_document(text, tmp_path, maid, time.monotonic() + 10.0, index={"a": frozenset()})
+    result = check_document(
+        text, tmp_path, maid, time.monotonic() + 10.0, index={"a": frozenset()}, names={}
+    )
     # 検証
     assert [v["path"] for v in result] == [
         "items[1].id",
@@ -174,9 +195,52 @@ def test_check_document_when_word_list(tmp_path: Path, fake_maid_factory: FakeMa
     )
     maid = fake_maid_factory(stdout='{"valid": true, "errors": []}', exit_code=0)
     # 実行
-    result = check_document(text, tmp_path, maid, time.monotonic() + 10.0, index={})
+    result = check_document(text, tmp_path, maid, time.monotonic() + 10.0, index={}, names={})
     # 検証
     assert [violation["path"] for violation in result] == ["entries[0].examples.hit[0]"]
+
+
+def test_check_document_when_aliases_collide(
+    tmp_path: Path, fake_maid_factory: FakeMaidFactory
+) -> None:
+    """aliases の衝突の違反を参照と mermaid の間に並べる（正常系）。"""
+    # 準備
+    text = (
+        "id: b\n"
+        "aliases:\n"
+        "  - アルファ\n"
+        "items:\n"
+        "  - id: x\n"
+        "    body: '[B](id:missing)'\n"
+    )
+    maid = fake_maid_factory(stdout='{"valid": true, "errors": []}', exit_code=0)
+    # 実行
+    result = check_document(
+        text,
+        tmp_path,
+        maid,
+        time.monotonic() + 10.0,
+        index={"a": frozenset()},
+        names={"アルファ": [("a", "aliases")]},
+    )
+    # 検証
+    assert [violation["path"] for violation in result] == ["items[0].body", "aliases[0]"]
+
+
+def test_check_document_when_config_missing(
+    tmp_path: Path, fake_maid_factory: FakeMaidFactory
+) -> None:
+    """dev-docs.yaml が無い（正常系）。"""
+    # 準備
+    text = "id: b\naliases:\n  - アルファ\n"
+    maid = fake_maid_factory(stdout='{"valid": true, "errors": []}', exit_code=0)
+    # 実行
+    result = check_document(text, tmp_path, maid, time.monotonic() + 10.0, index={})
+    # 検証
+    assert len(result) == 1
+    assert result[0]["path"] == "$"
+    assert "dev-docs.yaml" in result[0]["rule"]
+    assert "aliases の衝突を検査できません" in result[0]["rule"]
 
 
 def test_check_document_when_broken(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -230,6 +294,78 @@ def test_build_id_index_when_broken(tmp_path: Path) -> None:
     result = build_id_index(tmp_path)
     # 検証
     assert result == {"a": frozenset({"x"})}
+
+
+def test_normalize_name() -> None:
+    """全角・前後の空白・大文字（正常系）。"""
+    # 実行
+    result = normalize_name(" ＡＬＰＨＡ 規約 ")
+    # 検証
+    assert result == "alpha 規約"
+
+
+def test_build_name_index(tmp_path: Path) -> None:
+    """alias_type を持つ行の文書だけを集める（正常系）。"""
+    # 準備
+    (tmp_path / "docs" / "rule").mkdir(parents=True)
+    (tmp_path / "docs" / "word-list").mkdir(parents=True)
+    (tmp_path / "dev-docs.yaml").write_text(_ALIAS_CONFIG, encoding="utf-8")
+    (tmp_path / "docs" / "rule" / "a.yaml").write_text(
+        "id: a\nname: Alpha\naliases:\n  - アルファ\n", encoding="utf-8"
+    )
+    (tmp_path / "docs" / "word-list" / "w.yaml").write_text(
+        "id: w\nname: 単語表\n", encoding="utf-8"
+    )
+    rows = load_config(tmp_path)
+    # 実行
+    result = build_name_index(tmp_path, rows)
+    # 検証
+    assert result == {"alpha": [("a", "name")], "アルファ": [("a", "aliases")]}
+
+
+def test_build_name_index_when_broken(tmp_path: Path) -> None:
+    """読めない文書を飛ばす（正常系）。"""
+    # 準備
+    (tmp_path / "docs" / "rule").mkdir(parents=True)
+    (tmp_path / "dev-docs.yaml").write_text(_ALIAS_CONFIG, encoding="utf-8")
+    (tmp_path / "docs" / "rule" / "a.yaml").write_text("id: a\nname: Alpha\n", encoding="utf-8")
+    (tmp_path / "docs" / "rule" / "c.yaml").write_text("id: c\nname: [\n", encoding="utf-8")
+    rows = load_config(tmp_path)
+    # 実行
+    result = build_name_index(tmp_path, rows)
+    # 検証
+    assert result == {"alpha": [("a", "name")]}
+
+
+def test_check_aliases() -> None:
+    """name・aliases との衝突と、自分の除外（正常系）。"""
+    # 準備
+    doc = load_document(
+        "id: b\naliases:\n  - ' ａｌｐｈａ '\n  - アルファ\n  - ベータ\n"
+    )
+    names = {
+        "alpha": [("a", "name")],
+        "アルファ": [("a", "aliases")],
+        "ベータ": [("b", "aliases")],
+    }
+    # 実行
+    result = check_aliases(doc, names)
+    # 検証
+    assert [violation["path"] for violation in result] == ["aliases[0]", "aliases[1]"]
+    assert "`a` の name" in result[0]["rule"]
+    assert result[0]["rule"].startswith("3 行目: ")
+    assert "`a` の aliases" in result[1]["rule"]
+    assert result[1]["rule"].startswith("4 行目: ")
+
+
+def test_check_aliases_when_no_aliases() -> None:
+    """aliases を持たない文書（正常系）。"""
+    # 準備
+    doc = load_document("id: b\nname: 文書\n")
+    # 実行
+    result = check_aliases(doc, {"文書": [("a", "name")]})
+    # 検証
+    assert result == []
 
 
 def test_check_duplicate_ids() -> None:
