@@ -3,6 +3,16 @@ id: react-devtools-mock
 kind: rule
 name: モック（MSW）
 description: MSW で開発中・テスト中の API をモックする handler の共有と運用を定め、API のモックを作る・修正するときに読む。
+aliases:
+  - モック
+inject_when:
+  field: text
+  op: contains
+  values:
+    - React
+    - tsx
+    - jsx
+    - Vite
 tags:
   - name: scope:react
   - name: topic:devtools

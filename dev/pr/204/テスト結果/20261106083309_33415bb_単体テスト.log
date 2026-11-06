@@ -1,0 +1,51 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/docs-knowledge-guidance-timing
+configfile: pytest.ini
+collected 181 items
+
+tests/unit/scripts/test_build_pages.py ...................               [ 10%]
+tests/unit/scripts/test_build_word_list.py ...                           [ 12%]
+tests/unit/scripts/test_check_all.py ................................... [ 31%]
+                                                                         [ 31%]
+tests/unit/scripts/test_common.py ....................                   [ 42%]
+tests/unit/scripts/test_knowledge_checks.py ......................       [ 54%]
+tests/unit/scripts/test_knowledge_markdown.py ...........F.............. [ 69%]
+........                                                                 [ 73%]
+tests/unit/scripts/test_lint.py ...........                              [ 79%]
+tests/unit/scripts/test_maid.py ......                                   [ 82%]
+tests/unit/slop-check/test_slop_check.py ............................... [100%]
+
+=================================== FAILURES ===================================
+______________________ test_convert_when_hidden_metadata _______________________
+
+    def test_convert_when_hidden_metadata() -> None:
+        """本文に出さないキー（正常系）。"""
+        # 準備
+        doc = {
+            "id": "a",
+            "kind": "rule",
+            "name": "名前",
+            "description": "説明",
+            "aliases": ["別名の値"],
+            "inject_when": {
+                "or": [
+                    {"field": "text", "op": "contains", "values": ["照合の値"]},
+                ]
+            },
+            "items": [],
+        }
+        # 実行
+        result = convert(doc, {"title": "規約", "properties": {}}, {})
+        # 検証
+>       assert _HEADING.findall(result) == ["# 名前"]
+E       AssertionError: assert ['# 名前', '## inject_when'] == ['# 名前']
+E         
+E         Left contains one more item: '## inject_when'
+E         Use -v to get more diff
+
+tests/unit/scripts/test_knowledge_markdown.py:297: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/scripts/test_knowledge_markdown.py::test_convert_when_hidden_metadata
+======================== 1 failed, 180 passed in 4.49s =========================

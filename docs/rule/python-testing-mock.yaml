@@ -3,6 +3,17 @@ id: python-testing-mock
 kind: rule
 name: 結合テストの Mock パターン
 description: 結合テストで依存を差し替える Mock を、普通の関数で記載する方法と使い分けを定め、結合テストで外部依存を Mock にするときに読む。
+aliases:
+  - testing/モック
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: topic:testing

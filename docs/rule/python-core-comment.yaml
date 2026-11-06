@@ -3,6 +3,15 @@ id: python-core-comment
 kind: rule
 name: コメントルール
 description: Python のコメントと docstring の量・形式と、条件分岐のコメントの記載方法を定め、Python のコードにコメントや docstring を記載するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: topic:docstring

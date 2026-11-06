@@ -3,6 +3,16 @@ id: react-form-component
 kind: rule
 name: Controller + Field
 description: React Hook Form・Zod・shadcn/ui で Controller と Field を組み合わせる標準の書き方を定め、フォームの入力欄を実装するときに読む。
+aliases:
+  - フォーム
+inject_when:
+  field: text
+  op: contains
+  values:
+    - React
+    - tsx
+    - jsx
+    - Vite
 tags:
   - name: scope:react
   - name: topic:フロントエンド

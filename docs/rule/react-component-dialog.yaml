@@ -3,6 +3,16 @@ id: react-component-dialog
 kind: rule
 name: Dialog / Modal / Popup
 description: Dialog・Modal・Popup のコンポーネント選択、配置、Props、確認ダイアログ、Draft 確定方式を定め、ダイアログやモーダルを実装するときに読む。
+aliases:
+  - ダイアログ
+inject_when:
+  field: text
+  op: contains
+  values:
+    - React
+    - tsx
+    - jsx
+    - Vite
 tags:
   - name: scope:react
   - name: topic:フロントエンド

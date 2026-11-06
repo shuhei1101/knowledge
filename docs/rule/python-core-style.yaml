@@ -3,6 +3,17 @@ id: python-core-style
 kind: rule
 name: スタイル
 description: ruff・pyright・import-linter のツール構成と設定の置き場所、モジュールの区切り方を定め、Python の静的検査やフォーマッタを設定するときに読む。
+aliases:
+  - core/スタイル
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: topic:pyproject

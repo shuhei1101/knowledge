@@ -3,6 +3,14 @@ id: react-screen-edit
 kind: rule
 name: 編集・新規画面
 description: 編集・新規画面の構成と、送信の流れ、保存ボタンの活性条件を定め、編集・新規画面を実装するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - React
+    - tsx
+    - jsx
+    - Vite
 tags:
   - name: scope:react
   - name: topic:フロントエンド

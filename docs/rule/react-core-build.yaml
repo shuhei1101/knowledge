@@ -3,6 +3,14 @@ id: react-core-build
 kind: rule
 name: ビルド構成
 description: React のフロントエンドのビルド（Vite・tsc・React Compiler）、SPA の配り方、package.json と Vite の root の置き場所を定め、React のビルドや SPA の構成を作る・修正するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - React
+    - tsx
+    - jsx
+    - Vite
 tags:
   - name: scope:react
   - name: topic:api

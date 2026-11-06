@@ -3,6 +3,15 @@ id: next-frontend-feature-folder
 kind: rule
 name: フィーチャフォルダ構成
 description: フィーチャフォルダの構成、components・hooks の配置、命名のルールを定め、新しいフィーチャのフォルダを作るときに読む。
+aliases:
+  - frontend/フィーチャーフォルダ
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Next.js
+    - App Router
+    - next.config
 tags:
   - name: scope:next
   - name: topic:フロントエンド

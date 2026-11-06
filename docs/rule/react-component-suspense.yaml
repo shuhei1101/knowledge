@@ -3,6 +3,14 @@ id: react-component-suspense
 kind: rule
 name: Suspense
 description: Suspense の fallback の決まりを定め、React の画面で Suspense を使うときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - React
+    - tsx
+    - jsx
+    - Vite
 tags:
   - name: scope:react
   - name: topic:フロントエンド

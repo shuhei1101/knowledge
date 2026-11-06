@@ -3,6 +3,13 @@ id: typescript-core-util
 kind: rule
 name: 整形関数とロガー
 description: 日付・数値・通貨などの整形関数を 1 か所に集約する決まりと、ログ出力をロガー経由にする決まりを定め、整形処理やログ出力を TypeScript に実装するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - TypeScript
+    - '.ts'
+    - '.tsx'
 tags:
   - name: scope:typescript
   - name: topic:dom

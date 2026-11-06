@@ -1,0 +1,37 @@
+$ uv run --frozen --script scripts/check_all.py
+docs/flowchart/flowchart-react-state-placement.yaml:124: items[2].body: warning: markdownlint/KN001: 太字を使わない（Markdown 編集規約 emphasis-01） [**※1 URL に置く値**]
+docs/flowchart/flowchart-react-state-placement.yaml:124: items[2].body: warning: textlint/one-sentence-per-line: More than one sentence per line
+docs/flowchart/flowchart-react-state-placement.yaml:129: items[3].body: warning: markdownlint/KN001: 太字を使わない（Markdown 編集規約 emphasis-01） [**※2 戻したい値**]
+docs/flowchart/flowchart-react-state-placement.yaml:129: items[3].body: warning: textlint/one-sentence-per-line: More than one sentence per line
+docs/flowchart/flowchart-react-state-placement.yaml:134: items[4].body: warning: markdownlint/KN001: 太字を使わない（Markdown 編集規約 emphasis-01） [**※3 Zustand の使い方**]
+docs/flowchart/flowchart-react-state-placement.yaml:134: items[4].body: warning: textlint/one-sentence-per-line: More than one sentence per line
+docs/flowchart/flowchart-react-state-placement.yaml:138: items[5].body: warning: markdownlint/KN001: 太字を使わない（Markdown 編集規約 emphasis-01） [**※4 Context の使い方**]
+docs/flowchart/flowchart-react-state-placement.yaml:138: items[5].body: warning: textlint/one-sentence-per-line: More than one sentence per line
+docs/flowchart/flowchart-screen-state-retention.yaml:107: items[2].body: warning: markdownlint/KN001: 太字を使わない（Markdown 編集規約 emphasis-01） [**※1 URL のクエリに配置する値**]
+docs/flowchart/flowchart-screen-state-retention.yaml:107: items[2].body: warning: textlint/one-sentence-per-line: More than one sentence per line
+docs/flowchart/flowchart-screen-state-retention.yaml:111: items[3].body: warning: markdownlint/KN001: 太字を使わない（Markdown 編集規約 emphasis-01） [**※2 ルーターの機能**]
+docs/flowchart/flowchart-screen-state-retention.yaml:111: items[3].body: warning: textlint/one-sentence-per-line: More than one sentence per line
+docs/flowchart/flowchart-screen-state-retention.yaml:115: items[4].body: warning: markdownlint/KN001: 太字を使わない（Markdown 編集規約 emphasis-01） [**※3 入り直したときの復元**]
+docs/flowchart/flowchart-screen-state-retention.yaml:115: items[4].body: warning: textlint/one-sentence-per-line: More than one sentence per line
+docs/rule/python-core-language-rules.yaml:78: items[5].body: warning: textlint/one-sentence-per-line: More than one sentence per line
+docs/rule/ui-input-wording.yaml:104: items[0].body: warning: textlint/ja-technical-writing/sentence-length: Line 4 sentence length(379) exceeds the maximum sentence length of 100. Over 279 characters.
+docs/rule/ui-input-wording.yaml:153: items[5].body: warning: textlint/ja-technical-writing/no-exclamation-question-mark: Disallow to use "?".
+docs/rule/ui-input-wording.yaml:153: items[5].body: warning: textlint/ja-technical-writing/no-exclamation-question-mark: Disallow to use "?".
+docs/rule/ui-input-wording.yaml:209: items[9].body: warning: textlint/ja-technical-writing/ja-no-successive-word: "〇" が連続して2回使われています。
+docs/rule/ui-input-wording.yaml:214: items[9].body: warning: textlint/ja-technical-writing/ja-no-successive-word: "〇" が連続して2回使われています。
+docs/rule/ui-input-wording.yaml:221: items[10].body: warning: textlint/ja-technical-writing/ja-no-successive-word: "〇" が連続して2回使われています。
+docs/rule/ui-input-wording.yaml:222: items[10].body: warning: textlint/ja-technical-writing/ja-no-successive-word: "〇" が連続して2回使われています。
+（上は変更した文書の行だけを抜き出した。全体の集計は次の 1 行）
+272 件の文書を検査し、違反は 0 件、警告は 867 件でした
+
+$ rule-inject の索引の読み込みと照合（rule-inject v0.2.3 の features.index.service を直接呼ぶ。MCP に接続できなかったため）
+entries 68 skipped []
+missing rules []
+/x/cb/frontend/src/shared/styles/tokens.css -> ['react-core-tailwind.yaml']
+/x/cb/tsconfig.json -> ['react-core-build.yaml', 'react-devtools-lint-format.yaml']
+/x/cb/tsconfig.app.json -> ['react-core-build.yaml', 'react-devtools-lint-format.yaml']
+/x/cb/package.json -> ['react-core-build.yaml']
+/x/cb/eslint.config.js -> ['dev-coding-general.yaml', 'react-devtools-lint-format.yaml']
+/x/cb/lefthook.yml -> []
+/x/cb/node_modules/foo/package.json -> []
+/x/cb/vscode/package.json -> ['dev-vscode-extension-distribution.yaml', 'react-core-build.yaml']

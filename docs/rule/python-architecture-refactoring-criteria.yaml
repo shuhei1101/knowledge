@@ -3,6 +3,17 @@ id: python-architecture-refactoring-criteria
 kind: rule
 name: リファクタ判断基準
 description: 共通化・抽象化・設定の外出し・関数の長さ・ファイル分割を行う基準を定め、リファクタリングするかを判断するときに読む。
+aliases:
+  - architecture/リファクタリング判断
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: topic:architecture

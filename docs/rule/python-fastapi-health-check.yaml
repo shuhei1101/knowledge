@@ -3,6 +3,17 @@ id: python-fastapi-health-check
 kind: rule
 name: ヘルスチェック
 description: ヘルスチェックのエンドポイントの中身と、liveness・readiness を分ける場合、依存先の診断の扱いを定め、FastAPI にヘルスチェックを実装するときに読む。
+aliases:
+  - fastapi/ヘルスチェック
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: tool:fastapi

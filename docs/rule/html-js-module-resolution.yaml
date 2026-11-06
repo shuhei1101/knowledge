@@ -3,6 +3,13 @@ id: html-js-module-resolution
 kind: rule
 name: モジュール解決
 description: import maps でモジュールを解決する決まりを定め、単体 HTML でスクリプトのモジュールを読み込むときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - HTML
+    - CSS
+    - カスタムエレメント
 tags:
   - name: scope:html
   - name: tool:javascript

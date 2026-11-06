@@ -3,6 +3,17 @@ id: python-concurrency-parallel
 kind: rule
 name: 並列処理
 description: GIL を前提にした並列処理の判断フロー、早見表、ProcessPoolExecutor の制約、共有状態の扱いを定め、並列処理を導入する手段を選ぶときに読む。
+aliases:
+  - concurrency/並列処理
+inject_when:
+  field: text
+  op: contains
+  values:
+    - Python
+    - '.py'
+    - pytest
+    - FastAPI
+    - Pydantic
 tags:
   - name: scope:python
   - name: topic:concurrency

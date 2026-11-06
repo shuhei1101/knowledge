@@ -3,6 +3,16 @@ id: ui-display-stability
 kind: rule
 name: 表示の安定
 description: 読み込み・待ち時間・動きで表示が崩れたり揺れたりしないようにする決まりを定め、画面の読み込み中の表示やアニメーションを設計・実装するときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 画面
+    - UI
+    - フロントエンド
+    - tsx
+    - HTML
+    - コンポーネント
 tags:
   - name: scope:ui
   - name: topic:アニメーション
