@@ -214,7 +214,7 @@ functions:
       - name: test_check_lints_when_schema_unreadable
         case: 正常
         summary: UTF-8 で読めないスキーマを飛ばす
-        condition: '`test_check_lints_when_schemas_use_flow_style` と同じ `lint_dir` と、UTF-8 として不正なバイト列（`b"\\xff"`）の `schemas/design/broken.schema.yaml` と、`required: [id, title]` の行を持つ `schemas/rule.schema.yaml`'
+        condition: '`test_check_lints_when_schemas_use_flow_style` と同じ `lint_dir` と、UTF-8 として不正なバイト列（`b"\xff"`）の `schemas/design/broken.schema.yaml` と、`required: [id, title]` の行を持つ `schemas/rule.schema.yaml`'
         mock: Markdown の lint の呼び出しを、空を返す関数に差し替える
         expected: 例外を出さず、`schemas/rule.schema.yaml` の `brackets` の 1 件だけを返す
     callees:
