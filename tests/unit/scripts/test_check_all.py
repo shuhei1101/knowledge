@@ -435,7 +435,9 @@ def test_check_target_when_broken(repo_factory: RepoFactory) -> None:
         path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=True
     )
     # 実行
-    result = check_target(target, "items:\n  - id: a\n    name: [\n", validator, root, "maid", {}, {})
+    result = check_target(
+        target, "items:\n  - id: a\n    name: [\n", validator, root, "maid", {}, {}
+    )
     # 検証
     assert len(result) == 1
     assert result[0][0] >= 3

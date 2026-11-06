@@ -205,14 +205,7 @@ def test_check_document_when_aliases_collide(
 ) -> None:
     """aliases の衝突の違反を参照と mermaid の間に並べる（正常系）。"""
     # 準備
-    text = (
-        "id: b\n"
-        "aliases:\n"
-        "  - アルファ\n"
-        "items:\n"
-        "  - id: x\n"
-        "    body: '[B](id:missing)'\n"
-    )
+    text = "id: b\naliases:\n  - アルファ\nitems:\n  - id: x\n    body: '[B](id:missing)'\n"
     maid = fake_maid_factory(stdout='{"valid": true, "errors": []}', exit_code=0)
     # 実行
     result = check_document(
@@ -340,9 +333,7 @@ def test_build_name_index_when_broken(tmp_path: Path) -> None:
 def test_check_aliases() -> None:
     """name・aliases との衝突と、自分の除外（正常系）。"""
     # 準備
-    doc = load_document(
-        "id: b\naliases:\n  - ' ａｌｐｈａ '\n  - アルファ\n  - ベータ\n"
-    )
+    doc = load_document("id: b\naliases:\n  - ' ａｌｐｈａ '\n  - アルファ\n  - ベータ\n")
     names = {
         "alpha": [("a", "name")],
         "アルファ": [("a", "aliases")],
