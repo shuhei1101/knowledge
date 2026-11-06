@@ -191,6 +191,50 @@ def test_normal_when_lint_violations(run_script: RunScript, repo_factory: RepoFa
     assert any(line.startswith("docs/rule/b.yaml:4: -: yamllint/comments: ") for line in lines)
 
 
+def test_normal_when_schemas_use_flow_style(
+    run_script: RunScript, repo_factory: RepoFactory
+) -> None:
+    """schemas/ のスキーマのフロー形式を yamllint の違反にし、docs/ の文書のフロー形式は違反にしない（正常系）。"""
+    # 準備
+    rule_schema = (
+        "$schema: https://json-schema.org/draft/2020-12/schema\n"
+        "title: 規約\n"
+        "allOf:\n"
+        "  - $ref: common.schema.yaml#/$defs/metadata\n"
+        "properties:\n"
+        "  kind:\n"
+        "    const: rule\n"
+        # 8 行目がフロー形式のシーケンス
+        "required: [id, title]\n"
+    )
+    root = repo_factory(
+        {
+            "schemas/rule.schema.yaml": rule_schema,
+            # 6 行目がフロー形式のシーケンスとマッピング
+            "docs/rule/a.yaml": (
+                "id: a\n"
+                "kind: rule\n"
+                "name: A\n"
+                "title: A\n"
+                "description: A の文書\n"
+                "tags: [{name: scope:規約}]\n"
+                "items:\n"
+                "  - id: x\n"
+                "    body: 本文。\n"
+            ),
+        }
+    )
+    # 実行
+    result = run_script("check_all", root)
+    # 検証
+    lines = result.stdout.splitlines()
+    assert result.exit_code == 1
+    assert any(
+        line.startswith("schemas/rule.schema.yaml:8: -: yamllint/brackets: ") for line in lines
+    )
+    assert not any(line.startswith("docs/rule/a.yaml:") for line in lines)
+
+
 def test_normal_when_only_warnings(run_script: RunScript, repo_factory: RepoFactory) -> None:
     """警告にしたルールの違反は警告の行として出し、終了コードには数えない（正常系）。"""
     # 準備
