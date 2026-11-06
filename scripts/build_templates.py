@@ -361,14 +361,6 @@ def _type_of(schema: Mapping[str, object]) -> str | None:
     return " / ".join(option_types) if option_types else None
 
 
-def _join(values: object) -> str | None:
-    """配列の要素ごとにセルの値の書き方にして / でつなぐ。配列でないか空なら None。"""
-    items = as_list(values)
-    if not items:
-        return None
-    return " / ".join(_inline(item) for item in items)
-
-
 def _code(value: object) -> str:
     """値を 1 行のインラインコードにする（値がバッククォートを含むときは 2 つで囲む）。"""
     text = _flow(value)
@@ -391,7 +383,7 @@ def _render_key_table(rows: Sequence[KeyRow]) -> str:
     for row in rows:
         schema = row.schema
         constraints = ", ".join(
-            f"{key}: {_flow(schema[key])}" for key in CONSTRAINT_KEYS if key in schema
+            f"{key}: {_code(schema[key])}" for key in CONSTRAINT_KEYS if key in schema
         )
         body.append(
             [
@@ -399,10 +391,10 @@ def _render_key_table(rows: Sequence[KeyRow]) -> str:
                 _format_cell(schema.get("title")),
                 _format_cell(_type_of(schema)),
                 _format_cell("必須" if row.required else None),
-                _format_cell(_join(schema.get("enum"))),
+                # 選択肢・制約・examples の値は Markdown として読ませないよう、文字列もインラインコードにする
+                _format_cell(_join_code(schema.get("enum"))),
                 _format_cell(constraints or None),
                 _format_cell(schema.get("description")),
-                # examples は HTML として読ませないよう、文字列もインラインコードにする
                 _format_cell(_join_code(schema.get("examples"))),
             ]
         )
