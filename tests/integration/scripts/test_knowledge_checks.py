@@ -142,6 +142,65 @@ def test_normal_when_word_list_examples_fail(
         assert text in lines[number - 1]
 
 
+# docs/rule/*.yaml の行が alias_type を持ち、docs/word-list/*.yaml の行は持たない dev-docs.yaml
+_ALIAS_CONFIG = (
+    'version: "3"\n'
+    "name: knowledge\n"
+    "documents:\n"
+    "  - id: rule\n"
+    "    paths: [docs/rule/*.yaml]\n"
+    "    alias_type: doc\n"
+    "  - id: word-list\n"
+    "    paths: [docs/word-list/*.yaml]\n"
+)
+
+
+def test_normal_when_aliases_collide(run_script: RunScript, repo_factory: RepoFactory) -> None:
+    """ほかの文書の name・aliases と正規化して一致する aliases を、1 件 1 違反で返す（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "dev-docs.yaml": _ALIAS_CONFIG,
+            "docs/rule/a.yaml": "id: a\nname: Alpha 規約\naliases:\n  - アルファ\n",
+            # 書き込む前の b
+            "docs/rule/b.yaml": "id: b\nname: B\naliases:\n  - ベータ\n",
+            "docs/word-list/w.yaml": "id: w\nname: 単語表\n",
+        }
+    )
+    stdin = (
+        "id: b\nname: B\naliases:\n  - ' ａｌｐｈａ 規約 '\n  - アルファ\n  - ベータ\n  - 単語表\n"
+    )
+    lines = stdin.splitlines()
+    # 実行
+    result = run_script("knowledge_checks", root, stdin)
+    # 検証
+    assert result.exit_code == 0
+    violations = json.loads(result.stdout)
+    assert [violation["path"] for violation in violations] == ["aliases[0]", "aliases[1]"]
+    assert "`a` の name" in violations[0]["rule"]
+    assert "`a` の aliases" in violations[1]["rule"]
+    # rule の先頭の行番号が、文書の中の該当する行を指す
+    for violation, text in zip(violations, ["ａｌｐｈａ", "アルファ"], strict=True):
+        number = int(violation["rule"].split(" 行目")[0])
+        assert text in lines[number - 1]
+
+
+def test_normal_when_config_missing(run_script: RunScript, repo_factory: RepoFactory) -> None:
+    """dev-docs.yaml が無ければ aliases を照合せず、path: $ の違反とほかの検査の違反を返す（正常系）。"""
+    # 準備
+    root = repo_factory({"docs/rule/a.yaml": _DOC_A})
+    (root / "dev-docs.yaml").unlink()
+    stdin = "id: self\naliases:\n  - アルファ\nitems:\n  - id: p\n    body: '[B](id:missing)'\n"
+    # 実行
+    result = run_script("knowledge_checks", root, stdin)
+    # 検証
+    assert result.exit_code == 0
+    violations = json.loads(result.stdout)
+    assert sorted(violation["path"] for violation in violations) == ["$", "items[0].body"]
+    config = next(violation for violation in violations if violation["path"] == "$")
+    assert "dev-docs.yaml" in config["rule"]
+
+
 def test_normal_when_timed_out(
     run_checks_with_limit: RunChecksWithLimit, repo_factory: RepoFactory
 ) -> None:
