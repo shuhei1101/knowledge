@@ -1,0 +1,1 @@
+# knowledge-checks に、文書の中の aliases の重複と、自分の name と同じになる aliases を違反として返す検査を追加する
