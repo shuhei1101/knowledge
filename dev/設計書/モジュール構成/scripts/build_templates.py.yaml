@@ -1,0 +1,476 @@
+id: "MOD-201-1"
+title: "検査と変換のスクリプト / scripts / build_templates.py"
+lead: 手元から呼ぶ「設計書のテンプレートの生成」。`schemas/design/` の設計書の種類のスキーマから、`docs/template/` の対応するテンプレートの文書の `items` を組み立てて書き出す（IF-201-1）。
+data_models:
+  - name: KeyRow
+    title: キーの行
+    container: scripts/build_templates.py
+    usecase: 共通
+    summary: キーの表とキーごとの決まりの表の 1 行になる、`$ref` を解決したキー 1 つ
+    description: '`@dataclass(frozen=True, slots=True)`。'
+    properties:
+      - name: name
+        type: str
+        description: '`parent.child`・`parent[].child` の名前'
+      - name: schema
+        type: Mapping[str, object]
+        description: '`$ref` を解決した先のキーのスキーマに、キーの側の値を重ねたもの'
+      - name: required
+        type: bool
+        description: 親の `required` に名前があるか
+  - name: SchemaSet
+    title: 読み込んだ設計書のスキーマ
+    container: scripts/build_templates.py
+    usecase: 共通
+    summary: '`schemas/design/` の全てのスキーマと、ファイル名を URI にした `$ref` の登録'
+    description: '`@dataclass(frozen=True, slots=True)`。'
+    properties:
+      - name: docs
+        type: dict[str, Mapping[str, object]]
+        description: ファイル名 → スキーマ（ファイル名の順）
+      - name: registry
+        type: Registry[Any]
+        description: ファイル名を URI にして全てのスキーマを登録したもの
+  - name: BuildError
+    title: 生成できない理由
+    container: scripts/build_templates.py
+    usecase: 共通
+    summary: スキーマかテンプレートが読めず、生成を始められない理由
+    description: '`Exception` を継承する。`str()` で標準エラーへ出す 1 行を返す。'
+    properties:
+      - name: path
+        type: str
+        description: 原因のファイルのリポジトリの直下からのパス
+      - name: reason
+        type: str
+        description: 理由
+constants:
+  - name: SCHEMAS_DIR
+    title: 設計書のスキーマのフォルダ
+    container: scripts/build_templates.py
+    usecase: 共通
+    summary: リポジトリの直下からのパス
+    value: PurePosixPath("schemas/design")
+  - name: TEMPLATES_DIR
+    title: テンプレートのフォルダ
+    container: scripts/build_templates.py
+    usecase: 共通
+    summary: リポジトリの直下からのパス
+    value: PurePosixPath("docs/template")
+  - name: TEMPLATE_IDS
+    title: テンプレートの対応表
+    container: scripts/build_templates.py
+    usecase: 共通
+    summary: '`x-kind` → テンプレートの ID'
+    entries:
+      - key: architecture
+        value: template-architecture
+      - key: component
+        value: template-component
+      - key: config
+        value: template-config
+      - key: dataflow
+        value: template-dataflow
+      - key: dev_command
+        value: template-dev-command
+      - key: er
+        value: template-er
+      - key: external_api
+        value: template-external-api
+      - key: interface
+        value: template-interface
+      - key: library
+        value: template-external-library
+      - key: module
+        value: template-module
+      - key: nonfunctional
+        value: template-nonfunctional
+      - key: scenario
+        value: template-scenario
+      - key: screen
+        value: template-screen-design
+      - key: state_transition
+        value: template-state-transition
+      - key: test_procedure
+        value: template-test-procedure
+    refs:
+      - IF-201-1#constraints[テンプレートの対応表]
+  - name: CONSTRAINT_KEYS
+    title: 制約の列に出すキー
+    container: scripts/build_templates.py
+    usecase: 共通
+    summary: キーの表の `制約` の列に、この順で出すキーワード
+    value: ("const", "pattern", "format", "minLength", "maxLength", "minItems", "maxItems", "minimum", "maximum")
+  - name: COMMAND
+    title: 生成のコマンド
+    container: scripts/build_templates.py
+    usecase: 共通
+    summary: 標準エラーと「全ての文書の検査」の違反に出す、生成し直すコマンド
+    value: '"uv run --frozen --script scripts/build_templates.py"'
+functions:
+  - name: main
+    title: 設計書のテンプレートの生成の入口
+    kind: 関数
+    container: scripts/build_templates.py
+    usecase: 設計書のテンプレートの生成
+    role: 入口
+    scope: public
+    summary: 全てのスキーマとテンプレートを読み、全件の items を組み立ててから、違うものだけ書き出す
+    side_effects: '`TEMPLATES_DIR` の、組み立てた `items` が今の `items` と違うテンプレートの文書を書き換える'
+    args:
+      - name: argv
+        title: 引数
+        type: Sequence[str] | None
+        required: false
+        default: None
+        description: コマンドの引数。`None` は `sys.argv[1:]`。引数は取らない（`--help` だけ）
+    returns:
+      type: int
+      description: 終了コード。`0` = 全てのテンプレートが組み立てた items と一致した（書き換えたものを含む）、`2` = スキーマかテンプレートが読めない、`1` = 想定していない例外
+    process: |-
+      1. argparse で引数を読み、標準出力を UTF-8 にする
+      2. 作業ディレクトリの `SCHEMAS_DIR` の全てのスキーマを読み込む（設計書のスキーマの読み込み）
+      3. 対応表に行がある種類のスキーマごとに、`TEMPLATES_DIR / {テンプレートの ID}.yaml` を UTF-8 で読み、文書として読む（文書の読み込み）
+      4. 種類ごとに items を組み立てる（items の組み立て）
+         - `BuildError` の場合（2〜4 のどこか）、標準エラーへ `str(error)` を出し、どのファイルも書き換えずに `2` を返す
+      5. 組み立てた items が今の `items` と違うテンプレートごとに、items を置き換えて書き出し（items の置き換え）、パスを昇順で 1 行ずつ標準出力へ出して `0` を返す
+         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返す
+    unit_tests:
+      - name: test_main
+        case: 正常
+        summary: items が古いテンプレートだけ書き換える
+        condition: '`er`・`config`・`common`・`index` のスキーマと、`items` の古い `template-er.yaml`、生成した状態の `template-config.yaml` を持つ一時フォルダを作業ディレクトリにする'
+        mock: なし（一時ディレクトリ）
+        expected: '`0` を返し、標準出力が `docs/template/template-er.yaml` の 1 行で、`template-config.yaml` のバイト列が変わらない'
+      - name: test_main_when_unchanged
+        case: 正常
+        summary: 2 回目の起動
+        condition: '`test_main` の後にもう一度起動する'
+        mock: なし（一時ディレクトリ）
+        expected: '`0` を返し、標準出力が空で、どのファイルのバイト列も変わらない'
+      - name: test_main_when_template_missing
+        case: 正常
+        summary: 対応するテンプレートが無い
+        condition: '`test_main` の一時フォルダから `template-config.yaml` を削除する'
+        mock: なし（一時ディレクトリ）
+        expected: '`2` を返し、標準エラーに `template-config` と `schemas/design/config.schema.yaml` が出て、`template-er.yaml` のバイト列が変わらない'
+      - name: test_main_when_schema_broken
+        case: 正常
+        summary: スキーマが読めない
+        condition: '`test_main` の一時フォルダの `config.schema.yaml` を、閉じていない引用符の中身にする'
+        mock: なし（一時ディレクトリ）
+        expected: '`2` を返し、標準エラーに `schemas/design/config.schema.yaml` が出て、`template-er.yaml` のバイト列が変わらない'
+    callees:
+      - MOD-201-1#functions[load_schemas]
+      - MOD-201-1#functions[build_items]
+      - MOD-201-1#functions[replace_items]
+      - MOD-72-2#functions[load_document]
+    refs:
+      - IF-201-1#
+  - name: load_schemas
+    title: 設計書のスキーマの読み込み
+    kind: 関数
+    container: scripts/build_templates.py
+    usecase: 共通
+    scope: public
+    summary: '`SCHEMAS_DIR` の全てのスキーマを読み、ファイル名を URI にして登録し、全ての `$ref` を解決できるかを確認する'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`SCHEMAS_DIR` の起点'
+      - name: check_refs
+        title: $ref を確認するか
+        type: bool
+        required: false
+        default: 'True'
+        description: '`False` のときは解決できない `$ref` を `BuildError` にしない（「全ての文書の検査」は `$ref` の誤りを別の検査で出す）'
+    returns:
+      type: SchemaSet
+      description: 読み込んだ設計書のスキーマ
+    process: |-
+      1. `{root}/{SCHEMAS_DIR}` の直下の `*.schema.yaml` をファイル名の順に UTF-8 で読み、安全な型だけで読む（行の情報の要らない YAML の読み込み）
+      2. ファイル名を URI にして全てを登録する
+      3. `check_refs` のとき、各スキーマの全ての `$ref` を、そのファイル名を基準の URI にして登録から引く
+    exceptions:
+      - name: BuildError
+        condition: '`SCHEMAS_DIR` が無い、スキーマが UTF-8 の YAML として読めない・最上位がマッピングでない'
+        message: '`{パス}: スキーマを読めません: {理由}`'
+      - name: BuildError
+        condition: '`check_refs` のときに、解決できない `$ref` がある'
+        message: '`{パス}: $ref: {値} を解決できません`'
+    unit_tests:
+      - name: test_load_schemas
+        case: 正常
+        summary: 全てのスキーマを読んで登録する
+        condition: '`er`・`common` のスキーマ（`er` が `common.schema.yaml#/$defs/...` を指す）'
+        mock: なし（一時ディレクトリ）
+        expected: '`docs` が 2 件で、`registry` から `common.schema.yaml#/$defs/...` を引ける'
+      - name: test_load_schemas_when_ref_unresolvable
+        case: 異常
+        summary: 解決できない $ref
+        condition: '`er` のキーの `$ref` が `common.schema.yaml#/$defs/無い型`'
+        mock: なし（一時ディレクトリ）
+        expected: '`BuildError` で、`path` が `schemas/design/er.schema.yaml`、理由に `$ref` の値がある'
+        exception: 解決できない `$ref` がある
+      - name: test_load_schemas_when_ref_unchecked
+        case: 正常
+        summary: $ref を確認しない
+        condition: '`test_load_schemas_when_ref_unresolvable` と同じスキーマで `check_refs=False`'
+        mock: なし（一時ディレクトリ）
+        expected: '`BuildError` を送出せず、`docs` が 2 件'
+      - name: test_load_schemas_when_unreadable
+        case: 異常
+        summary: 読めないスキーマ
+        condition: 閉じていない引用符の中身の `er.schema.yaml`
+        mock: なし（一時ディレクトリ）
+        expected: '`BuildError` で、`path` が `schemas/design/er.schema.yaml`'
+        exception: スキーマが YAML として読めない
+    callees:
+      - MOD-72-2#functions[load_safe]
+    refs:
+      - IF-201-1#constraints[書き出しの順序]
+  - name: build_items
+    title: items の組み立て
+    kind: 関数
+    container: scripts/build_templates.py
+    usecase: 共通
+    scope: public
+    summary: 種類のスキーマ 1 件から、テンプレートの `items` を組み立てる
+    args:
+      - name: name
+        title: スキーマのファイル名
+        type: str
+        required: true
+        description: '`$ref` を解決するときの基準の URI'
+      - name: schemas
+        title: 読み込んだ設計書のスキーマ
+        type: SchemaSet
+        required: true
+        description: '`name` のスキーマと、`$ref` の解決先'
+    returns:
+      type: list[dict[str, str]]
+      description: '`id`・`name`・`body` だけを持つ項目の並び'
+    process: |-
+      1. `overview`（概要）: トップの `description`
+      2. `rules-01`（決まり）: トップの `x-rules` を `- ` の箇条書きにする（無ければ配置しない）
+      3. キーをたどり（キーの列挙）、`item-list-01`（項目）にキーの表を、`key-rules-01`（キーごとの決まり）に決まりの表を配置する（表の作成。決まりか悪い例を持つキーが無ければ `key-rules-01` を配置しない）
+      4. トップの `examples` の要素ごとに、`example-sample-01` から連番で、要素をブロックスタイルの YAML にした `yaml` のコードフェンスを配置する。要素が 2 件以上なら名前を `記載例 {番号}` にする
+    exceptions:
+      - name: BuildError
+        condition: キーの `$ref` を解決できない（`check_refs=False` で読んだときだけ起きる）
+        message: '`{パス}: $ref: {値} を解決できません`'
+    unit_tests:
+      - name: test_build_items
+        case: 正常
+        summary: 5 項目の並び
+        condition: トップの `x-rules`・キーの `x-rules`・`x-bad-examples`・トップの `examples` 1 件を持つスキーマ
+        mock: なし
+        expected: '`id` が `overview`・`rules-01`・`item-list-01`・`key-rules-01`・`example-sample-01` の順'
+      - name: test_build_items_when_no_rules
+        case: 正常
+        summary: 決まりも悪い例も持たない
+        condition: トップにもキーにも `x-rules`・`x-bad-examples` が無いスキーマ
+        mock: なし
+        expected: '`rules-01`・`key-rules-01` を持たない'
+      - name: test_build_items_when_many_examples
+        case: 正常
+        summary: 記載例が 2 件
+        condition: トップの `examples` が 2 件
+        mock: なし
+        expected: '`example-sample-01`・`example-sample-02` の名前が `記載例 1`・`記載例 2`'
+      - name: test_build_items_when_ref_unresolvable
+        case: 異常
+        summary: 解決できない $ref
+        condition: '`check_refs=False` で読んだ、`$ref` を解決できないスキーマ'
+        mock: なし
+        expected: '`BuildError`'
+        exception: キーの `$ref` を解決できない
+    callees:
+      - MOD-201-1#functions[_iter_keys]
+      - MOD-201-1#functions[_render_key_table]
+      - MOD-201-1#functions[_render_key_rules]
+    callers:
+      - MOD-72-6#functions[check_design_templates]
+    refs:
+      - IF-201-1#constraints[組み立てる items]
+  - name: _iter_keys
+    title: キーの列挙
+    kind: 関数
+    container: scripts/build_templates.py
+    usecase: 共通
+    scope: internal
+    summary: '`properties` を深さ優先でスキーマの並びのとおりにたどり、`$ref` を解決したキーの行を返す'
+    args:
+      - name: schema
+        title: スキーマ
+        type: Mapping[str, object]
+        required: true
+        description: たどるオブジェクトのスキーマ
+      - name: resolver
+        title: $ref の解決
+        type: Resolver[Any]
+        required: true
+        description: 基準の URI を持つ解決
+      - name: prefix
+        title: 親の名前
+        type: str
+        required: false
+        default: '""'
+        description: '`parent.`・`parent[].` の接頭'
+    returns:
+      type: Iterator[KeyRow]
+      description: キーの行
+    process: |-
+      1. `properties` のキーごとに、`$ref` を引いた先に、キーの側の `title`・`description`・`examples`・`x-rules`・`x-bad-examples` を重ねる（`$ref` を解決した先がさらに `$ref` を持てば、その解決器で続けて引く）
+      2. 親の `required` に名前があれば `required` を真にした行を返す
+      3. 子のスキーマがオブジェクトの `properties` を持てば `{名前}.` で、配列の `items` がオブジェクトの `properties` を持てば `{名前}[].` でたどる
+    unit_tests:
+      - name: test_iter_keys
+        case: 正常
+        summary: 入れ子と $ref
+        condition: オブジェクトの子・配列の要素の子・`$ref` で `title` だけキーの側にあるキーを持つスキーマ
+        mock: なし
+        expected: '名前が `a`・`a.b`・`c`・`c[].d` の順で、`$ref` のキーの `title` がキーの側、`description` が解決した先の値'
+  - name: _render_key_table
+    title: キーの表の作成
+    kind: 関数
+    container: scripts/build_templates.py
+    usecase: 共通
+    scope: internal
+    summary: 'キーの行から、`<!-- table: data -->` で包んだキーの表の Markdown を作る'
+    args:
+      - name: rows
+        title: キーの行
+        type: Sequence[KeyRow]
+        required: true
+        description: キーの列挙の結果
+    returns:
+      type: str
+      description: 表の Markdown
+    process: |-
+      1. 列を `名前`・`title`・`型`・`必須`・`選択肢`・`制約`・`description`・`examples` にする
+      2. `型` は `type`（配列なら要素を ` / ` でつなぐ。無ければ `anyOf`・`oneOf` の要素の `type` を ` / ` でつなぐ）、`制約` は `CONSTRAINT_KEYS` の順に `{キー}: {値}` を `, ` でつなぐ
+      3. 各セルをセルの書き方にする（セルの書き方）
+    unit_tests:
+      - name: test_render_key_table
+        case: 正常
+        summary: 列と制約と型
+        condition: '`type: [string, "null"]`・`pattern`・`minLength`・`enum`・`examples` 2 件を持つキー、`anyOf` だけを持つキー'
+        mock: なし
+        expected: '型が `string / null` と `anyOf` の要素の型を ` / ` でつないだ値、制約が `pattern: …, minLength: …` の順の行'
+    refs:
+      - IF-201-1#constraints[キーの表]
+  - name: _render_key_rules
+    title: キーごとの決まりの表の作成
+    kind: 関数
+    container: scripts/build_templates.py
+    usecase: 共通
+    scope: internal
+    summary: 決まりか悪い例を持つキーの行から、キーごとの決まりの表の Markdown を作る
+    args:
+      - name: rows
+        title: キーの行
+        type: Sequence[KeyRow]
+        required: true
+        description: キーの列挙の結果
+    returns:
+      type: str | None
+      description: 表の Markdown。決まりか悪い例を持つキーが無ければ `None`
+    process: |-
+      1. 列を `名前`・`決まり`・`悪い例`・`理由` にする
+      2. `x-rules` か `x-bad-examples` を持つキーごとに、`決まり` を `x-rules` の `<br>` つなぎにし、`x-bad-examples` の 1 件を 1 行にする（2 件目からは `名前`・`決まり` のセルを空にする）
+      3. 各セルをセルの書き方にする（セルの書き方）
+    unit_tests:
+      - name: test_render_key_rules
+        case: 正常
+        summary: 悪い例が 2 件
+        condition: '`x-rules` 2 件と `x-bad-examples` 2 件を持つキーと、どちらも持たないキー'
+        mock: なし
+        expected: 2 行で、2 行目の `名前`・`決まり` が空。どちらも持たないキーの行が無い
+      - name: test_render_key_rules_when_none
+        case: 正常
+        summary: 決まりを持つキーが無い
+        condition: '`x-rules`・`x-bad-examples` を持たないキーだけ'
+        mock: なし
+        expected: '`None`'
+    refs:
+      - IF-201-1#constraints[キーごとの決まりの表]
+  - name: _format_cell
+    title: セルの書き方
+    kind: 関数
+    container: scripts/build_templates.py
+    usecase: 共通
+    scope: internal
+    summary: 表のセル 1 つの値を、表の中に置ける 1 行の文字列にする
+    args:
+      - name: value
+        title: 値
+        type: object
+        required: true
+        description: セルの値。`None` は値の無いセル
+    returns:
+      type: str
+      description: セルの文字列
+    process: |-
+      1. `None` は `-` を返す
+      2. 文字列はそのまま、文字列でない値はフロースタイルの 1 行の YAML をバッククォートで囲む
+      3. 改行を `<br>` に、`|` を `\|` にして返す
+    unit_tests:
+      - name: test_format_cell
+        case: 正常
+        summary: 値の種類ごと
+        condition: '`None`・`"a|b\nc"`・`{"k": 1}`・`True`'
+        mock: なし
+        expected: '`-`・`a\|b<br>c`・`` `{k: 1}` ``・`` `true` ``'
+    refs:
+      - IF-201-1#constraints[表のセルの書き方]
+  - name: replace_items
+    title: items の置き換え
+    kind: 関数
+    container: scripts/build_templates.py
+    usecase: 設計書のテンプレートの生成
+    scope: public
+    summary: テンプレートの文書の `items` が組み立てた items と違えば置き換えて書き出す
+    side_effects: '`path` のファイルを書き換える（違いが無ければ書き換えない）'
+    args:
+      - name: path
+        title: テンプレートのパス
+        type: Path
+        required: true
+        description: 書き出すファイル
+      - name: doc
+        title: テンプレートの文書
+        type: CommentedMap
+        required: true
+        description: 往復の読み書きで読んだ文書
+      - name: items
+        title: 組み立てた items
+        type: Sequence[Mapping[str, str]]
+        required: true
+        description: items の組み立ての結果
+    returns:
+      type: bool
+      description: 書き換えたか
+    process: |-
+      1. 今の `items` を `id`・`name`・`body` の組の並びにし、`items` と同じなら `False` を返す
+      2. `items` の値を、`body` をブロックスカラー（`|-`）にした並びに置き換え、ruamel.yaml の往復の読み書き（インデントは既存の文書と同じマッピング 2・配列 4・オフセット 2、行の幅は折り返さない値）で UTF-8・改行 `\n` で書き出して `True` を返す
+    unit_tests:
+      - name: test_replace_items
+        case: 正常
+        summary: items だけが変わる
+        condition: 先頭のコメントと `tags`・`rev` を持ち、`items` が古いテンプレート
+        mock: なし（一時ディレクトリ）
+        expected: '`True` を返し、書き出したファイルの先頭のコメント・`items` 以外のキーの値と並びが変わらず、`items` が組み立てた items'
+      - name: test_replace_items_when_same
+        case: 正常
+        summary: 違いが無い
+        condition: '`items` が組み立てた items と同じテンプレート'
+        mock: なし（一時ディレクトリ）
+        expected: '`False` を返し、ファイルの更新日時とバイト列が変わらない'
+    refs:
+      - IF-201-1#constraints[書き出し]
+notes:
+  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）・`referencing`（`check_all.py` と同じバージョン）を書き、`_common.py` を同じフォルダから import する。
+  「全ての文書の検査」との共有: '`check_all.py` は `load_schemas`（`check_refs=False`）と `build_items` を import し、生成と同じ組み立てでずれを検査する（`check_all.py` の `check_design_templates`）。'

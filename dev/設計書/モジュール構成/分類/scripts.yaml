@@ -17,6 +17,8 @@ directory: |-
   ├── build_pages.py.lock
   ├── build_word_list.py          # 対応表のコピーの作成（手元の CLI）
   ├── build_word_list.py.lock
+  ├── build_templates.py          # 設計書のテンプレートの生成（手元の CLI）
+  ├── build_templates.py.lock
   ├── files.yaml                  # scripts/ のファイルの一覧（dev-docs の files の行）
   └── lint/                       # lint の設定と npm の依存（npm ci --prefix scripts/lint）
       ├── package.json
@@ -49,6 +51,10 @@ diagrams:
           class build["対応表のコピーの作成"]
           build : main()
           build : render_copy()
+          class templates["設計書のテンプレートの生成"]
+          templates : main()
+          templates : load_schemas()
+          templates : build_items()
           class common["共通"]
           common : load_document()
           common : iter_strings()
@@ -71,6 +77,8 @@ diagrams:
           pages ..> common
           build ..> common
           checkall ..> build
+          templates ..> common
+          checkall ..> templates
 notes:
   起動の方式: |-
     各入口のスクリプトは PEP 723 のインラインのメタデータ（`requires-python = ">=3.14"` と依存）を持ち、`uv lock --script` のロック（`{スクリプト}.py.lock`）で版を固定する。
