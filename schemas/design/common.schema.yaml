@@ -57,12 +57,18 @@ $defs:
     type: string
     title: 状態
     description: 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。書かなければ実装済みとして扱う。
-    enum: [planned, implemented, deprecated, removed]
+    enum:
+    - planned
+    - implemented
+    - deprecated
+    - removed
   visibility:
     type: string
     title: 公開
     description: Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。書かなければ親の値を引き継ぎ、最上位の既定は `developer`。
-    enum: [user, developer]
+    enum:
+    - user
+    - developer
   implementation:
     type: string
     title: 実装
@@ -119,7 +125,10 @@ $defs:
     items:
       type: object
       additionalProperties: false
-      required: [mark, term, definition]
+      required:
+      - mark
+      - term
+      - definition
       properties:
         mark:
           type: string
@@ -140,13 +149,20 @@ $defs:
     x-rules:
       - '使う項目の `x-shape: diagram` と `x-diagram` で図の種類を決める。'
     additionalProperties: false
-    required: [nodes, edges]
+    required:
+    - nodes
+    - edges
     properties:
       direction:
         type: string
         title: 向き
         description: 図の向き。書かなければ図の種類の既定（判定は `TD`、データフロー・アーキテクチャは `LR`）。
-        enum: [TD, TB, LR, RL, BT]
+        enum:
+        - TD
+        - TB
+        - LR
+        - RL
+        - BT
       nodes:
         type: array
         title: ノード
@@ -160,7 +176,9 @@ $defs:
         items:
           type: object
           additionalProperties: false
-          required: [from, to]
+          required:
+          - from
+          - to
           properties:
             from:
               type: string
@@ -178,7 +196,11 @@ $defs:
               type: string
               title: 線
               description: 線の種類（`solid`（`-->`）/ `dotted`（`-.->`）/ `thick`（`==>`）/ `open`（`---`））。書かなければ `solid`。
-              enum: [solid, dotted, thick, open]
+              enum:
+              - solid
+              - dotted
+              - thick
+              - open
       subgraphs:
         type: array
         title: 枠
@@ -186,7 +208,9 @@ $defs:
         items:
           type: object
           additionalProperties: false
-          required: [id, nodes]
+          required:
+          - id
+          - nodes
           properties:
             id:
               type: string
@@ -208,7 +232,9 @@ $defs:
         items:
           type: object
           additionalProperties: false
-          required: [id, href]
+          required:
+          - id
+          - href
           properties:
             id:
               type: string
@@ -222,7 +248,9 @@ $defs:
     type: object
     title: ノード
     additionalProperties: false
-    required: [id, label]
+    required:
+    - id
+    - label
     properties:
       id:
         type: string
@@ -237,12 +265,26 @@ $defs:
         type: string
         title: 形
         description: ノードの形（`rect`（四角）/ `round`（角丸）/ `stadium`（開始・終端 `([…])`）/ `diamond`（判定）/ `circle`（処理）/ `cylinder`（データストア）/ `hexagon` / `parallelogram`（入出力ポート）/ `subroutine`）。書かなければ `rect`。
-        enum: [rect, round, stadium, diamond, circle, cylinder, hexagon, parallelogram, subroutine]
+        enum:
+        - rect
+        - round
+        - stadium
+        - diamond
+        - circle
+        - cylinder
+        - hexagon
+        - parallelogram
+        - subroutine
       kind:
         type: string
         title: 要素の種類
         description: データフロー・アーキテクチャで、ノードが何を表すか。`actor`（人・外部の相手）/ `process`（処理）/ `store`（データストア）/ `system`（システム・サブシステム）/ `external`（外部システム）。
-        enum: [actor, process, store, system, external]
+        enum:
+        - actor
+        - process
+        - store
+        - system
+        - external
   state_transitions:
     type: object
     title: 状態遷移
@@ -251,7 +293,10 @@ $defs:
       - 状態の名前は図のノードになるので、空白と記号を含めない。
       - 含める場合は `node` に図のノード名を書く。
     additionalProperties: false
-    required: [states, initial, transitions]
+    required:
+    - states
+    - initial
+    - transitions
     properties:
       states:
         type: array
@@ -262,7 +307,9 @@ $defs:
         items:
           type: object
           additionalProperties: false
-          required: [name, identifier]
+          required:
+          - name
+          - identifier
           properties:
             name:
               type: string
@@ -321,7 +368,9 @@ $defs:
         items:
           type: object
           additionalProperties: false
-          required: [from, to]
+          required:
+          - from
+          - to
           properties:
             from:
               type: string
@@ -359,22 +408,27 @@ $defs:
                 properties:
                   from:
                     const: 全状態
-                required: [from]
+                required:
+                - from
               then:
-                required: [representative]
+                required:
+                - representative
             - if:
                 properties:
                   to:
                     const: 元の状態
-                required: [to]
+                required:
+                - to
               then:
-                required: [representative]
+                required:
+                - representative
   er:
     type: object
     title: ER 図
     description: 実体（テーブルとカラム）と関連。`erDiagram` の図はここから生成する。
     additionalProperties: false
-    required: [entities]
+    required:
+    - entities
     properties:
       entities:
         type: array
@@ -383,7 +437,8 @@ $defs:
         items:
           type: object
           additionalProperties: false
-          required: [name]
+          required:
+          - name
           properties:
             name:
               type: string
@@ -397,7 +452,9 @@ $defs:
               items:
                 type: object
                 additionalProperties: false
-                required: [type, name]
+                required:
+                - type
+                - name
                 properties:
                   type:
                     type: string
@@ -409,7 +466,10 @@ $defs:
                   key:
                     type: string
                     title: キー
-                    enum: [PK, FK, UK]
+                    enum:
+                    - PK
+                    - FK
+                    - UK
                   comment:
                     type: string
                     title: 注記
@@ -422,7 +482,10 @@ $defs:
         items:
           type: object
           additionalProperties: false
-          required: [from, to, cardinality]
+          required:
+          - from
+          - to
+          - cardinality
           properties:
             from:
               type: string

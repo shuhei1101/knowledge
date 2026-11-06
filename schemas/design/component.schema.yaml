@@ -163,7 +163,7 @@ properties:
           title: 差し込める部品
           description: 差し込める部品設計。どれでも差し込めるときは持たない。
           examples:
-          - ["CMP-3#"]
+          - - "CMP-3#"
           items:
             $ref: common.schema.yaml#/$defs/ref
         passes:
@@ -341,7 +341,7 @@ properties:
     title: アクセシビリティ
     description: 読み上げ名・キー操作・色に頼らない表し方など、部品が守ること。
     examples:
-    - ["状態を色だけで伝えない（`label` を必ず出す）"]
+    - - "状態を色だけで伝えない（`label` を必ず出す）"
     x-heading: アクセシビリティ
     x-shape: list
     items:
