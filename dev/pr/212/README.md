@@ -1,0 +1,1 @@
+# knowledge-checks に、文書どうしの aliases の衝突を違反として返す検査を追加する
