@@ -7,6 +7,7 @@ x-rules:
   - 補足は正の指示（何をどう記載するか）だけにする。
   - テンプレートと実体のファイルは個別のバージョンを持たない。
   - 設計書の種類のテンプレートは、`schemas/design/` のスキーマが正本で、文書を手で記載しない。
+  - 設計書の種類のテンプレートの `items` は `scripts/build_templates.py` が生成し、`items` の決まり（セクション一覧・記述例・補足の構成）を当てない。
 allOf:
   - $ref: common.schema.yaml#/$defs/metadata
 properties:
