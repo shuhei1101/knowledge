@@ -487,7 +487,7 @@ def test_check_word_list_copy_when_stale(repo_factory: RepoFactory) -> None:
 
 
 # テンプレートの検査に使う ER 図のスキーマ
-_DESIGN_ER = (
+_TEMPLATE_SOURCE_ER = (
     "$schema: https://json-schema.org/draft/2020-12/schema\n"
     "title: ER 図\n"
     "description: データストアの構造をまとめる。\n"
@@ -501,8 +501,8 @@ _DESIGN_ER = (
     "      - 改名でも変えない。\n"
 )
 
-# _DESIGN_ER の $ref の解決先
-_DESIGN_COMMON = (
+# _TEMPLATE_SOURCE_ER の $ref の解決先
+_TEMPLATE_SOURCE_COMMON = (
     "$schema: https://json-schema.org/draft/2020-12/schema\n"
     "title: 共通\n"
     "$defs:\n"
@@ -511,8 +511,8 @@ _DESIGN_COMMON = (
     "    description: 変わらない ID。\n"
 )
 
-# _DESIGN_ER から生成した template-er.yaml
-_DESIGN_TEMPLATE_ER = (
+# _TEMPLATE_SOURCE_ER から生成した template-er.yaml
+_GENERATED_TEMPLATE_ER = (
     "id: template-er\n"
     "kind: template\n"
     "items:\n"
@@ -548,9 +548,9 @@ def test_check_design_templates(repo_factory: RepoFactory) -> None:
     # 準備
     root = repo_factory(
         {
-            "schemas/design/common.schema.yaml": _DESIGN_COMMON,
-            "schemas/design/er.schema.yaml": _DESIGN_ER,
-            "docs/template/template-er.yaml": _DESIGN_TEMPLATE_ER,
+            "schemas/design/common.schema.yaml": _TEMPLATE_SOURCE_COMMON,
+            "schemas/design/er.schema.yaml": _TEMPLATE_SOURCE_ER,
+            "docs/template/template-er.yaml": _GENERATED_TEMPLATE_ER,
         }
     )
     # 実行
@@ -564,9 +564,9 @@ def test_check_design_templates_when_stale(repo_factory: RepoFactory) -> None:
     # 準備
     root = repo_factory(
         {
-            "schemas/design/common.schema.yaml": _DESIGN_COMMON,
-            "schemas/design/er.schema.yaml": _DESIGN_ER + "      - 2 つ目の決まり。\n",
-            "docs/template/template-er.yaml": _DESIGN_TEMPLATE_ER,
+            "schemas/design/common.schema.yaml": _TEMPLATE_SOURCE_COMMON,
+            "schemas/design/er.schema.yaml": _TEMPLATE_SOURCE_ER + "      - 2 つ目の決まり。\n",
+            "docs/template/template-er.yaml": _GENERATED_TEMPLATE_ER,
         }
     )
     # 実行
@@ -585,8 +585,8 @@ def test_check_design_templates_when_template_missing(repo_factory: RepoFactory)
     # 準備
     root = repo_factory(
         {
-            "schemas/design/common.schema.yaml": _DESIGN_COMMON,
-            "schemas/design/er.schema.yaml": _DESIGN_ER,
+            "schemas/design/common.schema.yaml": _TEMPLATE_SOURCE_COMMON,
+            "schemas/design/er.schema.yaml": _TEMPLATE_SOURCE_ER,
         }
     )
     # 実行
@@ -601,8 +601,8 @@ def test_check_design_templates_when_ref_unresolvable(repo_factory: RepoFactory)
     # 準備
     root = repo_factory(
         {
-            "schemas/design/common.schema.yaml": _DESIGN_COMMON,
-            "schemas/design/er.schema.yaml": _DESIGN_ER.replace("$defs/id", "$defs/無い型"),
+            "schemas/design/common.schema.yaml": _TEMPLATE_SOURCE_COMMON,
+            "schemas/design/er.schema.yaml": _TEMPLATE_SOURCE_ER.replace("$defs/id", "$defs/無い型"),
             "docs/template/template-er.yaml": "id: template-er\nkind: template\nitems: []\n",
         }
     )
