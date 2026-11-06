@@ -6,7 +6,7 @@ instructions: |-
   規約（rule）・テンプレート（template）・判定フローチャート（flowchart）・判定表（decision-table）・使い方（guide）・変更履歴（changelog）・スキル（skill）・単語の対応表（word-list）は `docs/` の YAML が正本で、種類ごとの行に分かれる。
   本文は `items[]` の各項目が持ち、`[名前](id:{文書の ID}#{項目の ID})` で他の文書・項目を指す。`related[].when` がその文書を読むときを表す。
   `hooks/`・`skills/`・`scripts/` のファイルは、各フォルダの `files.yaml` が名前・概要文・タグを持つ。
-  書き込みのときは knowledge-checks が、項目の ID の重複・参照先の実在・mermaid の文法を検査する。
+  書き込みのときは knowledge-checks が、項目の ID の重複・参照先の実在・`aliases` の衝突・mermaid の文法を検査する。
 related:
   types: [references, requires, replaces, part_of, change_together, see_also, implements, tests]
 github:

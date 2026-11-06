@@ -389,7 +389,7 @@ def test_check_target(repo_factory: RepoFactory, fake_maid_factory: FakeMaidFact
         path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=True
     )
     # 実行
-    result = check_target(target, _BROKEN_BOTH, validator, root, fake_maid_factory(), {})
+    result = check_target(target, _BROKEN_BOTH, validator, root, fake_maid_factory(), {}, {})
     # 検証
     assert len(result) == 2
     assert result[0][2].startswith("schema: ")
@@ -408,7 +408,7 @@ def test_check_target_when_no_checks(repo_factory: RepoFactory) -> None:
         path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=False
     )
     # 実行
-    result = check_target(target, text, validator, root, "maid", {})
+    result = check_target(target, text, validator, root, "maid", {}, {})
     # 検証
     assert result == []
 
@@ -421,7 +421,7 @@ def test_check_target_when_unreadable(repo_factory: RepoFactory) -> None:
         path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=True
     )
     # 実行
-    result = check_target(target, None, "スキーマが無い", root, "maid", {})
+    result = check_target(target, None, "スキーマが無い", root, "maid", {}, {})
     # 検証
     assert result == [(1, "$", "ファイルを UTF-8 で読めません")]
 
@@ -435,7 +435,9 @@ def test_check_target_when_broken(repo_factory: RepoFactory) -> None:
         path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=True
     )
     # 実行
-    result = check_target(target, "items:\n  - id: a\n    name: [\n", validator, root, "maid", {})
+    result = check_target(
+        target, "items:\n  - id: a\n    name: [\n", validator, root, "maid", {}, {}
+    )
     # 検証
     assert len(result) == 1
     assert result[0][0] >= 3

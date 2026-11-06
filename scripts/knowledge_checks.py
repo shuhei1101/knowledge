@@ -6,7 +6,7 @@
 # ///
 """標準入力の文書 1 件に、スキーマで見られない決まりを当て、違反の配列の JSON を標準出力へ出す。
 
-dev-docs の validators の knowledge-checks。項目の ID の重複・id: の参照と related の to の実在・mermaid の文法と、
+dev-docs の validators の knowledge-checks。項目の ID の重複・id: の参照と related の to の実在・aliases の衝突・mermaid の文法と、
 対応表の examples が照合と合うかを検査する。
 作業ディレクトリは配信元（knowledge のリポジトリ）の直下にする。
 
@@ -23,18 +23,22 @@ import subprocess
 import sys
 import time
 import traceback
+import unicodedata
 from pathlib import Path
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 from _common import (
     LIMIT_SEC,
+    ConfigError,
     DocumentError,
     Violation,
     format_path,
     iter_strings,
     line_of,
+    list_row_files,
+    load_config,
     load_document,
     read_texts,
     value_line,
@@ -108,6 +112,7 @@ def check_document(
     deadline: float,
     *,
     index: Mapping[str, frozenset[str]] | None = None,
+    names: Mapping[str, Sequence[tuple[str, str]]] | None = None,
 ) -> list[Violation]:
     """文書 1 件に全ての検査を当て、違反を並べて返す。"""
     try:
@@ -123,11 +128,22 @@ def check_document(
         ]
     if index is None:
         index = build_id_index(root)
-    violations = [
-        *check_duplicate_ids(doc),
-        *check_references(doc, index),
-        *check_mermaid(doc, executable, deadline),
-    ]
+    violations = [*check_duplicate_ids(doc), *check_references(doc, index)]
+    if names is None:
+        try:
+            names = build_name_index(root, load_config(root))
+        except ConfigError as error:
+            # 照合の相手を決められないので、aliases の衝突は検査せずに 1 件だけ返す
+            violations.append(
+                {
+                    "path": "$",
+                    "rule": f"1 行目: {error.message}。aliases の衝突を検査できません",
+                    "fix": "配信元の直下に読める dev-docs.yaml を置く",
+                }
+            )
+    if names is not None:
+        violations.extend(check_aliases(doc, names))
+    violations.extend(check_mermaid(doc, executable, deadline))
     # 対応表は examples の検査を後ろにつなぐ
     if _field(doc, "kind") == _WORD_LIST_KIND:
         violations.extend(check_word_list(doc))
@@ -174,6 +190,83 @@ def build_id_index(root: Path) -> dict[str, frozenset[str]]:
         if isinstance(doc_id, str):
             index[doc_id] = _item_ids(doc)
     return index
+
+
+def normalize_name(value: str) -> str:
+    """照合の前に、名前へ NFKC・前後の空白の除去・英字の大文字小文字の統一を適用する。"""
+    return unicodedata.normalize("NFKC", value).strip().casefold()
+
+
+def build_name_index(
+    root: Path, rows: Sequence[Mapping[str, Any]]
+) -> dict[str, list[tuple[str, str]]]:
+    """alias_type を持つ行の文書から、正規化した名前 → （文書の ID、name か aliases）の索引を作る。"""
+    paths = sorted(
+        {
+            root / file
+            for row in rows
+            if row.get("alias_type") is not None
+            for file in list_row_files(root, row)
+        }
+    )
+    names: dict[str, list[tuple[str, str]]] = {}
+    for text in read_texts(paths).values():
+        # 読めないファイル・文書は飛ばす（その文書の誤りはその文書の検査で出る）
+        if text is None:
+            continue
+        try:
+            doc = load_document(text)
+        except DocumentError:
+            continue
+        doc_id = _field(doc, "id")
+        if not isinstance(doc_id, str):
+            continue
+        name = _field(doc, "name")
+        if isinstance(name, str):
+            names.setdefault(normalize_name(name), []).append((doc_id, "name"))
+        for alias in _aliases(doc):
+            names.setdefault(normalize_name(alias), []).append((doc_id, "aliases"))
+    return names
+
+
+def _aliases(doc: CommentedMap) -> list[str]:
+    """aliases の文字列の要素を返す。配列でなければ空。"""
+    value = _field(doc, "aliases")
+    if not isinstance(value, CommentedSeq):
+        return []
+    return [alias for alias in cast("list[object]", value) if isinstance(alias, str)]
+
+
+def check_aliases(
+    doc: CommentedMap, names: Mapping[str, Sequence[tuple[str, str]]]
+) -> list[Violation]:
+    """aliases の要素が、ほかの文書の name・aliases と正規化して一致したら違反にする。"""
+    value = _field(doc, "aliases")
+    if not isinstance(value, CommentedSeq):
+        return []
+    doc_id = _field(doc, "id")
+    violations: list[Violation] = []
+    for position, alias in enumerate(cast("list[object]", value)):
+        if not isinstance(alias, str):
+            continue
+        # 書き込む前の自分の値は照合の相手にしない
+        owners = [
+            (owner, field)
+            for owner, field in names.get(normalize_name(alias), [])
+            if owner != doc_id
+        ]
+        if not owners:
+            continue
+        others = "、".join(f"`{owner}` の {field}" for owner, field in owners)
+        line = line_of(doc, ["aliases", position])
+        violations.append(
+            {
+                "path": f"aliases[{position}]",
+                "rule": f"{line} 行目: 別名 `{alias}` が {others} と衝突しています",
+                "fix": "指す文書を 1 件に決め、片方だけに登録する",
+            }
+        )
+    return violations
 
 
 def check_duplicate_ids(doc: CommentedMap) -> list[Violation]:

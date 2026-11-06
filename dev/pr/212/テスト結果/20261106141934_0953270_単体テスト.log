@@ -1,0 +1,114 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-scripts-alias-collision-check
+configfile: pytest.ini
+collected 188 items / 1 error
+
+==================================== ERRORS ====================================
+_________ ERROR collecting tests/unit/scripts/test_knowledge_checks.py _________
+ImportError while importing test module '/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-scripts-alias-collision-check/tests/unit/scripts/test_knowledge_checks.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/scripts/test_knowledge_checks.py:10: in <module>
+    from knowledge_checks import (
+E   ImportError: cannot import name 'build_name_index' from 'knowledge_checks' (/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-scripts-alias-collision-check/scripts/knowledge_checks.py). Did you mean: 'build_id_index'?
+=========================== short test summary info ============================
+ERROR tests/unit/scripts/test_knowledge_checks.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 1.07s ===============================
+
+# 収集のエラーで止まらないように、残りのテストの結果も確かめる
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit --continue-on-collection-errors -q
+......................................................FFFF.............. [ 38%]
+........................................................................ [ 76%]
+............................................                             [100%]
+==================================== ERRORS ====================================
+_________ ERROR collecting tests/unit/scripts/test_knowledge_checks.py _________
+ImportError while importing test module '/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-scripts-alias-collision-check/tests/unit/scripts/test_knowledge_checks.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/scripts/test_knowledge_checks.py:10: in <module>
+    from knowledge_checks import (
+E   ImportError: cannot import name 'build_name_index' from 'knowledge_checks' (/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-scripts-alias-collision-check/scripts/knowledge_checks.py). Did you mean: 'build_id_index'?
+=================================== FAILURES ===================================
+______________________________ test_check_target _______________________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x7eb05ce14460>
+fake_maid_factory = <function fake_maid_factory.<locals>._create at 0x7eb05ce14e00>
+
+    def test_check_target(repo_factory: RepoFactory, fake_maid_factory: FakeMaidFactory) -> None:
+        """スキーマと文書の違反を並べる（正常系）。"""
+        # 準備
+        root = repo_factory({"docs/rule/rule-c.yaml": _BROKEN_BOTH})
+        validator = build_validators(root, ["schemas/rule.schema.yaml"])["schemas/rule.schema.yaml"]
+        target = Target(
+            path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=True
+        )
+        # 実行
+>       result = check_target(target, _BROKEN_BOTH, validator, root, fake_maid_factory(), {}, {})
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: check_target() takes 6 positional arguments but 7 were given
+
+tests/unit/scripts/test_check_all.py:392: TypeError
+_______________________ test_check_target_when_no_checks _______________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x7eb05cfd9220>
+
+    def test_check_target_when_no_checks(repo_factory: RepoFactory) -> None:
+        """文書の違反の検査を当てない行（正常系）。"""
+        # 準備
+        text = "id: rule-c\nkind: rule\nname: 規約 C\ndescription: 説明\nitems:\n  - id: x\n  - id: x\n"
+        root = repo_factory({})
+        validator = build_validators(root, ["schemas/rule.schema.yaml"])["schemas/rule.schema.yaml"]
+        target = Target(
+            path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=False
+        )
+        # 実行
+>       result = check_target(target, text, validator, root, "maid", {}, {})
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: check_target() takes 6 positional arguments but 7 were given
+
+tests/unit/scripts/test_check_all.py:411: TypeError
+______________________ test_check_target_when_unreadable _______________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x7eb05cfab270>
+
+    def test_check_target_when_unreadable(repo_factory: RepoFactory) -> None:
+        """読めないファイル（正常系）。"""
+        # 準備
+        root = repo_factory({})
+        target = Target(
+            path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=True
+        )
+        # 実行
+>       result = check_target(target, None, "スキーマが無い", root, "maid", {}, {})
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: check_target() takes 6 positional arguments but 7 were given
+
+tests/unit/scripts/test_check_all.py:424: TypeError
+________________________ test_check_target_when_broken _________________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x7eb05cfab1c0>
+
+    def test_check_target_when_broken(repo_factory: RepoFactory) -> None:
+        """読めない YAML（正常系）。"""
+        # 準備
+        root = repo_factory({})
+        validator = build_validators(root, ["schemas/rule.schema.yaml"])["schemas/rule.schema.yaml"]
+        target = Target(
+            path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=True
+        )
+        # 実行
+>       result = check_target(target, "items:\n  - id: a\n    name: [\n", validator, root, "maid", {}, {})
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: check_target() takes 6 positional arguments but 7 were given
+
+tests/unit/scripts/test_check_all.py:438: TypeError
+=========================== short test summary info ============================
+ERROR tests/unit/scripts/test_knowledge_checks.py
+FAILED tests/unit/scripts/test_check_all.py::test_check_target - TypeError: c...
+FAILED tests/unit/scripts/test_check_all.py::test_check_target_when_no_checks
+FAILED tests/unit/scripts/test_check_all.py::test_check_target_when_unreadable
+FAILED tests/unit/scripts/test_check_all.py::test_check_target_when_broken - ...
+4 failed, 184 passed, 1 error in 2.76s
