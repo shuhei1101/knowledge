@@ -475,3 +475,5 @@ functions:
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）・`referencing`（`check_all.py` と同じバージョン）を書き、`_common.py` を同じフォルダから import する。
   「全ての文書の検査」との共有: '`check_all.py` は `load_schemas`（`check_refs=False`）と `build_items` を import し、生成と同じ組み立てでずれを検査する（`check_all.py` の `check_design_templates`）。'
+test_files:
+  - tests/unit/scripts/test_build_templates.py
