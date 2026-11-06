@@ -369,6 +369,22 @@ def _join(values: object) -> str | None:
     return " / ".join(_inline(item) for item in items)
 
 
+def _code(value: object) -> str:
+    """値を 1 行のインラインコードにする（値がバッククォートを含むときは 2 つで囲む）。"""
+    text = _flow(value)
+    if "`" in text:
+        return f"`` {text} ``"
+    return f"`{text}`"
+
+
+def _join_code(values: object) -> str | None:
+    """配列の要素ごとにインラインコードにして / でつなぐ。配列でないか空なら None。"""
+    items = as_list(values)
+    if not items:
+        return None
+    return " / ".join(_code(item) for item in items)
+
+
 def _render_key_table(rows: Sequence[KeyRow]) -> str:
     """キーの行から、キーの表の Markdown を作る。"""
     body: list[list[str]] = []
@@ -386,7 +402,8 @@ def _render_key_table(rows: Sequence[KeyRow]) -> str:
                 _format_cell(_join(schema.get("enum"))),
                 _format_cell(constraints or None),
                 _format_cell(schema.get("description")),
-                _format_cell(_join(schema.get("examples"))),
+                # examples は HTML として読ませないよう、文字列もインラインコードにする
+                _format_cell(_join_code(schema.get("examples"))),
             ]
         )
     return _render_table(_KEY_TABLE_COLUMNS, body)
