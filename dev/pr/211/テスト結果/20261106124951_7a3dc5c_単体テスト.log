@@ -1,0 +1,99 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-schemas-forbid-flow-style
+configfile: pytest.ini
+collected 198 items / 1 error
+
+==================================== ERRORS ====================================
+_______________ ERROR collecting tests/unit/scripts/test_lint.py _______________
+ImportError while importing test module '/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-schemas-forbid-flow-style/tests/unit/scripts/test_lint.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/scripts/test_lint.py:10: in <module>
+    from _lint import (
+E   ImportError: cannot import name 'YAMLLINT_SCHEMAS_CONFIG' from '_lint' (/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-schemas-forbid-flow-style/scripts/_lint.py)
+=========================== short test summary info ============================
+ERROR tests/unit/scripts/test_lint.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 1.52s ===============================
+
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit/scripts/test_check_all.py
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-schemas-forbid-flow-style
+configfile: pytest.ini
+collected 41 items
+
+tests/unit/scripts/test_check_all.py .....................FF............ [ 85%]
+......                                                                   [100%]
+
+=================================== FAILURES ===================================
+_________________ test_check_lints_when_schemas_use_flow_style _________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-6568/test_check_lints_when_schemas_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x76216c6a2a80>
+repo_factory = <function repo_factory.<locals>._create at 0x76216b40cb40>
+
+    def test_check_lints_when_schemas_use_flow_style(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, repo_factory: RepoFactory
+    ) -> None:
+        """スキーマのフロー形式だけを違反にする（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {
+                "docs/rule/rule-a.yaml": _FLOW_DOC,
+                "schemas/rule.schema.yaml": "type: object\nrequired: [id, title]\n",
+                "schemas/design/common.schema.yaml": "properties: {id: {type: string}}\n",
+            }
+        )
+        lint_dir = _schema_lint_dir(tmp_path)
+        target = Target(PurePosixPath("docs/rule/rule-a.yaml"), "schemas/rule.schema.yaml", True)
+        texts = {root / "docs/rule/rule-a.yaml": _FLOW_DOC}
+        monkeypatch.setattr(check_all, "run_markdown_lints", _no_lints)
+        # 実行
+        result = check_lints(root, [target], texts, lint_dir, _CLIS)
+        # 検証
+>       assert [(str(f.path), f.line, f.tool, f.rule) for f in result] == [
+            ("schemas/design/common.schema.yaml", 1, "yamllint", "braces"),
+            ("schemas/design/common.schema.yaml", 1, "yamllint", "braces"),
+            ("schemas/rule.schema.yaml", 2, "yamllint", "brackets"),
+        ]
+E       AssertionError: assert [] == [('schemas/de..., 'brackets')]
+E         
+E         Right contains 3 more items, first extra item: ('schemas/design/common.schema.yaml', 1, 'yamllint', 'braces')
+E         Use -v to get more diff
+
+tests/unit/scripts/test_check_all.py:717: AssertionError
+___________________ test_check_lints_when_schema_unreadable ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-6568/test_check_lints_when_schema_u0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x76216c6a3b60>
+repo_factory = <function repo_factory.<locals>._create at 0x76216c4f9d20>
+
+    def test_check_lints_when_schema_unreadable(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, repo_factory: RepoFactory
+    ) -> None:
+        """UTF-8 で読めないスキーマを飛ばす（正常系）。"""
+        # 準備
+        root = repo_factory({"schemas/rule.schema.yaml": "type: object\nrequired: [id, title]\n"})
+        (root / "schemas/design").mkdir()
+        (root / "schemas/design/broken.schema.yaml").write_bytes(b"\xff")
+        lint_dir = _schema_lint_dir(tmp_path)
+        monkeypatch.setattr(check_all, "run_markdown_lints", _no_lints)
+        # 実行
+        result = check_lints(root, [], {}, lint_dir, _CLIS)
+        # 検証
+>       assert [(str(f.path), f.tool, f.rule) for f in result] == [
+            ("schemas/rule.schema.yaml", "yamllint", "brackets"),
+        ]
+E       AssertionError: assert [] == [('schemas/ru..., 'brackets')]
+E         
+E         Right contains one more item: ('schemas/rule.schema.yaml', 'yamllint', 'brackets')
+E         Use -v to get more diff
+
+tests/unit/scripts/test_check_all.py:737: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/scripts/test_check_all.py::test_check_lints_when_schemas_use_flow_style
+FAILED tests/unit/scripts/test_check_all.py::test_check_lints_when_schema_unreadable
+========================= 2 failed, 39 passed in 1.45s =========================
