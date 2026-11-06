@@ -83,7 +83,7 @@ functions:
       4. 拡張したメタスキーマの検査器を作る（拡張したメタスキーマの読み込み）
          - 使えない拡張したメタスキーマの場合、標準エラーへ理由を出し `2` を返す
       5. 検査する文書を引き（検査する文書の列挙）、並列に読む（ファイルの並列の読み込み）
-      6. スキーマの検査器を作り（スキーマの検査器の作成）、ID の索引を 1 度だけ作る（ID の索引の作成）
+      6. スキーマの検査器を作り（スキーマの検査器の作成）、ID の索引と、3 で読んだ `documents[]` の行から名前の索引を 1 度ずつ作る（ID の索引の作成・名前の索引の作成）
       7. 文書ごとに検査し（文書 1 件の検査）、違反を `{ファイルのパス}:{行}: {項目のパス}: {内容}` の 1 行ずつ、文書のパスの順に標準出力へ出す
       8. 設計書のスキーマと `schemas/` の直下のスキーマを検査し（設計書のスキーマの検査・文書の種類のスキーマの検査）、違反を同じ形の行で出す
       9. 対応表のコピーを検査し（対応表のコピーの検査）、違反を同じ形の行で出す
@@ -154,6 +154,7 @@ functions:
       - MOD-72-2#functions[load_config]
       - MOD-72-2#functions[read_texts]
       - MOD-72-4#functions[build_id_index]
+      - MOD-72-4#functions[build_name_index]
     refs:
       - IF-72-3#
   - name: check_lints
@@ -641,6 +642,11 @@ functions:
         type: Mapping[str, frozenset[str]]
         required: true
         description: '`build_id_index` が 1 度だけ作った索引'
+      - name: names
+        title: 名前の索引
+        type: Mapping[str, Sequence[tuple[str, str]]]
+        required: true
+        description: '`build_name_index` が 1 度だけ作った索引'
     returns:
       type: list[tuple[int, str, str]]
       description: （文書の行、項目のパス、内容）。スキーマの違反の後に文書の違反
@@ -649,7 +655,7 @@ functions:
       2. 文書として読む（文書の読み込み）
          - 読めない文書の場合、`({行}, "$", "YAML として読めません: {理由}")` だけを返す
       3. `validator` が文字列の場合、`(1, "$", "スキーマ {schema} を使えません: {理由}")` を加える。検査器の場合、`iter_errors` の誤りごとに `(行, 項目のパス, "schema: {message}")` を加える（項目の行の引き当て・項目のパスの組み立て）
-      4. `target.checks` なら、締め切りを今から `LIMIT_SEC` 後にして文書の違反を検査し（文書の検査。`index` を渡す）、各違反の `rule` の先頭の `{行} 行目: ` を行に、残りを内容にして加える
+      4. `target.checks` なら、締め切りを今から `LIMIT_SEC` 後にして文書の違反を検査し（文書の検査。`index` と `names` を渡す）、各違反の `rule` の先頭の `{行} 行目: ` を行に、残りを内容にして加える
     unit_tests:
       - name: test_check_target
         case: 正常
