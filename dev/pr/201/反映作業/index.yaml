@@ -1,5 +1,5 @@
 設計書のスキーマのタグの更新:
-  説明: release が master へ入った後に、`design-schemas/v*` の最新のタグがこの PR の squash commit を含むかを確認し、含まなければ、そのマージの commit へ次のバージョンのタグを作成して push する。上げる桁（制約を狭めればメジャー、キーの追加だけならマイナー）は設計の工程で決めて記載し直す
+  説明: release が master へ入った後に、`design-schemas/v*` の最新のタグがこの PR の squash commit を含むかを確認し、含まなければ、そのマージの commit へ、最新のタグのマイナーを上げたタグを作成して push する（この PR のスキーマの変更は `docs_index` への `x-hidden` の追加だけで、既存の設計書は検査を通ったまま）
   タグ: [タグ, スキーマ]
   実行者: tester
   時期: master へ入った後
