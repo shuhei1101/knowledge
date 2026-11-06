@@ -32,28 +32,28 @@ items:
 
       | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
       | --- | --- | --- | --- | --- | --- | --- | --- |
-      | id | ID | string | 必須 | - | pattern: ^[A-Z]+-\d+(-\d+)?$ | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `IF-12` / `IF-3038-1` |
-      | title | タイトル | string | 必須 | - | pattern: ^データフロー: .+$ | `データフロー: {データ名}`。 | - |
+      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `IF-12` / `IF-3038-1` |
+      | title | タイトル | string | 必須 | - | pattern: `^データフロー: .+$` | `データフロー: {データ名}`。 | - |
       | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
       | source | 発生源 | string | - | - | - | 外部エンティティかシステムの中の処理。 | - |
       | sink | 出口 | string | - | - | - | 外部エンティティかデータストア。 | - |
-      | levels | 図 | array | 必須 | - | minItems: 1 | Level 0（外部の境界）と Level 1（主要な処理とデータストア）は必須。Level 2 は複雑な処理だけ。 | - |
+      | levels | 図 | array | 必須 | - | minItems: `1` | Level 0（外部の境界）と Level 1（主要な処理とデータストア）は必須。Level 2 は複雑な処理だけ。 | - |
       | levels[].name | レベル | string | 必須 | - | - | `Level 0` / `Level 1` / `Level 2: {親の処理}の分解`。 | - |
       | levels[].description | 説明 | string | - | - | - | Markdown で書く本文。定数は `!{名前}` で埋め込める。 | - |
       | levels[].diagram | 図 | object | 必須 | - | - | ノードの `kind` で外部の相手・処理・データストアを分けた図。 | - |
-      | levels[].diagram.direction | 向き | string | - | TD / TB / LR / RL / BT | - | 図の向き。書かなければ図の種類の既定（判定は `TD`、データフロー・アーキテクチャは `LR`）。 | - |
+      | levels[].diagram.direction | 向き | string | - | `TD` / `TB` / `LR` / `RL` / `BT` | - | 図の向き。書かなければ図の種類の既定（判定は `TD`、データフロー・アーキテクチャは `LR`）。 | - |
       | levels[].diagram.nodes | ノード | array | 必須 | - | - | - | - |
-      | levels[].diagram.nodes[].id | ID | string | 必須 | - | pattern: ^[^\s\[\](){}<>\|"]+$ | 図の中で一意なノードの ID。 | - |
+      | levels[].diagram.nodes[].id | ID | string | 必須 | - | pattern: `^[^\s\[\](){}<>\|"]+$` | 図の中で一意なノードの ID。 | - |
       | levels[].diagram.nodes[].label | 表示 | string | 必須 | - | - | ノードに出す文言。半角の括弧は描画を崩すので全角で書く。 | - |
-      | levels[].diagram.nodes[].shape | 形 | string | - | rect / round / stadium / diamond / circle / cylinder / hexagon / parallelogram / subroutine | - | ノードの形（`rect`（四角）/ `round`（角丸）/ `stadium`（開始・終端 `([…])`）/ `diamond`（判定）/ `circle`（処理）/ `cylinder`（データストア）/ `hexagon` / `parallelogram`（入出力ポート）/ `subroutine`）。書かなければ `rect`。 | - |
-      | levels[].diagram.nodes[].kind | 要素の種類 | string | - | actor / process / store / system / external | - | データフロー・アーキテクチャで、ノードが何を表すか。`actor`（人・外部の相手）/ `process`（処理）/ `store`（データストア）/ `system`（システム・サブシステム）/ `external`（外部システム）。 | - |
+      | levels[].diagram.nodes[].shape | 形 | string | - | `rect` / `round` / `stadium` / `diamond` / `circle` / `cylinder` / `hexagon` / `parallelogram` / `subroutine` | - | ノードの形（`rect`（四角）/ `round`（角丸）/ `stadium`（開始・終端 `([…])`）/ `diamond`（判定）/ `circle`（処理）/ `cylinder`（データストア）/ `hexagon` / `parallelogram`（入出力ポート）/ `subroutine`）。書かなければ `rect`。 | - |
+      | levels[].diagram.nodes[].kind | 要素の種類 | string | - | `actor` / `process` / `store` / `system` / `external` | - | データフロー・アーキテクチャで、ノードが何を表すか。`actor`（人・外部の相手）/ `process`（処理）/ `store`（データストア）/ `system`（システム・サブシステム）/ `external`（外部システム）。 | - |
       | levels[].diagram.edges | 辺 | array | 必須 | - | - | 図に描く順の辺。 | - |
       | levels[].diagram.edges[].from | 元 | string | 必須 | - | - | 元のノードの `id`。 | - |
       | levels[].diagram.edges[].to | 先 | string | 必須 | - | - | 先のノードの `id`。 | - |
       | levels[].diagram.edges[].label | ラベル | string | - | - | - | 矢印のラベル。判定は `YES` / `NO`、データフローは流れるデータの名前。 | - |
-      | levels[].diagram.edges[].line | 線 | string | - | solid / dotted / thick / open | - | 線の種類（`solid`（`-->`）/ `dotted`（`-.->`）/ `thick`（`==>`）/ `open`（`---`））。書かなければ `solid`。 | - |
+      | levels[].diagram.edges[].line | 線 | string | - | `solid` / `dotted` / `thick` / `open` | - | 線の種類（`solid`（`-->`）/ `dotted`（`-.->`）/ `thick`（`==>`）/ `open`（`---`））。書かなければ `solid`。 | - |
       | levels[].diagram.subgraphs | 枠 | array | - | - | - | - | - |
-      | levels[].diagram.subgraphs[].id | ID | string | 必須 | - | pattern: ^[A-Za-z0-9_]+$ | - | - |
+      | levels[].diagram.subgraphs[].id | ID | string | 必須 | - | pattern: `^[A-Za-z0-9_]+$` | - | - |
       | levels[].diagram.subgraphs[].label | 表示 | string | - | - | - | - | - |
       | levels[].diagram.subgraphs[].nodes | 中のノード | array | 必須 | - | - | 枠の中に置くノードの `id`。 | - |
       | levels[].diagram.clicks | リンク | array | - | - | - | - | - |
@@ -65,7 +65,7 @@ items:
       | dictionary[].to | 到達先 | string | 必須 | - | - | - | - |
       | dictionary[].structure | 構造 | string | 必須 | - | - | ペイロードの型（`{name, email}`）。 | - |
       | dictionary[].crosses_boundary | 信頼境界を越える | boolean | - | - | - | - | - |
-      | dictionary[].sensitivity | 機密の区分 | string | - | 個人情報 / 機密 | - | - | - |
+      | dictionary[].sensitivity | 機密の区分 | string | - | `個人情報` / `機密` | - | - | - |
       | dictionary[].threats | 脅威 | array | - | - | - | 信頼境界を越える流れの STRIDE の脅威。 | - |
       | dictionary[].volume | 頻度と量 | string | - | - | - | - | - |
       | dictionary[].notes | 補足 | string | - | - | - | - | - |
