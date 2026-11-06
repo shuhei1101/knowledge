@@ -30,7 +30,11 @@ items:
     name: 概要
     body: |-
       1 操作（API エンドポイント / MCP ツール / 画面操作 / 周期・イベント起動の処理）の入出力・制約・正常系と異常系のフロー。
-      1 ファイル = 1 操作 = 結合テストの 1 ファイル。外部依存は Mock 前提。
+  - id: rules-01
+    name: 決まり
+    body: |-
+      - 1 ファイル = 1 操作 = 結合テストの 1 ファイルにする。
+      - 外部依存は Mock 前提で書く。
   - id: item-list-01
     name: 項目
     body: |-
@@ -38,12 +42,13 @@ items:
 
       | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
       | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: ^[A-Z]+-\d+(-\d+)?$ | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `IF-12` / `IF-3038-1` |
       | title | タイトル | string | 必須 | - | - | 日本語の論理名。ファイル名に合わせる。 | - |
       | entry | 入口 | object | 必須 | - | - | 操作の入口。冒頭のメタ情報の行に出す。 | - |
       | entry.kind | 種類 | string | 必須 | endpoint / mcp_tool / operation / trigger / screen | - | `endpoint`（HTTP を返す。値はメソッド + パス）/ `mcp_tool`（MCP ツール名）/ `operation`（呼び出す識別子 + 境界の種別）/ `trigger`（起動契機 + 周期）/ `screen`（画面の実装ファイル）。 | - |
-      | entry.value | 値 | string | 必須 | - | - | 例 `POST /auth/signin` / `add_labels` / heartbeat 周期（`heartbeat_interval_sec` ごと）。 | - |
+      | entry.value | 値 | string | 必須 | - | - | 操作を指す値。 | `POST /auth/signin` / `add_labels` / `` heartbeat 周期（`heartbeat_interval_sec` ごと） `` |
       | entry.api | 呼び出し API | string | - | - | - | `screen` のときの呼び出す API（Mock）。 | - |
-      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。<br>初回に書いた内容のまま保ち、後から情報を追加しない（仕様は各項目に書く）。<br>対象そのものが変わったときだけ書き換える。 | - |
+      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
       | test_file | 対応テストファイル | string | - | - | pattern: ^tests/.+ | 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`）。 | - |
       | identifier | 識別子 | string | - | - | - | 操作の識別子（OpenAPI の operationId に当たる）。 | - |
       | permissions | 必要な権限 | string | - | - | - | - | - |
@@ -63,7 +68,7 @@ items:
       | request[].example | 例 | string | - | - | - | - | - |
       | request[].nullable | 空を許す | boolean | - | - | - | - | - |
       | request[].notes | 補足 | string | - | - | - | - | - |
-      | request[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
+      | request[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。書かなければ実装済みとして扱う。 | - |
       | request_example | リクエスト例 | string | - | - | - | ネスト構造の実形が分かる代表 1 ケース（JSON のコードブロック）。 | - |
       | response | レスポンス | array | - | - | - | - | - |
       | response[].name | フィールド | string | 必須 | - | - | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 フィールド = 1 要素に展開する。 | - |
@@ -75,7 +80,7 @@ items:
       | response[].notes | 補足 | string | - | - | - | - | - |
       | response_example | レスポンス例 | string | - | - | - | JSON のコードブロック。 | - |
       | response_notes | レスポンスの注記 | string | - | - | - | 冪等性など表に載らない挙動（`> [!NOTE]` のコールアウトで出す）。 | - |
-      | status_codes | ステータスコード | array | - | - | - | HTTP を返す操作の出口。`exceptions` とどちらか片方だけを持つ。異常の行は異常系のフローと 1:1。 | - |
+      | status_codes | ステータスコード | array | - | - | - | HTTP を返す操作の出口。 | - |
       | status_codes[].code | ステータスコード | string | 必須 | - | - | - | - |
       | status_codes[].condition | 発生条件 | string | 必須 | - | - | - | - |
       | status_codes[].notes | 補足 | string | - | - | - | - | - |
@@ -83,32 +88,57 @@ items:
       | exceptions[].name | 例外 | string | 必須 | - | - | 送出する例外のクラス名。正常終了の行は `なし（正常終了）`。 | - |
       | exceptions[].condition | 発生条件 | string | 必須 | - | - | - | - |
       | exceptions[].notes | 補足 | string | - | - | - | - | - |
-      | error_format | エラーの形式 | string | - | - | - | エラー応答の構造（RFC 9457 の type・title・status・detail 等）。 | - |
+      | error_format | エラーの形式 | string | - | - | - | エラー応答の形（RFC 9457 の type・title・status・detail 等）。 | - |
       | constraints | 制約 | array | - | - | - | 操作全体にかかる制約。関連する項目は制限を設けないときも行を置く。 | - |
       | constraints[].item | 項目 | string | 必須 | - | - | タイムアウト・認可・レート制限・合計サイズ・許可値の定義・周期・閾値など。 | - |
       | constraints[].constraint | 制約 | string | 必須 | - | - | 設けないときも `制限なし` と書く。 | - |
-      | constraints[].decided_by | 決定値 | string | - | - | pattern: ^[^#\s]*#(?:[^\s\[]\|\[[^\]]*\])*$ | 値の出所になる非機能要件の項目。 | `dev/設計書/インターフェース定義/バックエンド/タスク作成.py#flows[正常系]` |
+      | constraints[].decided_by | 決定値 | string | - | - | pattern: ^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$ | 値の出所になる非機能要件の項目。 | `IF-12#flows[正常系]` / `#functions[resolve_base].exceptions` / `CFG-3#` / `#notes[main.py の補足]` / `#functions[main#3]` |
       | constraints[].notes | 補足 | string | - | - | - | - | - |
-      | flows | フロー | array | 必須 | - | minItems: 1 | 正常系と異常系のフロー。1 フロー = 結合テストの 1 ケース。並びは正常 → 異常。 | - |
+      | flows | フロー | array | 必須 | - | minItems: 1 | 正常系と異常系のフロー。1 フロー = 結合テストの 1 ケース。 | - |
       | flows[].name | フロー名 | string | 必須 | - | pattern: ^(正常系\|異常系)(（.+）)?$ | 正常の基本形は `正常系`。正常な結末が条件で分かれるときは `正常系（{条件}）`、異常は `異常系（{原因}・{ステータスか例外名}）`。 | - |
-      | flows[].summary | 概要 | string | 必須 | - | minLength: 1, pattern: ^[^\n]+$ | 1 行でフローの中身を要約する。 | - |
-      | flows[].setup | セットアップ | array | 必須 | - | minItems: 1 | 事前に要るデータ・状態と、分岐・異常を決定的に誘発する入力。<br>`Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず置く。 | - |
-      | flows[].setup[].name | セットアップ | string | 必須 | - | - | 前提を作る Factory 関数名か状態の名前。`Mock` の行を必ず置く。 | - |
+      | flows[].summary | 概要 | string | 必須 | - | pattern: ^[^\n]+$, minLength: 1 | 1 行でフローの中身を要約する。 | - |
+      | flows[].setup | セットアップ | array | 必須 | - | minItems: 1 | 事前に要るデータ・状態と、分岐・異常を決定的に誘発する入力。 | - |
+      | flows[].setup[].name | セットアップ | string | 必須 | - | - | 前提を作る Factory 関数名か状態の名前。 | - |
       | flows[].setup[].description | 説明 | string | 必須 | - | - | その前提の意味・役割・依存関係。Mock の行は差し替える依存と応答。 | - |
       | flows[].setup[].notes | 補足 | string | - | - | - | 引数に指定する重要な値・分岐を決定的に誘発する値。 | - |
-      | flows[].flow | フロー | string | 必須 | - | - | Mermaid の `sequenceDiagram`。1 図 = 結末 1 本の一本道。<br>登場人物は呼び出し元（バックエンドは `participant クライアント`、フロントエンドは `actor ユーザー`）・インターフェース・外部システムの境界だけ。<br>読み取りと応答は点線 `-->>`、書き込み・操作は実線 `->>`。 | - |
+      | flows[].flow | フロー | string | 必須 | - | - | Mermaid の `sequenceDiagram`。1 図 = 結末 1 本の一本道。 | - |
       | flows[].expected | 期待値 | array | 必須 | - | minItems: 1 | フローの終了時点で外部から観測できる状態・戻り値。1 要素 = 1 つの確かめ。 | - |
       | flows[].test | テスト | string | - | - | pattern: ^test_[A-Za-z0-9_]+$ | 対応する結合テストの関数（`正常系` → `test_normal` / `正常系（{条件}）` → `test_normal_when_{条件}` / `異常系（{条件}）` → `test_error_when_{条件}`。`{条件}` は英訳）。 | - |
       | flows[].refs | 関連 | array | - | - | - | - | - |
-      | flows[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | flows[].notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
       | refs | 関連 | array | - | - | - | - | - |
-      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+
+      <!-- /table -->
+  - id: key-rules-01
+    name: キーごとの決まり
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | 決まり | 悪い例 | 理由 |
+      | --- | --- | --- | --- |
+      | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
+      | lead | 初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
+      | side_effects | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | request_example | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | response_example | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | response_notes | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | status_codes | 異常の行は異常系のフローと 1:1 にする。 | - | - |
+      | error_format | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | constraints[].decided_by | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 段になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として読む。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | flows | 並びは正常 → 異常にする。<br>フロー一覧は各フローの名前と概要から生成する。 | - | - |
+      | flows[].setup | `Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず置く。 | - | - |
+      | flows[].setup[].name | `Mock` の行を必ず置く。 | - | - |
+      | flows[].flow | 登場人物は呼び出し元（バックエンドは `participant クライアント`、フロントエンドは `actor ユーザー`）・インターフェース・外部システムの境界だけにする。<br>読み取りと応答は点線 `-->>`、書き込み・操作は実線 `->>` にする。 | - | - |
+      | flows[].notes | 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+      | notes | 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
 
       <!-- /table -->
   - id: example-sample-01
     name: 記載例
     body: |-
       ```yaml
+      id: IF-1
       title: タスク作成
       entry:
         kind: operation

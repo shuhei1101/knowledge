@@ -18,7 +18,12 @@ items:
   - id: overview
     name: 概要
     body: |-
-      外部コンポーネントの制約を踏まえてアプリとして守る値（コンポーネントをまたいで効く要件だけ）。1 プロジェクト 1 ファイル。
+      外部コンポーネントの制約を踏まえてアプリとして守る値（コンポーネントをまたいで効く要件だけ）。
+  - id: rules-01
+    name: 決まり
+    body: |-
+      - 1 プロジェクト 1 ファイルにする。
+      - 1 コンポーネント内で閉じる要件は、その変更の計画に書く（判定フローチャート『非機能要件のレイヤー』）。
   - id: item-list-01
     name: 項目
     body: |-
@@ -26,27 +31,28 @@ items:
 
       | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
       | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: ^[A-Z]+-\d+(-\d+)?$ | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `IF-12` / `IF-3038-1` |
       | title | タイトル | string | 必須 | - | - | `非機能要件`。 | - |
-      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。<br>初回に書いた内容のまま保ち、後から情報を追加しない（仕様は各項目に書く）。<br>対象そのものが変わったときだけ書き換える。 | - |
-      | requirements | 一覧 | array | 必須 | - | minItems: 1 | 外部の制約から逆算したアプリの値。決まっていない項目も同じ一覧に置き、決定値を `未確定` にする。<br>未確定だった項目が決まったら同じ要素を書き換える。 | - |
+      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
+      | requirements | 一覧 | array | 必須 | - | minItems: 1 | 外部の制約から逆算したアプリの値。一覧の表は各要素から生成する。 | - |
       | requirements[].name | 項目 | string | 必須 | - | - | 何についての値か。1 項目 = 1 要素。 | - |
       | requirements[].english_name | 英語名 | string | - | - | pattern: ^[a-z0-9_]+$ | テスト関数・ファイルの名前に使う。 | - |
       | requirements[].category | カテゴリ | string | 必須 | - | - | 性能 / レート制限 / 可用性 / 耐障害 / セキュリティ / コスト / 保守性 / 動作環境 等。<br>動作環境は対応端末・OS・ブラウザ・画面サイズ・入力方式・通信を 1 項目ずつ置く。 | - |
       | requirements[].external_constraint | 外部の制約 | string | 必須 | - | - | 外部が示す上限・下限・保証値。自主基準は `制限なし`、分からなければ `未確定`。 | - |
       | requirements[].source_kind | 出所種別 | string | 必須 | 外部 API の制限 / 外部ライブラリの制限 / 実行基盤の制限 / PC 性能 / ユーザー要望 / 制限なし / 未確定 | - | 6 種類を 1 つずつ突き合わせ、どれにも当たらないときだけ `制限なし`。 | - |
-      | requirements[].source | 出所 | string | - | - | - | 外部の制約を書いた設計書の参照・資料の URL・ユーザーの回答コメントの URL。 | - |
+      | requirements[].source | 出所 | string | - | - | - | 外部の制約を書いた設計書の参照・資料の URL・ユーザーの回答コメントの URL。<br>設計書の参照は `{ID}#{項目のパス}` で書く。 | - |
       | requirements[].value | 決定値 | string | 必須 | - | - | 実装とテストが参照する値。まだ決められないときは `未確定`。 | - |
       | requirements[].unit | 単位 | string | - | - | - | - | - |
       | requirements[].rationale | 根拠 | string | 必須 | - | - | 外部の制約そのままでない理由。未確定なら何が分かれば決まるか。 | - |
-      | requirements[].measurement | 測り方 | string | - | - | - | 実機での確認に回す項目は、確かめる端末と操作を書く。 | - |
-      | requirements[].test_file | 対応テスト | string | - | - | pattern: ^tests/.+ | 非機能要件テストのファイル（`tests/nfr/test_{英語名}.py`）。測れない項目・実機での確認に回す項目は持たない。 | - |
-      | requirements[].verification | 確認の記録 | object | - | - | - | 実機での確認に回した項目だけが持つ、確かめた結果。確かめた人が書く。<br>修正の後に合格の記録を持たない項目は、再確認して書き換える。 | `{"device": "Windows 11 の PC の Edge", "version": "Edge 140", "date": "2026-10-05", "result": "合格"}` |
+      | requirements[].measurement | 測り方 | string | - | - | - | - | - |
+      | requirements[].test_file | 対応テスト | string | - | - | pattern: ^tests/.+ | 非機能要件テストのファイル（`tests/nfr/test_{英語名}.py`）。測れない項目は持たない。 | - |
+      | requirements[].verification | 確認の記録 | object | - | - | - | 確かめた結果。 | `{date: '2026-10-05', device: Windows 11 の PC の Edge, result: 合格, version: Edge 140}` |
       | requirements[].verification.device | 端末 | string | 必須 | - | - | 確かめた端末（OS・ブラウザなど）。 | - |
-      | requirements[].verification.version | バージョン | string | 必須 | - | - | 確かめた端末のバージョン（OS・ブラウザのバージョン）。 | - |
+      | requirements[].verification.version | 版 | string | 必須 | - | - | 確かめた端末の版（OS・ブラウザの版）。 | - |
       | requirements[].verification.date | 確認日 | string | 必須 | - | pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ | `YYYY-MM-DD`。 | - |
       | requirements[].verification.result | 合否 | string | 必須 | 合格 / 不合格 | - | - | - |
       | requirements[].verification.detail | 確認内容 | string | - | - | - | 不合格のとき、起きた事象。 | - |
-      | requirements[].overflow | 超過時の挙動 | string | - | - | - | 決定値を超えたときに何が起きるか（分割 / 待機 / リトライ / エラー）。黙って切り捨てない。起こり得ないときは持たない。 | - |
+      | requirements[].overflow | 超過時の挙動 | string | - | - | - | 決定値を超えたときに何が起きるか（分割 / 待機 / リトライ / エラー）。 | - |
       | requirements[].breakdown | 内訳 | array | - | - | - | 決定値に至る積み上げ（外部の上限からの差し引き、または内側の値の合計）。積み上げの無い項目は持たない。 | - |
       | requirements[].breakdown[].part | 区分 | string | 必須 | - | - | - | - |
       | requirements[].breakdown[].value | 値 | string | 必須 | - | - | - | - |
@@ -60,22 +66,39 @@ items:
       | requirements[].tests[].notes | 補足 | string | - | - | - | - | - |
       | requirements[].refs | 関連 | array | - | - | - | - | - |
       | requirements[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
-      | requirements[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態。`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）。書かなければ実装済みとして扱う。 | - |
-      | requirements[].visibility | 公開 | string | - | user / developer | - | 公開の範囲。`user`（ユーザー向け）/ `developer`（開発者向け）。<br>書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
-      | requirements[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/profile/service.py#update_profile` |
+      | requirements[].status | 状態 | string | - | planned / implemented / deprecated / removed | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。書かなければ実装済みとして扱う。 | - |
+      | requirements[].visibility | 公開 | string | - | user / developer | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | requirements[].implementation | 実装 | string | - | - | pattern: ^[^#\s]+(#\S+)?$ | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/schemas/loader.py#load_catalog` |
       | requirements[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
-      | requirements[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ（例 `v0.3.0`）。 | - |
+      | requirements[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ。 | `v0.3.0` |
       | requirements[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
       | requirements[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
-      | requirements[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | requirements[].notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
       | refs | 関連 | array | - | - | - | - | - |
-      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。<br>同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補になる。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+
+      <!-- /table -->
+  - id: key-rules-01
+    name: キーごとの決まり
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | 決まり | 悪い例 | 理由 |
+      | --- | --- | --- | --- |
+      | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
+      | lead | 初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
+      | requirements | 決まっていない項目も同じ一覧に置き、決定値を `未確定` にする。<br>未確定だった項目が決まったら同じ要素を書き換える。 | - | - |
+      | requirements[].overflow | 黙って切り捨てない。 | - | - |
+      | requirements[].reason | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | requirements[].notes | 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+      | notes | 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
 
       <!-- /table -->
   - id: example-sample-01
-    name: 記載例
+    name: 記載例 1
     body: |-
       ```yaml
+      id: NFR-1
       title: 非機能要件
       lead: 外部の制約から逆算したアプリの決定値。
       requirements:
@@ -84,7 +107,7 @@ items:
         category: 性能
         external_constraint: 100 万トークン
         source_kind: 外部 API の制限
-        source: dev/設計書/外部API/OpenAI#
+        source: API-2#
         value: 10 万
         unit: トークン
         rationale: 内部のシステムプロンプトと出力枠を差し引く
@@ -106,12 +129,12 @@ items:
         tests:
         - name: test_input_limit
           summary: 上限ちょうどの入力
-          condition: 100,000 トークンの入力を 1 回送信する
+          condition: 100,000 トークンの入力を 1 回送る
           measurement: API へ渡ったトークン数
-          expected: 分割されずに 1 回で送信される
+          expected: 分割されずに 1 回で送られる
         - name: test_input_limit_when_over
           summary: 上限を超えた入力
-          condition: 100,001 トークンの入力を 1 回送信する
+          condition: 100,001 トークンの入力を 1 回送る
           measurement: API へ渡ったトークン数
           expected: 2 回に分かれ、各回が 100,000 以下
       - name: 応答の待ちの上限
@@ -121,8 +144,8 @@ items:
         source_kind: 制限なし
         value: '30'
         unit: 秒
-        rationale: 内側の待ち 2 つの合計に余裕を加える（入れ子の待ち）
-        measurement: 内側の待ちを両方とも上限まで遅らせた要求を 1 回送信し、応答までの時間を測る
+        rationale: 内側の待ち 2 つの合計に余裕を足す（規約『資源の値の決め方』の入れ子の待ち）
+        measurement: 内側の待ちを両方とも上限まで遅らせた要求を 1 回送り、応答までの時間を測る
         overflow: 上限を超えたら呼び出し元へタイムアウトのエラーを返す。回復は呼び出し元のリトライで待つ
         breakdown:
         - part: 内側の待ち（外部 API の呼び出し）
@@ -142,7 +165,7 @@ items:
         external_constraint: 未確定
         source_kind: 未確定
         value: 未確定
-        rationale: 想定利用者数が決まる「利用者管理」の要件が確定してから決める
+        rationale: 想定利用者数が決まる Issue「利用者管理」の要件が確定してから決める
       - name: 対応ブラウザ
         category: 動作環境
         external_constraint: Chrome と Edge の最新版
@@ -174,8 +197,11 @@ items:
           measurement: 文書の横幅と表示幅
           expected: 全ての画面で文書の横幅が 360px 以下
       ```
-
+  - id: example-sample-02
+    name: 記載例 2
+    body: |-
       ```yaml
+      id: NFR-2
       title: 非機能要件
       lead: 外部の制約から逆算したゲームの決定値。
       requirements:
@@ -185,7 +211,7 @@ items:
         source_kind: ユーザー要望
         source: https://github.com/{owner}/{repo}/issues/{番号}#issuecomment-{ID}
         value: Windows の PC と Nintendo Switch
-        rationale: 企画の工程で決めた販売先
+        rationale: 企画の段で決めた販売先
         measurement: 各端末の実機で、タイトル画面から 1 ステージを最後まで遊べるかを確かめる
         verification:
           device: Nintendo Switch の実機
@@ -200,12 +226,12 @@ items:
         source: https://github.com/{owner}/{repo}/issues/{番号}#issuecomment-{ID}
         value: キーボードとゲームパッド
         rationale: 対応端末の標準の入力に揃える
-        measurement: 論理操作ごとに、割り当てたキーとボタンの入力を送信する
+        measurement: 論理操作ごとに、割り当てたキーとボタンの入力を送る
         test_file: tests/nfr/test_input_devices.py
         tests:
         - name: test_input_devices
           summary: 全ての論理操作の割り当て
-          condition: 論理操作ごとに、キーボードとゲームパッドの割り当てを 1 回ずつ送信する
+          condition: 論理操作ごとに、キーボードとゲームパッドの割り当てを 1 回ずつ送る
           measurement: ゲームが受け取った論理操作
           expected: 全ての論理操作を、どちらの入力からも受け取る
       - name: 通信
@@ -213,5 +239,5 @@ items:
         external_constraint: 未確定
         source_kind: 未確定
         value: 未確定
-        rationale: オンラインで遊ぶ機能を持つかが企画の工程で決まってから決める
+        rationale: オンラインで遊ぶ機能を持つかが企画の段で決まってから決める
       ```
