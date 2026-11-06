@@ -10,7 +10,7 @@ flows:
       - name: Mock
         description: 差し替えない。PATH の maid を使う
       - name: 配信元
-        description: '`docs/rule/a.yaml`（項目 `x` を持つ）だけを持つ一時フォルダ'
+        description: '`dev-docs.yaml`（`docs/rule/*.yaml` の行だけ）と `docs/rule/a.yaml`（項目 `x` を持つ）を持つ一時フォルダ'
       - name: 標準入力
         description: '`[A](id:a#x)` と正しい mermaid を持ち、`related` の `to` が `a` の文書'
     flow: |-
@@ -37,7 +37,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: 配信元
-        description: '`docs/rule/a.yaml` だけを持つ一時フォルダ'
+        description: '`dev-docs.yaml`（`docs/rule/*.yaml` の行だけ）と `docs/rule/a.yaml` を持つ一時フォルダ'
       - name: 標準入力
         description: '項目の ID が 2 つ重なり、`[B](id:missing)` と `related` の `to: missing` と `end` の抜けた subgraph を持つ文書'
         notes: 違反は 4 件
@@ -64,7 +64,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: 配信元
-        description: '`docs/word-list/` だけを持つ一時フォルダ'
+        description: '`dev-docs.yaml`（`docs/rule/*.yaml` の行だけ）と `docs/word-list/` を持つ一時フォルダ'
       - name: 標準入力
         description: '`kind` が `word-list` の文書。`ng: 直す`・`pattern: 直す`・`examples.hit: [直した]` の行、`ng: 形`・`pattern: 形`・`examples.pass: [形式]` の行、`pattern: "形("` の行の 3 行を持つ'
         notes: 違反は 3 件
@@ -104,6 +104,31 @@ flows:
       - 標準出力の配列が 2 件で、`path` が `aliases[0]`・`aliases[1]`
       - '`aliases[0]` の `rule` に `a` と `name`、`aliases[1]` の `rule` に `a` と `aliases` があり、各違反の `rule` の行が文書の中の該当する行と一致する'
     test: test_normal_when_aliases_collide
+  - name: 正常系（dev-docs.yaml が無い）
+    summary: '`dev-docs.yaml` が無ければ `aliases` を照合せず、`path: $` の違反 1 件とほかの検査の違反を返す'
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 配信元
+        description: '`docs/rule/a.yaml` だけを持ち、`dev-docs.yaml` を持たない一時フォルダ'
+      - name: 標準入力
+        description: '`items[0].body` に `[B](id:missing)` を持ち、`aliases: [アルファ]` を持つ文書'
+        notes: 違反は 2 件
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の違反の検査
+        participant F as 配信元の docs
+        D->>S: 標準入力に文書の YAML
+        S->>F: 文書と項目の ID を集める
+        S->>F: dev-docs.yaml を読む
+        F-->>S: ファイルが無い
+        S->>S: aliases を照合せず、ほかの検査を続ける
+        S-->>D: 終了コード 0 と違反の配列
+    expected:
+      - 終了コードが 0
+      - '標準出力の配列が 2 件で、`path` が `$`（`rule` に `dev-docs.yaml`）と `items[0].body`（参照切れ）'
+    test: test_normal_when_config_missing
   - name: 正常系（時間切れ）
     summary: 残り時間が足りない mermaid のブロックを時間切れの違反として返す
     setup:
