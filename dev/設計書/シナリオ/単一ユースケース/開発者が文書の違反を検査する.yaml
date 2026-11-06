@@ -156,7 +156,8 @@ primary_actor: 開発者
 trigger: 開発者が knowledge に PR を出すか push する
 preconditions:
   - '`.github/workflows/` に検査のワークフローがある'
-  - 'リポジトリの直下の `.yamllint.yaml` が `comments` を `level: error` にしている'
+  - '`scripts/lint/.yamllint.yaml` が `comments` を `level: error` にしている'
+  - '`scripts/lint/.yamllint-schemas.yaml` が `brackets`・`braces` を `forbid: non-empty` にしている'
 success_guarantee: 違反が無ければ CI が成功する。
 minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反・スキーマのフロー形式・設計書のスキーマの誤り・スキーマとずれたテンプレート）が 1 つでもあれば CI が失敗し、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名。スキーマとずれたテンプレートは、行が `items` のキーの行で、内容が生成元のスキーマのパスと生成のコマンド）がログに出る。文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに失敗する。
 notes:
