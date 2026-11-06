@@ -21,8 +21,8 @@ flows:
         participant M as maid
         D->>S: 標準入力に文書の YAML
         S->>S: maid が PATH にあるかを確かめる
-        S->>F: 文書と項目の ID を集める
-        S->>S: 項目の ID の重複と参照の実在を確かめる
+        S->>F: 文書と項目の ID、alias_type を持つ行の文書の name・aliases を集める
+        S->>S: 項目の ID の重複・参照の実在・aliases の衝突を確かめる
         S->>M: mermaid のブロック（残り時間で打ち切る）
         M-->>S: 誤りなし
         S-->>D: 終了コード 0 と空の配列
@@ -80,6 +80,30 @@ flows:
       - '標準出力の配列が 3 件で、`path` が `entries[0].examples.hit[0]`・`entries[1].examples.pass[0]`・`entries[2].pattern`'
       - 各違反の `rule` の行が、文書の中の該当する行と一致する
     test: test_normal_when_word_list_examples_fail
+  - name: 正常系（aliases の衝突）
+    summary: ほかの文書の name・aliases と正規化して一致する aliases を、1 件 1 違反で返す
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 配信元
+        description: '`dev-docs.yaml`（`docs/rule/*.yaml` の行が `alias_type: doc` を持ち、`docs/word-list/*.yaml` の行は持たない）と、`docs/rule/a.yaml`（`name: Alpha 規約`・`aliases: [アルファ]`）、`docs/rule/b.yaml`（`aliases: [ベータ]`。書き込む前の `b`）、`docs/word-list/w.yaml`（`name: 単語表`）を持つ一時フォルダ'
+      - name: 標準入力
+        description: '`id: b` で、`aliases` が `[" ａｌｐｈａ 規約 ", アルファ, ベータ, 単語表]` の文書'
+        notes: 違反は 2 件。`ベータ` は自分の書き込む前の値、`単語表` は alias_type を持たない行の文書の値で、照合の相手にならない
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の違反の検査
+        participant F as 配信元の docs
+        D->>S: 標準入力に文書の YAML
+        S->>F: dev-docs.yaml の alias_type を持つ行の文書の name・aliases を集める
+        S->>S: 自分と同じ ID の文書を除き、正規化した aliases を照合する
+        S-->>D: 終了コード 0 と違反の配列
+    expected:
+      - 終了コードが 0
+      - 標準出力の配列が 2 件で、`path` が `aliases[0]`・`aliases[1]`
+      - '`aliases[0]` の `rule` に `a` と `name`、`aliases[1]` の `rule` に `a` と `aliases` があり、各違反の `rule` の行が文書の中の該当する行と一致する'
+    test: test_normal_when_aliases_collide
   - name: 正常系（時間切れ）
     summary: 残り時間が足りない mermaid のブロックを時間切れの違反として返す
     setup:
@@ -138,7 +162,7 @@ flows:
       - 標準出力が空
       - 標準エラーに maid が PATH から引けないことと、開発コマンドの環境構築への案内が出る
     test: test_error_when_maid_missing
-lead: 標準入力の文書 1 件に、スキーマで見られない決まり（項目の ID の重複・`id:` の参照と `related` の `to` の実在・mermaid の文法）を当て、違反を dev-docs の validators の約束で標準出力へ返す。
+lead: 標準入力の文書 1 件に、スキーマで見られない決まり（項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・mermaid の文法）を当て、違反を dev-docs の validators の約束で標準出力へ返す。
 identifier: knowledge-checks
 idempotent: true
 side_effects: なし（ファイルを書き換えない。maid は `--fix` を付けずに呼ぶ）
@@ -158,7 +182,7 @@ request:
     type: Path
     required: true
     location: argument
-    description: knowledge の配信元の直下。`docs/**/*.yaml` を読み、`id:` の参照先と `related` の `to` が実在するかを確かめる
+    description: knowledge の配信元の直下。`docs/**/*.yaml` を読み、`id:` の参照先と `related` の `to` が実在するかを確かめる。`dev-docs.yaml` の `documents[]` を読み、`aliases` の照合の相手を決める
     notes: 引数ではなく、子プロセスの作業ディレクトリとして受け取る
 response:
   - name: stdout
@@ -206,6 +230,12 @@ constraints:
   - item: 対応表の `examples`
     constraint: '`kind` が `word-list` の文書だけに当てる。各行の照合（「書き込んだ中身の照合」と同じ照合）を `examples.hit` の全件と `examples.pass` の全件に当て、ヒットしない `hit` とヒットした `pass` を 1 件 1 違反で返す。`pattern` が正規表現として読めない行は、`examples` を当てずに `entries[{n}].pattern` の違反 1 件で返す'
     decided_by: IF-148-1#constraints[照合]
+  - item: '`aliases` の衝突'
+    constraint: |-
+      検査する文書の `aliases[n]` を、`dev-docs.yaml` の `documents[]` のうち `alias_type` を持つ行の `paths` に当たる文書（ID が検査する文書と同じ文書を除く）の `name`・`aliases` と照合し、一致したら `aliases[{n}]` の違反 1 件にする。
+      照合の前に両方の値へ、NFKC・前後の空白の除去・英字の大文字小文字の統一（`casefold`）を適用する。
+      `rule` には一致した相手の文書の ID と、相手の `name`・`aliases` の別を全て並べる。`fix` は「指す文書を 1 件に決め、片方だけに登録する」。
+      `dev-docs.yaml` が無い・読めない場合は、`aliases` を照合せず `path: $` の違反 1 件にする
   - item: '`id:` の参照'
     constraint: '`[{名前}](id:{文書の ID})` は文書が、`[{名前}](id:{文書の ID}#{項目の ID})` はその文書の項目が実在する。自分を指す参照は標準入力の内容で確かめる。コードブロックの中の参照は検査しない'
 test_file: tests/integration/scripts/test_knowledge_checks.py
