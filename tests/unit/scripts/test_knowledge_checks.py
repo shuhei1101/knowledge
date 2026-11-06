@@ -10,6 +10,7 @@ from _common import load_config, load_document
 from knowledge_checks import (
     build_id_index,
     build_name_index,
+    check_alias_duplicates,
     check_aliases,
     check_document,
     check_duplicate_ids,
@@ -236,6 +237,19 @@ def test_check_document_when_config_missing(
     assert "aliases の衝突を検査できません" in result[0]["rule"]
 
 
+def test_check_document_when_aliases_duplicate(
+    tmp_path: Path, fake_maid_factory: FakeMaidFactory
+) -> None:
+    """dev-docs.yaml が無くても文書の中の aliases の重複を検査する（正常系）。"""
+    # 準備
+    text = "id: b\naliases:\n  - アルファ\n  - ｱﾙﾌｧ\n"
+    maid = fake_maid_factory(stdout='{"valid": true, "errors": []}', exit_code=0)
+    # 実行
+    result = check_document(text, tmp_path, maid, time.monotonic() + 10.0, index={})
+    # 検証
+    assert [violation["path"] for violation in result] == ["$", "aliases[1]"]
+
+
 def test_check_document_when_broken(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """読めない YAML（正常系）。"""
     # 準備
@@ -355,6 +369,45 @@ def test_check_aliases_when_no_aliases() -> None:
     doc = load_document("id: b\nname: 文書\n")
     # 実行
     result = check_aliases(doc, {"文書": [("a", "name")]})
+    # 検証
+    assert result == []
+
+
+def test_check_alias_duplicates() -> None:
+    """name との一致と前の要素との重複（正常系）。"""
+    # 準備
+    doc = load_document(
+        "id: b\nname: Beta 規約\naliases:\n  - ベータ\n  - ' ｂｅｔａ 規約 '\n  - べーた\n  - ' ベータ '\n"
+    )
+    # 実行
+    result = check_alias_duplicates(doc)
+    # 検証
+    assert [violation["path"] for violation in result] == ["aliases[1]", "aliases[3]"]
+    assert "name" in result[0]["rule"]
+    assert result[0]["rule"].startswith("5 行目: ")
+    assert result[0]["fix"] == "片方だけ登録する"
+    assert "aliases[0]" in result[1]["rule"]
+    assert result[1]["rule"].startswith("7 行目: ")
+    assert result[1]["fix"] == "片方だけ登録する"
+
+
+def test_check_alias_duplicates_when_no_name() -> None:
+    """name を持たない文書（正常系）。"""
+    # 準備
+    doc = load_document("id: b\naliases:\n  - アルファ\n  - ｱﾙﾌｧ\n")
+    # 実行
+    result = check_alias_duplicates(doc)
+    # 検証
+    assert [violation["path"] for violation in result] == ["aliases[1]"]
+    assert "aliases[0]" in result[0]["rule"]
+
+
+def test_check_alias_duplicates_when_unique() -> None:
+    """重複が無い（正常系）。"""
+    # 準備
+    doc = load_document("id: b\nname: Alpha\naliases:\n  - アルファ\n  - ベータ\n")
+    # 実行
+    result = check_alias_duplicates(doc)
     # 検証
     assert result == []
 
