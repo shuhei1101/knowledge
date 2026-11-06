@@ -16,6 +16,7 @@ rule-inject は [rule-inject#105](https://github.com/shuhei1101/rule-inject/issu
 | ファイル | 中身 |
 | --- | --- |
 | [要件](./要件.md) | 要望の整理と影響する UC 一覧 |
+| [確認ログ](./確認ログ.md) | ユーザーへの確認事項の決着 |
 
 ## タスク一覧
 
