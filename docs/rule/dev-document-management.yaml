@@ -37,8 +37,8 @@ tags:
   - name: action:開発
 status: current
 visibility: internal
-rev: 11
-last_reviewed: '2026-11-05'
+rev: 12
+last_reviewed: '2026-11-07'
 sources:
   - title: "Anthropic: Effective context engineering for AI agents"
     url: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
@@ -114,6 +114,13 @@ items:
           │   └── python-testing.yaml
           └── terms.yaml
       ```
+  - id: folder-06
+    group: フォルダ
+    name: 言語の規約を注入する拡張子
+    body: |-
+      - 実装の言語の規約を注入したい文書は、拡張子の前に `.{lang}` を挟む（例: `validate.py.yaml`・`サインイン画面.tsx.md`）
+        `{lang}` はその言語の拡張子（`py`・`ts`・`tsx`・`html`・`css` 等）で、rule-inject の索引の `paths` がその拡張子に当たって言語の規約を注入する
+      - 複数の言語にまたがる文書は `.py.ts.md` のようにドットで区切って並べる
   - id: metadata-01
     group: メタデータ
     name: メタデータのキー一覧
@@ -306,3 +313,30 @@ items:
     name: 設定のキー
     body: |-
       - 設定のキーは、dev-docs の [設定](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/%E8%A8%AD%E5%AE%9A.md) を参照する
+  - id: update-01
+    group: 更新
+    name: 参照元の確認
+    body: |-
+      - 他の文書から参照されている文書を変える前に、参照元を引いて影響の範囲を確認する。YAML の文書は dev-docs の `trace_related`（`direction: in`）、Markdown とコードは検索で引く
+  - id: update-02
+    group: 更新
+    name: 改名
+    body: |-
+      - 改名したら、引いた参照元を全て新しい名前に修正する
+  - id: update-03
+    group: 更新
+    name: 削除
+    body: |-
+      - 削除した文書の履歴は git log に任せ、履歴のコメントを残さない
+  - id: placement-criteria-01
+    group: 置く場所の判定
+    name: knowledge に置く決まり
+    body: |-
+      - 特定の道具（エージェントの運用・MCP のツール・ラベル・PR の計画の書式）を前提にせず、手元のセッションやほかの開発でもそのまま使用できる決まりは、knowledge に置く
+      - 特定の道具を前提にする手順は、その道具のリポジトリに置き、一般の決まりは knowledge の文書を参照する
+  - id: placement-criteria-02
+    group: 置く場所の判定
+    name: プロジェクトが独自のテンプレートを持つ条件
+    body: |-
+      - プロジェクトが独自のテンプレートを持つのは、knowledge に無い固有の設計書の種類が要るときだけにする
+      - knowledge の既存の種類を拡張したいときは、プロジェクトで持たずに knowledge へ追加する

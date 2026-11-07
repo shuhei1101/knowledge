@@ -1,0 +1,11 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: チェックシート
+description: やるべき作業が決まっていて、完了しているか・問題が無いかを確認するチェックシート。
+allOf:
+  - $ref: common.schema.yaml#/$defs/metadata
+properties:
+  kind:
+    title: 種類
+    description: 文書の種類。この種類では `checksheet` に固定する。
+    const: checksheet
+unevaluatedProperties: false

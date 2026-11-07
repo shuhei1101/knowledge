@@ -1,0 +1,150 @@
+# yaml-language-server: $schema=../../schemas/flowchart.schema.yaml
+id: flowchart-command-destination
+kind: flowchart
+name: コマンドの書き先 判定フローチャート
+description: 開発で使うコマンドを記載するか・どの分類か・どこに記載するかを判定し、開発で使うコマンドが変わる変更を記載するときに読む。
+aliases:
+  - コマンドの書き先
+tags:
+  - name: scope:判定フローチャート
+  - name: topic:判定フローチャート
+  - name: topic:フローチャート
+  - name: topic:コマンド
+    main: true
+  - name: topic:テンプレート
+  - name: topic:lint
+  - name: topic:testing
+  - name: topic:セットアップ
+  - name: action:判定
+  - name: action:分類
+  - name: action:配置
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      開発で使うコマンドを記載するか・どの分類か・どこに記載するかを判定し、開発で使うコマンドが変わる変更を記載するときに読む。
+  - id: command-destination-flow-01
+    group: コマンドの書き先 判定フローチャート
+    name: 判定フロー
+    body: |-
+      <!-- flow -->
+
+      ```json
+      {
+        "title": "コマンドの書き先",
+        "scope": "差分で変わるコマンドの書き先を決めるとき",
+        "updated": "2026-11-07",
+        "width": 1028,
+        "height": 2620,
+        "nodes": [
+          {"id": "start", "kind": "start", "x": 424, "y": 24, "w": 140, "h": 140, "name": "差分で変わるコマンド 1 つの書き先を決めたい ※1"},
+          {"id": "q0", "kind": "question", "x": 334, "y": 220, "w": 320, "h": 164, "name": "差分で変わるコマンドが、書く先に既に同じ形で書かれているか ※2"},
+          {"id": "r0", "kind": "result", "x": 24, "y": 274, "w": 240, "h": 56, "name": "書かない"},
+          {"id": "q1", "kind": "question", "x": 354, "y": 440, "w": 280, "h": 164, "name": "システムを使う側へ向けた CLI・API・操作手順か"},
+          {"id": "r1", "kind": "result", "x": 724, "y": 486, "w": 240, "h": 72, "name": "利用者向けの使い方・リファレンス"},
+          {"id": "q2", "kind": "question", "x": 354, "y": 660, "w": 280, "h": 164, "name": "CI と同じ検査を手元でまとめて流すコマンドか ※3"},
+          {"id": "r2", "kind": "result", "x": 24, "y": 706, "w": 240, "h": 72, "name": "開発コマンド『取り込み前の検査』"},
+          {"id": "q3", "kind": "question", "x": 354, "y": 880, "w": 280, "h": 120, "name": "テストを実行するコマンドか"},
+          {"id": "r3", "kind": "result", "x": 724, "y": 912, "w": 240, "h": 56, "name": "テスト実行方法"},
+          {"id": "q4", "kind": "question", "x": 354, "y": 1056, "w": 280, "h": 120, "name": "依存を足す・上げる・外すコマンドか"},
+          {"id": "r4", "kind": "result", "x": 24, "y": 1080, "w": 240, "h": 72, "name": "開発コマンド『依存の追加・更新・削除』"},
+          {"id": "q5", "kind": "question", "x": 354, "y": 1232, "w": 280, "h": 124, "name": "取り込んだ変更に手元を追従させるコマンドか ※4"},
+          {"id": "r5", "kind": "result", "x": 724, "y": 1258, "w": 240, "h": 72, "name": "開発コマンド『取り込み後の追従（pull 後）』"},
+          {"id": "q6", "kind": "question", "x": 334, "y": 1412, "w": 320, "h": 164, "name": "依存の定義への追加と同期の他に、特定の外部ライブラリだけが要る手順か ※5"},
+          {"id": "r6", "kind": "result", "x": 24, "y": 1458, "w": 240, "h": 72, "name": "外部ライブラリの設計書の install"},
+          {"id": "q7", "kind": "question", "x": 354, "y": 1632, "w": 280, "h": 120, "name": "クローン直後に流す環境の用意か ※6"},
+          {"id": "r7", "kind": "result", "x": 724, "y": 1656, "w": 240, "h": 72, "name": "開発コマンド『環境構築（クローン直後）』"},
+          {"id": "q8", "kind": "question", "x": 354, "y": 1808, "w": 280, "h": 124, "name": "プロセスを起動・停止するコマンドか ※7"},
+          {"id": "r8", "kind": "result", "x": 24, "y": 1842, "w": 240, "h": 56, "name": "開発コマンド『起動・停止』"},
+          {"id": "q9", "kind": "question", "x": 354, "y": 1988, "w": 280, "h": 124, "name": "lint・format・型検査か ※8"},
+          {"id": "r9", "kind": "result", "x": 724, "y": 2014, "w": 240, "h": 72, "name": "テスト実行方法の lint 層"},
+          {"id": "q10", "kind": "question", "x": 354, "y": 2168, "w": 280, "h": 124, "name": "ビルド・コード生成・ドキュメント生成か ※9"},
+          {"id": "r10", "kind": "result", "x": 24, "y": 2202, "w": 240, "h": 56, "name": "開発コマンド『ビルド・生成』"},
+          {"id": "q11", "kind": "question", "x": 354, "y": 2348, "w": 280, "h": 120, "name": "一度きりの作業か ※10"},
+          {"id": "r11", "kind": "result", "x": 724, "y": 2380, "w": 240, "h": 56, "name": "開発コマンド『管理作業』"},
+          {"id": "a1", "kind": "action", "x": 374, "y": 2524, "w": 240, "h": 72, "name": "どの分類にも当たらない: 分類を足すかを論点として挙げる"}
+        ],
+        "wires": [
+          {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[494, 164], [494, 220]]},
+          {"id": "j-q0-r0", "from": "q0", "to": "r0", "line": "flow", "points": [[334, 302], [264, 302]], "label": "YES", "labelAt": [299, 302]},
+          {"id": "j-q0-q1", "from": "q0", "to": "q1", "line": "flow", "points": [[494, 384], [494, 440]], "label": "NO", "labelAt": [494, 412]},
+          {"id": "j-q1-r1", "from": "q1", "to": "r1", "line": "flow", "points": [[634, 522], [724, 522]], "label": "YES", "labelAt": [679, 522]},
+          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[494, 604], [494, 660]], "label": "NO", "labelAt": [494, 632]},
+          {"id": "j-q2-r2", "from": "q2", "to": "r2", "line": "flow", "points": [[354, 742], [264, 742]], "label": "YES", "labelAt": [309, 742]},
+          {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[494, 824], [494, 880]], "label": "NO", "labelAt": [494, 852]},
+          {"id": "j-q3-r3", "from": "q3", "to": "r3", "line": "flow", "points": [[634, 940], [724, 940]], "label": "YES", "labelAt": [679, 940]},
+          {"id": "j-q3-q4", "from": "q3", "to": "q4", "line": "flow", "points": [[494, 1000], [494, 1056]], "label": "NO", "labelAt": [494, 1028]},
+          {"id": "j-q4-r4", "from": "q4", "to": "r4", "line": "flow", "points": [[354, 1116], [264, 1116]], "label": "YES", "labelAt": [309, 1116]},
+          {"id": "j-q4-q5", "from": "q4", "to": "q5", "line": "flow", "points": [[494, 1176], [494, 1232]], "label": "NO", "labelAt": [494, 1204]},
+          {"id": "j-q5-r5", "from": "q5", "to": "r5", "line": "flow", "points": [[634, 1294], [724, 1294]], "label": "YES", "labelAt": [679, 1294]},
+          {"id": "j-q5-q6", "from": "q5", "to": "q6", "line": "flow", "points": [[494, 1356], [494, 1412]], "label": "NO", "labelAt": [494, 1384]},
+          {"id": "j-q6-r6", "from": "q6", "to": "r6", "line": "flow", "points": [[334, 1494], [264, 1494]], "label": "YES", "labelAt": [299, 1494]},
+          {"id": "j-q6-q7", "from": "q6", "to": "q7", "line": "flow", "points": [[494, 1576], [494, 1632]], "label": "NO", "labelAt": [494, 1604]},
+          {"id": "j-q7-r7", "from": "q7", "to": "r7", "line": "flow", "points": [[634, 1692], [724, 1692]], "label": "YES", "labelAt": [679, 1692]},
+          {"id": "j-q7-q8", "from": "q7", "to": "q8", "line": "flow", "points": [[494, 1752], [494, 1808]], "label": "NO", "labelAt": [494, 1780]},
+          {"id": "j-q8-r8", "from": "q8", "to": "r8", "line": "flow", "points": [[354, 1870], [264, 1870]], "label": "YES", "labelAt": [309, 1870]},
+          {"id": "j-q8-q9", "from": "q8", "to": "q9", "line": "flow", "points": [[494, 1932], [494, 1988]], "label": "NO", "labelAt": [494, 1960]},
+          {"id": "j-q9-r9", "from": "q9", "to": "r9", "line": "flow", "points": [[634, 2050], [724, 2050]], "label": "YES", "labelAt": [679, 2050]},
+          {"id": "j-q9-q10", "from": "q9", "to": "q10", "line": "flow", "points": [[494, 2112], [494, 2168]], "label": "NO", "labelAt": [494, 2140]},
+          {"id": "j-q10-r10", "from": "q10", "to": "r10", "line": "flow", "points": [[354, 2230], [264, 2230]], "label": "YES", "labelAt": [309, 2230]},
+          {"id": "j-q10-q11", "from": "q10", "to": "q11", "line": "flow", "points": [[494, 2292], [494, 2348]], "label": "NO", "labelAt": [494, 2320]},
+          {"id": "j-q11-r11", "from": "q11", "to": "r11", "line": "flow", "points": [[634, 2408], [724, 2408]], "label": "YES", "labelAt": [679, 2408]},
+          {"id": "j-q11-a1", "from": "q11", "to": "a1", "line": "flow", "points": [[494, 2468], [494, 2524]], "label": "NO", "labelAt": [494, 2496]}
+        ]
+      }
+      ```
+
+      <!-- /flow -->
+  - id: command-destination-flow-02
+    group: コマンドの書き先 判定フローチャート
+    name: ※1 1 コマンドずつ通す
+    body: |-
+      - **※1 1 コマンドずつ通す**: 差分で変わるコマンドを洗い出し、1 つずつこの図で判定して記載先を 1 つ決める。依存の定義が変わる差分は、依存を追加・更新・削除するコマンドと、取り込んだ後に同期するコマンドを分けて 1 つずつ判定する
+  - id: command-destination-flow-03
+    group: コマンドの書き先 判定フローチャート
+    name: ※2 既に同じ形で書かれている
+    body: |-
+      - **※2 既に同じ形で書かれている**: Q1 以降で決まる記載先に、差分で変わるコマンドと前提と実行の順序が既にあること。記載先のページやセクションが無いとき、コマンドや前提が違うときは NO
+  - id: command-destination-flow-04
+    group: コマンドの書き先 判定フローチャート
+    name: ※3 取り込み前の検査
+    body: |-
+      - **※3 取り込み前の検査**: CI と同じ検査（テスト・静的検査・ビルドの組）を 1 つの手順で実行するもの。個別のコマンドはコピーせず、既に記載した先（テストと静的検査はテスト実行方法）を指し、他のページに無い検査だけを記載する
+  - id: command-destination-flow-05
+    group: コマンドの書き先 判定フローチャート
+    name: ※4 取り込み後の追従
+    body: |-
+      - **※4 取り込み後の追従**: 依存の同期・マイグレーション・生成物の作り直し・プラグインの更新・再起動など、他の人の変更を取り込んだ後に実行するもの
+  - id: command-destination-flow-06
+    group: コマンドの書き先 判定フローチャート
+    name: ※5 特定の外部ライブラリだけが要る手順
+    body: |-
+      - **※5 特定の外部ライブラリだけが要る手順**: 初期化・プラグインの登録・ライブラリ固有の設定など。依存の定義への追加と同期は Q4・Q5 で当たる
+  - id: command-destination-flow-07
+    group: コマンドの書き先 判定フローチャート
+    name: ※6 環境構築
+    body: |-
+      - **※6 環境構築**: ランタイム・ツールの認証・プラグインの導入など、クローンした直後に 1 度実行するもの
+  - id: command-destination-flow-08
+    group: コマンドの書き先 判定フローチャート
+    name: ※7 起動・停止
+    body: |-
+      - **※7 起動・停止**: 開発サーバーと補助のプロセスの起動と停止
+  - id: command-destination-flow-09
+    group: コマンドの書き先 判定フローチャート
+    name: ※8 静的検査
+    body: |-
+      - **※8 静的検査**: コードを実行せずに調べて修正するもの。linter・formatter の check・型検査・構造の検査を、テスト実行方法の lint 層の全件実行に集める
+  - id: command-destination-flow-10
+    group: コマンドの書き先 判定フローチャート
+    name: ※9 ビルド・生成
+    body: |-
+      - **※9 ビルド・生成**: 成果物・コード・ドキュメントを作るもの
+  - id: command-destination-flow-11
+    group: コマンドの書き先 判定フローチャート
+    name: ※10 一度きりの作業
+    body: |-
+      - **※10 一度きりの作業**: データの移行のように、繰り返し実行しない管理作業

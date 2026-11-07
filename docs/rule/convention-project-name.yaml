@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: convention-project-name
+kind: rule
+name: プロジェクト名の表記
+description: プロジェクト名を表示側とプログラム側で分けて記載する決まりを定め、ドキュメント・README・画面にプロジェクト名を記載するときに読む。
+tags:
+  - name: scope:規約
+  - name: topic:プロジェクト
+    main: true
+  - name: topic:文章
+  - name: topic:見出し
+  - name: topic:識別子
+  - name: topic:ケバブケース
+  - name: topic:リポジトリ
+  - name: action:記載
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-07'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      プロジェクト名を記載するとき、表示側とプログラム側で表記を分ける。
+  - id: project-name-01
+    group: 表記
+    name: 表示側とプログラム側の表記
+    body: |-
+      | 側 | 表記 | 例 | 対象 |
+      | --- | --- | --- | --- |
+      | 表示側 | 単語の頭を大文字にし、空白で区切る | `AI Monitor` | ドキュメントサイトの名前・説明文、ドキュメントのページの見出し、ルートの `README.md` の見出し、ドキュメントとルートの `README.md` の本文でプロジェクトを指す名詞、画面の文言 |
+      | プログラム側 | 英小文字のケバブケース | `ai-monitor` | URL・パス・識別子・セッション名・リポジトリ名 |

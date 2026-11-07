@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-versioning
+kind: rule
+name: バージョニング
+description: リリースのバージョン番号の桁の算出・タグの打ち方・破壊的変更の判定基準・0.x から 1.0.0 へ上げる判断を定め、リリースのバージョンを決めるときやタグを打つときに読む。
+tags:
+  - name: scope:dev
+  - name: topic:バージョン
+    main: true
+  - name: topic:semver
+  - name: topic:リリース
+  - name: topic:ブランチ
+  - name: topic:issue
+  - name: topic:正本
+  - name: tool:git
+  - name: action:バージョニング
+  - name: action:判定
+  - name: action:計算
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-07'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      リリースのバージョン番号の算出とタグの運用。
+  - id: sot-01
+    group: SoT
+    name: バージョンの正はタグ
+    body: |-
+      - バージョンの正はタグ。リポジトリの中のファイルにバージョンを記載するときは、タグの値の複製にし、リリースのたびにタグの値に統一する
+      - スプリントで出すときは、スプリントのバージョンの正はスプリントの計画で、release ブランチ名とタグはその複製
+  - id: digit-01
+    group: 桁の算出
+    name: 桁の決め方
+    body: |-
+      スプリントのバージョンは、計画時にそのスプリントに入れた Issue の `type:*` ラベルで判定する。
+      hotfix のマージ commit だけは、対象 Issue 1 件の `type:*` ラベルで判定する。
+
+      | 条件 | 桁 |
+      | --- | --- |
+      | `破壊的変更` ラベルが 1 つでもある | MAJOR |
+      | `type:feat` が 1 つでもある | MINOR |
+      | `type:bug` / `type:design` / `type:refactor` / `type:docs` / `type:chore` / `type:test` だけ | PATCH |
+      | Issue が 1 件も入っていない | PATCH |
+  - id: digit-02
+    group: 桁の算出
+    name: 計画が変わったとき
+    body: |-
+      - 「Issue が 1 件も入っていない」は、スプリントを繰り上げる時点で決める値に適用する
+      - release を切る前にスプリントに Issue が入ったら、入っている Issue の `type:*`・`破壊的変更` で桁を求め直し、スプリントのバージョンを書き換える
+  - id: digit-03
+    group: 桁の算出
+    name: 0.x の間
+    body: |-
+      - 0.x の間は破壊的変更でも MINOR を上げ、MAJOR は 1.0.0 を出すと決めたときだけ上げる（[0.x から 1.0.0 へ](id:dev-versioning#major-01)）
+  - id: tag-01
+    group: タグの打ち方
+    name: 打つ commit と値
+    body: |-
+      - master へ `--no-ff` でマージした commit に `v{バージョン}` のタグを打つ
+      - release はそのスプリントのバージョンをそのまま打つ。間に hotfix が入っても動かさない
+      - hotfix は master に付いている直前のタグを基準に、対象 Issue の `type:*` で決めた桁を上げる
+      - 最初のタグは `v0.1.0` から始める
+  - id: tag-02
+    group: タグの打ち方
+    name: 直前のタグの求め方
+    body: |-
+      `git fetch origin --prune --prune-tags --tags` の後に `git tag --list "v*" --merged origin/master --sort=-v:refname` で並べ、release では打った `v{バージョン}` より後ろにある最初のもの、hotfix の桁の決定では先頭のものを直前のタグにする。
+      該当が無ければ直前のタグは無いものとして扱う。
+  - id: breaking-01
+    group: 破壊的変更の判定基準
+    name: 破壊的変更
+    body: |-
+      - 既存の Issue・PR をそのまま進められなくなる変更を `破壊的変更` とする
+      - 何が壊れたら MAJOR かの判定基準はプロジェクトごとに定義する
+  - id: major-01
+    group: 0.x から 1.0.0 へ
+    name: 1.0.0 へ上げる判断
+    body: |-
+      - 0.x の間は互換を保証しない（MINOR で壊してよい）
+      - 1.0.0 にするかはユーザーが判断する。判断材料は「壊すと自分以外が困る状態になったか」
+      - 上げるときは Issue を起票する（判定基準の確定・設定のスキーマの記載など作業を伴うため）

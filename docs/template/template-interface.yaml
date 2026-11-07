@@ -24,7 +24,7 @@ tags:
   - name: action:起動
 status: current
 visibility: internal
-rev: 3
+rev: 4
 items:
   - id: overview
     name: 概要
@@ -49,7 +49,7 @@ items:
       | entry.value | 値 | string | 必須 | - | - | 操作を指す値。 | `POST /auth/signin` / `add_labels` / `` heartbeat 周期（`heartbeat_interval_sec` ごと） `` |
       | entry.api | 呼び出し API | string | - | - | - | `screen` のときの呼び出す API（Mock）。 | - |
       | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
-      | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`）。 | - |
+      | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`。規約『V字モデル』）。 | - |
       | identifier | 識別子 | string | - | - | - | 操作の識別子（OpenAPI の operationId に当たる）。 | - |
       | permissions | 必要な権限 | string | - | - | - | - | - |
       | idempotent | 冪等 | boolean | - | - | - | 同じ要求を繰り返しても結果が変わらないか。 | - |

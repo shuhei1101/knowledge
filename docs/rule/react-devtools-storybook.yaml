@@ -20,10 +20,11 @@ tags:
     main: true
   - name: action:導入
   - name: action:拡張
+  - name: action:選択
 status: current
 visibility: internal
-rev: 5
-last_reviewed: '2026-10-30'
+rev: 6
+last_reviewed: '2026-11-07'
 sources:
   - title: Storybook のドキュメント
     url: https://storybook.js.org/docs
@@ -68,3 +69,46 @@ items:
       | `Patterns` | パターンの例（一覧画面風・編集画面風） |
       | `Forms` | フォームの例 |
       | `Pages` | ページ全体のスタブ（任意） |
+  - id: storybook-06
+    group: Storybook
+    name: framework の選び方
+    body: |-
+      部品の仕組みから、Storybook の framework とストーリーの描き方を選ぶ。
+
+      <!-- flow -->
+
+      ```json
+      {
+        "title": "Storybook の framework の選び方",
+        "scope": "部品を Storybook に載せるとき",
+        "updated": "2026-11-07",
+        "width": 1338,
+        "height": 776,
+        "nodes": [
+          {"id": "start", "kind": "start", "x": 424, "y": 24, "w": 140, "h": 140, "name": "部品を Storybook に載せたい"},
+          {"id": "q1", "kind": "question", "x": 334, "y": 220, "w": 320, "h": 164, "name": "部品をブラウザのフレームワーク（React・Vue など）のコンポーネントで書くか ※1"},
+          {"id": "q2", "kind": "question", "x": 724, "y": 242, "w": 280, "h": 120, "name": "Next.js のアプリか"},
+          {"id": "r1", "kind": "result", "x": 1074, "y": 274, "w": 240, "h": 56, "name": "@storybook/nextjs-vite"},
+          {"id": "r2", "kind": "result", "x": 744, "y": 418, "w": 240, "h": 92, "name": "そのフレームワークの framework（@storybook/react-vite・@storybook/vue3-vite など）"},
+          {"id": "q3", "kind": "question", "x": 334, "y": 440, "w": 320, "h": 164, "name": "部品をサーバーのテンプレート（Jinja2 のマクロなど）で描くか ※2"},
+          {"id": "r3", "kind": "result", "x": 24, "y": 476, "w": 240, "h": 92, "name": "@storybook/server-webpack5 + 部品を描画するサーバー ※3"},
+          {"id": "r4", "kind": "result", "x": 374, "y": 660, "w": 240, "h": 92, "name": "@storybook/server-webpack5 + 静的な部品の断片 ※4"}
+        ],
+        "wires": [
+          {"id": "j-start-q1", "from": "start", "to": "q1", "line": "flow", "points": [[494, 164], [494, 220]]},
+          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[654, 302], [724, 302]], "label": "YES", "labelAt": [689, 302]},
+          {"id": "j-q2-r1", "from": "q2", "to": "r1", "line": "flow", "points": [[1004, 302], [1074, 302]], "label": "YES", "labelAt": [1039, 302]},
+          {"id": "j-q2-r2", "from": "q2", "to": "r2", "line": "flow", "points": [[864, 362], [864, 418]], "label": "NO", "labelAt": [864, 390]},
+          {"id": "j-q1-q3", "from": "q1", "to": "q3", "line": "flow", "points": [[494, 384], [494, 440]], "label": "NO", "labelAt": [494, 412]},
+          {"id": "j-q3-r3", "from": "q3", "to": "r3", "line": "flow", "points": [[334, 522], [264, 522]], "label": "YES", "labelAt": [299, 522]},
+          {"id": "j-q3-r4", "from": "q3", "to": "r4", "line": "flow", "points": [[494, 604], [494, 660]], "label": "NO", "labelAt": [494, 632]}
+        ]
+      }
+      ```
+
+      <!-- /flow -->
+
+      - **※1 フレームワークのコンポーネント**: 部品の実装がブラウザで描かれるコンポーネント（`.tsx`・`.vue` など）で、ストーリーから直に import できる
+      - **※2 サーバーのテンプレート**: 部品の実装がサーバーで HTML を組み立てるマクロ・部分テンプレートで、ブラウザからは import できない
+      - **※3 部品を描画するサーバー**: 作業ブランチのコードで部品を引数つきで描画し、HTML の断片を返すサーバー
+      - **※4 静的な部品の断片**: 実装を持たない部品の状態 1 つを HTML 1 ファイル（`.storybook/fragments/{部品}/{案}.html`）で持ち、部品を描画するサーバーが返す

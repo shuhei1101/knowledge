@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/shuhei1101/dev-docs/3fa52c474176b95140f6e05ec4a78869e1dd401c/schemas/dev-docs.schema.json
 version: "3"
 name: knowledge
-description: どのプロジェクトでも共通で使うコーディング規約・テンプレート・判定フローチャート・判定表・使い方
+description: どのプロジェクトでも共通で使うコーディング規約・テンプレート・判定フローチャート・判定表・チェックシート・使い方
 instructions: |-
-  規約（rule）・テンプレート（template）・判定フローチャート（flowchart）・判定表（decision-table）・使い方（guide）・変更履歴（changelog）・スキル（skill）・単語の対応表（word-list）は `docs/` の YAML が正本で、種類ごとの行に分かれる。
+  規約（rule）・テンプレート（template）・判定フローチャート（flowchart）・判定表（decision-table）・チェックシート（checksheet）・使い方（guide）・変更履歴（changelog）・スキル（skill）・単語の対応表（word-list）は `docs/` の YAML が正本で、種類ごとの行に分かれる。
   本文は `items[]` の各項目が持ち、`[名前](id:{文書の ID}#{項目の ID})` で他の文書・項目を指す。`related[].when` がその文書を読むときを表す。
   `hooks/`・`skills/`・`scripts/` のファイルは、各フォルダの `files.yaml` が名前・概要文・タグを持つ。
   書き込みのときは knowledge-checks が、項目の ID の重複・参照先の実在・`aliases` の衝突・文書の中の `aliases` の重複・mermaid の文法を検査する。
@@ -54,6 +54,16 @@ documents:
     title: 判定表
     paths: ["docs/decision-table/*.yaml"]
     schema: schemas/decision-table.schema.yaml
+    validators: [knowledge-checks]
+    converter: knowledge-markdown
+    alias_type: doc
+    metadata:
+      tags: tags[].name
+      main_tags: tags[main].name
+  - id: checksheet
+    title: チェックシート
+    paths: ["docs/checksheet/*.yaml"]
+    schema: schemas/checksheet.schema.yaml
     validators: [knowledge-checks]
     converter: knowledge-markdown
     alias_type: doc
@@ -138,6 +148,10 @@ nav:
       items:
         - auto:
             document: decision-table
+    - title: チェックシート
+      items:
+        - auto:
+            document: checksheet
     - title: 使い方
       items:
         - auto:

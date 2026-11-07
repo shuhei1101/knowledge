@@ -13,7 +13,7 @@ tags:
   - name: topic:境界
 status: current
 visibility: internal
-rev: 3
+rev: 4
 items:
   - id: overview
     name: 概要
@@ -82,7 +82,7 @@ items:
       | external_systems[].direction | 方向 | string | 必須 | `送信のみ` / `受信のみ` / `双方向` | - | - | - |
       | external_systems[].protocol | 技術 | string | - | - | - | プロトコル・形式。 | - |
       | external_systems[].detail | 詳細 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | API なら `設計書/外部API/`、それ以外（SDK・CLI 等）なら `設計書/外部ライブラリ/` の設計書。<br>持たないのは銘柄未定の行と初期構築の段の行だけ（設計書はその外部システムを使い始める設計の段で作る）。 | `IF-12#flows[正常系]` / `#functions[resolve_base].exceptions` / `CFG-3#` / `#notes[main.py の補足]` / `#functions[main#3]` |
-      | external_systems[].test_file | 対応非機能要件テスト | string | - | - | pattern: `^tests/external/.+` | 外部疎通のテストのファイル（`tests/external/test_{名前}.py`）。1 外部システム = 1 ファイル。 | - |
+      | external_systems[].test_file | 対応非機能要件テスト | string | - | - | pattern: `^tests/external/.+` | 外部疎通のテストのファイル（`tests/external/test_{名前}.py`）。1 外部システム = 1 ファイル（規約『V字モデル』）。 | - |
       | external_systems[].cost | 料金・副作用 | string | - | - | - | - | - |
       | external_systems[].refs | 関連 | array | - | - | - | - | - |
       | external_systems[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
