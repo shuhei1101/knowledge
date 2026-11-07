@@ -70,6 +70,45 @@ rules:
       - "**/.claude/commands/**"
     tools:
       - "mcp__*__write_design_doc*"
+  - rule: docs/rule/convention-doc-presentation.yaml
+    tools:
+      - "mcp__*_mindstella__add"
+      - "mcp__*_mindstella__update"
+    args:
+      item.body_markdown:
+        - 're:\|\s*キー\s*\|'
+  - rule: docs/rule/convention-doc-presentation.yaml
+    tools:
+      - "mcp__*_mindstella__batch"
+    args:
+      operations.item.body_markdown:
+        - 're:\|\s*キー\s*\|'
+  - rule: docs/template/template-scenario.yaml
+    tools:
+      - "mcp__*_mindstella__add"
+      - "mcp__*_mindstella__update"
+    args:
+      item.title:
+        - "re:シナリオ"
+  - rule: docs/template/template-scenario.yaml
+    tools:
+      - "mcp__*_mindstella__batch"
+    args:
+      operations.item.title:
+        - "re:シナリオ"
+  - rule: docs/template/template-interface.yaml
+    tools:
+      - "mcp__*_mindstella__add"
+      - "mcp__*_mindstella__update"
+    args:
+      item.title:
+        - "re:インターフェース定義"
+  - rule: docs/template/template-interface.yaml
+    tools:
+      - "mcp__*_mindstella__batch"
+    args:
+      operations.item.title:
+        - "re:インターフェース定義"
   - rule: docs/flowchart/flowchart-rule-form-choice.yaml
     paths:
       - "**/docs/rule/*.yaml"
