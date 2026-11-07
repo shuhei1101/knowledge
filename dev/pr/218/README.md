@@ -1,0 +1,1 @@
+# スキーマのファイルの書き方に、ツールの引数の制約を持たせるキーを JSON Schema の一部（required・properties・const・enum・pattern）で記載する決まりを追加する
