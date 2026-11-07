@@ -9,6 +9,13 @@ x-rules:
   - ファイル名は `{種類}.schema.yaml`（例 `プロンプト.schema.yaml`）にする。
   - 各項目に `title`・`description` を付け、スキーマを読めば各項目に何を書くかが分かるようにする。
   - 種類をまたぐ型は `共通.schema.yaml` の `$defs` に置き、各スキーマから `$ref` で指す。
+  - ツールの引数の制約を持たせるキーは、MCP のツールの `inputSchema` と同じ JSON Schema の `required`・`properties`・`additionalProperties` と、引数ごとの `const`・`enum`・`pattern` で値を記載させる。
+  - 引数を自由にするときは、引数の制約を持たせるキーを省かせる。
+  - '必須の引数は `required` に並べさせ（例 `required: [character_id]`）、任意の引数は `properties` に記載して `required` に入れさせない。'
+  - '引数の値を決めるときは `const` を記載させる（例 `kind: {const: comment}`）。'
+  - '引数の値を候補から選ばせるときは `enum` を記載させる（例 `kind: {enum: [comment, note]}`）。'
+  - '引数の値の書式だけを決めるときは `pattern` を記載させる（例 `segment_id: {pattern: "^seg-"}`）。'
+  - '記載しない引数を指定させないときは `additionalProperties: false` を記載させる。'
 type:
   - object
   - boolean
