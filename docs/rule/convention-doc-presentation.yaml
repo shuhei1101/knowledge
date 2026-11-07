@@ -2,7 +2,7 @@
 id: convention-doc-presentation
 kind: rule
 name: 表し方の優先順位
-description: 人が読む文書・設計書の中身を図・表・箇条書き・文のどれで表すかの優先順位と、図・表・箇条書きと文・ページの分け方・本文に出さないものの決まりを定め、文書・設計書を記載するときと文書を描くビュワーの変換を作るときに読む。
+description: 人が読む文書・設計書の中身を図・表・箇条書き・文のどれで表すかの優先順位と、図・表・キーの表・箇条書きと文・ページの分け方・本文に出さないものの決まりを定め、文書・設計書を記載するときと文書を描くビュワーの変換を作るときに読む。
 tags:
   - name: scope:規約
   - name: topic:表し方
@@ -31,6 +31,8 @@ tags:
   - name: topic:id
   - name: topic:メタデータ
   - name: topic:リンク
+  - name: topic:キー
+  - name: topic:スキーマ
   - name: tool:mdmark
   - name: tool:mermaid
   - name: action:選択
@@ -39,8 +41,8 @@ tags:
   - name: action:分割
 status: current
 visibility: internal
-rev: 2
-last_reviewed: '2026-11-05'
+rev: 3
+last_reviewed: '2026-11-07'
 items:
   - id: overview
     name: 概要
@@ -115,6 +117,21 @@ items:
     name: 真偽の値
     body: |-
       - 真偽の値は `true` / `false` でなく ✓ と空欄で出す
+  - id: key-table-01
+    group: キーの表
+    name: 列
+    body: |-
+      - 設定ファイル・スキーマのキーの表は、列をキー・型・必須・説明・例にし、設計書のテンプレートでは使用先の列も加える
+  - id: key-table-02
+    group: キーの表
+    name: オブジェクトの中のキー
+    body: |-
+      - オブジェクトの中のキーは表を分けず、`steps[].tools[].args` のように `.` と配列の要素の `[]` でつないで 1 つの表に並べる
+  - id: key-table-03
+    group: キーの表
+    name: 見本
+    body: |-
+      - 表の後に、実際の値のコードブロックを付ける
   - id: list-and-sentence-01
     group: 箇条書きと文
     name: 順番のある手順
