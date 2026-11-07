@@ -5,7 +5,7 @@
 ## ドキュメント
 
 実体は [docs/](./docs/) の YAML にある。
-種類（rule・template・flowchart・decision-table・guide・skill・word-list）ごとのフォルダに 1 トピック 1 ファイルで置き、スキーマは [schemas/](./schemas/) にある。
+種類（rule・template・flowchart・decision-table・checksheet・guide・skill・word-list）ごとのフォルダに 1 トピック 1 ファイルで置き、スキーマは [schemas/](./schemas/) にある。
 設計書のスキーマの正本は [schemas/design/](./schemas/design/) にあり、各プロジェクトは `design-schemas/v{メジャー}.{マイナー}.{パッチ}` のタグで指す。
 スキーマを変える PR は、release が master へ入った後にタグを上げる反映作業を持つ。
 既存の設計書が検査を通らなくなる変更はメジャー、通ったままの変更はマイナー、検査の結果を変えない変更はパッチを上げる。

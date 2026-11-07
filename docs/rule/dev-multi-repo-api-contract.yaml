@@ -1,0 +1,69 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-multi-repo-api-contract
+kind: rule
+name: 複数リポジトリのAPI契約
+description: 複数のリポジトリにまたがる機能で、API の契約を提供する側に配置し、利用する側はモックで先に作る決まりを定め、別のリポジトリの API を利用する機能を設計・実装するときに読む。
+tags:
+  - name: scope:dev
+  - name: topic:契約
+    main: true
+  - name: topic:api
+  - name: topic:リポジトリ
+  - name: topic:インターフェース
+  - name: topic:モック
+  - name: topic:アダプター
+  - name: topic:バージョン
+  - name: topic:issue
+  - name: action:設計
+  - name: action:依存
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-07'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      複数のリポジトリにまたがる機能で、API の契約を提供する側に配置し、利用する側はモックで先に作る。
+  - id: contract-01
+    group: 決まり
+    name: 契約の正本
+    body: |-
+      - 提供する側のリポジトリのインターフェース定義の設計書を正本にする
+      - 機械が読む形式（OpenAPI・MCP のツール定義 等）は、提供する側の実装の慣習どおりに提供する側のリポジトリへ配置し、設計書との食い違いは提供する側の結合テストで止める
+  - id: contract-02
+    group: 決まり
+    name: 提供する側の API
+    body: |-
+      - 特定の使い手に合わせず、汎用の API にする
+  - id: contract-03
+    group: 決まり
+    name: 利用する側の構え
+    body: |-
+      - 必要な部分だけを使用する付け替えのインターフェース（アダプター）と、契約に沿ったモックを手で記載する
+      - モックには、参照した契約のバージョン（提供する側の commit かタグ）を記録する
+      - 契約がまだ無いときは、提供する側の Issue に記載した入出力に沿って記載し、その Issue（`{owner}/{repo}#{番号}`）を記録する
+      - 決まった契約との食い違いは、本物につなぐ Issue で修正する
+  - id: contract-04
+    group: 決まり
+    name: 作る順
+    body: |-
+      - 利用する側は、提供する側の実装が終わる前でもモックで先に作ってテストする
+      - 本物につなぐ作業は別の Issue にし、本文の `## 依存` に提供する側の Issue を `{owner}/{repo}#{番号}` で記載する
+  - id: contract-05
+    group: 決まり
+    name: 契約の変更
+    body: |-
+      - 提供する側の Issue で先に変え、利用する側の追従は別の Issue にする
+      - 後方互換を保つか、バージョンを分ける
+  - id: contract-06
+    group: 別のリポジトリの変更が要ると分かったとき
+    name: 起票する Issue
+    body: |-
+      設計で別のリポジトリの変更が要ると分かったら、次の 2 つを起票する。
+      自分の作業は、付け替えのインターフェースとモックを前提に設計を続ける。
+
+      | 起票 | 起票先 | 本文 |
+      | --- | --- | --- |
+      | 提供する側の Issue | 提供する側のリポジトリ | 先頭の行に起点の作業（`{owner}/{repo}#{番号}`）と、続けて利用する側が要る入出力 |
+      | 本物につなぐ Issue | 自分のリポジトリ | モックを本物へ付け替える作業と、`## 依存` に提供する側の Issue |

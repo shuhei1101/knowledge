@@ -12,7 +12,7 @@ tags:
   - name: topic:複合ユースケース
 status: current
 visibility: internal
-rev: 3
+rev: 4
 items:
   - id: overview
     name: 概要
@@ -23,6 +23,7 @@ items:
     body: |-
       - 1 ファイル = 1 ユースケース = テストの 1 ファイルにする。
       - 外部 API は Mock 前提で書く。
+      - 既存の流用・既存の修正・新規の単一・新規の複合のどれで書くかは判定フローチャート『シナリオ』で決める。
   - id: item-list-01
     name: 項目
     body: |-
@@ -34,7 +35,7 @@ items:
       | title | タイトル | string | 必須 | - | - | 単一ユースケースは機能名、複合ユースケースは業務シナリオの論理名。ファイル名に合わせる。 | - |
       | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
       | issue | 対応 Issue | integer | - | - | - | 起点の Issue の番号。 | - |
-      | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | `tests/e2e/{単一ユースケース,複合ユースケース}/…`。 | - |
+      | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | `tests/e2e/{単一ユースケース,複合ユースケース}/…`（規約『V字モデル』）。 | - |
       | primary_actor | 主アクター | string | - | - | - | - | - |
       | stakeholders | 関係者と関心 | array | - | - | - | - | - |
       | stakeholders[].name | 関係者 | string | 必須 | - | - | - | - |

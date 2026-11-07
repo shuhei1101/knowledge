@@ -1,0 +1,91 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-branch-strategy
+kind: rule
+name: ブランチ戦略
+description: master・develop・release・hotfix と作業ブランチの役割・base・命名・マージの方式・ライフサイクルを定め、ブランチを作るときやマージ先を決めるときに読む。
+tags:
+  - name: scope:dev
+  - name: topic:ブランチ
+    main: true
+  - name: topic:リリース
+  - name: topic:issue
+  - name: topic:pr
+  - name: topic:naming
+  - name: topic:ケバブケース
+  - name: topic:ライフサイクル
+  - name: tool:git
+  - name: tool:github
+  - name: action:作成
+  - name: action:削除
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-07'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      ブランチの種類・base・命名・ライフサイクルの決まり。
+  - id: branch-01
+    group: ブランチ
+    name: ブランチの種類
+    body: |-
+      | ブランチ | 役割 | base |
+      | --- | --- | --- |
+      | `master` | E2E を通った状態だけを持つ。タグ（`v{バージョン}`）の打ち先 | - |
+      | `develop` | 作業 PR の squash マージ先。E2E を通っていない変更が集まる | `master` |
+      | `release/v{バージョン}` | スプリント単位で E2E を回す短命のブランチ | `develop` |
+      | `hotfix/{ドメイン}/{変更内容}` | master に出たバグを release を待たずに修正する短命のブランチ | `master` |
+      | 作業ブランチ（`{type}/{ドメイン}/{変更内容}`） | 1 Issue の作業 | `develop` |
+  - id: branch-02
+    group: ブランチ
+    name: release と develop の同期
+    body: |-
+      - release は commit が入るたびに develop へバックマージする（E2E を回し直す前と、master へマージした後）
+      - E2E が全て通った release は、master と develop の両方へ merge commit で入れる
+  - id: issue-pr-01
+    group: Issue と PR
+    name: 1 Issue = 1 作業 PR
+    body: |-
+      - 作業の単位は 1 Issue = 1 作業 PR
+      - まとめた Issue は親 Issue を起点にして 1 つの作業 PR で作業し、親の close で子も閉じる
+      - 起点の紐付けは PR の本文の `起点 Issue: #{Issue 番号}` で表す
+  - id: naming-01
+    group: 命名
+    name: 命名の形式
+    body: |-
+      ```text
+      {type}/{ドメイン}/{変更内容}
+      ```
+
+      | スロット | 値 | 例 |
+      | --- | --- | --- |
+      | type | `feat` / `fix` / `design` / `refactor` / `docs` / `chore` / `poc` / `hotfix`（Issue の `type:*` ラベルに対応。`hotfix` だけは base が master であることで決まる） | `feat` |
+      | ドメイン | 変更の対象のドメイン名 | `task` |
+      | 変更内容 | 何をするかの要約 | `name-length-validation` |
+
+      全てのスロットを英小文字・数字・ハイフンのケバブケースにする。
+  - id: exception-01
+    group: 例外の PR
+    name: PoC の PR
+    body: |-
+      コードをマージしない検証だけは、作業ブランチを base にした別の PR を切ってよい。
+
+      | 種類 | ブランチ | base | 扱い |
+      | --- | --- | --- | --- |
+      | PoC | `poc/{ドメイン}/{テーマ}` | 作業ブランチ | マージせずに PR を close する（結論は作業 PR の計画へ記載する） |
+  - id: lifecycle-01
+    group: ライフサイクル
+    name: ブランチごとのマージと削除
+    body: |-
+      | ブランチ | マージ | マージの後 | 恒久の記録 |
+      | --- | --- | --- | --- |
+      | 作業ブランチ | squash マージ | 削除する | マージした PR の diff |
+      | release | merge commit（`--no-ff`）で master・develop へ | 削除する | master のマージ commit とタグ |
+      | hotfix | merge commit（`--no-ff`）で master・develop へ | 削除する | master のマージ commit とタグ |
+      | PoC | マージしない | PR の close でローカル・リモートとも削除する | close した PR の diff |
+  - id: lifecycle-02
+    group: ライフサイクル
+    name: マージせずに閉じる作業ブランチ
+    body: |-
+      - 作業ブランチをマージせずに閉じる場合、引き渡し先の Issue・PR が作業 PR の commit の範囲を参照していればリモートのブランチを残し、参照していなければローカルのブランチと合わせて削除する

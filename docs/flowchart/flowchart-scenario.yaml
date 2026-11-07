@@ -1,0 +1,115 @@
+# yaml-language-server: $schema=../../schemas/flowchart.schema.yaml
+id: flowchart-scenario
+kind: flowchart
+name: シナリオ 判定フローチャート
+description: シナリオを既存の流用・既存の修正・新規の単一ユースケース・新規の複合ユースケースのどれで記載するかを判定し、シナリオを記載するときに読む。
+tags:
+  - name: scope:判定フローチャート
+  - name: topic:判定フローチャート
+  - name: topic:フローチャート
+  - name: topic:シナリオ
+    main: true
+  - name: topic:ユースケース
+  - name: topic:複合ユースケース
+  - name: topic:e2e
+  - name: topic:設計書
+  - name: action:判定
+  - name: action:分割
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      シナリオを既存の流用・既存の修正・新規の単一ユースケース・新規の複合ユースケースのどれで記載するかを判定し、シナリオを記載するときに読む。
+  - id: scenario-flow-01
+    group: シナリオ 判定フローチャート
+    name: 判定フロー
+    body: |-
+      <!-- flow -->
+
+      ```json
+      {
+        "title": "シナリオ",
+        "scope": "シナリオを記載するとき",
+        "updated": "2026-11-07",
+        "width": 1028,
+        "height": 2028,
+        "nodes": [
+          {"id": "start", "kind": "start", "x": 424, "y": 24, "w": 140, "h": 140, "name": "シナリオを記載したい"},
+          {"id": "q0", "kind": "question", "x": 354, "y": 220, "w": 280, "h": 124, "name": "既存のシナリオで既にカバーされているか"},
+          {"id": "use-exist", "kind": "result", "x": 24, "y": 246, "w": 240, "h": 72, "name": "既存のシナリオを流用し、新規に作らない"},
+          {"id": "q0b", "kind": "question", "x": 354, "y": 400, "w": 280, "h": 124, "name": "既存のシナリオを軽微に修正すれば足りるか"},
+          {"id": "edit-exist", "kind": "result", "x": 724, "y": 434, "w": 240, "h": 56, "name": "既存のシナリオを修正する"},
+          {"id": "q0a", "kind": "question", "x": 354, "y": 580, "w": 280, "h": 164, "name": "単一ユースケース 1 本（1 つの E2E）で足りるか"},
+          {"id": "new-single", "kind": "result", "x": 24, "y": 626, "w": 240, "h": 72, "name": "新規に単一ユースケースとして作る"},
+          {"id": "q1", "kind": "question", "x": 354, "y": 800, "w": 280, "h": 120, "name": "達成価値を 1 文で言えるか ※1"},
+          {"id": "a1", "kind": "action", "x": 724, "y": 824, "w": 240, "h": 72, "name": "複数の複合ユースケースに分ける"},
+          {"id": "q2", "kind": "question", "x": 354, "y": 976, "w": 280, "h": 120, "name": "主要フェーズが 4 以下か ※2"},
+          {"id": "a2", "kind": "action", "x": 24, "y": 990, "w": 240, "h": 92, "name": "前段を前提状態に入れるか、複数の複合ユースケースに分ける ※3"},
+          {"id": "q3", "kind": "question", "x": 354, "y": 1152, "w": 280, "h": 124, "name": "操作ノードが 10 前後に収まるか ※4"},
+          {"id": "a3", "kind": "action", "x": 724, "y": 1168, "w": 240, "h": 92, "name": "詳細のノードを前提状態に入れるか、複数の複合ユースケースに分ける"},
+          {"id": "q4", "kind": "question", "x": 334, "y": 1332, "w": 320, "h": 164, "name": "単体テスト・結合テスト・単一ユースケースの E2E では再現できないか"},
+          {"id": "a4", "kind": "action", "x": 24, "y": 1378, "w": 240, "h": 72, "name": "再現できる部分を下位のテストに移し、E2E の範囲を削る"},
+          {"id": "q5", "kind": "question", "x": 354, "y": 1552, "w": 280, "h": 124, "name": "複数のロールか複数のエンティティが登場するか"},
+          {"id": "r2", "kind": "result", "x": 724, "y": 1568, "w": 240, "h": 92, "name": "新規に複合ユースケース（単一価値シナリオ ※5）として 1 本作る"},
+          {"id": "q5a", "kind": "question", "x": 354, "y": 1732, "w": 280, "h": 124, "name": "その交差が価値の中核か、権限の境界の検証が目的か"},
+          {"id": "a5a", "kind": "action", "x": 24, "y": 1758, "w": 240, "h": 72, "name": "ロール・エンティティ別に複数の複合ユースケースに分ける"},
+          {"id": "r1", "kind": "result", "x": 374, "y": 1912, "w": 240, "h": 92, "name": "新規に複合ユースケース（交差点シナリオ ※6）として 1 本作る"}
+        ],
+        "wires": [
+          {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[494, 164], [494, 220]]},
+          {"id": "j-q0-use-exist", "from": "q0", "to": "use-exist", "line": "flow", "points": [[354, 282], [264, 282]], "label": "YES", "labelAt": [309, 282]},
+          {"id": "j-q0-q0b", "from": "q0", "to": "q0b", "line": "flow", "points": [[494, 344], [494, 400]], "label": "NO", "labelAt": [494, 372]},
+          {"id": "j-q0b-edit-exist", "from": "q0b", "to": "edit-exist", "line": "flow", "points": [[634, 462], [724, 462]], "label": "YES", "labelAt": [679, 462]},
+          {"id": "j-q0b-q0a", "from": "q0b", "to": "q0a", "line": "flow", "points": [[494, 524], [494, 580]], "label": "NO", "labelAt": [494, 552]},
+          {"id": "j-q0a-new-single", "from": "q0a", "to": "new-single", "line": "flow", "points": [[354, 662], [264, 662]], "label": "YES", "labelAt": [309, 662]},
+          {"id": "j-q0a-q1", "from": "q0a", "to": "q1", "line": "flow", "points": [[494, 744], [494, 800]], "label": "NO", "labelAt": [494, 772]},
+          {"id": "j-q1-a1", "from": "q1", "to": "a1", "line": "flow", "points": [[634, 860], [724, 860]], "label": "NO", "labelAt": [679, 860]},
+          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[494, 920], [494, 976]], "label": "YES", "labelAt": [494, 948]},
+          {"id": "j-q2-a2", "from": "q2", "to": "a2", "line": "flow", "points": [[354, 1036], [264, 1036]], "label": "NO", "labelAt": [309, 1036]},
+          {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[494, 1096], [494, 1152]], "label": "YES", "labelAt": [494, 1124]},
+          {"id": "j-q3-a3", "from": "q3", "to": "a3", "line": "flow", "points": [[634, 1214], [724, 1214]], "label": "NO", "labelAt": [679, 1214]},
+          {"id": "j-q3-q4", "from": "q3", "to": "q4", "line": "flow", "points": [[494, 1276], [494, 1332]], "label": "YES", "labelAt": [494, 1304]},
+          {"id": "j-q4-a4", "from": "q4", "to": "a4", "line": "flow", "points": [[334, 1414], [264, 1414]], "label": "NO", "labelAt": [299, 1414]},
+          {"id": "j-q4-q5", "from": "q4", "to": "q5", "line": "flow", "points": [[494, 1496], [494, 1552]], "label": "YES", "labelAt": [494, 1524]},
+          {"id": "j-q5-r2", "from": "q5", "to": "r2", "line": "flow", "points": [[634, 1614], [724, 1614]], "label": "NO", "labelAt": [679, 1614]},
+          {"id": "j-q5-q5a", "from": "q5", "to": "q5a", "line": "flow", "points": [[494, 1676], [494, 1732]], "label": "YES", "labelAt": [494, 1704]},
+          {"id": "j-q5a-a5a", "from": "q5a", "to": "a5a", "line": "flow", "points": [[354, 1794], [264, 1794]], "label": "NO", "labelAt": [309, 1794]},
+          {"id": "j-q5a-r1", "from": "q5a", "to": "r1", "line": "flow", "points": [[494, 1856], [494, 1912]], "label": "YES", "labelAt": [494, 1884]}
+        ]
+      }
+      ```
+
+      <!-- /flow -->
+  - id: scenario-flow-02
+    group: シナリオ 判定フローチャート
+    name: ※1 達成価値
+    body: |-
+      - **※1 達成価値**: シナリオが実現するユーザーの体験の結果を 1 文で言える単位。例: シナリオ「新規ユーザーの登録から初回のタスクの作成」の達成価値は「新規ユーザーがサインアップ・ログインを終えて自分のタスクを 1 件作成できる」。「登録して」「編集して」「削除して」など動詞を複数つながないと表せない場合は、複数の価値になっている
+  - id: scenario-flow-03
+    group: シナリオ 判定フローチャート
+    name: ※2 主要フェーズ
+    body: |-
+      - **※2 主要フェーズ**: シナリオを構成する大きな段階。フロー図のまとまりか、論理的なブロックの単位。例: 「ユーザー A がタスクを作成」「ユーザー B が編集」「ユーザー A が結果を確認」の 3 フェーズ。「サインアップ画面 → API の呼び出し → 結果画面」のような細かな画面の遷移は、1 フェーズの中の操作ノードにまとめる
+  - id: scenario-flow-04
+    group: シナリオ 判定フローチャート
+    name: ※3 前提状態
+    body: |-
+      - **※3 前提状態**: シナリオの開始の時点で既に成立していると仮定する状態。例: 「ユーザー A が既にログイン済み」「タスクが 1 件既に存在する」。フローの前段を前提状態に入れると、シナリオの本体を小さく保てる
+  - id: scenario-flow-05
+    group: シナリオ 判定フローチャート
+    name: ※4 操作ノード
+    body: |-
+      - **※4 操作ノード**: フロー図の中の 1 個のボックス。ユーザーの 1 操作か、インターフェース定義 1 件に対応する粒度。「サインアップ画面へ」「フォームの送信」「登録の成功」などの 1 ステップ = 1 ノード
+  - id: scenario-flow-06
+    group: シナリオ 判定フローチャート
+    name: ※5 単一価値シナリオ
+    body: |-
+      - **※5 単一価値シナリオ**: 1 ロール 1 エンティティで完結する、単純な業務の体験
+  - id: scenario-flow-07
+    group: シナリオ 判定フローチャート
+    name: ※6 交差点シナリオ
+    body: |-
+      - **※6 交差点シナリオ**: 複数のロール・複数のエンティティが交わること自体が価値になるシナリオ。例: ユーザー A のタスクをユーザー B が編集できるかの権限の境界

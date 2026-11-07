@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schemas/decision-table.schema.yaml
+id: decision-table-dataflow
+kind: decision-table
+name: データフローを作る条件 判定表
+description: データフローの設計書のデータ一覧に挙げた各データについて、DFD を作るかを判定し、データフローの設計書にデータを加えるときに読む。
+aliases:
+  - データフロー作成判定
+tags:
+  - name: scope:判定表
+  - name: topic:判定表
+  - name: topic:条件
+  - name: topic:データフロー
+    main: true
+  - name: topic:dfd
+  - name: topic:データ
+  - name: topic:設計書
+  - name: action:判定
+  - name: action:設計
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: データフローの設計書のデータ一覧に挙げた各データについて、DFD を作るかを判定し、データフローの設計書にデータを加えるときに読む。
+  - id: dataflow-table-01
+    group: データフローを作る条件 判定表
+    name: 判定表
+    body: |-
+      1 つでも当たれば「DFD を作る」にする。
+      どれにも当たらなければ「DFD を作らない」にする。
+
+      | 条件 | 結果 | 補足 |
+      | --- | --- | --- |
+      | 外部から入ってくるデータである（外部 API・ユーザーの入力・センサー・ファイルのアップロード） | DFD を作る | 発生源がシステムの外部 |
+      | 外部に出ていくデータである（外部 API・通知・配信・エクスポート・メールの送信） | DFD を作る | 出口がシステムの外部 |
+      | 複数のプロセス・モジュール・LLM・DB・外部サービスを経由する | DFD を作る | 単一の関数の中で完結しない |
+      | 変換・加工が複雑である（形式の変換・集約・派生・分岐） | DFD を作る | 単純な代入・コピーではない |
+      | インシデントのときに「どこで化けたか」を追いたい対象である | DFD を作る | 障害の調査の対象 |
+      | セキュリティ・個人情報の観点で扱いを可視化しておきたい | DFD を作る | 個人情報・認証情報・決済情報 等 |
+      | 別のデータの中間の産物ではなく、独立した業務の意味を持つ | DFD を作る | 中間の産物なら親のデータの DFD に含める |
+      | 実装の関数の局所変数ではなく、システムのレベルで意味を持つ | DFD を作る | - |

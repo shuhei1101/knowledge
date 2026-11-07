@@ -1,0 +1,68 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-v-model
+kind: rule
+name: V字モデル
+description: 設計書の種類とテストのレベル・場所の 1:1 の対応と記録先、設計書どうしの参照の向きを定め、設計書を記載してテストを作るときやテストを新設するときに読む。
+tags:
+  - name: scope:dev
+  - name: topic:設計書
+    main: true
+  - name: topic:testing
+  - name: topic:単体テスト
+  - name: topic:結合テスト
+  - name: topic:e2e
+  - name: topic:シナリオ
+  - name: topic:要件
+  - name: topic:モジュール
+  - name: topic:レイヤー
+  - name: topic:参照
+  - name: action:設計
+  - name: action:対応
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-07'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      設計書とテストの 1:1 の対応。
+      設計書を記載したら対応するテストを作り、テストを新設するときは先に設計書を記載する。
+  - id: mapping-01
+    group: 対応表
+    name: 設計書とテストの対応表
+    body: |-
+      <!-- table: data -->
+
+      | レベル | 設計書 | テストの場所 | ファイルの中の対応 | 対応の記録先 |
+      | --- | --- | --- | --- | --- |
+      | システム | 非機能要件 | `tests/nfr/` / `tests/external/` | `requirements` の 1 要素 = 1 ファイル、その `tests` の 1 要素 = テスト関数 1 つ | `requirements[].test_file` |
+      | システム | アーキテクチャ図 | `tests/external/` | `external_systems` の 1 要素 = 1 ファイル | `external_systems[].test_file` |
+      | 業務フロー | シナリオ（複合ユースケース） | `tests/e2e/複合ユースケース/` | `scenarios` の 1 要素（`正常 / 異常シナリオ（{条件}）`）= テスト関数 1 つ | シナリオの `test_file` と `scenarios[].test` |
+      | ユーザー操作 | シナリオ（単一ユースケース） | `tests/e2e/単一ユースケース/` | 同上 | シナリオの `test_file` と `scenarios[].test` |
+      | サブシステムの境界 | インターフェース定義 | `tests/integration/{サブシステム名}/` | `flows` の 1 要素（`正常 / 異常系（{条件}）`）= テスト関数 1 つ | インターフェース定義の `test_file` と `flows[].test` |
+      | サブシステムの境界 | 画面設計 | `tests/integration/{サブシステム名}/` | `elements` の 1 要素の確認項目（値を持つ `label` / `placeholder` / `visible_when` / `enabled_when` / `constraints` / `initial_value` / `action`）1 つ = テスト関数 1 つ、`input_checks` の 1 要素 = テスト関数 1 つ。`source` / `target` の先を差し替えて画面だけをブラウザで動かして確認する | 画面設計の `test_file` |
+      | サブシステムの境界 | 部品設計 | `tests/integration/{サブシステム名}/` | `states` の 1 要素（Storybook のストーリー 1 つ）= テスト関数 1 つ。画面設計の行のうち部品の中で完結する確認を、ストーリーを Playwright で開いて確認する | 部品設計の `test_file` |
+      | モジュール | モジュール構成 | `tests/unit/{パッケージのパス}/` | 設計書 1 つ = 物理ファイル 1 つ = 単体テストのファイル 1 つ（`test_files` は 1 つ）、関数・メソッドの `unit_tests` の 1 要素 = テスト関数 1 つ（`unit_tests[].name`） | モジュール構成の `test_files` |
+
+      <!-- /table -->
+  - id: mapping-02
+    group: 対応表
+    name: 対応の記録の向き
+    body: |-
+      - 対応は対応表の記録先へ一方向で記録する（テストコードの側に設計書のパスを記載しない）
+      - システムのレベルだけ、1 設計書 = 複数のテストファイルになる
+  - id: direction-01
+    group: 設計書どうしの参照の向き
+    name: 下流から上流へ一方向
+    body: |-
+      - 設計書は上流 → 下流の順（シナリオ → インターフェース定義 → モジュール構成 → 実装）に作る
+      - 参照は下流 → 上流の一方向に限る（上流を作る時点で下流はまだ無い）
+      - 例外は対応テストファイルの項目（`test_file`・`test_files`）だけ。テスト（下流）への参照だが、設計書を作るときに実体のファイルのパスを記入するため上流の設計書に持つ
+  - id: direction-02
+    group: 設計書どうしの参照の向き
+    name: インターフェース定義とモジュール構成の分担
+    body: |-
+      - インターフェース定義が定めるのはワイヤ上の構造（フィールド・型・例）だけ。それを実装する型の命名・クラスの分割はモジュール構成が行う
+      - 公開関数（MCP のツール・公開 API）も、モジュール構成の側で引数・戻り値・例外の表を記載する。インターフェース定義はワイヤ上のリクエストとレスポンス、モジュール構成はそれを実装する関数のシグネチャで、観点が異なるため重複してよい
+      - DTO も、モジュール構成の側にプロパティの表で型の設計（クラスの分割・ネストの構造・判別子付きユニオン等）を記載する

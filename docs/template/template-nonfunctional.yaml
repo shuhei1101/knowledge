@@ -13,7 +13,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 4
+rev: 5
 items:
   - id: overview
     name: 概要
@@ -45,7 +45,7 @@ items:
       | requirements[].unit | 単位 | string | - | - | - | - | - |
       | requirements[].rationale | 根拠 | string | 必須 | - | - | 外部の制約そのままでない理由。未確定なら何が分かれば決まるか。 | - |
       | requirements[].measurement | 測り方 | string | - | - | - | - | - |
-      | requirements[].test_file | 対応テスト | string | - | - | pattern: `^tests/.+` | 非機能要件テストのファイル（`tests/nfr/test_{英語名}.py`）。測れない項目は持たない。 | - |
+      | requirements[].test_file | 対応テスト | string | - | - | pattern: `^tests/.+` | 非機能要件テストのファイル（`tests/nfr/test_{英語名}.py`）。測れない項目は持たない（規約『V字モデル』）。 | - |
       | requirements[].verification | 確認の記録 | object | - | - | - | 確かめた結果。 | `{date: '2026-10-05', device: Windows 11 の PC の Edge, result: 合格, version: Edge 140}` |
       | requirements[].verification.device | 端末 | string | 必須 | - | - | 確かめた端末（OS・ブラウザなど）。 | - |
       | requirements[].verification.version | 版 | string | 必須 | - | - | 確かめた端末の版（OS・ブラウザの版）。 | - |

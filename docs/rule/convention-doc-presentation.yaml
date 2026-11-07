@@ -31,6 +31,8 @@ tags:
   - name: topic:id
   - name: topic:メタデータ
   - name: topic:リンク
+  - name: topic:issue
+  - name: topic:pr
   - name: topic:キー
   - name: topic:スキーマ
   - name: tool:mdmark
@@ -41,7 +43,7 @@ tags:
   - name: action:分割
 status: current
 visibility: internal
-rev: 3
+rev: 4
 last_reviewed: '2026-11-07'
 items:
   - id: overview
@@ -175,3 +177,31 @@ items:
     name: Issue 番号と文書のパス
     body: |-
       - Issue 番号・文書のパスは生の文字で出さず、タイトル付きのリンクにする
+  - id: link-01
+    group: リンクの書き方
+    name: Issue・PR の本文とコメントのリンク
+    body: |-
+      Issue・PR の本文・コメントで、他のファイル・commit・URL を指すときは次の書き方にする。
+
+      | 参照の種類 | 書き方 |
+      | --- | --- |
+      | commit | `[{短縮 SHA}](https://github.com/{owner}/{repo}/commit/{SHA})` |
+      | commit の範囲 | `[{開始}..{終了}](https://github.com/{owner}/{repo}/compare/{開始}...{終了})` |
+      | ファイル | `[{パス}](https://github.com/{owner}/{repo}/blob/{SHA}/{パス})`（ブランチ名ではなく commit の SHA で固定する） |
+      | 開いてもらう URL | `[{表示名}](URL)` |
+  - id: link-02
+    group: リンクの書き方
+    name: 新規のファイル
+    body: |-
+      - その PR で新規に作るファイルは、まだリンク先が無いため、バッククォートで囲んだパスで記載する
+  - id: link-03
+    group: リンクの書き方
+    name: URL エンコード
+    body: |-
+      - リンク先へ埋めるパスは、セグメントを URL エンコードする（`/` は残す）
+      - 表示名は素のパスのまま記載する
+  - id: link-04
+    group: リンクの書き方
+    name: バッククォートとの使い分け
+    body: |-
+      - バッククォートは値そのものを見せるときに使用し、新規のファイルを除くファイル・Issue・PR・commit を指す参照と、開いてもらう URL には使用しない

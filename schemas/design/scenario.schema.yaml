@@ -4,6 +4,7 @@ description: 単一ユースケース（ユーザーの 1 操作）または複�
 x-rules:
   - 1 ファイル = 1 ユースケース = テストの 1 ファイルにする。
   - 外部 API は Mock 前提で書く。
+  - 既存の流用・既存の修正・新規の単一・新規の複合のどれで書くかは判定フローチャート『シナリオ』で決める。
 x-kind: scenario
 x-folder: dev/設計書/シナリオ
 x-id-prefix: SC
@@ -45,7 +46,7 @@ properties:
     type: string
     title: 対応テストファイル
     description: |-
-      `tests/e2e/{単一ユースケース,複合ユースケース}/…`。
+      `tests/e2e/{単一ユースケース,複合ユースケース}/…`（規約『V字モデル』）。
     pattern: ^tests/.+
   primary_actor:
     type: string

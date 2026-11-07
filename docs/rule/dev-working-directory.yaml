@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-working-directory
+kind: rule
+name: 作業ディレクトリ
+description: ブランチの内容を触る作業を worktree で行い、メインのクローンを master のままにする決まりと、バックアップ・一時ファイルの置き場所を定め、ブランチを切り替えて作業するときやバックアップのファイルを作るときに読む。
+tags:
+  - name: scope:dev
+  - name: topic:worktree
+    main: true
+  - name: topic:ブランチ
+  - name: topic:リポジトリ
+  - name: topic:セッション
+  - name: topic:フォルダ
+  - name: topic:gitignore
+  - name: tool:git
+  - name: action:切り替え
+  - name: action:退避
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-07'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      ブランチの内容を触る作業は、対象ブランチの worktree（`.claude/worktrees/{ブランチ名の / を - に置換}`）の中で行う。
+  - id: worktree-01
+    group: worktree
+    name: メインのクローンでブランチを切り替えない
+    body: |-
+      - メインのクローンの直下でブランチを切り替えない（`git checkout`・`git switch`）。常に master のままにする
+        - 同じクローンを別のセッションが同時に使用している
+        - メインのクローンからルール・手順を読み込む道具が、切り替えている間は別のブランチの内容で動く
+  - id: worktree-02
+    group: worktree
+    name: 他のブランチを参照するだけのとき
+    body: |-
+      - 他のブランチの内容を参照するだけなら切り替えない。`git fetch origin --prune` の後に ref を指定して参照する（`git show origin/{ブランチ}:{パス}`・`git log origin/{ブランチ}`・`git diff origin/{ブランチ}`）
+  - id: worktree-03
+    group: worktree
+    name: worktree の作り方
+    body: |-
+      | 場面 | コマンド |
+      | --- | --- |
+      | 新しいブランチで作業する | `git worktree add .claude/worktrees/{ブランチ名の / を - に置換} -b {ブランチ名} origin/{base ブランチ}` |
+      | 既存のブランチで作業する（worktree が無い） | `git worktree add .claude/worktrees/{ブランチ名の / を - に置換} {ブランチ名}` |
+  - id: backup-01
+    group: バックアップ・一時ファイル
+    name: リポジトリの外の置き場所
+    body: |-
+      - リポジトリの外に配置するときは、設定ファイルの控えを `~/.config/{project}/bk/`、一時ファイルを `~/.cache/{project}/`（または OS の一時フォルダ）、データの控えをそのデータと同じ場所の下に配置する
+  - id: backup-02
+    group: バックアップ・一時ファイル
+    name: リポジトリの中の置き場所
+    body: |-
+      - リポジトリの中に配置するときは専用のフォルダ（`.bak/`・`tmp/` 等）に配置し、そのフォルダに中身が `*` だけの `.gitignore` を配置する。リポジトリの直下に `*.bak-*` や秘匿ファイルを配置しない
+  - id: backup-03
+    group: バックアップ・一時ファイル
+    name: 無視の指定の場所
+    body: |-
+      無視の指定は範囲で選ぶ。
+
+      | 範囲 | 指定の場所 |
+      | --- | --- |
+      | リポジトリを使用する全員 | `.gitignore` |
+      | 自分のマシンの全リポジトリ | `core.excludesFile` |
+      | この clone だけ | `.git/info/exclude` |

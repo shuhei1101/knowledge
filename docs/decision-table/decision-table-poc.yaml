@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=../../schemas/decision-table.schema.yaml
+id: decision-table-poc
+kind: decision-table
+name: PoC を実施する条件 判定表
+description: 採用候補に PoC を実施するか、候補の比較だけで採用を決めるかを判定し、採用候補のライブラリ・方式を洗い出した後に読む。
+aliases:
+  - PoC要否
+tags:
+  - name: scope:判定表
+  - name: topic:判定表
+  - name: topic:条件
+  - name: topic:ライブラリ
+  - name: topic:方針
+  - name: topic:リスク
+  - name: action:判定
+  - name: action:採用
+  - name: action:比較
+  - name: action:検証
+    main: true
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: 採用候補に PoC を実施するか、候補の比較だけで採用を決めるかを判定し、採用候補のライブラリ・方式を洗い出した後に読む。
+  - id: poc-table-01
+    group: PoC を実施する条件 判定表
+    name: 判定表
+    body: |-
+      1 つでも当たれば「PoC を実施する」にする。
+      どれにも当たらなければ「PoC を実施せず、候補の比較だけで採用を決める」にする。
+
+      | 条件 | 結果 | 補足 |
+      | --- | --- | --- |
+      | 実績の無い候補が複数あり、実際のコードで比べないと選べない ※1 | PoC を実施する | - |
+      | 採用の方針は決まっているが、API の実際の挙動を確認しないと設計を確定できない ※2 | PoC を実施する | - |
+      | 非機能要件に性能の数値の目標があり、実測しないと成立するかを判断できない ※3 | PoC を実施する | - |
+      | 既存のシステムへの結合の影響の範囲が見通せない ※4 | PoC を実施する | - |
+      | 本番に適用する前に、手順を最初から最後まで確認したい ※5 | PoC を実施する | - |
+  - id: poc-table-02
+    group: PoC を実施する条件 判定表
+    name: ※1 ライブラリ選定型
+    body: '- **※1 ライブラリ選定型**: 例: Faster-Whisper と whisper.cpp'
+  - id: poc-table-03
+    group: PoC を実施する条件 判定表
+    name: ※2 動作確認型
+    body: '- **※2 動作確認型**: 例: 定期課金のフロー'
+  - id: poc-table-04
+    group: PoC を実施する条件 判定表
+    name: ※3 パフォーマンス検証型
+    body: '- **※3 パフォーマンス検証型**: 性能の目標値を実測で確認する'
+  - id: poc-table-05
+    group: PoC を実施する条件 判定表
+    name: ※4 統合検証型
+    body: '- **※4 統合検証型**: 例: 認証のレイヤーの差し替え'
+  - id: poc-table-06
+    group: PoC を実施する条件 判定表
+    name: ※5 手順検証型
+    body: '- **※5 手順検証型**: 本番に適用するのをぶっつけで行うと復旧が難しいもの。例: DB のマイグレーション'
