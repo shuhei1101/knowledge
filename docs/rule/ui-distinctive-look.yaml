@@ -1,0 +1,129 @@
+id: ui-distinctive-look
+kind: rule
+name: シンプルで凡庸でない見た目
+description: 画面をシンプルに保ったまま凡庸に見せないための、ワンポイント・強い色・文字の大きさの対比・遊びと自動で動く図の配置の決まりを定め、画面の見た目の方向を決めるときとデザイン方針を作るときに読む。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 画面
+    - UI
+    - フロントエンド
+    - tsx
+    - HTML
+    - コンポーネント
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-09'
+sources:
+  - id: A
+    title: 'Apple Human Interface Guidelines: Motion'
+    url: https://developer.apple.com/design/human-interface-guidelines/motion
+  - id: L
+    title: 'Linear: How we redesigned the Linear UI'
+    url: https://linear.app/now/how-we-redesigned-the-linear-ui
+  - id: L
+    title: 'Linear: A calmer interface'
+    url: https://linear.app/now/behind-the-latest-design-refresh
+  - id: E
+    title: "Emil Kowalski: You don't need animations"
+    url: https://emilkowal.ski/ui/you-dont-need-animations
+  - id: R
+    title: 'Rauno Freiberg: Interaction design'
+    url: https://rauno.me/craft/interaction-design
+  - id: J
+    title: 'Josh Comeau: Whimsical animations'
+    url: https://www.joshwcomeau.com/blog/whimsical-animations/
+  - id: F
+    title: 'frog: Signature moments'
+    url: https://www.frog.co/designmind/making-the-most-of-your-signature-moments
+  - id: W
+    title: 'W3C: Understanding 2.2.2 Pause, Stop, Hide'
+    url: https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html
+  - id: W
+    title: 'W3C: Understanding 2.3.3 Animation from Interactions'
+    url: https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html
+  - id: V
+    title: Vercel Web Interface Guidelines
+    url: https://vercel.com/design/guidelines
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象: 共通（単体 HTML・React）
+      画面をシンプルに保ったまま、凡庸に見せないための決まり。
+      印象は飾りの量ではなく、ワンポイントの題材・色を絞ったうえでの 1 色・文字の大きさの対比で作る。
+      ワンポイントの題材・色・形状の味付けはシステムごとに選び、テンプレート『[デザイン方針](id:template-design-policy)』に記載する。
+      飾りで使用しない型は規約『[情報の階層と見た目](id:ui-information-hierarchy#visual-consistency-01)』に従う。
+      出典の略号は A = Apple Human Interface Guidelines、L = Linear、E = Emil Kowalski、R = Rauno Freiberg、J = Josh Comeau、F = frog、W = W3C、V = Vercel Web Interface Guidelines（リンクはメタデータの `sources`）。
+  - id: one-point-01
+    group: ワンポイント
+    name: ワンポイントの決まり
+    body: |-
+      <!-- table: data -->
+
+      | 要素 | 出典 |
+      | --- | --- |
+      | ワンポイントは 1 サイトに 1 つの題材に絞る。題材はそのシステム固有の物（扱うデータ・道具・名前の由来）から取る | F / R |
+      | 複数のシステムを、同じ題材・同じ色のワンポイントにしない | - |
+      | 特定の色・形状を規約で決めない。システムごとにデザイン方針で選ぶ | - |
+
+      <!-- /table -->
+  - id: color-01
+    group: 色
+    name: 色の決まり
+    body: |-
+      <!-- table: data -->
+
+      | 要素 | 出典 |
+      | --- | --- |
+      | 強い色は 1 色に決め、ワンポイントと操作・選択に使用する。それ以外の階層は文字色と線で作る | L |
+      | 状態色（成功・警告・エラー）は状態の表示だけに使用する | L |
+      | 色の候補は、色相に加えて明度・彩度の組み合わせで出し、ライトとダークの両方でコントラストの基準（[操作とアクセシビリティ](id:ui-operation-accessibility#operation-accessibility-01)）を満たすものから選ぶ | - |
+
+      <!-- /table -->
+  - id: type-scale-01
+    group: 文字
+    name: 文字の大きさの決まり
+    body: |-
+      <!-- table: data -->
+
+      | 要素 | 出典 |
+      | --- | --- |
+      | 見出しと本文の大きさの対比を大きく取る。ページの見出しは本文の 2.5 倍以上を目安にする | - |
+      | 文字の大きさの段階は、大・本文・小の 3 つまでにする。それ以上の階層は太さ・濃さで作る | - |
+
+      <!-- /table -->
+  - id: playfulness-01
+    group: 遊び
+    name: 遊びの配置
+    body: |-
+      <!-- table: data -->
+
+      | 要素 | 出典 |
+      | --- | --- |
+      | 遊び（ワンポイントの動き・隠れた反応）は、トップ・404・まれな操作（初回の完了 等）にだけ配置する | J / F |
+      | 本文のページと、頻繁に繰り返す操作には遊びを配置しない | E |
+
+      <!-- /table -->
+  - id: motion-01
+    group: 自動で動く図
+    name: 自動で動く図の決まり
+    body: |-
+      <!-- table: data -->
+
+      | 要素 | 出典 |
+      | --- | --- |
+      | 自動で動く図は、画面に入ったときに 1 回だけ動かす。止まった最後の状態だけで意味が通るようにする | A / E |
+      | 図の向き・順序を示す動き（線の上を流れる点 等）は、規約『[表示の安定](id:ui-display-stability#display-stability-01)』の動きの決まりの例外として、繰り返して動かしてよい | - |
+      | 繰り返して動く図は、画面外とタブが非表示の間は止める。5 秒を超えて動くものには停止ボタンを付ける。動きを減らす設定では止まった図にする | W / V |
+
+      <!-- /table -->
+tags:
+  - name: scope:ui
+  - name: topic:デザイン
+    main: true
+  - name: topic:画面
+  - name: topic:アニメーション
+  - name: action:選択
