@@ -1,0 +1,52 @@
+use_cases:
+  - kind: single
+    scenario: dev/設計書/シナリオ/単一ユースケース/エージェントが knowledge の文書を書き込む.yaml
+    impact: none
+    detail: 書き込みの点検の対象になるのは設計書の本文で、knowledge の文書のスキーマの本文の型は変えない。文言の置き換えは検査の結果を変えない
+    depends_on: []
+  - kind: single
+    scenario: dev/設計書/シナリオ/単一ユースケース/開発者が文書の違反を検査する.yaml
+    impact: none
+    detail: スキーマの種類の値の追加と文言の置き換えで、既存の文書の検査の結果を変えない
+    depends_on: []
+  - kind: single
+    scenario: dev/設計書/シナリオ/単一ユースケース/エージェントが knowledge の文書を検索・取得する.yaml
+    impact: none
+    detail: 検索・取得の手順を変えない
+    depends_on: []
+  - kind: composite
+    scenario: dev/設計書/シナリオ/複合ユースケース/利用者が端末に knowledge を導入して規約を引く.yaml
+    impact: none
+    detail: 導入と規約の参照の流れを変えない
+    depends_on: []
+docs:
+  - page: schemas/design/common.schema.yaml
+    new: false
+    change: '`$defs/markdown` に `contentMediaType: text/markdown` を追加する'
+    status: todo
+  - page: schemas/prompt.schema.yaml
+    new: false
+    change: '`kind` の `enum`・`description` にエージェントのシステムプロンプトの種類を追加し、`title`・`description`・`examples` の文言を dev-docs#148 の修正前後の表のとおりに置き換える'
+    status: todo
+  - page: schemas/common.schema.yaml
+    new: false
+    change: '`title`・`description`・`examples` の文言を dev-docs#148 の修正前後の表のとおりに置き換える'
+    status: todo
+  - page: schemas/files.schema.yaml
+    new: false
+    change: '`description` の文言を dev-docs#148 の修正前後の表のとおりに置き換える'
+    status: todo
+  - page: docs/rule/prompt-file.yaml
+    new: false
+    change: structure-02 の `kind`・structure-04 の `role` と、`overview`・`layout-01`・`description` の対象の列挙にエージェントのシステムプロンプトの種類を追加し、検査のセクションに起動の構成の `system_prompt` が指すファイルの種類の検査を追加する
+    status: todo
+scope_out:
+  - item: dev-docs の `templates/prompt.schema.yaml`（knowledge のコピー）と `src/dev_docs/features/prompt_doc/types.py` の `kind` の `Literal` への、追加する種類の反映
+    reason: dev-docs のリポジトリの作業で、この PR で決める種類の名前を前提にする
+    plan: to_file
+  - item: 起動の構成（`launch`）の `system_prompt` のキーと、指すファイルの種類の検査の実装
+    reason: '`launch` のスキーマはまだ無く、#224 が追加する。この PR は検査の置き場所を決めるだけ'
+    plan: '#224'
+  - item: '#236 の 3 ファイル以外のスキーマ（`schemas/design/` の全てと meta・word-list・skill・template）の文言の、AI slop の単語の対応表への合わせ込みと、設計書のテンプレートの生成し直し'
+    reason: 同じ型の文言だが、対象のファイルが多く、この PR がマージされなくても同じ内容で成り立つ
+    plan: '#241'
