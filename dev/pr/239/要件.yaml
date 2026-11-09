@@ -1,0 +1,11 @@
+use_cases:
+  - kind: single
+    scenario: dev/設計書/シナリオ/単一ユースケース/エージェントが knowledge の文書を書き込む.yaml
+    impact: changed
+    detail: Markdown の本文の値が mdmark の点検で `diagram_invalid`・`syntax_warning` を出すときに、書き込まず `isError` を返す異常シナリオを追加する。`preconditions` に `check --text` を持つ mdmark の CLI が PATH から引けることを追加する
+    depends_on: []
+scope_out:
+  - item: 追加する異常シナリオの E2E テスト（`tests/e2e/単一ユースケース/test_エージェントがknowledgeの文書を書き込む.py`）
+    reason: '2026-11-09 のユーザーの依頼で範囲から外した（D-297 A・D-307 A。https://github.com/shuhei1101/knowledge/issues/1#issuecomment-6726836084）。今ある E2E テストは #235 が削除する'
+    plan: none
+docs: []
