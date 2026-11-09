@@ -10,5 +10,5 @@ mdmark の CLI の導入:
   確認: null
   切り戻し: null
   失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
-  確認方法: "`command -v mdmark` がパスを返し、`mdmark check --text -` の標準入力に閉じていない図の部品を含む Markdown を渡すと、`diagram_invalid` の行を出して終了コード 1 で終わる"
+  確認方法: "`command -v mdmark` がパスを返し、`mdmark check --text -` の標準入力に、`flow` のマーカーの中に部品の定義として読み込めない `json` のコードブロックを持つ Markdown を渡すと、`diagram_invalid` の行を出して終了コード 1 で終わる"
   状態: "-"
