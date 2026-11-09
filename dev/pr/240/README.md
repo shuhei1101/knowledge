@@ -1,0 +1,1 @@
+# schemas/ の設計書の本文の型に contentMediaType を追加し、プロンプトの kind にエージェントのシステムプロンプトを追加して、prompt・common・files の文言を対応表に合わせる
