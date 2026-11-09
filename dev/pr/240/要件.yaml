@@ -53,7 +53,7 @@ docs:
 scope_out:
   - item: dev-docs の `templates/prompt.schema.yaml`（knowledge のコピー）と `src/dev_docs/features/prompt_doc/types.py` の `kind` の `Literal` への、追加する種類の反映
     reason: dev-docs のリポジトリの作業で、この PR で決める種類の名前を前提にする
-    plan: to_file
+    plan: shuhei1101/dev-docs#156
   - item: 起動の構成（`launch`）の `system_prompt` のキーと、指すファイルの種類の検査の実装
     reason: '`launch` のスキーマはまだ無く、#224 が追加する。この PR は検査の置き場所を決めるだけ'
     plan: '#224'
@@ -62,4 +62,4 @@ scope_out:
     plan: '#241'
   - item: mdmark の設計書『リンクをカードの格子に並べる』の `notes.項目の記載方法` の `icon:名前` が `syntax_warning` になる点の修正
     reason: mdmark のリポジトリの設計書で、mdmark が設計書のスキーマに `contentMediaType` を取り込んだ後にその値を書き換えるときだけ書き込みが止まる。今回の変更を前提にする
-    plan: to_file
+    plan: shuhei1101/mdmark#456
