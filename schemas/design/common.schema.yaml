@@ -8,6 +8,7 @@ $defs:
     type: string
     title: 本文
     description: Markdown で書く本文。定数は `!{名前}` で埋め込める。
+    contentMediaType: text/markdown
     x-rules:
       - 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。
   summary:
