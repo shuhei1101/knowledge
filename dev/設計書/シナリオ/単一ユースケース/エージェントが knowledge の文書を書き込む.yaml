@@ -46,6 +46,27 @@ scenarios:
       - 作業ツリーの文書が変わらない
       - 応答が `isError` で、違反の `path` が mermaid を持つ項目のパス、`rule` に文書の行と maid の内容が入る
     test: test_error_when_validator_reports_violation
+  - name: 異常シナリオ（Markdown の本文に mdmark の警告がある）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 書き込む内容
+        description: スキーマと検査のスクリプトには合うが、項目の `body` の `flow` のマーカーの中の `json` のコードブロックを部品の定義として読み込めない規約の YAML
+    flow: |-
+      sequenceDiagram
+        participant E as エージェント
+        participant M as dev-docs の文書の MCP
+        participant V as knowledge の検査のスクリプト
+        participant C as mdmark の CLI
+        E->>M: write_docs に source knowledge と文書
+        M->>V: 標準入力に文書の YAML
+        V-->>M: 終了コード 0 と空の違反の配列
+        M->>C: check --text -（標準入力に項目の body の値）
+        C-->>M: diagram_invalid の行と終了コード 1
+        M-->>E: isError と違反の一覧
+    expected:
+      - 作業ツリーの文書が変わらない
+      - 応答が `isError` で、違反の `path` が項目の `body` のパス、決まりに mdmark の `diagram_invalid` と行、直し方に mdmark の内容が入る
   - name: 異常シナリオ（作業場所が scope.write の外）
     setup:
       - name: Mock
@@ -69,6 +90,7 @@ trigger: エージェントが規約を追加・修正する
 preconditions:
   - knowledge が dev-docs に登録され、配信中
   - 検査のスクリプトが使う maid が Linux 側に入り、PATH から引ける
+  - '`check --text` を持つ mdmark の CLI が Linux 側に入り、PATH から引ける'
 success_guarantee: 違反の無い内容だけが knowledge の作業ツリーに書き込まれる。
 minimal_guarantee: 違反のある内容・`scope.write` の外からの書き込みは、ファイルを変えずに `isError` で返す。
 test_file: tests/e2e/単一ユースケース/test_エージェントがknowledgeの文書を書き込む.py

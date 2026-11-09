@@ -1,0 +1,14 @@
+mdmark の CLI の導入:
+  説明: 端末の Linux 側に `npm install -g github:shuhei1101/mdmark` で `check --text` を持つ mdmark の CLI を入れ、端末の dev-docs の `write_docs` が knowledge の文書の Markdown の本文を点検して、追加する異常シナリオのとおりに書き込みを止めるようにする（今は `command -v mdmark` が何も返さず、dev-docs は点検できなかったキーとして書き込む）
+  タグ: [CLI の導入]
+  実行者: tester
+  時期: master へ入った後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`command -v mdmark` がパスを返し、`mdmark check --text -` の標準入力に、`flow` のマーカーの中に部品の定義として読み込めない `json` のコードブロックを持つ Markdown を渡すと、`diagram_invalid` の行を出して終了コード 1 で終わる"
+  状態: "-"
