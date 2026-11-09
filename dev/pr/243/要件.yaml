@@ -71,3 +71,6 @@ scope_out:
   - item: AI Monitor 自身のドキュメントサイトのワンポイント・色・形状の選択
     reason: システムごとの割り当ては各プロジェクトのデザイン方針で決める（shuhei1101/ai-monitor#2354）
     plan: none
+  - item: '`schemas/design/module.schema.yaml` の単体テストのファイルの description が 3 文あり、結合テスト `test_normal_when_repository_schemas` が fail する'
+    reason: 'description を 2 文以内にする検査に合っていない。origin/develop でも同じ記述で、この PR の要望に含まれない。同じファイルの description を修正する #241 で対応する'
+    plan: '#241'
