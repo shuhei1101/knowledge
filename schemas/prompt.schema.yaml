@@ -34,7 +34,7 @@ properties:
       - 新しいファイルを空で作成してから記載する決まりを、セッションの始めに伝える
   kind:
     title: 種類
-    description: 文の種類。`llm` は LLM の呼び出し、`hook` はフックの注入文、`instructions` は MCP のサーバーの instructions、`tool` はツールの description、`agent` は対話モードの Claude Code に `--append-system-prompt` で指定するエージェントのシステムプロンプト。
+    description: 文の種類。`llm` は LLM の呼び出し、`hook` はフックの注入文、`instructions` は MCP のサーバーの instructions、`tool` はツールの description、`agent` は Claude Code のエージェントに `--append-system-prompt` で指定するシステムプロンプト。
     type: string
     enum:
       - llm

@@ -75,7 +75,7 @@ items:
       | `id` | ✅ | プロンプトの識別子（ファイル名の `{id}` と同じ） |
       | `name` | ✅ | 画面・検索に出す名前 |
       | `description` | ✅ | 何のための文かを 1 文で |
-      | `kind` | ✅ | 文の種類。`llm`（LLM の呼び出し）/ `hook`（フックの注入文）/ `instructions`（MCP のサーバーの instructions）/ `tool`（ツールの description）/ `agent`（対話モードの Claude Code に `--append-system-prompt` で指定するエージェントのシステムプロンプト） |
+      | `kind` | ✅ | 文の種類。`llm`（LLM の呼び出し）/ `hook`（フックの注入文）/ `instructions`（MCP のサーバーの instructions）/ `tool`（ツールの description）/ `agent`（Claude Code のエージェントに `--append-system-prompt` で指定するシステムプロンプト） |
       | `lang` | ✅ | 注入する言語（BCP 47 の言語タグ）。各部品の `texts[]` からこの言語の本文を選ぶ |
       | `tags` | - | 分類のタグ |
       | `vars` | - | 本文で使う変数。変数名 → 変数の定義（`structure-05`） |
