@@ -1,0 +1,137 @@
+# knowledge の schemas/design（a603c92）で $defs/markdown を指すキーの値を、各プロジェクトの origin/develop の設計書から集めて mdmark v0.10.0 の check --text で点検した
+$ npm install --prefix /tmp/mdmark-v010 github:shuhei1101/mdmark#v0.10.0
+$ git -C {プロジェクト} archive origin/develop dev | tar -x -C /tmp/check197/src/{プロジェクト}
+#   ai-monitor: e22424df5
+#   aituber: 9a4bc5892
+#   claude-balancer: 4a0e3cf
+#   dev-docs: 7967bfd
+#   knowledge: f82d8ad
+#   mdmark: 097ad7fc
+$ uv run --with pyyaml python -I collect.py schemas/design /tmp/check197/src values.jsonl
+# 値の件数: {'ai-monitor': 14352, 'aituber': 1042, 'claude-balancer': 4009, 'dev-docs': 1619, 'knowledge': 343, 'mdmark': 2743} 合計 24108
+$ python3 -I run.py /tmp/mdmark-v010/node_modules/.bin/mdmark values.jsonl findings.json
+1806 docs 1 findings
+[
+ {
+  "project": "mdmark",
+  "doc": "dev/設計書/シナリオ/単一ユースケース/リンクをカードの格子に並べる.yaml",
+  "key": "$.notes.項目の記載方法",
+  "code": "syntax_warning",
+  "message": "icon:名前の 名前 は Lucide のアイコンの名前になりません。名前は英小文字・数字・- で書きます（例: rocket）。書いた文字のまま表示しています。"
+ }
+]# --- collect.py
+"""knowledge の設計書のスキーマで $defs/markdown を指すキーの値を、各プロジェクトの設計書から集める。"""
+import json, sys
+from pathlib import Path
+import yaml
+
+SCHEMAS = Path(sys.argv[1])
+SRC = Path(sys.argv[2])
+OUT = Path(sys.argv[3])
+
+cache = {}
+def load(name):
+    if name not in cache:
+        cache[name] = yaml.safe_load((SCHEMAS / name).read_text(encoding="utf-8"))
+    return cache[name]
+
+def resolve(ref, cur):
+    f, _, frag = ref.partition("#")
+    f = f or cur
+    node = load(f)
+    for part in [p for p in frag.split("/") if p]:
+        node = node[part]
+    return node, f, (f == "common.schema.yaml" and frag == "/$defs/markdown")
+
+def walk(schema, cur, inst, path, out, depth=0):
+    if depth > 40 or not isinstance(schema, dict):
+        return
+    if "$ref" in schema:
+        target, f, is_md = resolve(schema["$ref"], cur)
+        if is_md:
+            if isinstance(inst, str):
+                out.append((path, inst))
+            return
+        walk(target, f, inst, path, out, depth + 1)
+    for key in ("allOf", "anyOf", "oneOf"):
+        for sub in schema.get(key, []) or []:
+            walk(sub, cur, inst, path, out, depth + 1)
+    for key in ("then", "else"):
+        if key in schema:
+            walk(schema[key], cur, inst, path, out, depth + 1)
+    if isinstance(inst, dict):
+        props = schema.get("properties", {}) or {}
+        for k, v in inst.items():
+            if k in props:
+                walk(props[k], cur, v, f"{path}.{k}", out, depth + 1)
+            elif isinstance(schema.get("additionalProperties"), dict):
+                walk(schema["additionalProperties"], cur, v, f"{path}.{k}", out, depth + 1)
+    if isinstance(inst, list) and isinstance(schema.get("items"), dict):
+        for i, v in enumerate(inst):
+            walk(schema["items"], cur, v, f"{path}[{i}]", out, depth + 1)
+
+folders = {}
+for p in SCHEMAS.glob("*.schema.yaml"):
+    s = load(p.name)
+    if s.get("x-folder"):
+        folders[s["x-folder"]] = p.name
+
+records = []
+for proj in sorted(SRC.iterdir()):
+    for folder, sname in folders.items():
+        base = proj / folder
+        if not base.is_dir():
+            continue
+        for doc in sorted(base.rglob("*.yaml")):
+            name = "index.schema.yaml" if doc.name == "index.yaml" else sname
+            try:
+                inst = yaml.safe_load(doc.read_text(encoding="utf-8"))
+            except Exception as e:
+                records.append({"project": proj.name, "doc": str(doc.relative_to(proj)), "error": str(e)})
+                continue
+            out = []
+            walk(load(name), name, inst, "$", out)
+            seen = set()
+            for path, text in out:
+                if path in seen:
+                    continue
+                seen.add(path)
+                records.append({"project": proj.name, "doc": str(doc.relative_to(proj)), "key": path, "text": text})
+OUT.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in records), encoding="utf-8")
+print(len(records), "values")
+# --- run.py
+"""設計書ごとに本文の値をつなげて mdmark check --text で点検し、警告を値へ戻す。"""
+import json, subprocess, sys, re
+from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
+MDMARK = sys.argv[1]; VALUES = sys.argv[2]; OUT = sys.argv[3]
+docs = defaultdict(list)
+for line in open(VALUES, encoding="utf-8"):
+    r = json.loads(line)
+    if "text" in r:
+        docs[(r["project"], r["doc"])].append((r["key"], r["text"]))
+LINE = re.compile(r"^-:(\d+):\s*(\S+?):\s*(.*)$")
+def check(item):
+    (proj, doc), vals = item
+    parts, spans, n = [], [], 1
+    for key, text in vals:
+        body = text.rstrip("\n")
+        cnt = body.count("\n") + 1
+        spans.append((n, n + cnt - 1, key))
+        parts.append(body)
+        n += cnt + 1
+    p = subprocess.run([MDMARK, "check", "--text", "-"], input="\n\n".join(parts) + "\n", capture_output=True, text=True)
+    found = []
+    for l in p.stdout.splitlines() + p.stderr.splitlines():
+        m = LINE.match(l)
+        if not m:
+            continue
+        ln = int(m[1]); key = next((k for a, b, k in spans if a <= ln <= b), "?")
+        found.append({"project": proj, "doc": doc, "key": key, "code": m[2], "message": m[3]})
+    return found, p.returncode, len(vals)
+res = []
+with ThreadPoolExecutor(6) as ex:
+    for found, rc, nv in ex.map(check, docs.items()):
+        res.extend(found)
+json.dump(res, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+print(len(docs), "docs", len(res), "findings")

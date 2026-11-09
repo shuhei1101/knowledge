@@ -1,0 +1,14 @@
+設計書のスキーマのタグの作成:
+  説明: 作業 PR を develop へマージした後に、`design-schemas/v*` の最新のタグのマイナーを上げたタグ（タグが無ければ `design-schemas/v1.0.0`）を、メッセージに `(#240)` を入れて develop の squash commit へ作成して push する（`$defs/markdown` の `contentMediaType` の追加で、そのタグを指す設計書への `write_docs` が本文を mdmark で点検するようになる）。切り戻しは、メッセージに `(#240)` を持つタグだけを削除する
+  タグ: [タグ, スキーマ]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: 設計書のスキーマのタグの作成/疎通確認.sh
+  実行: 設計書のスキーマのタグの作成/実行.sh
+  確認: 設計書のスキーマのタグの作成/確認.sh
+  切り戻し: 設計書のスキーマのタグの作成/切り戻し.sh
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグの commit の `schemas/design/common.schema.yaml` の `$defs/markdown` に `contentMediaType: text/markdown` がある"
+  状態: "-"

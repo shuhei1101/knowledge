@@ -2,7 +2,7 @@
 id: prompt-file
 kind: rule
 name: プロンプトファイル
-description: LLM の呼び出し・フックの注入文・MCP の instructions・ツールの description のプロンプトを 1 枚の YAML に記載するときの配置・構造・本文・検査・スキーマの指し方・更新の決まりを定め、プロンプトを作る・修正するときに読む。
+description: LLM の呼び出し・フックの注入文・MCP の instructions・ツールの description・エージェントのシステムプロンプトのプロンプトを 1 枚の YAML に記載するときの配置・構造・本文・検査・スキーマの指し方・更新の決まりを定め、プロンプトを作る・修正するときに読む。
 tags:
   - name: scope:prompt
   - name: topic:id
@@ -32,19 +32,19 @@ tags:
   - name: action:配置
 status: current
 visibility: internal
-rev: 8
-last_reviewed: '2026-11-06'
+rev: 9
+last_reviewed: '2026-11-09'
 items:
   - id: overview
     name: 概要
     body: |-
       プロンプトは 1 つにつき 1 枚の YAML に書き、言語ごとの本文を部品の `texts[]` に持つ。
-      対象は LLM の呼び出し・フックの注入文・MCP の instructions・ツールの description。
+      対象は LLM の呼び出し・フックの注入文・MCP の instructions・ツールの description・エージェントのシステムプロンプト。
   - id: layout-01
     group: 配置
     name: 1 プロンプト 1 枚の YAML
     body: |-
-      - 1 つのプロンプト（LLM の呼び出し 1 種類・フックの注入文・MCP の instructions・ツールの description）に YAML 1 枚を置く
+      - 1 つのプロンプト（LLM の呼び出し 1 種類・フックの注入文・MCP の instructions・ツールの description・エージェントのシステムプロンプト）に YAML 1 枚を置く
   - id: layout-02
     group: 配置
     name: prompts/{id}.yaml の配置
@@ -75,7 +75,7 @@ items:
       | `id` | ✅ | プロンプトの識別子（ファイル名の `{id}` と同じ） |
       | `name` | ✅ | 画面・検索に出す名前 |
       | `description` | ✅ | 何のための文かを 1 文で |
-      | `kind` | ✅ | 文の種類。`llm`（LLM の呼び出し）/ `hook`（フックの注入文）/ `instructions`（MCP のサーバーの instructions）/ `tool`（ツールの description） |
+      | `kind` | ✅ | 文の種類。`llm`（LLM の呼び出し）/ `hook`（フックの注入文）/ `instructions`（MCP のサーバーの instructions）/ `tool`（ツールの description）/ `agent`（Claude Code のエージェントに `--append-system-prompt` で指定するシステムプロンプト） |
       | `lang` | ✅ | 注入する言語（BCP 47 の言語タグ）。各部品の `texts[]` からこの言語の本文を選ぶ |
       | `tags` | - | 分類のタグ |
       | `vars` | - | 本文で使う変数。変数名 → 変数の定義（`structure-05`） |
@@ -263,6 +263,12 @@ items:
     name: example と type の整合
     body: |-
       - `example` が `type` に合う
+  - id: inspection-07
+    group: 検査
+    name: 起動の構成が指すファイルの種類
+    body: |-
+      - 起動の構成の `system_prompt` が指すプロンプトファイルの `kind` が `agent` である
+      - 2 つのファイルにまたがるため、起動の構成を持つプロジェクトの検査で確認する
   - id: inspection-06
     group: 検査
     name: スキーマと検査の参照先
