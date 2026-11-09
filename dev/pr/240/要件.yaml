@@ -23,23 +23,33 @@ docs:
   - page: schemas/design/common.schema.yaml
     new: false
     change: '`$defs/markdown` に `contentMediaType: text/markdown` を追加する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T12:47:24.874364+00:00'
   - page: schemas/prompt.schema.yaml
     new: false
-    change: '`kind` の `enum`・`description` にエージェントのシステムプロンプトの種類を追加し、`title`・`description`・`examples` の文言を dev-docs#148 の修正前後の表のとおりに置き換える'
-    status: todo
+    change: '`kind` の `enum`・`description` とルートの `description` にエージェントのシステムプロンプトの種類 `agent` を追加し、`title`・`description`・`examples` の文言を dev-docs#148 の修正前後の表のとおりに置き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T12:47:24.874364+00:00'
   - page: schemas/common.schema.yaml
     new: false
-    change: '`title`・`description`・`examples` の文言を dev-docs#148 の修正前後の表のとおりに置き換える'
-    status: todo
+    change: '`title`・`description`・`examples` の文言を dev-docs#148 の修正前後の表のとおりに置き換え、knowledge 側だけの `inject_when` の「当たる」も置き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T12:47:24.874364+00:00'
   - page: schemas/files.schema.yaml
     new: false
     change: '`description` の文言を dev-docs#148 の修正前後の表のとおりに置き換える'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T12:47:24.874364+00:00'
   - page: docs/rule/prompt-file.yaml
     new: false
-    change: structure-02 の `kind`・structure-04 の `role` と、`overview`・`layout-01`・`description` の対象の列挙にエージェントのシステムプロンプトの種類を追加し、検査のセクションに起動の構成の `system_prompt` が指すファイルの種類の検査を追加する
-    status: todo
+    change: structure-02 の `kind` と、`overview`・`layout-01`・`description` の対象の列挙に `agent` を追加し、検査のグループに起動の構成の `system_prompt` が指すファイルの種類の検査（inspection-07）を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T12:47:24.874364+00:00'
 scope_out:
   - item: dev-docs の `templates/prompt.schema.yaml`（knowledge のコピー）と `src/dev_docs/features/prompt_doc/types.py` の `kind` の `Literal` への、追加する種類の反映
     reason: dev-docs のリポジトリの作業で、この PR で決める種類の名前を前提にする
@@ -50,3 +60,6 @@ scope_out:
   - item: '#236 の 3 ファイル以外のスキーマ（`schemas/design/` の全てと meta・word-list・skill・template）の文言の、AI slop の単語の対応表への合わせ込みと、設計書のテンプレートの生成し直し'
     reason: 同じ型の文言だが、対象のファイルが多く、この PR がマージされなくても同じ内容で成り立つ
     plan: '#241'
+  - item: mdmark の設計書『リンクをカードの格子に並べる』の `notes.項目の記載方法` の `icon:名前` が `syntax_warning` になる点の修正
+    reason: mdmark のリポジトリの設計書で、mdmark が設計書のスキーマに `contentMediaType` を取り込んだ後にその値を書き換えるときだけ書き込みが止まる。今回の変更を前提にする
+    plan: to_file
