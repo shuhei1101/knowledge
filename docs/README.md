@@ -16,6 +16,15 @@ knowledge の文書全体の目次
 | [test-procedure](./test-procedure/) | テストの種別ごとの実行コマンド |
 | [dev-command](./dev-command/) | 開発の分類ごとのコマンド |
 | [library](./library/) | 使う外部ライブラリ・ CLI |
+| [rule](./rule/) | 規約 |
+| [template](./template/) | テンプレート |
+| [flowchart](./flowchart/) | 判定フローチャート |
+| [decision-table](./decision-table/) | 判定表 |
+| [checksheet](./checksheet/) | チェックシート |
+| [guide](./guide/) | 使い方 |
+| [skill](./skill/) | スキル |
+| [word-list](./word-list/) | 単語の対応表 |
+| [changelog](./changelog.yaml) | 変更履歴 |
 | [pr](./pr/) | 作業 PR ごとの計画書 |
 
 <!-- /table -->

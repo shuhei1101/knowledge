@@ -1,26 +1,26 @@
 use_cases:
   - kind: single
-    scenario: dev/設計書/シナリオ/単一ユースケース/利用者が dev-docs に knowledge を登録する.yaml
+    scenario: docs/scenario/SC-72-2.yaml
     impact: run_only
     detail: 配信の設定に設計書の種類が加わるため、登録した後に規約と設計書が引けることを確かめる
     depends_on: []
   - kind: single
-    scenario: dev/設計書/シナリオ/単一ユースケース/エージェントが knowledge の文書を検索・取得する.yaml
+    scenario: docs/scenario/SC-72-4.yaml
     impact: run_only
     detail: 文書の置き場所が変わるため、規約の検索と取得が変わらず動くことを確かめる
     depends_on: []
   - kind: single
-    scenario: dev/設計書/シナリオ/単一ユースケース/利用者が GitHub Pages で knowledge の公開文書を読む.yaml
+    scenario: docs/scenario/SC-137-1.yaml
     impact: run_only
     detail: 移した設計書が公開されず、今の公開文書だけが出ることを確かめる
     depends_on: []
   - kind: single
-    scenario: dev/設計書/シナリオ/単一ユースケース/開発者が文書の違反を検査する.yaml
+    scenario: docs/scenario/SC-72-6.yaml
     impact: run_only
     detail: 検査の対象に移した設計書が加わっても検査が通ることを確かめる
     depends_on: []
   - kind: single
-    scenario: dev/設計書/シナリオ/単一ユースケース/開発者がスキーマから設計書のテンプレートを生成する.yaml
+    scenario: docs/scenario/SC-201-1.yaml
     impact: run_only
     detail: スキーマの置き場所が変わっても、設計書のテンプレートが同じ中身で生成されることを確かめる
     depends_on: []
@@ -61,7 +61,7 @@ docs:
     updated_at: '2026-11-10T21:20:35.895589+00:00'
   - page: docs/index.yaml
     new: true
-    change: docs/ の起点の目次。行が種類のフォルダを指す
+    change: docs/ の起点の目次。行が設計書と既存の文書の種類のフォルダ・changelog.yaml・pr/ を指す
     status: done
     updated_by: planner
     updated_at: '2026-11-10T21:20:35.895589+00:00'
@@ -71,9 +71,15 @@ docs:
     status: done
     updated_by: planner
     updated_at: '2026-11-10T21:20:35.895589+00:00'
+  - page: docs/template/template-design-policy.yaml
+    new: false
+    change: 配置先を docs/design-policy.md、見本の置き場所を docs/mock/styles/ にする（rules.yaml の paths と合わせる）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-10T21:36:29.035821+00:00'
 scope_out:
-  - item: docs/template・docs/rule の中で、各プロジェクトの設計書の置き場所を dev/設計書/・dev/mock/・dev/ と書いている本文（template-container・template-design-policy・template-project-claude・template-project-readme・template-screen-design・template-test-fixture・dev-coding-general の NG 例）
-    reason: 今の判断はスコープ外。Issue は knowledge 自身の dev/ を指すパスの追随を求め、各プロジェクトへの決まりの本文は含めていない。ただし rules.yaml の paths を移した後の置き場所にすると本文と食い違うため、含めるかはレビューで確定する
+  - item: docs/template・docs/rule の中で、各プロジェクトの設計書の置き場所を dev/設計書/・dev/mock/・dev/ と書いている本文（template-container・template-project-claude・template-project-readme・template-screen-design・template-test-fixture・dev-coding-general の NG 例）
+    reason: 'Issue #237 の要望は knowledge 自身の dev/ の廃止で、各プロジェクト向けのテンプレート・規約の本文の書き換えは含まない（reviewer の判断）。rules.yaml と食い違う template-design-policy はこの PR で直した'
     plan: to_file
   - item: rules.yaml の template-container・template-test-fixture の paths（**/dev/設計書/コンテナ構成/**・**/dev/設計書/テストフィクスチャ.{md,yaml}）
     reason: ai-monitor#3307 の置き場所の表に、コンテナ構成・テストフィクスチャの移した後の置き場所が無い。同じテンプレートの本文の配置の記述（1 行目）と一緒に決める
