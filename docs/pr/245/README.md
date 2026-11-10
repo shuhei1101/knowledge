@@ -1,0 +1,1 @@
+# schemas/ の design・meta・word-list・template のスキーマの文言を AI slop の単語の対応表に合わせ、設計書のテンプレートを生成し直す
