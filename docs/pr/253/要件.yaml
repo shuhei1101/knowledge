@@ -88,10 +88,10 @@ docs:
 scope_out:
   - item: docs/template・docs/rule の中で、各プロジェクトの設計書の置き場所を dev/設計書/・dev/mock/・dev/ と書いている本文（template-container・template-project-claude・template-project-readme・template-screen-design・template-test-fixture・dev-coding-general の NG 例）
     reason: 'Issue #237 の要望は knowledge 自身の dev/ の廃止で、各プロジェクト向けのテンプレート・規約の本文の書き換えは含まない（reviewer の判断）。rules.yaml と食い違う template-design-policy はこの PR で直した'
-    plan: to_file
+    plan: '#254'
   - item: rules.yaml の template-container・template-test-fixture の paths（**/dev/設計書/コンテナ構成/**・**/dev/設計書/テストフィクスチャ.{md,yaml}）
     reason: ai-monitor#3307 の置き場所の表に、コンテナ構成・テストフィクスチャの移した後の置き場所が無い。同じテンプレートの本文の配置の記述（1 行目）と一緒に決める
-    plan: to_file
+    plan: '#255'
   - item: dev-docs.yaml の設計書と目次の行に、ai-monitor の同じ行が持つ validators（ai-monitor-checks）と after_write（ai-monitor-publish）を追加し、write_docs で書き込んだ設計書の検証と目次の作り直しを走らせる
     reason: 'knowledge から AI Monitor の検証を呼ぶ手段が今は無い。Issue #237 の要望（dev/ の廃止）に含まれない（reviewer の任意の指摘）'
-    plan: to_file
+    plan: '#256'
