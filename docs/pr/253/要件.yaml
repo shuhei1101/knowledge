@@ -77,6 +77,10 @@ docs:
     status: done
     updated_by: planner
     updated_at: '2026-11-10T21:36:29.035821+00:00'
+  - page: docs/rule/prompt-file.yaml
+    new: false
+    change: スキーマをコピーするときに `$ref` で指す共通の型のファイル名を knowledge-common.schema.yaml にする
+    status: todo
 scope_out:
   - item: docs/template・docs/rule の中で、各プロジェクトの設計書の置き場所を dev/設計書/・dev/mock/・dev/ と書いている本文（template-container・template-project-claude・template-project-readme・template-screen-design・template-test-fixture・dev-coding-general の NG 例）
     reason: 'Issue #237 の要望は knowledge 自身の dev/ の廃止で、各プロジェクト向けのテンプレート・規約の本文の書き換えは含まない（reviewer の判断）。rules.yaml と食い違う template-design-policy はこの PR で直した'
