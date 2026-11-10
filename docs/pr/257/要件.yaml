@@ -1,0 +1,77 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 警告にしていた lint のルールの違反で、検査が失敗するようになる。手順と結果の形は変わらない
+    depends_on: []
+docs:
+  - page: docs/interface/IF-72-3.py.yaml
+    new: false
+    change: 制約『警告にするルール』を、全てのルールを error にした後の形へ修正する。警告だけのときの正常系の前提（警告の設定の lint のフォルダ）を合わせる
+    status: todo
+  - page: docs/dev-command/CMD-72-1.yaml
+    new: false
+    change: 全ての文書の検査の effects・確認の結果の警告の記述を、切り替えた後の結果へ修正する
+    status: todo
+  - page: docs/rule
+    new: false
+    change: 規約の文書の文・箇条書きの表への書き換え・不要な文の削除と AI slop の修正・メタデータの付け直し・lint の違反の修正
+    status: todo
+  - page: docs/template
+    new: false
+    change: 手書きのテンプレート（TEMPLATE_IDS に載らないもの）の表への書き換え・不要な文の削除と AI slop の修正・メタデータの付け直し・lint の違反の修正。生成物の違反は生成元の schemas/design/ を修正して生成し直す
+    status: todo
+  - page: schemas/design
+    new: false
+    change: 生成するテンプレートに出る lint の違反と AI slop の元の文（description・x-rules など）を修正する
+    status: todo
+  - page: docs/flowchart
+    new: false
+    change: 判定フローチャートの表への書き換え・不要な文の削除と AI slop の修正・メタデータの付け直し・lint の違反の修正
+    status: todo
+  - page: docs/decision-table
+    new: false
+    change: 判定表の不要な文の削除と AI slop の修正・メタデータの付け直し・lint の違反の修正
+    status: todo
+  - page: docs/checksheet
+    new: false
+    change: チェックシートの不要な文の削除と AI slop の修正・メタデータの付け直し
+    status: todo
+  - page: docs/guide
+    new: false
+    change: 使い方の表への書き換え・不要な文の削除と AI slop の修正・メタデータの付け直し・lint の違反の修正
+    status: todo
+  - page: docs/word-list
+    new: false
+    change: 対応表の lint の違反の修正（修正したら対応表のコピーを作り直す）
+    status: todo
+  - page: docs/skill
+    new: false
+    change: スキルの文書の不要な文の削除と AI slop の修正・メタデータの付け直し
+    status: todo
+  - page: docs/changelog.yaml
+    new: false
+    change: 変更履歴の lint の違反（66 件）の修正。過去の版の記述を書き換えるか、検査の対象から外すかは要件.md の未確定
+    status: todo
+scope_out:
+  - item: Mermaid の図の mdmark の部品への置き換え
+    reason: '2026-11-09 のユーザーの依頼で範囲から外した。設計書と生成するテンプレートの図は #251 が持つ'
+    plan: '#251'
+  - item: 本文の検討事項の ID・Issue 番号・文書のパスの、関連のキーとタイトル付きのリンクへの移動
+    reason: 2026-11-09 のユーザーの依頼で範囲から外した（A-121）
+    plan: none
+  - item: 管理用の YAML のコード・テストの行への設計書への related（implements・tests）
+    reason: 2026-11-09 のユーザーの依頼で範囲から外した（A-121）
+    plan: none
+  - item: スキーマから生成する設計書のテンプレート（TEMPLATE_IDS に載るもの）を手で修正すること
+    reason: 生成物は生成元の schemas/design/ を修正して生成し直す（更新ドキュメントの schemas/design の行）
+    plan: none
+  - item: 設計書（docs/scenario・docs/interface・docs/module・docs/library など）の本文の表への書き換え
+    reason: 設計書の本文の形は設計書のスキーマが決め、lint の警告も 0 件。表し方はスキーマの見直し（#217・#249・#251）が持つ。メタデータと AI slop はこの PR の対象に含める。含めるかはレビューで確定する
+    plan: none
+  - item: PR ドキュメント（docs/pr/）の書き換え
+    reason: 過去の作業の記録で、dev-docs の配信と lint の対象に入っていない
+    plan: none
+  - item: CI（.github/workflows/docs-check.yml）に lint を載せ続けるかの見直し
+    reason: 'この PR は lint のルールを error へ切り替えるだけで、検査をどこで回すかは #227 が決める。切り替えは手元で回す check_all.py の合否にも効くため、#227 の結論によらず成り立つ'
+    plan: '#227'

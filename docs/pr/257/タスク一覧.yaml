@@ -1,0 +1,83 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存のリポジトリのため
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: 設計書は揃っている
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めの依頼ではない
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: 'lint の CLI と警告・error の切り替えは PR #176 で検証済み'
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: 業務フローは変わらない
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: 単一ユースケース設計
+    status: skipped
+    reason: 単一 UC『開発者が文書の違反を検査する』の流れは変わらない（違反の扱いのルールの区分だけが変わる）
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: モック作成
+    status: skipped
+    reason: 画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: インターフェース定義設計
+    status: todo
+    note: 『全ての文書の検査』（IF-72-3）の制約『警告にするルール』と、警告だけのときの正常系を、全てのルールを error にした後の形へ修正する
+  - process: 部品設計
+    status: skipped
+    reason: 画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: 画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: モジュール構成設計
+    status: skipped
+    reason: スクリプトの関数の構成は変わらない（警告と違反の振り分けは CLI の severity のまま）
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: ドキュメント修正
+    status: todo
+    note: docs/ の文書の表への書き換え・不要な文の削除と AI slop の修正・メタデータの付け直し・lint の違反の修正と、開発コマンド（CMD-72-1）の検査の結果の記述
+  - process: 単体テスト作成
+    status: skipped
+    reason: 単体テストは一時フォルダの設定を使い、lint の設定の変更の影響を受けない
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
+  - process: 実装
+    status: todo
+    note: scripts/lint/.markdownlint-cli2.jsonc・.textlintrc.json の警告にしたルールを error へ切り替える
+  - process: 結合テスト作成
+    status: todo
+    note: test_check_all.py の test_normal_when_only_warnings は既定の lint の設定に依存するため、警告の設定を持つ lint のフォルダを渡す形へ修正する
+  - process: E2E テスト作成
+    status: skipped
+    reason: 0.x の間は E2E を回さない運用（D-294）
+    updated_by: planner
+    updated_at: '2026-11-10T22:32:46.392098+00:00'
