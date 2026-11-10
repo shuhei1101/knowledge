@@ -10,7 +10,7 @@ rules:
       - "**/dev/設計書/テストフィクスチャ.{md,yaml}"
   - rule: docs/template/template-design-policy.yaml
     paths:
-      - "**/dev/設計書/デザイン方針.{md,yaml}"
+      - "**/docs/design-policy.md"
   - rule: docs/template/template-checksheet.yaml
     paths:
       - "**/docs/checksheet/*.yaml"
@@ -59,7 +59,6 @@ rules:
     paths:
       - "**/*.md"
       - "**/docs/**/*.yaml"
-      - "**/dev/設計書/**/*.yaml"
       - "**/dev-docs/**/src/dev_docs/features/convert/**"
       - "**/dev-docs/**/frontend/src/features/docs/**"
       - "**/mdmark/**/src/{render,parts,diagram}/**"
@@ -122,7 +121,6 @@ rules:
     paths:
       - "**/*.md"
       - "**/docs/**/*.yaml"
-      - "**/dev/設計書/**/*.yaml"
       - "**/dev-docs/**/src/dev_docs/features/convert/**"
       - "**/dev-docs/**/frontend/src/features/docs/**"
       - "**/mdmark/**/src/{render,parts,diagram}/**"
@@ -135,7 +133,7 @@ rules:
       - "mcp__*__write_design_doc*"
   - rule: docs/rule/convention-issue-presentation.yaml
     paths:
-      - "**/dev/pr/**/*.md"
+      - "**/docs/pr/**/*.md"
     tools:
       - "mcp__*__comment"
       - "mcp__*__create_review_comment"
@@ -373,10 +371,10 @@ rules:
       - "**/docs/word-list/*.yaml"
   - rule: docs/decision-table/decision-table-dataflow.yaml
     paths:
-      - "**/dev/設計書/データフロー/*.yaml"
+      - "**/docs/dataflow/*.yaml"
   - rule: docs/flowchart/flowchart-nonfunctional-layer.yaml
     paths:
-      - "**/dev/設計書/非機能要件/*.yaml"
+      - "**/docs/nonfunctional/*.yaml"
   - rule: docs/rule/dev-versioning.yaml
     paths:
       - "**/version.ini"

@@ -1,0 +1,693 @@
+id: "MOD-72-6"
+visibility: internal
+title: "検査と変換のスクリプト / scripts / check_all.py"
+lead: CI と手元から呼ぶ「全ての文書の検査」。`dev-docs.yaml` の `documents[]` が指す全ての文書に、スキーマの検査と文書の違反の検査を当て、`schemas/design/` の設計書のスキーマと `schemas/` の直下のスキーマにスキーマ自身の検査を当て、終了コードで合否を返す（IF-72-3）。
+data_models:
+  - name: Target
+    title: 検査する文書
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: DTO
+    summary: '`documents[]` の行から引いた文書 1 件と、当てる検査'
+    description: '`dataclass(frozen=True)`。'
+    properties:
+      - name: path
+        type: PurePosixPath
+        description: リポジトリの直下からのパス
+      - name: schema
+        type: str
+        description: 行の `schema`（`schemas/rule.schema.yaml` など）
+      - name: checks
+        type: bool
+        description: 行の `validators` に `knowledge-checks` を持つか
+  - name: MetaSchemaError
+    title: 使えない拡張したメタスキーマ
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: 例外
+    summary: '`schemas/meta.schema.yaml` が無い・読めない・JSON Schema 2020-12 のメタスキーマに合わない'
+    inherits: Exception
+    properties:
+      - name: message
+        type: str
+        description: 標準エラーへ出す理由の 1 行
+constants:
+  - name: CHECKS_ID
+    title: 文書の違反の検査の ID
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    summary: '`validators[]` の文書の違反の検査の `id`'
+    value: '"knowledge-checks"'
+  - name: YAMLLINT_EXTRA
+    title: yamllint だけを当てるファイル
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    summary: '`documents[]` に無く、yamllint を当てるリポジトリの直下のファイル'
+    value: ("dev-docs.yaml", "rules.yaml")
+  - name: DESIGN_SCHEMAS_DIR
+    title: 設計書のスキーマのフォルダ
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    summary: 設計書のスキーマ（knowledge の正本）を置くフォルダの、リポジトリの直下からのパス
+    value: PurePosixPath("schemas/design")
+  - name: META_SCHEMA_PATH
+    title: 拡張したメタスキーマのパス
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    summary: 'JSON Schema 2020-12 のメタスキーマに `x-rules`・`x-bad-examples` の形を足した、拡張したメタスキーマの、リポジトリの直下からのパス。ファイルは `$dynamicAnchor: meta` と絶対 URI の `$id`（`urn:knowledge:schemas:meta`）を持つ。`$id` が無いと `$dynamicRef` が拡張したメタスキーマへ戻らず、深い位置のキーを検査しない'
+    value: PurePosixPath("schemas/meta.schema.yaml")
+functions:
+  - name: main
+    title: 全ての文書の検査の入口
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: 入口
+    scope: public
+    summary: 全ての文書を検査し、違反を 1 件 1 行で出して終了コードで合否を返す
+    args:
+      - name: argv
+        title: 引数
+        type: Sequence[str] | None
+        required: false
+        default: None
+        description: コマンドの引数。`None` は `sys.argv[1:]`。`--lint-dir`（既定は `DEFAULT_LINT_DIR`）だけを取る
+    returns:
+      type: int
+      description: 終了コード。`0` = 違反なし、`1` = 違反が 1 件以上か想定していない例外、`2` = 検査を始めなかった
+    process: |-
+      1. argparse で引数を読み、標準出力を UTF-8 にする
+      2. maid と lint の CLI の在りかを確かめる（maid の在りかの確認・lint の CLI の在りかの確認）
+         - 引けない CLI がある場合、引けない CLI ごとに標準エラーへ `{CLI} がありません。開発コマンドの『環境構築（クローン直後）』で入れてください` を出し `2` を返す
+      3. 作業ディレクトリの `dev-docs.yaml` の `documents[]` を読む（dev-docs.yaml の読み込み）
+         - 読めない dev-docs.yaml の場合、標準エラーへ理由を出し `2` を返す
+      4. 拡張したメタスキーマの検査器を作る（拡張したメタスキーマの読み込み）
+         - 使えない拡張したメタスキーマの場合、標準エラーへ理由を出し `2` を返す
+      5. 検査する文書を引き（検査する文書の列挙）、並列に読む（ファイルの並列の読み込み）
+      6. スキーマの検査器を作り（スキーマの検査器の作成）、ID の索引と、3 で読んだ `documents[]` の行から名前の索引を 1 度ずつ作る（ID の索引の作成・名前の索引の作成）
+      7. 文書ごとに検査し（文書 1 件の検査）、違反を `{ファイルのパス}:{行}: {項目のパス}: {内容}` の 1 行ずつ、文書のパスの順に標準出力へ出す
+      8. 設計書のスキーマと `schemas/` の直下のスキーマを検査し（設計書のスキーマの検査・文書の種類のスキーマの検査）、違反を同じ形の行で出す
+      9. 対応表のコピーを検査し（対応表のコピーの検査）、違反を同じ形の行で出す
+         設計書のテンプレートを検査し（設計書のテンプレートの検査）、違反を同じ形の行で出す
+      10. lint を当てる（lint の検査）。違反を `{ファイルのパス}:{行}: {項目のパス}: {tool}/{rule}: {message}`、`warning` の違反は `{内容}` の前に `warning: ` を付けた行で、文書のパスと行の順に出す
+         - 読めない lint の出力の場合、標準エラーへ理由を出し `1` を返す
+      11. 最後に `{文書の数} 件の文書を検査し、違反は {違反の数} 件、警告は {警告の数} 件でした` を出し、違反があれば `1`、無ければ `0` を返す（警告は数えない）
+         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返す
+    unit_tests:
+      - name: test_main
+        case: 正常
+        summary: 違反の無いリポジトリ
+        condition: '`dev-docs.yaml`・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・違反の無い `docs/rule/` の文書 2 件を持つ一時フォルダ'
+        mock: maid の在りかの確認を、正しい図と答えるスクリプトのパスに差し替える。lint の CLI の在りかの確認を両方とも引けたパスに、lint の検査を空を返す関数に差し替える
+        expected: '`0` を返し、標準出力の最後の行が `2 件の文書を検査し、違反は 0 件、警告は 0 件でした`'
+      - name: test_main_when_violations
+        case: 正常
+        summary: 違反がある
+        condition: '`description` の無い文書と、項目の ID が重複した文書'
+        mock: maid と lint の CLI の在りかの確認を差し替える。lint の検査を空を返す関数に差し替える
+        expected: '`1` を返し、2 つの文書の違反が `{パス}:{行}: {項目のパス}: ` で始まる行で出る'
+      - name: test_main_when_design_schemas_invalid
+        case: 正常
+        summary: 設計書のスキーマに誤りがある
+        condition: 違反の無いリポジトリに、`examples[0]` が `required` のキーを持たない `schemas/design/scenario.schema.yaml` を加える
+        mock: maid と lint の CLI の在りかの確認を差し替える。lint の検査を空を返す関数に差し替える
+        expected: '`1` を返し、`schemas/design/scenario.schema.yaml:{行}: examples[0]: examples: ` で始まる行が出て、最後の行が違反 1 件'
+      - name: test_main_when_document_schemas_invalid
+        case: 正常
+        summary: '`schemas/` の直下のスキーマに誤りがある'
+        condition: 違反の無いリポジトリの `schemas/rule.schema.yaml` に、文字列の `x-rules` を加える
+        mock: maid と lint の CLI の在りかの確認を差し替える。lint の検査を空を返す関数に差し替える
+        expected: '`1` を返し、`schemas/rule.schema.yaml:{行}: x-rules: metaschema: ` で始まる行が出る'
+      - name: test_main_when_lint_findings
+        case: 正常
+        summary: lint の違反と警告
+        condition: 違反の無いリポジトリ
+        mock: maid と lint の CLI の在りかの確認を差し替える。lint の検査を、違反 1 件と `warning` の違反 1 件を返す関数に差し替える
+        expected: '`1` を返し、`markdownlint/MD036: ` の行と `warning: textlint/one-sentence-per-line: ` の行が出て、最後の行が違反 1 件・警告 1 件'
+      - name: test_main_when_only_warnings
+        case: 正常
+        summary: 警告だけ
+        condition: 違反の無いリポジトリ
+        mock: maid と lint の CLI の在りかの確認を差し替える。lint の検査を、`warning` の違反 1 件だけを返す関数に差し替える
+        expected: '`0` を返す'
+      - name: test_main_when_check_cli_missing
+        case: 正常
+        summary: 検査の CLI が無い
+        condition: 違反の無いリポジトリ
+        mock: maid の在りかの確認を `None` に、`--lint-dir` を存在しないフォルダにする
+        expected: '`2` を返し、標準エラーに `maid`・`markdownlint-cli2`・`textlint` の行が 1 行ずつ出る'
+      - name: test_main_when_meta_schema_unusable
+        case: 正常
+        summary: 拡張したメタスキーマが無い
+        condition: '`schemas/meta.schema.yaml` を持たないリポジトリ'
+        mock: maid と lint の CLI の在りかの確認を差し替える
+        expected: '`2` を返し、標準エラーに `schemas/meta.schema.yaml` が出る'
+      - name: test_main_when_config_missing
+        case: 正常
+        summary: dev-docs.yaml が無い
+        condition: '`dev-docs.yaml` を持たない一時フォルダ'
+        mock: maid と lint の CLI の在りかの確認を差し替える
+        expected: '`2` を返し、標準エラーに `dev-docs.yaml` が出る'
+    callees:
+      - '#functions[load_meta_validator]'
+      - MOD-72-3#functions[find_maid]
+      - MOD-176-1#functions[find_lint_clis]
+      - MOD-72-2#functions[load_config]
+      - MOD-72-2#functions[read_texts]
+      - MOD-72-4#functions[build_id_index]
+      - MOD-72-4#functions[build_name_index]
+    refs:
+      - IF-72-3#
+  - name: check_lints
+    title: lint の検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: サービス
+    scope: public
+    summary: 全ての文書の Markdown に markdownlint-cli2・textlint、YAML のファイルと `schemas/` のスキーマに yamllint を当てる
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`YAMLLINT_EXTRA` と `schemas/` のスキーマの起点'
+      - name: targets
+        title: 検査する文書
+        type: Sequence[Target]
+        required: true
+        description: '`list_targets` が返した文書'
+      - name: texts
+        title: 中身
+        type: Mapping[Path, str | None]
+        required: true
+        description: '`read_texts` が返した中身'
+      - name: lint_dir
+        title: lint のフォルダ
+        type: Path
+        required: true
+        description: '`--lint-dir` の値'
+      - name: clis
+        title: CLI の実行ファイル
+        type: Mapping[str, str]
+        required: true
+        description: '`find_lint_clis` が返した絶対パス'
+    returns:
+      type: list[LintFinding]
+      description: 文書のパスと行の順の違反
+    process: |-
+      1. 中身の読めた文書ごとに Markdown を取り出し（lint を当てる Markdown の取り出し）、まとめて Markdown の lint を呼ぶ（Markdown の lint の呼び出し）
+      2. yamllint の設定を読み（yamllint の設定の読み込み）、拡張子が `.yaml`・`.yml` の文書と、`YAMLLINT_EXTRA` のうち在るファイルに yamllint を当てる（yamllint の呼び出し）
+      3. `YAMLLINT_SCHEMAS_CONFIG` の設定を読み（yamllint の設定の読み込み）、`schemas/*.schema.yaml` と `DESIGN_SCHEMAS_DIR` の `*.schema.yaml` をパスの順に UTF-8 で読んで yamllint を当てる（yamllint の呼び出し）。UTF-8 で読めないファイルは、違反を設計書のスキーマの検査と文書の種類のスキーマの検査が出すため、yamllint を当てずに飛ばす
+      4. パスと行の順に並べて返す
+    unit_tests:
+      - name: test_check_lints
+        case: 正常
+        summary: 3 つの lint の違反を並べる
+        condition: '`body` が太字だけの段落の文書と、`key: foo #bar` を持つ `rules.yaml`。`lint_dir` に `extends: default`・`comments: {level: error}`・`document-start: disable`・`line-length: disable`・`truthy: {check-keys: false}`（`scripts/lint/.yamllint.yaml` と同じ内容） の `.yamllint.yaml` と、`test_check_lints_when_schemas_use_flow_style` と同じ `.yamllint-schemas.yaml`'
+        mock: Markdown の lint の呼び出しを、受け取った `sources` の 1 件目に `MD036` の違反を返す関数に差し替える
+        expected: 文書の `MD036` の 1 件と、`rules.yaml` の `comments` の 2 件の 3 件がパスの順に並ぶ
+      - name: test_check_lints_when_schemas_use_flow_style
+        case: 正常
+        summary: スキーマのフロー形式だけを違反にする
+        condition: '`tags: [{name: scope:規約}]` の行を持つ文書と、`required: [id, title]` の行を持つ `schemas/rule.schema.yaml` と、`properties: {id: {type: string}}` の行を持つ `schemas/design/common.schema.yaml`。`lint_dir` に `test_check_lints` と同じ `.yamllint.yaml` と、`brackets: {forbid: non-empty}`・`braces: {forbid: non-empty}`（`scripts/lint/.yamllint-schemas.yaml` と同じ内容）の `.yamllint-schemas.yaml`'
+        mock: Markdown の lint の呼び出しを、空を返す関数に差し替える
+        expected: '`schemas/design/common.schema.yaml` の `braces` の 2 件と `schemas/rule.schema.yaml` の `brackets` の 1 件の計 3 件がパスの順に並び、文書の違反は無い'
+      - name: test_check_lints_when_schema_unreadable
+        case: 正常
+        summary: UTF-8 で読めないスキーマを飛ばす
+        condition: '`test_check_lints_when_schemas_use_flow_style` と同じ `lint_dir` と、UTF-8 として不正なバイト列（`b"\xff"`）の `schemas/design/broken.schema.yaml` と、`required: [id, title]` の行を持つ `schemas/rule.schema.yaml`'
+        mock: Markdown の lint の呼び出しを、空を返す関数に差し替える
+        expected: 例外を出さず、`schemas/rule.schema.yaml` の `brackets` の 1 件だけを返す
+    callees:
+      - MOD-176-1#functions[collect_sources]
+      - MOD-176-1#functions[run_markdown_lints]
+      - MOD-176-1#functions[load_yamllint_config]
+      - MOD-176-1#functions[run_yamllint]
+    refs:
+      - IF-72-3#constraints[lint の当て先]
+      - IF-72-3#constraints[lint の設定]
+  - name: load_meta_validator
+    title: 拡張したメタスキーマの読み込み
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: サービス
+    scope: public
+    summary: '`META_SCHEMA_PATH` を読み、スキーマの検査器を作る'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`META_SCHEMA_PATH` の起点'
+    returns:
+      type: Draft202012Validator
+      description: 拡張したメタスキーマの検査器
+    process: |-
+      1. `META_SCHEMA_PATH` を UTF-8 で読み、YAML として読む（YAML の読み込み）
+         - 読めないファイル・YAML の場合、`MetaSchemaError` を送出する
+      2. `Draft202012Validator.check_schema` で、それ自身が JSON Schema 2020-12 のメタスキーマに合うかを確かめる
+         - 合わない場合、`MetaSchemaError` を送出する
+      3. 検査器を返す
+    exceptions:
+      - name: MetaSchemaError
+        condition: 拡張したメタスキーマが無い・読めない・JSON Schema 2020-12 のメタスキーマに合わない
+        message: 'schemas/meta.schema.yaml を使えません: {理由}'
+    unit_tests:
+      - name: test_load_meta_validator
+        case: 正常
+        summary: 正しい拡張したメタスキーマ
+        condition: 'リポジトリの `schemas/meta.schema.yaml`'
+        mock: なし
+        expected: '検査器が、最上位と `properties` の下の文字列の `x-rules` と `value` の無い `x-bad-examples` の要素と `type: strin` に誤りを返し、`examples`・`x-bad-examples` の値の中と `properties` の `x-rules` という名前の項目には誤りを返さない'
+      - name: test_load_meta_validator_when_missing
+        case: 異常
+        summary: ファイルが無い
+        condition: '`schemas/meta.schema.yaml` を持たない一時フォルダ'
+        mock: なし（一時ディレクトリ）
+        expected: '`MetaSchemaError` を送出し、`message` が `schemas/meta.schema.yaml を使えません: ` で始まる'
+      - name: test_load_meta_validator_when_broken
+        case: 異常
+        summary: 読めない YAML
+        condition: 括弧の閉じていない `schemas/meta.schema.yaml`
+        mock: なし（一時ディレクトリ）
+        expected: '`MetaSchemaError` を送出する'
+      - name: test_load_meta_validator_when_invalid
+        case: 異常
+        summary: メタスキーマに合わない
+        condition: '`type: strin` を持つ `schemas/meta.schema.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: '`MetaSchemaError` を送出する'
+    callees:
+      - MOD-72-2#functions[load_safe]
+    refs:
+      - IF-72-3#exceptions[終了コード 2]
+  - name: check_document_schemas
+    title: 文書の種類のスキーマの検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: サービス
+    scope: public
+    summary: '`schemas/*.schema.yaml` に拡張したメタスキーマの検査を当てる'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`schemas/` の起点'
+      - name: meta
+        title: 拡張したメタスキーマの検査器
+        type: Draft202012Validator
+        required: true
+        description: 拡張したメタスキーマの読み込みの返り値
+    returns:
+      type: list[tuple[str, int, str, str]]
+      description: （ファイルのパス、行、項目のパス、内容）。ファイルのパスの順。誤りが無ければ空
+    process: |-
+      1. `schemas/*.schema.yaml` をファイル名の順に、設計書のスキーマの検査の 2 と同じ扱いで読む
+      2. ファイルごとに `meta` の `iter_errors` の誤りを `(パス, 行, 項目のパス, "metaschema: {message}")` にする
+      3. ファイルのパス・行の順に並べて返す
+    unit_tests:
+      - name: test_check_document_schemas
+        case: 正常
+        summary: 誤りの無いスキーマ
+        condition: '`x-rules` を持つ `schemas/template.schema.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: 空
+      - name: test_check_document_schemas_when_invalid
+        case: 正常
+        summary: '`x-rules` の形が違う'
+        condition: 文字列の `x-rules` を持つ `schemas/rule.schema.yaml`
+        mock: なし（一時ディレクトリ）
+        expected: '1 件で、項目のパスが `x-rules`、内容が `metaschema: ` で始まり、行が `x-rules` のキーの行'
+      - name: test_check_document_schemas_when_broken
+        case: 正常
+        summary: 読めない YAML
+        condition: 括弧の閉じていない `schemas/rule.schema.yaml`
+        mock: なし（一時ディレクトリ）
+        expected: '`$` の 1 件で、内容が `YAML として読めません: ` で始まる'
+    callees:
+      - MOD-72-2#functions[load_document]
+      - MOD-72-2#functions[line_of]
+      - MOD-72-2#functions[format_path]
+    refs:
+      - IF-72-3#constraints[文書の種類のスキーマの検査]
+      - IF-72-3#constraints[スキーマの違反の行]
+  - name: check_design_schemas
+    title: 設計書のスキーマの検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: サービス
+    scope: public
+    summary: '`schemas/design/` の設計書のスキーマに、拡張したメタスキーマ・`$ref`・`examples` の検査を当てる'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`DESIGN_SCHEMAS_DIR` の起点'
+      - name: meta
+        title: 拡張したメタスキーマの検査器
+        type: Draft202012Validator
+        required: true
+        description: 拡張したメタスキーマの読み込みの返り値
+    returns:
+      type: list[tuple[str, int, str, str]]
+      description: （ファイルのパス、行、項目のパス、内容）。ファイルのパスの順。誤りが無ければ空
+    process: |-
+      1. `DESIGN_SCHEMAS_DIR` が無ければ空を返す
+      2. `DESIGN_SCHEMAS_DIR` の `*.schema.yaml` をファイル名の順に UTF-8 で読み、文書として読む（文書の読み込み）
+         - 読めないファイルの場合、`(パス, 1, "$", "ファイルを UTF-8 で読めません")` を加えて、そのファイルは以降の検査から外す
+         - 読めない YAML の場合、`(パス, {行}, "$", "YAML として読めません: {理由}")` を加えて、そのファイルは以降の検査から外す
+      3. 読めたファイルを、ファイル名を URI にした `referencing.Registry` に入れる（`build_validators` の `schemas/*.schema.yaml` の登録とは別の登録）
+      4. ファイルごとに次を当て、誤りごとに `(パス, 行, 項目のパス, 内容)` を加える。行は項目の行の引き当て、項目のパスは項目のパスの組み立てで求める
+         1. メタスキーマ: `meta` の `iter_errors` の誤りを `metaschema: {message}` にする
+            - メタスキーマの誤りがあるファイルの場合、そのファイルの 2・3 は当てない
+         2. `$ref`: スキーマを辿り、文字列の `$ref` ごとに、ファイル名を基準の URI にして登録から引く。引けなければ `$ref` のキーの位置で `$ref: {値} を解決できません` にする
+            - スキーマのキーワードとしての `examples`・`enum`・`const`・`default`・`x-bad-examples` の値の中は辿らない
+            - `properties`・`patternProperties`・`$defs`・`dependentSchemas` の値（名前 → スキーマの対応）のキーは名前として扱い、キーワードと見なさずに値のスキーマを辿る（`default`・`examples` という名前のプロパティも辿る）
+         3. `examples`: 2 と同じ辿り方で、キーワードとしての配列の `examples` を持つスキーマごとに、`{"$ref": "{ファイル名}#{JSON Pointer}"}` を登録つきの `Draft202012Validator` にし、要素ごとの `iter_errors` の誤りを、要素の位置に誤りの位置を続けた位置で `examples: {message}` にする
+            - 検査の途中で `$ref` を解決できない場合、その要素の誤りは出さない（2 が出す）
+      5. ファイルのパス・行の順に並べて返す
+    unit_tests:
+      - name: test_check_design_schemas
+        case: 正常
+        summary: 誤りの無いスキーマ
+        condition: '`common.schema.yaml` と、それを `$ref` で指し、合う `examples` を持つ `scenario.schema.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: 空
+      - name: test_check_design_schemas_when_invalid
+        case: 正常
+        summary: 3 種の誤り
+        condition: '`type: strin` を持つスキーマ、`common.schema.yaml#/$defs/missing` を指すスキーマ、`required` のキーを持たない `examples[0]` を持つスキーマと、`common.schema.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: '3 件で、内容がそれぞれ `metaschema: `・`$ref: `・`examples: ` で始まり、行がそれぞれ `type` のキー・`$ref` のキー・`examples[0]` の要素の行'
+      - name: test_check_design_schemas_when_x_keys_invalid
+        case: 正常
+        summary: '`x-rules`・`x-bad-examples` の形が違う'
+        condition: '`properties.id` に文字列の `x-rules` を持ち、`$defs.a` に `reason` の無い `x-bad-examples` の要素を持つスキーマ'
+        mock: なし（一時ディレクトリ）
+        expected: '2 件で、項目のパスがそれぞれ `properties.id.x-rules`・`$defs.a.x-bad-examples[0]`、内容が `metaschema: ` で始まる'
+      - name: test_check_design_schemas_when_x_keys_in_data
+        case: 正常
+        summary: 値の中と同じ名前の項目
+        condition: '`x-bad-examples` の `value` に `$ref` と文字列の `x-rules` を持つオブジェクトを書き、`properties` に `x-rules` という名前の項目を持つスキーマ'
+        mock: なし（一時ディレクトリ）
+        expected: 空
+      - name: test_check_design_schemas_when_nested_examples
+        case: 正常
+        summary: 入れ子の examples
+        condition: '`properties.id` が `common.schema.yaml#/$defs/id` を `$ref` で指し、`pattern` に合わない値を `properties.id.examples` に持つスキーマ'
+        mock: なし（一時ディレクトリ）
+        expected: '1 件で、項目のパスが `properties.id.examples[0]`、内容が `examples: ` で始まる'
+      - name: test_check_design_schemas_when_property_named_default
+        case: 正常
+        summary: default という名前のプロパティ
+        condition: '`properties.default` が `type: string` で、文字列でない値を `properties.default.examples` に持つスキーマ'
+        mock: なし（一時ディレクトリ）
+        expected: '1 件で、項目のパスが `properties.default.examples[0]`、内容が `examples: ` で始まる'
+      - name: test_check_design_schemas_when_folder_missing
+        case: 正常
+        summary: フォルダが無い
+        condition: '`schemas/design/` を持たない一時フォルダ'
+        mock: なし（一時ディレクトリ）
+        expected: 空
+      - name: test_check_design_schemas_when_broken
+        case: 正常
+        summary: 読めない YAML
+        condition: 括弧の閉じていない `common.schema.yaml`
+        mock: なし（一時ディレクトリ）
+        expected: '`$` の 1 件で、内容が `YAML として読めません: ` で始まる'
+    callees:
+      - MOD-72-2#functions[load_document]
+      - MOD-72-2#functions[line_of]
+      - MOD-72-2#functions[format_path]
+    refs:
+      - IF-72-3#constraints[設計書のスキーマの検査]
+      - IF-72-3#constraints[スキーマの違反の行]
+      - IF-72-3#constraints[`x-rules`・`x-bad-examples` の形]
+  - name: check_word_list_copy
+    title: 対応表のコピーの検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: 正本から作り直したコピーの中身が、置いてあるコピーと一致するかを確かめる
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`SOURCE`・`COPY` の起点'
+    returns:
+      type: list[tuple[str, int, str, str]]
+      description: （ファイルのパス、行、項目のパス、内容）。一致すれば空
+    process: |-
+      1. 正本が無ければ空を返す（正本の違反は文書の検査で出る）
+      2. 正本を読み（文書の読み込み）、コピーの中身を作る（コピーの中身の作成）
+         - 読めない正本の場合、空を返す
+      3. `COPY` を UTF-8 で読み、作った中身と一致しなければ `(COPY, 1, "$", "対応表のコピーが正本と一致しません。uv run --frozen --script scripts/build_word_list.py で作り直してください")` を返す（コピーが無いときも同じ）
+    unit_tests:
+      - name: test_check_word_list_copy
+        case: 正常
+        summary: 一致する
+        condition: 正本と、コピーの中身の作成で作ったコピー
+        mock: なし（一時ディレクトリ）
+        expected: 空
+      - name: test_check_word_list_copy_when_stale
+        case: 正常
+        summary: 一致しない
+        condition: 正本と、1 行を消したコピー
+        mock: なし（一時ディレクトリ）
+        expected: 1 件で、パスが `COPY`、内容に `build_word_list.py` がある
+    callees:
+      - MOD-148-3#functions[render_copy]
+      - MOD-72-2#functions[load_document]
+    refs:
+      - IF-72-3#constraints[対応表のコピー]
+  - name: check_design_templates
+    title: 設計書のテンプレートの検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: 種類のスキーマから組み立てた items が、対応するテンプレートの文書の items と一致するかを確かめる
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`SCHEMAS_DIR`・`TEMPLATES_DIR` の起点'
+    returns:
+      type: list[tuple[str, int, str, str]]
+      description: （ファイルのパス、行、項目のパス、内容）。全て一致すれば空
+    process: |-
+      1. `schemas/design/` が無ければ空を返す
+      2. 設計書のスキーマを `$ref` を確かめずに読み込む（設計書のスキーマの読み込み）
+         - `BuildError` の場合、空を返す（読めないスキーマは設計書のスキーマの検査が違反にする）
+      3. 対応表に行がある種類のスキーマごとに、テンプレートの文書を読む（文書の読み込み）
+         - 無い・読めないテンプレートの場合、`(テンプレートのパス, 1, "$", "テンプレートがありません: {スキーマのパス}")` を足して次へ進む
+      4. items を組み立て（items の組み立て）、テンプレートの `items` を `id`・`name`・`body` の組の並びにしたものと比べる
+         - `BuildError` の場合、そのスキーマを比べない（`$ref` の誤りは設計書のスキーマの検査が違反にする）
+         - 違う場合、`(テンプレートのパス, items のキーの行, "items", "テンプレートがスキーマ {スキーマのパス} と一致しません。{COMMAND} で作り直してください")` を足す
+      5. 足した違反をパスの順に返す
+    unit_tests:
+      - name: test_check_design_templates
+        case: 正常
+        summary: 一致する
+        condition: '`er`・`common` のスキーマと、生成した `template-er.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: 空
+      - name: test_check_design_templates_when_stale
+        case: 正常
+        summary: 一致しない
+        condition: '`er.schema.yaml` のキーの `x-rules` に 1 件追加する前に生成した `template-er.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: '1 件で、パスが `docs/template/template-er.yaml`、行が `items:` の行、項目のパスが `items`、内容に `schemas/design/er.schema.yaml` と `build_templates.py` がある'
+      - name: test_check_design_templates_when_template_missing
+        case: 正常
+        summary: テンプレートが無い
+        condition: '`er`・`common` のスキーマだけで、`template-er.yaml` が無い'
+        mock: なし（一時ディレクトリ）
+        expected: 1 件で、パスが `docs/template/template-er.yaml`
+      - name: test_check_design_templates_when_ref_unresolvable
+        case: 正常
+        summary: $ref を解決できないスキーマ
+        condition: '`er.schema.yaml` のキーの `$ref` が無い `$defs` を指し、`template-er.yaml` は古い'
+        mock: なし（一時ディレクトリ）
+        expected: 空（設計書のスキーマの検査が違反にする）
+    callees:
+      - MOD-201-1#functions[load_schemas]
+      - MOD-201-1#functions[build_items]
+      - MOD-72-2#functions[load_document]
+    refs:
+      - IF-72-3#constraints[設計書のテンプレート]
+  - name: list_targets
+    title: 検査する文書の列挙
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: '`documents[]` の行の `paths`・`exclude` に当たるファイルを、当てる検査と並べて返す'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: glob の起点
+      - name: rows
+        title: documents の行
+        type: Sequence[Mapping[str, Any]]
+        required: true
+        description: '`load_config` が返した行'
+    returns:
+      type: list[Target]
+      description: パスの順の検査する文書。同じファイルは最初に当たった行で 1 件
+    process: |-
+      1. `enabled` が `false` の行と、`schema` を持たない行を飛ばす
+      2. 行のファイルを引く（documents の行のファイルの列挙）
+      3. `validators` に `CHECKS_ID` を持つ行の文書は、文書の違反の検査も当てる
+      4. パスの順に並べて返す
+    unit_tests:
+      - name: test_list_targets
+        case: 正常
+        summary: 行のパターンで引く
+        condition: '`docs/rule/*.yaml`（validators に knowledge-checks）の行と `scripts/files.yaml`（validators なし）の行。文書 2 件と files.yaml'
+        mock: なし（一時ディレクトリ）
+        expected: 3 件で、rule の 2 件は `checks` が `True`、files.yaml は `False`
+      - name: test_list_targets_when_excluded
+        case: 正常
+        summary: exclude と無効な行
+        condition: '`exclude: ["index.yaml"]` の行に `index.yaml` と文書 1 件、`enabled: false` の行に文書 1 件'
+        mock: なし（一時ディレクトリ）
+        expected: 文書 1 件だけ
+    callees:
+      - MOD-72-2#functions[list_row_files]
+  - name: build_validators
+    title: スキーマの検査器の作成
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: '`schemas/*.schema.yaml` を互いの `$ref` で引けるようにした、スキーマのパス → 検査器を作る'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`schemas/` を持つフォルダ'
+      - name: schema_paths
+        title: 使うスキーマ
+        type: Iterable[str]
+        required: true
+        description: 検査する文書の `schema` の値
+    returns:
+      type: dict[str, Draft202012Validator | str]
+      description: スキーマのパス → 検査器。読めないスキーマは理由の文字列
+    process: |-
+      1. `schemas/*.schema.yaml` を `YAML(typ="safe")` で読み、ファイル名を URI にした `referencing.Registry` に入れる（`common.schema.yaml#/$defs/...` の `$ref` を解く。LIB-72-2）
+      2. `schema_paths` の各パスについて `Draft202012Validator(スキーマ, registry=...)` を作る
+         - ファイルが無い・読めない・`check_schema` が `SchemaError` を送出した場合、そのパスを理由の文字列にする
+    unit_tests:
+      - name: test_build_validators
+        case: 正常
+        summary: 他のスキーマへの $ref を解く
+        condition: '`rule.schema.yaml` が `common.schema.yaml#/$defs/metadata` を `$ref` で指す一時フォルダ'
+        mock: なし（一時ディレクトリ）
+        expected: 検査器が、`common` の必須のキーの無い文書に誤りを返す
+      - name: test_build_validators_when_missing
+        case: 正常
+        summary: スキーマが無い
+        condition: '`schemas/missing.schema.yaml` を渡す'
+        mock: なし（一時ディレクトリ）
+        expected: 値が理由の文字列
+  - name: check_target
+    title: 文書 1 件の検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    role: サービス
+    scope: public
+    summary: 文書 1 件にスキーマの検査と文書の違反の検査を当て、（行、項目のパス、内容）で返す
+    args:
+      - name: target
+        title: 検査する文書
+        type: Target
+        required: true
+        description: '`list_targets` が返した 1 件'
+      - name: text
+        title: 中身
+        type: str | None
+        required: true
+        description: '`read_texts` が返した中身。読めなかったときは `None`'
+      - name: validator
+        title: スキーマの検査器
+        type: Draft202012Validator | str
+        required: true
+        description: '`build_validators` の値'
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: 文書の違反の検査へ渡す
+      - name: executable
+        title: maid の実行ファイル
+        type: str
+        required: true
+        description: '`find_maid` が返したパス'
+      - name: index
+        title: ID の索引
+        type: Mapping[str, frozenset[str]]
+        required: true
+        description: '`build_id_index` が 1 度だけ作った索引'
+      - name: names
+        title: 名前の索引
+        type: Mapping[str, Sequence[tuple[str, str]]]
+        required: true
+        description: '`build_name_index` が 1 度だけ作った索引'
+    returns:
+      type: list[tuple[int, str, str]]
+      description: （文書の行、項目のパス、内容）。スキーマの違反の後に文書の違反
+    process: |-
+      1. `text` が `None` の場合、`(1, "$", "ファイルを UTF-8 で読めません")` だけを返す
+      2. 文書として読む（文書の読み込み）
+         - 読めない文書の場合、`({行}, "$", "YAML として読めません: {理由}")` だけを返す
+      3. `validator` が文字列の場合、`(1, "$", "スキーマ {schema} を使えません: {理由}")` を加える。検査器の場合、`iter_errors` の誤りごとに `(行, 項目のパス, "schema: {message}")` を加える（項目の行の引き当て・項目のパスの組み立て）
+      4. `target.checks` なら、締め切りを今から `LIMIT_SEC` 後にして文書の違反を検査し（文書の検査。`index` と `names` を渡す）、各違反の `rule` の先頭の `{行} 行目: ` を行に、残りを内容にして加える
+    unit_tests:
+      - name: test_check_target
+        case: 正常
+        summary: スキーマと文書の違反を並べる
+        condition: '`description` が無く、項目の ID が重複した文書。`checks` が `True`'
+        mock: maid を、正しい図と答えるスクリプトに差し替える
+        expected: '`schema: ` で始まる内容の後に、`items[{添字}].id` の重複が行つきで並ぶ。内容に `行目: ` が残らない'
+      - name: test_check_target_when_no_checks
+        case: 正常
+        summary: 文書の違反の検査を当てない行
+        condition: 項目の ID が重複し、スキーマには合う文書。`checks` が `False`
+        mock: なし
+        expected: 空
+      - name: test_check_target_when_unreadable
+        case: 正常
+        summary: 読めないファイル
+        condition: '`text` が `None`'
+        mock: なし
+        expected: '`(1, "$", ...)` の 1 件'
+      - name: test_check_target_when_broken
+        case: 正常
+        summary: 読めない YAML
+        condition: 括弧の閉じていない YAML
+        mock: なし
+        expected: '`$` の 1 件で、行が読めなかった行'
+    callees:
+      - MOD-72-2#functions[load_document]
+      - MOD-72-2#functions[line_of]
+      - MOD-72-2#functions[format_path]
+      - MOD-72-4#functions[check_document]
+notes:
+  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と `jsonschema>=4.26.0`（LIB-72-2）と `yamllint==1.38.0`（LIB-176-3）を書き、`knowledge_checks.py`・`build_word_list.py`・`_lint.py` を同じフォルダから import する。
+test_files:
+  - tests/unit/scripts/test_check_all.py
