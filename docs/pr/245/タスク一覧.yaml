@@ -65,14 +65,20 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-10T16:15:08.103747+00:00'
   - process: ドキュメント修正
-    status: todo
+    status: done
+    note: 要件.yaml の docs の行
+    updated_by: planner
+    updated_at: '2026-11-10T16:43:35.893545+00:00'
   - process: 単体テスト作成
     status: skipped
     reason: スクリプトを変えない
     updated_by: planner
     updated_at: '2026-11-10T16:15:08.103747+00:00'
   - process: 実装
-    status: todo
+    status: done
+    note: 反映作業のスクリプトと dry-run のログ
+    updated_by: planner
+    updated_at: '2026-11-10T16:43:35.893545+00:00'
   - process: 結合テスト作成
     status: skipped
     reason: 検査を追加しない。ドキュメント修正の後に全ての文書の検査と tests/integration/scripts/ の既存の結合テストを実行し、test_normal_when_repository_schemas の pass を確認する
