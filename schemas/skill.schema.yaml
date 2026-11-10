@@ -20,29 +20,29 @@ required:
   - branches
 properties:
   id:
-    $ref: common.schema.yaml#/$defs/metadata/properties/id
+    $ref: knowledge-common.schema.yaml#/$defs/metadata/properties/id
   kind:
     title: 種類
     description: 文書の種類。この種類では `skill` に固定する。
     const: skill
   name:
-    $ref: common.schema.yaml#/$defs/metadata/properties/name
+    $ref: knowledge-common.schema.yaml#/$defs/metadata/properties/name
   description:
-    $ref: common.schema.yaml#/$defs/metadata/properties/description
+    $ref: knowledge-common.schema.yaml#/$defs/metadata/properties/description
   aliases:
-    $ref: common.schema.yaml#/$defs/metadata/properties/aliases
+    $ref: knowledge-common.schema.yaml#/$defs/metadata/properties/aliases
   tags:
-    $ref: common.schema.yaml#/$defs/metadata/properties/tags
+    $ref: knowledge-common.schema.yaml#/$defs/metadata/properties/tags
   status:
-    $ref: common.schema.yaml#/$defs/metadata/properties/status
+    $ref: knowledge-common.schema.yaml#/$defs/metadata/properties/status
   visibility:
-    $ref: common.schema.yaml#/$defs/metadata/properties/visibility
+    $ref: knowledge-common.schema.yaml#/$defs/metadata/properties/visibility
   rev:
-    $ref: common.schema.yaml#/$defs/metadata/properties/rev
+    $ref: knowledge-common.schema.yaml#/$defs/metadata/properties/rev
   last_reviewed:
-    $ref: common.schema.yaml#/$defs/metadata/properties/last_reviewed
+    $ref: knowledge-common.schema.yaml#/$defs/metadata/properties/last_reviewed
   related:
-    $ref: common.schema.yaml#/$defs/metadata/properties/related
+    $ref: knowledge-common.schema.yaml#/$defs/metadata/properties/related
   skill:
     title: スキルの場所
     description: スキルを置くリポジトリとパス。

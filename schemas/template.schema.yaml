@@ -9,7 +9,7 @@ x-rules:
   - 設計書の種類のテンプレートは、`schemas/design/` のスキーマが原本で、文書を手で記載しない。
   - 設計書の種類のテンプレートの `items` は `scripts/build_templates.py` が生成し、`items` の決まり（セクション一覧・記述例・補足の構成）を適用しない。
 allOf:
-  - $ref: common.schema.yaml#/$defs/metadata
+  - $ref: knowledge-common.schema.yaml#/$defs/metadata
 properties:
   kind:
     title: 種類

@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 title: 単語の対応表
 description: 使用するべきでない単語と置き換え先の対応表。プラグイン slop-check が書き込んだ中身の照合に使用し、規約は本文にこの表を埋め込む。行を追加するときは `entries[].pattern` の説明に従う。
 allOf:
-  - $ref: common.schema.yaml#/$defs/metadata
+  - $ref: knowledge-common.schema.yaml#/$defs/metadata
 properties:
   kind:
     title: 種類
@@ -33,7 +33,7 @@ $defs:
       id:
         title: 行の ID
         description: 対応表の中で一意な、ローマ字の小文字とハイフンの識別子。
-        $ref: common.schema.yaml#/$defs/id
+        $ref: knowledge-common.schema.yaml#/$defs/id
         examples:
           - naosu
       ng:
