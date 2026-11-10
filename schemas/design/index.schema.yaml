@@ -1,10 +1,10 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 title: 目次
-description: フォルダ 1 つの直下の目次。`dev/` と `docs/` の各フォルダに `index.yaml` として置く。
+description: フォルダ 1 つの直下の目次。`dev/` と `docs/` の各フォルダに `index.yaml` として配置する。
 x-rules:
   - README は `index.yaml` から生成して commit する。
-  - '`index.yaml` を置かないフォルダは文書の索引から外れる。'
-  - '画面では辿れるようにしつつ、文書の索引には載せないフォルダは `docs_index: false` を付ける。'
+  - '`index.yaml` を配置しないフォルダは文書の索引から除外される。'
+  - '画面では辿れるようにしつつ、文書の索引には掲載しないフォルダは `docs_index: false` を付ける。'
 x-kind: index
 type: object
 additionalProperties: false
@@ -26,8 +26,8 @@ properties:
       - 親の `index.yaml` のこのフォルダの行の `summary` と同じ文言にする。
   docs_index:
     type: boolean
-    title: 文書の索引に載せるか
-    description: '`false` のとき、このフォルダの配下のページを文書の索引に載せない（ビュワーの上タブ・サイドバーには出す）。'
+    title: 文書の索引に掲載するか
+    description: '`false` のとき、このフォルダの配下のページを文書の索引に掲載しない（ビュワーの上タブ・サイドバーには出す）。'
     x-rules:
       - ルール注入が案内する規約のように、索引で並べると起動プロンプトが太るだけのフォルダに付ける。
     default: true
@@ -39,8 +39,8 @@ properties:
     x-rules:
       - 省略したときは、`group` を持つ行があれば `分類`・`ページ`・`概要`、無ければ `ページ`・`概要` の並びにする。
       - ページ名は `page` の列だけが持つ。
-      - ページ名を値にする列と、全行が同じ値になる列は置かない。
-      - 並びは `ページ`・`概要` の順にし、他の列はその後ろに置く（`分類` を持つ目次は `分類` を先頭に置く）。
+      - ページ名を値にする列と、全行が同じ値になる列は配置しない。
+      - 並びは `ページ`・`概要` の順にし、他の列はその後ろに配置する（`分類` を持つ目次は `分類` を先頭に配置する）。
     minItems: 2
     items:
       type: object
@@ -81,7 +81,7 @@ properties:
           title: ページ
           description: |-
             直下のファイルは実体のファイル名（Markdown は `{ファイル名}.md`、YAML の設計書は `{ファイル名}.yaml`）、サブフォルダは `{フォルダ名}/`。
-            別のフォルダと共有するページを並べるときだけ、`../` から始まる別のフォルダのページ（`../共通/後片付け.yaml`）を書く。
+            別のフォルダと共有するページを並べるときだけ、`../` から始まる別のフォルダのページ（`../共通/後片付け.yaml`）を記載する。
           pattern: ^(?:[^/\s][^/]*/?|(?:\.\./)+[^/\s.][^/]*(?:/[^/\s][^/]*)*)$
         summary:
           $ref: common.schema.yaml#/$defs/summary
@@ -97,7 +97,7 @@ examples:
 - summary: 実体ファイルの書式定義
   items:
   - page: common.schema.yaml
-    summary: 種別をまたいで使う型
+    summary: 種別をまたいで使用する型
   - page: シナリオ/
     summary: 単一・複合ユースケースのシナリオの書式
 - summary: 手順の索引
@@ -110,8 +110,8 @@ examples:
     title: 実行条件
   items:
   - page: 準備.yaml
-    summary: 作業ツリーと依存を揃える
+    summary: 作業ツリーと依存を同期する
     condition: 毎回最初に実行
   - page: ../共通/後片付け.yaml
-    summary: 一時ファイルを消す
-    condition: 上のどれにも当たらない
+    summary: 一時ファイルを削除する
+    condition: 上のどれにも該当しない

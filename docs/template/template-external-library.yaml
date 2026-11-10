@@ -19,7 +19,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      採用した外部ライブラリ 1 つにつき 1 ファイル。そのプロジェクトで使う部分だけを公式ドキュメントから抜き出す。
+      採用した外部ライブラリ 1 つにつき 1 ファイル。そのプロジェクトで使用する部分だけを公式ドキュメントから抜き出す。
   - id: rules-01
     name: 決まり
     body: |-
@@ -41,39 +41,39 @@ items:
       | dependency_scope | 依存の範囲 | string | - | `必須` / `任意` / `開発のみ` | - | - | - |
       | adoption | 採用状態 | string | - | `採用` / `未採用` | - | - | - |
       | used_in | 使用箇所 | array | - | - | - | 呼び出す境界層のパス（リポジトリの直下から）。エージェントの手順から呼ぶ CLI は手順を持つドキュメントのパス。 | - |
-      | upstream | 上流リポジトリ | string | - | - | pattern: `^[^/\s]+/[^/\s]+$` | GitHub の `owner/repo`。規約『不具合の報告』の上流 Issue の検索がここから引く。 | - |
-      | verification | 動作確認 | object | - | - | - | 動かして確かめたか。 | - |
+      | upstream | 上流リポジトリ | string | - | - | pattern: `^[^/\s]+/[^/\s]+$` | GitHub の `owner/repo`。規約『不具合の報告』の上流 Issue の検索がここを参照する。 | - |
+      | verification | 動作確認 | object | - | - | - | 動かして確認したか。 | - |
       | verification.state | 状態 | string | 必須 | `済` / `未確認` | - | - | - |
       | verification.date | 確認日 | string | - | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | `YYYY-MM-DD`。 | - |
-      | verification.detail | 確認内容 | string | - | - | - | 確かめた内容か、確かめられない理由。 | - |
+      | verification.detail | 確認内容 | string | - | - | - | 確認した内容か、確認できない理由。 | - |
       | version | 現在のバージョン情報 | object | 必須 | - | - | - | - |
-      | version.current | 版 | string | 必須 | - | - | 採用している版。 | - |
+      | version.current | バージョン | string | 必須 | - | - | 採用しているバージョン。 | - |
       | version.latest | 最新版 | string | - | - | - | - | - |
-      | version.checked_on | 確認日 | string | 必須 | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | 最新版を確かめた日（`YYYY-MM-DD`）。 | - |
-      | version.source | 版の出所 | string | - | - | - | 突き合わせる依存の定義（`uv.lock` / `pyproject.toml` / CDN の URL）。 | - |
-      | version.pinning | 版の固定の仕方 | string | - | - | - | - | - |
+      | version.checked_on | 確認日 | string | 必須 | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | 最新バージョンを確認した日（`YYYY-MM-DD`）。 | - |
+      | version.source | バージョンの出所 | string | - | - | - | 突き合わせる依存の定義（`uv.lock` / `pyproject.toml` / CDN の URL）。 | - |
+      | version.pinning | バージョンの固定方法 | string | - | - | - | - | - |
       | version.support_until | サポート期限 | string | - | - | - | - | - |
       | version.security_until | セキュリティ対応の期限 | string | - | - | - | - | - |
       | version.lts | LTS | boolean | - | - | - | - | - |
-      | license | ライセンス | string | - | - | - | 商用利用の可否を確かめて書く。 | - |
+      | license | ライセンス | string | - | - | - | 商用利用の可否を確認して記載する。 | - |
       | official_url | 公式 URL | string | - | - | - | - | - |
       | docs_url | 公式ドキュメント | string | - | - | - | API リファレンスの URL。 | - |
       | selection | 選定の記録 | object | - | - | - | - | - |
-      | selection.candidates | 比べた候補 | string | - | - | - | Markdown で書く本文。定数は `!{名前}` で埋め込める。 | - |
-      | selection.decision | 決めた理由 | string | - | - | - | Markdown で書く本文。定数は `!{名前}` で埋め込める。 | - |
-      | selection.consequences | 結果 | string | - | - | - | Markdown で書く本文。定数は `!{名前}` で埋め込める。 | - |
-      | install | インストール手順 | string | - | - | - | 版を固定したコマンドと、追加の設定（コードブロック）。 | - |
+      | selection.candidates | 比べた候補 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | - |
+      | selection.decision | 決めた理由 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | - |
+      | selection.consequences | 結果 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | - |
+      | install | インストール手順 | string | - | - | - | バージョンを固定したコマンドと、追加の設定（コードブロック）。 | - |
       | catalogs | 一覧 | array | 必須 | - | minItems: `1` | - | - |
       | catalogs[].name | 単位 | string | 必須 | - | - | 列挙する対象の単位（`API` / `コマンド` / `設定` / `ファイル` / `環境変数` / `同梱プラグイン` 等）。見出しは `{単位} 一覧`。 | - |
-      | catalogs[].version | 版 | string | 必須 | - | - | 一覧を作った版。 | - |
-      | catalogs[].entries | 対象 | array | 必須 | - | minItems: `1` | このプロジェクトで使う対象だけ。一覧の表は各対象の種別・名前・用途から生成する。 | - |
+      | catalogs[].version | バージョン | string | 必須 | - | - | 一覧を作ったバージョン。 | - |
+      | catalogs[].entries | 対象 | array | 必須 | - | minItems: `1` | このプロジェクトで使用する対象だけ。一覧の表は各対象の種別・名前・用途から生成する。 | - |
       | catalogs[].entries[].name | 名前 | string | 必須 | - | - | 対象の名前（関数・コンポーネント・コマンド 等）。 | - |
       | catalogs[].entries[].kind | 種別 | string | 必須 | - | - | `コンポーネント` / `関数` / `フック` / `クラス` / `定数` / `コマンド` 等。 | - |
       | catalogs[].entries[].purpose | 用途 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行の用途。 | - |
-      | catalogs[].entries[].description | 説明 | string | - | - | - | Markdown で書く本文。定数は `!{名前}` で埋め込める。 | - |
-      | catalogs[].entries[].params | パラメータ | array | - | - | - | 使うものだけでなく主要なパラメータも全部載せる。 | - |
+      | catalogs[].entries[].description | 説明 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | - |
+      | catalogs[].entries[].params | パラメータ | array | - | - | - | 使用するものだけでなく主要なパラメータも全て記載する。 | - |
       | catalogs[].entries[].params[].name | パラメータ | string | 必須 | - | - | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child`。 | - |
-      | catalogs[].entries[].params[].type | 型 | string | 必須 | - | - | 取りうる値が限られるときは列挙し、各値の意味は補足に書く。 | - |
+      | catalogs[].entries[].params[].type | 型 | string | 必須 | - | - | 取りうる値が限られるときは列挙し、各値の意味は補足に記載する。 | - |
       | catalogs[].entries[].params[].required | 必須 | boolean | - | - | - | - | - |
       | catalogs[].entries[].params[].default | 既定 | string | - | - | - | 任意のパラメータの省略時の値。 | - |
       | catalogs[].entries[].params[].description | 説明 | string | 必須 | - | - | - | - |
@@ -81,22 +81,22 @@ items:
       | catalogs[].entries[].params[].notes | 補足 | string | - | - | - | - | - |
       | catalogs[].entries[].params_example | パラメータ例 | string | - | - | - | import 込みの最小の動く例（コードブロック）。 | - |
       | catalogs[].entries[].returns | 戻り値 | array | - | - | - | 単純な値は `name` を `-` にした 1 要素。 | - |
-      | catalogs[].entries[].returns[].name | フィールド | string | 必須 | - | - | 返らないことがあるフィールドは `field?` と書き、条件を補足に書く。 | - |
+      | catalogs[].entries[].returns[].name | フィールド | string | 必須 | - | - | 返らないことがあるフィールドは `field?` と記載し、条件を補足に記載する。 | - |
       | catalogs[].entries[].returns[].type | 型 | string | 必須 | - | - | - | - |
       | catalogs[].entries[].returns[].description | 説明 | string | 必須 | - | - | - | - |
       | catalogs[].entries[].returns[].constraints | 制限 | string | - | - | - | - | - |
       | catalogs[].entries[].returns[].notes | 補足 | string | - | - | - | - | - |
-      | catalogs[].entries[].returns_example | 戻り値例 | string | - | - | - | Markdown で書く本文。定数は `!{名前}` で埋め込める。 | - |
+      | catalogs[].entries[].returns_example | 戻り値例 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | - |
       | catalogs[].entries[].refs | 関連 | array | - | - | - | - | - |
-      | catalogs[].entries[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
-      | catalogs[].entries[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。書かなければ実装済みとして扱う。 | - |
-      | catalogs[].entries[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | catalogs[].entries[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | - |
+      | catalogs[].entries[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
+      | catalogs[].entries[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
       | catalogs[].entries[].implementation | 実装 | string | - | - | pattern: `^[^#\s]+(#\S+)?$` | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/schemas/loader.py#load_catalog` |
       | catalogs[].entries[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
       | catalogs[].entries[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ。 | `v0.3.0` |
       | catalogs[].entries[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
-      | catalogs[].entries[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
-      | catalogs[].entries[].notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+      | catalogs[].entries[].aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | - |
+      | catalogs[].entries[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
       | limitations | 制限事項 | array | - | - | - | 仕様として常に成り立つ制約。 | - |
       | limitations[].item | 事項 | string | 必須 | - | - | - | - |
       | limitations[].content | 内容 | string | 必須 | - | - | - | - |
@@ -105,23 +105,23 @@ items:
       | usage_limits[].item | 項目 | string | 必須 | - | - | `利用枠` / `到達時の挙動` / `解除時刻` 等。 | - |
       | usage_limits[].content | 内容 | string | 必須 | - | - | - | - |
       | usage_limits[].notes | 補足 | string | - | - | - | - | - |
-      | issues | 不具合一覧 | array | - | - | - | 仕様どおりに使っても期待どおり動かない事象。 | - |
+      | issues | 不具合一覧 | array | - | - | - | 仕様どおりに使用しても期待どおり動かない事象。 | - |
       | issues[].title | タイトル | string | 必須 | - | - | - | - |
       | issues[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で事象を要約する。 | - |
       | issues[].occurred_on | 発生日 | string | 必須 | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | 事象を確認した日（`YYYY-MM-DD`）。再確認して続いていたら更新する。 | - |
       | issues[].state | 状態 | string | - | `未解決` / `回避策あり` / `解消済み` | - | - | - |
-      | issues[].description | 概要 | string | 必須 | - | - | 何が起きるかを事実だけで書く。 | - |
+      | issues[].description | 概要 | string | 必須 | - | - | 何が起きるかを事実だけで記載する。 | - |
       | issues[].conditions | 条件 | array | - | - | - | 再現する状況。 | - |
       | issues[].workarounds | 対処法 | array | 必須 | - | minItems: `1` | - | - |
       | issues[].workarounds[].method | 方法 | string | 必須 | - | - | 回避策が無いときは `回避策なし`。 | - |
       | issues[].workarounds[].result | 結果 | string | 必須 | - | - | 得られるものと、本来やりたかったことからのずれ。 | - |
       | issues[].workarounds[].recommended | 推奨 | boolean | - | - | - | 最初に試す 1 案だけ。 | - |
       | issues[].upstream_issue | 上流の Issue | string | - | - | - | 上流の Issue の URL。 | - |
-      | issues[].fixed_in | 解消版 | string | - | - | - | 解消した版。達したら回避策を外す候補になる。 | - |
+      | issues[].fixed_in | 解消版 | string | - | - | - | 解消したバージョン。達したら回避策を削除する候補になる。 | - |
       | issues[].refs | 関連 | array | - | - | - | - | - |
-      | issues[].notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+      | issues[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
       | refs | 関連 | array | - | - | - | - | - |
-      | notes | 補足 | object | - | - | - | 対象固有の解説節（節の名前 → 本文）。一覧・制限事項・不具合に属さないもの。 | - |
+      | notes | 補足 | object | - | - | - | 対象固有の解説セクション（セクションの名前 → 本文）。一覧・制限事項・不具合に属さないもの。 | - |
 
       <!-- /table -->
   - id: key-rules-01
@@ -132,20 +132,20 @@ items:
       | 名前 | 決まり | 悪い例 | 理由 |
       | --- | --- | --- | --- |
       | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
-      | lead | 自プロジェクトでの用途は書かない。<br>初回に書いた内容のまま保ち、後から情報を足さない。 | - | - |
-      | selection.candidates | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | selection.decision | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | selection.consequences | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | install | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | catalogs[].entries[].description | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | catalogs[].entries[].params_example | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | catalogs[].entries[].returns_example | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | catalogs[].entries[].reason | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | catalogs[].entries[].notes | 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
-      | issues | こちらの使い方の誤りだったものは書かない。<br>解消を確かめたら消す。 | - | - |
-      | issues[].description | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | issues[].notes | 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
-      | notes | 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+      | lead | 自プロジェクトでの用途は記載しない。<br>初回に記載した内容のまま保ち、後から情報を追加しない。 | - | - |
+      | selection.candidates | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | selection.decision | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | selection.consequences | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | install | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | catalogs[].entries[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | catalogs[].entries[].params_example | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | catalogs[].entries[].returns_example | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | catalogs[].entries[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | catalogs[].entries[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+      | issues | こちらの使用方法の誤りだったものは記載しない。<br>解消を確認したら削除する。 | - | - |
+      | issues[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | issues[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+      | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
 
       <!-- /table -->
   - id: example-sample-01
@@ -193,12 +193,12 @@ items:
         entries:
         - name: centerCrop
           kind: 関数
-          purpose: クロップ範囲を画像の中央に置く
+          purpose: クロップ範囲を画像の中央に配置する
           params:
           - name: crop
             type: Crop
             required: true
-            description: 中央に置きたいクロップ範囲
+            description: 中央に配置したいクロップ範囲
           - name: mediaWidth
             type: number
             required: true
@@ -214,19 +214,19 @@ items:
           returns:
           - name: '-'
             type: Crop
-            description: 中央に置いたクロップ範囲
+            description: 中央に配置したクロップ範囲
       issues:
       - title: onCrop が初回マウント時に発火しない
-        summary: 初期値を渡しても最初の 1 回だけコールバックが呼ばれない
+        summary: 初期値を指定しても最初の 1 回だけコールバックが呼ばれない
         occurred_on: '2026-08-02'
         state: 回避策あり
-        description: '`crop` に初期値を渡してマウントしても、`onCrop` が最初の 1 回だけ呼ばれない。'
+        description: '`crop` に初期値を指定してマウントしても、`onCrop` が最初の 1 回だけ呼ばれない。'
         conditions:
         - v11.0.0 以降
-        - '`crop` を制御コンポーネントとして親から渡している'
+        - '`crop` を制御コンポーネントとして親から指定している'
         workarounds:
         - method: マウント直後に親側で初期値を 1 度流す
-          result: 初回から値が揃う
+          result: 初回から値が一致する
           recommended: true
         - method: v10 系に固定する
           result: 発火するが、v11 の性能改善を受け取れない
