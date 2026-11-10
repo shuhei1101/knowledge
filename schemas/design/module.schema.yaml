@@ -194,6 +194,12 @@ properties:
           title: 関連
           items:
             $ref: common.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: common.schema.yaml#/$defs/decision
         reason:
           $ref: common.schema.yaml#/$defs/reason
         status:
@@ -268,6 +274,12 @@ properties:
           title: 関連
           items:
             $ref: common.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: common.schema.yaml#/$defs/decision
         reason:
           $ref: common.schema.yaml#/$defs/reason
         status:
@@ -357,6 +369,12 @@ properties:
           title: 関連
           items:
             $ref: common.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: common.schema.yaml#/$defs/decision
         reason:
           $ref: common.schema.yaml#/$defs/reason
         status:
@@ -432,6 +450,12 @@ properties:
           title: 関連
           items:
             $ref: common.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: common.schema.yaml#/$defs/decision
         reason:
           $ref: common.schema.yaml#/$defs/reason
         status:
@@ -555,6 +579,12 @@ properties:
           title: 関連
           items:
             $ref: common.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: common.schema.yaml#/$defs/decision
         reason:
           $ref: common.schema.yaml#/$defs/reason
         status:
@@ -814,6 +844,12 @@ properties:
           title: 関連
           items:
             $ref: common.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: common.schema.yaml#/$defs/decision
         reason:
           $ref: common.schema.yaml#/$defs/reason
         status:
@@ -896,6 +932,12 @@ properties:
           title: 関連
           items:
             $ref: common.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: common.schema.yaml#/$defs/decision
         reason:
           $ref: common.schema.yaml#/$defs/reason
         status:
@@ -964,6 +1006,12 @@ properties:
           title: 関連
           items:
             $ref: common.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: common.schema.yaml#/$defs/decision
         reason:
           $ref: common.schema.yaml#/$defs/reason
         status:
@@ -983,6 +1031,12 @@ properties:
     title: 関連
     items:
       $ref: common.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    items:
+      $ref: common.schema.yaml#/$defs/decision
   notes:
     $ref: common.schema.yaml#/$defs/notes
     x-heading: 補足
@@ -1202,6 +1256,12 @@ $defs:
         title: 関連
         items:
           $ref: common.schema.yaml#/$defs/ref
+      decisions:
+        type: array
+        title: 検討事項
+        description: 根拠になった話し合いの記録の検討事項の ID。
+        items:
+          $ref: common.schema.yaml#/$defs/decision
       reason:
         $ref: common.schema.yaml#/$defs/reason
       status:

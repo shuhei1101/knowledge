@@ -1,7 +1,8 @@
 id: "NFR-72-1"
 title: "非機能要件"
 requirements:
-  - name: 検査と変換のスクリプトの 1 文書あたりの処理時間
+  - id: NFR-1
+    name: 検査と変換のスクリプトの 1 文書あたりの処理時間
     english_name: script_duration
     category: 性能
     external_constraint: dev-docs はスクリプトを端末の設定 `script_timeout_sec`（既定 30 秒）で打ち切る
@@ -19,7 +20,8 @@ requirements:
         notes: 実測が無いので仮置き
       - part: スクリプト全体（maid の呼び出しを含む）
         value: 20 秒
-  - name: CI の 1 回の所要時間
+  - id: NFR-2
+    name: CI の 1 回の所要時間
     english_name: ci_duration
     category: 性能
     external_constraint: GitHub Actions の GitHub ホストランナーのジョブは 6 時間で打ち切られる
@@ -40,7 +42,8 @@ requirements:
       - part: ジョブの打ち切り（切り上げ）
         value: 5 分
     overflow: GitHub Actions がジョブを打ち切り、チェックが失敗する（PR はマージできない）
-  - name: スクリプトが動く OS
+  - id: NFR-3
+    name: スクリプトが動く OS
     english_name: supported_os
     category: 動作環境
     external_constraint: dev-docs は端末の WSL2 の Ubuntu で動き、CI は GitHub ホストランナーの `ubuntu-latest` で動く

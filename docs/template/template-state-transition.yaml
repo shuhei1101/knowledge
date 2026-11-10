@@ -34,7 +34,7 @@ items:
       | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `IF-12` / `IF-3038-1` |
       | title | タイトル | string | 必須 | - | pattern: `^状態遷移: .+$` | `状態遷移: {エンティティ名}`。 | - |
       | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
-      | state_transitions | 状態遷移 | object | 必須 | - | - | 状態の一覧と遷移の表。`stateDiagram-v2` の図はここから生成する。 | - |
+      | state_transitions | 状態遷移 | object | 必須 | - | - | 状態の一覧と遷移の表。状態遷移図はここから生成する。 | - |
       | state_transitions.states | 状態 | array | 必須 | - | minItems: `1` | - | - |
       | state_transitions.states[].name | 状態名 | string | 必須 | - | - | 業務用語での状態の名前。遷移の元・先はこの名前で指す。 | - |
       | state_transitions.states[].identifier | 識別子 | string | 必須 | - | - | 実装上の値・ラベル・フラグ。 | `status = draft` |
@@ -43,7 +43,6 @@ items:
       | state_transitions.states[].entry_value | 入る値 | string | - | - | - | この状態に入ったときに入る値。 | `` `started_at` が入る `` |
       | state_transitions.states[].on_enter | 入る時の処理 | string | - | - | - | - | - |
       | state_transitions.states[].on_exit | 出る時の処理 | string | - | - | - | - | - |
-      | state_transitions.states[].node | 図のノード | string | - | - | pattern: `^[^\s\[\]:（）()]+$` | 図のノード名が状態名と違うときだけ記載する。 | - |
       | state_transitions.states[].notes | 補足 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | - |
       | state_transitions.initial | 初期状態 | string | 必須 | - | - | 作成時に入る状態の名前。 | - |
       | state_transitions.final | 終了状態 | array | - | - | - | 消える前の最後の状態の名前。 | - |
@@ -57,6 +56,7 @@ items:
       | state_transitions.transitions[].representative | 代表 | string | - | - | - | `全状態` / `元の状態` の遷移を図で代表させる状態の名前。図には代表との遷移だけを描く。 | - |
       | state_transitions.transitions[].note | 注記 | string | - | - | - | `全状態` の遷移に図で添える注記。 | - |
       | refs | 関連 | array | - | - | - | - | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
       | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
 
       <!-- /table -->
@@ -69,7 +69,6 @@ items:
       | --- | --- | --- | --- |
       | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
       | lead | 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
-      | state_transitions | 状態の名前は図のノードになるので、空白と記号を含めない。<br>含める場合は `node` に図のノード名を記載する。 | - | - |
       | state_transitions.states[].notes | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
       | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
 

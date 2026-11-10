@@ -35,6 +35,7 @@ items:
       | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
       | prerequisites | 前提 | array | - | - | - | 全種別に共通の前提（言語ランタイム・依存サービス・環境変数）。 | - |
       | layers | テスト種別 | array | 必須 | - | minItems: `1` | テスト種別ごとの実行コマンド。 | - |
+      | layers[].id | ID | string | 必須 | - | pattern: `^[A-Za-z0-9_-]+$` | 設計書の中で一意な要素の ID。1 要素 1 ページにするときのページの ID になる。 | `TL-1` |
       | layers[].name | 種別 | string | 必須 | `非機能要件テスト` / `E2E テスト` / `結合テスト（フロント）` / `結合テスト（バック）` / `単体テスト（フロント）` / `単体テスト（バック）` / `外部疎通テスト` / `lint` | - | - | - |
       | layers[].description | 説明 | string | - | - | - | 使用するツールと実行の方式。 | - |
       | layers[].prerequisites | 前提 | array | - | - | - | 種別に固有の前提（起動しておくもの・Mock の状況・誤実行を防ぐフラグ）。 | - |
@@ -51,6 +52,7 @@ items:
       | layers[].results | 結果の配置場所 | string | - | - | - | - | - |
       | layers[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
       | refs | 関連 | array | - | - | - | - | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
       | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
 
       <!-- /table -->
@@ -64,6 +66,7 @@ items:
       | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
       | lead | 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
       | layers | 初期構築では種別だけを作り、コマンドはテストを作る担当が確定させる。<br>確定させるまでは `run_all` を `未確定` にする。<br>`lint` 層は、プロジェクトの言語に応じて linter・formatter の check・型検査・構造と依存の向きの検査を全て含める（コンパイラが担う検査は除く）。<br>CI・pre-commit・マニフェストのスクリプト・コーディング規約で使用すると決めたツールが持つ検査は `lint` 層へコピーし、`lint` 層に無い検査を残さない。<br>型検査と構造の検査は、変更ファイルだけでなくプロジェクト全体に回す。<br>全件実行は、どれかが失敗しても全ての検査を最後まで回し、1 つでも失敗したら失敗で終える 1 コマンドにまとめる（task runner・スクリプト・終了コードを集約するサブシェル 等）。 | - | - |
+      | layers[].id | 並びの順に `TL-{番号}` を振る。<br>新しく追加する要素には、既にある番号の最大の次を振る。<br>並べ替えても変えない。 | - | - |
       | layers[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
       | layers[].prerequisites | 料金・副作用のある種別は必ず記載する。 | - | - |
       | layers[].run_all | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
@@ -86,7 +89,8 @@ items:
       - Python 3.12 と uv
       - 'DB: PostgreSQL 16 のローカル起動（`docker compose up -d postgres`）'
       layers:
-      - name: 単体テスト（バック）
+      - id: TL-1
+        name: 単体テスト（バック）
         description: pytest で実行する。DB / API に依存しない。
         prerequisites:
         - 外部依存なし（純粋関数と Mock だけ）
@@ -101,7 +105,8 @@ items:
             uv run pytest {単体テストファイルパス}
             ```
         parallel: true
-      - name: 外部疎通テスト
+      - id: TL-2
+        name: 外部疎通テスト
         description: 実 API に繋いで疎通を確認する。
         prerequisites:
         - 実 API の認証情報を環境変数に設定する
@@ -118,7 +123,8 @@ items:
             uv run pytest {外部疎通テストファイルパス} --run-external
             ```
         external_cost: テストごとの料金は外部API の設計書の料金を参照する
-      - name: lint
+      - id: TL-3
+        name: lint
         description: ruff で linter・formatter の check を、mypy で型検査を、import-linter で依存の向きを検査する。型検査と依存の向きの検査はプロジェクト全体に回す。
         prerequisites:
         - 検査の設定は `pyproject.toml` が持つ

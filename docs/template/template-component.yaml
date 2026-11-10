@@ -79,6 +79,7 @@ items:
       | uses[].how | 使用方法 | string | 必須 | - | - | - | `停止中の一時停止のアイコン` |
       | accessibility | アクセシビリティ | array | - | - | - | スクリーンリーダー向けの名前・キー操作・色に頼らない表し方など、部品が守ること。 | `` [状態を色だけで伝えない（`label` を必ず出す）] `` |
       | refs | 関連 | array | - | - | - | - | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
       | status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
       | visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
       | introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |

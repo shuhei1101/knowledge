@@ -85,14 +85,13 @@ overview:
     - from: scripts
       to: slopcheck
       label: 対応表のコピーの作成
-  subgraphs:
-    - id: knowledge
-      label: knowledge
-      nodes:
-        - content
-        - scripts
-        - ci
-        - slopcheck
+  frame:
+    label: knowledge
+    nodes:
+      - content
+      - scripts
+      - ci
+      - slopcheck
 repository:
   style: モノレポ
   repositories:

@@ -228,6 +228,12 @@ properties:
           title: 関連
           items:
             $ref: common.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: common.schema.yaml#/$defs/decision
         reason:
           $ref: common.schema.yaml#/$defs/reason
         status:
@@ -247,6 +253,12 @@ properties:
     title: 関連
     items:
       $ref: common.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    items:
+      $ref: common.schema.yaml#/$defs/decision
   notes:
     $ref: common.schema.yaml#/$defs/notes
     x-heading: 補足
@@ -258,16 +270,31 @@ examples:
   er:
     entities:
     - name: ユーザー
+      columns:
+      - type: uuid
+        name: ID
+        key: PK
     - name: タスク
     - name: コメント
+      columns:
+      - type: uuid
+        name: task_id
+        key: FK
+        comment: '参照: タスク.id'
     relations:
     - from: ユーザー
       to: タスク
-      cardinality: '||--o{'
+      from_column: ID
+      to_column: user_id
+      from_cardinality: '1'
+      to_cardinality: 0..n
       label: 作成
     - from: タスク
       to: コメント
-      cardinality: '||--o{'
+      from_column: id
+      to_column: task_id
+      from_cardinality: '1'
+      to_cardinality: 0..n
       label: 持つ
   tables:
   - name: tasks

@@ -1,0 +1,52 @@
+# schemas/design/ のスキーマ（$ref は common.schema.yaml を登録して解決）で dev/設計書/ の全ての YAML を jsonschema で検証する一時のスクリプト
+```python
+import sys
+from pathlib import Path
+from ruamel.yaml import YAML
+from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
+
+root = Path(sys.argv[1]); doc_root = Path(sys.argv[2]) if len(sys.argv) > 2 else root
+yaml = YAML(typ="safe")
+schemas = {}
+registry = Registry()
+for p in sorted((root / "schemas/design").glob("*.schema.yaml")):
+    s = yaml.load(p.read_text(encoding="utf-8"))
+    schemas[p.name.removesuffix(".schema.yaml")] = s
+    registry = registry.with_resource(p.name, Resource.from_contents(s, default_specification=__import__("referencing.jsonschema").jsonschema.DRAFT202012))
+folder_kind = {
+    "アーキテクチャ図": "architecture", "非機能要件": "nonfunctional", "テスト": "test_procedure",
+    "外部ライブラリ": "library", "開発コマンド": "dev_command", "インターフェース定義": "interface",
+    "モジュール構成": "module", "シナリオ": "scenario", "外部API": "external_api",
+}
+total = bad = 0
+for p in sorted((doc_root / "dev/設計書").rglob("*.yaml")):
+    rel = p.relative_to(doc_root / "dev/設計書")
+    kind = "index" if p.name == "index.yaml" else folder_kind[rel.parts[0]]
+    doc = yaml.load(p.read_text(encoding="utf-8"))
+    v = Draft202012Validator(schemas[kind], registry=registry)
+    errs = sorted(v.iter_errors(doc), key=lambda e: list(e.absolute_path))
+    total += 1
+    for e in errs:
+        bad += 1
+        print(f"{p.relative_to(doc_root)} [{kind}] {'/'.join(map(str, e.absolute_path))}: {e.message[:200]}")
+print(f"documents={total} violations={bad}")
+sys.exit(1 if bad else 0)
+```
+
+$ uv run --no-project --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 python -I validate_design.py {作業ブランチ}
+documents=59 violations=0
+
+# 修正前の設計書（origin/develop）を修正したスキーマで検証した結果
+$ uv run --no-project --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 python -I validate_design.py {作業ブランチ} {develop}
+dev/設計書/アーキテクチャ図/アーキテクチャ図.yaml [architecture] overview: Additional properties are not allowed ('subgraphs' was unexpected)
+dev/設計書/テスト/テスト実行方法.yaml [test_procedure] layers/0: 'id' is a required property
+dev/設計書/テスト/テスト実行方法.yaml [test_procedure] layers/1: 'id' is a required property
+dev/設計書/テスト/テスト実行方法.yaml [test_procedure] layers/2: 'id' is a required property
+dev/設計書/テスト/テスト実行方法.yaml [test_procedure] layers/3: 'id' is a required property
+dev/設計書/テスト/テスト実行方法.yaml [test_procedure] layers/4: 'id' is a required property
+dev/設計書/テスト/テスト実行方法.yaml [test_procedure] layers/5: 'id' is a required property
+dev/設計書/非機能要件/非機能要件.yaml [nonfunctional] requirements/0: 'id' is a required property
+dev/設計書/非機能要件/非機能要件.yaml [nonfunctional] requirements/1: 'id' is a required property
+dev/設計書/非機能要件/非機能要件.yaml [nonfunctional] requirements/2: 'id' is a required property
+documents=59 violations=10

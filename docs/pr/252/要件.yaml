@@ -1,0 +1,77 @@
+use_cases:
+  - kind: single
+    scenario: dev/設計書/シナリオ/単一ユースケース/開発者がスキーマから設計書のテンプレートを生成する.yaml
+    impact: run_only
+    detail: 修正したスキーマから設計書のテンプレートを生成し直す。生成の手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: dev/設計書/シナリオ/単一ユースケース/開発者が文書の違反を検査する.yaml
+    impact: run_only
+    detail: 修正したスキーマが、スキーマ自身の検査と例の検査を通り、テンプレートがスキーマと一致することを確認する。検査の手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: dev/設計書/シナリオ/単一ユースケース/エージェントが knowledge の文書を書き込む.yaml
+    impact: none
+    detail: knowledge の文書のスキーマは変わらず、書き込みの検査の結果を変えない
+    depends_on: []
+  - kind: composite
+    scenario: dev/設計書/シナリオ/複合ユースケース/利用者が端末に knowledge を導入して規約を引く.yaml
+    impact: none
+    detail: 規約の引き方を変えない
+    depends_on: []
+docs:
+  - page: schemas/design/common.schema.yaml
+    new: false
+    change: '`$defs/flowchart`・`$defs/flowchart_node`・`$defs/state_transitions`・`$defs/er` を ai-monitor#3222 と同じキーの構造にし、`$defs/er_cardinality`・`$defs/decision` を追加する。`x-rules` を削除・変更したキーに合わせる'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-10T20:15:31.106927+00:00'
+  - page: schemas/design/
+    new: false
+    change: 設計書の種類のスキーマ 15 件に `decisions` を追加し、`nonfunctional`・`test_procedure` の要素に `id` を追加し、`architecture`・`dataflow`・`er`・`nonfunctional`・`test_procedure` の `examples` を新しいキーに合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-10T20:15:31.106927+00:00'
+  - page: docs/template/
+    new: false
+    change: 設計書の種類のテンプレート（`template-*.yaml`）を `scripts/build_templates.py` で生成し直す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-10T20:15:31.106927+00:00'
+  - page: dev/設計書/アーキテクチャ図/アーキテクチャ図.yaml
+    new: false
+    change: '`overview.subgraphs` を `overview.frame` にする'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-10T20:15:31.106927+00:00'
+  - page: dev/設計書/非機能要件/非機能要件.yaml
+    new: false
+    change: '`requirements[]` に並びの順の `id`（`NFR-{番号}`）を追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-10T20:15:31.106927+00:00'
+  - page: dev/設計書/テスト/テスト実行方法.yaml
+    new: false
+    change: '`layers[]` に並びの順の `id`（`TL-{番号}`）を追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-10T20:15:31.106927+00:00'
+  - page: dev/設計書/外部ライブラリ/maid.yaml
+    new: false
+    change: 文の中の検討事項の ID（D-104）を `decisions` に移す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-10T20:15:31.106927+00:00'
+scope_out:
+  - item: シナリオの `scenarios[].flow` を mdmark の図で記載する修正と、シナリオの設計書の図の移行
+    reason: mdmark の新しい図 map が入ってから map で記載する（D-373 A）
+    plan: '#246'
+  - item: インターフェース定義の `flow` とモジュール構成の `diagrams[].diagram` を mdmark の図で記載する修正と、その設計書の図の移行
+    reason: ai-monitor#3222 でも `$defs/mermaid` を参照したままで、どの mdmark の図にするかは新しい決定になる
+    plan: '#251'
+  - item: knowledge の `dev/テンプレート/`（AI Monitor のテンプレートのコピー）の修正
+    reason: 設計書のスキーマの原本は `schemas/design/` で、`dev/` の廃止とあわせてコピーの扱いが決まる
+    plan: '#237'
+  - item: 設計書のスキーマを指す他のプロジェクトの設計書の、新しいキーへの変換
+    reason: 各プロジェクトは `design-schemas/v*` のタグで原本を指し、新しいタグへの追従と変換（ai-monitor の `schemas/conversions/v0.4.0.py`）は各プロジェクトと shuhei1101/ai-monitor#3188 の作業
+    plan: none

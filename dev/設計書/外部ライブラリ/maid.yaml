@@ -57,12 +57,14 @@ official_url: https://www.npmjs.com/package/@probelabs/maid
 docs_url: https://github.com/probelabs/maid
 selection:
   candidates: '@probelabs/maid、@mermaid-js/mermaid-cli（描画にブラウザが要る）'
-  decision: PoC で、ブラウザを要らず 1 回 1 秒未満で検査でき、誤りの行を機械で取り出せると確かめた（D-104）
+  decision: PoC で、ブラウザを要らず 1 回 1 秒未満で検査でき、誤りの行を機械で取り出せると確かめた
 install: |-
   ```bash
   npm install -g @probelabs/maid@0.0.29
   ```
 
   Linux 側のファイルシステムに入れ、PATH から呼ぶ。`/mnt/c` の `node_modules` に入れると 1 回の起動に 9〜14 秒かかる
+decisions:
+  - D-104
 notes:
   入力と行: 入力は mermaid の図 1 つで、Markdown のコードブロックの取り出しは呼ぶ側がする。`errors[].line` は図の中の行（1 始まり）で、文書の行へは呼ぶ側が戻す
