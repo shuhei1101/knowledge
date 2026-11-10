@@ -200,7 +200,7 @@ def test_normal_when_schemas_use_flow_style(
         "$schema: https://json-schema.org/draft/2020-12/schema\n"
         "title: 規約\n"
         "allOf:\n"
-        "  - $ref: common.schema.yaml#/$defs/metadata\n"
+        "  - $ref: knowledge-common.schema.yaml#/$defs/metadata\n"
         "properties:\n"
         "  kind:\n"
         "    const: rule\n"
@@ -402,3 +402,79 @@ def test_error_when_meta_schema_unusable(run_script: RunScript, repo_factory: Re
     # 検証
     assert result.exit_code == 2
     assert "schemas/meta.schema.yaml" in result.stderr
+
+
+def test_normal_when_ai_monitor_schemas(run_script: RunScript, repo_factory: RepoFactory) -> None:
+    """AI Monitor の配布物のスキーマには拡張したメタスキーマと yamllint を当てず、それを行の schema に持つ設計書にはスキーマの検査だけを当てる（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "dev-docs.yaml": (
+                'version: "3"\n'
+                "name: knowledge\n"
+                "validators:\n"
+                "  - id: knowledge-checks\n"
+                "    run: [uv, run, --frozen, --script, scripts/knowledge_checks.py]\n"
+                "    on: [write]\n"
+                "documents:\n"
+                "  - id: rule\n"
+                "    paths:\n"
+                "      - docs/rule/*.yaml\n"
+                "    schema: schemas/rule.schema.yaml\n"
+                "    validators:\n"
+                "      - knowledge-checks\n"
+                "  - id: scenario\n"
+                "    paths:\n"
+                "      - docs/scenario/*.yaml\n"
+                "    schema: schemas/scenario.schema.yaml\n"
+            ),
+            # x-kind と、6 行目にフロー形式のシーケンスを持つ配布物のスキーマ
+            "schemas/scenario.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: シナリオ\n"
+                "x-kind: scenario\n"
+                "x-folder: docs/scenario\n"
+                "type: object\n"
+                "required: [id, title]\n"
+                "properties:\n"
+                "  id:\n"
+                "    $ref: common.schema.yaml#/$defs/id\n"
+                "  title:\n"
+                "    type: string\n"
+                "  body:\n"
+                "    type: string\n"
+            ),
+            # ケバブケースでない ID の型を持つ、x-kind の無い配布物のスキーマ
+            "schemas/common.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: 共通\n"
+                "$defs:\n"
+                "  id:\n"
+                "    type: string\n"
+                "    pattern: ^[A-Z]+-\\d+(-\\d+)?$\n"
+                "    x-rules: 文字列\n"
+            ),
+            "docs/rule/a.yaml": (
+                "id: a\nkind: rule\nname: A\ndescription: A の文書\n"
+                "items:\n  - id: x\n    body: '[B](id:b)'\n"
+            ),
+            "docs/rule/b.yaml": (
+                "id: b\nkind: rule\nname: B\ndescription: B の文書\n"
+                "items:\n  - id: y\n    body: 本文。\n"
+            ),
+            # 1 行に 2 文を持ち、スキーマに合う設計書
+            "docs/scenario/SC-1-1.yaml": "id: SC-1-1\ntitle: シナリオ\nbody: A です。B です。\n",
+        }
+    )
+    # 実行
+    result = run_script("check_all", root)
+    # 検証
+    lines = result.stdout.splitlines()
+    assert result.exit_code == 0
+    assert not any(
+        line.startswith(
+            ("schemas/scenario.schema.yaml:", "schemas/common.schema.yaml:", "docs/scenario/")
+        )
+        for line in lines
+    )
+    assert lines[-1] == "3 件の文書を検査し、違反は 0 件、警告は 0 件でした"
