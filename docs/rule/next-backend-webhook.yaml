@@ -40,7 +40,7 @@ items:
     group: 配置
     name: 配置のツリー
     body: |-
-      ```
+      ```text
       app/api/v{N}/webhooks/{provider}/route.ts
       ```
   - id: layout-02
@@ -71,22 +71,27 @@ items:
     group: 重要ポイント > 2. raw body
     name: raw body で検証
     body: |-
-      署名検証には raw body が必要。`await request.text()` で生文字列を取得（`request.json()` だと検証に失敗）。
+      署名検証には raw body が必要。
+      `await request.text()` で生文字列を取得（`request.json()` だと検証に失敗）。
   - id: webhook-idempotency-01
     group: 重要ポイント > 3. Idempotency
     name: 冪等性の確保
     body: |-
-      同じイベントが複数回届き、到着順も保証されない。`event.id` を `processed_events` テーブルに保存して二重処理を防ぐ（詳細パターンは [冪等性](id:next-backend-idempotency)）。順序や処理済みの判断にイベントの `created` を使わない。
+      同じイベントが複数回届き、到着順も保証されない。
+      `event.id` を `processed_events` テーブルに保存して二重処理を防ぐ（詳細パターンは [冪等性](id:next-backend-idempotency)）。
+      順序や処理済みの判断にイベントの `created` を使わない。
   - id: webhook-response-time-01
     group: 重要ポイント > 4. レスポンス時間
     name: 素早く 2xx を返す
     body: |-
-      Webhook は素早く 2xx を返すべき。重い処理は、短ければ `after()`（`next/server`）で応答後に回し、長ければジョブキューに積んで、即時 200 を返す。
+      Webhook は素早く 2xx を返すべき。
+      重い処理は、短ければ `after()`（`next/server`）で応答後に回し、長ければジョブキューに積んで、即時 200 を返す。
   - id: webhook-retry-policy-01
     group: 重要ポイント > 5. リトライポリシー
     name: リトライポリシー
     body: |-
-      再送の有無はプロバイダごとに違う（Stripe は 2xx 以外で再送、GitHub は自動再送しない）。再送してほしい失敗だけ 5xx を返す。
+      再送の有無はプロバイダごとに違う（Stripe は 2xx 以外で再送、GitHub は自動再送しない）。
+      再送してほしい失敗だけ 5xx を返す。
   - id: webhook-others-01
     group: 重要ポイント > 6. その他
     name: 署名シークレットの置き場所

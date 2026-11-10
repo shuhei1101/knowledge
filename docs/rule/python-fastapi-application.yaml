@@ -78,7 +78,8 @@ items:
     group: CORS
     name: CORS の origins をハードコードしない
     body: |-
-      - `allow_origins=["*"]` のハードコード禁止。Settings の `cors_origins: list[str]` + `cors_origin_regex: str` で管理
+      - `allow_origins=["*"]` のハードコード禁止。
+        Settings の `cors_origins: list[str]` + `cors_origin_regex: str` で管理
   - id: cors-02
     group: CORS
     name: 開発と本番の CORS 設定
@@ -88,12 +89,15 @@ items:
     group: SPA の配信
     name: ビルドした SPA を配る
     body: |-
-      - ビルドした SPA（`index.html` と `assets/`）は FastAPI が配る。`assets/` を `StaticFiles` でマウントし、API のルーターの後ろに、API に当たらない GET で `index.html` を返すルートを最後に置く（画面の切り替えはフロントのルーターが行う）
+      - ビルドした SPA（`index.html` と `assets/`）は FastAPI が配る。
+        `assets/` を `StaticFiles` でマウントし、API のルーターの後ろに、API に当たらない GET で `index.html` を返すルートを最後に置く（画面の切り替えはフロントのルーターが行う）
   - id: custom-middleware-01
     group: カスタム middleware
     name: pure ASGI ミドルウェア
     body: |-
-      pure ASGI ミドルウェア（`__call__(self, scope, receive, send)` を持つクラス）が標準。`BaseHTTPMiddleware` は ContextVar の変更が上位へ伝わらないので使わない。例: X-Request-Id の付与。
+      pure ASGI ミドルウェア（`__call__(self, scope, receive, send)` を持つクラス）が標準。
+      `BaseHTTPMiddleware` は ContextVar の変更が上位へ伝わらないので使わない。
+      例: X-Request-Id の付与。
   - id: others-01
     group: その他
     name: /healthz に外部依存を持たせない

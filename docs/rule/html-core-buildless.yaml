@@ -40,7 +40,8 @@ items:
     body: |-
       - バンドラを使わない。
         - webpack / vite / esbuild などでブラウザ用にバンドル・最適化しない。
-        - ネイティブ ES Modules と素の CSS をそのまま配信する。起動を軽く保つのが目的。
+        - ネイティブ ES Modules と素の CSS をそのまま配信する。
+          起動を軽く保つのが目的。
         - ただし TypeScript の型システムを使うため、`tsc` による `.ts` → `.js` のトランスパイル 1 工程だけは許可する。
         - 開発時のツールは使ってよい（[html/tooling/tsc運用](id:html-tooling-tsc)）。
   - id: script-extension-01

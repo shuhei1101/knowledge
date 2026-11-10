@@ -55,7 +55,8 @@ items:
     group: サーバー描画
     name: 未定義の値はエラーにする
     body: |-
-      - 未定義の値はエラーにする。空文字で描かない（`StrictUndefined`）
+      - 未定義の値はエラーにする。
+        空文字で描かない（`StrictUndefined`）
   - id: server-rendering-04
     group: サーバー描画
     name: テンプレート環境の使い回し
@@ -80,7 +81,8 @@ items:
     group: サーバー描画
     name: script 内に値を直接置かない
     body: |-
-      - `<script>` の中・イベント属性・属性名には値を直接置かない。JS へ値を渡すときは HTML の中で安全な JSON 化にする（`tojson`）
+      - `<script>` の中・イベント属性・属性名には値を直接置かない。
+        JS へ値を渡すときは HTML の中で安全な JSON 化にする（`tojson`）
   - id: server-rendering-09
     group: サーバー描画
     name: URL は url_for で組み立てる

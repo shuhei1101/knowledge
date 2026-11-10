@@ -42,7 +42,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      第一選択は Upstash Ratelimit（Redis ベース・Edge 対応）。`@upstash/ratelimit` + `@upstash/redis`、env は `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`。
+      第一選択は Upstash Ratelimit（Redis ベース・Edge 対応）。
+      `@upstash/ratelimit` + `@upstash/redis`、env は `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`。
   - id: structure-01
     group: 構成
     name: 用途別 limiter の定義
@@ -53,7 +54,8 @@ items:
     group: 構成
     name: 既定のアルゴリズム
     body: |-
-      - アルゴリズムは `slidingWindow` を既定とする。バースト許容なら `tokenBucket`
+      - アルゴリズムは `slidingWindow` を既定とする。
+        バースト許容なら `tokenBucket`
   - id: structure-03
     group: 構成
     name: proxy.ts での全体適用

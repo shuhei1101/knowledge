@@ -42,7 +42,7 @@ items:
     group: 判断フロー
     name: 並列処理の判断フロー
     body: |-
-      ```
+      ```tree
       CPU バウンド？
       ├── No (IO) → asyncio が第一候補。古い sync lib なら ThreadPoolExecutor
       └── Yes
@@ -74,4 +74,5 @@ items:
     group: 共有状態
     name: 共有状態は避ける
     body: |-
-      共有状態はバグの温床なので避け、Producer / Consumer でキューに流すのが基本。必要なら threading.Lock / multiprocessing.Queue 等。
+      共有状態はバグの温床なので避け、Producer / Consumer でキューに流すのが基本。
+      必要なら threading.Lock / multiprocessing.Queue 等。

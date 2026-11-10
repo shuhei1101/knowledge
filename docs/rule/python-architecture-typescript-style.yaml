@@ -42,7 +42,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      中心ドキュメント。関数ファースト + 型エイリアス + DTO + Protocol で書く。
+      中心ドキュメント。
+      関数ファースト + 型エイリアス + DTO + Protocol で書く。
   - id: ts-style-python-01
     group: TypeScript 風 Python — 関数ファースト設計
     name: 振る舞いは関数、データは DTO
@@ -63,7 +64,8 @@ items:
     name: 型エイリアス DI の方針
     body: |-
       外部依存（LLM / TTS / HTTP / DB）は関数の型エイリアスで抽象化し、キーワード引数で注入する。
-      型は `types.py` に置き、`service.py` は型で受け、`main.py` で `partial` で配線する。テストでは mock 関数を注入するだけ。
+      型は `types.py` に置き、`service.py` は型で受け、`main.py` で `partial` で配線する。
+      テストでは mock 関数を注入するだけ。
   - id: type-alias-di-02
     group: 型エイリアス DI（基本パターン）
     name: 実装はベンダーごとに別ファイル
@@ -104,4 +106,5 @@ items:
     group: DTO の使い分け
     name: Pydantic と dataclass の使い分け
     body: |-
-      - Pydantic は検証ありでやや重い → 外部境界に。dataclass は軽量 → 内部に
+      - Pydantic は検証ありでやや重い → 外部境界に。
+        dataclass は軽量 → 内部に

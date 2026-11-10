@@ -55,7 +55,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      ルーターは薄く。責務は 4 つだけ:
+      ルーターは薄く。
+      責務は 4 つだけ:
   - id: router-pattern-01
     group: ルーター実装パターン
     name: 入力パース
@@ -146,4 +147,5 @@ items:
     group: エラー処理
     name: HTTPException を直接 raise しない
     body: |-
-      route 内で `HTTPException` を直接 raise しない。`NotFoundError` 等の AppError 系を raise し、exception_handler に HTTP 変換させる。
+      route 内で `HTTPException` を直接 raise しない。
+      `NotFoundError` 等の AppError 系を raise し、exception_handler に HTTP 変換させる。

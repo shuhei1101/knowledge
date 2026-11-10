@@ -36,10 +36,12 @@ items:
     group: セッション名
     name: セッション名の付け方
     body: |-
-      - セッション名は `{リポジトリ}-{worktree}-{役割}`。メインリポジトリでは `{worktree}` を省く（例: `app-server`・`app-feat-preview-storybook`）
+      - セッション名は `{リポジトリ}-{worktree}-{役割}`。
+        メインリポジトリでは `{worktree}` を省く（例: `app-server`・`app-feat-preview-storybook`）
       - 役割は `server`・`vite`・`api`・`storybook`・`mcp`・`docs` など
       - 文字は `[A-Za-z0-9_-]` だけにし、worktree 名の `/`・`.` は `-` に置き換える
-      - 1 セッションに 1 サーバー。一緒に起動・停止するものだけ、1 セッションでウィンドウを分ける
+      - 1 セッションに 1 サーバー。
+        一緒に起動・停止するものだけ、1 セッションでウィンドウを分ける
       - AI Monitor が自動で起動するセッションは、AI Monitor の命名のままにする
   - id: port-01
     group: ポート
@@ -74,7 +76,8 @@ items:
       - `has-session`・`kill-session`・`capture-pane` の `-t` には `=` を付けて完全一致で指定する
       - 実行ファイルはフルパス（`.venv/bin/python`・`node_modules/.bin/...`）で指定し、環境変数は `-e` で渡す
       - 起動は Bash の通常の実行で行い、`run_in_background` は使わない（Claude Code の終了時に片付けられる）
-      - プロセスが終わったらセッションも閉じる（tmux の既定）。`has-session` を生死の判定に使う
+      - プロセスが終わったらセッションも閉じる（tmux の既定）。
+        `has-session` を生死の判定に使う
   - id: start-02
     group: 起動
     name: 既にあるとき

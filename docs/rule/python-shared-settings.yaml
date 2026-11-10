@@ -41,12 +41,15 @@ items:
     name: 概要
     body: |-
       既定値・環境の値・checkout の上書き・環境変数を `Settings(BaseSettings)` で型安全に読む（`shared/settings.py`）。
-      置き場所の判断（秘匿値・環境の値・既定値・定数のどこに置くか）は [設定値の置き場所](id:flowchart-config-location) に従う。ここは Python での読み方だけを決める。
+      置き場所の判断（秘匿値・環境の値・既定値・定数のどこに置くか）は [設定値の置き場所](id:flowchart-config-location) に従う。
+      ここは Python での読み方だけを決める。
   - id: loading-01
     group: 読み込み
     name: 設定の 3 レイヤーの読み込み
     body: |-
-      - 設定の 3 レイヤー（既定値 → 環境の値 → checkout の上書き）は、`settings_customise_sources` で `YamlConfigSettingsSource` に `yaml_file` を並べて読む。後のファイルが勝つ。無いファイルは飛ばされる
+      - 設定の 3 レイヤー（既定値 → 環境の値 → checkout の上書き）は、`settings_customise_sources` で `YamlConfigSettingsSource` に `yaml_file` を並べて読む。
+        後のファイルが勝つ。
+        無いファイルは飛ばされる
   - id: loading-02
     group: 読み込み
     name: ネスト項目の deep_merge
@@ -56,7 +59,8 @@ items:
     group: 読み込み
     name: 優先順は settings_customise_sources
     body: |-
-      - `settings_customise_sources` が返す順が優先順。`init_settings` → `env_settings` → `file_secret_settings` → YAML の順にして、環境変数・引数が 3 レイヤーより勝つようにする
+      - `settings_customise_sources` が返す順が優先順。
+        `init_settings` → `env_settings` → `file_secret_settings` → YAML の順にして、環境変数・引数が 3 レイヤーより勝つようにする
   - id: loading-04
     group: 読み込み
     name: 既定値は YAML だけに置く
@@ -81,7 +85,8 @@ items:
     group: 型と検証
     name: API キーは SecretStr
     body: |-
-      - API キーは `SecretStr`（ログに出ない）。外部クライアントに渡す時だけ `get_secret_value()`
+      - API キーは `SecretStr`（ログに出ない）。
+        外部クライアントに渡す時だけ `get_secret_value()`
   - id: type-validation-02
     group: 型と検証
     name: extra は ignore
@@ -101,7 +106,8 @@ items:
     group: 型と検証
     name: ネスト設定と環境変数
     body: |-
-      - ネスト設定は `BaseModel` 入れ子。環境変数は `env_nested_delimiter="__"` で `DB__HOST` → `Settings.db.host`
+      - ネスト設定は `BaseModel` 入れ子。
+        環境変数は `env_nested_delimiter="__"` で `DB__HOST` → `Settings.db.host`
   - id: type-validation-06
     group: 型と検証
     name: 環境変数名の命名

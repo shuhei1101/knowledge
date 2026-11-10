@@ -61,7 +61,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      ruff / pyright / import-linter の設定の正本は各リポジトリの `pyproject.toml`。次の雛形を初期値にする（ツール構成は [core/スタイル](id:python-core-style)）。
+      ruff / pyright / import-linter の設定の正本は各リポジトリの `pyproject.toml`。
+      次の雛形を初期値にする（ツール構成は [core/スタイル](id:python-core-style)）。
 
       ```toml
       [project]
@@ -209,12 +210,14 @@ items:
     group: Git フックとタスクの入口
     name: タスクの入口は npm scripts
     body: |-
-      - タスクの入口はリポジトリ直下の `package.json` の npm scripts。Python のコマンドは `uv run` で呼ぶ（例: `"lint": "uv run ruff check"`）
+      - タスクの入口はリポジトリ直下の `package.json` の npm scripts。
+        Python のコマンドは `uv run` で呼ぶ（例: `"lint": "uv run ruff check"`）
   - id: python-version-01
     group: Python バージョン方針
     name: 高いバージョンを採用する
     body: |-
-      - 極力高いバージョンを採用する。新規は最新安定版か 1 つ下（各バージョンの状況は Python のリリース状況）
+      - 極力高いバージョンを採用する。
+        新規は最新安定版か 1 つ下（各バージョンの状況は Python のリリース状況）
   - id: python-version-02
     group: Python バージョン方針
     name: 最低ラインは 3.14
@@ -244,7 +247,8 @@ items:
     group: 依存管理 — uv 標準
     name: uv を標準にする
     body: |-
-      `uv` を標準とする（pip / poetry は使わない）。高速・venv 管理込み・lockfile・Python バージョン管理を統合。
+      `uv` を標準とする（pip / poetry は使わない）。
+      高速・venv 管理込み・lockfile・Python バージョン管理を統合。
   - id: command-cheatsheet-01
     group: コマンド早見表
     name: uv のコマンド早見表
@@ -267,7 +271,8 @@ items:
     group: コマンド早見表
     name: activate は不要
     body: |-
-      venv の activate は不要（`uv run` が .venv を見る）。`pip install` で venv に直接入れない（uv の状態と乖離）。
+      venv の activate は不要（`uv run` が .venv を見る）。
+      `pip install` で venv に直接入れない（uv の状態と乖離）。
   - id: git-management-01
     group: Git 管理
     name: Git 管理の表
@@ -291,7 +296,8 @@ items:
     group: 依存グループ
     name: dependency-groups の用途
     body: |-
-      - `[dependency-groups]`（PEP 735）: 開発者用作業グループ（dev / docs / benchmark）。`uv sync --group docs`
+      - `[dependency-groups]`（PEP 735）: 開発者用作業グループ（dev / docs / benchmark）。
+        `uv sync --group docs`
   - id: distribution-01
     group: 配布
     name: uv build と uv publish
@@ -301,7 +307,8 @@ items:
     group: 配布
     name: SemVer でバージョン管理
     body: |-
-      - バージョンは SemVer（PATCH=バグ修正 / MINOR=機能追加 / MAJOR=破壊的変更）。`0.x` の間は MINOR を破壊的変更扱いにできる
+      - バージョンは SemVer（PATCH=バグ修正 / MINOR=機能追加 / MAJOR=破壊的変更）。
+        `0.x` の間は MINOR を破壊的変更扱いにできる
   - id: distribution-03
     group: 配布
     name: CHANGELOG の維持
@@ -331,4 +338,5 @@ items:
     group: GitHub Actions 自動公開
     name: GitHub Actions での自動公開
     body: |-
-      `on: push: tags: ["v*"]` で `uv build` → `pypa/gh-action-pypi-publish`（`id-token: write` で trusted publishing）。`git tag v0.2.0 && git push --tags` で発火。
+      `on: push: tags: ["v*"]` で `uv build` → `pypa/gh-action-pypi-publish`（`id-token: write` で trusted publishing）。
+      `git tag v0.2.0 && git push --tags` で発火。

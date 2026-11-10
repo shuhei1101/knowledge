@@ -77,7 +77,7 @@ items:
     group: 決定フロー
     name: キャッシュの決定フロー
     body: |-
-      ```
+      ```text
       ユーザーごとに違うデータ? → キャッシュしない
       どれくらい古くていい? → 即時=なし / 数分=minutes / 数時間=hours / 1ヶ月+=max
       mutation 後に即時反映必要? → Yes: updateTag + refresh / No: revalidateTag(tag, "max")

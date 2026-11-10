@@ -41,7 +41,7 @@ items:
     body: |-
       `app/api/v{N}/{resource}/` 配下の 6 ファイルの責務分離（CQRS）。
 
-      ```
+      ```tree
       app/api/v{N}/{resource}/
       ├── route.ts        # HTTP ハンドラ
       ├── client.ts       # クライアント側 fetch ヘルパー
@@ -54,7 +54,7 @@ items:
     group: 呼び出し階層
     name: 呼び出し階層の図
     body: |-
-      ```
+      ```text
       route.ts ─→ service.ts ─→ db.ts / query.ts
       client.ts ─→ route.ts（型のみ import）
       client.ts ─→ query.ts（フィルタ型のみ import）

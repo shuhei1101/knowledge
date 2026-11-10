@@ -47,7 +47,8 @@ items:
     group: SDK と Instructor に共通
     name: Field の description と Literal
     body: |-
-      - スキーマの `Field(description=...)` が抽出精度に効くので書く。固定選択肢は `Literal`、ネスト・`list[...]` も可
+      - スキーマの `Field(description=...)` が抽出精度に効くので書く。
+        固定選択肢は `Literal`、ネスト・`list[...]` も可
   - id: common-02
     group: SDK と Instructor に共通
     name: 検証失敗は例外を伝える
@@ -79,7 +80,8 @@ items:
     name: タスク特化の関数に封じる
     body: |-
       特定タスク特化の関数として封じる:
-      `type ExtractEventFn = Callable[[str], Awaitable[ExtractedEvent]]` を定義し、`make_extract_event_fn(*, client, model) -> ExtractEventFn` で client / model をクロージャに隠す。呼び出し側は記事を渡すだけ。
+      `type ExtractEventFn = Callable[[str], Awaitable[ExtractedEvent]]` を定義し、`make_extract_event_fn(*, client, model) -> ExtractEventFn` で client / model をクロージャに隠す。
+      呼び出し側は記事を渡すだけ。
   - id: file-structure-01
     group: ファイル構成
     name: スキーマと関数のファイル構成

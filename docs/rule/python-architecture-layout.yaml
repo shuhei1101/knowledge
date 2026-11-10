@@ -44,7 +44,7 @@ items:
     group: トップレベル構成
     name: トップレベルの構成例
     body: |-
-      ```
+      ```tree
       src/{pkg}/
       ├── __init__.py
       ├── __main__.py                   # 任意: python -m {pkg} で起動
@@ -64,7 +64,7 @@ items:
     group: feature フォルダ
     name: feature フォルダの構成例
     body: |-
-      ```
+      ```tree
       {pkg}/features/{feature}/
       ├── __init__.py             # 公開 API（必須。公開シンボルの再エクスポート）
       ├── types.py                # DTO + 型エイリアス + Protocol
@@ -89,7 +89,7 @@ items:
     group: shared/
     name: shared の構成例
     body: |-
-      ```
+      ```tree
       {pkg}/shared/
       ├── logger.py               # JSONL logger
       ├── settings.py             # Pydantic Settings
@@ -107,7 +107,7 @@ items:
     group: integrations/
     name: integrations の構成例
     body: |-
-      ```
+      ```tree
       {pkg}/integrations/
       └── llm/                    # サービス種別ごとにサブフォルダ
           ├── types.py            # 関数の型エイリアス（AsyncChatFn 等）と DTO
@@ -125,7 +125,7 @@ items:
     group: server/（FastAPI 使用時）
     name: server の構成例
     body: |-
-      ```
+      ```tree
       {pkg}/server/
       ├── app.py                  # build_fastapi() -> FastAPI
       ├── lifespan.py             # startup / shutdown
@@ -137,7 +137,8 @@ items:
     group: server/（FastAPI 使用時）
     name: route の置き場所
     body: |-
-      route の置き場所は `features/{feature}/route.py` を基本にする（feature 内で完結）。`server/app.py` から `include_router` で集約。
+      route の置き場所は `features/{feature}/route.py` を基本にする（feature 内で完結）。
+      `server/app.py` から `include_router` で集約。
   - id: tests-folder-01
     group: tests/
     name: tests の構成

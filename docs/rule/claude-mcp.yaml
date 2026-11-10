@@ -99,32 +99,39 @@ items:
     body: |-
       - 公式 MCP Python SDK（pip の `mcp` パッケージ）の `MCPServer` を使う
         - `from mcp.server.mcpserver import MCPServer`
-        - 旧名の `FastMCP`（`mcp.server.fastmcp`）は v2 で削除された。サードパーティの「FastMCP」（pip の `fastmcp`）とも別物
+        - 旧名の `FastMCP`（`mcp.server.fastmcp`）は v2 で削除された。
+          サードパーティの「FastMCP」（pip の `fastmcp`）とも別物
   - id: sdk-transport-02
     group: SDK とトランスポート
     name: HTTP の常駐サーバー
     body: |-
-      - MCP サーバーは HTTP（Streamable HTTP）の常駐サーバーにする（`mcp.streamable_http_app()`）。stdio（`mcp.run()`）は禁止する
+      - MCP サーバーは HTTP（Streamable HTTP）の常駐サーバーにする（`mcp.streamable_http_app()`）。
+        stdio（`mcp.run()`）は禁止する
   - id: sdk-transport-03
     group: SDK とトランスポート
     name: stdio を避ける理由
     body: |-
-      - stdio は **セッションごとに 1 プロセス**が立つ。5 セッション並べれば同じサーバが 5 個起動し、依存解決も 5 回走る。並行で起動するセッションの数だけプロセスが増える
+      - stdio は **セッションごとに 1 プロセス**が立つ。
+        5 セッション並べれば同じサーバが 5 個起動し、依存解決も 5 回走る。
+        並行で起動するセッションの数だけプロセスが増える
   - id: sdk-transport-04
     group: SDK とトランスポート
     name: 起動のノンブロッキング
     body: |-
-      - Claude Code の MCP 起動は既定でノンブロッキング。接続中のサーバーのツールが要るときは、Claude が接続完了を待つ
+      - Claude Code の MCP 起動は既定でノンブロッキング。
+        接続中のサーバーのツールが要るときは、Claude が接続完了を待つ
   - id: sdk-transport-05
     group: SDK とトランスポート
     name: alwaysLoad の付け方
     body: |-
-      - 毎ターン使うツールを持つサーバーだけ `.mcp.json` に `"alwaysLoad": true` を付ける。ツール検索を介さず最初のプロンプトから載り、起動がツールの確定まで待つ（上限は `MCP_CONNECT_TIMEOUT_MS`）
+      - 毎ターン使うツールを持つサーバーだけ `.mcp.json` に `"alwaysLoad": true` を付ける。
+        ツール検索を介さず最初のプロンプトから載り、起動がツールの確定まで待つ（上限は `MCP_CONNECT_TIMEOUT_MS`）
   - id: sdk-transport-06
     group: SDK とトランスポート
     name: 常駐サーバーの起動方法
     body: |-
-      - 常駐サーバをどう起動するかを決める。既に常駐しているプロセス（アプリ本体・compose のサービス）に相乗りさせると、起動するものが増えない
+      - 常駐サーバをどう起動するかを決める。
+        既に常駐しているプロセス（アプリ本体・compose のサービス）に相乗りさせると、起動するものが増えない
       - 起動する場所が決まらないセッションで使う MCP は、プラグインで配る。
         渡し方は判定フローチャート [MCP・フックの渡し方](id:flowchart-mcp-hook-delivery) で決める。
       - 起動と管理は systemd --user を主にする。
@@ -151,7 +158,8 @@ items:
     body: |-
       - 常駐サーバーには、セッションの作業ディレクトリと環境変数（`CLAUDE_PROJECT_DIR`・`CLAUDE_CODE_SESSION_ID`）が渡らない
         - サーバーが持つファイルは、作業ディレクトリに依存せず、起動時に設定したルートを基準にパス解決する
-        - セッションの作業対象のファイルは、ツールの引数で絶対パスを受ける。セッションごとの値は PreToolUse フックで引数に入れる
+        - セッションの作業対象のファイルは、ツールの引数で絶対パスを受ける。
+          セッションごとの値は PreToolUse フックで引数に入れる
   - id: tool-schema-01
     group: ツール定義のスキーマ
     name: ツール定義の項目表
@@ -188,7 +196,9 @@ items:
     group: 読み取りのツール
     name: limit・total・next_cursor
     body: |-
-      - 既定の `limit` を持ち、絞り込みに当たった総数 `total` を返す。続きがあるときは `next_cursor` を返す。型付きで返すツールは、どちらも共通モデルに項目を追加して返す
+      - 既定の `limit` を持ち、絞り込みに当たった総数 `total` を返す。
+        続きがあるときは `next_cursor` を返す。
+        型付きで返すツールは、どちらも共通モデルに項目を追加して返す
   - id: read-tool-14
     group: 読み取りのツール
     name: readOnlyHint
@@ -226,7 +236,8 @@ items:
     group: 登録
     name: プロジェクト用の登録
     body: |-
-      - プロジェクト用: ルートの `.mcp.json`（バージョン管理でチーム共有）。文書の MCP は対象外
+      - プロジェクト用: ルートの `.mcp.json`（バージョン管理でチーム共有）。
+        文書の MCP は対象外
   - id: registration-02
     group: 登録
     name: プラグイン用の登録
@@ -253,12 +264,14 @@ items:
     group: 登録
     name: type の添付
     body: |-
-      - `url` を書くときは `type` を添える。`type` の無いエントリは stdio として読まれ、サーバーごとスキップされる
+      - `url` を書くときは `type` を添える。
+        `type` の無いエントリは stdio として読まれ、サーバーごとスキップされる
   - id: registration-08
     group: 登録
     name: url の形式
     body: |-
-      - `url` は `http://127.0.0.1:${{ツール名}_PORT:-{既定のポート}}/mcp` の形式で書く。`{ツール名}_PORT` と `{既定のポート}` は台帳（`${XDG_CONFIG_HOME:-~/.config}/mcp-ports.yaml`）の `env` と `port`
+      - `url` は `http://127.0.0.1:${{ツール名}_PORT:-{既定のポート}}/mcp` の形式で書く。
+        `{ツール名}_PORT` と `{既定のポート}` は台帳（`${XDG_CONFIG_HOME:-~/.config}/mcp-ports.yaml`）の `env` と `port`
         - 環境変数の名前の付け方は [設定値の置き場所](id:flowchart-config-location) に従う
   - id: registration-09
     group: 登録
@@ -269,7 +282,8 @@ items:
     group: 登録
     name: サーバー側のポート
     body: |-
-      - サーバーは起動時に同じ `{ツール名}_PORT` を読み、無ければ台帳（`${XDG_CONFIG_HOME:-~/.config}/mcp-ports.yaml`）の `port` で待ち受ける。上書きするときは、サーバーを起動する環境にも同じ値を渡す
+      - サーバーは起動時に同じ `{ツール名}_PORT` を読み、無ければ台帳（`${XDG_CONFIG_HOME:-~/.config}/mcp-ports.yaml`）の `port` で待ち受ける。
+        上書きするときは、サーバーを起動する環境にも同じ値を渡す
   - id: registration-11
     group: 登録
     name: ポート台帳の案内
@@ -286,7 +300,8 @@ items:
     group: 動作確認
     name: 再接続の注意
     body: |-
-      - 設定が変わらないプラグイン MCP サーバーは `/reload-plugins` で再接続されないので、反映にはセッション再起動が必要。`/mcp` で接続状態を確認する
+      - 設定が変わらないプラグイン MCP サーバーは `/reload-plugins` で再接続されないので、反映にはセッション再起動が必要。
+        `/mcp` で接続状態を確認する
 related:
   - to: claude-mcp-docs-server
     type: references

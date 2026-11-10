@@ -70,7 +70,10 @@ items:
     group: stamina によるリトライ
     name: retry_after の優先
     body: |-
-      - `on` に渡すフック関数は、`LlmRateLimitError.retry_after`（Retry-After ヘッダから抽出してコンストラクタに渡す）があればその秒数（float）を返して待ちに使う。フックが返した待ちは `wait_max` で抑えられないため、`retry_after` が `wait_max` を超えるときは False を返してリトライせず、その値を 503 の Retry-After で返す。無ければ既定のバックオフ。同じ値を 503 の Retry-After にも使う（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
+      - `on` に渡すフック関数は、`LlmRateLimitError.retry_after`（Retry-After ヘッダから抽出してコンストラクタに渡す）があればその秒数（float）を返して待ちに使う。
+        フックが返した待ちは `wait_max` で抑えられないため、`retry_after` が `wait_max` を超えるときは False を返してリトライせず、その値を 503 の Retry-After で返す。
+        無ければ既定のバックオフ。
+        同じ値を 503 の Retry-After にも使う（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
   - id: stamina-retry-05
     group: stamina によるリトライ
     name: リトライ時のログ
@@ -80,7 +83,8 @@ items:
     group: stamina によるリトライ
     name: テストではリトライの待ちを止める
     body: |-
-      - テストでは `stamina.set_testing(True, attempts=...)` でバックオフの待ちを無効にする。試行の回数は `attempts`（既定は 1）になるので、リトライを確かめるテストでは `stamina-retry-01` と同じ回数を渡す
+      - テストでは `stamina.set_testing(True, attempts=...)` でバックオフの待ちを無効にする。
+        試行の回数は `attempts`（既定は 1）になるので、リトライを確かめるテストでは `stamina-retry-01` と同じ回数を渡す
   - id: timeout-01
     group: タイムアウト
     name: クライアントとデコレータのタイムアウト
@@ -106,7 +110,8 @@ items:
       <!-- /table -->
 
       - 呼び出し元の待ちは、利用者・上流の待ちか外側の作業の上限
-      - `<全体の待ち>` が呼び出し元の待ちを超えるときは、`<試行回数>` を保ったまま呼び出し元の待ちから `<各回の待ち>` を逆算する。逆算した値が 0 以下か実測の p99.9 より短いときだけ `<試行回数>` を減らす
+      - `<全体の待ち>` が呼び出し元の待ちを超えるときは、`<試行回数>` を保ったまま呼び出し元の待ちから `<各回の待ち>` を逆算する。
+        逆算した値が 0 以下か実測の p99.9 より短いときだけ `<試行回数>` を減らす
       - stamina の `timeout` は実行中の試行を打ち切らないため、打ち切りは `@with_timeout` が担う（C）
   - id: composition-01
     group: 合成

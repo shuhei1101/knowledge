@@ -44,12 +44,14 @@ items:
     group: tsc 運用（バニラ TS + FastAPI）
     name: js の出力先
     body: |-
-      - 生成 `.js` は `.ts` と同じ階層に出す。`screen.ts` → 同じフォルダに `screen.js`。
+      - 生成 `.js` は `.ts` と同じ階層に出す。
+        `screen.ts` → 同じフォルダに `screen.js`。
   - id: tsc-operation-03
     group: tsc 運用（バニラ TS + FastAPI）
     name: frontend が指す範囲
     body: |-
-      - 以下の `frontend/` は画面のスクリプトの置き場所を指す。`static/`・`assets/` などに置く構成では、そのフォルダに読み替える。
+      - 以下の `frontend/` は画面のスクリプトの置き場所を指す。
+        `static/`・`assets/` などに置く構成では、そのフォルダに読み替える。
   - id: config-files-01
     group: 設定ファイル（repo ルート）
     name: 設定ファイルの表
@@ -91,6 +93,8 @@ items:
     group: 生成 .js は gitignore
     name: 生成 js は gitignore
     body: |-
-      著作は `.ts`、`.js` は生成物。フロントエンドの生成 `.js` はコミットしない（`.gitignore`）。例外は手書きで維持する `shared/vendor/`（外部依存の vendoring）と openapi 生成型 `shared/api/schema.d.ts`（コミットする）。
+      著作は `.ts`、`.js` は生成物。
+      フロントエンドの生成 `.js` はコミットしない（`.gitignore`）。
+      例外は手書きで維持する `shared/vendor/`（外部依存の vendoring）と openapi 生成型 `shared/api/schema.d.ts`（コミットする）。
       ビルドしない配信先（GitHub Pages・配布先）と共用する生成 `.js` と、配信・テスト・Storybook・モックの配信がビルドせずにパスを直接読む生成 `.js` は、`.ts` と同じ階層へコミットする。
       コミットする生成 `.js` はプロジェクトの設計書に列挙し、列挙したものに限る。

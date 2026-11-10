@@ -86,11 +86,11 @@ items:
   - id: read-tool-03
     group: 読み取りのツール
     name: view と include の指定
-    body: '- `view`（`brief` / `standard` / `full`）で返す量を選べ、`include` / `exclude`（項目名の enum の配列）で追加・除外できるようにする。既定は `search` が `brief`、1 件を取るツールが `standard`。省いた項目は `omitted` で返し、取り方を添える'
+    body: "- `view`（`brief` / `standard` / `full`）で返す量を選べ、`include` / `exclude`（項目名の enum の配列）で追加・除外できるようにする。\n  既定は `search` が `brief`、1 件を取るツールが `standard`。\n  省いた項目は `omitted` で返し、取り方を添える"
   - id: read-tool-04
     group: 読み取りのツール
     name: brief の返す項目
-    body: '- `search` の `brief` は各行に ID・名前・概要文・タグ・文字数・バージョンを返し、中身は ID で取るツールで返す。結果の先頭に総件数と、当たった全件の合計文字数を返す'
+    body: "- `search` の `brief` は各行に ID・名前・概要文・タグ・文字数・バージョンを返し、中身は ID で取るツールで返す。\n  結果の先頭に総件数と、当たった全件の合計文字数を返す"
   - id: read-tool-05
     group: 読み取りのツール
     name: 切り詰め時の案内
@@ -132,7 +132,8 @@ items:
     body: |-
       - 本文を返すときは、文書ごとに場所（文書のファイルの絶対パスか URL）と範囲（`full`・`section`・`summary`）を載せる
         - markdown は文書ごとに `<document path="..." scope="...">` で包み、json は各項目に `path`・`scope` を持たせる
-        - `full` は全文を返したときだけ付ける。`section` はセクションを指定した取得（`read-tool-10`）、`summary` は `view` が `brief` など説明だけを返したとき（`read-tool-03`）に付ける
+        - `full` は全文を返したときだけ付ける。
+          `section` はセクションを指定した取得（`read-tool-10`）、`summary` は `view` が `brief` など説明だけを返したとき（`read-tool-03`）に付ける
         - 載せ方の詳細は rule-inject の [MCPの結果の書式](https://github.com/shuhei1101/rule-inject/blob/master/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/MCP%E3%81%AE%E7%B5%90%E6%9E%9C%E3%81%AE%E6%9B%B8%E5%BC%8F.md) に従う
   - id: read-tool-12
     group: 読み取りのツール

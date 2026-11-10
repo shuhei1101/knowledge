@@ -46,8 +46,10 @@ items:
     group: 基本方針
     name: ブレークポイントは 768px 単一
     body: |-
-      - ブレークポイントは [レイアウト](id:ui-layout) の `md`（48rem）単一にする。タブレット中間は設けない。
-        - 新しく作る画面は `min-width` で広げる。既存のデスクトップ向けの画面は `@media (max-width: 48rem)` で足してよい。
+      - ブレークポイントは [レイアウト](id:ui-layout) の `md`（48rem）単一にする。
+        タブレット中間は設けない。
+        - 新しく作る画面は `min-width` で広げる。
+          既存のデスクトップ向けの画面は `@media (max-width: 48rem)` で足してよい。
   - id: basic-policy-02
     group: 基本方針
     name: スマホ対応は screen.css の末尾
@@ -59,19 +61,23 @@ items:
     group: 基本方針
     name: DOM 切替は screen.ts 内で
     body: |-
-      - DOM 構造の切替が本当に必要な画面のみ `screen.ts` 内で関数を増やす。別ファイルに切り出さない。
+      - DOM 構造の切替が本当に必要な画面のみ `screen.ts` 内で関数を増やす。
+        別ファイルに切り出さない。
   - id: basic-policy-04
     group: 基本方針
     name: デスクトップのレイアウトを維持
     body: |-
-      - デスクトップレイアウトはピクセル単位で維持。`@media` の外側を触らない。
+      - デスクトップレイアウトはピクセル単位で維持。
+        `@media` の外側を触らない。
   - id: basic-policy-05
     group: 基本方針
     name: 横幅不足で縦積みになる問題
     body: |-
       - モバイル時に横幅が足りず、文字が縦積みになる問題
-        - まず、横スクロールに対応して解消する。（ただし、画面全体の横スクロール化は禁止。一部分のみなら可）
-        - 次に、文字列の変更。例えば、モバイル時のみ絵文字だけにするとか、文字量を減らすとか
+        - まず、横スクロールに対応して解消する。
+          （ただし、画面全体の横スクロール化は禁止。一部分のみなら可）
+        - 次に、文字列の変更。
+          例えば、モバイル時のみ絵文字だけにするとか、文字量を減らすとか
         - 縦積みになっていないかをテストすること
   - id: shell-responsibility-01
     group: 共通シェル（`frontend/shared/`）の責務
@@ -100,4 +106,5 @@ items:
     group: 落とし穴チェックリスト > ビューポート・高さ
     name: viewport meta の集約
     body: |-
-      - viewport meta は `templates/_layout.html` に集約。各画面 HTML で再宣言しない
+      - viewport meta は `templates/_layout.html` に集約。
+        各画面 HTML で再宣言しない

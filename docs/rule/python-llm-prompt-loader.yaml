@@ -42,12 +42,13 @@ items:
   - id: overview
     name: 概要
     body: |-
-      `prompts/{id}.yaml` を読み、`when` に当たる部品のトップレベルの `lang` の本文を Jinja2 でレンダリングして 1 つのプロンプトに組み立てる。書き方は [プロンプトファイル](id:prompt-file)。
+      `prompts/{id}.yaml` を読み、`when` に当たる部品のトップレベルの `lang` の本文を Jinja2 でレンダリングして 1 つのプロンプトに組み立てる。
+      書き方は [プロンプトファイル](id:prompt-file)。
   - id: structure-01
     group: 構成
     name: ローダーのファイル構成
     body: |-
-      ```
+      ```tree
       src/{pkg}/integrations/llm/prompts/
       ├── node_loader.py        # prompts/{id}.yaml の読み込みとキャッシュ
       ├── builder.py            # when の評価 + 部品結合 + Jinja2 レンダリング
@@ -57,7 +58,8 @@ items:
     group: 構成
     name: プロンプト本体の置き場所
     body: |-
-      プロンプト本体はリポジトリ直下の `content/prompts/`、ローダーは `src/` 配下。場所は `shared/constants.py` の `PROJECT_ROOT` から解決。
+      プロンプト本体はリポジトリ直下の `content/prompts/`、ローダーは `src/` 配下。
+      場所は `shared/constants.py` の `PROJECT_ROOT` から解決。
   - id: node-loader-01
     group: node_loader.py
     name: id ごとに 1 回だけ読む

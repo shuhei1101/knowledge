@@ -51,7 +51,8 @@ items:
     group: ハンドラーデコレータ（横断関心事）
     name: ハンドラーデコレータの方針
     body: |-
-      例外キャッチ / リトライ / タイムアウト / メトリクスは関数デコレータで束ねる（クラスベース AOP は使わない）。`{pkg}/shared/decorators.py` に定義。
+      例外キャッチ / リトライ / タイムアウト / メトリクスは関数デコレータで束ねる（クラスベース AOP は使わない）。
+      `{pkg}/shared/decorators.py` に定義。
   - id: handler-decorator-02
     group: ハンドラーデコレータ（横断関心事）
     name: ハンドラーデコレータの表
@@ -99,4 +100,5 @@ items:
     group: "@overload"
     name: "@overload の使いどころ"
     body: |-
-      戻り値が引数型で分岐する関数のみ。ほとんどは型エイリアス + Callable / Protocol で済むので出番は少ない。
+      戻り値が引数型で分岐する関数のみ。
+      ほとんどは型エイリアス + Callable / Protocol で済むので出番は少ない。

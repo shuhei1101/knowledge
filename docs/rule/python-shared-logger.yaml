@@ -72,7 +72,8 @@ items:
     group: 標準実装の要点（`shared/logger.py`）
     name: レベルは Settings から反映
     body: |-
-      - レベルは `Settings.log_level` から main で反映。本番 INFO、開発 DEBUG
+      - レベルは `Settings.log_level` から main で反映。
+        本番 INFO、開発 DEBUG
   - id: level-usage-01
     group: レベル運用
     name: ログレベルの運用表
@@ -108,4 +109,5 @@ items:
     group: 出力先
     name: 出力先は stdout
     body: |-
-      開発 / Docker / serverless とも stdout のまま。単発スクリプトのファイル保存はランチャー（bat / sh）側で tee。
+      開発 / Docker / serverless とも stdout のまま。
+      単発スクリプトのファイル保存はランチャー（bat / sh）側で tee。

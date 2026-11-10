@@ -37,7 +37,8 @@ items:
     group: drizzle/schema.ts — 共通カラム（timestamps / auditFields）
     name: timestamp は string モード
     body: |-
-      - `timestamp` は `mode: "string"` で持つ。値は DB サーバーのタイムゾーンの Postgres 形式の文字列で返り、`toISOString()` の形式とは限らない
+      - `timestamp` は `mode: "string"` で持つ。
+        値は DB サーバーのタイムゾーンの Postgres 形式の文字列で返り、`toISOString()` の形式とは限らない
 
       ```ts
       // drizzle/_helpers.ts（または schema.ts 冒頭）

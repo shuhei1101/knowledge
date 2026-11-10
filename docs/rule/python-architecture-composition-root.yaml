@@ -39,7 +39,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      `main.py` で関数依存を組み立てる。クラスベース DI コンテナは使わない。
+      `main.py` で関数依存を組み立てる。
+      クラスベース DI コンテナは使わない。
   - id: basic-pattern-01
     group: 基本パターン
     name: Handlers の組み立て例
@@ -82,7 +83,8 @@ items:
     group: テストでの差し替え
     name: テストでの差し替え
     body: |-
-      `build_test_handlers()` を conftest に作り、mock 関数を partial で注入し、`build_fastapi(handlers=build_test_handlers())` で渡す。build 系は外部依存をすべて引数で受けるテスト前提の設計にする。
+      `build_test_handlers()` を conftest に作り、mock 関数を partial で注入し、`build_fastapi(handlers=build_test_handlers())` で渡す。
+      build 系は外部依存をすべて引数で受けるテスト前提の設計にする。
   - id: library-classes-01
     group: ライブラリ標準クラスはそのまま使う
     name: ライブラリ標準クラスはそのまま

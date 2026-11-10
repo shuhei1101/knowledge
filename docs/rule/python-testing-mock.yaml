@@ -35,7 +35,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      関数の型エイリアスで DI している依存は Mock も普通の関数で書く（`AsyncMock` より読みやすい）。引数注入していない依存は `monkeypatch` / `mock.patch` で差し替えてよい。
+      関数の型エイリアスで DI している依存は Mock も普通の関数で書く（`AsyncMock` より読みやすい）。
+      引数注入していない依存は `monkeypatch` / `mock.patch` で差し替えてよい。
   - id: integration-mock-pattern-01
     group: 結合テストの Mock パターン
     name: Mock の方式の比較
