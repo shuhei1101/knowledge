@@ -45,10 +45,10 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-10T20:58:17.499895+00:00'
   - process: インターフェース定義設計
-    status: skipped
-    reason: スクリプトの入出力を変えない
+    status: todo
     updated_by: planner
-    updated_at: '2026-11-10T20:58:17.499895+00:00'
+    updated_at: '2026-11-10T21:21:14.160021+00:00'
+    note: 全ての文書の検査（IF-72-3）の入力の制約が dev/テンプレート/ のコピーを検査しないと書くため、コピーの配置に合わせる
   - process: 部品設計
     status: skipped
     reason: 画面を持たない
@@ -60,28 +60,27 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-10T20:58:17.499895+00:00'
   - process: モジュール構成設計
-    status: skipped
-    reason: スクリプト・テストは dev/ を参照せず、コードを変えない
-    updated_by: planner
-    updated_at: '2026-11-10T20:58:17.499895+00:00'
-  - process: ドキュメント修正
     status: todo
-    note: v0.4.0 の変換、dev/ の文書の docs/・schemas/ への移動、rules.yaml・.gitignore・dev-docs.yaml・schemas/design の x-folder・ai-monitor-version.ini の追随
+    updated_by: planner
+    updated_at: '2026-11-10T21:20:59.312543+00:00'
+    note: AI Monitor のスキーマのコピーを schemas/ へ配置するための check_all.py の検査の対象と、knowledge の common・files のスキーマの名前（要件.md の 未確定）
+  - process: ドキュメント修正
+    status: done
+    note: dev-docs.yaml の設計書の行は、スキーマのコピーの置き場所が決まる実装で追加する
+    updated_by: planner
+    updated_at: '2026-11-10T21:21:14.160021+00:00'
   - process: 単体テスト作成
-    status: skipped
-    reason: コードを変えない
+    status: todo
     updated_by: planner
-    updated_at: '2026-11-10T20:58:17.499895+00:00'
+    updated_at: '2026-11-10T21:20:59.312543+00:00'
   - process: 実装
-    status: skipped
-    reason: コードを変えない（文書と設定の移動はドキュメント修正で行う）
+    status: todo
     updated_by: planner
-    updated_at: '2026-11-10T20:58:17.499895+00:00'
+    updated_at: '2026-11-10T21:20:59.312543+00:00'
   - process: 結合テスト作成
-    status: skipped
-    reason: コードを変えない。既存の結合テストはドキュメント修正の確認で実行する
+    status: todo
     updated_by: planner
-    updated_at: '2026-11-10T20:58:17.499895+00:00'
+    updated_at: '2026-11-10T21:20:59.312543+00:00'
   - process: E2E テスト作成
     status: skipped
     reason: ユースケースの流れを変えない
