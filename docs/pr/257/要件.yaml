@@ -87,6 +87,10 @@ docs:
     new: false
     change: 設計書のメタデータ（タグ・用語・関連）の付け直しと AI slop の修正。description は設計書のスキーマの書き方のまま
     status: todo
+  - page: schemas/files.schema.yaml
+    new: false
+    change: description の説明の「どんなときに読むか」を「どんなときに参照するか」へ修正する
+    status: todo
 scope_out:
   - item: Mermaid の図の mdmark の部品への置き換え
     reason: '2026-11-09 のユーザーの依頼で範囲から外した。設計書と生成するテンプレートの図は #251 が持つ'
@@ -109,3 +113,6 @@ scope_out:
   - item: CI（.github/workflows/docs-check.yml）に lint を載せ続けるかの見直し
     reason: 'この PR は lint のルールを error へ切り替えるだけで、検査をどこで回すかは #227 が決める。切り替えは手元で回す check_all.py の合否にも効くため、#227 の結論によらず成り立つ'
     plan: '#227'
+  - item: lint の違反の修正・表への書き換え・メタデータの付け直しで書き換えない文の AI slop の修正（着手時 3786 件）
+    reason: 件数が多く 1 つの PR でレビューできないため、フォルダごとの Issue に分ける（2026-11-11 のユーザーの判断。確認ログ）
+    plan: to_file
