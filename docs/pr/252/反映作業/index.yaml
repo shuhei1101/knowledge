@@ -1,0 +1,14 @@
+設計書のスキーマのタグの作成:
+  説明: 作業 PR を develop へマージした後に、`design-schemas/v*` の最新のタグのメジャーを上げたタグ（今の最新は `design-schemas/v1.0.1` で、作るタグは `design-schemas/v2.0.0`）を、メッセージに `(#252)` を入れて develop の squash commit へ作成して push する（既存の設計書が検査を通らなくなる変更のため、メジャーを上げる）。切り戻しは、メッセージに `(#252)` を持つタグだけを削除する
+  タグ: [タグ, スキーマ]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグが `design-schemas/v2.0.0` で、その commit の `schemas/design/common.schema.yaml` に `$defs/decision` がある"
+  状態: "-"
