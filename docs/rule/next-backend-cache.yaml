@@ -35,8 +35,8 @@ tags:
   - name: action:無効化
 status: current
 visibility: internal
-rev: 4
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-11-10'
 items:
   - id: overview
     name: 概要
@@ -63,7 +63,7 @@ items:
     body: |-
       | API | 挙動 | 用途 |
       | --- | --- | --- |
-      | `revalidateTag(tag, profile)` | stale マーク → 次の閲覧者は古いデータを見つつ背後で再生成 | 遅延 OK な更新（一覧・カタログ）。第 2 引数必須（Next.js 16） |
+      | `revalidateTag(tag, profile)` | stale マーク → 次のリクエストは古いデータを見つつ背後で再生成 | 遅延 OK な更新（一覧・カタログ）。第 2 引数必須（Next.js 16） |
       | `updateTag(tag)` | 即時 expire + 同リクエスト内で再フェッチ（read-your-writes） | フォーム保存・設定変更（Server Action 内のみ） |
       | `refresh()` | client router の RSC payload を更新（`router.refresh()` のサーバー用） | mutation 後に画面を最新化 |
   - id: invalidate-api-02

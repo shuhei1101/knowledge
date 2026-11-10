@@ -1,0 +1,76 @@
+use_cases:
+  - kind: single
+    scenario: dev/設計書/シナリオ/単一ユースケース/エージェントが書き込んだ中身の AI slop の単語を通知される.yaml
+    impact: run_only
+    detail: 対応表の行が増えるだけで、シナリオの記述は変わらない
+    depends_on: []
+  - kind: single
+    scenario: dev/設計書/シナリオ/単一ユースケース/開発者が文書の違反を検査する.yaml
+    impact: run_only
+    detail: 追加した行の examples・新しい規約の文書・対応表のコピーの一致を検査する
+    depends_on: []
+docs:
+  - page: docs/word-list/word-list-ai-slop.yaml
+    new: false
+    change: 閲覧者→読者・アクセシブルネーム→スクリーンリーダー向けの名前・UI のまとまった表示を指す「〜の枠」→「〜ブロック」・ボタンの「〜を表示」「〜を追加」→「〜表示」「〜追加」の行を pattern・allow・examples つきで追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T13:15:58.034528+00:00'
+  - page: plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json
+    new: false
+    change: scripts/build_word_list.py で再生成する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T13:15:58.034528+00:00'
+  - page: docs/rule/ui-input-wording.yaml
+    new: false
+    change: wording-term-format-02 のボタンの書式を「を」を付けない決まりへ修正し、同じ規約のボタンの例（wording-01 の「Issue を作成」・wording-term-format-02 の「選択 n 件をコピー」）を合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T13:15:58.034528+00:00'
+  - page: docs/rule/next-backend-cache.yaml
+    new: false
+    change: 追加する「閲覧者」の行にヒットする「次の閲覧者」を、文脈に合う語（次のリクエスト 等）へ置き換える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T13:15:58.034528+00:00'
+  - page: docs/rule/ui-layout.yaml
+    new: false
+    change: 追加する「〜の枠」の行にヒットする「共通の枠」（description・概要・common-shell-01 の group）と、common-shell-01 の「枠を読み込む」を「共通シェル」へ置き換える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T13:15:58.034528+00:00'
+  - page: docs/rule/ui-information-hierarchy.yaml
+    new: false
+    change: 「強い色は操作・選択・状態にだけ使う」を新しい規約の「強い色は 1 つ」と矛盾しないように修正し、追加する「〜の枠」の行にヒットする記述があれば置き換える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T13:15:58.034528+00:00'
+  - page: docs/rule/ui-display-stability.yaml
+    new: false
+    change: 「動きは状態の変化と操作への反応にだけ使う」に、新しい規約の自動で動く図の例外への参照を加え、追加する「〜の枠」の行にヒットする記述があれば置き換える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T13:15:58.034528+00:00'
+  - page: docs/rule/ui-distinctive-look.yaml
+    new: true
+    change: どのシステムにも適用する、シンプルだけど凡庸でない見た目の決まりの規約を新しく作る。既存の ui の規約と同じ inject_when で注入する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T13:15:58.034528+00:00'
+  - page: docs/template/template-design-policy.yaml
+    new: false
+    change: サイトのワンポイントの題材・色・配置する場所、形状の味付け、明暗の両方でコントラストを満たす色の候補を、システムごとに割り当てる欄として追加する（ユーザーへ確認する）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-09T13:15:58.034528+00:00'
+scope_out:
+  - item: AI Monitor のデザインスタイル選定の手順（designer）から、追加する規約とテンプレートの欄へのリンク
+    reason: shuhei1101/ai-monitor の手順で、knowledge の作業 PR では変更できない。この PR で追加する規約を前提にする
+    plan: shuhei1101/ai-monitor#3337
+  - item: AI Monitor 自身のドキュメントサイトのワンポイント・色・形状の選択
+    reason: システムごとの割り当ては各プロジェクトのデザイン方針で決める（shuhei1101/ai-monitor#2354）
+    plan: none
+  - item: '`schemas/design/module.schema.yaml` の単体テストのファイルの description が 3 文あり、結合テスト `test_normal_when_repository_schemas` が fail する'
+    reason: 'description を 2 文以内にする検査に合っていない。origin/develop でも同じ記述で、この PR の要望に含まれない。同じファイルの description を修正する #241 で対応する'
+    plan: '#241'
