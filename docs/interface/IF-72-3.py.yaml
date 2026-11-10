@@ -251,7 +251,7 @@ flows:
         description: 差し替えない
       - name: リポジトリ
         description: '`items[].body` に `A です。B です。` の 1 行を持つ文書と `schemas/meta.schema.yaml` だけを持つ一時フォルダ'
-        notes: '`--lint-dir` に、既定の lint のフォルダの設定のうち textlint の `one-sentence-per-line` だけを `severity: warning` にした一時の lint のフォルダを指定する（既定の設定に警告にするルールは無い）'
+        notes: '`--lint-dir` に一時の lint のフォルダを指定する（既定の設定に警告にするルールは無い）。一時の lint のフォルダは、`scripts/lint/` の `.markdownlint-cli2.jsonc`・`no-inline-strong.mjs`・`.yamllint.yaml`・`.yamllint-schemas.yaml` のコピーと、textlint の `one-sentence-per-line` だけを `severity: warning` にした `.textlintrc.json` を持ち、`node_modules` は `scripts/lint/node_modules` へのシンボリックリンクにする'
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
