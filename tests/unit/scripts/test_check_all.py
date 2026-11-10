@@ -302,24 +302,31 @@ def test_list_targets(tmp_path: Path) -> None:
         {
             "id": "scripts",
             "paths": ["scripts/files.yaml"],
-            "schema": "schemas/files.schema.yaml",
+            "schema": "schemas/knowledge-files.schema.yaml",
             "records": "files",
         },
     ]
     # 実行
-    result = list_targets(tmp_path, rows)
+    result = list_targets(tmp_path, rows, frozenset())
     # 検証
     assert result == [
         Target(
-            path=PurePosixPath("docs/rule/a.yaml"), schema="schemas/rule.schema.yaml", checks=True
+            path=PurePosixPath("docs/rule/a.yaml"),
+            schema="schemas/rule.schema.yaml",
+            checks=True,
+            lints=True,
         ),
         Target(
-            path=PurePosixPath("docs/rule/b.yaml"), schema="schemas/rule.schema.yaml", checks=True
+            path=PurePosixPath("docs/rule/b.yaml"),
+            schema="schemas/rule.schema.yaml",
+            checks=True,
+            lints=True,
         ),
         Target(
             path=PurePosixPath("scripts/files.yaml"),
-            schema="schemas/files.schema.yaml",
+            schema="schemas/knowledge-files.schema.yaml",
             checks=False,
+            lints=True,
         ),
     ]
 
@@ -347,11 +354,14 @@ def test_list_targets_when_excluded(tmp_path: Path) -> None:
         },
     ]
     # 実行
-    result = list_targets(tmp_path, rows)
+    result = list_targets(tmp_path, rows, frozenset())
     # 検証
     assert result == [
         Target(
-            path=PurePosixPath("docs/rule/a.yaml"), schema="schemas/rule.schema.yaml", checks=False
+            path=PurePosixPath("docs/rule/a.yaml"),
+            schema="schemas/rule.schema.yaml",
+            checks=False,
+            lints=True,
         )
     ]
 
@@ -386,7 +396,10 @@ def test_check_target(repo_factory: RepoFactory, fake_maid_factory: FakeMaidFact
     root = repo_factory({"docs/rule/rule-c.yaml": _BROKEN_BOTH})
     validator = build_validators(root, ["schemas/rule.schema.yaml"])["schemas/rule.schema.yaml"]
     target = Target(
-        path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=True
+        path=PurePosixPath("docs/rule/rule-c.yaml"),
+        schema="schemas/rule.schema.yaml",
+        checks=True,
+        lints=True,
     )
     # 実行
     result = check_target(target, _BROKEN_BOTH, validator, root, fake_maid_factory(), {}, {})
@@ -405,7 +418,10 @@ def test_check_target_when_no_checks(repo_factory: RepoFactory) -> None:
     root = repo_factory({})
     validator = build_validators(root, ["schemas/rule.schema.yaml"])["schemas/rule.schema.yaml"]
     target = Target(
-        path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=False
+        path=PurePosixPath("docs/rule/rule-c.yaml"),
+        schema="schemas/rule.schema.yaml",
+        checks=False,
+        lints=True,
     )
     # 実行
     result = check_target(target, text, validator, root, "maid", {}, {})
@@ -418,7 +434,10 @@ def test_check_target_when_unreadable(repo_factory: RepoFactory) -> None:
     # 準備
     root = repo_factory({})
     target = Target(
-        path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=True
+        path=PurePosixPath("docs/rule/rule-c.yaml"),
+        schema="schemas/rule.schema.yaml",
+        checks=True,
+        lints=True,
     )
     # 実行
     result = check_target(target, None, "スキーマが無い", root, "maid", {}, {})
@@ -432,7 +451,10 @@ def test_check_target_when_broken(repo_factory: RepoFactory) -> None:
     root = repo_factory({})
     validator = build_validators(root, ["schemas/rule.schema.yaml"])["schemas/rule.schema.yaml"]
     target = Target(
-        path=PurePosixPath("docs/rule/rule-c.yaml"), schema="schemas/rule.schema.yaml", checks=True
+        path=PurePosixPath("docs/rule/rule-c.yaml"),
+        schema="schemas/rule.schema.yaml",
+        checks=True,
+        lints=True,
     )
     # 実行
     result = check_target(
@@ -653,7 +675,7 @@ def test_check_lints(
     lint_dir.mkdir()
     (lint_dir / ".yamllint.yaml").write_text(_YAMLLINT_CONFIG, encoding="utf-8")
     (lint_dir / ".yamllint-schemas.yaml").write_text(_YAMLLINT_SCHEMAS_CONFIG, encoding="utf-8")
-    target = Target(PurePosixPath("docs/rule/rule-a.yaml"), "schemas/rule.schema.yaml", True)
+    target = Target(PurePosixPath("docs/rule/rule-a.yaml"), "schemas/rule.schema.yaml", True, True)
     texts = {root / "docs/rule/rule-a.yaml": doc}
     monkeypatch.setattr(
         check_all,
@@ -661,7 +683,7 @@ def test_check_lints(
         _first_source_md036,
     )
     # 実行
-    result = check_lints(root, [target], texts, lint_dir, _CLIS)
+    result = check_lints(root, [target], texts, lint_dir, _CLIS, frozenset())
     # 検証
     assert [(str(f.path), f.tool, f.rule) for f in result] == [
         ("docs/rule/rule-a.yaml", "markdownlint", "MD036"),
@@ -706,11 +728,11 @@ def test_check_lints_when_schemas_use_flow_style(
         }
     )
     lint_dir = _schema_lint_dir(tmp_path)
-    target = Target(PurePosixPath("docs/rule/rule-a.yaml"), "schemas/rule.schema.yaml", True)
+    target = Target(PurePosixPath("docs/rule/rule-a.yaml"), "schemas/rule.schema.yaml", True, True)
     texts = {root / "docs/rule/rule-a.yaml": _FLOW_DOC}
     monkeypatch.setattr(check_all, "run_markdown_lints", _no_lints)
     # 実行
-    result = check_lints(root, [target], texts, lint_dir, _CLIS)
+    result = check_lints(root, [target], texts, lint_dir, _CLIS, frozenset())
     # 検証
     assert [(str(f.path), f.line, f.tool, f.rule) for f in result] == [
         ("schemas/design/common.schema.yaml", 1, "yamllint", "braces"),
@@ -730,7 +752,7 @@ def test_check_lints_when_schema_unreadable(
     lint_dir = _schema_lint_dir(tmp_path)
     monkeypatch.setattr(check_all, "run_markdown_lints", _no_lints)
     # 実行
-    result = check_lints(root, [], {}, lint_dir, _CLIS)
+    result = check_lints(root, [], {}, lint_dir, _CLIS, frozenset())
     # 検証
     assert [(str(f.path), f.tool, f.rule) for f in result] == [
         ("schemas/rule.schema.yaml", "yamllint", "brackets"),
@@ -1052,7 +1074,7 @@ def test_check_document_schemas(repo_factory: RepoFactory) -> None:
         {"schemas/template.schema.yaml": "title: テンプレート\nx-rules:\n  - 1 文の決まり。\n"}
     )
     # 実行
-    result = check_all.check_document_schemas(root, _meta())
+    result = check_all.check_document_schemas(root, _meta(), frozenset())
     # 検証
     assert result == []
 
@@ -1062,7 +1084,7 @@ def test_check_document_schemas_when_invalid(repo_factory: RepoFactory) -> None:
     # 準備
     root = repo_factory({"schemas/rule.schema.yaml": "title: 規約\nx-rules: 文字列\n"})
     # 実行
-    result = check_all.check_document_schemas(root, _meta())
+    result = check_all.check_document_schemas(root, _meta(), frozenset())
     # 検証
     assert len(result) == 1
     assert result[0][:3] == ("schemas/rule.schema.yaml", 2, "x-rules")
@@ -1074,7 +1096,7 @@ def test_check_document_schemas_when_broken(repo_factory: RepoFactory) -> None:
     # 準備
     root = repo_factory({"schemas/rule.schema.yaml": "title: [\n"})
     # 実行
-    result = check_all.check_document_schemas(root, _meta())
+    result = check_all.check_document_schemas(root, _meta(), frozenset())
     # 検証
     assert len(result) == 1
     assert result[0][2] == "$"
@@ -1131,3 +1153,174 @@ def test_main_when_meta_schema_unusable(
     # 検証
     assert code == 2
     assert "schemas/meta.schema.yaml" in capsys.readouterr().err
+
+
+# x-kind と、メタスキーマに合わない文字列の x-rules を持つ AI Monitor の配布物のスキーマ
+_DISTRIBUTED_SCENARIO = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: シナリオ\n"
+    "x-kind: scenario\n"
+    "x-rules: 文字列\n"
+    "type: object\n"
+    "required: [id, title]\n"
+)
+
+# 配布物のスキーマに合う設計書
+_SCENARIO_DOC = "id: SC-1-1\ntitle: シナリオ\n"
+
+# 規約の文書と、配布物のスキーマを指す設計書の行を持つ dev-docs.yaml
+_DEV_DOCS_WITH_DESIGN = (
+    'version: "3"\n'
+    "name: knowledge\n"
+    "documents:\n"
+    "  - id: rule\n"
+    "    paths:\n"
+    "      - docs/rule/*.yaml\n"
+    "    schema: schemas/rule.schema.yaml\n"
+    "    validators:\n"
+    "      - knowledge-checks\n"
+    "  - id: scenario\n"
+    "    paths:\n"
+    "      - docs/scenario/*.yaml\n"
+    "    schema: schemas/scenario.schema.yaml\n"
+)
+
+
+def test_find_distributed_schemas(repo_factory: RepoFactory) -> None:
+    """x-kind と名前で見分ける（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/scenario.schema.yaml": "title: シナリオ\nx-kind: scenario\n",
+            "schemas/index.schema.yaml": "title: 目次\nx-kind: index\n",
+            "schemas/common.schema.yaml": "title: 共通\n",
+            "schemas/files.schema.yaml": "title: 管理用の YAML\n",
+        }
+    )
+    # 実行
+    result = check_all.find_distributed_schemas(root)
+    # 検証
+    assert result == frozenset(
+        {
+            "common.schema.yaml",
+            "files.schema.yaml",
+            "index.schema.yaml",
+            "scenario.schema.yaml",
+        }
+    )
+
+
+def test_find_distributed_schemas_when_broken(tmp_path: Path) -> None:
+    """読めないスキーマ（正常系）。"""
+    # 準備
+    (tmp_path / "schemas").mkdir()
+    (tmp_path / "schemas" / "rule.schema.yaml").write_text("title: [\n", encoding="utf-8")
+    # 実行
+    result = check_all.find_distributed_schemas(tmp_path)
+    # 検証
+    assert result == frozenset()
+
+
+def test_list_targets_when_distributed(tmp_path: Path) -> None:
+    """配布物のスキーマの行（正常系）。"""
+    # 準備
+    (tmp_path / "docs" / "scenario").mkdir(parents=True)
+    (tmp_path / "docs" / "scenario" / "SC-1-1.yaml").write_text(_SCENARIO_DOC, encoding="utf-8")
+    rows = [
+        {
+            "id": "scenario",
+            "paths": ["docs/scenario/*.yaml"],
+            "schema": "schemas/scenario.schema.yaml",
+        }
+    ]
+    # 実行
+    result = list_targets(tmp_path, rows, frozenset({"scenario.schema.yaml"}))
+    # 検証
+    assert result == [
+        Target(
+            path=PurePosixPath("docs/scenario/SC-1-1.yaml"),
+            schema="schemas/scenario.schema.yaml",
+            checks=False,
+            lints=False,
+        )
+    ]
+
+
+def test_check_document_schemas_when_distributed(repo_factory: RepoFactory) -> None:
+    """配布物のスキーマを検査しない（正常系）。"""
+    # 準備
+    root = repo_factory({"schemas/scenario.schema.yaml": _DISTRIBUTED_SCENARIO})
+    # 実行
+    result = check_all.check_document_schemas(root, _meta(), frozenset({"scenario.schema.yaml"}))
+    # 検証
+    assert result == []
+
+
+def test_check_lints_when_ai_monitor_schemas(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, repo_factory: RepoFactory
+) -> None:
+    """配布物のスキーマと設計書に当てない（正常系）。"""
+    # 準備
+    doc = (
+        "id: SC-1-1\n"
+        "title: シナリオ\n"
+        "tags: [{name: scope:規約}]\n"
+        "items:\n"
+        "  - body: A です。B です。\n"
+    )
+    root = repo_factory(
+        {
+            "docs/scenario/SC-1-1.yaml": doc,
+            "schemas/scenario.schema.yaml": "type: object\nrequired: [id, title]\n",
+        }
+    )
+    lint_dir = _schema_lint_dir(tmp_path)
+    target = Target(
+        PurePosixPath("docs/scenario/SC-1-1.yaml"), "schemas/scenario.schema.yaml", False, False
+    )
+    texts = {root / "docs/scenario/SC-1-1.yaml": doc}
+    received: list[list[LintSource]] = []
+
+    def _record(sources: list[LintSource], *_args: object) -> list[LintFinding]:
+        received.append(list(sources))
+        return []
+
+    monkeypatch.setattr(check_all, "run_markdown_lints", _record)
+    # 実行
+    result = check_lints(
+        root, [target], texts, lint_dir, _CLIS, frozenset({"scenario.schema.yaml"})
+    )
+    # 検証
+    assert result == []
+    assert [source.path for sources in received for source in sources] == []
+
+
+def test_main_when_ai_monitor_schemas(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    repo_factory: RepoFactory,
+    fake_maid_factory: FakeMaidFactory,
+) -> None:
+    """AI Monitor の配布物のスキーマと設計書（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "dev-docs.yaml": _DEV_DOCS_WITH_DESIGN,
+            "docs/rule/rule-a.yaml": _VALID_A,
+            "docs/rule/rule-b.yaml": _VALID_B,
+            "docs/scenario/SC-1-1.yaml": _SCENARIO_DOC,
+            "schemas/scenario.schema.yaml": _DISTRIBUTED_SCENARIO,
+        }
+    )
+    monkeypatch.chdir(root)
+    maid = fake_maid_factory()
+    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
+    monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+    monkeypatch.setattr(check_all, "check_lints", _no_lints)
+    # 実行
+    code = check_all.main([])
+    # 検証
+    out = capsys.readouterr().out
+    assert code == 0
+    assert "schemas/scenario.schema.yaml" not in out
+    assert out.splitlines()[-1] == "3 件の文書を検査し、違反は 0 件、警告は 0 件でした"

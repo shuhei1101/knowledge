@@ -92,6 +92,9 @@ YAMLLINT_EXTRA = ("dev-docs.yaml", "rules.yaml")
 # 設計書のスキーマ（knowledge の正本）を置くフォルダ
 DESIGN_SCHEMAS_DIR = PurePosixPath("schemas/design")
 
+# schemas/ の直下の AI Monitor の配布物のスキーマのうち、x-kind を持たないもの
+DISTRIBUTED_SCHEMA_NAMES = ("common.schema.yaml", "files.schema.yaml")
+
 # JSON Schema 2020-12 のメタスキーマに x-rules・x-bad-examples の形を足したメタスキーマ
 META_SCHEMA_PATH = PurePosixPath("schemas/meta.schema.yaml")
 
@@ -137,6 +140,8 @@ class Target:
     schema: str
     # 行の validators に knowledge-checks を持つか
     checks: bool
+    # 行の schema が AI Monitor の配布物のスキーマでないか（偽の設計書には lint を当てない）
+    lints: bool
 
 
 def _use_utf8(stream: object) -> None:
@@ -179,7 +184,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(error.message, file=sys.stderr)
             return _EXIT_NOT_STARTED
 
-        targets = list_targets(root, rows)
+        # AI Monitor の配布物のスキーマは、設計書の検証を AI Monitor が受け持つので検査から外す
+        distributed = find_distributed_schemas(root)
+        targets = list_targets(root, rows, distributed)
         texts = read_texts([root / target.path for target in targets])
         validators = build_validators(root, dict.fromkeys(target.schema for target in targets))
         # ID の索引と名前の索引は全ての文書で 1 度だけ作る
@@ -197,7 +204,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         # スキーマが自身の検査を通るかと、対応表のコピーと設計書のテンプレートが正本と一致するか
         for file_path, line, path, message in (
             *check_design_schemas(root, meta),
-            *check_document_schemas(root, meta),
+            *check_document_schemas(root, meta, distributed),
             *check_word_list_copy(root),
             *check_design_templates(root),
         ):
@@ -205,7 +212,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             count += 1
         # lint の違反は失敗させるルールだけを数え、警告にしたルールは警告として数える
         try:
-            findings = check_lints(root, targets, texts, lint_dir, clis)
+            findings = check_lints(root, targets, texts, lint_dir, clis, distributed)
         except LintOutputError as error:
             print(error.message, file=sys.stderr)
             return _EXIT_VIOLATIONS
@@ -233,7 +240,9 @@ def _print_lints(findings: Sequence[LintFinding]) -> int:
     return warnings
 
 
-def list_targets(root: Path, rows: Sequence[Mapping[str, Any]]) -> list[Target]:
+def list_targets(
+    root: Path, rows: Sequence[Mapping[str, Any]], distributed: frozenset[str]
+) -> list[Target]:
     """documents[] の行の paths・exclude に当たるファイルを、当てる検査と並べて返す。"""
     # 同じファイルは最初に当たった行で 1 件にする
     targets: dict[PurePosixPath, Target] = {}
@@ -243,8 +252,11 @@ def list_targets(root: Path, rows: Sequence[Mapping[str, Any]]) -> list[Target]:
         if row.get("enabled") is False or not isinstance(schema, str) or not schema:
             continue
         checks = CHECKS_ID in strings(row.get("validators"))
+        lints = PurePosixPath(schema).name not in distributed
         for relative in list_row_files(root, row):
-            targets.setdefault(relative, Target(path=relative, schema=schema, checks=checks))
+            targets.setdefault(
+                relative, Target(path=relative, schema=schema, checks=checks, lints=lints)
+            )
     return sorted(targets.values(), key=lambda target: target.path)
 
 
@@ -252,7 +264,8 @@ def build_validators(
     root: Path, schema_paths: Iterable[str]
 ) -> dict[str, Draft202012Validator | str]:
     """schemas/*.schema.yaml を互いの $ref で引けるようにした、スキーマのパス → 検査器を作る。"""
-    # ファイル名を URI にして登録する（common.schema.yaml#/$defs/... の $ref を解く）
+    # ファイル名を URI にして登録する（knowledge-common.schema.yaml#/$defs/... と、配布物の
+    # common.schema.yaml#/$defs/... の $ref を解く）
     resources: list[tuple[str, Resource[Any]]] = []
     for path in sorted(root.glob(_SCHEMAS_GLOB)):
         try:
@@ -333,14 +346,15 @@ def check_lints(
     texts: Mapping[Path, str | None],
     lint_dir: Path,
     clis: Mapping[str, str],
+    distributed: frozenset[str],
 ) -> list[LintFinding]:
-    """全ての文書の Markdown に markdownlint-cli2・textlint、YAML のファイルに yamllint を当てる。"""
+    """設計書を除く文書の Markdown に markdownlint-cli2・textlint、YAML のファイルに yamllint を当てる。"""
     sources: list[LintSource] = []
     yaml_files: list[tuple[PurePosixPath, str]] = []
     for target in targets:
         text = texts.get(root / target.path)
-        # 読めなかった文書の違反は文書 1 件の検査が出す
-        if text is None:
+        # 読めなかった文書の違反は文書 1 件の検査が出す。設計書の検証は AI Monitor が受け持つ
+        if text is None or not target.lints:
             continue
         sources.extend(collect_sources(target.path, text))
         if target.path.suffix in _YAML_SUFFIXES:
@@ -357,14 +371,15 @@ def check_lints(
         findings.extend(run_yamllint(path, text, config))
     # schemas/ のスキーマには、フロー形式を違反にする設定だけを当てる
     schemas_config = load_yamllint_config(lint_dir, YAMLLINT_SCHEMAS_CONFIG)
-    for path, text in _read_schema_texts(root):
+    for path, text in _read_schema_texts(root, distributed):
         findings.extend(run_yamllint(path, text, schemas_config))
     return sorted(findings, key=lambda finding: (str(finding.path), finding.line))
 
 
-def _read_schema_texts(root: Path) -> list[tuple[PurePosixPath, str]]:
-    """schemas/ の直下と schemas/design/ のスキーマを、パスの順に読む。"""
-    paths = sorted([*root.glob(_SCHEMAS_GLOB), *(root / DESIGN_SCHEMAS_DIR).glob("*.schema.yaml")])
+def _read_schema_texts(root: Path, distributed: frozenset[str]) -> list[tuple[PurePosixPath, str]]:
+    """配布物を除く schemas/ の直下と schemas/design/ のスキーマを、パスの順に読む。"""
+    own = [path for path in root.glob(_SCHEMAS_GLOB) if path.name not in distributed]
+    paths = sorted([*own, *(root / DESIGN_SCHEMAS_DIR).glob("*.schema.yaml")])
     texts: list[tuple[PurePosixPath, str]] = []
     for path in paths:
         try:
@@ -391,16 +406,34 @@ def load_meta_validator(root: Path) -> Draft202012Validator:
 
 
 def check_document_schemas(
-    root: Path, meta: Draft202012Validator
+    root: Path, meta: Draft202012Validator, distributed: frozenset[str]
 ) -> list[tuple[str, int, str, str]]:
-    """schemas/*.schema.yaml に、拡張したメタスキーマの検査を当てる。"""
+    """配布物を除く schemas/*.schema.yaml に、拡張したメタスキーマの検査を当てる。"""
     docs, results = _read_schemas(root, PurePosixPath("schemas"))
     for name, doc in docs.items():
+        if name in distributed:
+            continue
         relative = str(PurePosixPath("schemas") / name)
         results.extend(
             (relative, line, path, message) for line, path, message in _check_meta(doc, meta)
         )
     return sorted(results, key=lambda result: (result[0], result[1]))
+
+
+def find_distributed_schemas(root: Path) -> frozenset[str]:
+    """schemas/ の直下の AI Monitor の配布物のスキーマのファイル名を返す。"""
+    names: set[str] = set()
+    for path in sorted(root.glob(_SCHEMAS_GLOB)):
+        try:
+            contents = as_mapping(load_safe(path.read_text(encoding="utf-8")))
+        except OSError, UnicodeDecodeError, YAMLError:
+            # 読めないスキーマは配布物に入れず、文書の種類のスキーマの検査が誤りを出す
+            continue
+        if contents is None:
+            continue
+        if "x-kind" in contents or path.name in DISTRIBUTED_SCHEMA_NAMES:
+            names.add(path.name)
+    return frozenset(names)
 
 
 def _read_schemas(

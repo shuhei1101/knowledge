@@ -1,0 +1,7 @@
+# afd4254 の worktree のコピー（dev/ を除く）の schemas/ に ai-monitor の develop（af7258c2d）の schemas/*.schema.yaml・schemas/conversions/ を重ねて検証した
+# knowledge の schemas/common.schema.yaml・files.schema.yaml は ai-monitor のコピーで上書きされるため、コピーは commit していない（要件.md の 未確定）
+$ PYTHONPATH=src uv run --frozen python -m ai_monitor.design_docs validate --root /tmp/k237-verify
+exit=0
+$ PYTHONPATH=src uv run --frozen python -m ai_monitor.design_docs generate --root /tmp/k237-verify
+生成: 41
+exit=0

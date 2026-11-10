@@ -73,7 +73,7 @@ RULE_SCHEMA = textwrap.dedent(
     $schema: https://json-schema.org/draft/2020-12/schema
     title: 規約
     allOf:
-      - $ref: common.schema.yaml#/$defs/metadata
+      - $ref: knowledge-common.schema.yaml#/$defs/metadata
     properties:
       kind:
         const: rule
@@ -144,7 +144,9 @@ def repo_factory(tmp_path: Path) -> RepoFactory:
         root = tmp_path / "repo"
         (root / "schemas").mkdir(parents=True)
         (root / "docs").mkdir()
-        (root / "schemas" / "common.schema.yaml").write_text(COMMON_SCHEMA, encoding="utf-8")
+        (root / "schemas" / "knowledge-common.schema.yaml").write_text(
+            COMMON_SCHEMA, encoding="utf-8"
+        )
         (root / "schemas" / "rule.schema.yaml").write_text(RULE_SCHEMA, encoding="utf-8")
         (root / "schemas" / "meta.schema.yaml").write_text(META_SCHEMA, encoding="utf-8")
         (root / "dev-docs.yaml").write_text(DEV_DOCS_YAML, encoding="utf-8")

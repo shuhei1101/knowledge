@@ -1,0 +1,316 @@
+id: "IF-148-1"
+visibility: internal
+title: "書き込んだ中身の照合"
+entry:
+  kind: operation
+  value: 'プラグイン slop-check の `hooks/hooks.json` の `PostToolUse` に登録したコマンド（Claude Code が書き込むツールの実行の後に子プロセスとして起動する。境界は標準入出力と終了コード）'
+flows:
+  - name: 正常系
+    summary: Write の中身にヒットした単語の行だけの表を持つ通知の文を返す
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 対応表
+        description: '`直す`（`ok: [修正]`）・`形`（`ok: [スキーマ, 構造]`・`note: 形状の意味なら「形状」`）・`版`（`ok: [バージョン]`）の 3 行を、この並びで持つ対応表のコピー'
+      - name: 標準入力
+        description: '`tool_name` が `Write`、`tool_input.content` が対応表の単語を 2 つと同じ単語の 2 回目を含む文'
+        notes: '`tool_input.content` に「この形で直す。もう一度直す。」'
+    flow: |-
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        participant L as 対応表のコピー
+        C->>H: 標準入力に PostToolUse の入力
+        H->>L: 対応表を読む
+        L-->>H: 対応表の行
+        H->>H: tool_input.content を各行で照合する
+        H-->>C: 終了コード 0 と additionalContext に通知の文
+    expected:
+      - 終了コードが 0
+      - '標準出力の JSON の `hookSpecificOutput.hookEventName` が `PostToolUse`'
+      - '`hookSpecificOutput.additionalContext` の表が `| 直す | 修正 |`・`| 形 | スキーマ・構造（形状の意味なら「形状」） |` の 2 行で、この順に並ぶ'
+      - '標準出力の JSON に `decision` が無い'
+    test: test_normal
+  - name: 正常系（対応表の単語を含まない）
+    summary: ヒットが無いか、ヒットが全て allow に当たれば何も出力しない
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 対応表
+        description: '`当てる`（`allow: [割り当て]`）と、`pattern` が `(?<![㐀-鿿々])形(?![㐀-鿿々])` の `形` の 2 行を持つ対応表のコピー'
+      - name: 標準入力
+        description: '`tool_name` が `Write` で、`allow` に当たる複合語と前後に漢字が続く漢字 1 文字だけを含む文'
+        notes: '`tool_input.content` に「設定を割り当てる。形式と円形を確認する。」'
+    flow: |-
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        participant L as 対応表のコピー
+        C->>H: 標準入力に PostToolUse の入力
+        H->>L: 対応表を読む
+        L-->>H: 対応表の行
+        H->>H: 照合し、allow に当たるヒットを除く
+        H-->>C: 終了コード 0 と出力なし
+    expected:
+      - 終了コードが 0
+      - 標準出力が空
+    test: test_normal_when_no_word_hits
+  - name: 正常系（Edit）
+    summary: Edit は修正後のファイル全体を照合し、前からある単語も通知する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 書き込んだファイル
+        description: 「新しい版を出す。」と「設定を修正する。」の行を持つ一時ファイル
+      - name: 標準入力
+        description: '`tool_name` が `Edit`、`tool_input.file_path` が書き込んだファイル、`tool_input.new_string` が「設定を修正する。」'
+    flow: |-
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        participant F as 書き込んだファイル
+        C->>H: 標準入力に PostToolUse の入力
+        H->>F: ファイル全体を読む
+        F-->>H: 修正後の内容
+        H->>H: ファイル全体を各行で照合する
+        H-->>C: 終了コード 0 と additionalContext に通知の文
+    expected:
+      - 終了コードが 0
+      - '`hookSpecificOutput.additionalContext` の表が `| 版 | バージョン |` の 1 行'
+    test: test_normal_when_edit
+  - name: 正常系（Edit でファイルが読めない）
+    summary: 修正後のファイルが読めなければ new_string を照合する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '`tool_name` が `Edit`、`tool_input.file_path` が存在しないパス、`tool_input.new_string` が「設定を直す。」'
+    flow: |-
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        participant F as 書き込んだファイル
+        C->>H: 標準入力に PostToolUse の入力
+        H->>F: ファイル全体を読む
+        F-->>H: ファイルが無い
+        H->>H: tool_input.new_string を各行で照合する
+        H-->>C: 終了コード 0 と additionalContext に通知の文
+    expected:
+      - 終了コードが 0
+      - '`hookSpecificOutput.additionalContext` の表が `| 直す | 修正 |` の 1 行'
+    test: test_normal_when_edited_file_unreadable
+  - name: 正常系（NotebookEdit）
+    summary: NotebookEdit はセルの新しい中身を照合する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '`tool_name` が `NotebookEdit`、`tool_input.new_source` が「# 版を出す」'
+    flow: |-
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        C->>H: 標準入力に PostToolUse の入力
+        H->>H: tool_input.new_source を各行で照合する
+        H-->>C: 終了コード 0 と additionalContext に通知の文
+    expected:
+      - 終了コードが 0
+      - '`hookSpecificOutput.additionalContext` の表が `| 版 | バージョン |` の 1 行'
+    test: test_normal_when_notebook_edit
+  - name: 正常系（MCP ツール）
+    summary: 対象の MCP ツールは、識別子のキーを除いた全ての文字列の値を照合する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '`tool_name` が `mcp__plugin_dev-docs_dev-docs__write_docs`。`tool_input.operations[0].set.body` が「設定を足す。」、`tool_input.operations[0].id` が「直す」'
+        notes: 除くキーの値に対応表の単語を入れ、通知に出ないことを確かめる
+    flow: |-
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        C->>H: 標準入力に PostToolUse の入力
+        H->>H: 識別子のキーを除いた文字列の値を集めて照合する
+        H-->>C: 終了コード 0 と additionalContext に通知の文
+    expected:
+      - 終了コードが 0
+      - '`hookSpecificOutput.additionalContext` の表が `| 足す | 追加 |` の 1 行'
+    test: test_normal_when_mcp_tool
+  - name: 正常系（対象外のツール）
+    summary: 対象の一覧に無いツールは照合せずに何も出力しない
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '`tool_name` が `mcp__plugin_dev-docs_dev-docs__search_docs`、`tool_input.term` が「直す」'
+    flow: |-
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        C->>H: 標準入力に PostToolUse の入力
+        H->>H: tool_name が対象の一覧に無い
+        H-->>C: 終了コード 0 と出力なし
+    expected:
+      - 終了コードが 0
+      - 標準出力が空
+    test: test_normal_when_tool_not_target
+  - name: 正常系（対応表を書き込む）
+    summary: 対応表の正本とコピーへの書き込みは照合せずに何も出力しない
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '`tool_name` が `Write`、`tool_input.file_path` が `docs/word-list/word-list-ai-slop.yaml` で終わるパス、`tool_input.content` が「ng: 直す」'
+    flow: |-
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        C->>H: 標準入力に PostToolUse の入力
+        H->>H: 書き込む先が対応表
+        H-->>C: 終了コード 0 と出力なし
+    expected:
+      - 終了コードが 0
+      - 標準出力が空
+    test: test_normal_when_writing_word_list
+  - name: 異常系（対応表が読めない・終了コード 0）
+    summary: 対応表のコピーが無いか JSON として読めなければ、何も出力せずに理由を標準エラーへ出す
+    setup:
+      - name: Mock
+        description: 対応表のコピーのパスを、存在しないパスに差し替える
+      - name: 標準入力
+        description: '`tool_name` が `Write`、`tool_input.content` が「設定を直す。」'
+    flow: |-
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        participant L as 対応表のコピー
+        C->>H: 標準入力に PostToolUse の入力
+        H->>L: 対応表を読む
+        L-->>H: ファイルが無い
+        H-->>C: 終了コード 0 と標準エラーの理由
+    expected:
+      - 終了コードが 0
+      - 標準出力が空
+      - 標準エラーに、読めなかった対応表のコピーのパスが出る
+    test: test_error_when_word_list_missing
+  - name: 異常系（入力が読めない・終了コード 0）
+    summary: 標準入力が JSON として読めなければ、何も出力せずに理由を標準エラーへ出す
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: JSON として読めない文字列
+        notes: '`{"tool_name": "Write"'
+    flow: |-
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        C->>H: 標準入力に壊れた JSON
+        H->>H: JSON として読めない
+        H-->>C: 終了コード 0 と標準エラーの理由
+    expected:
+      - 終了コードが 0
+      - 標準出力が空
+      - 標準エラーに、入力が JSON として読めないことが出る
+    test: test_error_when_input_invalid
+lead: 書き込むツールの実行の後に、Claude Code から受け取った PostToolUse の入力から書き込んだ中身を取り出して対応表で照合し、ヒットした単語があれば NG と OK の表を持つ通知の文を `additionalContext` で返す。書き込みは止めない。
+identifier: slop-check
+idempotent: true
+side_effects: なし（ファイルを書き換えない）
+callers:
+  - SC-148-1#scenarios[正常シナリオ]
+  - SC-148-1#scenarios[正常シナリオ（対応表の単語を含まない）]
+  - SC-148-1#scenarios[正常シナリオ（Edit で前からある単語）]
+  - SC-148-1#scenarios[正常シナリオ（MCP ツールで書き込む）]
+  - SC-148-1#scenarios[異常シナリオ（対応表が読めない）]
+exclusivity: 制限なし（読むだけで、同時に起動されても結果は変わらない）
+request:
+  - name: stdin
+    type: dict
+    required: true
+    location: body
+    description: Claude Code の PostToolUse の入力の JSON
+    notes: 標準入力で受け取る
+  - name: stdin.tool_name
+    type: str
+    required: true
+    location: body
+    description: 実行したツールの名前。対象のツールかを、制約の「対象のツール」で判定する
+  - name: stdin.tool_input
+    type: dict
+    required: true
+    location: body
+    description: ツールに渡した引数。書き込んだ中身を制約の「取り出す中身」で取り出す
+  - name: stdin.tool_input.content
+    type: str
+    required: false
+    location: body
+    description: Write の書き込んだ中身
+  - name: stdin.tool_input.file_path
+    type: str
+    required: false
+    location: body
+    description: Edit で修正したファイルの絶対パス
+  - name: stdin.tool_input.new_string
+    type: str
+    required: false
+    location: body
+    description: Edit の置き換え後の文字列。修正後のファイルが読めないときに照合する
+  - name: stdin.tool_input.new_source
+    type: str
+    required: false
+    location: body
+    description: NotebookEdit のセルの新しい中身
+  - name: CLAUDE_PLUGIN_ROOT
+    type: Path
+    required: true
+    location: argument
+    description: プラグイン slop-check のフォルダ。対応表のコピー `hooks/post-tool-use/word-list-ai-slop.json` をここから読む
+    notes: 環境変数で受け取る
+response:
+  - name: stdout
+    type: dict
+    description: ヒットした単語があるときだけ出す JSON。ヒットが無いとき・異常のときは何も出さない
+  - name: stdout.hookSpecificOutput.hookEventName
+    type: Literal["PostToolUse"]
+    description: フックの種類
+  - name: stdout.hookSpecificOutput.additionalContext
+    type: str
+    description: 通知の文。要件の要望 3 の文のとおりで、表にはヒットした行だけを対応表の並びの順に 1 行ずつ出す。OK は「・」でつなぎ、`note` があれば OK の後ろに括弧で添える
+  - name: stderr
+    type: str
+    description: 対応表・入力が読めないときの理由（1 行）
+  - name: exit_code
+    type: Literal[0]
+    description: 常に 0。書き込みの結果を変えない
+response_example: |-
+  ```json
+  {"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": "AI がよく使う単語（AI slop）が入っています。OK の単語に置き換えてください。\n…\n| NG | OK |\n| --- | --- |\n| 直す | 修正 |\n…"}}
+  ```
+response_notes: '`decision` と `reason` は返さない。Claude Code は終了コード 0 の標準出力の JSON の `additionalContext` を、ツールの結果に続けてエージェントのコンテキストへ入れる'
+exceptions:
+  - name: なし（正常終了）
+    condition: 照合を終えた。ヒットの有無に依らず終了コード 0
+  - name: 対応表が読めない（終了コード 0）
+    condition: 対応表のコピーが無いか JSON として読めない。何も出力せず、標準エラーに理由を出す
+  - name: 入力が読めない（終了コード 0）
+    condition: 標準入力が JSON として読めないか、`tool_name`・`tool_input` が無い。何も出力せず、標準エラーに理由を出す
+constraints:
+  - item: 対象のツール
+    constraint: '`Write`・`Edit`・`NotebookEdit` と、`mcp__` で始まり最後の `__` の後ろが次のツール名の MCP ツール。dev-docs の `write_docs`。ai-monitor の `comment`・`reply_comment`・`reply_review_thread`・`create_review_comment`・`create_file_comment`・`create_issue`・`create_draft_pr`・`update_body`・`update_title`・`add_notice_row`・`notify`・`create_defect_issue`・`create_monitor_rule_issue`・`create_plugin_rule_issue`。MindStella の `add`・`batch`・`update`・`reply`・`new_thread`・`edit_option`・`update_thread`'
+    notes: MCP ツールはサーバーの部分（`mcp__` と最後の `__` の間）に `dev-docs`・`ai-monitor`・`mindstella` を含むかも合わせて見る。`hooks.json` の `matcher` は `Write|Edit|NotebookEdit|mcp__.*` にし、MCP ツールの対象の判定はフックだけが持つ
+  - item: 照合しない書き込む先
+    constraint: '対応表の正本とコピーへの書き込みは照合しない。Write・Edit・NotebookEdit は `file_path`（NotebookEdit は `notebook_path`）が `docs/word-list/` の下の `.yaml` か `hooks/post-tool-use/word-list-` で始まる `.json` のとき。`write_docs` は `operations[]` の全ての `id` が `word-list-` で始まるか、`kind` が `word-list` のとき'
+    notes: NG の単語を例文に持つ設計書は除かず、通知の文の但し書きに任せる
+  - item: 取り出す中身
+    constraint: 'Write は `content`。Edit は `file_path` のファイル全体（読めなければ `new_string`）。NotebookEdit は `new_source`。MCP ツールは `tool_input` の中の全ての文字列の値を改行でつないだもの。ただし、キーが `id`・`ids`・`path`・`paths`・`file_path`・`url`・`source`・`kind`・`op`・`cwd`・`worktree`・`branch`・`sender`・`receiver`・`labels` か、`_id` で終わる値は除く'
+  - item: 照合
+    constraint: '対応表の各行を、`pattern` があればその正規表現（Python の `re`）、無ければ `ng` の文字列で中身に当てる。ヒットした位置を含む、`allow` のいずれかの文字列の出現があれば、そのヒットは除く。1 行が複数ヒットしても表には 1 行だけ出す'
+  - item: 対応表のコピー
+    constraint: '`${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-use/word-list-ai-slop.json`。`pattern` が正規表現として読めない行は、その行だけを飛ばして標準エラーに行の `id` を出す'
+    notes: コピーは「対応表のコピーの作成」が正本の YAML から作る
+  - item: 処理時間
+    constraint: 制限なし（`hooks.json` に `timeout` を置かず、Claude Code の既定の打ち切りに任せる。打ち切られても書き込みの結果は変わらない）
+  - item: 中身の大きさ
+    constraint: 制限なし
+test_file: tests/integration/slop-check/test_slop_check.py

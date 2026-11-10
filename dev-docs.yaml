@@ -6,6 +6,7 @@ instructions: |-
   規約（rule）・テンプレート（template）・判定フローチャート（flowchart）・判定表（decision-table）・チェックシート（checksheet）・使い方（guide）・変更履歴（changelog）・スキル（skill）・単語の対応表（word-list）は `docs/` の YAML が正本で、種類ごとの行に分かれる。
   本文は `items[]` の各項目が持ち、`[名前](id:{文書の ID}#{項目の ID})` で他の文書・項目を指す。`related[].when` がその文書を読むときを表す。
   `hooks/`・`skills/`・`scripts/` のファイルは、各フォルダの `files.yaml` が名前・概要文・タグを持つ。
+  設計書（`docs/` の `scenario`・`interface`・`module` などの種類のフォルダ）は AI Monitor の設計書で、書式は `schemas/{種類}.schema.yaml`（AI Monitor の配布物）が持ち、他の設計書は `{ID}#{項目のパス}` で指す。
   書き込みのときは knowledge-checks が、項目の ID の重複・参照先の実在・`aliases` の衝突・文書の中の `aliases` の重複・mermaid の文法を検査する。
 related:
   types: [references, requires, replaces, part_of, change_together, see_also, implements, tests]
@@ -108,22 +109,108 @@ documents:
     metadata:
       tags: tags[].name
       main_tags: tags[main].name
+  - id: architecture
+    title: アーキテクチャ図
+    alias_type: doc
+    paths: ["docs/architecture/*.yaml"]
+    exclude: [index.yaml]
+    schema: schemas/architecture.schema.yaml
+    metadata:
+      name: title
+      description: lead
+      visibility: visibility
+  - id: nonfunctional
+    title: 非機能要件
+    alias_type: doc
+    paths: ["docs/nonfunctional/*.yaml"]
+    exclude: [index.yaml]
+    schema: schemas/nonfunctional.schema.yaml
+    metadata:
+      name: title
+      description: lead
+      visibility: visibility
+  - id: scenario
+    title: シナリオ
+    alias_type: doc
+    paths: ["docs/scenario/*.yaml"]
+    exclude: [index.yaml]
+    schema: schemas/scenario.schema.yaml
+    metadata:
+      name: title
+      description: lead
+      visibility: visibility
+  - id: interface
+    title: インターフェース定義
+    alias_type: doc
+    paths: ["docs/interface/*.yaml"]
+    exclude: [index.yaml]
+    schema: schemas/interface.schema.yaml
+    metadata:
+      name: title
+      description: lead
+      visibility: visibility
+  - id: module
+    title: モジュール構成
+    alias_type: doc
+    paths: ["docs/module/*.yaml"]
+    exclude: [index.yaml]
+    schema: schemas/module.schema.yaml
+    metadata:
+      name: title
+      description: lead
+      visibility: visibility
+  - id: library
+    title: 外部ライブラリ
+    alias_type: doc
+    paths: ["docs/library/*.yaml"]
+    exclude: [index.yaml]
+    schema: schemas/library.schema.yaml
+    metadata:
+      name: title
+      description: lead
+      visibility: visibility
+  - id: test_procedure
+    title: テスト実行方法
+    alias_type: doc
+    paths: ["docs/test-procedure/*.yaml"]
+    exclude: [index.yaml]
+    schema: schemas/test-procedure.schema.yaml
+    metadata:
+      name: title
+      visibility: visibility
+  - id: dev_command
+    title: 開発コマンド
+    alias_type: doc
+    paths: ["docs/dev-command/*.yaml"]
+    exclude: [index.yaml]
+    schema: schemas/dev-command.schema.yaml
+    metadata:
+      name: title
+      visibility: visibility
+  - id: index
+    title: 目次
+    paths:
+      - docs/index.yaml
+      - "docs/*/index.yaml"
+    schema: schemas/index.schema.yaml
+    metadata:
+      description: summary
   - id: hooks
     title: フック
     paths: [hooks/files.yaml]
-    schema: schemas/files.schema.yaml
+    schema: schemas/knowledge-files.schema.yaml
     records: files
     body_file: path
   - id: skills
     title: スキルの本体
     paths: [skills/files.yaml]
-    schema: schemas/files.schema.yaml
+    schema: schemas/knowledge-files.schema.yaml
     records: files
     body_file: path
   - id: scripts
     title: 検査と変換のスクリプト
     paths: [scripts/files.yaml]
-    schema: schemas/files.schema.yaml
+    schema: schemas/knowledge-files.schema.yaml
     records: files
     body_file: path
 nav:
