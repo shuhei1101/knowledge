@@ -43,7 +43,7 @@ properties:
     title: タグ
     description: |-
       フェーズを検索で絞り込むタグ。`x-tag-registry` が指すタグの一覧に登録した名前だけを書ける。
-      先にタグの一覧のツール（`list_design_doc_tags`）で登録済みのタグを確かめる。
+      先にタグの一覧（`x-tag-registry` が指すファイル）で登録済みのタグを確かめる。
     uniqueItems: true
     items:
       type: string
@@ -58,7 +58,7 @@ properties:
       type: string
     examples:
     - - planner
-      - implementer
+      - reviewer
   steps:
     type: array
     title: 手順
@@ -116,7 +116,7 @@ examples:
   - 応答
   agents:
   - planner
-  - implementer
+  - reviewer
   steps:
   - name: コメントへの返信
     body: |-

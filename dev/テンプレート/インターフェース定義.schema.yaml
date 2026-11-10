@@ -367,6 +367,12 @@ properties:
           title: 関連
           items:
             $ref: 共通.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: 共通.schema.yaml#/$defs/decision
         notes:
           $ref: 共通.schema.yaml#/$defs/notes
   refs:
@@ -374,6 +380,12 @@ properties:
     title: 関連
     items:
       $ref: 共通.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    items:
+      $ref: 共通.schema.yaml#/$defs/decision
   notes:
     $ref: 共通.schema.yaml#/$defs/notes
     x-heading: 補足

@@ -47,7 +47,7 @@ properties:
     title: 要素一覧
     description: |-
       画面の要素 1 つ = 1 要素。ダイアログの中の要素も並べ、位置の先頭にダイアログ名を書く。
-      列の表示・非表示は開発ドキュメントサーバーのユーザーごとの設定で切り替える。
+      列の表示・非表示は dev-docs の画面の表の列の設定で切り替える。
     x-heading: 要素一覧
     x-shape: table
     x-key: name
@@ -289,6 +289,12 @@ properties:
           title: 関連
           items:
             $ref: 共通.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: 共通.schema.yaml#/$defs/decision
         reason:
           $ref: 共通.schema.yaml#/$defs/reason
         status:
@@ -343,6 +349,12 @@ properties:
     title: 関連
     items:
       $ref: 共通.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    items:
+      $ref: 共通.schema.yaml#/$defs/decision
   notes:
     $ref: 共通.schema.yaml#/$defs/notes
     x-heading: 補足

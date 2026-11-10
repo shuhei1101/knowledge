@@ -46,7 +46,7 @@ properties:
     type: array
     title: 対応疎通テストファイル
     description: |-
-      疎通テスト（`connectivity_tests`）を持つ関数の、外部疎通テストのファイル（`tests/external/` の下）。
+      疎通テスト（`connectivity_tests`）を持つ関数・メソッドの、外部疎通テストのファイル（`tests/external/` の下）。
       疎通テストのレビューを終えたときに planner が記入する（設計の時点では空でよい）。
     items:
       type: string
@@ -180,6 +180,12 @@ properties:
           title: 関連
           items:
             $ref: 共通.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: 共通.schema.yaml#/$defs/decision
         reason:
           $ref: 共通.schema.yaml#/$defs/reason
         status:
@@ -254,6 +260,12 @@ properties:
           title: 関連
           items:
             $ref: 共通.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: 共通.schema.yaml#/$defs/decision
         reason:
           $ref: 共通.schema.yaml#/$defs/reason
         status:
@@ -343,6 +355,12 @@ properties:
           title: 関連
           items:
             $ref: 共通.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: 共通.schema.yaml#/$defs/decision
         reason:
           $ref: 共通.schema.yaml#/$defs/reason
         status:
@@ -415,6 +433,12 @@ properties:
           title: 関連
           items:
             $ref: 共通.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: 共通.schema.yaml#/$defs/decision
         reason:
           $ref: 共通.schema.yaml#/$defs/reason
         status:
@@ -538,6 +562,12 @@ properties:
           title: 関連
           items:
             $ref: 共通.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: 共通.schema.yaml#/$defs/decision
         reason:
           $ref: 共通.schema.yaml#/$defs/reason
         status:
@@ -792,6 +822,12 @@ properties:
           title: 関連
           items:
             $ref: 共通.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: 共通.schema.yaml#/$defs/decision
         reason:
           $ref: 共通.schema.yaml#/$defs/reason
         status:
@@ -874,6 +910,12 @@ properties:
           title: 関連
           items:
             $ref: 共通.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: 共通.schema.yaml#/$defs/decision
         reason:
           $ref: 共通.schema.yaml#/$defs/reason
         status:
@@ -942,6 +984,12 @@ properties:
           title: 関連
           items:
             $ref: 共通.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: 共通.schema.yaml#/$defs/decision
         reason:
           $ref: 共通.schema.yaml#/$defs/reason
         status:
@@ -961,6 +1009,12 @@ properties:
     title: 関連
     items:
       $ref: 共通.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    items:
+      $ref: 共通.schema.yaml#/$defs/decision
   notes:
     $ref: 共通.schema.yaml#/$defs/notes
     x-heading: 補足
@@ -1176,6 +1230,12 @@ $defs:
         title: 関連
         items:
           $ref: 共通.schema.yaml#/$defs/ref
+      decisions:
+        type: array
+        title: 検討事項
+        description: 根拠になった話し合いの記録の検討事項の ID。
+        items:
+          $ref: 共通.schema.yaml#/$defs/decision
       reason:
         $ref: 共通.schema.yaml#/$defs/reason
       status:

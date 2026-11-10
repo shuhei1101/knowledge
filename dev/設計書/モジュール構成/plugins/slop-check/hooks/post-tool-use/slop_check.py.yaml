@@ -1,6 +1,8 @@
 id: "MOD-148-2"
 title: "slop-check / hooks / slop_check.py"
 lead: プラグイン slop-check の PostToolUse のフック。書き込んだ中身を対応表のコピーで照合し、ヒットした行の通知の文を `additionalContext` で返す（IF-148-1）。
+test_files:
+  - tests/unit/slop-check/test_slop_check.py
 data_models:
   - name: Entry
     title: 対応表の行
@@ -484,5 +486,3 @@ functions:
         expected: '`| 形 | スキーマ・構造（形状の意味なら「形状」） |` の行を持ち、`NOTICE_HEAD` で始まり `NOTICE_TAIL` で終わる'
 notes:
   依存: Python の標準ライブラリだけ（`argparse`・`json`・`os`・`re`・`sys`・`traceback`・`dataclasses`・`pathlib`）。PEP 723 のメタデータは持たない。端末の `python3`（2026-11-03 に WSL2 で測った値は 3.12.3）を下限にし、3.13 以降の構文・API を使わない
-test_files:
-  - tests/unit/slop-check/test_slop_check.py
