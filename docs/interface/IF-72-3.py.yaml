@@ -63,6 +63,36 @@ flows:
       - '標準出力に `schemas/design/{ファイル名}:{行}: {項目のパス}: {内容}` の行が 4 件と、`schemas/template.schema.yaml:{行}: x-rules: metaschema: {内容}` の行が出る'
       - メタスキーマの違反の行は `type`・`x-rules` のキーの行、解決できない `$ref` の行は `$ref` のキーの行、`examples` の違反の行は `examples[0]` の要素の先頭の行
     test: test_normal_when_design_schemas_invalid
+  - name: 正常系（AI Monitor の配布物のスキーマ）
+    summary: AI Monitor の配布物のスキーマには拡張したメタスキーマと yamllint を当てず、それを行の `schema` に持つ設計書にはスキーマの検査だけを当てる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`dev-docs.yaml`（`docs/rule/` の行と、`schema` が `schemas/scenario.schema.yaml` の `docs/scenario/` の行）・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・`schemas/knowledge-common.schema.yaml` と、`x-kind` とフロー形式の行を持つ `schemas/scenario.schema.yaml`・ケバブケースでない `$defs/id` を持つ `schemas/common.schema.yaml` と、`body` の 1 行に 2 文を持ちスキーマに合う `docs/scenario/` の設計書と、違反の無い `docs/rule/` の文書を持つ一時フォルダ'
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>F: dev-docs.yaml の documents を読む
+        loop 全ての文書
+          S->>S: スキーマの検査
+          opt 行の schema が AI Monitor の配布物のスキーマでない
+            S->>S: 文書の違反の検査と lint の対象に加える
+          end
+        end
+        S->>F: schemas/ の直下のスキーマを読む
+        loop AI Monitor の配布物のスキーマを除く schemas/ の直下のスキーマ
+          S->>S: 拡張したメタスキーマの検査と yamllint
+        end
+        S-->>C: 終了コード 0 と件数の行
+    expected:
+      - 終了コードが 0
+      - 標準出力に `schemas/scenario.schema.yaml`・`schemas/common.schema.yaml`・`docs/scenario/` の行が出ない
+      - 標準出力の最後の行が、文書 2 件・違反 0 件・警告 0 件を示す
+    test: test_normal_when_ai_monitor_schemas
   - name: 正常系（リポジトリのスキーマ）
     summary: リポジトリの全てのスキーマと設計書のテンプレートが違反なしで通り、設計書のスキーマの `description` が全て 2 文以内になっている
     setup:
@@ -333,18 +363,23 @@ exceptions:
     condition: maid が PATH から引けないか、markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`dev-docs.yaml` が無い・YAML として読めないか、`schemas/meta.schema.yaml` が無い・YAML として読めない・それ自身が JSON Schema 2020-12 のメタスキーマに合わない
 constraints:
   - item: 検査の範囲
-    constraint: '`dev-docs.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も当てる'
+    constraint: '`dev-docs.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も当てる。`schema` が AI Monitor の配布物のスキーマの行（設計書）は、スキーマの検査だけを当てる'
   - item: 設計書のスキーマの検査の範囲
-    constraint: '`schemas/design/*.schema.yaml` の全てのファイル（knowledge の正本）。`dev/テンプレート/` のコピーは検査しない。`schemas/design/` が無ければ検査しない'
+    constraint: '`schemas/design/*.schema.yaml` の全てのファイル（knowledge の正本）。`schemas/` の直下の AI Monitor の配布物のスキーマは検査しない。`schemas/design/` が無ければ検査しない'
   - item: 設計書のスキーマの検査
     constraint: |-
       ファイルごとに次の 3 つを当て、誤り 1 件を違反 1 件にする。
       メタスキーマ: `schemas/meta.schema.yaml`（JSON Schema 2020-12 のメタスキーマを `allOf` で指して `x-rules`・`x-bad-examples` の形を足した拡張したメタスキーマ）に合うか。
       `$ref`: 全ての `$ref` が、`schemas/design/` のファイル名を URI にして登録したスキーマの中で解決できるか。
       `examples`: 全ての深さの `examples` の要素が、その `examples` を持つスキーマに合うか（`$ref` は同じ登録から解く）。
-      `schemas/*.schema.yaml`（knowledge の文書の種類のスキーマ）とは別に登録し、同じファイル名（`common.schema.yaml`）を取り違えない
+      `schemas/*.schema.yaml`（knowledge の文書の種類のスキーマと AI Monitor の配布物のスキーマ）とは別に登録し、同じファイル名（`common.schema.yaml`）を取り違えない
   - item: 文書の種類のスキーマの検査
-    constraint: '`schemas/*.schema.yaml`（`schemas/meta.schema.yaml` を含む）にも拡張したメタスキーマを当てる。`$ref`・`examples` の検査は当てない'
+    constraint: '`schemas/*.schema.yaml`（`schemas/meta.schema.yaml` を含み、AI Monitor の配布物のスキーマを除く）にも拡張したメタスキーマを当てる。`$ref`・`examples` の検査は当てない'
+  - item: AI Monitor の配布物のスキーマ
+    constraint: |-
+      `schemas/*.schema.yaml` のうち、`x-kind` を持つファイルと、`common.schema.yaml`・`files.schema.yaml`。AI Monitor のバージョンアップの配布が書き換え、AI Monitor の `python -m ai_monitor.design_docs validate` が設計書の検証を受け持つ。
+      knowledge の文書のスキーマが指す共通の型とファイルの一覧のスキーマは、配布物と重ならない `knowledge-common.schema.yaml`・`knowledge-files.schema.yaml` に置く。
+      文書の行のスキーマの検査では、`$ref` を解くために `schemas/*.schema.yaml` の全てのファイルをファイル名で登録する
   - item: '`x-rules`・`x-bad-examples` の形'
     constraint: |-
       スキーマの全ての深さのキーに当てる。`examples`・`x-bad-examples` の値の中と、`properties` の中の同じ名前の項目には当てない。
@@ -353,7 +388,7 @@ constraints:
   - item: スキーマの違反の行
     constraint: '設計書のスキーマと `schemas/*.schema.yaml` の違反の行は、スキーマの YAML の中の誤りのある位置の行。メタスキーマの違反は誤りのあるキー、`$ref` の違反は `$ref` のキー、`examples` の違反は誤りのある要素（要素の中の項目が誤りなら、その項目）の行。項目のパスは同じ位置を `format_path` の書き方で出す'
   - item: lint の当て先
-    constraint: 'markdownlint-cli2・textlint は、`documents[]` の YAML の文書の Markdown の項目（パスの末尾が `body` の文字列）を 1 項目 1 ファイルの一時の `.md` にして当て、`.md` の文書にはそのまま当てる。yamllint は `documents[]` の YAML の文書と、直下の `dev-docs.yaml`・`rules.yaml` と、`schemas/*.schema.yaml`・`schemas/design/*.schema.yaml` に当てる'
+    constraint: 'markdownlint-cli2・textlint は、`documents[]` の YAML の文書の Markdown の項目（パスの末尾が `body` の文字列）を 1 項目 1 ファイルの一時の `.md` にして当て、`.md` の文書にはそのまま当てる。yamllint は `documents[]` の YAML の文書と、直下の `dev-docs.yaml`・`rules.yaml` と、`schemas/*.schema.yaml`・`schemas/design/*.schema.yaml` に当てる。`schema` が AI Monitor の配布物のスキーマの行の文書と、AI Monitor の配布物のスキーマには、どれも当てない'
   - item: lint の行
     constraint: 一時の `.md` の違反の行は、CLI の行に `iter_strings` が返す項目の開始行を足して 1 を引いた、元の文書の YAML の行で出す
   - item: lint の CLI の呼び出し
