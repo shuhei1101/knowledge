@@ -31,17 +31,17 @@ items:
       | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `IF-12` / `IF-3038-1` |
       | title | タイトル | string | 必須 | - | - | 日本語の画面名。ファイル名に合わせる。 | - |
       | screen | 画面 | string | - | - | - | 画面の実装ファイルのパス。 | - |
-      | mock | モック | string | - | - | - | 採用したモックの置き場所。 | - |
+      | mock | モック | string | - | - | - | 採用したモックの配置場所。 | - |
       | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
       | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | 対応する結合テストのファイル（規約『V字モデル』）。 | - |
       | elements | 要素一覧 | array | 必須 | - | minItems: `1` | 画面の要素 1 つ = 1 要素。 | - |
       | elements[].name | 要素 | string | 必須 | - | - | ボタン・入力欄・ラベル・テーブル等の日本語の論理名。 | - |
-      | elements[].id | 項目 ID | string | - | - | - | 画面の中で一意な識別子。テスト・実装から引く。 | - |
+      | elements[].id | 項目 ID | string | - | - | - | 画面の中で一意な識別子。テスト・実装から参照する。 | - |
       | elements[].kind | 種類 | string | 必須 | - | - | `button` / `input` / `select` / `table` / `label` 等。 | - |
-      | elements[].component | 部品 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 使う部品の部品設計（部品設計の `{ID}#`）。 | `CMP-5#` / `CMP-6#` |
-      | elements[].args | 部品へ渡す引数 | array | - | - | - | 部品設計の引数へ渡す値。`component` を持つ要素だけが持ち、部品設計の必須の引数を全て並べる。 | - |
+      | elements[].component | 部品 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 使用する部品の部品設計（部品設計の `{ID}#`）。 | `CMP-5#` / `CMP-6#` |
+      | elements[].args | 部品へ指定する引数 | array | - | - | - | 部品設計の引数へ指定する値。`component` を持つ要素だけが持ち、部品設計の必須の引数を全て並べる。 | - |
       | elements[].args[].name | 引数 | string | 必須 | - | - | 部品設計の `args` の `name`。 | `status` / `filterable` |
-      | elements[].args[].value | 渡す値 | string | 必須 | - | - | 固定の値か取得元（`{インターフェース定義の論理名}.{フィールドのパス}`）。 | `` `計画画面.行の材料[].status` `` / `` ※2 で絞り込みを持つ列なら `true` `` |
+      | elements[].args[].value | 指定する値 | string | 必須 | - | - | 固定の値か取得元（`{インターフェース定義の論理名}.{フィールドのパス}`）。 | `` `計画画面.行の材料[].status` `` / `` ※2 で絞り込みを持つ列なら `true` `` |
       | elements[].slots | スロットに差し込む中身 | array | - | - | - | 部品設計のスロットへ差し込む要素か部品。`component` を持つ要素だけが持つ。 | - |
       | elements[].slots[].name | スロット | string | 必須 | - | - | 部品設計の `slots` の `name`。 | `default` / `actions` |
       | elements[].slots[].value | 差し込む中身 | string | 必須 | - | - | 差し込む要素の名前か、部品の部品設計。 | `行の番号` / `CMP-3#` |
@@ -65,14 +65,14 @@ items:
       | elements[].pattern | 形式 | string | - | - | - | 正規表現。 | - |
       | elements[].charset | 文字種の扱い | string | - | - | - | 受け付ける文字と、制限せず変換するか。 | - |
       | elements[].width | 表示幅 | string | - | - | - | - | - |
-      | elements[].display_format | 表示形式 | string | - | - | - | 日付・時刻・数値の表示の形と、表示の例。 | - |
+      | elements[].display_format | 表示形式 | string | - | - | - | 日付・時刻・数値の表示の形式と、表示の例。 | - |
       | elements[].align | 文字揃え | string | - | `左` / `中央` / `右` | - | - | - |
       | elements[].tab_order | タブ順 | integer | - | - | - | - | - |
       | elements[].autofocus | 初期フォーカス | boolean | - | - | - | - | - |
       | elements[].initial_state | 初期状態 | string | - | `活性` / `非活性` / `読み取り専用` | - | - | - |
       | elements[].initial_value | 初期値 | string | - | - | - | 表示時点の値（`空` / 取得値 等）。 | - |
       | elements[].hint | 補助文 | string | - | - | - | ラベルの下に出す説明。 | - |
-      | elements[].error_message | エラーの文言 | string | - | - | - | 項目ごとの誤りと直し方。 | - |
+      | elements[].error_message | エラーの文言 | string | - | - | - | 項目ごとの誤りと修正方法。 | - |
       | elements[].autocomplete | 入力の目的 | string | - | - | - | 自動入力の種類（HTML の `autocomplete`）。 | - |
       | elements[].inputmode | 入力モード | string | - | - | - | - | - |
       | elements[].prefix | 接頭辞 | string | - | - | - | - | - |
@@ -82,26 +82,26 @@ items:
       | elements[].input_example | 入力例 | string | - | - | - | - | - |
       | elements[].source | 取得元 | string | - | - | - | `{インターフェース定義の論理名}.{フィールドのパス}`。 | - |
       | elements[].target | 送信先 | string | - | - | - | `{インターフェース定義の論理名}.{フィールドのパス}`。変換・合成・除外は括弧書きで添える。 | - |
-      | elements[].action | アクション | string | - | - | - | 画面の中で閉じる動きは日本語で書く。送信・画面遷移は `action_ref` に参照で持つ。 | - |
+      | elements[].action | アクション | string | - | - | - | 画面の中で閉じる動きは日本語で記載する。送信・画面遷移は `action_ref` に参照で持つ。 | - |
       | elements[].action_ref | アクションの参照 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 送信を伴う動きはインターフェース定義、画面遷移は遷移先の画面設計。 | `IF-12#flows[正常系]` / `#functions[resolve_base].exceptions` / `CFG-3#` / `#notes[main.py の補足]` / `#functions[main#3]` |
       | elements[].refs | 関連 | array | - | - | - | - | - |
-      | elements[].reason | 理由 | string | - | - | - | そうしている理由。読み手の判断が変わるものだけを書く。 | - |
-      | elements[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。書かなければ実装済みとして扱う。 | - |
-      | elements[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。書かなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
+      | elements[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | - |
+      | elements[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
+      | elements[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
       | elements[].implementation | 実装 | string | - | - | pattern: `^[^#\s]+(#\S+)?$` | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/schemas/loader.py#load_catalog` |
       | elements[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
       | elements[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ。 | `v0.3.0` |
       | elements[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
-      | elements[].aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | - |
-      | elements[].notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+      | elements[].aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | - |
+      | elements[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
       | input_checks | 入力チェック | array | - | - | - | 1 要素 = 1 ケースの入力チェック。無い画面は持たない。 | - |
       | input_checks[].element | 要素 | string | 必須 | - | - | `elements` の要素の名前。 | - |
       | input_checks[].violation | 違反の条件 | string | 必須 | - | - | 1 要素に 1 つの違反。 | - |
-      | input_checks[].trigger | 検証の契機 | string | 必須 | - | - | 入力のたび / フォーカスが外れたとき / 送信ボタンのクリック 等。 | - |
+      | input_checks[].trigger | 検証の契機 | string | 必須 | - | - | 入力のたび / フォーカスを失ったとき / 送信ボタンのクリック 等。 | - |
       | input_checks[].message | エラー文言 | string | 必須 | - | - | 画面に出る文字列そのまま。 | - |
       | input_checks[].position | 表示位置 | string | 必須 | - | - | - | - |
       | refs | 関連 | array | - | - | - | - | - |
-      | notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
 
       <!-- /table -->
   - id: key-rules-01
@@ -112,14 +112,14 @@ items:
       | 名前 | 決まり | 悪い例 | 理由 |
       | --- | --- | --- | --- |
       | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
-      | lead | 初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
-      | elements | ダイアログの中の要素も並べ、位置の先頭にダイアログ名を書く。<br>列の表示・非表示は dev-docs の画面の表の列の設定で切り替える。 | - | - |
+      | lead | 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
+      | elements | ダイアログの中の要素も並べ、位置の先頭にダイアログ名を記載する。<br>列の表示・非表示は dev-docs の画面の表の列の設定で切り替える。 | - | - |
       | elements[].name | 画面の中で一意にする。 | - | - |
-      | elements[].component | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 段になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として読む。 | IF-12#flows[0] | リストの項目を番号で指している |
-      | elements[].action_ref | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 段になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として読む。 | IF-12#flows[0] | リストの項目を番号で指している |
-      | elements[].reason | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | elements[].notes | 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
-      | notes | 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+      | elements[].component | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | elements[].action_ref | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | elements[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | elements[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+      | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
 
       <!-- /table -->
   - id: example-sample-01

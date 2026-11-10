@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 title: 単語の対応表
-description: 使うべきでない単語と置き換え先の対応表。プラグイン slop-check が書き込んだ中身の照合に使い、規約は本文にこの表を埋め込む。行を追加するときは `entries[].pattern` の説明に従う。
+description: 使用するべきでない単語と置き換え先の対応表。プラグイン slop-check が書き込んだ中身の照合に使用し、規約は本文にこの表を埋め込む。行を追加するときは `entries[].pattern` の説明に従う。
 allOf:
   - $ref: common.schema.yaml#/$defs/metadata
 properties:
@@ -45,7 +45,7 @@ $defs:
           - 直す
       ok:
         title: OK
-        description: 置き換え先。合うものから並べる。動詞は名詞で記載し、文では「する」を付けて使う。
+        description: 置き換え先。合うものから並べる。動詞は名詞で記載し、文では「する」を付けて使用する。
         type: array
         minItems: 1
         items:
@@ -60,7 +60,7 @@ $defs:
           ヒットさせる正規表現（Python の `re`）。省くと `ng` の文字列をそのまま探す。YAML ではシングルクォートで囲む。
           漢字 1 文字の単語は、前を否定の後読み、後ろを否定の先読みにして前後に漢字が続かないときだけヒットさせる（`(?<![㐀-鿿々])形(?![㐀-鿿々])`）。
           動詞は語幹の後ろに活用語尾を `(?:...)` で並べ、語幹の前に漢字の否定の後読みを付ける（`(?<![㐀-鿿々])直(?:さ|し|す|せ|そ|っ)`）。
-          ひらがなが続く複合語は正規表現で除かず `allow` に入れる。漢字の範囲は `[㐀-鿿々]` で記載する（`\p{Han}` は使えない）。
+          ひらがなが続く複合語は正規表現で除かず `allow` に入れる。漢字の範囲は `[㐀-鿿々]` で記載する（`\p{Han}` は使用できない）。
         type: string
         format: regex
         minLength: 1
@@ -68,7 +68,7 @@ $defs:
           - (?<![㐀-鿿々])形(?![㐀-鿿々])
       allow:
         title: 除く文字列
-        description: ヒットの開始位置を含むこの文字列の出現があれば、そのヒットを除く。ひらがなが続く複合語に使う。
+        description: ヒットの開始位置を含むこの文字列の出現があれば、そのヒットを除く。ひらがなが続く複合語に使用する。
         type: array
         items:
           type: string
@@ -84,7 +84,7 @@ $defs:
           - 形状の意味なら「形状」
       examples:
         title: 照合の例
-        description: 検査で照合を当てる文。`hit` は全件ヒットし、`pass` は 1 件もヒットしないこと。
+        description: 検査で照合を適用する文。`hit` は全件ヒットし、`pass` は 1 件もヒットしないこと。
         type: object
         additionalProperties: false
         required:

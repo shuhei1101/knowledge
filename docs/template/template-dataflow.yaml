@@ -40,23 +40,23 @@ items:
       | sink | 出口 | string | - | - | - | 外部エンティティかデータストア。 | - |
       | levels | 図 | array | 必須 | - | minItems: `1` | Level 0（外部の境界）と Level 1（主要な処理とデータストア）は必須。Level 2 は複雑な処理だけ。 | - |
       | levels[].name | レベル | string | 必須 | - | - | `Level 0` / `Level 1` / `Level 2: {親の処理}の分解`。 | - |
-      | levels[].description | 説明 | string | - | - | - | Markdown で書く本文。定数は `!{名前}` で埋め込める。 | - |
+      | levels[].description | 説明 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | - |
       | levels[].diagram | 図 | object | 必須 | - | - | ノードの `kind` で外部の相手・処理・データストアを分けた図。 | - |
-      | levels[].diagram.direction | 向き | string | - | `TD` / `TB` / `LR` / `RL` / `BT` | - | 図の向き。書かなければ図の種類の既定（判定は `TD`、データフロー・アーキテクチャは `LR`）。 | - |
+      | levels[].diagram.direction | 向き | string | - | `TD` / `TB` / `LR` / `RL` / `BT` | - | 図の向き。記載しなければ図の種類の既定（判定は `TD`、データフロー・アーキテクチャは `LR`）。 | - |
       | levels[].diagram.nodes | ノード | array | 必須 | - | - | - | - |
       | levels[].diagram.nodes[].id | ID | string | 必須 | - | pattern: `^[^\s\[\](){}<>\|"]+$` | 図の中で一意なノードの ID。 | - |
-      | levels[].diagram.nodes[].label | 表示 | string | 必須 | - | - | ノードに出す文言。半角の括弧は描画を崩すので全角で書く。 | - |
-      | levels[].diagram.nodes[].shape | 形 | string | - | `rect` / `round` / `stadium` / `diamond` / `circle` / `cylinder` / `hexagon` / `parallelogram` / `subroutine` | - | ノードの形（`rect`（四角）/ `round`（角丸）/ `stadium`（開始・終端 `([…])`）/ `diamond`（判定）/ `circle`（処理）/ `cylinder`（データストア）/ `hexagon` / `parallelogram`（入出力ポート）/ `subroutine`）。書かなければ `rect`。 | - |
+      | levels[].diagram.nodes[].label | 表示 | string | 必須 | - | - | ノードに出す文言。半角の括弧は描画を崩すので全角で記載する。 | - |
+      | levels[].diagram.nodes[].shape | 形状 | string | - | `rect` / `round` / `stadium` / `diamond` / `circle` / `cylinder` / `hexagon` / `parallelogram` / `subroutine` | - | ノードの形状（`rect`（四角）/ `round`（角丸）/ `stadium`（開始・終端 `([…])`）/ `diamond`（判定）/ `circle`（処理）/ `cylinder`（データストア）/ `hexagon` / `parallelogram`（入出力ポート）/ `subroutine`）。記載しなければ `rect`。 | - |
       | levels[].diagram.nodes[].kind | 要素の種類 | string | - | `actor` / `process` / `store` / `system` / `external` | - | データフロー・アーキテクチャで、ノードが何を表すか。`actor`（人・外部の相手）/ `process`（処理）/ `store`（データストア）/ `system`（システム・サブシステム）/ `external`（外部システム）。 | - |
       | levels[].diagram.edges | 辺 | array | 必須 | - | - | 図に描く順の辺。 | - |
       | levels[].diagram.edges[].from | 元 | string | 必須 | - | - | 元のノードの `id`。 | - |
       | levels[].diagram.edges[].to | 先 | string | 必須 | - | - | 先のノードの `id`。 | - |
       | levels[].diagram.edges[].label | ラベル | string | - | - | - | 矢印のラベル。判定は `YES` / `NO`、データフローは流れるデータの名前。 | - |
-      | levels[].diagram.edges[].line | 線 | string | - | `solid` / `dotted` / `thick` / `open` | - | 線の種類（`solid`（`-->`）/ `dotted`（`-.->`）/ `thick`（`==>`）/ `open`（`---`））。書かなければ `solid`。 | - |
+      | levels[].diagram.edges[].line | 線 | string | - | `solid` / `dotted` / `thick` / `open` | - | 線の種類（`solid`（`-->`）/ `dotted`（`-.->`）/ `thick`（`==>`）/ `open`（`---`））。記載しなければ `solid`。 | - |
       | levels[].diagram.subgraphs | 枠 | array | - | - | - | - | - |
       | levels[].diagram.subgraphs[].id | ID | string | 必須 | - | pattern: `^[A-Za-z0-9_]+$` | - | - |
       | levels[].diagram.subgraphs[].label | 表示 | string | - | - | - | - | - |
-      | levels[].diagram.subgraphs[].nodes | 中のノード | array | 必須 | - | - | 枠の中に置くノードの `id`。 | - |
+      | levels[].diagram.subgraphs[].nodes | 中のノード | array | 必須 | - | - | 枠の中に配置するノードの `id`。 | - |
       | levels[].diagram.clicks | リンク | array | - | - | - | - | - |
       | levels[].diagram.clicks[].id | ノード | string | 必須 | - | - | リンクを付けるノードの `id`。 | - |
       | levels[].diagram.clicks[].href | リンク先 | string | 必須 | - | - | 押したときに開く先（相対パス + アンカー）。 | - |
@@ -71,7 +71,7 @@ items:
       | dictionary[].volume | 頻度と量 | string | - | - | - | - | - |
       | dictionary[].notes | 補足 | string | - | - | - | - | - |
       | refs | 関連 | array | - | - | - | - | - |
-      | notes | 補足 | object | - | - | - | 項目に分けられない残り。節の名前 → 本文。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
 
       <!-- /table -->
   - id: key-rules-01
@@ -82,10 +82,10 @@ items:
       | 名前 | 決まり | 悪い例 | 理由 |
       | --- | --- | --- | --- |
       | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
-      | lead | 初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
-      | levels[].description | 他の設計書を指すときは説明文の中にリンクを書かず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | levels[].diagram | 辺のラベルに流れるデータの名前を書く。<br>処理は動詞句、データは名詞で書く。<br>1 図の処理は 3〜7 個にする。<br>信頼境界は枠で描く。 | - | - |
-      | notes | 同じ名前の節が多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+      | lead | 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
+      | levels[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | levels[].diagram | 辺のラベルに流れるデータの名前を記載する。<br>処理は動詞句、データは名詞で記載する。<br>1 図の処理は 3〜7 個にする。<br>信頼境界は枠で描く。 | - | - |
+      | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
 
       <!-- /table -->
   - id: example-sample-01

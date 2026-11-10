@@ -3,8 +3,8 @@ title: シナリオ
 description: 単一ユースケース（ユーザーの 1 操作）または複合ユースケース（単一ユースケースの連鎖）の正常・異常シナリオ。
 x-rules:
   - 1 ファイル = 1 ユースケース = テストの 1 ファイルにする。
-  - 外部 API は Mock 前提で書く。
-  - 既存の流用・既存の修正・新規の単一・新規の複合のどれで書くかは判定フローチャート『シナリオ』で決める。
+  - 外部 API は Mock 前提で記載する。
+  - 既存の流用・既存の修正・新規の単一・新規の複合のどれで記載するかは判定フローチャート『シナリオ』で決める。
 x-kind: scenario
 x-folder: dev/設計書/シナリオ
 x-id-prefix: SC
@@ -33,7 +33,7 @@ properties:
     title: 冒頭リード
     description: 対象を 1〜3 行で説明する。
     x-rules:
-      - 初回に書いた内容のまま保ち、後から情報を足さない（仕様は各項目に書く）。
+      - 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。
       - 対象そのものが変わったときだけ書き換える。
     x-bad-examples:
       - value: 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。
@@ -92,9 +92,9 @@ properties:
     title: 優先度
   reading:
     $ref: common.schema.yaml#/$defs/markdown
-    title: 読み替え
-    description: 1 ファイルで複数のレイヤー・役割を代表するときの読み替えの表。
-    x-heading: 読み替え
+    title: 置き換え
+    description: 1 ファイルで複数のレイヤー・役割を代表するときの置き換えの表。
+    x-heading: 置き換え
   scenarios:
     type: array
     title: シナリオ
@@ -122,7 +122,7 @@ properties:
           title: セットアップ
           description: 事前に要るデータ・状態と、分岐・異常を決定的に誘発する入力。
           x-rules:
-            - '`Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず置く。'
+            - '`Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず配置する。'
           x-heading: セットアップ
           x-shape: table
           minItems: 1
@@ -138,7 +138,7 @@ properties:
                 title: セットアップ
                 description: 前提を作る Factory 関数名か状態の名前。
                 x-rules:
-                  - '`Mock` の行を必ず置く。'
+                  - '`Mock` の行を必ず配置する。'
               description:
                 type: string
                 title: 説明
@@ -150,16 +150,16 @@ properties:
         flow:
           $ref: common.schema.yaml#/$defs/mermaid
           title: フロー
-          description: 単一ユースケースは `sequenceDiagram`、複合ユースケースは単一ユースケースを箱として連鎖させる `flowchart TD`。
+          description: 単一ユースケースは `sequenceDiagram`、複合ユースケースは単一ユースケースをノードとして連鎖させる `flowchart TD`。
           x-rules:
             - 1 図 = 結末 1 本の一本道にする。
-            - ユーザー視点で観測できる境界まで書く。
-            - 複合ユースケースの箱のノード名は `{UC名}:{シナリオ名}` にし、`click` で単一ユースケースの節へリンクする。
+            - ユーザー視点で観測できる境界まで記載する。
+            - 複合ユースケースのノード名は `{UC名}:{シナリオ名}` にし、`click` で単一ユースケースのセクションへリンクする。
           x-heading: フロー
         expected:
           type: array
           title: 期待値
-          description: フローの終了時点で外部から観測できる状態・戻り値。1 要素 = 1 つの確かめ。
+          description: フローの終了時点で外部から観測できる状態・戻り値。1 要素 = 1 つの確認項目。
           x-heading: 期待値
           x-shape: list
           minItems: 1
@@ -171,8 +171,8 @@ properties:
           x-test-function: true
         uses:
           type: array
-          title: 使う単一ユースケース
-          description: 複合ユースケースの箱が指す単一ユースケースのシナリオ。
+          title: 使用する単一ユースケース
+          description: 複合ユースケースのノードが指す単一ユースケースのシナリオ。
           items:
             $ref: common.schema.yaml#/$defs/ref
         refs:
