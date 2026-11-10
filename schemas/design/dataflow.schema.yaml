@@ -140,6 +140,12 @@ properties:
     title: 関連
     items:
       $ref: common.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    items:
+      $ref: common.schema.yaml#/$defs/decision
   notes:
     $ref: common.schema.yaml#/$defs/notes
     x-heading: 補足
@@ -159,7 +165,6 @@ examples:
         kind: actor
       - id: S
         label: 問い合わせ処理システム
-        shape: circle
         kind: process
       - id: SUP
         label: サポート担当
@@ -179,19 +184,15 @@ examples:
         kind: actor
       - id: P1
         label: 1. 受付
-        shape: circle
         kind: process
       - id: P2
         label: 2. 保存
-        shape: circle
         kind: process
       - id: DB
         label: 問い合わせ DB
-        shape: cylinder
         kind: store
       - id: P3
         label: 3. 通知
-        shape: circle
         kind: process
       - id: SUP
         label: サポート担当
@@ -212,8 +213,7 @@ examples:
       - from: P3
         to: SUP
         label: 通知ペイロード
-      subgraphs:
-      - id: SYS
+      frame:
         label: '信頼境界: システム'
         nodes:
         - P1

@@ -43,7 +43,7 @@ items:
       | overview | 概要 | string | - | - | - | 索引の設計書だけが持つ。データストアの種別とバージョン・物理名の命名規則・全テーブルの共通カラム。 | - |
       | er | ER 図 | object | - | - | - | 当該分類のテーブル間の関連。 | - |
       | er.entities | 実体 | array | 必須 | - | - | - | - |
-      | er.entities[].name | 名前 | string | 必須 | - | pattern: `^\S+$` | 図に出すテーブルの論理名（空白なし）。他の分類のテーブルは名前だけで配置する。 | - |
+      | er.entities[].name | 名前 | string | 必須 | - | - | 図に出すテーブルの論理名。他の分類のテーブルは名前だけで配置する。 | - |
       | er.entities[].columns | カラム | array | - | - | - | 図に描くカラム。記載しなければ、同じ設計書のテーブルのカラムから作る。 | - |
       | er.entities[].columns[].type | 型 | string | 必須 | - | - | - | - |
       | er.entities[].columns[].name | 名前 | string | 必須 | - | pattern: `^\S+$` | - | - |
@@ -52,7 +52,10 @@ items:
       | er.relations | 関連 | array | - | - | - | - | - |
       | er.relations[].from | 元 | string | 必須 | - | - | - | - |
       | er.relations[].to | 先 | string | 必須 | - | - | - | - |
-      | er.relations[].cardinality | 多重度 | string | 必須 | - | - | `\|\|--o{` = 1:N / `\|\|--\|\|` = 1:1 / `}o--o{` = N:M。 | - |
+      | er.relations[].from_column | 元の列 | string | 必須 | - | - | 関連が結ぶ元の実体の列の名前。 | - |
+      | er.relations[].to_column | 先の列 | string | 必須 | - | - | 関連が結ぶ先の実体の列の名前。 | - |
+      | er.relations[].from_cardinality | 元の多重度 | string | 必須 | `1` / `0..1` / `1..n` / `0..n` | - | 関連の片端の多重度（`1` = ちょうど 1 / `0..1` = 0 か 1 / `1..n` = 1 以上 / `0..n` = 0 以上）。 | `0..n` |
+      | er.relations[].to_cardinality | 先の多重度 | string | 必須 | `1` / `0..1` / `1..n` / `0..n` | - | 関連の片端の多重度（`1` = ちょうど 1 / `0..1` = 0 か 1 / `1..n` = 1 以上 / `0..n` = 0 以上）。 | `0..n` |
       | er.relations[].label | ラベル | string | - | - | - | - | - |
       | tables | テーブル | array | - | - | - | テーブル 1 つ = 1 要素。並びは依存の上流から下流。 | - |
       | tables[].name | 物理名 | string | 必須 | - | - | DB は snake_case、JSON / YAML はファイルのパス。 | - |
@@ -91,6 +94,7 @@ items:
       | tables[].indexes[].kind | 種別 | string | 必須 | - | - | - | - |
       | tables[].indexes[].notes | 補足 | string | - | - | - | - | - |
       | tables[].refs | 関連 | array | - | - | - | - | - |
+      | tables[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
       | tables[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | - |
       | tables[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
       | tables[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
@@ -101,6 +105,7 @@ items:
       | tables[].aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | - |
       | tables[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
       | refs | 関連 | array | - | - | - | - | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
       | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
 
       <!-- /table -->
@@ -131,16 +136,31 @@ items:
       er:
         entities:
         - name: ユーザー
+          columns:
+          - type: uuid
+            name: ID
+            key: PK
         - name: タスク
         - name: コメント
+          columns:
+          - type: uuid
+            name: task_id
+            key: FK
+            comment: '参照: タスク.id'
         relations:
         - from: ユーザー
           to: タスク
-          cardinality: '||--o{'
+          from_column: ID
+          to_column: user_id
+          from_cardinality: '1'
+          to_cardinality: 0..n
           label: 作成
         - from: タスク
           to: コメント
-          cardinality: '||--o{'
+          from_column: id
+          to_column: task_id
+          from_cardinality: '1'
+          to_cardinality: 0..n
           label: 持つ
       tables:
       - name: tasks

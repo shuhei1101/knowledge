@@ -134,6 +134,12 @@ properties:
           description: 他のページが持つコマンドの原本。テストのセクションはテスト実行方法（`TP-1#`）を、静的検査のセクションはその `lint` 層（`TP-1#layers[lint]`）を指す。
           items:
             $ref: common.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: common.schema.yaml#/$defs/decision
       allOf:
       - if:
           properties:
@@ -155,6 +161,12 @@ properties:
     title: 関連
     items:
       $ref: common.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    items:
+      $ref: common.schema.yaml#/$defs/decision
   notes:
     $ref: common.schema.yaml#/$defs/notes
     x-heading: 補足

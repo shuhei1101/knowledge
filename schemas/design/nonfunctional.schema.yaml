@@ -51,6 +51,7 @@ properties:
       type: object
       additionalProperties: false
       required:
+      - id
       - name
       - category
       - external_constraint
@@ -58,6 +59,17 @@ properties:
       - value
       - rationale
       properties:
+        id:
+          type: string
+          title: ID
+          description: 設計書の中で一意な要素の ID。1 要素 1 ページにするときのページの ID になる。
+          x-rules:
+            - 並びの順に `NFR-{番号}` を振る。
+            - 新しく追加する要素には、既にある番号の最大の次を振る。
+            - 並べ替えても変えない。
+          pattern: "^[A-Za-z0-9_-]+$"
+          examples:
+            - NFR-1
         name:
           type: string
           title: 項目
@@ -231,6 +243,12 @@ properties:
           title: 関連
           items:
             $ref: common.schema.yaml#/$defs/ref
+        decisions:
+          type: array
+          title: 検討事項
+          description: 根拠になった話し合いの記録の検討事項の ID。
+          items:
+            $ref: common.schema.yaml#/$defs/decision
         reason:
           $ref: common.schema.yaml#/$defs/reason
         status:
@@ -250,6 +268,12 @@ properties:
     title: 関連
     items:
       $ref: common.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    items:
+      $ref: common.schema.yaml#/$defs/decision
   notes:
     $ref: common.schema.yaml#/$defs/notes
     x-heading: 補足
@@ -259,7 +283,8 @@ examples:
   title: 非機能要件
   lead: 外部の制約から逆算したアプリの決定値。
   requirements:
-  - name: 入力トークン上限
+  - id: NFR-1
+    name: 入力トークン上限
     english_name: input_limit
     category: 性能
     external_constraint: 100 万トークン
@@ -294,7 +319,8 @@ examples:
       condition: 100,001 トークンの入力を 1 回送る
       measurement: API へ渡ったトークン数
       expected: 2 回に分かれ、各回が 100,000 以下
-  - name: 応答の待ちの上限
+  - id: NFR-2
+    name: 応答の待ちの上限
     english_name: response_wait_limit
     category: 耐障害
     external_constraint: 制限なし
@@ -317,13 +343,15 @@ examples:
     - part: アプリの決定値
       value: "30"
       notes: 内側の待ちの合計 + 余裕
-  - name: 同時接続数
+  - id: NFR-3
+    name: 同時接続数
     category: 性能
     external_constraint: 未確定
     source_kind: 未確定
     value: 未確定
     rationale: 想定利用者数が決まる Issue「利用者管理」の要件が確定してから決める
-  - name: 対応ブラウザ
+  - id: NFR-4
+    name: 対応ブラウザ
     category: 動作環境
     external_constraint: Chrome と Edge の最新版
     source_kind: ユーザー要望
@@ -336,7 +364,8 @@ examples:
       version: Edge 140
       date: '2026-10-05'
       result: 合格
-  - name: 最小画面幅
+  - id: NFR-5
+    name: 最小画面幅
     english_name: min_viewport_width
     category: 動作環境
     external_constraint: "360"
@@ -357,7 +386,8 @@ examples:
   title: 非機能要件
   lead: 外部の制約から逆算したゲームの決定値。
   requirements:
-  - name: 対応端末
+  - id: NFR-1
+    name: 対応端末
     category: 動作環境
     external_constraint: Windows の PC と Nintendo Switch
     source_kind: ユーザー要望
@@ -370,7 +400,8 @@ examples:
       version: システムソフトウェア 19.0.0
       date: '2026-10-05'
       result: 合格
-  - name: 入力方式
+  - id: NFR-2
+    name: 入力方式
     english_name: input_devices
     category: 動作環境
     external_constraint: キーボードとゲームパッド
@@ -386,7 +417,8 @@ examples:
       condition: 論理操作ごとに、キーボードとゲームパッドの割り当てを 1 回ずつ送信する
       measurement: ゲームが受け取った論理操作
       expected: 全ての論理操作を、どちらの入力からも受け取る
-  - name: 通信
+  - id: NFR-3
+    name: 通信
     category: 動作環境
     external_constraint: 未確定
     source_kind: 未確定

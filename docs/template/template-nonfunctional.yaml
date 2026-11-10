@@ -35,6 +35,7 @@ items:
       | title | タイトル | string | 必須 | - | - | `非機能要件`。 | - |
       | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
       | requirements | 一覧 | array | 必須 | - | minItems: `1` | 外部の制約から逆算したアプリの値。一覧の表は各要素から生成する。 | - |
+      | requirements[].id | ID | string | 必須 | - | pattern: `^[A-Za-z0-9_-]+$` | 設計書の中で一意な要素の ID。1 要素 1 ページにするときのページの ID になる。 | `NFR-1` |
       | requirements[].name | 項目 | string | 必須 | - | - | 何についての値か。1 項目 = 1 要素。 | - |
       | requirements[].english_name | 英語名 | string | - | - | pattern: `^[a-z0-9_]+$` | テスト関数・ファイルの名前に使用する。 | - |
       | requirements[].category | カテゴリ | string | 必須 | - | - | 性能 / レート制限 / 可用性 / 耐障害 / セキュリティ / コスト / 保守性 / 動作環境 等。<br>動作環境は対応端末・OS・ブラウザ・画面サイズ・入力方式・通信を 1 項目ずつ配置する。 | - |
@@ -65,6 +66,7 @@ items:
       | requirements[].tests[].expected | 期待値 | string | 必須 | - | - | 合否の判定の基準。 | - |
       | requirements[].tests[].notes | 補足 | string | - | - | - | - | - |
       | requirements[].refs | 関連 | array | - | - | - | - | - |
+      | requirements[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
       | requirements[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | - |
       | requirements[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
       | requirements[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
@@ -75,6 +77,7 @@ items:
       | requirements[].aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | - |
       | requirements[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
       | refs | 関連 | array | - | - | - | - | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
       | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
 
       <!-- /table -->
@@ -88,6 +91,7 @@ items:
       | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
       | lead | 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
       | requirements | 決まっていない項目も同じ一覧に配置し、決定値を `未確定` にする。<br>未確定だった項目が決まったら同じ要素を書き換える。 | - | - |
+      | requirements[].id | 並びの順に `NFR-{番号}` を振る。<br>新しく追加する要素には、既にある番号の最大の次を振る。<br>並べ替えても変えない。 | - | - |
       | requirements[].overflow | 黙って切り捨てない。 | - | - |
       | requirements[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
       | requirements[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
@@ -102,7 +106,8 @@ items:
       title: 非機能要件
       lead: 外部の制約から逆算したアプリの決定値。
       requirements:
-      - name: 入力トークン上限
+      - id: NFR-1
+        name: 入力トークン上限
         english_name: input_limit
         category: 性能
         external_constraint: 100 万トークン
@@ -137,7 +142,8 @@ items:
           condition: 100,001 トークンの入力を 1 回送る
           measurement: API へ渡ったトークン数
           expected: 2 回に分かれ、各回が 100,000 以下
-      - name: 応答の待ちの上限
+      - id: NFR-2
+        name: 応答の待ちの上限
         english_name: response_wait_limit
         category: 耐障害
         external_constraint: 制限なし
@@ -160,13 +166,15 @@ items:
         - part: アプリの決定値
           value: '30'
           notes: 内側の待ちの合計 + 余裕
-      - name: 同時接続数
+      - id: NFR-3
+        name: 同時接続数
         category: 性能
         external_constraint: 未確定
         source_kind: 未確定
         value: 未確定
         rationale: 想定利用者数が決まる Issue「利用者管理」の要件が確定してから決める
-      - name: 対応ブラウザ
+      - id: NFR-4
+        name: 対応ブラウザ
         category: 動作環境
         external_constraint: Chrome と Edge の最新版
         source_kind: ユーザー要望
@@ -179,7 +187,8 @@ items:
           version: Edge 140
           date: '2026-10-05'
           result: 合格
-      - name: 最小画面幅
+      - id: NFR-5
+        name: 最小画面幅
         english_name: min_viewport_width
         category: 動作環境
         external_constraint: '360'
@@ -205,7 +214,8 @@ items:
       title: 非機能要件
       lead: 外部の制約から逆算したゲームの決定値。
       requirements:
-      - name: 対応端末
+      - id: NFR-1
+        name: 対応端末
         category: 動作環境
         external_constraint: Windows の PC と Nintendo Switch
         source_kind: ユーザー要望
@@ -218,7 +228,8 @@ items:
           version: システムソフトウェア 19.0.0
           date: '2026-10-05'
           result: 合格
-      - name: 入力方式
+      - id: NFR-2
+        name: 入力方式
         english_name: input_devices
         category: 動作環境
         external_constraint: キーボードとゲームパッド
@@ -234,7 +245,8 @@ items:
           condition: 論理操作ごとに、キーボードとゲームパッドの割り当てを 1 回ずつ送信する
           measurement: ゲームが受け取った論理操作
           expected: 全ての論理操作を、どちらの入力からも受け取る
-      - name: 通信
+      - id: NFR-3
+        name: 通信
         category: 動作環境
         external_constraint: 未確定
         source_kind: 未確定
