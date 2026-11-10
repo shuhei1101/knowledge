@@ -77,7 +77,7 @@ items:
       | uses | 使用する部品 | array | - | - | - | この部品が中で使用する別の部品。 | - |
       | uses[].component | 部品 | string | 必須 | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 設計書の項目を指す。`{ID}#{項目のパス}` で記載する。 | `CMP-4#` |
       | uses[].how | 使用方法 | string | 必須 | - | - | - | `停止中の一時停止のアイコン` |
-      | accessibility | アクセシビリティ | array | - | - | - | アクセシブルな名前・キー操作・色に頼らない表し方など、部品が守ること。 | `` [状態を色だけで伝えない（`label` を必ず出す）] `` |
+      | accessibility | アクセシビリティ | array | - | - | - | スクリーンリーダー向けの名前・キー操作・色に頼らない表し方など、部品が守ること。 | `` [状態を色だけで伝えない（`label` を必ず出す）] `` |
       | refs | 関連 | array | - | - | - | - | - |
       | status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
       | visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
@@ -166,5 +166,5 @@ items:
           value: 'true'
       accessibility:
       - 絞り込み・固定のボタンは `aria-pressed` で押した状態を伝える
-      - アイコンだけのボタンに `{label} で絞り込む` などのアクセシブルな名前を付ける
+      - アイコンだけのボタンに `{label} で絞り込む` などのスクリーンリーダー向けの名前を付ける
       ```

@@ -339,7 +339,7 @@ properties:
   accessibility:
     type: array
     title: アクセシビリティ
-    description: アクセシブルな名前・キー操作・色に頼らない表し方など、部品が守ること。
+    description: スクリーンリーダー向けの名前・キー操作・色に頼らない表し方など、部品が守ること。
     examples:
     - - "状態を色だけで伝えない（`label` を必ず出す）"
     x-heading: アクセシビリティ
@@ -417,4 +417,4 @@ examples:
       value: 'true'
   accessibility:
   - 絞り込み・固定のボタンは `aria-pressed` で押した状態を伝える
-  - アイコンだけのボタンに `{label} で絞り込む` などのアクセシブルな名前を付ける
+  - アイコンだけのボタンに `{label} で絞り込む` などのスクリーンリーダー向けの名前を付ける
