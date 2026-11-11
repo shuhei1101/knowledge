@@ -341,8 +341,9 @@ functions:
     process: |-
       1. `properties` のキーごとに、`$ref` を引いた先に、キーの側の `title`・`description`・`examples`・`x-rules`・`x-bad-examples` を重ねる（`$ref` を解決した先がさらに `$ref` を持てば、その解決器で続けて引く）
       2. 親の `required` に名前があれば `required` を真にした行を返す
-      3. 解決した `$ref` の先（解決した値の同一性）が `ancestors` にあれば（再帰する `$ref`）、行だけを返して子はたどらない
-      4. 子のスキーマがオブジェクトの `properties` を持てば `{名前}.` で、配列の `items` がオブジェクトの `properties` を持てば `{名前}[].` で、`ancestors` にそのキーで解決した `$ref` の先を加えてたどる
+      3. 子へ潜る前に、そのキーの `$ref` と、配列のときは `items` の `$ref` を解決した先を集める。先は `resolver.lookup` が返した `resolved.contents` の `id()` で、`$ref` がさらに `$ref` を持つときは引いた全ての先を集める。そのために `_resolve` は、重ねた dict と解決器に加えて、引いた先の `id()` の集合（`$ref` が無ければ空）も返す
+      4. 集めた先が 1 つでも `ancestors` にあれば（再帰する `$ref`）、行だけを返して子はたどらない
+      5. 子のスキーマがオブジェクトの `properties` を持てば `{名前}.` で、配列の `items` がオブジェクトの `properties` を持てば `{名前}[].` で、`ancestors` に集めた先を加えてたどる
     unit_tests:
       - name: test_iter_keys
         case: 正常
