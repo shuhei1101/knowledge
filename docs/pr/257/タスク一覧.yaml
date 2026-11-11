@@ -60,18 +60,20 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-10T22:32:46.392098+00:00'
   - process: モジュール構成設計
-    status: skipped
-    reason: スクリプトの関数の構成は変わらない（警告と違反の振り分けは CLI の severity のまま）
-    updated_by: planner
-    updated_at: '2026-11-10T22:32:46.392098+00:00'
-  - process: ドキュメント修正
     status: todo
-    note: docs/ の文書の表への書き換え・不要な文の削除と AI slop の修正・メタデータの付け直し・lint の違反の修正と、開発コマンド（CMD-72-1）の検査の結果の記述
-  - process: 単体テスト作成
-    status: skipped
-    reason: 単体テストは一時フォルダの設定を使い、lint の設定の変更の影響を受けない
     updated_by: planner
-    updated_at: '2026-11-10T22:32:46.392098+00:00'
+    updated_at: '2026-11-11T01:29:11.547418+00:00'
+    note: 『設計書のテンプレートの生成』（MOD-201-1）の記載例のコードフェンスを、要素が持つバッククォートの並びより長くする。外部ライブラリのテンプレートの記載例で入れ子のコードブロックが閉じ、lint の違反が 9 件残る
+  - process: ドキュメント修正
+    status: done
+    note: docs/ の文書の表への書き換え・不要な文の削除と AI slop の修正・メタデータの付け直し・lint の違反の修正と、開発コマンド（CMD-72-1）の検査の結果の記述
+    updated_by: planner
+    updated_at: '2026-11-11T01:29:11.547418+00:00'
+  - process: 単体テスト作成
+    status: todo
+    updated_by: planner
+    updated_at: '2026-11-11T01:29:11.547418+00:00'
+    note: build_templates.py の記載例のコードフェンスの長さの単体テストを追加する
   - process: 実装
     status: todo
     note: scripts/lint/.markdownlint-cli2.jsonc・.textlintrc.json の警告にしたルールを error へ切り替える
