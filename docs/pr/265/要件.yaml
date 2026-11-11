@@ -86,7 +86,7 @@ scope_out:
     reason: '起票の後に #225 へ移した'
     plan: '#225'
   - item: 入れ子の entries[] からパスを生成する変換と、リポジトリのフォルダ・.gitignore との突き合わせの検査・.gitignore の生成
-    reason: 判断が分かれている。各プロジェクトの設計書を検証するのは AI Monitor の設計書の検証（design_docs）で、knowledge の scripts は knowledge の文書だけを検査する。knowledge 自身のフォルダ構成の設計書も、AI Monitor が配布する schemas/ の直下のスキーマで検査する。この PR のスキーマを前提にするので、AI Monitor へ起票する推奨をレビューで確定する
+    reason: 各プロジェクトの設計書を検証するのは AI Monitor の設計書の検証（design_docs）で、knowledge の scripts は knowledge の文書だけを検査する。knowledge 自身のフォルダ構成の設計書も、AI Monitor が配布する schemas/ の直下のスキーマで検査する。この PR のスキーマを前提にするので AI Monitor へ起票し、D-200・D-202 の決定を本文に引き継ぐ
     plan: to_file
   - item: knowledge 自身のフォルダ構成の設計書の作成と、dev-docs.yaml への種類の行の追加
     reason: テンプレートを前提にした後続の Issue が持つ
@@ -97,3 +97,9 @@ scope_out:
   - item: スキーマの各キーへの使用先の記載と、キーを設ける条件の追加
     reason: 目的が別で、この PR の後にフォルダ構成のスキーマも含めて見直す
     plan: '#217'
+  - item: knowledge の既存の設計書（ARCH-72-1 の repository.layout・MOD-72-1・MOD-148-1 の directory）からの廃止するキーの除去と、フォルダ構成の設計書への移し替え
+    reason: '移し先の knowledge のフォルダ構成の設計書を #220 が作る。この PR で消すと、移し先が無いまま内容が失われる。knowledge の設計書は AI Monitor が配布する schemas/ で検査し、この PR の時点では検査を通る。#220 の本文への書き足しを task-planner へ連絡する'
+    plan: '#220'
+  - item: 他のプロジェクトの設計書からの廃止するキーの除去と、フォルダ構成の設計書への移し替え
+    reason: design-schemas の新しいメジャーを取り込む側の作業で、AI Monitor の配布と各プロジェクトの設計書の作成に合わせて行う
+    plan: to_file
