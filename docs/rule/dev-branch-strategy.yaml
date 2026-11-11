@@ -30,6 +30,8 @@ items:
     group: ブランチ
     name: ブランチの種類
     body: |-
+      <!-- table: data -->
+
       | ブランチ | 役割 | base |
       | --- | --- | --- |
       | `master` | E2E を通った状態だけを持つ。タグ（`v{バージョン}`）の打ち先 | - |
@@ -37,6 +39,8 @@ items:
       | `release/v{バージョン}` | スプリント単位で E2E を回す短命のブランチ | `develop` |
       | `hotfix/{ドメイン}/{変更内容}` | master に出たバグを release を待たずに修正する短命のブランチ | `master` |
       | 作業ブランチ（`{type}/{ドメイン}/{変更内容}`） | 1 Issue の作業 | `develop` |
+
+      <!-- /table -->
   - id: branch-02
     group: ブランチ
     name: release と develop の同期
@@ -78,12 +82,16 @@ items:
     group: ライフサイクル
     name: ブランチごとのマージと削除
     body: |-
+      <!-- table: data -->
+
       | ブランチ | マージ | マージの後 | 恒久の記録 |
       | --- | --- | --- | --- |
       | 作業ブランチ | squash マージ | 削除する | マージした PR の diff |
       | release | merge commit（`--no-ff`）で master・develop へ | 削除する | master のマージ commit とタグ |
       | hotfix | merge commit（`--no-ff`）で master・develop へ | 削除する | master のマージ commit とタグ |
       | PoC | マージしない | PR の close でローカル・リモートとも削除する | close した PR の diff |
+
+      <!-- /table -->
   - id: lifecycle-02
     group: ライフサイクル
     name: マージせずに閉じる作業ブランチ

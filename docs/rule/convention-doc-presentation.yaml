@@ -192,12 +192,16 @@ items:
     body: |-
       Issue・PR の本文・コメントで、他のファイル・commit・URL を指すときは次の書き方にする。
 
+      <!-- table: data -->
+
       | 参照の種類 | 書き方 |
       | --- | --- |
       | commit | `[{短縮 SHA}](https://github.com/{owner}/{repo}/commit/{SHA})` |
       | commit の範囲 | `[{開始}..{終了}](https://github.com/{owner}/{repo}/compare/{開始}...{終了})` |
       | ファイル | `[{パス}](https://github.com/{owner}/{repo}/blob/{SHA}/{パス})`（ブランチ名ではなく commit の SHA で固定する） |
       | 開いてもらう URL | `[{表示名}](URL)` |
+
+      <!-- /table -->
   - id: link-02
     group: リンクの書き方
     name: 新規のファイル

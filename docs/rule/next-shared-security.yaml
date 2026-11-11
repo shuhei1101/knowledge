@@ -54,6 +54,8 @@ items:
     body: |-
       `next.config.ts` の `headers()` で、全レスポンスに次を付与する。
 
+      <!-- table: data -->
+
       | ヘッダ | 値 |
       | --- | --- |
       | X-Frame-Options | SAMEORIGIN |
@@ -61,6 +63,8 @@ items:
       | Referrer-Policy | strict-origin-when-cross-origin |
       | Strict-Transport-Security | - |
       | Permissions-Policy | - |
+
+      <!-- /table -->
 
       CSP は要件に応じて nonce 方式（proxy.ts で nonce 生成 → ヘッダに付与）。
       nonce 方式は全ページが動的描画になり Cache Components と併用できない。

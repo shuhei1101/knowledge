@@ -158,17 +158,23 @@ items:
     group: 設定ファイル
     name: global と projects の構成
     body: |-
-      - YAML の最上位に `global` と `projects` を置く
-        - `global`: どのプロジェクトで起動しても効く値
-        - `projects`: 要素ごとに `match` と、そのプロジェクトで効く値を持つ並び
-        - `match` は絶対パスかプロジェクト名で書く
-          - 絶対パス: 起動したプロジェクトの直下（`CLAUDE_PROJECT_DIR`）がそのパスか、その配下のときに当たる。
-            `.claude/worktrees/` の下の worktree も本体のパスで当たる
-          - プロジェクト名: リポジトリのフォルダ名が一致したときに当たる。
-            worktree は本体のフォルダ名で見る
-        - `projects` の中の相対パスは、起動したプロジェクトの直下から解決する
-        - 当たった `projects` の要素は、並びの順に `global` へ重ねる。
-          辞書はキーごとに重ね、並びは `global` の後ろに `projects` の要素を足す
+      YAML の最上位に `global` と `projects` を配置する。
+
+      | キー | 中身 |
+      | --- | --- |
+      | `global` | どのプロジェクトで起動しても効く値 |
+      | `projects` | 要素ごとに `match` と、そのプロジェクトで効く値を持つ並び |
+
+      `match` は絶対パスかプロジェクト名で記載する。
+
+      | `match` | 該当する条件 |
+      | --- | --- |
+      | 絶対パス | 起動したプロジェクトの直下（`CLAUDE_PROJECT_DIR`）がそのパスか、その配下のとき。`.claude/worktrees/` の下の worktree も本体のパスで該当する |
+      | プロジェクト名 | リポジトリのフォルダ名が一致したとき。worktree は本体のフォルダ名で照合する |
+
+      - `projects` の中の相対パスは、起動したプロジェクトの直下から解決する
+      - 該当した `projects` の要素は、並びの順に `global` へ重ねる。
+        辞書はキーごとに重ね、並びは `global` の後ろに `projects` の要素を追加する
   - id: settings-file-06
     group: 設定ファイル
     name: 単純な値は env に置く

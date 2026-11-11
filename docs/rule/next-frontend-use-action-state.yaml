@@ -35,6 +35,8 @@ items:
     group: Server Action をクライアントから呼ぶ — useTransition / useActionState / useFormStatus
     name: ケース別の推奨表
     body: |-
+      <!-- table: data -->
+
       | ケース                             | 推奨                                    |
       | ---------------------------------- | --------------------------------------- |
       | フォーム送信（リッチ UI）          | `useTransition` + 自前ハンドラ          |
@@ -42,3 +44,5 @@ items:
       | `<form>` 内のサブミットボタン      | `useFormStatus`                         |
       | 楽観 UI                            | `useOptimistic` (+ useTransition)       |
       | 複雑な楽観更新 / キャンセル        | useMutation（[useMutationパターン](id:react-data-mutation)） |
+
+      <!-- /table -->

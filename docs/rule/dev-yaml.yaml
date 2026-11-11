@@ -167,8 +167,7 @@ items:
     group: データの正本 > worktree-safe な runtime YAML
     name: worktree-safe な runtime YAML
     body: |-
-      `settings.yaml` 等、実行時に UI / API から書き込まれる YAML は、どの worktree から書いても main repo の同一ファイル に着地させる。
-      worktree 削除でユーザーデータが消える事故 を防ぐため。
+      `settings.yaml` 等、実行時に UI / API から書き込まれる YAML は、どの worktree から書いても main repo の同一ファイルに着地させる。
 
       次の例では `main_repo_root()` ヘルパを採用する。
 

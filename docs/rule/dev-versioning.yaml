@@ -39,12 +39,16 @@ items:
       スプリントのバージョンは、計画時にそのスプリントへ入れた Issue の `type:*` ラベルで判定する。
       hotfix のマージ commit だけは、対象 Issue 1 件の `type:*` ラベルで判定する。
 
+      <!-- table: data -->
+
       | 条件 | 桁 |
       | --- | --- |
       | `破壊的変更` ラベルが 1 つでもある | MAJOR |
       | `type:feat` が 1 つでもある | MINOR |
       | `type:bug` / `type:design` / `type:refactor` / `type:docs` / `type:chore` / `type:test` だけ | PATCH |
       | Issue が 1 件も入っていない | PATCH |
+
+      <!-- /table -->
   - id: digit-02
     group: 桁の算出
     name: 計画が変わったとき
@@ -86,4 +90,4 @@ items:
       - 0.x の間は互換を保証しない（MINOR で壊してよい）
       - 1.0.0 にするかはユーザーが判断する。
         判断材料は「壊すと自分以外が困る状態になったか」
-      - 上げるときは Issue を起票する（判定基準の確定・設定のスキーマの記載など作業を伴うため）
+      - 上げるときは Issue を起票する

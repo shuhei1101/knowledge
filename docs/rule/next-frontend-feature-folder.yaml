@@ -66,12 +66,16 @@ items:
     group: components / hooks の配置
     name: components と hooks の配置表
     body: |-
+      <!-- table: data -->
+
       | Scope | Location |
       |---|---|
       | フィーチャ全体 | `{feature}/components/`, `{feature}/hooks/` |
       | view/edit 共用 | `{feature}/[id]/components/`, `{feature}/[id]/hooks/` |
       | edit 専用 | `{feature}/[id]/edit/components/`, `{feature}/[id]/edit/hooks/` |
       | 複数フィーチャ共通 | `app/(shared)/components/`, `app/(shared)/hooks/` |
+
+      <!-- /table -->
   - id: rules-01
     group: ルール
     name: フィーチャ名は kebab-case 複数形

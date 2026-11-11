@@ -85,9 +85,13 @@ items:
     group: CDN
     name: CDN 配信の表
     body: |-
+      <!-- table: data -->
+
       | アセット | 配信 |
       |---|---|
       | `public/` 静的画像 | Vercel CDN 自動 |
       | ユーザーアップロード | Supabase Storage / Vercel Blob / S3 |
       | OG image（動的） | `opengraph-image.tsx` + `next/og` |
       | 動画 | Mux / Vercel Blob |
+
+      <!-- /table -->

@@ -57,6 +57,8 @@ items:
     group: ハンドラーデコレータ（横断関心事）
     name: ハンドラーデコレータの表
     body: |-
+      <!-- table: data -->
+
       | デコレータ                              | 用途                                                            |
       | --------------------------------------- | --------------------------------------------------------------- |
       | `@catch_and_log(*exc_types, level=...)` | 指定例外をログに出して再送出する                                |
@@ -64,6 +66,8 @@ items:
       | `@stamina.retry(on=<フック関数>, attempts=<試行回数>)` | 指数バックオフでリトライ（引数は [llm/例外とリトライ](id:python-llm-exception-retry)）      |
       | `@with_timeout(seconds=<全体の待ち>)` | `asyncio.timeout` ラッパー。超過で `IntegrationTimeoutError`（値は [llm/例外とリトライ](id:python-llm-exception-retry#timeout-01)） |
       | `@measure_time(metric="...")`           | 実行時間メトリクス                                              |
+
+      <!-- /table -->
   - id: composition-01
     group: 合成
     name: デコレータの合成順

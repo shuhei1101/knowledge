@@ -46,12 +46,16 @@ items:
   - id: section-list-01
     name: セクション一覧
     body: |-
+      <!-- table: data -->
+
       | セクション | サブセクション | 必須or条件 |
       | --- | --- | --- |
       | タイトル（メタデータ `name`・`description`） | - | 必須 |
       | `overview` の項目 | - | 必須 |
       | フロー図の部品の定義を `body` に持つ項目 | - | 必須 |
       | `※n` の注記の項目 | - | 図に `※n` がある場合のみ |
+
+      <!-- /table -->
   - id: title-01
     name: "`タイトル`"
     body: |-
@@ -124,12 +128,16 @@ items:
     group: ノード種類
     name: ノードの種類の表
     body: |-
+      <!-- table: data -->
+
       | `kind` | ノード | 使い方 |
       | --- | --- | --- |
       | `start` | 開始ノード | 1 個だけ |
       | `question` | 判定ノード | 菱形。YES / NO で分岐する |
       | `action` | アクションノード | 不合格時の対応 |
       | `result` | 終端ノード | 判定通過時の最終結果 |
+
+      <!-- /table -->
   - id: edge-order-01
     group: 配置（一本道の時のみ）
     name: 一本道の配置

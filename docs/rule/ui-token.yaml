@@ -49,9 +49,11 @@ items:
     body: |-
       - セマンティックトークンの名前は、shadcn の名前に統一する。
         単体 HTML も同じ名前にする。
-        - 色: `background`・`foreground`・`card`・`popover`・`primary`・`primary-foreground`・`secondary`。
-          ほかに `muted`・`muted-foreground`・`accent`・`destructive`・`border`・`input`・`ring`
-        - 角丸: `--radius` から `sm`・`md`・`lg`・`xl` を派生する
+
+        | 種類 | 名前 |
+        | --- | --- |
+        | 色 | `background`・`foreground`・`card`・`popover`・`primary`・`primary-foreground`・`secondary`・`muted`・`muted-foreground`・`accent`・`destructive`・`border`・`input`・`ring` |
+        | 角丸 | `--radius` から `sm`・`md`・`lg`・`xl` を派生する |
   - id: token-name-02
     group: トークンの名前
     name: 独自の色の名前を作らない
@@ -70,10 +72,13 @@ items:
     group: トークンの持ち方
     name: 3 ティアで持つ
     body: |-
-      - 3 ティアで持つ。
-        - プリミティブ: 生の値（`--blue-500: oklch(...)`）
-        - セマンティック: 用途（`--background`・`--foreground`・`--primary`・`--border`）
-        - 派生: セマンティックから生成する値（hover・subtle・border など）
+      3 ティアで持つ。
+
+      | ティア | 中身 |
+      | --- | --- |
+      | プリミティブ | 生の値（`--blue-500: oklch(...)`） |
+      | セマンティック | 用途（`--background`・`--foreground`・`--primary`・`--border`） |
+      | 派生 | セマンティックから生成する値（hover・subtle・border など） |
   - id: token-tier-03
     group: トークンの持ち方
     name: 派生色の作り方
@@ -95,11 +100,15 @@ items:
     group: トークンの段階
     name: Tailwind の既定の段階を採る
     body: |-
-      - 余白・文字・角丸の段階は、Tailwind の既定を採る。
-        - 余白: 0.25rem 刻み
-        - 文字: `text-xs` から
-        - 角丸: `--radius` から派生する
-      - 単体 HTML も同じ段階の値を `:root` に置く。
+      余白・文字・角丸の段階は、Tailwind の既定を採る。
+
+      | 対象 | 段階 |
+      | --- | --- |
+      | 余白 | 0.25rem 刻み |
+      | 文字 | `text-xs` から |
+      | 角丸 | `--radius` から派生する |
+
+      単体 HTML も同じ段階の値を `:root` に配置する。
   - id: token-scale-02
     group: トークンの段階
     name: 変える値はデザイン方針に記載する

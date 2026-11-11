@@ -26,6 +26,8 @@ items:
     group: デプロイ先の選択
     name: デプロイ先の選択表
     body: |-
+      <!-- table: data -->
+
       | プロジェクト種別                                | 推奨                                                             |
       | ----------------------------------------------- | ---------------------------------------------------------------- |
       | Web サービス（フロント + API）                  | Vercel                                                       |
@@ -33,6 +35,8 @@ items:
       | セルフホストしたい                              | Node.js サーバー（`pnpm build && pnpm start`）+ リバースプロキシ |
       | 完全静的サイト                                  | Vercel / Cloudflare Pages / Netlify                              |
       | エッジに寄せたい                                | Cloudflare Workers + OpenNext                                    |
+
+      <!-- /table -->
   - id: deploy-target-02
     group: デプロイ先の選択
     name: Vercel を標準とする

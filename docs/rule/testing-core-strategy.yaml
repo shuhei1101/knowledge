@@ -67,6 +67,8 @@ items:
     group: テストレベル
     name: テストレベルの表
     body: |-
+      <!-- table: data -->
+
       | Level | Tool | 対象 | 比率 |
       | --- | --- | --- | --- |
       | Unit | Vitest | 純粋関数・schema・util | 多 |
@@ -74,6 +76,8 @@ items:
       | Integration | Vitest | 画面と API のモック（MSW）・service / db / API（実 DB か testcontainers） | 中 |
       | E2E | Playwright | ブラウザでの重要なフロー | 少 |
       | External | Vitest | 外部 API ラッパーの実接続（実際に使うパラメータ値の網羅） | 少 |
+
+      <!-- /table -->
   - id: test-level-02
     group: テストレベル
     name: Unit の単位
@@ -95,7 +99,7 @@ items:
     group: テスト関数の書式
     name: テスト名の書式
     body: |-
-      - テスト名（`test` / `it` の説明文字列）は `{関数名}_when_{条件}` にし、期待値は名前に入れない（期待値が変わるたびに名前が変わるため）。
+      - テスト名（`test` / `it` の説明文字列）は `{関数名}_when_{条件}` にし、期待値は名前に入れない。
         条件分岐のない唯一のケースは `{関数名}` だけにする。
   - id: test-function-format-02
     group: テスト関数の書式

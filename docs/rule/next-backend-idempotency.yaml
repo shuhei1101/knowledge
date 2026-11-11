@@ -44,6 +44,8 @@ items:
     group: どこに適用するか
     name: 適用するケースの表
     body: |-
+      <!-- table: data -->
+
       | ケース                | Idempotency の要否 |
       | --------------------- | ------------------ |
       | 課金 / 払い戻し       | ✅ 必須            |
@@ -52,6 +54,8 @@ items:
       | 一般的なフォーム POST | △ あると安全       |
       | GET / PUT / DELETE    | ❌ HTTP 仕様で冪等 |
       | PATCH                 | ❌ 楽観的ロックで二重適用を防ぐ |
+
+      <!-- /table -->
   - id: cleanup-01
     group: クリーンアップ
     name: 期限切れキーの削除
