@@ -23,7 +23,7 @@ _ER_TEMPLATE = "docs/template/template-er.yaml"
 # ER 図のスキーマの id のキーの x-rules の行と、その後ろに追加する決まり
 _ID_RULE = "      - 設計書を作るときに振り、改名・移動でも変えない。\n"
 _ADDED_RULE = "e2e で追加した決まり。"
-# 生成の対象の 15 件のテンプレート
+# 生成の対象の設計書の種類のテンプレート
 _TEMPLATES = (
     "template-architecture",
     "template-component",
@@ -34,6 +34,7 @@ _TEMPLATES = (
     "template-external-api",
     "template-external-library",
     "template-interface",
+    "template-layout",
     "template-module",
     "template-nonfunctional",
     "template-scenario",
@@ -59,7 +60,7 @@ def _run_build(folder: Path) -> subprocess.CompletedProcess[str]:
 
 
 def _bytes_of_templates(folder: Path) -> dict[str, bytes]:
-    """15 件のテンプレートのバイト列を返す。"""
+    """生成の対象の全てのテンプレートのバイト列を返す。"""
     return {
         name: (folder / "docs" / "template" / f"{name}.yaml").read_bytes() for name in _TEMPLATES
     }

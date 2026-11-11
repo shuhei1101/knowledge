@@ -217,6 +217,55 @@ def test_normal(run_script: RunScript, tmp_path: Path) -> None:
     assert (root / "docs/template/template-er.yaml").read_bytes() == er_after
 
 
+def test_normal_recursive_ref(run_script: RunScript, tmp_path: Path) -> None:
+    """配列の要素が自分と同じ定義を $ref で指すスキーマからも、キーの表を組み立てて書き出す（正常系）。"""
+    # 準備
+    root = _repo(tmp_path / "repo")
+    run_script("build_templates", root)
+    (root / "schemas/design/config.schema.yaml").write_text(
+        _CONFIG
+        + "  entries:\n"
+        + "    type: array\n"
+        + "    title: エントリ\n"
+        + "    items:\n"
+        + "      $ref: '#/$defs/entry'\n"
+        + "$defs:\n"
+        + "  entry:\n"
+        + "    type: object\n"
+        + "    properties:\n"
+        + "      name:\n"
+        + "        type: string\n"
+        + "        title: 名前\n"
+        + "      children:\n"
+        + "        type: array\n"
+        + "        title: 配下\n"
+        + "        items:\n"
+        + "          $ref: '#/$defs/entry'\n",
+        encoding="utf-8",
+    )
+    # 実行
+    result = run_script("build_templates", root)
+    # 検証
+    assert result.exit_code == 0
+    assert result.stdout == "docs/template/template-config.yaml\n"
+    doc = cast(
+        "dict[str, list[dict[str, str]]]",
+        load_safe((root / "docs/template/template-config.yaml").read_text(encoding="utf-8")),
+    )
+    assert doc["items"][1]["body"] == (
+        "<!-- table: data -->\n"
+        "\n"
+        "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
+        "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
+        "| name | 名前 | string | - | - | - | - | - |\n"
+        "| entries | エントリ | array | - | - | - | - | - |\n"
+        "| entries[].name | 名前 | string | - | - | - | - | - |\n"
+        "| entries[].children | 配下 | array | - | - | - | - | - |\n"
+        "\n"
+        "<!-- /table -->"
+    )
+
+
 def test_error_when_ref_unresolvable(run_script: RunScript, tmp_path: Path) -> None:
     """解決できない $ref があれば、どのテンプレートも書き換えずに終わる（異常系）。"""
     # 準備
