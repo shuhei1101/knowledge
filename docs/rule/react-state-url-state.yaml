@@ -2,7 +2,7 @@
 id: react-state-url-state
 kind: rule
 name: URL の状態
-description: 画面で見ているものに影響する状態を URL の search で持つ原則と、TanStack Router の validateSearch + Zod での読み取り・書き込み・検証を定め、タブ・フィルタ・ソート・ページなどの状態を URL に持たせるときに参照する。
+description: 画面に表示しているものに影響する状態を URL の search で持つ原則と、TanStack Router での読み取り・書き込み・検証を定め、タブ・フィルタ・ソートなどの状態を URL に持たせるときに参照する。
 inject_when:
   field: text
   op: contains
