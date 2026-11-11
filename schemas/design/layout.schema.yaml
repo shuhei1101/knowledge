@@ -1,0 +1,360 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: フォルダ構成
+description: |-
+  リポジトリの直下からの全てのフォルダとファイル（エントリ）を、入れ子の `entries[]` で記載する設計書。1 リポジトリ 1 ファイル。
+  フォルダを切る観点とレビューの観点は規約『フォルダ構成の切り方とレビュー』（`dev-folder-layout`）に従う。
+x-rules:
+  - 1 リポジトリ 1 ファイルにする。
+  - 配下の細かい配置を言語の規約が定めるフォルダは、`children` を記載せず `convention` で規約を指す。
+  - 生成物・複製・一時ファイルは `gitignore` に記載し、生成物・複製のエントリには `generated_from` を記載する。
+x-kind: layout
+x-folder: docs/layout
+x-id-prefix: LAY
+type: object
+additionalProperties: false
+required:
+- id
+- title
+- repository
+- lead
+- entries
+properties:
+  id:
+    $ref: common.schema.yaml#/$defs/id
+    title: ID
+    description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
+    x-rules:
+      - 設計書を作るときに振り、改名・移動でも変えない。
+    examples:
+    - LAY-1
+  title:
+    type: string
+    title: タイトル
+    description: 設計書の表示名。
+    examples:
+    - aituber
+  repository:
+    type: string
+    title: リポジトリ
+    description: 対象のリポジトリ（`owner/name`）。
+    x-rules:
+      - アーキテクチャ図の `repository.repositories[].name` のどれかと同じ値にする。
+    pattern: ^[^/\s]+/[^/\s]+$
+    examples:
+    - shuhei1101/aituber
+  lead:
+    $ref: common.schema.yaml#/$defs/markdown
+    title: 冒頭リード
+    description: リポジトリのフォルダ構成を 1〜3 行で説明する。
+    x-rules:
+      - 初回に記載した内容のまま保ち、後から情報を追加しない。
+      - 対象そのものが変わったときだけ書き換える。
+    examples:
+    - 機能ごとのフォルダと、コードではない原本の `content/` に分ける。
+  content_types:
+    type: array
+    title: 中身の種類
+    description: エントリの `content_types` に付ける中身の種類の語彙。
+    x-heading: 中身の種類
+    x-shape: table
+    x-key: name
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - name
+      - group
+      - summary
+      properties:
+        name:
+          type: string
+          title: 種類
+          description: 種類の単語（英語）。
+          pattern: ^[a-z][a-z0-9_]*$
+          examples:
+          - config
+        group:
+          type: string
+          title: 分類
+          description: '`role`（役割）か `feature`（機能）。'
+          enum:
+          - role
+          - feature
+        summary:
+          $ref: common.schema.yaml#/$defs/summary
+          title: 説明
+          description: 種類の意味を 1 行で説明する。
+          examples:
+          - 設定ファイル
+  entries:
+    type: array
+    title: エントリ
+    description: リポジトリの直下のフォルダとファイル。
+    x-heading: エントリ
+    x-shape: sections
+    x-key: name
+    minItems: 1
+    items:
+      $ref: '#/$defs/entry'
+  gitignore:
+    type: array
+    title: Git で管理しないもの
+    description: '`.gitignore` に記載するパターンと、管理しない理由。'
+    x-heading: Git で管理しないもの
+    x-shape: table
+    x-key: pattern
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - pattern
+      - reason
+      properties:
+        pattern:
+          type: string
+          title: パターン
+          description: '`.gitignore` の 1 行のパターン。'
+          examples:
+          - tmp/
+        reason:
+          type: string
+          title: 理由
+          description: Git で管理しない理由。
+          examples:
+          - 一時ファイル
+  refs:
+    type: array
+    title: 関連
+    items:
+      $ref: common.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    items:
+      $ref: common.schema.yaml#/$defs/decision
+  notes:
+    $ref: common.schema.yaml#/$defs/notes
+    x-heading: 補足
+    x-shape: sections
+$defs:
+  entry:
+    type: object
+    title: エントリ
+    description: フォルダかファイル 1 つ。`type` が `folder` のときだけ、配下のエントリと配下の決まりを持つ。
+    additionalProperties: false
+    required:
+    - type
+    - name
+    - contents
+    properties:
+      type:
+        type: string
+        title: 種別
+        description: '`folder` か `file`。'
+        enum:
+        - folder
+        - file
+      name:
+        type: string
+        title: 名前
+        description: 親のフォルダからの名前。可変の部分は英語の `{名前}` で記載する。
+        x-rules:
+          - 区切りの `/` を含めず、1 階層の名前にする。
+        pattern: ^[^/]+$
+        examples:
+        - shared
+        - '{feature}'
+      contents:
+        $ref: common.schema.yaml#/$defs/summary
+        title: 配置するもの
+        description: このフォルダかファイルに配置するものを 1 行で記載する。
+        examples:
+        - 全ての機能が参照する設定・ログ・例外
+      content_types:
+        type: array
+        title: 中身の種類
+        description: 中身の種類。最上位の `content_types[].name` の単語を選ぶ。
+        uniqueItems: true
+        items:
+          type: string
+        examples:
+        - - agent_flow
+          - brain
+      generated_from:
+        type: object
+        title: 生成元
+        description: 生成物・複製のエントリの生成元と、生成するコマンド。
+        additionalProperties: false
+        required:
+        - path
+        - command
+        properties:
+          path:
+            type: string
+            title: 生成元のパス
+            description: 生成元のリポジトリの直下からのパス。
+            examples:
+            - frontend/
+          command:
+            $ref: common.schema.yaml#/$defs/ref
+            title: 生成するコマンド
+            description: 生成するコマンドを持つ『開発コマンド』の分類への参照。
+            examples:
+            - CMD-1#categories[ビルド・生成]
+      placeholders:
+        type: array
+        title: 可変の部分
+        description: '`name`・`naming` の `{名前}` ごとの、値の語彙への参照。'
+        items:
+          type: object
+          additionalProperties: false
+          required:
+          - name
+          - from
+          properties:
+            name:
+              type: string
+              title: 名前
+              description: '`{名前}` の名前。'
+              examples:
+              - stage
+            from:
+              $ref: common.schema.yaml#/$defs/ref
+              title: 語彙
+              description: 値の語彙を持つ設計書の項目への参照。
+              examples:
+              - AG-1#stages
+      children:
+        type: array
+        title: 配下のエントリ
+        description: '`type` が `folder` のときだけ記載する、配下のフォルダとファイル。'
+        items:
+          $ref: '#/$defs/entry'
+      naming:
+        type: array
+        title: ファイル名の決まり
+        description: '`type` が `folder` のときだけ記載する、配下のファイル名のパターン（英語）。'
+        x-rules:
+          - 1 つのパターンを 1 つの値にする。
+        items:
+          type: string
+        examples:
+        - - '{stage}.yaml'
+        x-bad-examples:
+        - value:
+          - '{stage}.yaml・{stage}.md'
+          reason: 1 つの値に 2 つのパターンが入っている
+      used_by:
+        type: array
+        title: 参照する構成要素
+        description: '`type` が `folder` のときだけ記載する、配下を参照する構成要素の設計書への参照。'
+        items:
+          $ref: common.schema.yaml#/$defs/ref
+        examples:
+        - - AG-1#
+          - AG-2#
+      id_root:
+        type: boolean
+        title: ID の起点
+        description: '`type` が `folder` のときだけ記載する。配下のファイルの文書の ID を、このフォルダからのパスにするか。'
+      convention:
+        type: string
+        title: 配下の規約
+        description: '`type` が `folder` のときだけ記載する、配下の配置を定める knowledge の規約の ID。'
+        examples:
+        - python-architecture-layout
+    allOf:
+    - if:
+        properties:
+          type:
+            const: file
+      then:
+        properties:
+          children: false
+          naming: false
+          used_by: false
+          id_root: false
+          convention: false
+examples:
+- id: LAY-1
+  title: aituber
+  repository: shuhei1101/aituber
+  lead: 機能ごとのフォルダと、コードではない原本の `content/` に分ける。
+  content_types:
+  - name: agent_flow
+    group: role
+    summary: エージェントが参照するエージェントフロー
+  - name: config
+    group: role
+    summary: 設定ファイル
+  - name: brain
+    group: feature
+    summary: ブレインノード
+  entries:
+  - type: folder
+    name: src
+    contents: コード
+    children:
+    - type: folder
+      name: aituber
+      contents: サーバー本体のコード
+      convention: python-architecture-layout
+      children:
+      - type: folder
+        name: shared
+        contents: 全ての機能が参照する設定・ログ・例外
+        content_types:
+        - config
+  - type: folder
+    name: content
+    contents: コードではない原本
+    children:
+    - type: folder
+      name: node-docs
+      contents: ノードのエージェントフローと、そのスキーマ
+      id_root: true
+      children:
+      - type: file
+        name: schema.yaml
+        contents: エージェントフローのスキーマ
+      - type: folder
+        name: shared
+        contents: 複数のノードが埋め込む手順の部品
+        content_types:
+        - agent_flow
+        naming:
+        - '{part}.yaml'
+        used_by:
+        - AG-1#
+        - AG-2#
+      - type: folder
+        name: brain
+        contents: 活動ごとのブレインノードの手順
+        children:
+        - type: folder
+          name: stream
+          contents: 配信のブレインノードの手順
+          content_types:
+          - agent_flow
+          - brain
+          naming:
+          - '{stage}.yaml'
+          placeholders:
+          - name: stage
+            from: AG-1#stages
+          used_by:
+          - AG-1#
+  - type: folder
+    name: dist
+    contents: ビルドしたフロントエンド
+    generated_from:
+      path: frontend/
+      command: CMD-1#categories[ビルド・生成]
+  gitignore:
+  - pattern: dist/
+    reason: 生成物
+  - pattern: tmp/
+    reason: 一時ファイル
+  refs:
+  - ARCH-1#

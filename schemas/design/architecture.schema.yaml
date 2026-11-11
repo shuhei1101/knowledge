@@ -84,9 +84,6 @@ properties:
               type: string
               title: サブシステム
               description: ポリレポのとき。
-      layout:
-        type: string
-        title: 配置
       notes:
         type: string
         title: 補足
@@ -299,7 +296,6 @@ examples:
     style: モノレポ
     repositories:
     - name: owner/taskflow
-    layout: '`frontend/` / `backend/`'
   subsystems:
   - name: フロントエンド
     scope: frontend

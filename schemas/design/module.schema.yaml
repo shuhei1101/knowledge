@@ -7,8 +7,9 @@ x-rules:
   - 1 ファイル = 物理ファイル 1 つにする。
   - 全ての要素の `container` は同じ物理ファイルを指す。
   - 配置場所は `モジュール構成/{container}.yaml` にする。
-  - 分類の構成図・ディレクトリ構成と分類全体の決まりは、分類をまとめる設計書に配置する。
-  - 分類をまとめる設計書は `モジュール構成/分類/` の下に配置し、要素を持たず `diagrams`・`directory`・`notes` だけを持つ。
+  - 分類の構成図と分類全体の決まりは、分類をまとめる設計書に配置する。
+  - 分類をまとめる設計書は `モジュール構成/分類/` の下に配置し、要素を持たず `diagrams`・`notes` だけを持つ。
+  - ファイルの配置はフォルダ構成の設計書に記載する。
 x-kind: module
 x-folder: docs/module
 x-id-prefix: MOD
@@ -61,11 +62,6 @@ properties:
     items:
       type: string
       pattern: ^tests/external/.+
-  directory:
-    $ref: common.schema.yaml#/$defs/markdown
-    title: ディレクトリ構成
-    description: 属するファイルのツリー（コードブロック）。各ファイルの右に主な中身を 1 行で記載する。
-    x-heading: ディレクトリ構成
   diagrams:
     type: array
     title: 構成図

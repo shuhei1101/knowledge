@@ -226,6 +226,14 @@ rules:
   - rule: docs/rule/dev-content-location.yaml
     paths:
       - "**/content/**"
+  - rule: docs/rule/dev-folder-layout.yaml
+    paths:
+      - "**/docs/layout/*.yaml"
+    tools:
+      - "mcp__*__write_docs"
+    args:
+      operations.id:
+        - "re:^LAY-"
   - rule: docs/rule/html-core-server-rendering.yaml
     paths:
       - "**/templates/**/*.{html,j2}"
