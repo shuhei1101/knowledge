@@ -81,7 +81,7 @@ items:
   - id: example-sample-01
     name: 記載例
     body: |-
-      ```yaml
+      ````yaml
       id: TP-1
       title: テスト実行方法
       lead: テスト種別ごとの実行コマンドと前提。
@@ -132,4 +132,4 @@ items:
           ```bash
           (rc=0; uv run ruff check . || rc=1; uv run ruff format --check . || rc=1; uv run mypy . || rc=1; uv run lint-imports || rc=1; exit $rc)
           ```
-      ```
+      ````
