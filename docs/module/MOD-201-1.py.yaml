@@ -94,6 +94,8 @@ constants:
         value: template-state-transition
       - key: test_procedure
         value: template-test-procedure
+      - key: layout
+        value: template-layout
     refs:
       - IF-201-1#constraints[テンプレートの対応表]
   - name: CONSTRAINT_KEYS
@@ -327,13 +329,20 @@ functions:
         required: false
         default: '""'
         description: '`parent.`・`parent[].` の接頭'
+      - name: ancestors
+        title: たどっている親の $ref の先
+        type: frozenset[int]
+        required: false
+        default: frozenset()
+        description: たどっている途中の親が解決した `$ref` の先の値の `id()`
     returns:
       type: Iterator[KeyRow]
       description: キーの行
     process: |-
       1. `properties` のキーごとに、`$ref` を引いた先に、キーの側の `title`・`description`・`examples`・`x-rules`・`x-bad-examples` を重ねる（`$ref` を解決した先がさらに `$ref` を持てば、その解決器で続けて引く）
       2. 親の `required` に名前があれば `required` を真にした行を返す
-      3. 子のスキーマがオブジェクトの `properties` を持てば `{名前}.` で、配列の `items` がオブジェクトの `properties` を持てば `{名前}[].` でたどる
+      3. 解決した `$ref` の先（解決した値の同一性）が `ancestors` にあれば（再帰する `$ref`）、行だけを返して子はたどらない
+      4. 子のスキーマがオブジェクトの `properties` を持てば `{名前}.` で、配列の `items` がオブジェクトの `properties` を持てば `{名前}[].` で、`ancestors` にそのキーで解決した `$ref` の先を加えてたどる
     unit_tests:
       - name: test_iter_keys
         case: 正常
@@ -341,6 +350,12 @@ functions:
         condition: オブジェクトの子・配列の要素の子・`$ref` で `title` だけキーの側にあるキーを持つスキーマ
         mock: なし
         expected: '名前が `a`・`a.b`・`c`・`c[].d` の順で、`$ref` のキーの `title` がキーの側、`description` が解決した先の値'
+      - name: test_iter_keys_when_ref_recursive
+        case: 正常
+        summary: 再帰する $ref
+        condition: 配列 `entries` の要素が `#/$defs/entry` を指し、`$defs/entry` が `name` と、要素が `#/$defs/entry` を指す `children` を持つスキーマ
+        mock: なし
+        expected: 名前が `entries`・`entries[].name`・`entries[].children` の順で、`entries[].children[].name` の行が無い
   - name: _render_key_table
     title: キーの表の作成
     kind: 関数
