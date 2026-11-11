@@ -102,6 +102,32 @@ flows:
       - 標準エラーに `template-config` と `schemas/design/config.schema.yaml` が出る
       - '`template-er.yaml` のバイト列が実行の前と同じ'
     test: test_error_when_template_missing
+  - name: 正常系（再帰する $ref）
+    summary: 配列の要素が自分と同じ定義を $ref で指すスキーマからも、キーの表を組み立てて書き出す
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: 正常系の一時フォルダで、`config.schema.yaml` に `entries[]`（要素は `#/$defs/entry`）を追加し、`$defs/entry` が `name` と、要素が `#/$defs/entry` を指す `children[]` を持つもの。`template-er.yaml`・`template-config.yaml` は今のスキーマから生成した状態
+    flow: |-
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant G as 設計書のテンプレートの生成
+        participant F as リポジトリ
+        C->>G: リポジトリの直下で起動する
+        G->>F: schemas/design/ の全てのスキーマを読み込む
+        F-->>G: スキーマ
+        G->>G: 全ての $ref を解決する
+        G->>F: 種類のスキーマに対応する全てのテンプレートの文書を読み込む
+        F-->>G: テンプレートの文書
+        G->>G: 種類ごとに items を組み立てる（再帰する $ref の先はたどらない）
+        G->>F: items が違う template-config.yaml の items だけを置き換えて書き出す
+        G-->>C: 書き換えたテンプレートのパスと終了コード 0
+    expected:
+      - 終了コードが 0
+      - 標準出力が `docs/template/template-config.yaml` の 1 行だけ
+      - '`template-config.yaml` のキーの表に、`entries`・`entries[].name`・`entries[].children` の行がこの並びで 1 つずつあり、`entries[].children[].name` の行が無い'
+    test: test_normal_recursive_ref
 lead: '`schemas/design/` の設計書の種類のスキーマから、`docs/template/` の対応するテンプレートの文書の `items` を組み立てて書き出す。'
 identifier: build-templates
 idempotent: true
@@ -138,7 +164,7 @@ constraints:
   - item: テンプレートの対応表
     constraint: |-
       `x-kind` → テンプレートの ID の固定の対応。
-      `architecture` → `template-architecture`、`component` → `template-component`、`config` → `template-config`、`dataflow` → `template-dataflow`、`dev_command` → `template-dev-command`、`er` → `template-er`、`external_api` → `template-external-api`、`interface` → `template-interface`、`library` → `template-external-library`、`module` → `template-module`、`nonfunctional` → `template-nonfunctional`、`scenario` → `template-scenario`、`screen` → `template-screen-design`、`state_transition` → `template-state-transition`、`test_procedure` → `template-test-procedure`。
+      `architecture` → `template-architecture`、`component` → `template-component`、`config` → `template-config`、`dataflow` → `template-dataflow`、`dev_command` → `template-dev-command`、`er` → `template-er`、`external_api` → `template-external-api`、`interface` → `template-interface`、`layout` → `template-layout`、`library` → `template-external-library`、`module` → `template-module`、`nonfunctional` → `template-nonfunctional`、`scenario` → `template-scenario`、`screen` → `template-screen-design`、`state_transition` → `template-state-transition`、`test_procedure` → `template-test-procedure`。
       テンプレートの文書のパスは `docs/template/{テンプレートの ID}.yaml`
     notes: 対応表に無い `x-kind` の種類のスキーマを `schemas/design/` に追加したら、対応表とテンプレートの文書も追加する
   - item: 書き出しの順序
@@ -157,6 +183,7 @@ constraints:
       列は `名前`・`title`・`型`・`必須`・`選択肢`・`制約`・`description`・`examples`。
       行は `properties` を深さ優先でスキーマの並びのとおりにたどり、オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` の名前にする。
       `$ref` は解決した先のキーを使用し、`title`・`description`・`examples` はキーの側の値があればそれを優先する。
+      たどっている途中の親が解決した `$ref` と同じ先を、子が再び `$ref` で指すとき（再帰する `$ref`）は、そのキーの行だけを出して、その先の子はたどらない。
       `型` は `type`（解決した先を含む）。`type` が配列なら要素を ` / ` でつなぎ、`type` が無く `anyOf`・`oneOf` だけを持つなら各要素の `type` を ` / ` でつなぐ。`必須` は親の `required` に名前があれば `必須`、`選択肢` は `enum` の要素を ` / ` でつなぐ。
       `制約` は `const`・`pattern`・`format`・`minLength`・`maxLength`・`minItems`・`maxItems`・`minimum`・`maximum` を `{キー}: {値}` で `, ` でつなぐ。
       `if`・`then`・`else`・`allOf`・`anyOf` の条件つきの必須は `必須` にせず、条件は `description` が持つ。
