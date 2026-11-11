@@ -58,7 +58,6 @@ items:
       | repository.repositories | リポジトリ | array | 必須 | - | minItems: `1` | - | - |
       | repository.repositories[].name | リポジトリ | string | 必須 | - | - | `owner/name`。 | - |
       | repository.repositories[].subsystem | サブシステム | string | - | - | - | ポリレポのとき。 | - |
-      | repository.layout | 配置 | string | - | - | - | - | - |
       | repository.notes | 補足 | string | - | - | - | - | - |
       | subsystems | サブシステム一覧 | array | 必須 | - | minItems: `1` | 独立してテスト・デプロイできる単位。 | - |
       | subsystems[].name | サブシステム | string | 必須 | - | - | 業務的な役割で命名する。 | - |
@@ -171,7 +170,6 @@ items:
         style: モノレポ
         repositories:
         - name: owner/taskflow
-        layout: '`frontend/` / `backend/`'
       subsystems:
       - name: フロントエンド
         scope: frontend

@@ -1,0 +1,188 @@
+# yaml-language-server: $schema=../../schemas/template.schema.yaml
+id: template-layout
+kind: template
+name: 'テンプレート: フォルダ構成'
+description: リポジトリの直下からの全てのフォルダとファイルを入れ子で記載するフォルダ構成の書式を定め、フォルダ構成の設計書を作る・修正するときに参照する。
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: dev-folder-layout
+    type: references
+    when: フォルダを切るとき・フォルダ構成の設計書をレビューするとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      リポジトリの直下からの全てのフォルダとファイル（エントリ）を、入れ子の `entries[]` で記載する設計書。1 リポジトリ 1 ファイル。
+      フォルダを切る観点とレビューの観点は規約『フォルダ構成の切り方とレビュー』（`dev-folder-layout`）に従う。
+  - id: rules-01
+    name: 決まり
+    body: |-
+      - 1 リポジトリ 1 ファイルにする。
+      - 配下の細かい配置を言語の規約が定めるフォルダは、`children` を記載せず `convention` で規約を指す。
+      - 生成物・複製・一時ファイルは `gitignore` に記載し、生成物・複製のエントリには `generated_from` を記載する。
+  - id: item-list-01
+    name: 項目
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `LAY-1` |
+      | title | タイトル | string | 必須 | - | - | 設計書の表示名。 | `aituber` |
+      | repository | リポジトリ | string | 必須 | - | pattern: `^[^/\s]+/[^/\s]+$` | 対象のリポジトリ（`owner/name`）。 | `shuhei1101/aituber` |
+      | lead | 冒頭リード | string | 必須 | - | - | リポジトリのフォルダ構成を 1〜3 行で説明する。 | `` 機能ごとのフォルダと、コードではない原本の `content/` に分ける。 `` |
+      | content_types | 中身の種類 | array | - | - | - | エントリの `content_types` に付ける中身の種類の語彙。 | - |
+      | content_types[].name | 種類 | string | 必須 | - | pattern: `^[a-z][a-z0-9_]*$` | 種類の単語（英語）。 | `config` |
+      | content_types[].group | 分類 | string | 必須 | `role` / `feature` | - | `role`（役割）か `feature`（機能）。 | - |
+      | content_types[].summary | 説明 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 種類の意味を 1 行で説明する。 | `設定ファイル` |
+      | entries | エントリ | array | 必須 | - | minItems: `1` | リポジトリの直下のフォルダとファイル。 | - |
+      | entries[].type | 種別 | string | 必須 | `folder` / `file` | - | `folder` か `file`。 | - |
+      | entries[].name | 名前 | string | 必須 | - | pattern: `^[^/]+$` | 親のフォルダからの名前。可変の部分は英語の `{名前}` で記載する。 | `shared` / `{feature}` |
+      | entries[].contents | 配置するもの | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | このフォルダかファイルに配置するものを 1 行で記載する。 | `全ての機能が参照する設定・ログ・例外` |
+      | entries[].content_types | 中身の種類 | array | - | - | - | 中身の種類。最上位の `content_types[].name` の単語を選ぶ。 | `[agent_flow, brain]` |
+      | entries[].generated_from | 生成元 | object | - | - | - | 生成物・複製のエントリの生成元と、生成するコマンド。 | - |
+      | entries[].generated_from.path | 生成元のパス | string | 必須 | - | - | 生成元のリポジトリの直下からのパス。 | `frontend/` |
+      | entries[].generated_from.command | 生成するコマンド | string | 必須 | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 生成するコマンドを持つ『開発コマンド』の分類への参照。 | `CMD-1#categories[ビルド・生成]` |
+      | entries[].placeholders | 可変の部分 | array | - | - | - | `name`・`naming` の `{名前}` ごとの、値の語彙への参照。 | - |
+      | entries[].placeholders[].name | 名前 | string | 必須 | - | - | `{名前}` の名前。 | `stage` |
+      | entries[].placeholders[].from | 語彙 | string | 必須 | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 値の語彙を持つ設計書の項目への参照。 | `AG-1#stages` |
+      | entries[].children | 配下のエントリ | array | - | - | - | `type` が `folder` のときだけ記載する、配下のフォルダとファイル。 | - |
+      | entries[].naming | ファイル名の決まり | array | - | - | - | `type` が `folder` のときだけ記載する、配下のファイル名のパターン（英語）。 | `['{stage}.yaml']` |
+      | entries[].used_by | 参照する構成要素 | array | - | - | - | `type` が `folder` のときだけ記載する、配下を参照する構成要素の設計書への参照。 | `[AG-1#, AG-2#]` |
+      | entries[].id_root | ID の起点 | boolean | - | - | - | `type` が `folder` のときだけ記載する。配下のファイルの文書の ID を、このフォルダからのパスにするか。 | - |
+      | entries[].convention | 配下の規約 | string | - | - | - | `type` が `folder` のときだけ記載する、配下の配置を定める knowledge の規約の ID。 | `python-architecture-layout` |
+      | gitignore | Git で管理しないもの | array | - | - | - | `.gitignore` に記載するパターンと、管理しない理由。 | - |
+      | gitignore[].pattern | パターン | string | 必須 | - | - | `.gitignore` の 1 行のパターン。 | `tmp/` |
+      | gitignore[].reason | 理由 | string | 必須 | - | - | Git で管理しない理由。 | `一時ファイル` |
+      | refs | 関連 | array | - | - | - | - | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
+
+      <!-- /table -->
+  - id: key-rules-01
+    name: キーごとの決まり
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | 決まり | 悪い例 | 理由 |
+      | --- | --- | --- | --- |
+      | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
+      | repository | アーキテクチャ図の `repository.repositories[].name` のどれかと同じ値にする。 | - | - |
+      | lead | 初回に記載した内容のまま保ち、後から情報を追加しない。<br>対象そのものが変わったときだけ書き換える。 | - | - |
+      | entries[].name | 区切りの `/` を含めず、1 階層の名前にする。 | - | - |
+      | entries[].generated_from.command | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | entries[].placeholders[].from | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | entries[].naming | 1 つのパターンを 1 つの値にする。 | `['{stage}.yaml・{stage}.md']` | 1 つの値に 2 つのパターンが入っている |
+      | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+
+      <!-- /table -->
+  - id: example-sample-01
+    name: 記載例
+    body: |-
+      ```yaml
+      id: LAY-1
+      title: aituber
+      repository: shuhei1101/aituber
+      lead: 機能ごとのフォルダと、コードではない原本の `content/` に分ける。
+      content_types:
+      - name: agent_flow
+        group: role
+        summary: エージェントが参照するエージェントフロー
+      - name: config
+        group: role
+        summary: 設定ファイル
+      - name: brain
+        group: feature
+        summary: ブレインノード
+      entries:
+      - type: folder
+        name: src
+        contents: コード（src レイアウトのため、パッケージ 1 つだけを配置する）
+        children:
+        - type: folder
+          name: aituber
+          contents: サーバー本体のコード
+          convention: python-architecture-layout
+          children:
+          - type: folder
+            name: shared
+            contents: 全ての機能が参照する設定・ログ・例外
+            content_types:
+            - config
+      - type: folder
+        name: content
+        contents: コードではない原本
+        children:
+        - type: folder
+          name: node-docs
+          contents: ノードのエージェントフローと、そのスキーマ
+          id_root: true
+          children:
+          - type: file
+            name: schema.yaml
+            contents: エージェントフローのスキーマ
+          - type: folder
+            name: shared
+            contents: 複数のノードが埋め込む手順の部品
+            content_types:
+            - agent_flow
+            naming:
+            - '{part}.yaml'
+            used_by:
+            - AG-1#
+            - AG-2#
+          - type: folder
+            name: brain
+            contents: 活動ごとのブレインノードの手順
+            children:
+            - type: folder
+              name: stream
+              contents: 配信のブレインノードの手順
+              content_types:
+              - agent_flow
+              - brain
+              naming:
+              - '{stage}.yaml'
+              placeholders:
+              - name: stage
+                from: AG-1#stages
+              used_by:
+              - AG-1#
+            - type: folder
+              name: chat
+              contents: 雑談のブレインノードの手順
+              content_types:
+              - agent_flow
+              - brain
+              naming:
+              - '{stage}.yaml'
+              placeholders:
+              - name: stage
+                from: AG-2#stages
+              used_by:
+              - AG-2#
+      - type: folder
+        name: dist
+        contents: ビルドしたフロントエンド
+        generated_from:
+          path: frontend/
+          command: CMD-1#categories[ビルド・生成]
+      gitignore:
+      - pattern: dist/
+        reason: 生成物
+      - pattern: tmp/
+        reason: 一時ファイル
+      refs:
+      - ARCH-1#
+      ```
+tags:
+  - name: scope:テンプレート
+  - name: topic:フォルダ
+    main: true
+  - name: topic:構成
+  - name: topic:リポジトリ
+  - name: topic:テンプレート
+  - name: topic:gitignore
+  - name: topic:ツリー
