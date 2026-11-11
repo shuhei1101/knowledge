@@ -1,0 +1,99 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: changed
+    detail: 生成の対象にフォルダ構成のテンプレートが加わり、前提と結果のテンプレートの件数が変わる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 追加したスキーマと生成したテンプレートが、スキーマ自身の検査とテンプレートの一致の検査の対象に入る。手順と結果の形は変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: none
+    detail: 検索できる文書にフォルダ構成のテンプレートと規約が加わるだけ
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: none
+    detail: 書き込みの流れを変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: none
+    detail: 読める文書が加わるだけ
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-2.yaml
+    impact: none
+    detail: 登録の流れを変えない
+    depends_on: []
+  - kind: composite
+    scenario: docs/scenario/SC-72-1.yaml
+    impact: none
+    detail: 導入の流れを変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: none
+    detail: 'テンプレートと規約は visibility: internal で Pages に出ない'
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-148-1.yaml
+    impact: none
+    detail: 対応表を変えない
+    depends_on: []
+docs:
+  - page: schemas/design/layout.schema.yaml
+    new: true
+    change: フォルダ構成の設計書のスキーマを、案 A-74 の最新版のキー（content_types・entries[].placeholders・entries[].id_root を含む）で作る
+    status: todo
+  - page: docs/template/template-layout.yaml
+    new: true
+    change: フォルダ構成のテンプレートを生成する（メタデータは手で記載する）
+    status: todo
+  - page: docs/rule/dev-folder-layout.yaml
+    new: true
+    change: フォルダを切る観点とレビューの観点の規約を追加する（ファイル名は仮）
+    status: todo
+  - page: rules.yaml
+    new: false
+    change: 追加した規約を、フォルダ構成の設計書とスキーマに該当する行で登録する
+    status: todo
+  - page: schemas/design/architecture.schema.yaml
+    new: false
+    change: repository.layout を廃止する（要件.md の未確定）
+    status: todo
+  - page: schemas/design/module.schema.yaml
+    new: false
+    change: directory と、分類をまとめる設計書に directory を配置させる x-rules を廃止する（要件.md の未確定）
+    status: todo
+  - page: docs/template/template-architecture.yaml
+    new: false
+    change: スキーマの変更に合わせて生成し直す
+    status: todo
+  - page: docs/template/template-module.yaml
+    new: false
+    change: スキーマの変更に合わせて生成し直す
+    status: todo
+  - page: docs/rule/python-architecture-layout.yaml
+    new: false
+    change: python -m の入口（{pkg}/{command}/__main__.py）の配置先を追加する
+    status: todo
+scope_out:
+  - item: 中身の種類の決め方（A-79）の判定フローチャート
+    reason: '起票の後に #225 へ移した'
+    plan: '#225'
+  - item: 入れ子の entries[] からパスを生成する変換と、リポジトリのフォルダ・.gitignore との突き合わせの検査・.gitignore の生成
+    reason: 判断が分かれている。各プロジェクトの設計書を検証するのは AI Monitor の設計書の検証（design_docs）で、knowledge の scripts は knowledge の文書だけを検査する。knowledge 自身のフォルダ構成の設計書も、AI Monitor が配布する schemas/ の直下のスキーマで検査する。この PR のスキーマを前提にするので、AI Monitor へ起票する推奨をレビューで確定する
+    plan: to_file
+  - item: knowledge 自身のフォルダ構成の設計書の作成と、dev-docs.yaml への種類の行の追加
+    reason: テンプレートを前提にした後続の Issue が持つ
+    plan: '#220'
+  - item: AI Monitor の設計の手順へのフォルダ構成の工程の追加
+    reason: AI Monitor の配布物の範囲
+    plan: shuhei1101/ai-monitor#3267
+  - item: スキーマの各キーへの使用先の記載と、キーを設ける条件の追加
+    reason: 目的が別で、この PR の後にフォルダ構成のスキーマも含めて見直す
+    plan: '#217'
