@@ -1,0 +1,16 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit
+/home/shuhei2441/.cache/uv/archive-v0/j4M9hkSCvlQ_ZO_lUFhca/lib/python3.14/site-packages/referencing/_core.py:690: in lookup
+/home/shuhei2441/.cache/uv/archive-v0/j4M9hkSCvlQ_ZO_lUFhca/lib/python3.14/site-packages/referencing/_core.py:283: in pointer
+/home/shuhei2441/.cache/uv/archive-v0/j4M9hkSCvlQ_ZO_lUFhca/lib/python3.14/site-packages/referencing/jsonschema.py:298: in maybe_in_subresource
+/home/shuhei2441/.cache/uv/archive-v0/j4M9hkSCvlQ_ZO_lUFhca/lib/python3.14/site-packages/referencing/_core.py:704: in in_subresource
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Resource(contents={'type': 'object', 'properties': {'name': {'type': 'string', 'title': '名前'}, 'children': {'type': 'array', 'title': '配下', 'items': {'$ref': '#/$defs/entry'}}}}, _specification=<Specification name='draft2020-12'>)
+
+>       id = self._specification.id_of(self.contents)
+
+/home/shuhei2441/.cache/uv/archive-v0/j4M9hkSCvlQ_ZO_lUFhca/lib/python3.14/site-packages/referencing/_core.py:231: RecursionError
+!!! Recursion error detected, but the origin of the recursion could not be located.
+=========================== short test summary info ============================
+FAILED tests/unit/scripts/test_build_templates.py::test_iter_keys_when_ref_recursive
+======================== 1 failed, 228 passed in 8.18s =========================
