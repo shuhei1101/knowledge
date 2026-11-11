@@ -334,11 +334,11 @@ def _iter_keys(
         yield KeyRow(name=name, schema=merged, required=key in required)
         # 配列の要素の $ref も、子へ潜る前に解決しておく
         element = as_mapping(merged.get("items"))
-        element_schema, element_resolver, element_targets = (
-            _resolve(element, sub_resolver)
-            if element is not None
-            else ({}, sub_resolver, frozenset())
-        )
+        element_schema: Mapping[str, object] = {}
+        element_resolver = sub_resolver
+        element_targets: frozenset[int] = frozenset()
+        if element is not None:
+            element_schema, element_resolver, element_targets = _resolve(element, sub_resolver)
         targets = key_targets | element_targets
         # 親が辿った先をもう一度指している: 再帰する $ref のため、子はたどらない
         if targets & ancestors:
