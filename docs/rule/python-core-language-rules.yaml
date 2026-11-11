@@ -2,7 +2,7 @@
 id: python-core-language-rules
 kind: rule
 name: 言語ルール
-description: コメント・識別子・出力の言語、文字列フォーマット、import、例外、エンコーディングの決まりを定め、Python のコードを記載するときに読む。
+description: コメント・識別子・出力の言語、文字列フォーマット、import、例外、エンコーディングの決まりを定め、Python のコードを記載するときに参照する。
 inject_when:
   field: text
   op: contains
@@ -75,7 +75,9 @@ items:
     group: 例外
     name: assert の使い方
     body: |-
-      - `assert` を実行時の検査に使わない（最適化モードで消える）。前提の確認は例外を投げる。テストの `assert` は可
+      - `assert` を実行時の検査に使わない（最適化モードで消える）。
+        前提の確認は例外を投げる。
+        テストの `assert` は可
   - id: exception-05
     group: 例外
     name: try の範囲

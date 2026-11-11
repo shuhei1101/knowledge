@@ -2,7 +2,7 @@
 id: template-dev-command
 kind: template
 name: "テンプレート: 開発コマンド"
-description: 開発者が開発で使うコマンドの前提・実行の順序・料金や副作用・確かめた記録を記載する開発コマンドの書式を定め、開発コマンドを作る・追加するときに読む。
+description: 開発者が開発で使用するコマンドの前提・実行の順序・料金や副作用・確かめた記録を記載する開発コマンドの書式を定め、開発コマンドを作る・追加するときに参照する。
 tags:
   - name: scope:テンプレート
   - name: topic:コマンド
@@ -70,7 +70,7 @@ items:
   - id: example-sample-01
     name: 記載例
     body: |-
-      ```yaml
+      ````yaml
       id: CMD-1
       title: 開発コマンド
       lead: 開発で使用するコマンドの、分類ごとの前提・順序・コマンド・確認した記録。
@@ -104,4 +104,4 @@ items:
         verification:
           state: 未確認
           detail: 本番の DB へ書き込むため走らせていない
-      ```
+      ````

@@ -2,7 +2,7 @@
 id: claude-plugin
 kind: rule
 name: Claude プラグインルール
-description: Claude プラグインの分け方、テンプレート・フック・定数・設定ファイルの置き方、バージョンと反映のタイミングを定め、プラグインを作る・修正するときに読む。
+description: Claude プラグインの分け方、テンプレート・フック・定数・設定ファイルの配置方法、バージョンと反映のタイミングを定め、プラグインを作る・修正するときに参照する。
 tags:
   - name: scope:claude
   - name: tool:yaml
@@ -42,7 +42,7 @@ items:
     group: プラグインの分け方
     name: プラグインは機能ごとに単独
     body: |-
-      - プラグインは機能ごとに単独にする（利用者が個別にオンオフできる）
+      - プラグインは機能ごとに分ける（利用者が機能ごとのオンオフを選べる）
   - id: plugin-division-02
     group: プラグインの分け方
     name: 文書の MCP のプラグイン
@@ -60,7 +60,7 @@ items:
     body: |-
       - スキル内ではcatで展開する
 
-      ```
+      ```text
       <!-- 任意のスキルファイル -->
       !`cat xxx/xxx.md`
       ```
@@ -128,7 +128,8 @@ items:
     group: 設定ファイル
     name: 設定ファイルの全体方針
     body: |-
-      プラグインのフック・スクリプト・MCP サーバーが読む、利用者の環境ごと・プロジェクトごとに変わる設定は、本体を `${XDG_CONFIG_HOME:-~/.config}` の YAML に書いて受け取る。
+      プラグインのフック・スクリプト・MCP サーバーが参照する設定のうち、利用者の環境・プロジェクトで変わるものが対象。
+      本体を `${XDG_CONFIG_HOME:-~/.config}` の YAML に記載して受け取る。
   - id: settings-file-02
     group: 設定ファイル
     name: env に置く設定の指定
@@ -136,9 +137,11 @@ items:
       - 既定のパス（`settings-file-03`）と違う場所に配置するときだけ、ユーザースコープの `~/.claude/settings.json` の `env` に、`{ツール名}_CONFIG` でパスを書く
         - 環境変数の名前の付け方は [設定値の置き場所](id:flowchart-config-location) に従う
         - プラグインは値の先頭の `~` をホームに展開して読む
-        - `env` のプロジェクトスコープ（`.claude/settings.json` / `.claude/settings.local.json`）には書かない。プロジェクトごとの違いは YAML の `projects` に書く
+        - `env` のプロジェクトスコープ（`.claude/settings.json` / `.claude/settings.local.json`）には書かない。
+          プロジェクトごとの違いは YAML の `projects` に書く
         - `env` にパスが無いときは既定のパスを読み、ファイルも無いときは設定なし（プラグインの既定値）で動く
-        - MCP サーバーは常駐で `env` が渡らないため、サーバーを起動する環境に同じ環境変数を渡す。`match` に使う起動したプロジェクトの直下は、[MCP サーバー作成ルール](id:claude-mcp) の常駐サーバーの決まりどおり PreToolUse フックでツールの引数に入れて受ける
+        - MCP サーバーは常駐で `env` が渡らないため、サーバーを起動する環境に同じ環境変数を渡す。
+          `match` に使う起動したプロジェクトの直下は、[MCP サーバー作成ルール](id:claude-mcp) の常駐サーバーの決まりどおり PreToolUse フックでツールの引数に入れて受ける
   - id: settings-file-03
     group: 設定ファイル
     name: 設定の本体の置き場所
@@ -155,14 +158,23 @@ items:
     group: 設定ファイル
     name: global と projects の構成
     body: |-
-      - YAML の最上位に `global` と `projects` を置く
-        - `global`: どのプロジェクトで起動しても効く値
-        - `projects`: 要素ごとに `match` と、そのプロジェクトで効く値を持つ並び
-        - `match` は絶対パスかプロジェクト名で書く
-          - 絶対パス: 起動したプロジェクトの直下（`CLAUDE_PROJECT_DIR`）がそのパスか、その配下のときに当たる。`.claude/worktrees/` の下の worktree も本体のパスで当たる
-          - プロジェクト名: リポジトリのフォルダ名が一致したときに当たる。worktree は本体のフォルダ名で見る
-        - `projects` の中の相対パスは、起動したプロジェクトの直下から解決する
-        - 当たった `projects` の要素は、並びの順に `global` へ重ねる。辞書はキーごとに重ね、並びは `global` の後ろに `projects` の要素を足す
+      YAML の最上位に `global` と `projects` を配置する。
+
+      | キー | 中身 |
+      | --- | --- |
+      | `global` | どのプロジェクトで起動しても効く値 |
+      | `projects` | 要素ごとに `match` と、そのプロジェクトで効く値を持つ並び |
+
+      `match` は絶対パスかプロジェクト名で記載する。
+
+      | `match` | 該当する条件 |
+      | --- | --- |
+      | 絶対パス | 起動したプロジェクトの直下（`CLAUDE_PROJECT_DIR`）がそのパスか、その配下のとき。`.claude/worktrees/` の下の worktree も本体のパスで該当する |
+      | プロジェクト名 | リポジトリのフォルダ名が一致したとき。worktree は本体のフォルダ名で照合する |
+
+      - `projects` の中の相対パスは、起動したプロジェクトの直下から解決する
+      - 該当した `projects` の要素は、並びの順に `global` へ重ねる。
+        辞書はキーごとに重ね、並びは `global` の後ろに `projects` の要素を追加する
   - id: settings-file-06
     group: 設定ファイル
     name: 単純な値は env に置く
@@ -189,22 +201,27 @@ items:
     group: 設定ファイル
     name: YAML を読めない仕組みも読む値は env に置く
     body: |-
-      - 設定ファイルを持つプラグインでも、`.mcp.json` など YAML を読めない仕組みも読む値は、ユーザースコープの `env` に置く（例: [MCP サーバー作成ルール](id:claude-mcp) の `## 登録` の `{ツール名}_PORT`）
+      - 設定ファイルを持つプラグインでも、`.mcp.json` など YAML を参照できない仕組みも参照する値は、ユーザースコープの `env` に配置する。
+        例は [MCP サーバー作成ルール](id:claude-mcp) の `## 登録` の `{ツール名}_PORT`
         - サーバーと `.mcp.json` の両方が同じ `env` を読む
         - 同じ値を設定ファイルと `env` の 2 か所に記載しない
   - id: no-version-01
     group: version を置かない規約
     name: version を置かない
     body: |-
-      `.claude-plugin/marketplace.json` に載るプラグインは、`plugins[].version` と `plugin.json` の `version` のどちらにも version を置かない。
+      `.claude-plugin/marketplace.json` に載るプラグインは、`plugins[].version` と `plugin.json` の `version` のどちらにも値を配置しない。
   - id: reload-timing-01
     group: 反映を叩くタイミング
     name: 反映のタイミング
     body: |-
-      稼働中のワークツリーへ入った `plugins/` 配下とリポジトリの直下の `.claude-plugin/` 配下の変更は、モニターが `update_plugins` と同じ更新を済ませてから再起動するので、手では叩かない。
-      自動で効かないとき（`local` で作業ツリーを修正したとき 等）は、設定 `rule_inject.source` によらず、変更の commit を載せた後に MCP ツール `update_plugins` を実行して認証領域へ反映する。
-      どちらの出所でも実体は認証領域の cache（`{認証領域}/plugins/cache/{マーケットプレース名}/{名前}/{version}`）の複製で、修正した作業ツリーがそのまま読まれることはない。
-      `update_plugins` は Claude 種別のアカウントの認証領域ごとに `claude plugin marketplace update` → `claude plugin update` の順で実行する。
+      稼働中のワークツリーへ入った `plugins/` 配下とリポジトリの直下の `.claude-plugin/` 配下の変更は、手で反映しない。
+      モニターが `update_plugins` と同じ更新を済ませてから再起動する。
+      自動で反映されないとき（`local` で作業ツリーを修正したとき 等）は、設定 `rule_inject.source` によらず手で反映する。
+      変更を commit した後に、MCP ツール `update_plugins` を実行して認証領域へ反映する。
+      どちらの出所でも、実体は認証領域の cache（`{認証領域}/plugins/cache/{マーケットプレース名}/{名前}/{version}`）の複製になる。
+      修正した作業ツリーがそのまま参照されることはない。
+      `update_plugins` は、Claude 種別のアカウントの認証領域ごとに実行する。
+      実行の順は `claude plugin marketplace update` → `claude plugin update`。
   - id: mcp-delivery-01
     group: MCP の配り方
     name: プラグインの .mcp.json で配る

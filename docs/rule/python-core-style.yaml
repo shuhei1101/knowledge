@@ -2,7 +2,7 @@
 id: python-core-style
 kind: rule
 name: スタイル
-description: ruff・pyright・import-linter のツール構成と設定の置き場所、モジュールの区切り方を定め、Python の静的検査やフォーマッタを設定するときに読む。
+description: ruff・pyright・import-linter のツール構成と設定の配置先、モジュールの区切り方を定め、Python の静的検査やフォーマッタを設定するときに参照する。
 aliases:
   - core/スタイル
 inject_when:
@@ -39,6 +39,8 @@ items:
     group: ツール構成
     name: ツール構成の表
     body: |-
+      <!-- table: data -->
+
       | ツール                        | 役割                                                           |
       | ----------------------------- | -------------------------------------------------------------- |
       | `ruff`                        | フォーマッタ + リンタ（black + isort + flake8 相当）           |
@@ -46,6 +48,8 @@ items:
       | `ty`                          | 型チェック（試験的に並行して実行。1.0 になったら見直す）       |
       | `import-linter`               | 依存の向きの検査（layers 契約）                                |
       | `pytest`                      | テストランナー                                                 |
+
+      <!-- /table -->
   - id: config-01
     group: 設定
     name: 設定の正本は pyproject

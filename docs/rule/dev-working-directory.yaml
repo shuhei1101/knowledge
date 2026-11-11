@@ -2,7 +2,7 @@
 id: dev-working-directory
 kind: rule
 name: 作業ディレクトリ
-description: ブランチの内容を触る作業を worktree で行い、メインのクローンを master のままにする決まりと、バックアップ・一時ファイルの置き場所を定め、ブランチを切り替えて作業するときやバックアップのファイルを作るときに読む。
+description: ブランチの内容を触る作業を worktree で行い、メインのクローンを master のままにする決まりと、バックアップ・一時ファイルの配置先を定め、ブランチを切り替えて作業するときやバックアップのファイルを作るときに参照する。
 tags:
   - name: scope:dev
   - name: topic:worktree
@@ -28,14 +28,16 @@ items:
     group: worktree
     name: メインのクローンでブランチを切り替えない
     body: |-
-      - メインのクローンの直下でブランチを切り替えない（`git checkout`・`git switch`）。常に master のままにする
+      - メインのクローンの直下でブランチを切り替えない（`git checkout`・`git switch`）。
+        常に master のままにする
         - 同じクローンを別のセッションが同時に使用している
         - メインのクローンからルール・手順を読み込む道具が、切り替えている間は別のブランチの内容で動く
   - id: worktree-02
     group: worktree
     name: 他のブランチを参照するだけのとき
     body: |-
-      - 他のブランチの内容を参照するだけなら切り替えない。`git fetch origin --prune` の後に ref を指定して参照する（`git show origin/{ブランチ}:{パス}`・`git log origin/{ブランチ}`・`git diff origin/{ブランチ}`）
+      - 他のブランチの内容を参照するだけなら切り替えない。
+        `git fetch origin --prune` の後に ref を指定して参照する（`git show origin/{ブランチ}:{パス}`・`git log origin/{ブランチ}`・`git diff origin/{ブランチ}`）
   - id: worktree-03
     group: worktree
     name: worktree の作り方
@@ -48,12 +50,15 @@ items:
     group: バックアップ・一時ファイル
     name: リポジトリの外の置き場所
     body: |-
-      - リポジトリの外に配置するときは、設定ファイルの控えを `~/.config/{project}/bk/`、一時ファイルを `~/.cache/{project}/`（または OS の一時フォルダ）、データの控えをそのデータと同じ場所の下に配置する
+      - リポジトリの外に配置するときの配置先は次のとおり。
+        設定ファイルの控えは `~/.config/{project}/bk/`、一時ファイルは `~/.cache/{project}/`（または OS の一時フォルダ）。
+        データの控えは、そのデータと同じ場所の下
   - id: backup-02
     group: バックアップ・一時ファイル
     name: リポジトリの中の置き場所
     body: |-
-      - リポジトリの中に配置するときは専用のフォルダ（`.bak/`・`tmp/` 等）に配置し、そのフォルダに中身が `*` だけの `.gitignore` を配置する。リポジトリの直下に `*.bak-*` や秘匿ファイルを配置しない
+      - リポジトリの中に配置するときは専用のフォルダ（`.bak/`・`tmp/` 等）に配置し、そのフォルダに中身が `*` だけの `.gitignore` を配置する。
+        リポジトリの直下に `*.bak-*` や秘匿ファイルを配置しない
   - id: backup-03
     group: バックアップ・一時ファイル
     name: 無視の指定の場所

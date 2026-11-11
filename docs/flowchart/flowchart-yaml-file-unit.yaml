@@ -2,7 +2,7 @@
 id: flowchart-yaml-file-unit
 kind: flowchart
 name: YAML ファイルの単位 判定フローチャート
-description: 文書・データのまとまりを markdown にするか、YAML のどの単位で 1 ファイルにするかを判定し、文書を YAML のファイルに分けるときに読む。
+description: 文書・データのまとまりを markdown にするか、YAML のどの単位で 1 ファイルにするかを判定し、文書を YAML のファイルに分けるときに参照する。
 aliases:
   - YAML ファイルの単位
 tags:
@@ -26,7 +26,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      文書・データのまとまりを markdown にするか、YAML のどの単位で 1 ファイルにするかを判定
+      文書・データのまとまりを markdown にするか、YAML のどの単位で 1 ファイルにするかを判定する。
   - id: yaml-file-unit-flow-01
     group: YAML ファイルの単位 判定フローチャート
     name: 判定フロー
@@ -87,22 +87,23 @@ items:
     group: YAML ファイルの単位 判定フローチャート
     name: ※1 markdown を前提にするファイル
     body: |-
-      - **※1 markdown を前提にするファイル**: README・CLAUDE.md・AGENTS.md・SKILL.md・PR の本文など、道具が markdown として読むファイル
+      - ※1 markdown を前提にするファイル: README・CLAUDE.md・AGENTS.md・SKILL.md・PR の本文など、道具が markdown として読むファイル
   - id: yaml-file-unit-flow-03
     group: YAML ファイルの単位 判定フローチャート
     name: ※2 外部との 1 対 1
     body: |-
-      - **※2 外部との 1 対 1**: テストファイル・画面・ソースファイル・外部 API のように、対応する相手が 1 つ決まるもの
+      - ※2 外部との 1 対 1: テストファイル・画面・ソースファイル・外部 API のように、対応する相手が 1 つ決まるもの
   - id: yaml-file-unit-flow-04
     group: YAML ファイルの単位 判定フローチャート
     name: ※3 単独のライフサイクル
     body: |-
-      - **※3 単独のライフサイクル**: 状態・レビュー・決定を項目ごとに持ち、ほかの文書から ID で指されるもの
+      - ※3 単独のライフサイクル: 状態・レビュー・決定を項目ごとに持ち、ほかの文書から ID で指されるもの
   - id: yaml-file-unit-flow-05
     group: YAML ファイルの単位 判定フローチャート
     name: ※4 一緒に読み込まれるまとまり
     body: |-
-      - **※4 一緒に読み込まれるまとまり**: rule-inject が注入する規約のトピックのように、いつも束で読まれるもの。中は同じキー構造のリストを種類別に並べる
+      - ※4 一緒に読み込まれるまとまり: rule-inject が注入する規約のトピックのように、いつも束で読まれるもの。
+        中は同じキー構造のリストを種類別に並べる
   - id: yaml-file-unit-flow-06
     group: YAML ファイルの単位 判定フローチャート
     name: 子のリストの切り出し
@@ -112,5 +113,5 @@ items:
     group: YAML ファイルの単位 判定フローチャート
     name: PR でレビューしないデータ
     body: |-
-      PR でレビューしないデータ（実行時に増える記録・状態）は、文書にせず SQLite に持つ。
+      PR でレビューしないデータ（実行時に増える記録・状態）は、文書にせず SQLite で持つ。
       実装の側に正本があるデータ（ラベル名の一覧・ツールの定義など）は、手で記載せず実装から YAML を生成する。

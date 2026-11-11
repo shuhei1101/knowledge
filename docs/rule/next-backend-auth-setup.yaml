@@ -2,7 +2,7 @@
 id: next-backend-auth-setup
 kind: rule
 name: lib/auth.ts — Better Auth セットアップ
-description: 採用する認証プロバイダ Better Auth のセットアップの決まりを定め、Better Auth の設定を作る・修正するときに読む。
+description: 採用する認証プロバイダ Better Auth のセットアップの決まりを定め、Better Auth の設定を作る・修正するときに参照する。
 tags:
   - name: scope:next
   - name: topic:バックエンド
@@ -42,7 +42,8 @@ items:
     group: lib/auth.ts — Better Auth セットアップ
     name: cookieCache の有効化
     body: |-
-      - `cookieCache` を有効化（DB クエリ削減）。失効が他端末に反映されるまで最大 `maxAge` かかるため、機微な操作は `disableCookieCache: true` で DB を引く
+      - `cookieCache` を有効化（DB クエリ削減）。
+        失効が他端末に反映されるまで最大 `maxAge` かかるため、機微な操作は `disableCookieCache: true` で DB を引く
   - id: auth-setup-04
     group: lib/auth.ts — Better Auth セットアップ
     name: cookie を設定する呼び出しの扱い

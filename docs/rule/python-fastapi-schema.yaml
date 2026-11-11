@@ -2,7 +2,7 @@
 id: python-fastapi-schema
 kind: rule
 name: 入出力 Pydantic スキーマ
-description: FastAPI の入出力に使う Pydantic スキーマの分離・配置・Field・camelCase 対応・response_model の決まりを定め、API の入出力スキーマを定義するときに読む。
+description: FastAPI の入出力に使用する Pydantic スキーマの分離・配置・Field・camelCase 対応・response_model の決まりを定め、API の入出力スキーマを定義するときに参照する。
 aliases:
   - fastapi/スキーマ
 tags:
@@ -53,9 +53,11 @@ items:
     group: camelCase 対応
     name: camelCase の扱い
     body: |-
-      - API のスキーマの基底クラスに `ConfigDict(alias_generator=to_camel, validate_by_name=True, serialize_by_alias=True)` を置き、JSON のキーを camelCase にする
+      - API のスキーマの基底クラスに `ConfigDict(...)` を配置し、JSON のキーを camelCase にする。
+        引数は `alias_generator=to_camel, validate_by_name=True, serialize_by_alias=True`
   - id: response-model-01
     group: response_model
     name: レスポンスは戻り値の型注釈
     body: |-
-      レスポンススキーマは戻り値の型注釈（`-> Response`）で指定する。`from_domain` で明示変換して返すのを基本にし、返す型と宣言したい型が合わないときだけ `response_model=` を使う。
+      レスポンススキーマは戻り値の型注釈（`-> Response`）で指定する。
+      `from_domain` で明示変換して返すのを基本にし、返す型と宣言したい型が合わないときだけ `response_model=` を使う。

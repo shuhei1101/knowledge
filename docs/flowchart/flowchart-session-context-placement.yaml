@@ -2,7 +2,7 @@
 id: flowchart-session-context-placement
 kind: flowchart
 name: エージェントに渡す文・処理の置き場所 判定フローチャート
-description: エージェントに渡す文・処理を、SessionStart のフック・MCP の instructions・ツールでの取得のどれに置くかを判定し、プラグインや MCP サーバーがセッションに渡すものを決めるときに読む。
+description: エージェントに指定する文・処理を、SessionStart のフック・MCP の instructions・ツールでの取得のどれに配置するかを判定し、プラグインや MCP サーバーがセッションに指定するものを決めるときに参照する。
 aliases:
   - エージェントに渡す文・処理の置き場所
 tags:
@@ -76,14 +76,16 @@ items:
     group: エージェントに渡す文・処理の置き場所 判定フローチャート
     name: ※1 処理
     body: |-
-      - **※1 処理**: 常駐のサーバーの起動・環境変数の設定・記録の後片付けなど、文を渡すのではなく実行するもの。instructions は文を渡すだけで、処理を実行できない
+      - ※1 処理: 常駐のサーバーの起動・環境変数の設定・記録の後片付けなど、文を渡すのではなく実行するもの。
+        instructions は文を渡すだけで、処理を実行できない
   - id: session-context-placement-flow-03
     group: エージェントに渡す文・処理の置き場所 判定フローチャート
     name: ※2 セッションごとに変わる事実
     body: |-
-      - **※2 セッションごとに変わる事実**: 作業場所から使える配信元など、起動した場所や時点で変わるもの
+      - ※2 セッションごとに変わる事実: 作業場所から使える配信元など、起動した場所や時点で変わるもの
   - id: session-context-placement-flow-04
     group: エージェントに渡す文・処理の置き場所 判定フローチャート
     name: ※3 SessionStart で注入するもの
     body: |-
-      - **※3 SessionStart で注入するもの**: MCP を持たないプラグインの常に守る決まり（例: rule-inject の新しいファイルの作り方）。instructions を載せるサーバーが無い
+      - ※3 SessionStart で注入するもの: MCP を持たないプラグインの常に守る決まり（例: rule-inject の新しいファイルの作り方）。
+        instructions を載せるサーバーが無い

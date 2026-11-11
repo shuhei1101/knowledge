@@ -91,6 +91,9 @@ _KEY_RULES_COLUMNS = ("名前", "決まり", "悪い例", "理由")
 _TABLE_OPEN = "<!-- table: data -->"
 _TABLE_CLOSE = "<!-- /table -->"
 
+# コードフェンスのバッククォートの最小の数
+_MIN_FENCE_LENGTH = 3
+
 # 終了コード。2 = スキーマかテンプレートが読めずどのファイルも書き換えなかった、1 = 想定していない例外
 _EXIT_NOT_BUILT = 2
 _EXIT_UNEXPECTED = 1
@@ -275,11 +278,13 @@ def build_items(name: str, schemas: SchemaSet) -> list[dict[str, str]]:
     for number, example in enumerate(examples, start=1):
         # 記載例が 2 件以上のときだけ名前に番号を付ける
         title = "記載例" if len(examples) == 1 else f"記載例 {number}"
+        block = _dump_block(example)
+        fence = "`" * _fence_length(block)
         items.append(
             {
                 "id": f"example-sample-{number:02d}",
                 "name": title,
-                "body": f"```yaml\n{_dump_block(example)}```",
+                "body": f"{fence}yaml\n{block}{fence}",
             }
         )
     return items
@@ -472,6 +477,18 @@ def _literal(value: object) -> object:
     if isinstance(value, str) and "\n" in value:
         return LiteralScalarString(value)
     return value
+
+
+def _fence_length(text: str) -> int:
+    """text を囲むコードフェンスのバッククォートの数を返す。
+
+    インデントの後のバッククォートの並びも外側のフェンスを閉じるため、各行の先頭の空白を除いてから数える。
+    """
+    longest = 0
+    for line in text.splitlines():
+        stripped = line.lstrip(" ")
+        longest = max(longest, len(stripped) - len(stripped.lstrip("`")))
+    return max(_MIN_FENCE_LENGTH, longest + 1)
 
 
 def _dump_block(value: object) -> str:

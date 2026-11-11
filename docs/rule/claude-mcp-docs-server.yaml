@@ -2,7 +2,7 @@
 id: claude-mcp-docs-server
 kind: rule
 name: 文書の MCP サーバーの設計
-description: 文書の MCP（dev-docs）のサーバーとツールの単位・mdmark と YAML の役割の分担・読み取りと差分と関連のツール・検索の手段を定め、文書の MCP のツールを作る・修正するときに読む。
+description: 文書の MCP（dev-docs）のサーバーとツールの単位・mdmark と YAML の役割の分担・読み取りと差分と関連のツール・検索の手段を定め、文書の MCP のツールを作る・修正するときに参照する。
 tags:
   - name: scope:claude
   - name: tool:mcp
@@ -23,10 +23,7 @@ status: current
 visibility: internal
 rev: 1
 last_reviewed: '2026-11-05'
-related:
-  - to: claude-mcp
-    type: references
-    when: SDK・トランスポート・構成・ツール定義のスキーマ・登録など、MCP サーバー全般の決まりを確かめるとき
+related: []
 sources:
   - title: 'Anthropic: Writing effective tools for agents'
     url: https://www.anthropic.com/engineering/writing-tools-for-agents
@@ -86,11 +83,11 @@ items:
   - id: read-tool-03
     group: 読み取りのツール
     name: view と include の指定
-    body: '- `view`（`brief` / `standard` / `full`）で返す量を選べ、`include` / `exclude`（項目名の enum の配列）で追加・除外できるようにする。既定は `search` が `brief`、1 件を取るツールが `standard`。省いた項目は `omitted` で返し、取り方を添える'
+    body: "- `view`（`brief` / `standard` / `full`）で返す量を選べ、`include` / `exclude`（項目名の enum の配列）で追加・除外できるようにする。\n  既定は `search` が `brief`、1 件を取るツールが `standard`。\n  省いた項目は `omitted` で返し、取り方を添える"
   - id: read-tool-04
     group: 読み取りのツール
     name: brief の返す項目
-    body: '- `search` の `brief` は各行に ID・名前・概要文・タグ・文字数・バージョンを返し、中身は ID で取るツールで返す。結果の先頭に総件数と、当たった全件の合計文字数を返す'
+    body: "- `search` の `brief` は各行に ID・名前・概要文・タグ・文字数・バージョンを返却し、中身は ID を受けるツールが返却する。\n  結果の先頭に総件数と、当たった全件の合計文字数を返す"
   - id: read-tool-05
     group: 読み取りのツール
     name: 切り詰め時の案内
@@ -103,7 +100,7 @@ items:
     group: 読み取りのツール
     name: count_only
     body: |-
-      - `search` に任意の `count_only` を持たせ、一覧を返さずに総件数・合計文字数・タグごとの件数だけを返せるようにする
+      - `search` に任意の `count_only` を持たせ、一覧を返さずに総件数・合計文字数・タグごとの件数だけを返せるようにする。
         手順で先に呼ぶことは強制せず、エージェントがヒットの多さを見て絞り込むときに使う
   - id: read-tool-08
     group: 読み取りのツール
@@ -113,8 +110,8 @@ items:
     group: 読み取りのツール
     name: ids による複数取得
     body: |-
-      - 1 件を取るツールは `ids` の配列で複数を受け、渡した順に返す
-        合計が 50,000 文字を超えるときは 1 件も返さず、分けて呼ぶよう返す（Claude Code は 50,000 文字を超える結果をファイルに退避する）
+      - 1 件を取るツールは `ids` の配列で複数を受け、渡した順に返す。
+        合計が 50,000 文字を超えるときは 1 件も返さず、分けて呼ぶよう返す（Claude Code は 50,000 文字を超える結果をファイルに退避する）。
         見つからない ID があれば全体を失敗にし、近い ID を添える
   - id: read-tool-10
     group: 読み取りのツール
@@ -124,7 +121,8 @@ items:
     group: 読み取りのツール
     name: 返却形式
     body: |-
-      - 一覧は Markdown の表（各行に ID と名前）、1 件の本文は Markdown（文書ごとに `<document>` で包む。`read-tool-19`）、YAML が正本の項目は YAML のまま返す
+      - 一覧は Markdown の表（各行に ID と名前）で返却する。
+        1 件の本文は Markdown（文書ごとに `<document>` で包む。`read-tool-19`）、YAML が原本の項目は YAML のまま返却する。
         参照は ID と名前・概要文まで結合し、相手の本文は結合しない
   - id: read-tool-19
     group: 読み取りのツール
@@ -132,20 +130,21 @@ items:
     body: |-
       - 本文を返すときは、文書ごとに場所（文書のファイルの絶対パスか URL）と範囲（`full`・`section`・`summary`）を載せる
         - markdown は文書ごとに `<document path="..." scope="...">` で包み、json は各項目に `path`・`scope` を持たせる
-        - `full` は全文を返したときだけ付ける。`section` はセクションを指定した取得（`read-tool-10`）、`summary` は `view` が `brief` など説明だけを返したとき（`read-tool-03`）に付ける
+        - `full` は全文を返したときだけ付ける。
+          `section` はセクションを指定した取得（`read-tool-10`）、`summary` は `view` が `brief` など説明だけを返したとき（`read-tool-03`）に付ける
         - 載せ方の詳細は rule-inject の [MCPの結果の書式](https://github.com/shuhei1101/rule-inject/blob/master/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/MCP%E3%81%AE%E7%B5%90%E6%9E%9C%E3%81%AE%E6%9B%B8%E5%BC%8F.md) に従う
   - id: read-tool-12
     group: 読み取りのツール
     name: 用語・エイリアスの一覧付与
     body: |-
-      - 本文に出る用語・エイリアスは、本文を変えずに末尾に一覧（語と ID）を付ける
+      - 本文に出る用語・エイリアスは、本文を変えずに末尾へ一覧（単語と ID）を付ける。
         語の名前と概要文を引くツールを置く
   - id: read-tool-13
     group: 読み取りのツール
     name: 用語照合ツール
     body: |-
-      - 用語・エイリアスの照合に使う語の一覧（語・正規化した語・ID・種類・概要・関連する文書）を返すツールを置く
-        指定したバージョンから変わっていなければ、変わっていないことだけを返す
+      - 用語・エイリアスの照合に使う語の一覧（語・正規化した語・ID・種類・概要・関連する文書）を返すツールを置く。
+        指定したバージョンから変わっていなければ、変わっていないことだけを返す。
         mod が使うので、`format` の既定は `json` にする
   - id: diff-tool-01
     group: 差分のツール
@@ -164,8 +163,8 @@ items:
     group: 差分のツール
     name: from・to の指定
     body: |-
-      - `from`・`to` は git の commit・日時・ブランチ・タグのどれでも受け、サーバーが commit に解決する
-        日時はその時点の最後の commit にする
+      - `from`・`to` は git の commit・日時・ブランチ・タグのどれでも受け、サーバーが commit に解決する。
+        日時はその時点の最後の commit にする。
         解決した commit と日時を結果の先頭に返す
   - id: diff-tool-04
     group: 差分のツール
@@ -208,7 +207,7 @@ items:
     group: 関連と影響範囲のツール
     name: 関連候補の記録
     body: |-
-      - 関連の候補は、同じコミットでの変更・同じ会話での編集・同じ会話での閲覧を分けて記録し、上位 3 件を概要文つきで出す
+      - 関連の候補は、同じコミットの変更・同じ会話の編集・同じ会話の閲覧を分けて記録し、上位 3 件を概要文つきで出す。
         採用されたものだけ文書の関連に記載する
   - id: relation-impact-tool-04
     group: 関連と影響範囲のツール

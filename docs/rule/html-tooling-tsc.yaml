@@ -2,7 +2,7 @@
 id: html-tooling-tsc
 kind: rule
 name: tsc 運用（バニラ TS + FastAPI）
-description: tsc が生成する js の出力先、設定ファイル、scripts、gitignore の運用を定め、単体 HTML で TypeScript のビルド設定を作る・修正するときに読む。
+description: tsc が生成する js の出力先、設定ファイル、scripts、gitignore の運用を定め、単体 HTML で TypeScript のビルド設定を作る・修正するときに参照する。
 aliases:
   - html/tooling/tsc運用
 tags:
@@ -33,7 +33,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      対象: 単体 HTML
+      対象は単体 HTML。
   - id: tsc-operation-01
     group: tsc 運用（バニラ TS + FastAPI）
     name: ブラウザに出すのは生成 js
@@ -44,12 +44,14 @@ items:
     group: tsc 運用（バニラ TS + FastAPI）
     name: js の出力先
     body: |-
-      - 生成 `.js` は `.ts` と同じ階層に出す。`screen.ts` → 同じフォルダに `screen.js`。
+      - 生成 `.js` は `.ts` と同じ階層に出す。
+        `screen.ts` → 同じフォルダに `screen.js`。
   - id: tsc-operation-03
     group: tsc 運用（バニラ TS + FastAPI）
     name: frontend が指す範囲
     body: |-
-      - 以下の `frontend/` は画面のスクリプトの置き場所を指す。`static/`・`assets/` などに置く構成では、そのフォルダに読み替える。
+      - 以下の `frontend/` は画面のスクリプトの置き場所を指す。
+        `static/`・`assets/` などに置く構成では、そのフォルダに読み替える。
   - id: config-files-01
     group: 設定ファイル（repo ルート）
     name: 設定ファイルの表
@@ -91,6 +93,11 @@ items:
     group: 生成 .js は gitignore
     name: 生成 js は gitignore
     body: |-
-      著作は `.ts`、`.js` は生成物。フロントエンドの生成 `.js` はコミットしない（`.gitignore`）。例外は手書きで維持する `shared/vendor/`（外部依存の vendoring）と openapi 生成型 `shared/api/schema.d.ts`（コミットする）。
-      ビルドしない配信先（GitHub Pages・配布先）と共用する生成 `.js` と、配信・テスト・Storybook・モックの配信がビルドせずにパスを直接読む生成 `.js` は、`.ts` と同じ階層へコミットする。
+      著作は `.ts`、`.js` は生成物。
+      フロントエンドの生成 `.js` はコミットしない（`.gitignore`）。
+      例外は手書きで維持する `shared/vendor/`（外部依存の vendoring）と openapi 生成型 `shared/api/schema.d.ts`（コミットする）。
+      次の生成 `.js` は、`.ts` と同じ階層へコミットする。
+
+      - ビルドしない配信先（GitHub Pages・配布先）と共用する生成 `.js`
+      - 配信・テスト・Storybook・モックの配信が、ビルドせずにパスを直接参照する生成 `.js`
       コミットする生成 `.js` はプロジェクトの設計書に列挙し、列挙したものに限る。

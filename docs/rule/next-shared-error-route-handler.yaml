@@ -2,7 +2,7 @@
 id: next-shared-error-route-handler
 kind: rule
 name: withRouteErrorHandling — route.ts のエラー変換
-description: route.ts のエラーを構造化 JSON に変換する withRouteErrorHandling と、レスポンス封筒を定め、route.ts のエラー処理を実装するときに読む。
+description: route.ts のエラーを構造化 JSON に変換する withRouteErrorHandling と、レスポンス封筒を定め、route.ts のエラー処理を実装するときに参照する。
 tags:
   - name: scope:next
   - name: tool:json
@@ -49,7 +49,7 @@ items:
       | Error                | Status       | code                                          |
       | -------------------- | ------------ | --------------------------------------------- |
       | ZodError             | 400          | VALIDATION（最初の issue の message + field） |
-      | ClientValueError     | 400          | VALUE（field? あり）                          |
+      | ClientValueError     | 400          | VALUE（field あり）                           |
       | ClientAuthError      | 401 / 403    | AUTH                                          |
       | VersionConflictError | 409          | CONFLICT                                      |
       | AppError（404 等）   | e.statusCode | e.code                                        |

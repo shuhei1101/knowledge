@@ -2,7 +2,7 @@
 id: next-frontend-feature-folder
 kind: rule
 name: フィーチャフォルダ構成
-description: フィーチャフォルダの構成、components・hooks の配置、命名のルールを定め、新しいフィーチャのフォルダを作るときに読む。
+description: フィーチャフォルダの構成、components・hooks の配置、命名のルールを定め、新しいフィーチャのフォルダを作るときに参照する。
 aliases:
   - frontend/フィーチャーフォルダ
 inject_when:
@@ -40,7 +40,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      ```
+      ```tree
       app/(authenticated)/{feature}/
       ├── page.tsx                       # Server Component: 一覧
       ├── {Feature}ListScreen.tsx        # Client Component
@@ -66,12 +66,16 @@ items:
     group: components / hooks の配置
     name: components と hooks の配置表
     body: |-
+      <!-- table: data -->
+
       | Scope | Location |
       |---|---|
       | フィーチャ全体 | `{feature}/components/`, `{feature}/hooks/` |
       | view/edit 共用 | `{feature}/[id]/components/`, `{feature}/[id]/hooks/` |
       | edit 専用 | `{feature}/[id]/edit/components/`, `{feature}/[id]/edit/hooks/` |
       | 複数フィーチャ共通 | `app/(shared)/components/`, `app/(shared)/hooks/` |
+
+      <!-- /table -->
   - id: rules-01
     group: ルール
     name: フィーチャ名は kebab-case 複数形

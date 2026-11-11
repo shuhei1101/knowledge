@@ -2,7 +2,7 @@
 id: next-frontend-app-folder
 kind: rule
 name: app/ — フォルダ全体図
-description: Next.js App Router の app/ 配下のフォルダ構成と、page.tsx の共通原則を定め、app/ 配下にフォルダやページを追加するときに読む。
+description: Next.js App Router の app/ 配下のフォルダ構成と、page.tsx の共通原則を定め、app/ 配下にフォルダやページを追加するときに参照する。
 tags:
   - name: scope:next
   - name: topic:フロントエンド
@@ -33,7 +33,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      Next.js App Router プロジェクトの `app/` 配下の構成。モノレポ前提で通常は `packages/web/app/`。
+      Next.js App Router プロジェクトの `app/` 配下の構成。
+      モノレポ前提で通常は `packages/web/app/`。
   - id: app-folder-01
     group: app/ — フォルダ全体図
     name: API ルートのバージョニング
@@ -53,7 +54,7 @@ items:
     group: トップレベル
     name: app の構成ツリー
     body: |-
-      ```
+      ```tree
       packages/web/app/
       ├── (authenticated)/   # 認証必須エリア — メイン画面群
       ├── (auth)/            # 認証画面（login / signup / reset-password）
@@ -70,9 +71,9 @@ items:
     group: トップレベル
     name: プロジェクト直下の構成
     body: |-
-      プロジェクト直下:
+      プロジェクトの直下は次のとおり。
 
-      ```
+      ```tree
       packages/web/
       ├── proxy.ts           # リクエスト前処理
       ├── drizzle/           # DB スキーマ

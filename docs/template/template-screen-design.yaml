@@ -2,7 +2,7 @@
 id: template-screen-design
 kind: template
 name: "テンプレート: 画面設計"
-description: 1 画面の要素の仕様と入力チェックを記載する画面設計の書式を定め、画面設計を作る・修正するときに読む。
+description: 1 画面の要素の仕様と入力チェックを記載する画面設計の書式を定め、画面設計を作る・修正するときに参照する。
 tags:
   - name: scope:テンプレート
   - name: topic:テンプレート
@@ -20,7 +20,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      1 画面の要素の仕様（表示条件・活性条件・制限・初期値・取得元・送信先・アクション）と入力チェック。1 ファイル = 1 画面。
+      1 画面の要素の仕様（表示条件・活性条件・制限・初期値・取得元・送信先・アクション）と入力チェック。
+      1 ファイル = 1 画面。
   - id: item-list-01
     name: 項目
     body: |-
@@ -87,7 +88,7 @@ items:
       | elements[].refs | 関連 | array | - | - | - | - | - |
       | elements[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
       | elements[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | - |
-      | elements[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
+      | elements[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | - |
       | elements[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
       | elements[].implementation | 実装 | string | - | - | pattern: `^[^#\s]+(#\S+)?$` | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/schemas/loader.py#load_catalog` |
       | elements[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |

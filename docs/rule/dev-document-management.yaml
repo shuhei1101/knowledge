@@ -2,7 +2,7 @@
 id: dev-document-management
 kind: rule
 name: ドキュメント管理
-description: AI エージェントが読み書きする文書の置き方・フォルダ・メタデータ・関連・配信の決まりを定め、文書を作る・移す・メタデータを付けるときに読む。
+description: AI エージェントが読み書きする文書の配置方法・フォルダ・メタデータ・関連・配信の決まりを定め、文書を作る・移す・メタデータを付けるときに参照する。
 tags:
   - name: scope:dev
   - name: topic:ai
@@ -58,7 +58,7 @@ items:
     group: 置き方
     name: 文書の正本は YAML
     body: |-
-      - 文書の正本は YAML にする
+      - 文書の正本は YAML にする。
         markdown にするのは、道具が markdown を前提にするファイル（README・CLAUDE.md・AGENTS.md・SKILL.md・PR の本文など）だけ
   - id: placement-02
     group: 置き方
@@ -150,7 +150,7 @@ items:
     name: 作成・更新日時は持たない
     body: |-
       - 作成日時・更新日時は持たない
-        要るときは git から取る
+        必要になったら git から取り出す
   - id: metadata-03
     group: メタデータ
     name: メタデータは多めに持つ
@@ -198,7 +198,7 @@ items:
     group: 配信
     name: GitHub Pages の配信
     body: |-
-      - GitHub Pages は、master へのマージで動く GitHub Actions のワークフローで、`visibility: public` の文書だけを HTML にして配信する
+      - GitHub Pages は、master へのマージで動く GitHub Actions のワークフローで、`visibility: public` の文書だけを HTML にして配信する。
         YAML の原本は成果物に入れない
   - id: delivery-03
     group: 配信
@@ -221,7 +221,8 @@ items:
     group: 配信
     name: 読み書きできる範囲
     body: |-
-      - どの作業場所からどの配信元を読み書きできるかは、端末の設定 `~/.config/dev-docs/settings.yaml` の `sources[]` の `scope.read`・`scope.write` で決める
+      - 作業場所ごとに読み書きできる配信元は、端末の設定 `~/.config/dev-docs/settings.yaml` で決める。
+        決めるキーは `sources[]` の `scope.read`・`scope.write`
   - id: delivery-07
     group: 配信
     name: メタデータとエイリアスの対応づけ
@@ -277,7 +278,7 @@ items:
 
       <!-- /flow -->
 
-      - **※1 除外の条件の見分け方**: Q0・Q1 の除外の条件は、dev-docs の [文書のメタデータ](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/%E3%82%B3%E3%82%A2%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%97%E3%83%88/%E6%96%87%E6%9B%B8%E3%81%AE%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF.md) の「載せるファイルの判定」に従う
+      - ※1 除外の条件の見分け方: Q0・Q1 の除外の条件は、dev-docs の [文書のメタデータ](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/%E3%82%B3%E3%82%A2%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%97%E3%83%88/%E6%96%87%E6%9B%B8%E3%81%AE%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF.md) の「載せるファイルの判定」に従う
   - id: files-yaml-02
     group: 配信
     name: files.yaml の行の列に入れる値
@@ -317,7 +318,8 @@ items:
     group: 更新
     name: 参照元の確認
     body: |-
-      - 他の文書から参照されている文書を変える前に、参照元を引いて影響の範囲を確認する。YAML の文書は dev-docs の `trace_related`（`direction: in`）、Markdown とコードは検索で引く
+      - 他の文書から参照されている文書を変える前に、参照元を引いて影響の範囲を確認する。
+        YAML の文書は dev-docs の `trace_related`（`direction: in`）、Markdown とコードは検索で引く
   - id: update-02
     group: 更新
     name: 改名

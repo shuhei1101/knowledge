@@ -2,7 +2,7 @@
 id: guide-setup-apply-rule-index
 kind: guide
 name: 規約の索引を当てる
-description: rule-inject の索引を当てる手順と、反映・確認・元に戻す方法を示し、この規約を使う環境を新しく用意したときに読む。
+description: rule-inject の索引を当てる手順と、反映・確認・元に戻す方法を示し、この規約を使う環境を新しく用意したときに参照する。
 tags:
   - name: scope:使い方
   - name: topic:セットアップ手順
@@ -64,7 +64,7 @@ items:
       ```
 
       ほかの索引も使うときは、`global.indexes` に並べる。
-      絶対パスか `~` で始まるパスで書かないと索引が読まれず、規約が案内されない。
+      絶対パスか、`~` から始まるパスで記載しないと索引が参照されず、規約が案内されない。
 
       設定ファイルを既定と違う場所に配置するときだけ、`~/.claude/settings.json` の `env` の `RULE_INJECT_CONFIG` に設定ファイルのパスを記載する。
   - id: reflection-01

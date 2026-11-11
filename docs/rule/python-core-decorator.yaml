@@ -2,7 +2,7 @@
 id: python-core-decorator
 kind: rule
 name: 推奨デコレータ + ハンドラーデコレータ
-description: 推奨するデコレータ、ハンドラーデコレータ、合成の順序、自作デコレータの注意、@overload の使いどころを定め、デコレータを使う・自作するときに読む。
+description: 推奨するデコレータ、ハンドラーデコレータ、合成の順序、自作デコレータの注意、@overload を使用する場面を定め、デコレータを使用する・自作するときに参照する。
 aliases:
   - core/デコレーター
 inject_when:
@@ -51,11 +51,14 @@ items:
     group: ハンドラーデコレータ（横断関心事）
     name: ハンドラーデコレータの方針
     body: |-
-      例外キャッチ / リトライ / タイムアウト / メトリクスは関数デコレータで束ねる（クラスベース AOP は使わない）。`{pkg}/shared/decorators.py` に定義。
+      例外キャッチ / リトライ / タイムアウト / メトリクスは関数デコレータで束ねる（クラスベース AOP は使わない）。
+      `{pkg}/shared/decorators.py` に定義。
   - id: handler-decorator-02
     group: ハンドラーデコレータ（横断関心事）
     name: ハンドラーデコレータの表
     body: |-
+      <!-- table: data -->
+
       | デコレータ                              | 用途                                                            |
       | --------------------------------------- | --------------------------------------------------------------- |
       | `@catch_and_log(*exc_types, level=...)` | 指定例外をログに出して再送出する                                |
@@ -63,11 +66,13 @@ items:
       | `@stamina.retry(on=<フック関数>, attempts=<試行回数>)` | 指数バックオフでリトライ（引数は [llm/例外とリトライ](id:python-llm-exception-retry)）      |
       | `@with_timeout(seconds=<全体の待ち>)` | `asyncio.timeout` ラッパー。超過で `IntegrationTimeoutError`（値は [llm/例外とリトライ](id:python-llm-exception-retry#timeout-01)） |
       | `@measure_time(metric="...")`           | 実行時間メトリクス                                              |
+
+      <!-- /table -->
   - id: composition-01
     group: 合成
     name: デコレータの合成順
     body: |-
-      外側から順に適用、読み方は下から上:
+      外側から順に適用し、下から上へ読む。
 
       ```python
       @with_timeout(seconds=<全体の待ち>)                         # 3. 全体の待ちで打ち切り
@@ -94,9 +99,10 @@ items:
     group: 自作デコレータの注意
     name: 1 デコレータ 1 責務
     body: |-
-      - 1 デコレータ 1 責務（ログだけ・例外変換だけ）
+      - 1 デコレータ 1 責務（ログ・例外変換のどちらか 1 つ）
   - id: overload-01
     group: "@overload"
     name: "@overload の使いどころ"
     body: |-
-      戻り値が引数型で分岐する関数のみ。ほとんどは型エイリアス + Callable / Protocol で済むので出番は少ない。
+      戻り値が引数型で分岐する関数のみ。
+      ほとんどは型エイリアス + Callable / Protocol で済むので出番は少ない。

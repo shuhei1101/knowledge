@@ -1,0 +1,21 @@
+confirmations:
+  - topic: 量が 8pt を超えたときに lint の違反の修正と設定の切り替えを別の Issue に分けるか
+    decision: 分けずに 1 つの PR で行う（推奨案 A）。lint の違反は AI slop の修正で文を修正する箇所と重なり、分けると同じ 209 ファイルを 2 回修正するため。計画の行の概要の分割の条件は task-reviewer の任意の指摘を元にしたもので、要件は変わらない
+    decided_by: reviewer
+    approver: reviewer
+    thread: https://github.com/shuhei1101/knowledge/pull/257#discussion_r4531525598
+  - topic: AI slop の修正をどこまでこの PR で行うか
+    decision: lint の違反の修正・表への書き換え・メタデータの付け直しと、その作業で書き換える文の AI slop だけを修正する。残りはフォルダごとの Issue に分けて起票する（推奨案 A）
+    decided_by: thumbs_up
+    approver: shuhei1101
+    thread: https://github.com/shuhei1101/knowledge/pull/257#discussion_r4531638920
+  - topic: description の末尾の「〜ときに読む」を対応表の NG の単語として修正するか
+    decision: 「ときに参照する」へ統一する。規約『文書のタグと description の記載』の例と description-01 も書き換える（案 B）
+    decided_by: reply
+    approver: shuhei1101
+    thread: https://github.com/shuhei1101/knowledge/pull/257#discussion_r4531650972
+  - topic: '#145 の「エイリアスと用語: 用語集へ登録する」をこの PR で行うか'
+    decision: 用語集（terms.yaml）の新設と登録を別の Issue にする（推奨案 A）
+    decided_by: thumbs_up
+    approver: shuhei1101
+    thread: https://github.com/shuhei1101/knowledge/pull/257#discussion_r4533047223

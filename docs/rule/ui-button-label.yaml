@@ -2,7 +2,7 @@
 id: ui-button-label
 kind: rule
 name: ボタンのラベル
-description: ボタンをアイコンだけにするか文字を出すかの使い分けと、ツールチップ・アイコン・文言の決まりを定め、画面のボタンを設計・実装するときに読む。
+description: ボタンをアイコンだけにするか文字を出すかの使い分けと、ツールチップ・アイコン・文言の決まりを定め、画面のボタンを設計・実装するときに参照する。
 inject_when:
   field: text
   op: contains
@@ -51,9 +51,14 @@ items:
   - id: overview
     name: 概要
     body: |-
-      対象: 共通（単体 HTML・React）
+      対象は共通（単体 HTML・React）。
       ボタンをアイコンだけにするか文字を出すかの使い分けと、ツールチップ・アイコン・文言の決まり。
-      出典の略号は HIG = Apple Human Interface Guidelines、MD = Material Web（リンクはメタデータの `sources`）。
+      出典の略号は次の表のとおり（リンクはメタデータの `sources`）。
+
+      | 略号 | 出典 |
+      | --- | --- |
+      | HIG | Apple Human Interface Guidelines |
+      | MD | Material Web |
   - id: icon-or-text-01
     group: アイコンと文字の使い分け
     name: アイコンと文字の使い分けの決まり

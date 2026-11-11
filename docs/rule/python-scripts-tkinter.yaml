@@ -2,7 +2,7 @@
 id: python-scripts-tkinter
 kind: rule
 name: tkinter — GUI スクリプト規約
-description: tkinter で GUI を付けるスクリプトの設計指針と、長い処理で GUI をブロックしない方法を定め、Python スクリプトに操作画面を付けるときに読む。
+description: tkinter で GUI を付けるスクリプトの設計指針と、長い処理で GUI をブロックしない方法を定め、Python スクリプトに操作画面を付けるときに参照する。
 tags:
   - name: scope:python
   - name: topic:スクリプト
@@ -47,7 +47,8 @@ items:
     group: 設計指針
     name: アクセントカラーは青
     body: |-
-      - アクセントカラーは青で統一（`#2563eb` 基準、hover `#1d4ed8`）。`Accent.TButton` スタイルを定義
+      - アクセントカラーは青で統一（`#2563eb` 基準、hover `#1d4ed8`）。
+        `Accent.TButton` スタイルを定義
   - id: design-guideline-04
     group: 設計指針
     name: エラーは messagebox で見せる
@@ -57,7 +58,9 @@ items:
     group: 設計指針
     name: Tk は 1 つだけ
     body: |-
-      - `tk.Tk()` は 1 つだけ。モーダルは `tk.Toplevel` 派生 + `transient(master)` + `grab_set()`、結果は `result` プロパティで返し `root.wait_window(dialog)` で受ける
+      - `tk.Tk()` は 1 つだけ。
+        モーダルは `tk.Toplevel` 派生 + `transient(master)` + `grab_set()` にする。
+        結果は `result` プロパティで返却し、`root.wait_window(dialog)` が受け取る
   - id: design-guideline-06
     group: 設計指針
     name: ファイル選択のダイアログ
@@ -72,7 +75,7 @@ items:
     group: 長い処理
     name: GUI スレッドをブロックしない
     body: |-
-      GUI スレッドをブロックしない:
+      GUI スレッドをブロックしない。
   - id: long-process-02
     group: 長い処理
     name: worker スレッドと Queue
@@ -82,4 +85,4 @@ items:
     group: 長い処理
     name: after によるポーリング
     body: |-
-      - `root.after(100, poll)` のポーリングで tk イベントループ上で回収して messagebox 表示
+      - `root.after(100, poll)` のポーリングにより、tk のイベントループ上で回収して messagebox を表示する

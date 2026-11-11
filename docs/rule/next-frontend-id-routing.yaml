@@ -2,7 +2,7 @@
 id: next-frontend-id-routing
 kind: rule
 name: "[id]/ — レコード単位のルーティング"
-description: レコード単位の [id]/ ルーティングの構成、権限ガード、View がない画面の扱いを定め、レコード単位の画面（詳細・編集）を作るときに読む。
+description: レコード単位の [id]/ ルーティングの構成、権限ガード、View がない画面の扱いを定め、レコード単位の画面（詳細・編集）を作るときに参照する。
 tags:
   - name: scope:next
   - name: topic:フロントエンド
@@ -46,7 +46,7 @@ items:
     group: 権限ガード
     name: 権限ガードの前提
     body: |-
-      編集権限なしで `/edit` 直アクセスされた場合:
+      編集権限なしで `/edit` へ直接アクセスされた場合は次のとおり。
   - id: permission-guard-02
     group: 権限ガード
     name: Edit の page で canEdit を確認

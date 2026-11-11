@@ -2,7 +2,7 @@
 id: ui-input-wording
 kind: rule
 name: 入力と文言
-description: 入力・送信・エラー・通知の振る舞いと、画面に出す言葉（語・操作の語・状態名・空の表示）を定め、フォームや画面の文言を設計・実装するときに読む。
+description: 入力・送信・エラー・通知の振る舞いと、画面に出す言葉（単語・操作の単語・状態名・空の表示）を定め、フォームや画面の文言を設計・実装するときに参照する。
 inject_when:
   field: text
   op: contains
@@ -98,14 +98,37 @@ items:
   - id: overview
     name: 概要
     body: |-
-      対象: 共通（単体 HTML・React）
+      対象は共通（単体 HTML・React）。
       入力・送信・エラー・通知の振る舞いと、画面に出す言葉。
       画面の状態をどこに保持するか。
-      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、GOV = GOV.UK Design System、C = IBM Carbon Design System、MS = Microsoft Japanese Localization Style Guide、SH = SmartHR Design System、BK = 公用文作成の考え方、APG = WAI-ARIA Authoring Practices Guide、TR = TanStack Router、MDN = MDN Web Docs、WD = web.dev、NN = Nielsen Norman Group、BY = Baymard Institute、OW = OWASP（リンクはメタデータの `sources`）。
+      出典の略号は次の表のとおり（リンクはメタデータの `sources`）。
+
+      <!-- table: data -->
+
+      | 略号 | 出典 |
+      | --- | --- |
+      | I | Impeccable |
+      | V | Vercel Web Interface Guidelines |
+      | GOV | GOV.UK Design System |
+      | C | IBM Carbon Design System |
+      | MS | Microsoft Japanese Localization Style Guide |
+      | SH | SmartHR Design System |
+      | BK | 公用文作成の考え方 |
+      | APG | WAI-ARIA Authoring Practices Guide |
+      | TR | TanStack Router |
+      | MDN | MDN Web Docs |
+      | WD | web.dev |
+      | NN | Nielsen Norman Group |
+      | BY | Baymard Institute |
+      | OW | OWASP |
+
+      <!-- /table -->
   - id: input-submit-01
     group: 入力と送信
     name: 入力と送信の決まり
     body: |-
+      <!-- table: data -->
+
       | 要素 | 出典 |
       | --- | --- |
       | ラベルは常に見せる。入力欄の中の例示文をラベルの代わりにしない | V / I |
@@ -113,20 +136,28 @@ items:
       | 送信中は二重送信を防ぎ、処理中であることを見せる | V / I |
       | 押せない理由が画面から読み取れないボタンを無効にしない。理由を近くに書くか、押したときに理由を示す | GOV |
       | 取り返しのつかない操作には確認か取り消し猶予を置く。安全に戻せるなら確認より取り消しを選ぶ | V / I |
+
+      <!-- /table -->
   - id: error-notification-01
     group: エラーと通知
     name: エラーと通知の決まり
     body: |-
+      <!-- table: data -->
+
       | 要素 | 出典 |
       | --- | --- |
       | エラーは原因の近くに、何が起きたかと修正方法を書く。入力内容は削除しない | V / I |
       | 検証エラーが出たら、フォームの先頭にエラーの一覧を出し、各項目へのリンクを付けてフォーカスを移す。一覧と各項目の文言を揃える | GOV |
       | 対応が要る通知（エラー・警告）は関係する場所に置き、自動で閉じない。自動で閉じる通知は短い完了の知らせに限り、後から見返せる場所を用意する | C |
       | 通知に置く操作は 1 つにする | C |
+
+      <!-- /table -->
   - id: wording-01
     group: 文言
     name: 文言の決まり
     body: |-
+      <!-- table: data -->
+
       | 要素 | 出典 |
       | --- | --- |
       | ボタンは起きることを動詞で書く（「OK」ではなく「Issue 作成」）。確認のボタンも操作名にする | V / I |
@@ -134,6 +165,8 @@ items:
       | 内部の用語やエラーコードを主なメッセージにしない | I |
       | 見れば分かるものにラベルを付けない（切り替えの部品の前の「ビュー:」等） | - |
       | 文言は識別子より意味を先に書く（「v3.0.0（現在）」ではなく「現在（v3.0.0）」） | - |
+
+      <!-- /table -->
   - id: wording-term-format-01
     group: 文言 > 語と書式
     name: 用語の選び方の参照
@@ -144,14 +177,18 @@ items:
     group: 文言 > 語と書式
     name: 語と書式の決まり
     body: |-
+      <!-- table: data -->
+
       | 要素 | 出典 |
       | --- | --- |
       | 一般の Web アプリと同じ形式的な語にする。やわらかさを狙った言い換えをしない（「直す」ではなく「修正」、「消す」ではなく「削除」）。長い文言は短くする（「選んだ n 件をコピー」ではなく「選択 n 件コピー」） | MS / SH |
       | 品詞を揃える。タブ・列名・見出し・状態は名詞、ボタンは操作語、説明文は敬体で述語まで書く | SH |
       | ボタンの漢語は「する」を省き、目的語の後ろの「を」も省く（追加・権限追加）。画面タイトルは名詞にする（権限の追加） | SH / - |
       | トグルは、ラベルを変えないチェックボックスかスイッチにする（状態によって「表示」と「非表示」を切り替えるボタンにしない） | APG |
-      | エラーのメッセージは「〜できませんでした」「〜が見つかりません」で終える。意思の確認は「〜しますか?」にする（「〜してもよろしいですか?」にしない） | MS |
+      | エラーのメッセージは「〜できませんでした」「〜が見つかりません」で終える。意思の確認は疑問形の「〜しますか」にする（「〜してもよろしいですか」にしない） | MS |
       | 長音は語末の -er / -or / -ar / -y に付ける（ユーザー・サーバー・メモリー） | BK |
+
+      <!-- /table -->
   - id: wording-operation-01
     group: 文言 > 操作の語
     name: 操作の語の案内
@@ -204,28 +241,34 @@ items:
     group: 文言 > 状態名の型
     name: 状態名の型の表
     body: |-
+      <!-- table: data -->
+
       | パターン | 使うとき | 例 |
       | --- | --- | --- |
-      | 未〇〇 | 始まっていない | 未着手・未対応 |
+      | 未（動作） | 始まっていない | 未着手・未対応 |
       | 〇〇中 | 進行している | 対応中・確認中 |
       | 〇〇待ち | 他者の入力や作業を待っている | 確認待ち・返信待ち |
       | 〇〇済み | その作業が終わった | 対応済み・確認済み |
       | 完了 | 全体が終わった | 完了 |
-      | 要〇〇 | 人の対応が要る | 要確認・要対応 |
+      | 要（動作） | 人の対応が要る | 要確認・要対応 |
+
+      <!-- /table -->
   - id: wording-empty-pattern-01
     group: 文言 > 空の表示の型
     name: 空の表示の型
     body: |-
       | 場所 | パターン | 例 |
       | --- | --- | --- |
-      | 一覧 | 〇〇はありません。 | タスクはありません。 |
-      | 検索の 0 件 | 該当する〇〇はありません。別の条件を試してください。 | 該当するタスクはありません。別の条件を試してください。 |
+      | 一覧 | {対象}はありません。 | タスクはありません。 |
+      | 検索の 0 件 | 該当する{対象}はありません。別の条件を試してください。 | 該当するタスクはありません。別の条件を試してください。 |
       | 項目の値の欄 | なし か — | なし |
   - id: state-retention-01
     group: 状態の保持
     name: 状態の保持
     body: |-
       保持先の判定は判定フローチャート [画面の状態の保持先](id:flowchart-screen-state-retention) で行う。
+
+      <!-- table: data -->
 
       | 保持するもの | 置き場所 | 出典 |
       | --- | --- | --- |
@@ -237,6 +280,8 @@ items:
       | そのタブで別の画面からリンクで入り直したときに戻したいもの（最後のタブ・絞り込み） | sessionStorage。URL に値があれば URL を優先し、sessionStorage の値を使用したら URL に `replace` で書き戻す | - |
       | 機密（トークン・個人情報） | URL と Web Storage に配置しない | OW |
       | 保存ビュー | サーバー（画面が書き込みの経路を持たないときは localStorage） | - |
+
+      <!-- /table -->
   - id: state-retention-02
     group: 状態の保持
     name: 未保存のまま離れるときの警告

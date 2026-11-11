@@ -2,7 +2,7 @@
 id: python-testing-mock
 kind: rule
 name: 結合テストの Mock パターン
-description: 結合テストで依存を差し替える Mock を、普通の関数で記載する方法と使い分けを定め、結合テストで外部依存を Mock にするときに読む。
+description: 結合テストで依存を差し替える Mock を、普通の関数で記載する方法と使い分けを定め、結合テストで外部依存を Mock にするときに参照する。
 aliases:
   - testing/モック
 inject_when:
@@ -35,7 +35,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      関数の型エイリアスで DI している依存は Mock も普通の関数で書く（`AsyncMock` より読みやすい）。引数注入していない依存は `monkeypatch` / `mock.patch` で差し替えてよい。
+      関数の型エイリアスで DI している依存は Mock も普通の関数で書く（`AsyncMock` より読みやすい）。
+      引数注入していない依存は `monkeypatch` / `mock.patch` で差し替えてよい。
   - id: integration-mock-pattern-01
     group: 結合テストの Mock パターン
     name: Mock の方式の比較

@@ -2,7 +2,7 @@
 id: template-skill
 kind: template
 name: "テンプレート: スキル"
-description: スキルの手順を、フローチャートと外部とのやり取りのシーケンス図で記載するスキルの設計書の書式を定め、スキルの設計書を作る・修正するときに読む。
+description: スキルの手順を、フローチャートと外部とのやり取りのシーケンス図で記載するスキルの設計書の書式を定め、スキルの設計書を作る・修正するときに参照する。
 tags:
   - name: scope:テンプレート
   - name: topic:シーケンス
@@ -45,7 +45,7 @@ items:
       | flow | 手順 | string | 必須 | - | - | 手順のフローチャート。上から下へ。分岐はそのまま描く。<br>mdmark の `flow` で記載する。 | - |
       | sequence | 外部とのやり取り | string | 必須 | - | - | 正常の流れで、相手との呼び出しと返りの順番。<br>mdmark の `sequence` で記載する。 | - |
       | branches | 分かれる結末 | array | 必須 | - | minItems: 1 | 結末ごとの条件と、終わったときの状態。 | - |
-      | branches[].name | 結末 | string | 必須 | - | pattern: ^(正常\|異常)(（.+）)?$ | `正常`・`正常（{条件}）`・`異常（{条件}）`。 | - |
+      | branches[].name | 結末 | string | 必須 | - | pattern: `^(正常\|異常)(（.+）)?$` | `正常`・`正常（{条件}）`・`異常（{条件}）`。 | - |
       | branches[].when | 条件 | string | 必須 | - | - | - | - |
       | branches[].result | 終わったときの状態 | string | 必須 | - | - | 外から見える状態。スキルを実装した後に、設計書とスキルの手順を突き合わせる観点になる。 | - |
       | related | 関連 | array | - | - | - | 読む規約・他の設計書。メタデータの `related`（`to`・`type`・`when`）で持つ。 | - |

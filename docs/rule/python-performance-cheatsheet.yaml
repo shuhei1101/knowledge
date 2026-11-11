@@ -2,7 +2,7 @@
 id: python-performance-cheatsheet
 kind: rule
 name: パフォーマンスチートシート
-description: 最適化の前に計測する原則と、計測ツールの使い分け、ホットパスのチェックリストを定め、Python のコードの性能を改善するときに読む。
+description: 最適化の前に計測する原則と、計測ツールの使い分け、ホットパスのチェックリストを定め、Python のコードの性能を改善するときに参照する。
 inject_when:
   field: text
   op: contains
@@ -43,7 +43,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      最適化に着手する前に計測する。「推測するな、計測せよ」。
+      最適化の着手前に計測する。
+      「推測するな、計測せよ」。
   - id: profiling-tools-01
     group: 計測ツール早見表
     name: 計測ツールの早見表
@@ -65,7 +66,10 @@ items:
     group: 計測ツール早見表
     name: 計測ツールの使い分け
     body: |-
-      使い分け: どこが遅いか不明 → cProfile（開発）/ py-spy（本番）。特定関数 → line_profiler / scalene。メモリ → memray。cProfile はオーバーヘッドが大きいので本番では使わない。
+      使い分け: どこが遅いか不明 → cProfile（開発）/ py-spy（本番）。
+      特定関数 → line_profiler / scalene。
+      メモリ → memray。
+      cProfile はオーバーヘッドが大きいので本番では使わない。
   - id: hot-path-checklist-01
     group: ホットパスのチェックリスト（試す順）
     name: アルゴリズム改善

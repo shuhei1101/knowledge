@@ -2,7 +2,7 @@
 id: guide-setup-docs-mcp
 kind: guide
 name: knowledge を dev-docs の配信元に登録する
-description: knowledge を dev-docs の配信元に登録して画面と MCP で文書を引く手順と、反映・確認・元に戻す方法を示し、どの端末・作業場所からでも規約を検索・取得したいときに読む。
+description: knowledge を dev-docs の配信元に登録して画面と MCP で文書を検索する手順と、反映・確認・元に戻す方法を示し、どの端末・作業場所からでも規約を検索・取得したいときに参照する。
 tags:
   - name: scope:使い方
   - name: topic:セットアップ手順
@@ -51,7 +51,8 @@ items:
       ```
 
       端末の設定の場所を聞かれたら、既定の `~/.config/dev-docs/settings.yaml` を選ぶ。
-      既に端末の設定がある端末でも同じコマンドを実行する。既にある `sources[]` の行は消えない。
+      既に端末の設定がある端末でも同じコマンドを実行する。
+      既にある `sources[]` の行は消えない。
   - id: step-global-setup-02
     group: 手順 > 端末を準備する
     name: MCP のつなぎ直し
@@ -121,7 +122,8 @@ items:
     name: 反映のタイミング
     body: |-
       - 端末の設定の `sources[]`: `即時`（`/dev-docs:setup` が最後に管理の MCP の `reload` を呼ぶ）
-      - knowledge の `dev-docs.yaml`・スキーマ・`scripts/`: 管理の MCP の `reload` を呼ぶまで、変える前の設定で配信する（dev-docs の [配信元を配信する](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E9%85%8D%E4%BF%A1%E5%85%83%E3%82%92%E9%85%8D%E4%BF%A1%E3%81%99%E3%82%8B.md) の「設定を変えたら確かめる」）
+      - knowledge の `dev-docs.yaml`・スキーマ・`scripts/`: 管理の MCP の `reload` を呼ぶまで、変える前の設定で配信する。
+        確認の方法は dev-docs の [配信元を配信する](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E9%85%8D%E4%BF%A1%E5%85%83%E3%82%92%E9%85%8D%E4%BF%A1%E3%81%99%E3%82%8B.md) の「設定を変えたら確かめる」
   - id: check-served-01
     group: 確認 > knowledge が配信中になっている
     name: 設定画面の状態の確認

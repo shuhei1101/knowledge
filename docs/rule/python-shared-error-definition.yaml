@@ -2,7 +2,7 @@
 id: python-shared-error-definition
 kind: rule
 name: 例外階層
-description: ドメイン例外を AppError 継承の単一階層にする設計原則と、例外を処理する場所を定め、Python に例外クラスを追加する・例外処理を実装するときに読む。
+description: ドメイン例外を AppError 継承の単一階層にする設計原則と、例外を処理する場所を定め、Python に例外クラスを追加する・例外処理を実装するときに参照する。
 aliases:
   - shared/エラー定義
 inject_when:
@@ -43,7 +43,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      すべてのドメイン例外は `AppError` を継承する単一階層（`shared/errors.py`）。docstring のみのシンプルなクラス定義。
+      すべてのドメイン例外は `AppError` を継承する単一階層（`shared/errors.py`）。
+      docstring のみのシンプルなクラス定義。
   - id: exception-hierarchy-01
     group: 例外階層
     name: 例外階層の表

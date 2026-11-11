@@ -2,7 +2,7 @@
 id: next-backend-cache
 kind: rule
 name: Caching（Next.js 16）
-description: Next.js 16 の cacheComponents・use cache・cacheLife・cacheTag の使い方と、invalidate API の使い分けを定め、データ取得のキャッシュを設定・無効化するときに読む。
+description: Next.js 16 の cacheComponents・use cache・cacheLife・cacheTag の使用方法と、invalidate API の使い分けを定め、データ取得のキャッシュを設定・無効化するときに参照する。
 aliases:
   - キャッシュ
   - backend/キャッシュ
@@ -41,7 +41,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      `cacheComponents: true` を有効化（PPR が標準動作: 静的部分はプリレンダ、`cookies()` / `headers()` / `<Suspense>` 内はリクエスト時レンダ + ストリーム）。
+      `cacheComponents: true` を有効にする。
+      PPR が標準の動作になり、静的な部分はプリレンダ、`cookies()` / `headers()` / `<Suspense>` の中はリクエスト時のレンダとストリームになる。
   - id: use-cache-01
     group: "\"use cache\" + cacheLife + cacheTag"
     name: データ取得関数に use cache
@@ -72,12 +73,13 @@ items:
     body: |-
       `updateTag` が使えない Route Handler・Webhook から即時に削除するときは `revalidateTag(tag, { expire: 0 })`。
 
-      Server Action での典型: 自分が見る単体は `updateTag(`resource:${id}`)`、他人の一覧は `revalidateTag("resources", "max")`、最後に `refresh()`。
+      Server Action の典型は次のとおり。
+      自分が参照する単体は `updateTag(`resource:${id}`)`、他人の一覧は `revalidateTag("resources", "max")`、最後に `refresh()`。
   - id: decision-flow-01
     group: 決定フロー
     name: キャッシュの決定フロー
     body: |-
-      ```
+      ```text
       ユーザーごとに違うデータ? → キャッシュしない
       どれくらい古くていい? → 即時=なし / 数分=minutes / 数時間=hours / 1ヶ月+=max
       mutation 後に即時反映必要? → Yes: updateTag + refresh / No: revalidateTag(tag, "max")
@@ -86,4 +88,4 @@ items:
     group: 決定フロー
     name: マスター系のキャッシュ
     body: |-
-      マスター系（カテゴリ・アイコン等）は `cacheLife("max")` + 管理画面更新時に `revalidateTag`。
+      マスター系（カテゴリ・アイコン等）は `cacheLife("max")` にし、管理画面で更新したときに `revalidateTag` する。

@@ -2,7 +2,7 @@
 id: next-backend-local-yaml-dev-db
 kind: rule
 name: ローカル開発用 YAML データストア
-description: ローカル開発用の YAML データストアで query.ts と db.ts の実装を切り替える構成を定め、DB に接続せずローカルで開発できるようにするときに読む。
+description: ローカル開発用の YAML データストアで query.ts と db.ts の実装を切り替える構成を定め、DB に接続せずローカルで開発できるようにするときに参照する。
 tags:
   - name: scope:next
   - name: topic:バックエンド
@@ -31,11 +31,12 @@ items:
     name: 概要
     body: |-
       > 関数ごとに `type` で型を定義し、`query.ts` / `db.ts` の実装を本番（Drizzle）と
-      > ローカル（YAML ファイル）で差し替える。クラス・`interface`・Repository は使わない。
+      > ローカル（YAML ファイル）で差し替える。
+      > クラス・`interface`・Repository は使わない。
       > データアクセスは `fetch{Feature}` / `insert{Feature}` などの素の関数で、`db` を引数で受け渡す。
       > トランザクション境界は `service.ts` が持つ。
 
-      ```
+      ```text
       service.ts（transaction() でトランザクション境界）
          ↓ fetchResource({ db, id }) / insertResource({ db, record })
       query.ts / db.ts  ← env で実装を切り替え
@@ -56,14 +57,15 @@ items:
     group: ローカル開発用 YAML データストア
     name: トランザクションの維持
     body: |-
-      - トランザクション維持：本番は Drizzle の `db.transaction`、ローカルは YAML スナップショット/ロールバック + ロック（ロックとロールバックの決まりは [YAML](id:dev-yaml) の `## 書き込み`）
+      - トランザクション維持：本番は Drizzle の `db.transaction`、ローカルは YAML スナップショット/ロールバック + ロック。
+        ロックとロールバックの決まりは [YAML](id:dev-yaml) の `## 書き込み`
   - id: local-yaml-datastore-04
     group: ローカル開発用 YAML データストア
     name: YAML のフィールドはスキーマと同じ
     body: |-
       - YAML ファイルはスキーマと同じフィールドを持つ → 移行コストなし
 
-      ```
+      ```tree
       app/api/v{N}/resources/
       ├── types.ts          # 関数ごとの型定義
       ├── query.ts          # 読み取りの切り替え（re-export）
@@ -80,4 +82,5 @@ items:
     group: ローカル開発用 YAML データストア
     name: 実装ファイルは env を見ない
     body: |-
-      実装ファイル（`*.drizzle.ts` / `*.yaml.ts`）は env を見ない。本番ビルドに YAML 実装を混入させない（`USE_YAML_DB` のガードを守る）。
+      実装ファイル（`*.drizzle.ts` / `*.yaml.ts`）は env を見ない。
+      本番ビルドに YAML 実装を混入させない（`USE_YAML_DB` のガードを守る）。

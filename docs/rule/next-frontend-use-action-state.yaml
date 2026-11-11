@@ -2,7 +2,7 @@
 id: next-frontend-use-action-state
 kind: rule
 name: Server Action をクライアントから呼ぶ — useTransition / useActionState / useFormStatus
-description: Server Action をクライアントから呼ぶ useTransition・useActionState・useFormStatus の使い分けと通知の決まりを定め、画面から Server Action を呼ぶときに読む。
+description: Server Action をクライアントから呼ぶ useTransition・useActionState・useFormStatus の使い分けと通知の決まりを定め、画面から Server Action を呼ぶときに参照する。
 tags:
   - name: scope:next
   - name: topic:フロントエンド
@@ -24,7 +24,8 @@ items:
     group: Server Action をクライアントから呼ぶ — useTransition / useActionState / useFormStatus
     name: mutation は Server Action 直接呼び
     body: |-
-      - mutation の第一選択は Server Action 直接呼び。単純なフォームは `useTransition` + 自前ハンドラ
+      - mutation の第一選択は Server Action 直接呼び。
+        単純なフォームは `useTransition` + 自前ハンドラ
   - id: server-action-client-call-02
     group: Server Action をクライアントから呼ぶ — useTransition / useActionState / useFormStatus
     name: 失敗と成功は必ず通知
@@ -34,6 +35,8 @@ items:
     group: Server Action をクライアントから呼ぶ — useTransition / useActionState / useFormStatus
     name: ケース別の推奨表
     body: |-
+      <!-- table: data -->
+
       | ケース                             | 推奨                                    |
       | ---------------------------------- | --------------------------------------- |
       | フォーム送信（リッチ UI）          | `useTransition` + 自前ハンドラ          |
@@ -41,3 +44,5 @@ items:
       | `<form>` 内のサブミットボタン      | `useFormStatus`                         |
       | 楽観 UI                            | `useOptimistic` (+ useTransition)       |
       | 複雑な楽観更新 / キャンセル        | useMutation（[useMutationパターン](id:react-data-mutation)） |
+
+      <!-- /table -->

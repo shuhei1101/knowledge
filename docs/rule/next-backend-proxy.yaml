@@ -2,7 +2,7 @@
 id: next-backend-proxy
 kind: rule
 name: proxy.ts（旧 Middleware）
-description: Next.js 16 の proxy.ts（旧 Middleware）の用途・ランタイム・matcher・認証チェックを定め、proxy.ts を作る・修正するときに読む。
+description: Next.js 16 の proxy.ts（旧 Middleware）の用途・ランタイム・matcher・認証チェックを定め、proxy.ts を作る・修正するときに参照する。
 aliases:
   - backend/プロキシ
 tags:
@@ -26,7 +26,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      Next.js 16 で `middleware.ts` → `proxy.ts` にリネーム（export 関数名も `proxy`）。配置はプロジェクト直下。
+      Next.js 16 で `middleware.ts` → `proxy.ts` にリネーム（export 関数名も `proxy`）。
+      配置はプロジェクト直下。
   - id: proxy-ts-01
     group: proxy.ts（旧 Middleware）
     name: 用途
@@ -41,7 +42,8 @@ items:
     group: proxy.ts（旧 Middleware）
     name: matcher で適用パスを指定
     body: |-
-      - `config.matcher` で適用パスを指定。静的アセット・auth API・webhook は negative lookahead で除外する
+      - `config.matcher` で適用パスを指定。
+        静的アセット・auth API・webhook は negative lookahead で除外する
 
       ```ts
       export const config = {
@@ -52,9 +54,10 @@ items:
     group: proxy.ts（旧 Middleware）
     name: 認証チェックは軽量判定
     body: |-
-      - 認証チェックは cookie の有無等の軽量判定に留める（本判定は `getAuthContext()` 側）。Server Action は matcher の対象外パスでは proxy を通らないため、各 Action で認証する
+      - 認証チェックは cookie の有無等の軽量判定に留める（本判定は `getAuthContext()` 側）。
+        Server Action は matcher の対象外パスでは proxy を通らないため、各 Action で認証する
   - id: proxy-ts-05
     group: proxy.ts（旧 Middleware）
     name: 未認証 redirect に from を付ける
     body: |-
-      - 未認証 redirect 時は `?from=` に元パスを付けてログイン後に戻せるようにする
+      - 未認証で redirect するときは `?from=` へ元のパスを付け、ログインの後で元のページへ戻れるようにする

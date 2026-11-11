@@ -258,7 +258,7 @@ functions:
       1. `overview`（概要）: トップの `description`
       2. `rules-01`（決まり）: トップの `x-rules` を `- ` の箇条書きにする（無ければ配置しない）
       3. キーをたどり（キーの列挙）、`item-list-01`（項目）にキーの表を、`key-rules-01`（キーごとの決まり）に決まりの表を配置する（表の作成。決まりか悪い例を持つキーが無ければ `key-rules-01` を配置しない）
-      4. トップの `examples` の要素ごとに、`example-sample-01` から連番で、要素をブロックスタイルの YAML にした `yaml` のコードフェンスを配置する。要素が 2 件以上なら名前を `記載例 {番号}` にする
+      4. トップの `examples` の要素ごとに、`example-sample-01` から連番で、要素をブロックスタイルの YAML にした `yaml` のコードフェンスを配置する。フェンスのバッククォートの数は、YAML の各行の先頭の空白を除いた後のバッククォートの並びの最長より 1 つ多くし、3 つ未満にしない。要素が 2 件以上なら名前を `記載例 {番号}` にする
     exceptions:
       - name: BuildError
         condition: キーの `$ref` を解決できない（`check_refs=False` で読んだときだけ起きる）
@@ -289,6 +289,12 @@ functions:
         mock: なし
         expected: '`BuildError`'
         exception: キーの `$ref` を解決できない
+      - name: test_build_items_when_example_has_code_fence
+        case: 正常
+        summary: 記載例の値にコードフェンスがある
+        condition: トップの `examples` の文字列の値に 3 つのバッククォートと `bash` で始まるコードフェンスを持ち、ブロックスタイルにした YAML でコードフェンスの行がインデントの後に出るスキーマ
+        mock: なし
+        expected: '`example-sample-01` の本文の 1 行目が 4 つのバッククォートと `yaml`、最後の行が 4 つのバッククォート'
     callees:
       - MOD-201-1#functions[_iter_keys]
       - MOD-201-1#functions[_render_key_table]

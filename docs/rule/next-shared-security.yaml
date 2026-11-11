@@ -2,7 +2,7 @@
 id: next-shared-security
 kind: rule
 name: Security
-description: Next.js のセキュリティヘッダ・CSRF・XSS・SQL Injection・Open Redirect・認証セッション・その他の対策を定め、Next.js のセキュリティ対策を実装・確認するときに読む。
+description: Next.js のセキュリティヘッダ・CSRF・XSS・SQL Injection・Open Redirect・認証セッション・その他の対策を定め、Next.js のセキュリティ対策を実装・確認するときに参照する。
 inject_when:
   field: text
   op: contains
@@ -52,8 +52,23 @@ items:
     group: セキュリティヘッダ
     name: セキュリティヘッダの付与
     body: |-
-      `next.config.ts` の `headers()` で全レスポンスに付与:
-      X-Frame-Options (SAMEORIGIN) / X-Content-Type-Options (nosniff) / Referrer-Policy (strict-origin-when-cross-origin) / Strict-Transport-Security / Permissions-Policy。CSP は要件に応じて nonce 方式（proxy.ts で nonce 生成 → ヘッダに付与）。nonce 方式は全ページが動的描画になり Cache Components と併用できない。Cache Components を使う場合は `headers()` で nonce なしの CSP を付ける。
+      `next.config.ts` の `headers()` で、全レスポンスに次を付与する。
+
+      <!-- table: data -->
+
+      | ヘッダ | 値 |
+      | --- | --- |
+      | X-Frame-Options | SAMEORIGIN |
+      | X-Content-Type-Options | nosniff |
+      | Referrer-Policy | strict-origin-when-cross-origin |
+      | Strict-Transport-Security | - |
+      | Permissions-Policy | - |
+
+      <!-- /table -->
+
+      CSP は要件に応じて nonce 方式（proxy.ts で nonce 生成 → ヘッダに付与）。
+      nonce 方式は全ページが動的描画になり Cache Components と併用できない。
+      Cache Components を使う場合は `headers()` で nonce なしの CSP を付ける。
   - id: csrf-01
     group: CSRF
     name: Server Actions の CSRF 対策
@@ -103,7 +118,9 @@ items:
     group: その他
     name: secret の置き場所
     body: |-
-      - secret は env / Vercel ダッシュボードのみ。`NEXT_PUBLIC_` を付けない。定期ローテーション
+      - secret は env / Vercel ダッシュボードのみ。
+        `NEXT_PUBLIC_` を付けない。
+        定期ローテーション
   - id: others-04
     group: その他
     name: 認証 API とフォームの対策

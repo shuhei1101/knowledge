@@ -2,7 +2,7 @@
 id: claude-skills-usage
 kind: rule
 name: AgentSkills関連の知識
-description: SKILL.md の公式の参照先、動的コンテキスト注入、変数の展開、ユーザー定義の環境変数の扱いを定め、SKILL.md にコンテキストや変数を埋め込むときに読む。
+description: SKILL.md の公式の参照先、動的コンテキスト注入、変数の展開、ユーザー定義の環境変数の扱いを定め、SKILL.md にコンテキストや変数を埋め込むときに参照する。
 tags:
   - name: scope:claude
   - name: topic:コンテキスト
@@ -35,20 +35,22 @@ items:
     name: SKILL.md にのみ適用
     body: |-
       - 本ルールはSKILL.mdにのみ適用すること
-        - CLAUDE.mdやAGENT.mdには適用されないため、注意
+        - CLAUDE.md・AGENT.md には適用されない
   - id: skill-dynamic-context-01
     group: スキル内の動的コンテキスト注入の書き方
     name: 動的コンテキスト注入
     body: |-
-      - `` !`<command>` `` はスキルの内容を Claude に送信する前にシェルで実行され、出力で置き換わる
+      - `` !`<command>` `` は、スキルの内容を Claude へ送信する前にシェルで実行され、出力で置き換わる
         - インライン形式は `!` が行頭か空白の直後にあるときだけ認識される（`` KEY=!`cmd` `` はリテラルのまま）
         - 複数行のコマンドは、`` ```! `` で開くフェンスコードブロックを使う
-        - 出力は再展開されない。コマンドが失敗するとスキル全体の呼び出しが中止される
+        - 出力は再展開されない。
+          コマンドが失敗するとスキル全体の呼び出しが中止される
   - id: skill-variable-expansion-01
     group: スキル内の環境変数や引数の展開方法
     name: 展開される変数
     body: |-
-      - 展開される変数: `$ARGUMENTS`、`$ARGUMENTS[N]`、`$N`、`arguments` フロントマターで宣言した `$name`、`${CLAUDE_SESSION_ID}`、`${CLAUDE_EFFORT}`、`${CLAUDE_SKILL_DIR}`
+      - 展開される変数: `$ARGUMENTS`・`$ARGUMENTS[N]`・`$N`・`${CLAUDE_SESSION_ID}`・`${CLAUDE_EFFORT}`・`${CLAUDE_SKILL_DIR}`。
+        ほかに、`arguments` フロントマターで宣言した `$name` も展開される
   - id: skill-variable-expansion-02
     group: スキル内の環境変数や引数の展開方法
     name: リテラルの $ のエスケープ
@@ -58,7 +60,8 @@ items:
     group: ユーザー定義環境変数を値として展開する
     name: ユーザー定義環境変数
     body: |-
-      `$ARGUMENTS` / `${CLAUDE_SESSION_ID}` などの公式変数以外に、プラグイン側で `export` した独自環境変数（`$GH_KIT_LABEL_TYPE_FEAT` など）をスキル本文に **値として** 埋め込みたい場合のルール。
+      公式変数（`$ARGUMENTS` / `${CLAUDE_SESSION_ID}` など）以外の独自環境変数を、スキル本文に値として埋め込みたい場合のルール。
+      独自環境変数は、プラグイン側で `export` した変数（`$GH_KIT_LABEL_TYPE_FEAT` など）を指す。
   - id: user-env-var-02
     group: ユーザー定義環境変数を値として展開する
     name: バッククォートでは展開されない

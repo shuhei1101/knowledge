@@ -2,7 +2,7 @@
 id: python-testing-pytest
 kind: rule
 name: pytest 規約
-description: pytest のテストの命名・fixture・parametrize・例外の検証・FastAPI ルートのテスト・マーカーの書き方を定め、pytest でテストコードを記載するときに読む。
+description: pytest のテストの命名・fixture・parametrize・例外の検証・FastAPI ルートのテスト・マーカーの記載方法を定め、pytest でテストコードを記載するときに参照する。
 tags:
   - name: scope:python
   - name: topic:testing
@@ -45,7 +45,8 @@ items:
     group: 命名
     name: テストファイルと関数の命名
     body: |-
-      - ファイル `test_*.py`、関数 `test_*()`。クラスは使わず関数で書く
+      - ファイル `test_*.py`、関数 `test_*()`。
+        クラスは使わず関数で書く
   - id: naming-02
     group: 命名
     name: 単体テストの命名
@@ -58,7 +59,7 @@ items:
     name: 期待値を名前に入れない
     body: |-
       - 期待値（returns_x / raises_y 等）は名前に入れない。
-        期待値が変わるたびに関数名まで変わるため、期待値は docstring とアサートに書く
+        期待値は関数名に入れず、docstring とアサートに記載する
   - id: naming-04
     group: 命名
     name: 結合・E2E の命名
@@ -108,7 +109,8 @@ items:
     group: FastAPI ルート
     name: FastAPI ルートのテスト
     body: |-
-      `build_fastapi(handlers=build_test_handlers())` で Mock 注入済みの Handlers を渡し、`LifespanManager` で起動して `AsyncClient(transport=ASGITransport(app=app))` で叩く（[testing/フィクスチャ](id:python-testing-fixture)）。
+      `build_fastapi(handlers=build_test_handlers())` で、Mock を注入済みの Handlers を指定する。
+      `LifespanManager` で起動して `AsyncClient(transport=ASGITransport(app=app))` で呼ぶ（[testing/フィクスチャ](id:python-testing-fixture)）。
   - id: fastapi-route-02
     group: FastAPI ルート
     name: openapi.json のスナップショットテスト

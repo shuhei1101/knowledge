@@ -2,7 +2,7 @@
 id: convention-writing-style
 kind: rule
 name: 文章の書き方
-description: エージェントが記載する文章の確認表と、用語の選び方（原則・ドキュメントの用語の対応表）を定め、ドキュメント・PR 本文・フェーズ手順に文章を追加するときに読む。
+description: エージェントが記載する文章の確認表と、用語の選び方（原則・ドキュメントの用語の対応表）を定め、ドキュメント・PR 本文・フェーズ手順に文章を追加するときに参照する。
 tags:
   - name: scope:規約
   - name: topic:pr
@@ -56,8 +56,19 @@ items:
       文章を追加する前に、既存の行を修正・削除することで足りないかを確かめ、足りるなら追加しない。
 
       ドキュメント・PR 本文・フェーズ手順に文章を追加したら、書き終えた直後に次を確認して当てはまる行を削除する。
-      追加した分は以降の全ターンの起動プロンプトに載り続けるため、削除しないとノイズだけが増える。
-      出典の略号は A = Anthropic Skill authoring best practices、C = Claude Code Best practices、P = Anthropic Prompting best practices、GT = Google Technical Writing One、T = textlint-rule-preset-ja-technical-writing（リンクはメタデータの `sources`）。
+      出典の略号は次の表のとおり（リンクはメタデータの `sources`）。
+
+      <!-- table: data -->
+
+      | 略号 | 出典 |
+      | --- | --- |
+      | A | Anthropic Skill authoring best practices |
+      | C | Claude Code Best practices |
+      | P | Anthropic Prompting best practices |
+      | GT | Google Technical Writing One |
+      | T | textlint-rule-preset-ja-technical-writing |
+
+      <!-- /table -->
   - id: writing-style-check-01
     group: 文章の書き方
     name: 文章を追加した後の確認表
@@ -81,7 +92,7 @@ items:
       | 同じものを別の言葉で呼んでいないか | 別のものと読まれる。既出の呼び名に揃える | A / GT |
       | 選択肢を並べたまま、既定を決めていないか | 読み手が選べない。既定を 1 つ書き、例外だけ添える | A |
       | 強調（必ず・絶対・重要・太字）を追加していないか | 今のモデルは強調に過剰に反応する。重ねると、どれも目立たなくなる | P / C |
-      | 推量やぼかし（〜と思われる・〜かもしれない）で書いていないか | 手順として実行できない。決めて書く | T |
+      | 推量やぼかし（〜と思われる・〜の可能性がある）で書いていないか | 手順として実行できない。決めて書く | T |
       | 冗長な言い回し（することができる・を行う）を使っていないか | 省いても意味が変わらない | T |
       | 同じファイルの中で同じ説明を繰り返していないか（概要・まとめのセクションを含む。見出し・図・表との重複は [表し方の優先順位](id:convention-doc-presentation#principle-03)） | 最も適切な 1 か所に置く | |
 
@@ -98,9 +109,10 @@ items:
     group: 用語の選び方
     name: 文章でない所の用語の選び方
     body: |-
-      文章でない所（UI のラベル・見出し・表の列名・項目名・論理名）は、IT の分野で定着した語で書く。
-      漢語でもカタカナ語でもよい。
-      文章は自然な文でよい。話し言葉の動詞は避ける。
+      文章でない所（UI のラベル・見出し・表の列名・項目名・論理名）は、IT の分野に定着した単語で記載する。
+      漢語とカタカナ語のどちらでもよい。
+      文章は自然な文でよい。
+      話し言葉の動詞は避ける。
 
       定着したかは、Microsoft の用語集・Android の日本語文字列・その技術の公式ドキュメントで使われている語かで判断する。
       迷ったときの順序は判定フローチャート [用語の選び方](id:flowchart-word-choice) に従う。

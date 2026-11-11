@@ -2,7 +2,7 @@
 id: next-frontend-asset
 kind: rule
 name: Assets (Image / Font / Static)
-description: next/image・next/font・SVG・CDN の使い方の決まりを定め、画像・フォント・SVG を画面に組み込むときに読む。
+description: next/image・next/font・SVG・CDN の使用方法の決まりを定め、画像・フォント・SVG を画面に組み込むときに参照する。
 inject_when:
   field: text
   op: contains
@@ -85,9 +85,13 @@ items:
     group: CDN
     name: CDN 配信の表
     body: |-
+      <!-- table: data -->
+
       | アセット | 配信 |
       |---|---|
       | `public/` 静的画像 | Vercel CDN 自動 |
       | ユーザーアップロード | Supabase Storage / Vercel Blob / S3 |
       | OG image（動的） | `opengraph-image.tsx` + `next/og` |
       | 動画 | Mux / Vercel Blob |
+
+      <!-- /table -->

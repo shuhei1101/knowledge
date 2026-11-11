@@ -2,7 +2,7 @@
 id: next-backend-db-relation
 kind: rule
 name: drizzle/schema.ts — Relations と Index
-description: 外部キー・relations・index の付け方と、onDelete の選び方を定め、テーブルの関連やインデックスを定義するときに読む。
+description: 外部キー・relations・index の付け方と、onDelete の選び方を定め、テーブルの関連やインデックスを定義するときに参照する。
 tags:
   - name: scope:next
   - name: topic:バックエンド
@@ -78,9 +78,13 @@ items:
     group: onDelete の選び方
     name: onDelete の選び方の表
     body: |-
+      <!-- table: data -->
+
       | Behavior    | 用途                                                |
       | ----------- | --------------------------------------------------- |
       | `cascade`   | 親消滅で子も削除する（タグ・コメント・履歴）            |
       | `restrict`  | 子が存在する間は親を削除できない（マスター ↔ データ）     |
       | `set null`  | 親消滅で外部キーを null（任意関連、カテゴリ削除等） |
       | `no action` | `restrict` と同じ拒否だが、検査をトランザクション末尾まで遅延できる（基本使わない） |
+
+      <!-- /table -->

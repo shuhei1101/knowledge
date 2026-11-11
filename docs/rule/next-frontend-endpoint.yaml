@@ -2,7 +2,7 @@
 id: next-frontend-endpoint
 kind: rule
 name: URL 定数管理 — app/(shared)/endpoints.ts
-description: 全 URL を app/(shared)/endpoints.ts に集約する形式と命名の決まりを定め、画面や API 呼び出しで URL を参照する・追加するときに読む。
+description: 全 URL を app/(shared)/endpoints.ts に集約する形式と命名の決まりを定め、画面や API 呼び出しで URL を参照する・追加するときに参照する。
 tags:
   - name: scope:next
   - name: topic:フロントエンド
@@ -27,7 +27,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      全 URL を集約。コンポーネント・hook・client.ts での URL ハードコード禁止。
+      全 URL を集約。
+      コンポーネント・hook・client.ts での URL ハードコード禁止。
   - id: format-01
     group: 形式
     name: endpoints.ts の形式の例

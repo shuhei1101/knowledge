@@ -2,7 +2,7 @@
 id: python-llm-provider
 kind: rule
 name: LLM プロバイダ実装
-description: LLM プロバイダを関数で抽象化して注入する構成と、実装の要点を定め、LLM プロバイダの呼び出しを実装する・切り替えるときに読む。
+description: LLM プロバイダを関数で抽象化して注入する構成と、実装の要点を定め、LLM プロバイダの呼び出しを実装する・切り替えるときに参照する。
 tags:
   - name: scope:python
   - name: topic:llm
@@ -43,7 +43,8 @@ items:
     group: 構成
     name: types.py の Message
     body: |-
-      - `integrations/llm/types.py` に `Message`（TypedDict: role / content）と `type AsyncChatFn = Callable[[ChatRequest], Awaitable[ChatResponse]]`
+      - `integrations/llm/types.py` に `Message`（TypedDict: role / content）を定義する。
+        同じファイルに `type AsyncChatFn = Callable[[ChatRequest], Awaitable[ChatResponse]]` も定義する
   - id: structure-02
     group: 構成
     name: make_provider_chat の構成
@@ -59,13 +60,16 @@ items:
     group: 構成
     name: プロバイダの配線と切り替え
     body: |-
-      - composition root でプロバイダを 1 つ選んで配線。切り替えは設定 1 行（service のシグネチャは不変）
+      - composition root でプロバイダを 1 つ選んで配線。
+        切り替えは設定 1 行（service のシグネチャは不変）
   - id: implementation-points-01
     group: 実装の要点
     name: vendor 例外のラップ
     body: |-
       - vendor 例外をドメイン例外にラップ
-        - RateLimitError → `LlmRateLimitError` / 5xx → `LlmServerError` / 400 → `LlmBadRequestError` / timeout → `IntegrationTimeoutError`、すべて `raise ... from e`
+        - RateLimitError → `LlmRateLimitError`、5xx → `LlmServerError`。
+          400 → `LlmBadRequestError`、timeout → `IntegrationTimeoutError`。
+          すべて `raise ... from e`
   - id: implementation-points-02
     group: 実装の要点
     name: トークン使用量のログ

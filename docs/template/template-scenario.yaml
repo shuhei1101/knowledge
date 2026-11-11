@@ -2,7 +2,7 @@
 id: template-scenario
 kind: template
 name: "テンプレート: シナリオ"
-description: 単一ユースケースまたは複合ユースケースの正常・異常シナリオを記載するシナリオの書式を定め、シナリオを作る・修正するときに読む。
+description: 単一ユースケースまたは複合ユースケースの正常・異常シナリオを記載するシナリオの書式を定め、シナリオを作る・修正するときに参照する。
 tags:
   - name: scope:テンプレート
   - name: topic:シナリオ
@@ -87,7 +87,7 @@ items:
   - id: example-sample-01
     name: 記載例
     body: |-
-      ```yaml
+      ````yaml
       id: SC-1
       title: プロフィール編集
       lead: ログイン中のユーザーが自身のプロフィール（氏名・自己紹介・アバター画像）を編集する単一ユースケース。
@@ -147,4 +147,4 @@ items:
         expected:
         - エラーが表示され、画像が選ばれていない
         test: test_error_when_image_too_large
-      ```
+      ````

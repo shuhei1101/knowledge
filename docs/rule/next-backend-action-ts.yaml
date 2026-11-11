@@ -2,7 +2,7 @@
 id: next-backend-action-ts
 kind: rule
 name: app/(authenticated)/{feature}/actions.ts
-description: Server Action 群を置く actions.ts の入力検証・認証・戻り値・配置・命名の決まりを定め、Next.js の Server Action を実装するときに読む。
+description: Server Action 群を配置する actions.ts の入力検証・認証・戻り値・配置・命名の決まりを定め、Next.js の Server Action を実装するときに参照する。
 tags:
   - name: scope:next
   - name: topic:バックエンド
@@ -37,7 +37,8 @@ items:
     group: app/(authenticated)/{feature}/actions.ts
     name: Server Action 群
     body: |-
-      - Server Action 群。mutation の第一選択。
+      - Server Action 群。
+        mutation の第一選択。
   - id: actions-ts-02
     group: app/(authenticated)/{feature}/actions.ts
     name: use server の記載
@@ -57,7 +58,8 @@ items:
     group: app/(authenticated)/{feature}/actions.ts
     name: 認証は getAuthContext
     body: |-
-      - 認証は `getAuthContext()`（呼ばないとセキュリティ違反）。対象リソースへの権限（所有者・ロール）も確認する
+      - 認証は `getAuthContext()`（呼ばないとセキュリティ違反）。
+        対象リソースへの権限（所有者・ロール）も確認する
   - id: actions-ts-06
     group: app/(authenticated)/{feature}/actions.ts
     name: 業務処理は service 経由

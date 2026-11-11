@@ -2,7 +2,7 @@
 id: python-llm-cost-cache
 kind: rule
 name: トークン管理とコスト最適化
-description: LLM のトークン管理、max_tokens の絞り方、プロンプトキャッシュの設計、その他のコスト最適化の定石を定め、LLM 呼び出しのコストを抑えるときに読む。
+description: LLM のトークン管理、max_tokens の絞り方、プロンプトキャッシュの設計、その他のコスト最適化の定石を定め、LLM 呼び出しのコストを抑えるときに参照する。
 aliases:
   - コストとキャッシュ
 inject_when:
@@ -49,12 +49,15 @@ items:
     group: トークン管理とコスト最適化
     name: 最適化前に計測する
     body: |-
-      - 最適化前にまず計測: 呼び出しごとに provider / model / input_tokens / output_tokens を構造化ログ → JSON Lines 集計で日次コスト
+      - 最適化前にまず計測する。
+        呼び出しごとの provider / model / input_tokens / output_tokens を構造化ログへ出し、JSON Lines を集計して日次コストを出す
   - id: max-tokens-01
     group: max_tokens
     name: max_tokens を絞る
     body: |-
-      無制限だと冗長な前置きで使い切るので用途に応じて絞る:
+      用途に応じて絞る。
+
+      <!-- table: data -->
 
       | 用途         | 目安      |
       | ------------ | --------- |
@@ -63,11 +66,14 @@ items:
       | 1 段落の要約 | 300       |
       | 構造化抽出   | 800〜1024 |
       | 長文生成     | 2048+     |
+
+      <!-- /table -->
   - id: prompt-cache-01
     group: プロンプトキャッシュの設計（最重要）
     name: 先頭の共通プレフィックス
     body: |-
-      キャッシュは「先頭から共通したプレフィックス」だけに効く。固定値は上、動的値は下:
+      キャッシュは「先頭から共通したプレフィックス」だけに効く。
+      固定値は上、動的値は下に配置する。
 
       | 位置       | 内容                                                 |
       | ---------- | ---------------------------------------------------- |

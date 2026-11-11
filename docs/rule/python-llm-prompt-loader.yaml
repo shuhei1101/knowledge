@@ -2,7 +2,7 @@
 id: python-llm-prompt-loader
 kind: rule
 name: プロンプトローダー実装
-description: プロンプトのローダーとビルダーの構成と、守るルールを定め、プロンプトを読み込んで組み立てる処理を実装するときに読む。
+description: プロンプトのローダーとビルダーの構成と、守るルールを定め、プロンプトを読み込んで組み立てる処理を実装するときに参照する。
 inject_when:
   field: text
   op: contains
@@ -42,12 +42,13 @@ items:
   - id: overview
     name: 概要
     body: |-
-      `prompts/{id}.yaml` を読み、`when` に当たる部品のトップレベルの `lang` の本文を Jinja2 でレンダリングして 1 つのプロンプトに組み立てる。書き方は [プロンプトファイル](id:prompt-file)。
+      `prompts/{id}.yaml` を読み、`when` に当たる部品のトップレベルの `lang` の本文を Jinja2 でレンダリングして 1 つのプロンプトに組み立てる。
+      書き方は [プロンプトファイル](id:prompt-file)。
   - id: structure-01
     group: 構成
     name: ローダーのファイル構成
     body: |-
-      ```
+      ```tree
       src/{pkg}/integrations/llm/prompts/
       ├── node_loader.py        # prompts/{id}.yaml の読み込みとキャッシュ
       ├── builder.py            # when の評価 + 部品結合 + Jinja2 レンダリング
@@ -57,7 +58,8 @@ items:
     group: 構成
     name: プロンプト本体の置き場所
     body: |-
-      プロンプト本体はリポジトリ直下の `content/prompts/`、ローダーは `src/` 配下。場所は `shared/constants.py` の `PROJECT_ROOT` から解決。
+      プロンプト本体はリポジトリ直下の `content/prompts/`、ローダーは `src/` 配下。
+      場所は `shared/constants.py` の `PROJECT_ROOT` から解決。
   - id: node-loader-01
     group: node_loader.py
     name: id ごとに 1 回だけ読む
@@ -67,7 +69,8 @@ items:
     group: node_loader.py
     name: 戻り値は TypedDict
     body: |-
-      - 戻り値は TypedDict（`PromptFile`: id / name / description / kind / lang / tags / vars / examples / output / parts）
+      - 戻り値は TypedDict の `PromptFile`。
+        キーは id / name / description / kind / lang / tags / vars / examples / output / parts
   - id: builder-01
     group: builder.py
     name: StrictUndefined の Environment
@@ -77,7 +80,8 @@ items:
     group: builder.py
     name: build_prompt の検証
     body: |-
-      - `build_prompt(prompt_id, **vars)`: `vars` の必須が渡されているかを確かめ、渡されていない必須でない変数を `default` か `None` で補い、`parts` を順に見て `when` が真の部品のトップレベルの `lang` の本文をレンダリングし `"\n\n".join`
+      - `build_prompt(prompt_id, **vars)`: `vars` に必須の変数がそろっているかを確認し、指定されていない任意の変数を `default` か `None` で補う。
+        `parts` を順に確認し、`when` が真の部品のトップレベルの `lang` の本文をレンダリングして `"\n\n".join` する
   - id: builder-03
     group: builder.py
     name: role 別の build_bundle

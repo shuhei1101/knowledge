@@ -2,7 +2,7 @@
 id: python-scripts-python-script
 kind: rule
 name: 単一ファイルスクリプト
-description: pyproject.toml を作らない単一ファイルの Python スクリプトの配置と必須要素を定め、簡易な Python スクリプトを作るときに読む。
+description: pyproject.toml を作らない単一ファイルの Python スクリプトの配置と必須要素を定め、簡易な Python スクリプトを作るときに参照する。
 aliases:
   - scripts/Pythonスクリプト
 inject_when:
@@ -43,12 +43,14 @@ items:
   - id: overview
     name: 概要
     body: |-
-      pyproject.toml を作らない簡易スクリプト（自動化・コンバート・レポート生成等）。パッケージ化が必要になったら py-project に昇格。
+      pyproject.toml を作らない簡易スクリプト（自動化・コンバート・レポート生成等）。
+      パッケージ化が必要になったら py-project へ昇格する。
   - id: layout-01
     group: 配置
     name: scripts サブフォルダに置く
     body: |-
-      ルート直下ではなく `scripts/`（or `tools/`）サブフォルダ。共通ヘルパーは `_common.py`。
+      ルート直下ではなく `scripts/`（or `tools/`）サブフォルダ。
+      共通ヘルパーは `_common.py`。
   - id: required-elements-01
     group: 必須要素
     name: モジュール docstring
@@ -74,8 +76,9 @@ items:
     group: 必須要素
     name: 出力は print
     body: |-
-      6. 出力は `print`（エラーは `file=sys.stderr`）— logging モジュールは使わない
-         - ruff の `T20`（print の禁止）は `**/{tool,tools,script,scripts}/*.py` の `per-file-ignores` で外す（[pyproject.toml 標準テンプレート](id:python-packaging-pyproject)）
+      6. 出力は `print`（エラーの出力先は `file=sys.stderr`）にし、logging モジュールを使用しない
+         - ruff の `T20`（print の禁止）は、`**/{tool,tools,script,scripts}/*.py` の `per-file-ignores` で除外する。
+           設定は [pyproject.toml 標準テンプレート](id:python-packaging-pyproject)
   - id: required-elements-07
     group: 必須要素
     name: 例外と終了コード

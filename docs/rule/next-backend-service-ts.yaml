@@ -2,7 +2,7 @@
 id: next-backend-service-ts
 kind: rule
 name: app/api/v{N}/{resource}/service.ts
-description: トランザクション境界を持つ service.ts の決まりと、トランザクションの書き方、命名を定め、業務処理の service.ts を実装するときに読む。
+description: トランザクション境界を持つ service.ts の決まりと、トランザクションの記載方法、命名を定め、業務処理の service.ts を実装するときに参照する。
 tags:
   - name: scope:next
   - name: topic:バックエンド
@@ -35,7 +35,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      ビジネスロジック層。**トランザクション境界** を持ち、複数の `query.ts` / `db.ts` 関数を組み合わせて 1 つの業務ユニットを実行する。
+      ビジネスロジック層。
+      トランザクション境界を持ち、複数の `query.ts` / `db.ts` 関数を組み合わせて 1 つの業務ユニットを実行する。
   - id: rules-01
     group: ルール
     name: db.transaction でラップ

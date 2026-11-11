@@ -2,7 +2,7 @@
 id: testing-core-strategy
 kind: rule
 name: テスト戦略
-description: Vitest と Playwright を使うテストレベル、テスト関数の書式、カバレッジ、CUJ、保守性の決まりを定め、TypeScript のテストを設計する・記載するときに読む。
+description: Vitest と Playwright を使用するテストレベル、テスト関数の書式、カバレッジ、CUJ、保守性の決まりを定め、TypeScript のテストを設計する・記載するときに参照する。
 inject_when:
   field: text
   op: contains
@@ -59,7 +59,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      対象: TypeScript のテスト
+      対象は TypeScript のテスト。
       構成は Vitest（Unit / Component）+ Playwright（E2E）+ Testing Library + MSW（任意）。
       ピラミッドの構造にし、ユニットで網羅して、E2E はクリティカルパスだけにする。
       テストの対応関係は、設計書（モジュール構成・結合・シナリオ）のテスト表が SoT で、テストは表と 1 対 1 で実装する。
@@ -67,6 +67,8 @@ items:
     group: テストレベル
     name: テストレベルの表
     body: |-
+      <!-- table: data -->
+
       | Level | Tool | 対象 | 比率 |
       | --- | --- | --- | --- |
       | Unit | Vitest | 純粋関数・schema・util | 多 |
@@ -74,6 +76,8 @@ items:
       | Integration | Vitest | 画面と API のモック（MSW）・service / db / API（実 DB か testcontainers） | 中 |
       | E2E | Playwright | ブラウザでの重要なフロー | 少 |
       | External | Vitest | 外部 API ラッパーの実接続（実際に使うパラメータ値の網羅） | 少 |
+
+      <!-- /table -->
   - id: test-level-02
     group: テストレベル
     name: Unit の単位
@@ -95,7 +99,7 @@ items:
     group: テスト関数の書式
     name: テスト名の書式
     body: |-
-      - テスト名（`test` / `it` の説明文字列）は `{関数名}_when_{条件}` にし、期待値は名前に入れない（期待値が変わるたびに名前が変わるため）。
+      - テスト名（`test` / `it` の説明文字列）は `{関数名}_when_{条件}` にし、期待値は名前に入れない。
         条件分岐のない唯一のケースは `{関数名}` だけにする。
   - id: test-function-format-02
     group: テスト関数の書式

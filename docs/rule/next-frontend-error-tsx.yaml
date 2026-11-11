@@ -2,7 +2,7 @@
 id: next-frontend-error-tsx
 kind: rule
 name: error.tsx / global-error.tsx
-description: error.tsx と global-error.tsx の実装と配置の決まりを定め、エラー画面を作るときに読む。
+description: error.tsx と global-error.tsx の実装と配置の決まりを定め、エラー画面を作るときに参照する。
 tags:
   - name: scope:next
   - name: topic:フロントエンド
@@ -60,7 +60,7 @@ items:
     group: 配置
     name: 配置のツリー
     body: |-
-      ```
+      ```tree
       app/
       ├── global-error.tsx          # ルート layout 自体のエラー
       ├── error.tsx                 # ルート layout 配下

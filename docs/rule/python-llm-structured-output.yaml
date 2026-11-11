@@ -2,7 +2,7 @@
 id: python-llm-structured-output
 kind: rule
 name: 構造化出力 — Pydantic で受け取る
-description: LLM 出力を Pydantic モデルとして受け取る方法（SDK の組み込みを標準にし、Instructor は複数プロバイダーが要るときだけ）と、タスク特化の関数・ファイル構成を定め、LLM の出力を構造化して受け取るときに読む。
+description: LLM 出力を Pydantic モデルとして受け取る方法（SDK の組み込みを標準にし、Instructor は複数プロバイダーが要るときだけ）と、タスク特化の関数・ファイル構成を定め、LLM の出力を構造化して受け取るときに参照する。
 aliases:
   - llm/構造化出力
 tags:
@@ -47,7 +47,8 @@ items:
     group: SDK と Instructor に共通
     name: Field の description と Literal
     body: |-
-      - スキーマの `Field(description=...)` が抽出精度に効くので書く。固定選択肢は `Literal`、ネスト・`list[...]` も可
+      - スキーマの `Field(description=...)` が抽出精度に効くので書く。
+        固定選択肢は `Literal`、ネスト・`list[...]` も可
   - id: common-02
     group: SDK と Instructor に共通
     name: 検証失敗は例外を伝える
@@ -67,7 +68,8 @@ items:
     group: Instructor（複数プロバイダーが要るリポジトリだけ）
     name: response_model で呼び出す
     body: |-
-      - `client.chat.completions.create(response_model=MySchema, max_retries=<検証の再試行回数>, ...)` で（値は [llm/例外とリトライ](id:python-llm-exception-retry#timeout-01)）
+      - `client.chat.completions.create(response_model=MySchema, max_retries=<検証の再試行回数>, ...)` で呼ぶ。
+        値は [llm/例外とリトライ](id:python-llm-exception-retry#timeout-01) で決める
         - JSON 受信 → Pydantic 検証 → 失敗時は LLM に修正させて再試行
   - id: instructor-05
     group: Instructor（複数プロバイダーが要るリポジトリだけ）
@@ -78,8 +80,15 @@ items:
     group: Task-specific client パターン
     name: タスク特化の関数に封じる
     body: |-
-      特定タスク特化の関数として封じる:
-      `type ExtractEventFn = Callable[[str], Awaitable[ExtractedEvent]]` を定義し、`make_extract_event_fn(*, client, model) -> ExtractEventFn` で client / model をクロージャに隠す。呼び出し側は記事を渡すだけ。
+      特定のタスクに特化した関数として封じる。
+      型 `ExtractEventFn` を定義し、`make_extract_event_fn` で client / model をクロージャに隠す。
+
+      ```python
+      type ExtractEventFn = Callable[[str], Awaitable[ExtractedEvent]]
+      def make_extract_event_fn(*, client, model) -> ExtractEventFn: ...
+      ```
+
+      呼び出し側は記事を渡すだけ。
   - id: file-structure-01
     group: ファイル構成
     name: スキーマと関数のファイル構成

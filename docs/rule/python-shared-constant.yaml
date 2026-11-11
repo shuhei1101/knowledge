@@ -2,7 +2,7 @@
 id: python-shared-constant
 kind: rule
 name: shared/constants.py — 計算済み定数
-description: shared/constants.py に置く計算済み定数の範囲と書き方、固定の選択肢の表し方を定め、Python に定数を追加する・置き場所を決めるときに読む。
+description: shared/constants.py に配置する計算済み定数の範囲と記載方法、固定の選択肢の表し方を定め、Python に定数を追加する・配置先を決めるときに参照する。
 aliases:
   - shared/定数
 tags:
@@ -24,10 +24,12 @@ items:
   - id: overview
     name: 概要
     body: |-
-      計算済みの不変値だけを置く。env で切り替える値は [shared/設定](id:python-shared-settings)。
+      計算済みの不変値だけを置く。
+      env で切り替える値は [shared/設定](id:python-shared-settings)。
       置き場所の判断は [設定値の置き場所](id:flowchart-config-location) に従う。
 
-      `constants.py` には、構造から計算されるパス（`PROJECT_ROOT` / `LOG_DIR`）と業務固定値（`MAX_TAGS_PER_POST` / `DEFAULT_PAGE_SIZE`）を置く。feature 専用の定数・業務 Enum は feature の `types.py` に置く。
+      `constants.py` には、構造から計算されるパス（`PROJECT_ROOT` / `LOG_DIR`）と業務固定値（`MAX_TAGS_PER_POST` / `DEFAULT_PAGE_SIZE`）を置く。
+      feature 専用の定数・業務 Enum は feature の `types.py` に置く。
   - id: writing-01
     group: 書き方
     name: 定数の命名と型注釈
@@ -48,4 +50,5 @@ items:
     name: 固定の選択肢は API に出るなら StrEnum、それ以外は Literal
     body: |-
       API に出る選択肢は `StrEnum`（[fastapi/スキーマ](id:python-fastapi-schema)）。
-      それ以外は `Literal` を基本に（`type Status = Literal["draft", "published", "archived"]`）。`StrEnum` はライブラリが要求するときだけ。
+      それ以外は `Literal` を基本に（`type Status = Literal["draft", "published", "archived"]`）。
+      `StrEnum` はライブラリが要求するときだけ。

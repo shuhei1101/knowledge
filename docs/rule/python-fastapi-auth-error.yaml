@@ -2,7 +2,7 @@
 id: python-fastapi-auth-error
 kind: rule
 name: 認証と例外ハンドラ
-description: FastAPI の認証パターン、SecretStr の扱い、例外ハンドラの決まりを定め、FastAPI に認証やエラー応答を実装するときに読む。
+description: FastAPI の認証パターン、SecretStr の扱い、例外ハンドラの決まりを定め、FastAPI に認証やエラー応答を実装するときに参照する。
 aliases:
   - fastapi/認証とエラー
 inject_when:
@@ -43,7 +43,9 @@ items:
     group: 認証パターン
     name: Bearer 認証
     body: |-
-      - Bearer: `server/auth.py` の `verify_token`（Header から検証 → `AuthContext` dataclass を返す）を `Auth = Annotated[AuthContext, Depends(verify_token)]` に型エイリアス化
+      - Bearer: `server/auth.py` の `verify_token` を型エイリアス `Auth` にする。
+        定義は `Auth = Annotated[AuthContext, Depends(verify_token)]`。
+        `verify_token` は Header から検証し、`AuthContext` dataclass を返却する
   - id: auth-pattern-02
     group: 認証パターン
     name: API Key 認証
@@ -73,7 +75,7 @@ items:
     group: 例外ハンドラ
     name: 例外ハンドラの登録と対応表
     body: |-
-      `server/error_handlers.py` の `register_exception_handlers(app)` で例外階層を一括 HTTP マップ:
+      `server/error_handlers.py` の `register_exception_handlers(app)` で、例外階層を一括で HTTP にマップする。
 
       <!-- table: data -->
 
@@ -106,7 +108,8 @@ items:
     group: 例外ハンドラ
     name: RFC 9457 形式のレスポンス
     body: |-
-      - レスポンスは RFC 9457 の Problem Details（`application/problem+json`。`type` / `title` / `status` / `detail`、拡張メンバーに `code` / `request_id`）に統一する
+      - レスポンスは RFC 9457 の Problem Details（`application/problem+json`）に統一する。
+        メンバーは `type` / `title` / `status` / `detail`、拡張メンバーは `code` / `request_id`
   - id: exception-handler-04
     group: 例外ハンドラ
     name: RequestValidationError のカスタム

@@ -2,7 +2,7 @@
 id: claude-json
 kind: rule
 name: Claude Code Jsonファイル作成時のルール
-description: Claude Code の設定の JSON にコメントを記載する方法と、フックの説明の置き方を定め、設定の JSON を編集するときに読む。
+description: Claude Code の設定の JSON にコメントを記載する方法と、フックの説明の配置方法を定め、設定の JSON を編集するときに参照する。
 tags:
   - name: scope:claude
   - name: tool:json
@@ -37,7 +37,8 @@ items:
     name: キーの間に空行を置く
     body: |-
       - 各キーは一行の間を空けること
-        - ただし、最上部のキーやコメントがないキーは除く。つまり、コメントがないキーどうしが並ぶ場合は空行不要
+        - ただし、最上部のキーやコメントがないキーは除く。
+          つまり、コメントの無いキーどうしの間に空行は要らない
 
       ```json
       {

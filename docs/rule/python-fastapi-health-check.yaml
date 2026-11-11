@@ -2,7 +2,7 @@
 id: python-fastapi-health-check
 kind: rule
 name: ヘルスチェック
-description: ヘルスチェックのエンドポイントの中身と、liveness・readiness を分ける場合、依存先の診断の扱いを定め、FastAPI にヘルスチェックを実装するときに読む。
+description: ヘルスチェックのエンドポイントの中身と、liveness・readiness を分ける場合、依存先の診断の扱いを定め、FastAPI にヘルスチェックを実装するときに参照する。
 aliases:
   - fastapi/ヘルスチェック
 inject_when:
@@ -59,4 +59,5 @@ items:
     group: 依存先の状態を見たい場合
     name: 依存先の診断用エンドポイント
     body: |-
-      `/healthz/deep` のような診断用エンドポイントを別に作る。認証必須にし、load balancer の probe には使わない（監視・運用向け）。
+      `/healthz/deep` のような診断用エンドポイントを別に作る。
+      認証必須にし、load balancer の probe には使わない（監視・運用向け）。

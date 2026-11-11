@@ -1,0 +1,67 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/docs-rules-presentation-slop-metadata-lint-migration
+configfile: pytest.ini
+collected 228 items
+
+tests/unit/scripts/test_build_pages.py ...................               [  8%]
+tests/unit/scripts/test_build_templates.py ...........F...........       [ 18%]
+tests/unit/scripts/test_build_word_list.py ...                           [ 19%]
+tests/unit/scripts/test_check_all.py ................................... [ 35%]
+............                                                             [ 40%]
+tests/unit/scripts/test_common.py ....................                   [ 49%]
+tests/unit/scripts/test_knowledge_checks.py ............................ [ 61%]
+.....                                                                    [ 63%]
+tests/unit/scripts/test_knowledge_markdown.py .......................... [ 75%]
+........                                                                 [ 78%]
+tests/unit/scripts/test_lint.py ............                             [ 83%]
+tests/unit/scripts/test_maid.py ......                                   [ 86%]
+tests/unit/slop-check/test_slop_check.py ............................... [100%]
+
+=================================== FAILURES ===================================
+_________________ test_build_items_when_example_has_code_fence _________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x787554b02b90>
+
+    def test_build_items_when_example_has_code_fence(repo_factory: RepoFactory) -> None:
+        """記載例の値にコードフェンスがある（正常系）。"""
+        # 準備（複数行の値はブロックスタイルになり、コードフェンスの行がインデントの後に出る）
+        root = repo_factory(
+            {
+                "schemas/design/config.schema.yaml": (
+                    _CONFIG + 'examples:\n  - name: a\n    install: "```bash\\nnpm i\\n```\\n"\n'
+                )
+            }
+        )
+        schemas = load_schemas(root)
+        # 実行
+        result = build_items("config.schema.yaml", schemas)
+        # 検証
+>       assert result[2:] == [
+            {
+                "id": "example-sample-01",
+                "name": "記載例",
+                "body": "````yaml\nname: a\ninstall: |\n  ```bash\n  npm i\n  ```\n````",
+            },
+        ]
+E       AssertionError: assert [{'id': 'exam...n  ```\n```'}] == [{'id': 'exam...  ```\n````'}]
+E         
+E         At index 0 diff: {'id': 'example-sample-01', 'name': '記載例', 'body': '```yaml\nname: a\ninstall: |\n  ```bash\n  npm i\n  ```\n```'} != {'id': 'example-sample-01', 'name': '記載例', 'body': '````yaml\nname: a\ninstall: |\n  ```bash\n  npm i\n  ```\n````'}
+E         Use -v to get more diff
+
+tests/unit/scripts/test_build_templates.py:476: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/scripts/test_build_templates.py::test_build_items_when_example_has_code_fence
+======================== 1 failed, 227 passed in 4.50s =========================
+
+$ uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/docs-rules-presentation-slop-metadata-lint-migration
+configfile: pytest.ini
+collected 31 items
+
+tests/unit/slop-check/test_slop_check.py ............................... [100%]
+
+============================== 31 passed in 0.49s ==============================

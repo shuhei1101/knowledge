@@ -2,7 +2,7 @@
 id: next-frontend-pwa
 kind: rule
 name: PWA / Offline
-description: PWA の manifest・Apple 対応・Service Worker の決まりを定め、アプリを PWA 対応にするときに読む。
+description: PWA の manifest・Apple 対応・Service Worker の決まりを定め、アプリを PWA 対応にするときに参照する。
 inject_when:
   field: text
   op: contains
@@ -39,7 +39,8 @@ items:
     group: manifest
     name: manifest の必須項目
     body: |-
-      - 必須項目: name / short_name / start_url / scope / `display: "standalone"` / theme_color / icons（192・512・maskable の 3 種）
+      - 必須項目: name / short_name / start_url / scope / `display: "standalone"` / theme_color / icons。
+        icons は 192・512・maskable の 3 種
   - id: apple-support-01
     group: Apple 対応
     name: appleWebApp の指定
@@ -54,4 +55,6 @@ items:
     group: Service Worker
     name: Serwist による Service Worker
     body: |-
-      Next.js は SW を直接サポートしないので Serwist を使う。Next.js 16 の既定の bundler は Turbopack のため `@serwist/turbopack` を使う（`@serwist/next` は webpack 用）。導入手順は Serwist の Turbopack ガイド。
+      Next.js は SW を直接サポートしないので Serwist を使う。
+      Next.js 16 の既定の bundler は Turbopack のため `@serwist/turbopack` を使う（`@serwist/next` は webpack 用）。
+      導入手順は Serwist の Turbopack ガイド。

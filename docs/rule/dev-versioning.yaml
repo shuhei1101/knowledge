@@ -2,7 +2,7 @@
 id: dev-versioning
 kind: rule
 name: バージョニング
-description: リリースのバージョン番号の桁の算出・タグの打ち方・破壊的変更の判定基準・0.x から 1.0.0 へ上げる判断を定め、リリースのバージョンを決めるときやタグを打つときに読む。
+description: リリースのバージョン番号の桁の算出・タグの打ち方・破壊的変更の判定基準・0.x から 1.0.0 へ上げる判断を定め、リリースのバージョンを決めるときやタグを打つときに参照する。
 tags:
   - name: scope:dev
   - name: topic:バージョン
@@ -29,14 +29,17 @@ items:
     group: SoT
     name: バージョンの正はタグ
     body: |-
-      - バージョンの正はタグ。リポジトリの中のファイルにバージョンを記載するときは、タグの値の複製にし、リリースのたびにタグの値に統一する
+      - バージョンの正はタグ。
+        リポジトリの中のファイルにバージョンを記載するときは、タグの値の複製にし、リリースのたびにタグの値に統一する
       - スプリントで出すときは、スプリントのバージョンの正はスプリントの計画で、release ブランチ名とタグはその複製
   - id: digit-01
     group: 桁の算出
     name: 桁の決め方
     body: |-
-      スプリントのバージョンは、計画時にそのスプリントに入れた Issue の `type:*` ラベルで判定する。
+      スプリントのバージョンは、計画時にそのスプリントへ入れた Issue の `type:*` ラベルで判定する。
       hotfix のマージ commit だけは、対象 Issue 1 件の `type:*` ラベルで判定する。
+
+      <!-- table: data -->
 
       | 条件 | 桁 |
       | --- | --- |
@@ -44,12 +47,14 @@ items:
       | `type:feat` が 1 つでもある | MINOR |
       | `type:bug` / `type:design` / `type:refactor` / `type:docs` / `type:chore` / `type:test` だけ | PATCH |
       | Issue が 1 件も入っていない | PATCH |
+
+      <!-- /table -->
   - id: digit-02
     group: 桁の算出
     name: 計画が変わったとき
     body: |-
       - 「Issue が 1 件も入っていない」は、スプリントを繰り上げる時点で決める値に適用する
-      - release を切る前にスプリントに Issue が入ったら、入っている Issue の `type:*`・`破壊的変更` で桁を求め直し、スプリントのバージョンを書き換える
+      - release を切る前にスプリントへ Issue が入ったら、入っている Issue の `type:*`・`破壊的変更` で桁を求め直し、スプリントのバージョンを書き換える
   - id: digit-03
     group: 桁の算出
     name: 0.x の間
@@ -60,14 +65,17 @@ items:
     name: 打つ commit と値
     body: |-
       - master へ `--no-ff` でマージした commit に `v{バージョン}` のタグを打つ
-      - release はそのスプリントのバージョンをそのまま打つ。間に hotfix が入っても動かさない
+      - release はそのスプリントのバージョンをそのまま打つ。
+        間に hotfix が入っても動かさない
       - hotfix は master に付いている直前のタグを基準に、対象 Issue の `type:*` で決めた桁を上げる
       - 最初のタグは `v0.1.0` から始める
   - id: tag-02
     group: タグの打ち方
     name: 直前のタグの求め方
     body: |-
-      `git fetch origin --prune --prune-tags --tags` の後に `git tag --list "v*" --merged origin/master --sort=-v:refname` で並べ、release では打った `v{バージョン}` より後ろにある最初のもの、hotfix の桁の決定では先頭のものを直前のタグにする。
+      `git fetch origin --prune --prune-tags --tags` を実行する。
+      続けて `git tag --list "v*" --merged origin/master --sort=-v:refname` で並べる。
+      release では打った `v{バージョン}` より後ろにある最初のもの、hotfix の桁の決定では先頭のものを直前のタグにする。
       該当が無ければ直前のタグは無いものとして扱う。
   - id: breaking-01
     group: 破壊的変更の判定基準
@@ -80,5 +88,6 @@ items:
     name: 1.0.0 へ上げる判断
     body: |-
       - 0.x の間は互換を保証しない（MINOR で壊してよい）
-      - 1.0.0 にするかはユーザーが判断する。判断材料は「壊すと自分以外が困る状態になったか」
-      - 上げるときは Issue を起票する（判定基準の確定・設定のスキーマの記載など作業を伴うため）
+      - 1.0.0 にするかはユーザーが判断する。
+        判断材料は「壊すと自分以外が困る状態になったか」
+      - 上げるときは Issue を起票する

@@ -2,7 +2,7 @@
 id: next-backend-db-migration
 kind: rule
 name: Drizzle — マイグレーション運用
-description: drizzle-kit による schema から SQL migration、DB 適用までの流れと運用の決まりを定め、DB スキーマを変更してマイグレーションを作る・適用するときに読む。
+description: drizzle-kit による schema から SQL migration、DB 適用までの流れと運用の決まりを定め、DB スキーマを変更してマイグレーションを作る・適用するときに参照する。
 tags:
   - name: scope:next
   - name: topic:バックエンド
@@ -36,7 +36,7 @@ items:
     body: |-
       `drizzle-kit` を使った schema → SQL migration → DB 適用の流れ。
 
-      破壊的変更の手順:
+      破壊的変更の手順は次のとおり。
   - id: drizzle-migration-01
     group: Drizzle — マイグレーション運用
     name: 旧カラム参照を削除
@@ -81,4 +81,5 @@ items:
     group: Drizzle — マイグレーション運用
     name: Enum 値の削除
     body: |-
-      - Enum 値は削除できない（追加と改名のみ）。削除は新しい型へ列を移して旧型を drop する
+      - Enum 値は削除できない（追加と改名のみ）。
+        削除は新しい型へ列を移して旧型を drop する

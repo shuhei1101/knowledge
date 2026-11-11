@@ -2,7 +2,7 @@
 id: python-concurrency-parallel
 kind: rule
 name: 並列処理
-description: GIL を前提にした並列処理の判断フロー、早見表、ProcessPoolExecutor の制約、共有状態の扱いを定め、並列処理を導入する手段を選ぶときに読む。
+description: GIL を前提にした並列処理の判断フロー、早見表、ProcessPoolExecutor の制約、共有状態の扱いを定め、並列処理を導入する手段を選ぶときに参照する。
 aliases:
   - concurrency/並列処理
 inject_when:
@@ -42,7 +42,7 @@ items:
     group: 判断フロー
     name: 並列処理の判断フロー
     body: |-
-      ```
+      ```tree
       CPU バウンド？
       ├── No (IO) → asyncio が第一候補。古い sync lib なら ThreadPoolExecutor
       └── Yes
@@ -53,6 +53,8 @@ items:
     group: 早見表
     name: 並列処理の早見表
     body: |-
+      <!-- table: data -->
+
       | やりたいこと                | API                                                                        |
       | --------------------------- | -------------------------------------------------------------------------- |
       | 多数の HTTP 並列            | `asyncio` + httpx2.AsyncClient                                             |
@@ -60,6 +62,8 @@ items:
       | 重い計算の並列              | `ProcessPoolExecutor()`（`max_workers` 省略で CPU 数）                      |
       | 既存 sync 関数を async から | `asyncio.to_thread`                                                        |
       | 外部コマンド                | `subprocess.run(check=True)` / async なら `asyncio.create_subprocess_exec` |
+
+      <!-- /table -->
   - id: process-pool-constraint-01
     group: ProcessPoolExecutor の制約
     name: 引数と戻り値は pickle 可能
@@ -74,4 +78,5 @@ items:
     group: 共有状態
     name: 共有状態は避ける
     body: |-
-      共有状態はバグの温床なので避け、Producer / Consumer でキューに流すのが基本。必要なら threading.Lock / multiprocessing.Queue 等。
+      共有状態は避け、Producer / Consumer でキューに流すのが基本。
+      必要なら threading.Lock / multiprocessing.Queue 等。

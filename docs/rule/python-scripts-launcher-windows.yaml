@@ -2,7 +2,7 @@
 id: python-scripts-launcher-windows
 kind: rule
 name: bat ランチャー
-description: Windows で Python スクリプトを起動する bat ランチャーの標準テンプレートと必須要素を定め、Python スクリプトの bat ランチャーを作るときに読む。
+description: Windows で Python スクリプトを起動する bat ランチャーの標準テンプレートと必須要素を定め、Python スクリプトの bat ランチャーを作るときに参照する。
 tags:
   - name: scope:python
   - name: topic:スクリプト
@@ -78,4 +78,6 @@ items:
     group: bat 内に日本語を書かない
     name: bat 内は ASCII のみ
     body: |-
-      文字列・コメントとも ASCII / 英語のみ。日本語表示が必要なら bat は呼ぶだけにして Python 側で出力する。sh ランチャー（UTF-8 標準）は日本語可。
+      文字列・コメントとも ASCII / 英語のみ。
+      日本語表示が必要なら bat は呼ぶだけにして Python 側で出力する。
+      sh ランチャー（UTF-8 標準）は日本語可。

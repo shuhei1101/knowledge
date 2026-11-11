@@ -2,7 +2,7 @@
 id: next-backend-drizzle-style
 kind: rule
 name: Drizzle — SQL Builder vs Relational Queries
-description: Drizzle の SQL Builder を標準とし、Relational Queries を使う範囲と SQL Injection の対策を定め、Drizzle でクエリを記載するときに読む。
+description: Drizzle の SQL Builder を標準とし、Relational Queries を使用する範囲と SQL Injection の対策を定め、Drizzle でクエリを記載するときに参照する。
 tags:
   - name: scope:next
   - name: topic:バックエンド
@@ -23,7 +23,7 @@ items:
     group: Drizzle — SQL Builder vs Relational Queries
     name: 標準は SQL Builder
     body: |-
-      - 標準は **SQL Builder**
+      - 標準は SQL Builder
   - id: drizzle-sql-builder-02
     group: Drizzle — SQL Builder vs Relational Queries
     name: Relational Query の範囲
@@ -33,7 +33,7 @@ items:
     group: Drizzle — SQL Builder vs Relational Queries
     name: 複雑な JOIN の組み方
     body: |-
-      - 複雑な JOIN は **alias + groupBy + Promise.all** を駆使
+      - 複雑な JOIN は alias + groupBy + Promise.all を駆使
   - id: drizzle-sql-builder-04
     group: Drizzle — SQL Builder vs Relational Queries
     name: sql.raw を使わない

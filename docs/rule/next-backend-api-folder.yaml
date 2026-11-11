@@ -2,7 +2,7 @@
 id: next-backend-api-folder
 kind: rule
 name: app/api/v{N}/{resource}/ — フォルダ構成
-description: app/api/v{N}/{resource}/ 配下の 6 ファイルの責務分離（CQRS）と、呼び出し階層、Server Actions との使い分けを定め、Next.js の API ルートのフォルダを作るときに読む。
+description: app/api/v{N}/{resource}/ 配下の 6 ファイルの責務分離（CQRS）と、呼び出し階層、Server Actions との使い分けを定め、Next.js の API ルートのフォルダを作るときに参照する。
 tags:
   - name: scope:next
   - name: topic:バックエンド
@@ -41,7 +41,7 @@ items:
     body: |-
       `app/api/v{N}/{resource}/` 配下の 6 ファイルの責務分離（CQRS）。
 
-      ```
+      ```tree
       app/api/v{N}/{resource}/
       ├── route.ts        # HTTP ハンドラ
       ├── client.ts       # クライアント側 fetch ヘルパー
@@ -54,7 +54,7 @@ items:
     group: 呼び出し階層
     name: 呼び出し階層の図
     body: |-
-      ```
+      ```text
       route.ts ─→ service.ts ─→ db.ts / query.ts
       client.ts ─→ route.ts（型のみ import）
       client.ts ─→ query.ts（フィルタ型のみ import）
@@ -69,8 +69,8 @@ items:
     group: Server Actions との使い分け
     name: mutation は Server Actions が第一選択
     body: |-
-      mutation の第一選択は **Server Actions**
-      `route.ts` は以下の場合に限定:
+      mutation の第一選択は Server Actions
+      `route.ts` を配置するのは、次の場合に限る。
   - id: server-actions-usage-02
     group: Server Actions との使い分け
     name: 外部公開する場合

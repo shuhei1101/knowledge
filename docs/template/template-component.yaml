@@ -2,7 +2,7 @@
 id: template-component
 kind: template
 name: "テンプレート: 部品設計"
-description: 画面の要素が使う React の部品 1 つの仕様（props・children・コールバック・variants・状態）を記載する部品設計の書式を定め、部品設計を作る・修正するときに読む。
+description: 画面の要素が使用する React の部品 1 つの仕様（props・children・コールバック・variants・状態）を記載する部品設計の書式を定め、部品設計を作る・修正するときに参照する。
 tags:
   - name: scope:テンプレート
   - name: topic:props
@@ -22,7 +22,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      画面の要素が使用する部品 1 つの仕様（引数・スロット・イベント・CSS カスタムプロパティ・状態）。状態 1 つが Storybook のストーリー 1 つに該当する。
+      画面の要素が使用する部品 1 つの仕様（引数・スロット・イベント・CSS カスタムプロパティ・状態）。
+      状態 1 つが Storybook のストーリー 1 つに該当する。
   - id: rules-01
     name: 決まり
     body: |-
@@ -49,7 +50,7 @@ items:
       | args[].component | 受ける部品 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 型が `部品` のとき、受け取れる部品設計（部品設計の `{ID}#`）。 | `CMP-2#` |
       | args[].enabled_when | 有効になる条件 | string | - | - | - | 他の引数の値によって意味を持つときの条件。 | `` `filterable` が `true` のとき `` |
       | args[].description | 説明 | string | 必須 | - | - | - | `行の状態。色とアイコンを決める` |
-      | args[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
+      | args[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | - |
       | args[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
       | slots | スロット | array | - | - | - | 使用する側が中身を差し込む場所。スロット 1 つ = 1 要素。 | - |
       | slots[].name | 名前 | string | 必須 | - | pattern: `^[A-Za-z_][A-Za-z0-9_]*$` | 名前の無いスロットは `default`。 | `default` / `actions` |
@@ -80,7 +81,7 @@ items:
       | accessibility | アクセシビリティ | array | - | - | - | スクリーンリーダー向けの名前・キー操作・色に頼らない表し方など、部品が守ること。 | `` [状態を色だけで伝えない（`label` を必ず出す）] `` |
       | refs | 関連 | array | - | - | - | - | - |
       | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
-      | status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
+      | status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | - |
       | visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
       | introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
       | introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ。 | `v0.3.0` |
