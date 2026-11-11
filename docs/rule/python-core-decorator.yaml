@@ -68,7 +68,7 @@ items:
     group: 合成
     name: デコレータの合成順
     body: |-
-      外側から順に適用、読み方は下から上:
+      外側から順に適用し、下から上へ読む。
 
       ```python
       @with_timeout(seconds=<全体の待ち>)                         # 3. 全体の待ちで打ち切り
@@ -95,7 +95,7 @@ items:
     group: 自作デコレータの注意
     name: 1 デコレータ 1 責務
     body: |-
-      - 1 デコレータ 1 責務（ログだけ・例外変換だけ）
+      - 1 デコレータ 1 責務（ログ・例外変換のどちらか 1 つ）
   - id: overload-01
     group: "@overload"
     name: "@overload の使いどころ"

@@ -58,7 +58,7 @@ items:
     group: 置き方
     name: 文書の正本は YAML
     body: |-
-      - 文書の正本は YAML にする
+      - 文書の正本は YAML にする。
         markdown にするのは、道具が markdown を前提にするファイル（README・CLAUDE.md・AGENTS.md・SKILL.md・PR の本文など）だけ
   - id: placement-02
     group: 置き方
@@ -150,7 +150,7 @@ items:
     name: 作成・更新日時は持たない
     body: |-
       - 作成日時・更新日時は持たない
-        要るときは git から取る
+        必要になったら git から取り出す
   - id: metadata-03
     group: メタデータ
     name: メタデータは多めに持つ
@@ -198,7 +198,7 @@ items:
     group: 配信
     name: GitHub Pages の配信
     body: |-
-      - GitHub Pages は、master へのマージで動く GitHub Actions のワークフローで、`visibility: public` の文書だけを HTML にして配信する
+      - GitHub Pages は、master へのマージで動く GitHub Actions のワークフローで、`visibility: public` の文書だけを HTML にして配信する。
         YAML の原本は成果物に入れない
   - id: delivery-03
     group: 配信
@@ -221,7 +221,8 @@ items:
     group: 配信
     name: 読み書きできる範囲
     body: |-
-      - どの作業場所からどの配信元を読み書きできるかは、端末の設定 `~/.config/dev-docs/settings.yaml` の `sources[]` の `scope.read`・`scope.write` で決める
+      - 作業場所ごとに読み書きできる配信元は、端末の設定 `~/.config/dev-docs/settings.yaml` で決める。
+        決めるキーは `sources[]` の `scope.read`・`scope.write`
   - id: delivery-07
     group: 配信
     name: メタデータとエイリアスの対応づけ

@@ -57,7 +57,8 @@ items:
     group: ローカル開発用 YAML データストア
     name: トランザクションの維持
     body: |-
-      - トランザクション維持：本番は Drizzle の `db.transaction`、ローカルは YAML スナップショット/ロールバック + ロック（ロックとロールバックの決まりは [YAML](id:dev-yaml) の `## 書き込み`）
+      - トランザクション維持：本番は Drizzle の `db.transaction`、ローカルは YAML スナップショット/ロールバック + ロック。
+        ロックとロールバックの決まりは [YAML](id:dev-yaml) の `## 書き込み`
   - id: local-yaml-datastore-04
     group: ローカル開発用 YAML データストア
     name: YAML のフィールドはスキーマと同じ

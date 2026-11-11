@@ -58,7 +58,7 @@ items:
     group: asyncio 規約
     name: 排他と同時実行数の制限
     body: |-
-      - 排他は `asyncio.Lock`、同時実行数制限は `asyncio.Semaphore(N)`
+      - 排他は `asyncio.Lock`、同時に実行する数の制限は `asyncio.Semaphore(N)`
   - id: asyncio-rules-06
     group: asyncio 規約
     name: CPU バウンドを直書きしない

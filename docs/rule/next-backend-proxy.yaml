@@ -60,4 +60,4 @@ items:
     group: proxy.ts（旧 Middleware）
     name: 未認証 redirect に from を付ける
     body: |-
-      - 未認証 redirect 時は `?from=` に元パスを付けてログイン後に戻せるようにする
+      - 未認証で redirect するときは `?from=` へ元のパスを付け、ログインの後で元のページへ戻れるようにする

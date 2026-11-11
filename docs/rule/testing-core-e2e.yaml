@@ -53,7 +53,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      対象: TypeScript のテスト
+      対象は TypeScript のテスト。
   - id: playwright-config-01
     group: playwright.config.ts の要点
     name: testDir と並列実行
@@ -73,7 +73,8 @@ items:
     group: playwright.config.ts の要点
     name: global.setup と global.teardown
     body: |-
-      - `global.setup.ts` と `global.teardown.ts` は、setup project の `dependencies` と `teardown` で繋ぐ（`globalSetup` の設定は使わない）。
+      - `global.setup.ts` と `global.teardown.ts` は、setup project の `dependencies` と `teardown` で繋ぐ。
+        `globalSetup` の設定は使用しない。
   - id: playwright-config-05
     group: playwright.config.ts の要点
     name: webServer の自動起動
@@ -140,7 +141,7 @@ items:
     group: ルール
     name: 検証対象
     body: |-
-      - 検証対象は、画面が組み上がること・共通シェルが付くこと・主要な操作とバリデーションに絞る。
+      - 検証対象は、画面の組み上がり・共通シェルの付与・主要な操作とバリデーションに絞る。
   - id: rules-09
     group: ルール
     name: 別ポートで起動する

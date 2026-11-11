@@ -59,7 +59,8 @@ items:
     name: Tk は 1 つだけ
     body: |-
       - `tk.Tk()` は 1 つだけ。
-        モーダルは `tk.Toplevel` 派生 + `transient(master)` + `grab_set()`、結果は `result` プロパティで返し `root.wait_window(dialog)` で受ける
+        モーダルは `tk.Toplevel` 派生 + `transient(master)` + `grab_set()` にする。
+        結果は `result` プロパティで返却し、`root.wait_window(dialog)` が受け取る
   - id: design-guideline-06
     group: 設計指針
     name: ファイル選択のダイアログ
@@ -74,7 +75,7 @@ items:
     group: 長い処理
     name: GUI スレッドをブロックしない
     body: |-
-      GUI スレッドをブロックしない:
+      GUI スレッドをブロックしない。
   - id: long-process-02
     group: 長い処理
     name: worker スレッドと Queue
@@ -84,4 +85,4 @@ items:
     group: 長い処理
     name: after によるポーリング
     body: |-
-      - `root.after(100, poll)` のポーリングで tk イベントループ上で回収して messagebox 表示
+      - `root.after(100, poll)` のポーリングにより、tk のイベントループ上で回収して messagebox を表示する

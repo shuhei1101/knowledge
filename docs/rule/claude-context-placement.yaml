@@ -59,7 +59,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      エージェントに読ませる文を、SessionStart の `additionalContext`・MCP の instructions・ツールの description・CLAUDE.md・スキル・フックのどこに何を書くかと、その書き方の決まり。
+      エージェントに参照させる文の記載先と、その書き方の決まり。
+      記載先は SessionStart の `additionalContext`・MCP の instructions・ツールの description・CLAUDE.md・スキル・フック。
       文を置くファイル（`content/prompts/` の YAML）は [プロンプトファイル](id:prompt-file) が決める。
   - id: placement-01
     group: 何をどこに書くか
@@ -109,12 +110,12 @@ items:
     name: 長さと要点の位置
     body: |-
       - 公式の上限は `additionalContext` 10,000 字・instructions 4,096 字
-        SessionStart は 1,000 字以内を目安にし、要点を先頭に置く
+        SessionStart の文は 1,000 字以内を目安にし、要点を先頭に配置する
   - id: writing-07
     group: 書き方
     name: サブエージェントへの届け方
     body: |-
-      - サブエージェントには SessionStart が届かないので、使い分けは description・instructions で届ける
+      - サブエージェントには SessionStart が届かないので、使い分けは description・instructions で届ける。
         足りないと分かったら SubagentStart のフックで入れる
   - id: writing-08
     group: 書き方

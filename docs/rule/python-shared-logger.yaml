@@ -52,7 +52,9 @@ items:
     group: 標準実装の要点（`shared/logger.py`）
     name: JsonLinesFormatter の出力項目
     body: |-
-      - `JsonLinesFormatter(logging.Formatter)`: `{ ts, level, name, msg }` + `extra={...}` のフィールドを取り込み（LogRecord 予約キーは除外）、`exc_info` は `exc` に
+      - `JsonLinesFormatter(logging.Formatter)`: `{ ts, level, name, msg }` に `extra={...}` のフィールドを取り込む。
+        LogRecord の予約キーは除外する。
+        `exc_info` は `exc` に入れる
   - id: logger-implementation-02
     group: 標準実装の要点（`shared/logger.py`）
     name: ensure_ascii の指定

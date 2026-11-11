@@ -338,5 +338,6 @@ items:
     group: GitHub Actions 自動公開
     name: GitHub Actions での自動公開
     body: |-
-      `on: push: tags: ["v*"]` で `uv build` → `pypa/gh-action-pypi-publish`（`id-token: write` で trusted publishing）。
+      `on: push: tags: ["v*"]` で `uv build` → `pypa/gh-action-pypi-publish` を実行する。
+      `id-token: write` で trusted publishing にする。
       `git tag v0.2.0 && git push --tags` で発火。

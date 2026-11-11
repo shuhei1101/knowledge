@@ -109,7 +109,8 @@ items:
     group: FastAPI ルート
     name: FastAPI ルートのテスト
     body: |-
-      `build_fastapi(handlers=build_test_handlers())` で Mock 注入済みの Handlers を渡し、`LifespanManager` で起動して `AsyncClient(transport=ASGITransport(app=app))` で叩く（[testing/フィクスチャ](id:python-testing-fixture)）。
+      `build_fastapi(handlers=build_test_handlers())` で、Mock を注入済みの Handlers を指定する。
+      `LifespanManager` で起動して `AsyncClient(transport=ASGITransport(app=app))` で呼ぶ（[testing/フィクスチャ](id:python-testing-fixture)）。
   - id: fastapi-route-02
     group: FastAPI ルート
     name: openapi.json のスナップショットテスト

@@ -68,7 +68,8 @@ items:
     group: Instructor（複数プロバイダーが要るリポジトリだけ）
     name: response_model で呼び出す
     body: |-
-      - `client.chat.completions.create(response_model=MySchema, max_retries=<検証の再試行回数>, ...)` で（値は [llm/例外とリトライ](id:python-llm-exception-retry#timeout-01)）
+      - `client.chat.completions.create(response_model=MySchema, max_retries=<検証の再試行回数>, ...)` で呼ぶ。
+        値は [llm/例外とリトライ](id:python-llm-exception-retry#timeout-01) で決める
         - JSON 受信 → Pydantic 検証 → 失敗時は LLM に修正させて再試行
   - id: instructor-05
     group: Instructor（複数プロバイダーが要るリポジトリだけ）
@@ -79,8 +80,14 @@ items:
     group: Task-specific client パターン
     name: タスク特化の関数に封じる
     body: |-
-      特定タスク特化の関数として封じる:
-      `type ExtractEventFn = Callable[[str], Awaitable[ExtractedEvent]]` を定義し、`make_extract_event_fn(*, client, model) -> ExtractEventFn` で client / model をクロージャに隠す。
+      特定のタスクに特化した関数として封じる。
+      型 `ExtractEventFn` を定義し、`make_extract_event_fn` で client / model をクロージャに隠す。
+
+      ```python
+      type ExtractEventFn = Callable[[str], Awaitable[ExtractedEvent]]
+      def make_extract_event_fn(*, client, model) -> ExtractEventFn: ...
+      ```
+
       呼び出し側は記事を渡すだけ。
   - id: file-structure-01
     group: ファイル構成

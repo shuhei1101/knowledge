@@ -48,7 +48,8 @@ items:
     group: FastAPI アプリ構成
     name: build_fastapi で組み立てる
     body: |-
-      - `server/app.py` の `build_fastapi(handlers: Handlers | None = None) -> FastAPI` で組み立て、`uvicorn {pkg}.server.app:build_fastapi --factory` で起動
+      - `server/app.py` の `build_fastapi(handlers: Handlers | None = None) -> FastAPI` で組み立てる。
+        起動は `uvicorn {pkg}.server.app:build_fastapi --factory`
   - id: fastapi-app-structure-02
     group: FastAPI アプリ構成
     name: 依存配線は build_handlers から
@@ -63,7 +64,8 @@ items:
     group: lifespan
     name: build_fastapi で Settings と handlers を保持
     body: |-
-      - `Settings()` は `build_fastapi` の中で 1 度だけ作り、`app.state.settings` / `app.state.handlers` にセット（lifespan では作らず、上書きしない）
+      - `Settings()` は `build_fastapi` の中で 1 度だけ作り、`app.state.settings` / `app.state.handlers` にセットする。
+        lifespan では作らず、上書きしない
   - id: lifespan-03
     group: lifespan
     name: settings をグローバルに持たない
@@ -73,7 +75,8 @@ items:
     group: ルートからの参照
     name: ルートからの handlers の参照
     body: |-
-      - `server/deps.py` の型付きの `get_handlers(request) -> Handlers` を `Annotated[Handlers, Depends(get_handlers)]` で受ける（`request.app.state` を直接読むと型が `Any` になる）
+      - `server/deps.py` の `get_handlers` を `Annotated[Handlers, Depends(get_handlers)]` で受ける。
+        `request.app.state` を直接参照すると、型が `Any` になる
   - id: cors-01
     group: CORS
     name: CORS の origins をハードコードしない
@@ -84,7 +87,8 @@ items:
     group: CORS
     name: 開発と本番の CORS 設定
     body: |-
-      - 開発は regex（`http://localhost:5173$`。Vite の dev サーバーの既定のポート。worktree では `.dev/{役割}.port` に記録した空きポートに合わせる）、本番は origins にドメイン列挙
+      - 開発は regex（`http://localhost:5173$`。Vite の dev サーバーの既定のポート）、本番は origins にドメインを列挙する。
+        worktree では、`.dev/{役割}.port` へ記録した空きポートを regex に使用する
   - id: spa-01
     group: SPA の配信
     name: ビルドした SPA を配る
@@ -117,4 +121,5 @@ items:
     group: その他
     name: operationId の生成
     body: |-
-      - operationId は `FastAPI(generate_unique_id_function=...)` で `{tag}-{関数名}` にする（`tag` は [fastapi/ルート定義](id:python-fastapi-route) の `APIRouter(tags=)`）
+      - operationId は `FastAPI(generate_unique_id_function=...)` で `{tag}-{関数名}` にする。
+        `tag` は [fastapi/ルート定義](id:python-fastapi-route) の `APIRouter(tags=)`

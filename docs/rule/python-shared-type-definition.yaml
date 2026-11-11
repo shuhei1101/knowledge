@@ -59,8 +59,15 @@ items:
     group: 共通の関数型エイリアス
     name: 共通の関数型エイリアス
     body: |-
-      テストで差し替えたい横断関数は型で抽象化して shared に:
-      `type NowFn = Callable[[], datetime]` / `type GenerateId = Callable[[], str]` / `type AsyncHttpFetch = Callable[[str], Awaitable[dict]]` 等。
+      テストで差し替えたい横断関数は、型で抽象化して shared に配置する。
+      例は次のとおり。
+
+      ```python
+      type NowFn = Callable[[], datetime]
+      type GenerateId = Callable[[], str]
+      type AsyncHttpFetch = Callable[[str], Awaitable[dict]]
+      ```
+
       composition root で本物 / 固定値 Mock を注入。
   - id: common-dto-01
     group: 共通 DTO

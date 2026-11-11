@@ -34,7 +34,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      リトライ可否を例外の型で判断できるよう `LlmError` ベースで分類する。
+      リトライの可否を例外の型から判断できるよう、`LlmError` を基底に分類する。
   - id: llm-exception-retry-01
     group: LLM 例外階層とリトライ戦略
     name: LLM 例外階層の表
@@ -55,7 +55,14 @@ items:
     group: stamina によるリトライ
     name: stamina.retry の引数
     body: |-
-      - `@stamina.retry(on=<フック関数>, attempts=<試行回数>, timeout=<全試行の待ち>, wait_initial=<最初の間隔>, wait_max=<間隔の上限>, wait_jitter=<ジッタ>)`（初回 + リトライ `<試行回数>` − 1 回。値は [クライアントとデコレータのタイムアウト](id:python-llm-exception-retry#timeout-01) の表で導く）
+      - 次のとおり `@stamina.retry` を付ける。
+
+        ```python
+        @stamina.retry(on=<フック関数>, attempts=<試行回数>, timeout=<全試行の待ち>, wait_initial=<最初の間隔>, wait_max=<間隔の上限>, wait_jitter=<ジッタ>)
+        ```
+
+        試行は初回 + リトライ `<試行回数>` − 1 回。
+        値は [クライアントとデコレータのタイムアウト](id:python-llm-exception-retry#timeout-01) の表で導く
   - id: stamina-retry-02
     group: stamina によるリトライ
     name: 指数バックオフとジッター
@@ -71,7 +78,8 @@ items:
     name: retry_after の優先
     body: |-
       - `on` に渡すフック関数は、`LlmRateLimitError.retry_after`（Retry-After ヘッダから抽出してコンストラクタに渡す）があればその秒数（float）を返して待ちに使う。
-        フックが返した待ちは `wait_max` で抑えられないため、`retry_after` が `wait_max` を超えるときは False を返してリトライせず、その値を 503 の Retry-After で返す。
+        フックが返却した待ちは `wait_max` で抑えられない。
+        そのため `retry_after` が `wait_max` を超えるときは False を返却してリトライせず、その値を 503 の Retry-After で返却する。
         無ければ既定のバックオフ。
         同じ値を 503 の Retry-After にも使う（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
   - id: stamina-retry-05
@@ -89,7 +97,13 @@ items:
     group: タイムアウト
     name: クライアントとデコレータのタイムアウト
     body: |-
-      クライアントレベル（`AsyncOpenAI(timeout=<各回の待ち>)`）+ stamina レベル（`@stamina.retry(timeout=<全試行の待ち>)`）+ デコレータレベル（`@with_timeout(seconds=<全体の待ち>)`）の 3 レイヤー。
+      次の 3 レイヤーで設定する。
+
+      | レイヤー | 設定 |
+      | --- | --- |
+      | クライアント | `AsyncOpenAI(timeout=<各回の待ち>)` |
+      | stamina | `@stamina.retry(timeout=<全試行の待ち>)` |
+      | デコレータ | `@with_timeout(seconds=<全体の待ち>)` |
 
       値は規約 [資源の値の決め方](id:dev-resource-values) の入れ子の待ちとリトライの導き方で、次の表のとおりに導く。
       出典の略号はメタデータの `sources` の `id`。

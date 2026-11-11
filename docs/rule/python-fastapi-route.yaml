@@ -56,7 +56,7 @@ items:
     name: 概要
     body: |-
       ルーターは薄く。
-      責務は 4 つだけ:
+      責務は次の 4 つだけ。
   - id: router-pattern-01
     group: ルーター実装パターン
     name: 入力パース
@@ -107,12 +107,15 @@ items:
     group: 書き方
     name: レスポンススキーマの指定
     body: |-
-      - レスポンススキーマは戻り値の型注釈で指定（返す型と合わないときだけ `response_model=`。[fastapi/スキーマ](id:python-fastapi-schema)）、作成系は `status_code=201` を明示、エラーレスポンスは 422 を含めて `ProblemDetail` モデルを `APIRouter(responses=...)` で一括宣言して OpenAPI に反映（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
+      - レスポンススキーマは戻り値の型注釈で指定する（返却する型と合わないときだけ `response_model=`。[fastapi/スキーマ](id:python-fastapi-schema)）。
+        作成系は `status_code=201` を明示する。
+        エラーレスポンスは 422 を含めて `ProblemDetail` モデルを `APIRouter(responses=...)` で一括宣言し、OpenAPI に反映する（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
   - id: writing-05
     group: 書き方
     name: SSE のストリーミング
     body: |-
-      - ストリーミング（SSE）は `response_class=EventSourceResponse`（`fastapi.sse`）で `ServerSentEvent` を yield し、終端は `ServerSentEvent(raw_data="[DONE]")`
+      - ストリーミング（SSE）は `response_class=EventSourceResponse`（`fastapi.sse`）で `ServerSentEvent` を yield する。
+        終端は `ServerSentEvent(raw_data="[DONE]")`
   - id: writing-06
     group: 書き方
     name: body は Pydantic で受ける

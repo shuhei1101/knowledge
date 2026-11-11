@@ -36,7 +36,7 @@ items:
     group: 桁の算出
     name: 桁の決め方
     body: |-
-      スプリントのバージョンは、計画時にそのスプリントに入れた Issue の `type:*` ラベルで判定する。
+      スプリントのバージョンは、計画時にそのスプリントへ入れた Issue の `type:*` ラベルで判定する。
       hotfix のマージ commit だけは、対象 Issue 1 件の `type:*` ラベルで判定する。
 
       | 条件 | 桁 |
@@ -50,7 +50,7 @@ items:
     name: 計画が変わったとき
     body: |-
       - 「Issue が 1 件も入っていない」は、スプリントを繰り上げる時点で決める値に適用する
-      - release を切る前にスプリントに Issue が入ったら、入っている Issue の `type:*`・`破壊的変更` で桁を求め直し、スプリントのバージョンを書き換える
+      - release を切る前にスプリントへ Issue が入ったら、入っている Issue の `type:*`・`破壊的変更` で桁を求め直し、スプリントのバージョンを書き換える
   - id: digit-03
     group: 桁の算出
     name: 0.x の間
@@ -69,7 +69,9 @@ items:
     group: タグの打ち方
     name: 直前のタグの求め方
     body: |-
-      `git fetch origin --prune --prune-tags --tags` の後に `git tag --list "v*" --merged origin/master --sort=-v:refname` で並べ、release では打った `v{バージョン}` より後ろにある最初のもの、hotfix の桁の決定では先頭のものを直前のタグにする。
+      `git fetch origin --prune --prune-tags --tags` を実行する。
+      続けて `git tag --list "v*" --merged origin/master --sort=-v:refname` で並べる。
+      release では打った `v{バージョン}` より後ろにある最初のもの、hotfix の桁の決定では先頭のものを直前のタグにする。
       該当が無ければ直前のタグは無いものとして扱う。
   - id: breaking-01
     group: 破壊的変更の判定基準

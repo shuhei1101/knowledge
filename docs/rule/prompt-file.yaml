@@ -280,7 +280,12 @@ items:
     group: スキーマの指し方
     name: モードラインで knowledge のスキーマを指す
     body: |-
-      - スキーマは各プロジェクトで書かず、各ファイルの 1 行目のモードライン `# yaml-language-server: $schema=https://raw.githubusercontent.com/shuhei1101/knowledge/{タグ}/schemas/prompt.schema.yaml` で knowledge のスキーマを指す
+      - スキーマは各プロジェクトで記載せず、各ファイルの 1 行目のモードラインで knowledge のスキーマを指す。
+        モードラインは次のとおり。
+
+        ```yaml
+        # yaml-language-server: $schema=https://raw.githubusercontent.com/shuhei1101/knowledge/{タグ}/schemas/prompt.schema.yaml
+        ```
   - id: schema-ref-02
     group: スキーマの指し方
     name: 変えたいプロジェクトだけコピーする

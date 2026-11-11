@@ -69,7 +69,8 @@ items:
     group: node_loader.py
     name: 戻り値は TypedDict
     body: |-
-      - 戻り値は TypedDict（`PromptFile`: id / name / description / kind / lang / tags / vars / examples / output / parts）
+      - 戻り値は TypedDict の `PromptFile`。
+        キーは id / name / description / kind / lang / tags / vars / examples / output / parts
   - id: builder-01
     group: builder.py
     name: StrictUndefined の Environment
@@ -79,7 +80,8 @@ items:
     group: builder.py
     name: build_prompt の検証
     body: |-
-      - `build_prompt(prompt_id, **vars)`: `vars` の必須が渡されているかを確かめ、渡されていない必須でない変数を `default` か `None` で補い、`parts` を順に見て `when` が真の部品のトップレベルの `lang` の本文をレンダリングし `"\n\n".join`
+      - `build_prompt(prompt_id, **vars)`: `vars` に必須の変数がそろっているかを確認し、指定されていない任意の変数を `default` か `None` で補う。
+        `parts` を順に確認し、`when` が真の部品のトップレベルの `lang` の本文をレンダリングして `"\n\n".join` する
   - id: builder-03
     group: builder.py
     name: role 別の build_bundle

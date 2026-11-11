@@ -122,7 +122,8 @@ items:
     name: 反映のタイミング
     body: |-
       - 端末の設定の `sources[]`: `即時`（`/dev-docs:setup` が最後に管理の MCP の `reload` を呼ぶ）
-      - knowledge の `dev-docs.yaml`・スキーマ・`scripts/`: 管理の MCP の `reload` を呼ぶまで、変える前の設定で配信する（dev-docs の [配信元を配信する](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E9%85%8D%E4%BF%A1%E5%85%83%E3%82%92%E9%85%8D%E4%BF%A1%E3%81%99%E3%82%8B.md) の「設定を変えたら確かめる」）
+      - knowledge の `dev-docs.yaml`・スキーマ・`scripts/`: 管理の MCP の `reload` を呼ぶまで、変える前の設定で配信する。
+        確認の方法は dev-docs の [配信元を配信する](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E9%85%8D%E4%BF%A1%E5%85%83%E3%82%92%E9%85%8D%E4%BF%A1%E3%81%99%E3%82%8B.md) の「設定を変えたら確かめる」
   - id: check-served-01
     group: 確認 > knowledge が配信中になっている
     name: 設定画面の状態の確認

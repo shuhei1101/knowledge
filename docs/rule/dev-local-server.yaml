@@ -107,7 +107,8 @@ items:
     group: 常駐サーバー
     name: systemd --user での常駐
     body: |-
-      - 必ず動いていてほしい常駐サーバーは、`~/.config/systemd/user/{サービス名}.service` の unit で起動し、`systemctl --user enable --now {サービス名}` で WSL の起動時に自動で起動する
+      - 必ず動いていてほしい常駐サーバーは、`~/.config/systemd/user/{サービス名}.service` の unit で起動する。
+        `systemctl --user enable --now {サービス名}` で、WSL の起動時に自動で起動する
       - ログは `journalctl --user -u {サービス名}` で確認する
       - SessionStart のフックでの起動は、落ちていたときの補助にする
   - id: forbidden-01

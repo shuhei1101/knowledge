@@ -47,7 +47,8 @@ items:
     group: 読み込み
     name: 設定の 3 レイヤーの読み込み
     body: |-
-      - 設定の 3 レイヤー（既定値 → 環境の値 → checkout の上書き）は、`settings_customise_sources` で `YamlConfigSettingsSource` に `yaml_file` を並べて読む。
+      - 設定の 3 レイヤー（既定値 → 環境の値 → checkout の上書き）は、`settings_customise_sources` で読み込む。
+        `YamlConfigSettingsSource` に `yaml_file` を並べる。
         後のファイルが勝つ。
         無いファイルは飛ばされる
   - id: loading-02
@@ -59,7 +60,7 @@ items:
     group: 読み込み
     name: 優先順は settings_customise_sources
     body: |-
-      - `settings_customise_sources` が返す順が優先順。
+      - `settings_customise_sources` の返却の順を優先順にする。
         `init_settings` → `env_settings` → `file_secret_settings` → YAML の順にして、環境変数・引数が 3 レイヤーより勝つようにする
   - id: loading-04
     group: 読み込み
@@ -127,4 +128,4 @@ items:
     group: 運用
     name: os.environ を直接読まない
     body: |-
-      - `os.environ` を直接読まない（型も検証もない）
+      - `os.environ` を直接参照しない（型と検証が無い）

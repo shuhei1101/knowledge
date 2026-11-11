@@ -98,10 +98,28 @@ items:
   - id: overview
     name: 概要
     body: |-
-      対象: 共通（単体 HTML・React）
+      対象は共通（単体 HTML・React）。
       入力・送信・エラー・通知の振る舞いと、画面に出す言葉。
       画面の状態をどこに保持するか。
-      出典の略号は I = Impeccable、V = Vercel Web Interface Guidelines、GOV = GOV.UK Design System、C = IBM Carbon Design System、MS = Microsoft Japanese Localization Style Guide、SH = SmartHR Design System、BK = 公用文作成の考え方、APG = WAI-ARIA Authoring Practices Guide、TR = TanStack Router、MDN = MDN Web Docs、WD = web.dev、NN = Nielsen Norman Group、BY = Baymard Institute、OW = OWASP（リンクはメタデータの `sources`）。
+      出典の略号は次の表のとおり（リンクはメタデータの `sources`）。
+
+      | 略号 | 出典 |
+      | --- | --- |
+      | I | Impeccable |
+      | V | Vercel Web Interface Guidelines |
+      | GOV | GOV.UK Design System |
+      | C | IBM Carbon Design System |
+      | MS | Microsoft Japanese Localization Style Guide |
+      | SH | SmartHR Design System |
+      | BK | 公用文作成の考え方 |
+      | APG | WAI-ARIA Authoring Practices Guide |
+      | TR | TanStack Router |
+      | MDN | MDN Web Docs |
+      | WD | web.dev |
+      | NN | Nielsen Norman Group |
+      | BY | Baymard Institute |
+
+      | OW | OWASP |
   - id: input-submit-01
     group: 入力と送信
     name: 入力と送信の決まり
@@ -150,7 +168,7 @@ items:
       | 品詞を揃える。タブ・列名・見出し・状態は名詞、ボタンは操作語、説明文は敬体で述語まで書く | SH |
       | ボタンの漢語は「する」を省き、目的語の後ろの「を」も省く（追加・権限追加）。画面タイトルは名詞にする（権限の追加） | SH / - |
       | トグルは、ラベルを変えないチェックボックスかスイッチにする（状態によって「表示」と「非表示」を切り替えるボタンにしない） | APG |
-      | エラーのメッセージは「〜できませんでした」「〜が見つかりません」で終える。意思の確認は「〜しますか?」にする（「〜してもよろしいですか?」にしない） | MS |
+      | エラーのメッセージは「〜できませんでした」「〜が見つかりません」で終える。意思の確認は疑問形の「〜しますか」にする（「〜してもよろしいですか」にしない） | MS |
       | 長音は語末の -er / -or / -ar / -y に付ける（ユーザー・サーバー・メモリー） | BK |
   - id: wording-operation-01
     group: 文言 > 操作の語
@@ -206,20 +224,20 @@ items:
     body: |-
       | パターン | 使うとき | 例 |
       | --- | --- | --- |
-      | 未〇〇 | 始まっていない | 未着手・未対応 |
+      | 未（動作） | 始まっていない | 未着手・未対応 |
       | 〇〇中 | 進行している | 対応中・確認中 |
       | 〇〇待ち | 他者の入力や作業を待っている | 確認待ち・返信待ち |
       | 〇〇済み | その作業が終わった | 対応済み・確認済み |
       | 完了 | 全体が終わった | 完了 |
-      | 要〇〇 | 人の対応が要る | 要確認・要対応 |
+      | 要（動作） | 人の対応が要る | 要確認・要対応 |
   - id: wording-empty-pattern-01
     group: 文言 > 空の表示の型
     name: 空の表示の型
     body: |-
       | 場所 | パターン | 例 |
       | --- | --- | --- |
-      | 一覧 | 〇〇はありません。 | タスクはありません。 |
-      | 検索の 0 件 | 該当する〇〇はありません。別の条件を試してください。 | 該当するタスクはありません。別の条件を試してください。 |
+      | 一覧 | {対象}はありません。 | タスクはありません。 |
+      | 検索の 0 件 | 該当する{対象}はありません。別の条件を試してください。 | 該当するタスクはありません。別の条件を試してください。 |
       | 項目の値の欄 | なし か — | なし |
   - id: state-retention-01
     group: 状態の保持

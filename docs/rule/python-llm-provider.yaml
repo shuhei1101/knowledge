@@ -43,7 +43,8 @@ items:
     group: 構成
     name: types.py の Message
     body: |-
-      - `integrations/llm/types.py` に `Message`（TypedDict: role / content）と `type AsyncChatFn = Callable[[ChatRequest], Awaitable[ChatResponse]]`
+      - `integrations/llm/types.py` に `Message`（TypedDict: role / content）を定義する。
+        同じファイルに `type AsyncChatFn = Callable[[ChatRequest], Awaitable[ChatResponse]]` も定義する
   - id: structure-02
     group: 構成
     name: make_provider_chat の構成
@@ -66,7 +67,9 @@ items:
     name: vendor 例外のラップ
     body: |-
       - vendor 例外をドメイン例外にラップ
-        - RateLimitError → `LlmRateLimitError` / 5xx → `LlmServerError` / 400 → `LlmBadRequestError` / timeout → `IntegrationTimeoutError`、すべて `raise ... from e`
+        - RateLimitError → `LlmRateLimitError`、5xx → `LlmServerError`。
+          400 → `LlmBadRequestError`、timeout → `IntegrationTimeoutError`。
+          すべて `raise ... from e`
   - id: implementation-points-02
     group: 実装の要点
     name: トークン使用量のログ

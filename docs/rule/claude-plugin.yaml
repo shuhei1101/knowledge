@@ -42,7 +42,7 @@ items:
     group: プラグインの分け方
     name: プラグインは機能ごとに単独
     body: |-
-      - プラグインは機能ごとに単独にする（利用者が個別にオンオフできる）
+      - プラグインは機能ごとに分ける（利用者が機能ごとのオンオフを選べる）
   - id: plugin-division-02
     group: プラグインの分け方
     name: 文書の MCP のプラグイン
@@ -128,7 +128,8 @@ items:
     group: 設定ファイル
     name: 設定ファイルの全体方針
     body: |-
-      プラグインのフック・スクリプト・MCP サーバーが読む、利用者の環境ごと・プロジェクトごとに変わる設定は、本体を `${XDG_CONFIG_HOME:-~/.config}` の YAML に書いて受け取る。
+      プラグインのフック・スクリプト・MCP サーバーが参照する設定のうち、利用者の環境・プロジェクトで変わるものが対象。
+      本体を `${XDG_CONFIG_HOME:-~/.config}` の YAML に記載して受け取る。
   - id: settings-file-02
     group: 設定ファイル
     name: env に置く設定の指定
@@ -194,22 +195,27 @@ items:
     group: 設定ファイル
     name: YAML を読めない仕組みも読む値は env に置く
     body: |-
-      - 設定ファイルを持つプラグインでも、`.mcp.json` など YAML を読めない仕組みも読む値は、ユーザースコープの `env` に置く（例: [MCP サーバー作成ルール](id:claude-mcp) の `## 登録` の `{ツール名}_PORT`）
+      - 設定ファイルを持つプラグインでも、`.mcp.json` など YAML を参照できない仕組みも参照する値は、ユーザースコープの `env` に配置する。
+        例は [MCP サーバー作成ルール](id:claude-mcp) の `## 登録` の `{ツール名}_PORT`
         - サーバーと `.mcp.json` の両方が同じ `env` を読む
         - 同じ値を設定ファイルと `env` の 2 か所に記載しない
   - id: no-version-01
     group: version を置かない規約
     name: version を置かない
     body: |-
-      `.claude-plugin/marketplace.json` に載るプラグインは、`plugins[].version` と `plugin.json` の `version` のどちらにも version を置かない。
+      `.claude-plugin/marketplace.json` に載るプラグインは、`plugins[].version` と `plugin.json` の `version` のどちらにも値を配置しない。
   - id: reload-timing-01
     group: 反映を叩くタイミング
     name: 反映のタイミング
     body: |-
-      稼働中のワークツリーへ入った `plugins/` 配下とリポジトリの直下の `.claude-plugin/` 配下の変更は、モニターが `update_plugins` と同じ更新を済ませてから再起動するので、手では叩かない。
-      自動で効かないとき（`local` で作業ツリーを修正したとき 等）は、設定 `rule_inject.source` によらず、変更の commit を載せた後に MCP ツール `update_plugins` を実行して認証領域へ反映する。
-      どちらの出所でも実体は認証領域の cache（`{認証領域}/plugins/cache/{マーケットプレース名}/{名前}/{version}`）の複製で、修正した作業ツリーがそのまま読まれることはない。
-      `update_plugins` は Claude 種別のアカウントの認証領域ごとに `claude plugin marketplace update` → `claude plugin update` の順で実行する。
+      稼働中のワークツリーへ入った `plugins/` 配下とリポジトリの直下の `.claude-plugin/` 配下の変更は、手で反映しない。
+      モニターが `update_plugins` と同じ更新を済ませてから再起動する。
+      自動で反映されないとき（`local` で作業ツリーを修正したとき 等）は、設定 `rule_inject.source` によらず手で反映する。
+      変更を commit した後に、MCP ツール `update_plugins` を実行して認証領域へ反映する。
+      どちらの出所でも、実体は認証領域の cache（`{認証領域}/plugins/cache/{マーケットプレース名}/{名前}/{version}`）の複製になる。
+      修正した作業ツリーがそのまま参照されることはない。
+      `update_plugins` は、Claude 種別のアカウントの認証領域ごとに実行する。
+      実行の順は `claude plugin marketplace update` → `claude plugin update`。
   - id: mcp-delivery-01
     group: MCP の配り方
     name: プラグインの .mcp.json で配る

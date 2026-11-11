@@ -49,7 +49,7 @@ items:
       | Error                | Status       | code                                          |
       | -------------------- | ------------ | --------------------------------------------- |
       | ZodError             | 400          | VALIDATION（最初の issue の message + field） |
-      | ClientValueError     | 400          | VALUE（field? あり）                          |
+      | ClientValueError     | 400          | VALUE（field あり）                           |
       | ClientAuthError      | 401 / 403    | AUTH                                          |
       | VersionConflictError | 409          | CONFLICT                                      |
       | AppError（404 等）   | e.statusCode | e.code                                        |

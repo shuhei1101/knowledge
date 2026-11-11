@@ -41,7 +41,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      `cacheComponents: true` を有効化（PPR が標準動作: 静的部分はプリレンダ、`cookies()` / `headers()` / `<Suspense>` 内はリクエスト時レンダ + ストリーム）。
+      `cacheComponents: true` を有効にする。
+      PPR が標準の動作になり、静的な部分はプリレンダ、`cookies()` / `headers()` / `<Suspense>` の中はリクエスト時のレンダとストリームになる。
   - id: use-cache-01
     group: "\"use cache\" + cacheLife + cacheTag"
     name: データ取得関数に use cache
@@ -72,7 +73,8 @@ items:
     body: |-
       `updateTag` が使えない Route Handler・Webhook から即時に削除するときは `revalidateTag(tag, { expire: 0 })`。
 
-      Server Action での典型: 自分が見る単体は `updateTag(`resource:${id}`)`、他人の一覧は `revalidateTag("resources", "max")`、最後に `refresh()`。
+      Server Action の典型は次のとおり。
+      自分が参照する単体は `updateTag(`resource:${id}`)`、他人の一覧は `revalidateTag("resources", "max")`、最後に `refresh()`。
   - id: decision-flow-01
     group: 決定フロー
     name: キャッシュの決定フロー
@@ -86,4 +88,4 @@ items:
     group: 決定フロー
     name: マスター系のキャッシュ
     body: |-
-      マスター系（カテゴリ・アイコン等）は `cacheLife("max")` + 管理画面更新時に `revalidateTag`。
+      マスター系（カテゴリ・アイコン等）は `cacheLife("max")` にし、管理画面で更新したときに `revalidateTag` する。
