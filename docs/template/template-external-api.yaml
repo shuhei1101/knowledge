@@ -19,7 +19,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      利用する外部 API 1 つにつき 1 ファイル。そのプロジェクトで使用するエンドポイントだけを公式ドキュメントから抜き出す。
+      利用する外部 API 1 つにつき 1 ファイル。
+      そのプロジェクトで使用するエンドポイントだけを公式ドキュメントから抜き出す。
   - id: item-list-01
     name: 項目
     body: |-
@@ -88,7 +89,7 @@ items:
       | endpoints[].request[].format | 形式 | string | - | - | - | - | - |
       | endpoints[].request[].example | 例 | string | - | - | - | - | - |
       | endpoints[].request[].nullable | 空を許す | boolean | - | - | - | - | - |
-      | endpoints[].request[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
+      | endpoints[].request[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | - |
       | endpoints[].request_example | リクエスト例 | string | - | - | - | JSON のコードブロック。body を持たないときはリクエストライン。 | - |
       | endpoints[].response | レスポンス | array | - | - | - | 別のエンドポイントと同形のときは持たず、`same_as` に記載する。 | - |
       | endpoints[].response[].name | フィールド | string | 必須 | - | - | 返らないことがあるフィールドは `field?` と記載し、条件を補足に記載する。 | - |
@@ -109,7 +110,7 @@ items:
       | endpoints[].refs | 関連 | array | - | - | - | - | - |
       | endpoints[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
       | endpoints[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | - |
-      | endpoints[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
+      | endpoints[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | - |
       | endpoints[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
       | endpoints[].implementation | 実装 | string | - | - | pattern: `^[^#\s]+(#\S+)?$` | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/schemas/loader.py#load_catalog` |
       | endpoints[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |

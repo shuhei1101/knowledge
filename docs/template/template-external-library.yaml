@@ -19,7 +19,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      採用した外部ライブラリ 1 つにつき 1 ファイル。そのプロジェクトで使用する部分だけを公式ドキュメントから抜き出す。
+      採用した外部ライブラリ 1 つにつき 1 ファイル。
+      そのプロジェクトで使用する部分だけを公式ドキュメントから抜き出す。
   - id: rules-01
     name: 決まり
     body: |-
@@ -90,7 +91,7 @@ items:
       | catalogs[].entries[].refs | 関連 | array | - | - | - | - | - |
       | catalogs[].entries[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
       | catalogs[].entries[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | - |
-      | catalogs[].entries[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
+      | catalogs[].entries[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | - |
       | catalogs[].entries[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
       | catalogs[].entries[].implementation | 実装 | string | - | - | pattern: `^[^#\s]+(#\S+)?$` | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/schemas/loader.py#load_catalog` |
       | catalogs[].entries[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |

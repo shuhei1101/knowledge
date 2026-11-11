@@ -68,7 +68,7 @@ items:
       | request[].example | 例 | string | - | - | - | - | - |
       | request[].nullable | 空を許す | boolean | - | - | - | - | - |
       | request[].notes | 補足 | string | - | - | - | - | - |
-      | request[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態（`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止））。記載しなければ実装済みとして扱う。 | - |
+      | request[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | - |
       | request_example | リクエスト例 | string | - | - | - | ネスト構造の実形が分かる代表 1 ケース（JSON のコードブロック）。 | - |
       | response | レスポンス | array | - | - | - | - | - |
       | response[].name | フィールド | string | 必須 | - | - | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 フィールド = 1 要素に展開する。 | - |
