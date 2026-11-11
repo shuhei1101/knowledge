@@ -2,39 +2,39 @@
 files:
   - path: _common.py
     name: 文書の読み込みの共通処理
-    description: 文書の YAML の読み込み・項目のパスと文書の行の対応・違反の型・ファイルの並列の読み込みを受け持つ。違反の行の求め方や処理時間の上限を変えるときに読む。
+    description: 文書の YAML の読み込み・項目のパスと文書の行の対応・違反の型・ファイルの並列の読み込みを受け持つ。違反の行の求め方や処理時間の上限を変えるときに参照する。
     tags: [topic:検査, topic:行番号, tool:ruamel.yaml]
   - path: _maid.py
     name: maid の呼び出し
-    description: mermaid の文法を検査する maid の在りかの確認と、残り時間で打ち切る呼び出しを受け持つ。maid のバージョンを上げるときや、maid の出力の読み方を変えるときに読む。
+    description: mermaid の文法を検査する maid の在りかの確認と、残り時間で打ち切る呼び出しを受け持つ。maid のバージョンを上げるときや、maid の出力の読み方を変えるときに参照する。
     tags: [topic:mermaid, topic:検査, tool:maid]
   - path: knowledge_checks.py
     name: 文書の違反の検査
-    description: dev-docs の validators の knowledge-checks として、文書 1 件の項目の ID の重複・参照先の実在・aliases の衝突・文書の中の aliases の重複・mermaid の文法を検査する。スキーマで見られない決まりを追加・変更するときに読む。
+    description: dev-docs の validators の knowledge-checks として、文書 1 件の項目の ID の重複・参照先の実在・aliases の衝突・文書の中の aliases の重複・mermaid の文法を検査する。スキーマで見られない決まりを追加・変更するときに参照する。
     tags: [topic:検査, topic:参照, topic:mermaid, tool:dev-docs]
   - path: knowledge_markdown.py
     name: 文書の Markdown への変換
-    description: dev-docs の converters の knowledge-markdown として、文書 1 件を項目の group の階層を見出しにした Markdown にし、本文の埋め込みのマーカーを対応表の表に展開する。画面での文書の見え方を変えるときに読む。
+    description: dev-docs の converters の knowledge-markdown として、文書 1 件を項目の group の階層を見出しにした Markdown にし、本文の埋め込みのマーカーを対応表の表に展開する。画面での文書の見え方を変えるときに参照する。
     tags: [topic:変換, topic:markdown, tool:dev-docs, tool:mdmark]
   - path: check_all.py
     name: 全ての文書の検査
-    description: dev-docs.yaml が指す全ての文書にスキーマの検査と文書の違反の検査を当て、CI と手元で合否を返す。CI の検査の範囲や出力を変えるときに読む。
+    description: dev-docs.yaml が指す全ての文書にスキーマの検査と文書の違反の検査を当て、CI と手元で合否を返す。CI の検査の範囲や出力を変えるときに参照する。
     tags: [topic:検査, topic:ci, topic:スキーマ, tool:jsonschema]
   - path: build_pages.py
     name: Pages の成果物の作成
-    description: dev-docs.yaml が指す visibility が public の文書を変換し、参照をリンクに書き換えて mdmark の build で 1 枚の HTML にまとめる。Pages に出す文書の範囲やリンクの書き換えを変えるときに読む。
+    description: dev-docs.yaml が指す visibility が public の文書を変換し、参照をリンクに書き換えて mdmark の build で 1 枚の HTML にまとめる。Pages に出す文書の範囲やリンクの書き換えを変えるときに参照する。
     tags: [topic:変換, topic:ci, tool:mdmark]
   - path: build_word_list.py
     name: 対応表のコピーの作成
-    description: 正本の対応表の YAML から、プラグイン slop-check のフックが読む JSON のコピーを書き出す。対応表の正本を変えたときや、コピーに残すキーを変えるときに読む。
+    description: 正本の対応表の YAML から、プラグイン slop-check のフックが読む JSON のコピーを書き出す。対応表の正本を変えたときや、コピーに残すキーを変えるときに参照する。
     tags: [topic:対応表, topic:変換, tool:ruamel.yaml]
   - path: build_templates.py
     name: 設計書のテンプレートの生成
-    description: 設計書のスキーマから、docs/template/ の対応するテンプレートの items を書き出す。テンプレートに出す項目や表の書き方を変えるときに読む。
+    description: 設計書のスキーマから、docs/template/ の対応するテンプレートの items を書き出す。テンプレートに出す項目や表の書き方を変えるときに参照する。
     tags: [topic:テンプレート, topic:スキーマ, topic:生成, tool:ruamel.yaml]
   - path: _lint.py
     name: lint の呼び出し
-    description: markdownlint-cli2・textlint・yamllint の在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応を受け持つ。lint の CLI のバージョンを上げるときや、CLI の出力の読み方を変えるときに読む。
+    description: markdownlint-cli2・textlint・yamllint の在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応を受け持つ。lint の CLI のバージョンを上げるときや、CLI の出力の読み方を変えるときに参照する。
     tags:
       - topic:検査
       - topic:lint
@@ -44,7 +44,7 @@ files:
     id: scripts/_lint.py
   - path: lint/no-inline-strong.mjs
     name: 文中の太字の検査
-    description: markdownlint のカスタムルールとして、太字（strong）を違反にする。太字の検査の対象や違反の内容を変えるときに読む。
+    description: markdownlint のカスタムルールとして、太字（strong）を違反にする。太字の検査の対象や違反の内容を変えるときに参照する。
     tags:
       - topic:検査
       - topic:lint
@@ -53,7 +53,7 @@ files:
     id: scripts/lint/no-inline-strong.mjs
   - path: lint/.markdownlint-cli2.jsonc
     name: markdownlint の設定
-    description: 全ての文書の検査が文書の Markdown の項目に当てる markdownlint-cli2 のルールの有効・無効と警告を定める。Markdown の検査のルールを変えるときや、警告のルールを失敗させる設定へ切り替えるときに読む。
+    description: 全ての文書の検査が文書の Markdown の項目に当てる markdownlint-cli2 のルールの有効・無効と警告を定める。Markdown の検査のルールを変えるときや、警告のルールを失敗させる設定へ切り替えるときに参照する。
     tags:
       - topic:検査
       - topic:lint
@@ -62,7 +62,7 @@ files:
     id: scripts/lint/.markdownlint-cli2.jsonc
   - path: lint/.textlintrc.json
     name: textlint の設定
-    description: 全ての文書の検査が文書の Markdown の項目に当てる textlint のルールと警告を定める。文章の検査のルールを変えるときや、警告のルールを失敗させる設定へ切り替えるときに読む。
+    description: 全ての文書の検査が文書の Markdown の項目に当てる textlint のルールと警告を定める。文章の検査のルールを変えるときや、警告のルールを失敗させる設定へ切り替えるときに参照する。
     tags:
       - topic:検査
       - topic:lint
@@ -71,7 +71,7 @@ files:
     id: scripts/lint/.textlintrc.json
   - path: lint/.yamllint.yaml
     name: yamllint の設定
-    description: 全ての文書の検査が文書の YAML に当てる yamllint のルールを定める。YAML の書き方の検査のルールを変えるときに読む。
+    description: 全ての文書の検査が文書の YAML に当てる yamllint のルールを定める。YAML の書き方の検査のルールを変えるときに参照する。
     tags:
       - topic:検査
       - topic:lint
@@ -80,7 +80,7 @@ files:
     id: scripts/lint/.yamllint.yaml
   - path: lint/.yamllint-schemas.yaml
     name: スキーマの yamllint の設定
-    description: 全ての文書の検査が schemas/ のスキーマに当てる yamllint のルール（フロー形式を違反にする brackets・braces）を定める。スキーマの書き方の検査のルールを変えるときに読む。
+    description: 全ての文書の検査が schemas/ のスキーマに当てる yamllint のルール（フロー形式を違反にする brackets・braces）を定める。スキーマの書き方の検査のルールを変えるときに参照する。
     tags:
       - topic:検査
       - topic:lint
@@ -90,7 +90,7 @@ files:
     id: scripts/lint/.yamllint-schemas.yaml
   - path: lint/package.json
     name: lint の npm の依存
-    description: 全ての文書の検査が呼ぶ markdownlint-cli2・textlint とルールのバージョンを定める（ロックは package-lock.json）。lint の CLI やルールのバージョンを上げるときに読む。
+    description: 全ての文書の検査が呼ぶ markdownlint-cli2・textlint とルールのバージョンを定める（ロックは package-lock.json）。lint の CLI やルールのバージョンを上げるときに参照する。
     tags:
       - topic:検査
       - topic:lint
