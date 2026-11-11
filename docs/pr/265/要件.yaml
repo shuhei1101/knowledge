@@ -48,27 +48,37 @@ docs:
   - page: schemas/design/layout.schema.yaml
     new: true
     change: フォルダ構成の設計書のスキーマを、案 A-74 の最新版のキー（content_types・entries[].placeholders・entries[].id_root を含む）で作る
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:33:56.897036+00:00'
   - page: docs/template/template-layout.yaml
     new: true
     change: フォルダ構成のテンプレートを生成する（メタデータは手で記載する）
     status: todo
   - page: docs/rule/dev-folder-layout.yaml
     new: true
-    change: フォルダを切る観点とレビューの観点の規約を追加する（ファイル名は仮）
+    change: フォルダを切る観点とレビューの観点の規約を追加する。テンプレートを生成した後に、概要から template-layout への参照をリンクにする
     status: todo
+    updated_by: planner
+    updated_at: '2026-11-11T07:34:02.779530+00:00'
   - page: rules.yaml
     new: false
     change: 追加した規約を、フォルダ構成の設計書とスキーマに該当する行で登録する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:33:56.897036+00:00'
   - page: schemas/design/architecture.schema.yaml
     new: false
-    change: repository.layout を廃止する（要件.md の未確定）
-    status: todo
+    change: repository.layout と、記載例の layout を削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:33:56.897036+00:00'
   - page: schemas/design/module.schema.yaml
     new: false
-    change: directory と、分類をまとめる設計書に directory を配置させる x-rules を廃止する（要件.md の未確定）
-    status: todo
+    change: directory を削除し、分類をまとめる設計書の x-rules からディレクトリ構成を除いて、ファイルの配置をフォルダ構成の設計書に記載する決まりを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:33:56.897036+00:00'
   - page: docs/template/template-architecture.yaml
     new: false
     change: スキーマの変更に合わせて生成し直す
@@ -80,7 +90,9 @@ docs:
   - page: docs/rule/python-architecture-layout.yaml
     new: false
     change: python -m の入口（{pkg}/{command}/__main__.py）の配置先を追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:33:56.897036+00:00'
 scope_out:
   - item: 中身の種類の決め方（A-79）の判定フローチャート
     reason: '起票の後に #225 へ移した'
