@@ -1,0 +1,1 @@
+# 設計書のスキーマのキーを設ける条件を meta.schema.yaml に追加し、schemas/design のキーを見直す
