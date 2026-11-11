@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-folder-layout
+kind: rule
+name: フォルダ構成の切り方とレビュー
+description: リポジトリのフォルダを切る観点と、フォルダ構成の設計書をレビューする観点を定め、フォルダ構成の設計書を作る・レビューするときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-11'
+related:
+  - to: dev-content-location
+    type: references
+    when: コードではない原本の配置先を決めるとき
+  - to: python-architecture-layout
+    type: references
+    when: Python のソースコードのフォルダを切るとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      リポジトリのフォルダを切る観点と、フォルダ構成の設計書をレビューする観点。
+      設計書の書式は[テンプレート: フォルダ構成](id:template-layout) に従う。
+  - id: split-01
+    group: フォルダを切る観点
+    name: 切る観点の表
+    body: |-
+      | 観点 | 決まり |
+      | --- | --- |
+      | 機能で分ける | ソースコードは機能（feature）ごとのフォルダにし、層（domain・infrastructure など）で分けない（[トップレベルレイアウト + feature 内構造](id:python-architecture-layout)） |
+      | 共通のもの | 複数の機能・構成要素が参照するものは、参照する側の共通の親の `shared/` に配置する |
+      | 切りすぎない | 中身が 1 つだけのフォルダは作らない |
+      | コードではない原本 | `content/` に配置する（[コンテンツの置き場所](id:dev-content-location)） |
+  - id: review-01
+    group: レビューの観点
+    name: まとめるか分けるかの決め方
+    body: |-
+      同じ `content_types` の組を持つエントリは検査で一覧にするだけで、警告にしない。
+      まとめるか分けるかは、設計する側とレビューする側が次の観点で決める。
+  - id: review-02
+    group: レビューの観点
+    name: レビューの観点の表
+    body: |-
+      | 観点 | 確認すること |
+      | --- | --- |
+      | 同じ種類が散る | 同じ `content_types` の組を持つエントリが複数あるとき、1 つにまとめられないか |
+      | 種類が混ざる | 役割も機能も一致しない中身が入り、再分割が要るフォルダが無いか |
+      | まとめすぎ | 1 つのフォルダに複数の機能の単語が付き、機能が増えたときに分けにくくならないか |
+      | 共通のものが深い | `used_by` が複数なのに、1 つの機能のフォルダの下にないか |
+      | 管理しないもの | 生成物・一時ファイルが `gitignore` にあるか。`generated_from` のエントリを手で編集していないか |
+tags:
+  - name: scope:dev
+  - name: topic:フォルダ
+    main: true
+  - name: topic:構成
+  - name: topic:リポジトリ
+  - name: topic:設計書
+  - name: topic:観点
+  - name: topic:gitignore
+  - name: action:配置
+  - name: action:分割
+  - name: action:レビュー

@@ -1,0 +1,31 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-schemas-layout-template
+configfile: pytest.ini
+collected 229 items
+
+tests/unit/scripts/test_build_pages.py ...................               [  8%]
+tests/unit/scripts/test_build_templates.py ........................      [ 18%]
+tests/unit/scripts/test_build_word_list.py ...                           [ 20%]
+tests/unit/scripts/test_check_all.py ................................... [ 35%]
+............                                                             [ 40%]
+tests/unit/scripts/test_common.py ....................                   [ 49%]
+tests/unit/scripts/test_knowledge_checks.py ............................ [ 61%]
+.....                                                                    [ 63%]
+tests/unit/scripts/test_knowledge_markdown.py .......................... [ 75%]
+........                                                                 [ 78%]
+tests/unit/scripts/test_lint.py ............                             [ 83%]
+tests/unit/scripts/test_maid.py ......                                   [ 86%]
+tests/unit/slop-check/test_slop_check.py ............................... [100%]
+
+============================= 229 passed in 5.09s ==============================
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-schemas-layout-template
+configfile: pytest.ini
+collected 31 items
+
+tests/unit/slop-check/test_slop_check.py ............................... [100%]
+
+============================== 31 passed in 0.34s ==============================

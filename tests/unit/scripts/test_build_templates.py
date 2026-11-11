@@ -536,6 +536,44 @@ def test_iter_keys(repo_factory: RepoFactory) -> None:
     assert result[1].schema["description"] == "1 行の説明。"
 
 
+def test_iter_keys_when_ref_recursive(repo_factory: RepoFactory) -> None:
+    """再帰する $ref（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/common.schema.yaml": _COMMON,
+            "schemas/design/a.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "type: object\n"
+                "properties:\n"
+                "  entries:\n"
+                "    type: array\n"
+                "    title: エントリ\n"
+                "    items:\n"
+                "      $ref: '#/$defs/entry'\n"
+                "$defs:\n"
+                "  entry:\n"
+                "    type: object\n"
+                "    properties:\n"
+                "      name:\n"
+                "        type: string\n"
+                "        title: 名前\n"
+                "      children:\n"
+                "        type: array\n"
+                "        title: 配下\n"
+                "        items:\n"
+                "          $ref: '#/$defs/entry'\n"
+            ),
+        }
+    )
+    schemas = load_schemas(root)
+    resolver = schemas.registry.resolver(base_uri="a.schema.yaml")
+    # 実行
+    result = list(_iter_keys(schemas.docs["a.schema.yaml"], resolver))
+    # 検証
+    assert [row.name for row in result] == ["entries", "entries[].name", "entries[].children"]
+
+
 def test_render_key_table() -> None:
     """列と制約と型（正常系）。"""
     # 準備

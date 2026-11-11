@@ -1,0 +1,123 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: changed
+    detail: 生成の対象にフォルダ構成のテンプレートが加わり、前提と結果のテンプレートの件数が変わる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 追加したスキーマと生成したテンプレートが、スキーマ自身の検査とテンプレートの一致の検査の対象に入る。手順と結果の形は変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: none
+    detail: 検索できる文書にフォルダ構成のテンプレートと規約が加わるだけ
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: none
+    detail: 書き込みの流れを変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: none
+    detail: 読める文書が加わるだけ
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-2.yaml
+    impact: none
+    detail: 登録の流れを変えない
+    depends_on: []
+  - kind: composite
+    scenario: docs/scenario/SC-72-1.yaml
+    impact: none
+    detail: 導入の流れを変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: none
+    detail: 'テンプレートと規約は visibility: internal で Pages に出ない'
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-148-1.yaml
+    impact: none
+    detail: 対応表を変えない
+    depends_on: []
+docs:
+  - page: schemas/design/layout.schema.yaml
+    new: true
+    change: フォルダ構成の設計書のスキーマを、案 A-74 の最新版のキー（content_types・entries[].placeholders・entries[].id_root を含む）で作る
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:33:56.897036+00:00'
+  - page: docs/template/template-layout.yaml
+    new: true
+    change: フォルダ構成のテンプレートを生成する（メタデータは手で記載する）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:58:04.794172+00:00'
+  - page: docs/rule/dev-folder-layout.yaml
+    new: true
+    change: フォルダを切る観点とレビューの観点の規約を追加する。テンプレートを生成した後に、概要から template-layout への参照をリンクにする
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:58:04.794172+00:00'
+  - page: rules.yaml
+    new: false
+    change: 追加した規約を、フォルダ構成の設計書とスキーマに該当する行で登録する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:33:56.897036+00:00'
+  - page: schemas/design/architecture.schema.yaml
+    new: false
+    change: repository.layout と、記載例の layout を削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:33:56.897036+00:00'
+  - page: schemas/design/module.schema.yaml
+    new: false
+    change: directory を削除し、分類をまとめる設計書の x-rules からディレクトリ構成を除いて、ファイルの配置をフォルダ構成の設計書に記載する決まりを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:33:56.897036+00:00'
+  - page: docs/template/template-architecture.yaml
+    new: false
+    change: スキーマの変更に合わせて生成し直す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:58:04.794172+00:00'
+  - page: docs/template/template-module.yaml
+    new: false
+    change: スキーマの変更に合わせて生成し直す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:58:04.794172+00:00'
+  - page: docs/rule/python-architecture-layout.yaml
+    new: false
+    change: python -m の入口（{pkg}/{command}/__main__.py）の配置先を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-11T07:33:56.897036+00:00'
+scope_out:
+  - item: 中身の種類の決め方（A-79）の判定フローチャート
+    reason: '起票の後に #225 へ移した'
+    plan: '#225'
+  - item: 入れ子の entries[] からパスを生成する変換と、リポジトリのフォルダ・.gitignore との突き合わせの検査・.gitignore の生成
+    reason: 各プロジェクトの設計書を検証するのは AI Monitor の設計書の検証（design_docs）で、knowledge の scripts は knowledge の文書だけを検査する。knowledge 自身のフォルダ構成の設計書も、AI Monitor が配布する schemas/ の直下のスキーマで検査する。この PR のスキーマを前提にするので AI Monitor へ起票し、D-200・D-202 の決定を本文に引き継ぐ
+    plan: shuhei1101/ai-monitor#3371
+  - item: knowledge 自身のフォルダ構成の設計書の作成と、dev-docs.yaml への種類の行の追加
+    reason: テンプレートを前提にした後続の Issue が持つ
+    plan: '#220'
+  - item: AI Monitor の設計の手順へのフォルダ構成の工程の追加
+    reason: AI Monitor の配布物の範囲
+    plan: shuhei1101/ai-monitor#3267
+  - item: スキーマの各キーへの使用先の記載と、キーを設ける条件の追加
+    reason: 目的が別で、この PR の後にフォルダ構成のスキーマも含めて見直す
+    plan: '#217'
+  - item: knowledge の既存の設計書（ARCH-72-1 の repository.layout・MOD-72-1・MOD-148-1 の directory）からの廃止するキーの除去と、フォルダ構成の設計書への移し替え
+    reason: '移し先の knowledge のフォルダ構成の設計書を #220 が作る。この PR で消すと、移し先が無いまま内容が失われる。knowledge の設計書は AI Monitor が配布する schemas/ で検査し、この PR の時点では検査を通る。#220 の本文への書き足しを task-planner へ連絡する'
+    plan: '#220'
+  - item: 他のプロジェクトの設計書からの廃止するキーの除去と、フォルダ構成の設計書への移し替え
+    reason: design-schemas の新しいメジャーを取り込む側の作業で、AI Monitor の配布と各プロジェクトの設計書の作成に合わせて行う
+    plan: shuhei1101/ai-monitor#3370

@@ -52,6 +52,7 @@ items:
       ├── shared/                       # 横断インフラ（必須）
       ├── features/                     # ビジネス機能（任意）
       ├── integrations/                 # 外部サービス連携（任意）
+      ├── {command}/                    # 任意: python -m {pkg}.{command} で起動する入口（__main__.py だけ）
       ├── runtime/                      # 実行時インフラ（任意: queue / workflow / state）
       └── server/                       # HTTP/WS サーバ（任意: FastAPI 使用時）
       ```
@@ -60,6 +61,7 @@ items:
     name: 任意フォルダの扱い
     body: |-
       任意フォルダはプロジェクトで使う場合のみ作る。
+      `{command}/` の `__main__.py` は引数を解釈して `features/{command}/` の公開 API を呼ぶだけにし、処理は `features/{command}/` に配置する。
   - id: feature-folder-01
     group: feature フォルダ
     name: feature フォルダの構成例

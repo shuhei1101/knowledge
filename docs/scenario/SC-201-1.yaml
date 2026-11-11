@@ -7,7 +7,7 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: スキーマ
-        description: '15 件のテンプレートがスキーマから生成した状態の knowledge のクローンで、`schemas/design/er.schema.yaml` のキーの `x-rules` に 1 件追加し、他のスキーマは変えていないもの'
+        description: 設計書の種類の全てのテンプレートがスキーマから生成した状態の knowledge のクローンで、`schemas/design/er.schema.yaml` のキーの `x-rules` に 1 件追加し、他のスキーマは変えていないもの
     flow: |-
       sequenceDiagram
         actor D as 開発者
@@ -27,7 +27,7 @@ scenarios:
     expected:
       - '`docs/template/template-er.yaml` の `items` に、追加した `x-rules` の決まりが出る'
       - '`docs/template/template-er.yaml` の `items` 以外のキー（`id`・`name`・`description`・`tags`・`status`・`visibility`・`rev`）は実行の前と同じ値'
-      - 他の 14 件のテンプレートのファイルは実行の前とバイト単位で同じ
+      - 設計書の種類の他のテンプレートのファイルは実行の前とバイト単位で同じ
       - 標準出力に `docs/template/template-er.yaml` だけが出る
       - 続けて全ての文書の検査を実行すると成功で終わる
     test: test_normal
@@ -48,7 +48,7 @@ scenarios:
     expected:
       - 終了コードが 2
       - 標準エラーに、スキーマのパスと解決できない `$ref` の項目が出る
-      - 15 件のテンプレートのファイルは実行の前とバイト単位で同じ
+      - 設計書の種類の全てのテンプレートのファイルは実行の前とバイト単位で同じ
     test: test_error_when_schema_unresolvable
   - name: 異常シナリオ（対応するテンプレートが無い）
     setup:
@@ -67,7 +67,7 @@ scenarios:
     expected:
       - 終了コードが 2
       - 標準エラーに、無いテンプレートの ID（`template-er`）とスキーマのパス（`schemas/design/er.schema.yaml`）が出る
-      - 残りの 14 件のテンプレートのファイルは実行の前とバイト単位で同じ
+      - 設計書の種類の残りのテンプレートのファイルは実行の前とバイト単位で同じ
     test: test_error_when_template_missing
 lead: 開発者が設計書のスキーマを変えた後に生成のコマンドを実行し、`docs/template/` の設計書の種類のテンプレートの本文をスキーマから書き出す。
 issue: 163
