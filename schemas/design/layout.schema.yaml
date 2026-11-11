@@ -294,7 +294,7 @@ examples:
   entries:
   - type: folder
     name: src
-    contents: コード
+    contents: コード（src レイアウトのため、パッケージ 1 つだけを配置する）
     children:
     - type: folder
       name: aituber
@@ -345,6 +345,19 @@ examples:
             from: AG-1#stages
           used_by:
           - AG-1#
+        - type: folder
+          name: chat
+          contents: 雑談のブレインノードの手順
+          content_types:
+          - agent_flow
+          - brain
+          naming:
+          - '{stage}.yaml'
+          placeholders:
+          - name: stage
+            from: AG-2#stages
+          used_by:
+          - AG-2#
   - type: folder
     name: dist
     contents: ビルドしたフロントエンド
