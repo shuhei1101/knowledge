@@ -52,6 +52,7 @@ TEMPLATE_IDS = {
     "er": "template-er",
     "external_api": "template-external-api",
     "interface": "template-interface",
+    "layout": "template-layout",
     "library": "template-external-library",
     "module": "template-module",
     "nonfunctional": "template-nonfunctional",
@@ -297,41 +298,56 @@ def _strings(value: object) -> list[str]:
 
 def _resolve(
     schema: Mapping[str, object], resolver: Resolver[Any]
-) -> tuple[Mapping[str, object], Resolver[Any]]:
-    """$ref を辿った先に、キーの側の値を重ねたスキーマと、その先の解決器を返す。"""
+) -> tuple[Mapping[str, object], Resolver[Any], frozenset[int]]:
+    """$ref を辿った先に、キーの側の値を重ねたスキーマと、その先の解決器と、辿った先の id() の集合を返す。"""
     ref = schema.get("$ref")
     if not isinstance(ref, str):
-        return schema, resolver
+        return schema, resolver, frozenset()
     resolved = resolver.lookup(ref)
     target = as_mapping(resolved.contents) or {}
     # 解決した先がさらに $ref を持てば、その先の解決器で続けて引く
-    base, next_resolver = _resolve(target, resolved.resolver)
+    base, next_resolver, targets = _resolve(target, resolved.resolver)
     merged = {**base, **{key: value for key, value in schema.items() if key != "$ref"}}
-    return merged, next_resolver
+    # 辿った先は、解決した値そのものの id() で表す（重ねた merged は呼ぶたびに別のオブジェクトになる）
+    return merged, next_resolver, targets | {id(resolved.contents)}
 
 
 def _iter_keys(
-    schema: Mapping[str, object], resolver: Resolver[Any], prefix: str = ""
+    schema: Mapping[str, object],
+    resolver: Resolver[Any],
+    prefix: str = "",
+    ancestors: frozenset[int] = frozenset(),
 ) -> Iterator[KeyRow]:
-    """properties を深さ優先でスキーマの並びのとおりにたどり、$ref を解決したキーの行を返す。"""
+    """properties を深さ優先でスキーマの並びのとおりにたどり、$ref を解決したキーの行を返す。
+
+    ancestors は、たどっている途中の親が解決した $ref の先の id()。
+    同じ先を再び指すキー（再帰する $ref）は、行だけを返して子はたどらない。
+    """
     properties = as_mapping(schema.get("properties")) or {}
     required = set(_strings(schema.get("required")))
     for key, value in properties.items():
         sub = as_mapping(value)
         if sub is None:
             continue
-        merged, sub_resolver = _resolve(sub, resolver)
+        merged, sub_resolver, key_targets = _resolve(sub, resolver)
         name = f"{prefix}{key}"
         yield KeyRow(name=name, schema=merged, required=key in required)
+        # 配列の要素の $ref も、子へ潜る前に解決しておく
+        element = as_mapping(merged.get("items"))
+        element_schema, element_resolver, element_targets = (
+            _resolve(element, sub_resolver) if element is not None else ({}, sub_resolver, frozenset())
+        )
+        targets = key_targets | element_targets
+        # 親が辿った先をもう一度指している: 再帰する $ref のため、子はたどらない
+        if targets & ancestors:
+            continue
+        child_ancestors = ancestors | targets
         # オブジェクトの子は parent.child でたどる
         if as_mapping(merged.get("properties")) is not None:
-            yield from _iter_keys(merged, sub_resolver, f"{name}.")
+            yield from _iter_keys(merged, sub_resolver, f"{name}.", child_ancestors)
         # 配列の要素の子は parent[].child でたどる
-        element = as_mapping(merged.get("items"))
-        if element is not None:
-            element_schema, element_resolver = _resolve(element, sub_resolver)
-            if as_mapping(element_schema.get("properties")) is not None:
-                yield from _iter_keys(element_schema, element_resolver, f"{name}[].")
+        if as_mapping(element_schema.get("properties")) is not None:
+            yield from _iter_keys(element_schema, element_resolver, f"{name}[].", child_ancestors)
 
 
 def _render_table(columns: Sequence[str], rows: Sequence[Sequence[str]]) -> str:
