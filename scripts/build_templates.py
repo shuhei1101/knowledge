@@ -335,7 +335,9 @@ def _iter_keys(
         # 配列の要素の $ref も、子へ潜る前に解決しておく
         element = as_mapping(merged.get("items"))
         element_schema, element_resolver, element_targets = (
-            _resolve(element, sub_resolver) if element is not None else ({}, sub_resolver, frozenset())
+            _resolve(element, sub_resolver)
+            if element is not None
+            else ({}, sub_resolver, frozenset())
         )
         targets = key_targets | element_targets
         # 親が辿った先をもう一度指している: 再帰する $ref のため、子はたどらない
