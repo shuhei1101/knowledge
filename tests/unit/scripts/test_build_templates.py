@@ -459,6 +459,29 @@ def test_build_items_when_many_examples(repo_factory: RepoFactory) -> None:
     ]
 
 
+def test_build_items_when_example_has_code_fence(repo_factory: RepoFactory) -> None:
+    """記載例の値にコードフェンスがある（正常系）。"""
+    # 準備（複数行の値はブロックスタイルになり、コードフェンスの行がインデントの後に出る）
+    root = repo_factory(
+        {
+            "schemas/design/config.schema.yaml": (
+                _CONFIG + 'examples:\n  - name: a\n    install: "```bash\\nnpm i\\n```\\n"\n'
+            )
+        }
+    )
+    schemas = load_schemas(root)
+    # 実行
+    result = build_items("config.schema.yaml", schemas)
+    # 検証
+    assert result[2:] == [
+        {
+            "id": "example-sample-01",
+            "name": "記載例",
+            "body": "````yaml\nname: a\ninstall: |\n  ```bash\n  npm i\n  ```\n````",
+        },
+    ]
+
+
 def test_build_items_when_ref_unresolvable(repo_factory: RepoFactory) -> None:
     """解決できない $ref（異常系）。"""
     # 準備
