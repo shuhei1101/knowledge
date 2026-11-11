@@ -235,7 +235,9 @@ def test_normal_when_schemas_use_flow_style(
     assert not any(line.startswith("docs/rule/a.yaml:") for line in lines)
 
 
-def test_normal_when_only_warnings(run_script: RunScript, repo_factory: RepoFactory) -> None:
+def test_normal_when_only_warnings(
+    run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
+) -> None:
     """警告にしたルールの違反は警告の行として出し、終了コードには数えない（正常系）。"""
     # 準備
     root = repo_factory(
@@ -246,8 +248,22 @@ def test_normal_when_only_warnings(run_script: RunScript, repo_factory: RepoFact
             ),
         }
     )
+    # 既定の設定は警告にするルールを持たないため、one-sentence-per-line だけを警告にした lint のフォルダを作る
+    lint_dir = tmp_path / "lint"
+    lint_dir.mkdir()
+    for name in (
+        ".markdownlint-cli2.jsonc",
+        "no-inline-strong.mjs",
+        ".yamllint.yaml",
+        ".yamllint-schemas.yaml",
+    ):
+        shutil.copy(_REPO / "scripts/lint" / name, lint_dir / name)
+    (lint_dir / ".textlintrc.json").write_text(
+        '{"rules": {"one-sentence-per-line": {"severity": "warning"}}}\n', encoding="utf-8"
+    )
+    (lint_dir / "node_modules").symlink_to(_REPO / "scripts/lint/node_modules")
     # 実行
-    result = run_script("check_all", root)
+    result = run_script("check_all", root, args=["--lint-dir", str(lint_dir)])
     # 検証
     lines = result.stdout.splitlines()
     assert result.exit_code == 0
