@@ -1,7 +1,7 @@
 id: flowchart-screen-state-retention
 kind: flowchart
 name: 画面の状態の保持先 判定フローチャート
-description: 画面の一時的な状態を URL・サーバー・Web Storage・Cookie・ルーターの機能・メモリのどこに保持するかをスタックによらず判定し、画面の状態の保持先を決めるときに読む。
+description: 画面の一時的な状態を URL・サーバー・Web Storage・Cookie・ルーターの機能・メモリのどこに保持するかをスタックによらず判定し、画面の状態の保持先を決めるときに参照する。
 aliases:
   - 画面の状態の保持先
 inject_when:
@@ -43,7 +43,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      画面の一時的な状態を URL・サーバー・Web Storage・Cookie・ルーターの機能・メモリのどこに保持するかをスタックによらず判定し、画面の状態の保持先を決めるときに読む。
+      画面の一時的な状態を URL・サーバー・Web Storage・Cookie・ルーターの機能・メモリのどこに保持するかをスタックによらず判定し、画面の状態の保持先を決めるときに参照する。
       React のフロントエンドの値の置き場所は、この判定の後に [React の状態の置き場所](id:flowchart-react-state-placement) で決める。
   - id: screen-state-retention-flow-01
     group: 画面の状態の保持先 判定フローチャート
