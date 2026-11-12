@@ -47,6 +47,7 @@ TEMPLATE_IDS = {
     "architecture": "template-architecture",
     "component": "template-component",
     "config": "template-config",
+    "data": "template-data",
     "dataflow": "template-dataflow",
     "dev_command": "template-dev-command",
     "er": "template-er",
