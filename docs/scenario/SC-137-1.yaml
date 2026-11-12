@@ -10,6 +10,9 @@ scenarios:
         description: '`visibility: public` の文書と `visibility: internal` の文書がある'
         notes: 公開の文書から公開の文書への参照と、internal の文書への参照を 1 つずつ持つ公開の文書をクローンに置く
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         actor D as 開発者
         participant G as GitHub Actions
@@ -34,6 +37,9 @@ scenarios:
         W->>P: 成果物を配信する
         U->>P: ブラウザで開く
         P-->>U: 公開の文書の HTML
+      ```
+
+      <!-- /map -->
     expected:
       - ジョブが成功で終わる
       - '成果物に `visibility: public` の全ての文書の本文が入り、`visibility: internal` の文書の本文は入らない'
@@ -45,6 +51,9 @@ scenarios:
       - name: Mock
         description: 変換のスクリプトを、終了コード 1 で終わるものに差し替える
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant G as GitHub Actions
         participant W as 配信のワークフロー
@@ -58,6 +67,9 @@ scenarios:
         B-->>W: 失敗した文書のパスと標準エラーを出して終了コード 1
         W-->>G: 配信せずに失敗
         Note over P: 前に配信したサイトのまま
+      ```
+
+      <!-- /map -->
     expected:
       - ジョブが配信のステップに進まずに失敗で終わる
       - ログに失敗した文書のパスと変換のスクリプトの標準エラーが出る
@@ -67,6 +79,9 @@ scenarios:
       - name: Mock
         description: Pages の成果物を作るスクリプトの出力のフォルダに、YAML のファイルを 1 つ置く
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant G as GitHub Actions
         participant W as 配信のワークフロー
@@ -78,6 +93,9 @@ scenarios:
         W->>W: 出力に .yaml が無いことを確かめる
         W-->>G: 混じった .yaml のパスを出して配信せずに失敗
         Note over P: 前に配信したサイトのまま
+      ```
+
+      <!-- /map -->
     expected:
       - ジョブが配信のステップに進まずに失敗で終わる
       - ログに混じった `.yaml` のパスが出る

@@ -9,6 +9,9 @@ scenarios:
       - name: 配信中の knowledge
         description: develop の全ての種類の文書（rule・template・flowchart・guide・changelog・skill）と files.yaml の行がある
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         actor U as 利用者
         participant D as dev-docs の画面
@@ -21,6 +24,9 @@ scenarios:
           D->>D: 行の path のファイルを本文として読む
         end
         D-->>U: 共通スタイルで描いた本文
+      ```
+
+      <!-- /map -->
     expected:
       - 全ての種類の文書が HTTP 200 で開け、本文が空でない
       - タブとサイドバーの並びが `dev-docs.yaml` の `nav` と一致する
@@ -33,6 +39,9 @@ scenarios:
       - name: 配信中の knowledge
         description: 規約『文章の書き方』を 1 回開いた後に、対応表 `docs/word-list/word-list-ai-slop.yaml` の `entries` へ 1 行追加する（規約の文書は変えない）
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         actor U as 利用者
         participant D as dev-docs の画面
@@ -46,6 +55,9 @@ scenarios:
         D->>V: 標準入力に規約の YAML
         V-->>D: mdmark の記法の Markdown
         D-->>U: 追加した行を含む本文
+      ```
+
+      <!-- /map -->
     expected:
       - 開き直した本文の対応表の表に、追加した行の NG の単語が出る
     test: test_normal_when_word_list_updated
@@ -54,6 +66,9 @@ scenarios:
       - name: Mock
         description: 変換のスクリプトを、終了コード 1 で終わるものに差し替える
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         actor U as 利用者
         participant D as dev-docs の画面
@@ -62,6 +77,9 @@ scenarios:
         D->>V: 標準入力に文書の YAML
         V-->>D: 終了コード 1
         D-->>U: 変換に失敗したことと理由
+      ```
+
+      <!-- /map -->
     expected:
       - 画面に変換に失敗したことと理由（`exit`）が出る
       - files.yaml の行の Markdown（`skills/text-review/SKILL.md`）は開ける
