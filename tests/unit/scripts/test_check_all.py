@@ -1170,6 +1170,16 @@ _DESIGN_COMMON_SCHEMA = (
     "    pattern: ^SC-\\d+-\\d+$\n"
 )
 
+# schemas/ の直下に置く、$defs/id の pattern が違う同じ名前の共通の型
+_ROOT_COMMON_SCHEMA = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: 共通の型\n"
+    "$defs:\n"
+    "  id:\n"
+    "    type: string\n"
+    "    pattern: ^X-\\d+$\n"
+)
+
 # 設計書のスキーマに合う設計書
 _SCENARIO_DOC = "id: SC-1-1\ntitle: シナリオ\n"
 
@@ -1198,6 +1208,7 @@ def test_build_validators_when_design_schema(repo_factory: RepoFactory) -> None:
         {
             "schemas/design/scenario.schema.yaml": _DESIGN_SCENARIO_SCHEMA,
             "schemas/design/common.schema.yaml": _DESIGN_COMMON_SCHEMA,
+            "schemas/common.schema.yaml": _ROOT_COMMON_SCHEMA,
         }
     )
     # 実行
