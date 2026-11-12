@@ -164,7 +164,7 @@ constraints:
   - item: テンプレートの対応表
     constraint: |-
       `x-kind` → テンプレートの ID の固定の対応。
-      `architecture` → `template-architecture`、`component` → `template-component`、`config` → `template-config`、`dataflow` → `template-dataflow`、`dev_command` → `template-dev-command`、`er` → `template-er`、`external_api` → `template-external-api`、`interface` → `template-interface`、`layout` → `template-layout`、`library` → `template-external-library`、`module` → `template-module`、`nonfunctional` → `template-nonfunctional`、`scenario` → `template-scenario`、`screen` → `template-screen-design`、`state_transition` → `template-state-transition`、`test_procedure` → `template-test-procedure`。
+      `architecture` → `template-architecture`、`component` → `template-component`、`config` → `template-config`、`data` → `template-data`、`dataflow` → `template-dataflow`、`dev_command` → `template-dev-command`、`er` → `template-er`、`external_api` → `template-external-api`、`interface` → `template-interface`、`layout` → `template-layout`、`library` → `template-external-library`、`module` → `template-module`、`nonfunctional` → `template-nonfunctional`、`scenario` → `template-scenario`、`screen` → `template-screen-design`、`state_transition` → `template-state-transition`、`test_procedure` → `template-test-procedure`。
       テンプレートの文書のパスは `docs/template/{テンプレートの ID}.yaml`
     notes: 対応表に無い `x-kind` の種類のスキーマを `schemas/design/` に追加したら、対応表とテンプレートの文書も追加する
   - item: 書き出しの順序
