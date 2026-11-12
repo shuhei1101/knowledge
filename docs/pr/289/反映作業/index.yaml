@@ -1,0 +1,14 @@
+設計書のスキーマのタグの作成:
+  説明: 作業 PR を develop へマージした後に、`design-schemas/v*` の最新のタグのメジャーを上げたタグ（今の最新は `design-schemas/v4.0.0` で、作るタグは `design-schemas/v5.0.0`）を、メッセージに `(#289)` を入れて develop の squash commit へ作成して push する（`er.schema.yaml` に必須の `tables[].source` を追加し、既存の ER 図の設計書が検査を通らなくなる変更のため、メジャーを上げる）。切り戻しは、メッセージに `(#289)` を持つタグだけを削除する
+  タグ: [タグ, スキーマ]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: 設計書のスキーマのタグの作成/疎通確認.sh
+  実行: 設計書のスキーマのタグの作成/実行.sh
+  確認: 設計書のスキーマのタグの作成/確認.sh
+  切り戻し: 設計書のスキーマのタグの作成/切り戻し.sh
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグが `design-schemas/v5.0.0` で、その commit に `schemas/design/data.schema.yaml` があり、`schemas/design/er.schema.yaml` の `tables` の要素の `required` に `source` がある"
+  状態: "-"
