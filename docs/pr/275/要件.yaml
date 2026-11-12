@@ -1,0 +1,132 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: run_only
+    detail: 生成するテンプレートに 8 種類が加わる。シナリオの流れは変わらないが、E2E の生成の対象のテンプレートの並びに 8 種類を追加する
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 新しいスキーマとテンプレート、書き直したスキル text-review が全ての文書の検査を通る
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: run_only
+    detail: スキルの配信元のスキーマを agent_flow へ替えた後も、スキル text-review が検索・取得できる
+    depends_on: []
+docs:
+  - page: schemas/design/agent.schema.yaml
+    new: true
+    change: 'エージェントの定義（x-kind: agent・AG）のスキーマを A-71 から新設する'
+    status: todo
+  - page: schemas/design/mcp_server.schema.yaml
+    new: true
+    change: 'MCP サーバーの定義（x-kind: mcp_server・MCP）のスキーマを A-72 から新設する'
+    status: todo
+  - page: schemas/design/agent_flow.schema.yaml
+    new: true
+    change: 'エージェントフロー（x-kind: agent_flow。ID はパスから導く）のスキーマを A-73 から新設する。type: skill と skill のオブジェクトを持つ'
+    status: todo
+  - page: schemas/design/launch.schema.yaml
+    new: true
+    change: '起動の構成（x-kind: launch・LCH）のスキーマを A-89 から新設する'
+    status: todo
+  - page: schemas/design/llm_call.schema.yaml
+    new: true
+    change: 'LLM の呼び出し（x-kind: llm_call・LLM。type で choose・score・generate・extract を分ける）のスキーマを A-90 から新設する'
+    status: todo
+  - page: schemas/design/evaluation.schema.yaml
+    new: true
+    change: '精度評価のスイート（x-kind: evaluation・EVAL）のスキーマを A-91 から新設する'
+    status: todo
+  - page: schemas/design/eval_criterion.schema.yaml
+    new: true
+    change: '精度評価の観点（x-kind: eval_criterion。ID はファイル名から導く）のスキーマを A-91 から新設する'
+    status: todo
+  - page: schemas/design/eval_case.schema.yaml
+    new: true
+    change: '精度評価のケース（x-kind: eval_case。ID はファイル名から導く）のスキーマを A-91 から新設する'
+    status: todo
+  - page: schemas/design/interface.schema.yaml
+    new: false
+    change: MCP のツールの annotations を導くため、read_only・destructive を任意のキーとして追加する
+    status: todo
+  - page: scripts/build_templates.py
+    new: false
+    change: TEMPLATE_IDS に 8 種類の x-kind → テンプレートの ID を追加する
+    status: todo
+  - page: docs/template/template-agent.yaml
+    new: true
+    change: エージェントの定義のテンプレートをスキーマから生成する
+    status: todo
+  - page: docs/template/template-mcp-server.yaml
+    new: true
+    change: MCP サーバーの定義のテンプレートをスキーマから生成する
+    status: todo
+  - page: docs/template/template-agent-flow.yaml
+    new: true
+    change: エージェントフローのテンプレートをスキーマから生成する
+    status: todo
+  - page: docs/template/template-launch.yaml
+    new: true
+    change: 起動の構成のテンプレートをスキーマから生成する
+    status: todo
+  - page: docs/template/template-llm-call.yaml
+    new: true
+    change: LLM の呼び出しのテンプレートをスキーマから生成する
+    status: todo
+  - page: docs/template/template-evaluation.yaml
+    new: true
+    change: 精度評価のスイートのテンプレートをスキーマから生成する
+    status: todo
+  - page: docs/template/template-eval-criterion.yaml
+    new: true
+    change: 精度評価の観点のテンプレートをスキーマから生成する
+    status: todo
+  - page: docs/template/template-eval-case.yaml
+    new: true
+    change: 精度評価のケースのテンプレートをスキーマから生成する
+    status: todo
+  - page: docs/template/template-interface.yaml
+    new: false
+    change: インターフェース定義のスキーマの read_only・destructive の追加に合わせて生成し直す
+    status: todo
+  - page: docs/template/template-skill.yaml
+    new: false
+    change: テンプレート『スキル』を削除する（TH-620）
+    status: todo
+  - page: schemas/skill.schema.yaml
+    new: false
+    change: スキルのスキーマを削除する（TH-620）
+    status: todo
+  - page: rules.yaml
+    new: false
+    change: template-skill.yaml を docs/skill/*.yaml に当てる行を削除する
+    status: todo
+  - page: dev-docs.yaml
+    new: false
+    change: skill の配信元の schema を schemas/design/agent_flow.schema.yaml へ替える
+    status: todo
+  - page: docs/skill/text-review.yaml
+    new: false
+    change: 'agent_flow の type: skill の書式に書き直す'
+    status: todo
+  - page: docs/interface/IF-201-1.py.yaml
+    new: false
+    change: x-kind → テンプレートの ID の対応に 8 種類を追加する
+    status: todo
+  - page: docs/module/MOD-201-1.py.yaml
+    new: false
+    change: TEMPLATE_IDS の値に 8 種類を追加する
+    status: todo
+  - page: tests/e2e/単一ユースケース/test_開発者がスキーマから設計書のテンプレートを生成する.py
+    new: false
+    change: 生成の対象のテンプレートの並び _TEMPLATES に 8 種類を追加する
+    status: todo
+scope_out:
+  - item: 'agent_flow の type: skill から SKILL.md を作る変換と、skills/text-review/SKILL.md の生成物への置き換え'
+    reason: 計画の行で別の Issue に切り出すと決まっている。この作業 PR の agent_flow のスキーマを前提にする
+    plan: to_file
+  - item: エージェントフローの索引の生成と、progress の書き込みの工程を足す変換・参照先の検査（clients[].allow・permissions との突き合わせ）
+    reason: テンプレートが持つのはキーとその使用先の説明までで、生成・検査は使用するプロジェクト（ai-monitor#3275 等）の仕組みが持つ
+    plan: none
