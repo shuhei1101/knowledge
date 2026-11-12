@@ -117,13 +117,13 @@ _ER_ITEMS = [
         "body": (
             "<!-- table: data -->\n"
             "\n"
-            "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
-            "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
-            "| id | ID | string | 必須 | - | - | 変わらない ID。 | - |\n"
-            "| lead | 冒頭リード | string | - | - | minLength: `1` | 1 行の説明。 | - |\n"
-            "| kind | 種別 | string | - | `db` / `json` | - | - | - |\n"
-            "| tables | テーブル | array | - | - | - | - | - |\n"
-            "| tables[].name | 物理名 | string | 必須 | - | pattern: `^[a-z_]+$` | - | `tasks` |\n"
+            "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+            "| id | ID | string | 必須 | - | - | 変わらない ID。 | - | - |\n"
+            "| lead | 冒頭リード | string | - | - | minLength: `1` | 1 行の説明。 | - | - |\n"
+            "| kind | 種別 | string | - | `db` / `json` | - | - | - | - |\n"
+            "| tables | テーブル | array | - | - | - | - | - | - |\n"
+            "| tables[].name | 物理名 | string | 必須 | - | pattern: `^[a-z_]+$` | - | - | `tasks` |\n"
             "\n"
             "<!-- /table -->"
         ),
@@ -158,9 +158,9 @@ _CONFIG_ITEMS = [
         "body": (
             "<!-- table: data -->\n"
             "\n"
-            "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
-            "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
-            "| name | 名前 | string | - | - | - | - | - |\n"
+            "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+            "| name | 名前 | string | - | - | - | - | - | - |\n"
             "\n"
             "<!-- /table -->"
         ),
@@ -208,13 +208,13 @@ _TEMPLATE_ER = (
     "    body: |-\n"
     "      <!-- table: data -->\n"
     "\n"
-    "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
-    "      | --- | --- | --- | --- | --- | --- | --- | --- |\n"
-    "      | id | ID | string | 必須 | - | - | 変わらない ID。 | - |\n"
-    "      | lead | 冒頭リード | string | - | - | minLength: `1` | 1 行の説明。 | - |\n"
-    "      | kind | 種別 | string | - | `db` / `json` | - | - | - |\n"
-    "      | tables | テーブル | array | - | - | - | - | - |\n"
-    "      | tables[].name | 物理名 | string | 必須 | - | pattern: `^[a-z_]+$` | - | `tasks` |\n"
+    "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
+    "      | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+    "      | id | ID | string | 必須 | - | - | 変わらない ID。 | - | - |\n"
+    "      | lead | 冒頭リード | string | - | - | minLength: `1` | 1 行の説明。 | - | - |\n"
+    "      | kind | 種別 | string | - | `db` / `json` | - | - | - | - |\n"
+    "      | tables | テーブル | array | - | - | - | - | - | - |\n"
+    "      | tables[].name | 物理名 | string | 必須 | - | pattern: `^[a-z_]+$` | - | - | `tasks` |\n"
     "\n"
     "      <!-- /table -->\n"
     "  - id: key-rules-01\n"
@@ -255,9 +255,9 @@ _TEMPLATE_CONFIG = (
     "    body: |-\n"
     "      <!-- table: data -->\n"
     "\n"
-    "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
-    "      | --- | --- | --- | --- | --- | --- | --- | --- |\n"
-    "      | name | 名前 | string | - | - | - | - | - |\n"
+    "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
+    "      | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+    "      | name | 名前 | string | - | - | - | - | - | - |\n"
     "\n"
     "      <!-- /table -->\n"
 )
@@ -514,6 +514,8 @@ def test_iter_keys(repo_factory: RepoFactory) -> None:
                 "      b:\n"
                 "        $ref: common.schema.yaml#/$defs/summary\n"
                 "        title: B\n"
+                "        x-used-by:\n"
+                "          - 実装で、b にする。\n"
                 "  c:\n"
                 "    type: array\n"
                 "    title: C\n"
@@ -534,6 +536,7 @@ def test_iter_keys(repo_factory: RepoFactory) -> None:
     assert [row.name for row in result] == ["a", "a.b", "c", "c[].d"]
     assert result[1].schema["title"] == "B"
     assert result[1].schema["description"] == "1 行の説明。"
+    assert result[1].schema["x-used-by"] == ["実装で、b にする。"]
 
 
 def test_iter_keys_when_ref_recursive(repo_factory: RepoFactory) -> None:
@@ -592,7 +595,11 @@ def test_render_key_table() -> None:
         ),
         KeyRow(
             name="b",
-            schema={"title": "B", "anyOf": [{"type": "string"}, {"type": "integer"}]},
+            schema={
+                "title": "B",
+                "anyOf": [{"type": "string"}, {"type": "integer"}],
+                "x-used-by": ["実装で、b にする。", "レビューで、b を確認する。"],
+            },
             required=False,
         ),
     ]
@@ -602,10 +609,10 @@ def test_render_key_table() -> None:
     assert result == (
         "<!-- table: data -->\n"
         "\n"
-        "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
-        "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
-        "| a | A | string / null | 必須 | `x` / `y` | pattern: `^x$`, minLength: `1` | - | `x` / `y` |\n"
-        "| b | B | string / integer | - | - | - | - | - |\n"
+        "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+        "| a | A | string / null | 必須 | `x` / `y` | pattern: `^x$`, minLength: `1` | - | - | `x` / `y` |\n"
+        "| b | B | string / integer | - | - | - | - | 実装で、b にする。<br>レビューで、b を確認する。 | - |\n"
         "\n"
         "<!-- /table -->"
     )
