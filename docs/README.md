@@ -15,6 +15,7 @@ knowledge の文書全体の目次
 | [nonfunctional](./nonfunctional/) | 外部の制約から逆算した決定値 |
 | [test-procedure](./test-procedure/) | テストの種別ごとの実行コマンド |
 | [dev-command](./dev-command/) | 開発の分類ごとのコマンド |
+| [layout](./layout/) | リポジトリのフォルダとファイルの構成 |
 | [library](./library/) | 使う外部ライブラリ・ CLI |
 | [rule](./rule/) | 規約 |
 | [template](./template/) | テンプレート |
