@@ -16,6 +16,9 @@ required:
 - split
 - inputs
 properties:
+  visibility:
+    $ref: common.schema.yaml#/$defs/doc_visibility
+    title: 公開範囲
   summary:
     $ref: common.schema.yaml#/$defs/summary
     title: 概要

@@ -28,6 +28,9 @@ properties:
       - 実行で、エージェントがエージェントフローを取得する ID にする。
     examples:
     - brain/stream/on-event
+  visibility:
+    $ref: common.schema.yaml#/$defs/doc_visibility
+    title: 公開範囲
   type:
     type: string
     title: 種類
