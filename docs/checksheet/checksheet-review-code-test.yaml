@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-code-test
+kind: checksheet
+name: "実装・テストコードのレビュー観点 チェックシート"
+description: 実装コードとテストコードをレビューするときの観点を並べ、コードの差分をレビューするときに参照する。
+aliases:
+  - コードレビューの観点
+  - テストコードのレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:コード
+    main: true
+  - name: topic:testing
+  - name: topic:実装
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+  - to: dev-v-model
+    type: references
+    when: 設計書とテストの対応関係を確認するとき
+  - to: flowchart-config-location
+    type: references
+    when: 値の配置先を確認するとき
+  - to: flowchart-command-destination
+    type: references
+    when: 開発コマンドの追従を確認するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      実装コードとテストコードをレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | テストコードと実装が設計書と合っていること | テストは観点の過不足・粒度、実装は構成要素・物理名・依存方向を確認する（対応関係は規約 [V字モデル](id:dev-v-model) の対応表） |
+      | テストが、実装が壊れたときに失敗するように作られていること | 期待値が無い・常に合格する・実装と同じ計算で期待値を作っているテストを指摘する |
+      | 並行して動く処理（複数セッション・非同期・スレッド）で、競合と取りこぼしが起きないこと | 動かしても見つけにくいので、コードを参照して確認する |
+      | 差分の行だけでなく、変更を含むファイル全体を参照し、全体として分かりにくくなっていないこと | - |
+      | 非機能要件で決めた時点の事前確認が実装にあり、確認で止めた場合のテストがあること | 規約 [事前確認](id:dev-precheck) |
+      | `tsc` を挟める配信なのに、ブラウザのスクリプトを `.js` で記載していないこと | 規約 [ビルドレス原則（バンドルしない）](id:html-core-buildless) |
+      | 実装で呼ぶ外部ライブラリ・外部 API の設計書があること | - |
+      | 値の配置先が判定フローチャート [設定値の置き場所](id:flowchart-config-location) のとおりで、秘匿値が git 管理下にもログにも無いこと | 秘匿値の配置先を変えたら、サンプルと README の配置方法の説明も変わっているかを確認する |
+      | 差分がマニフェスト・ロックファイル・CI 設定・ツール設定・スクリプト・プラグインの定義に触れているとき、開発コマンドのページが追従していること | 差分で変わるコマンドを 1 つずつ判定フローチャート [コマンドの書き先](id:flowchart-command-destination) で判定し、該当するセクションと突き合わせる。記載しないと判定される変更は追従を求めない |
+      | 差分が配布物の入れ方・起動に影響するファイルに触れているとき、利用者の入れ方で入れて起動する単一ユースケースが、影響するユースケースに挙がっていること | 挙がっていなければ影響するユースケースへの追加を求める |
+      | スキーマで作った・追加した項目に `examples` があり、`$ref` 先の例が項目に合わないままスキーマの説明に出ていないこと | - |
+      | 開発コマンドのページに記載されたコマンドに、確認した記録があること | 状態が `済` の行は確認日、`未確認` の行は実行していない理由があるかを確認する。副作用・権限、または規約 [開発時の従量課金APIの実行](id:dev-paid-api-execution) でユーザーへ確認する料金が要らないのに `未確認` の行を指摘する |
+
+      <!-- /table -->

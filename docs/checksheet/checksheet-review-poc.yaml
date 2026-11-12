@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-poc
+kind: checksheet
+name: "PoC の方針・結果のレビュー観点 チェックシート"
+description: PoC の方針と結果をレビューするときの観点を並べ、PoC の方針や結果をレビューするときに参照する。
+aliases:
+  - PoC のレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:poc
+    main: true
+  - name: topic:リスク
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+  - to: decision-table-poc
+    type: references
+    when: PoC を実施する条件を確認するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      PoC の方針と結果をレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | リスク仮説が、成立しなければ要件が成り立たない核心に該当していること | 確認しなくても分かることを検証対象にしていないか |
+      | 成功条件が測定できる値か状態で記載されていること | 数値か、観測できる状態で記載させる |
+      | 検証構成が本番の構成と違う点を明示していること | 違いが結論に影響するかまで記載させる |
+      | 検証結果が仮説に回答しており、成功条件と突き合わせてあること | 実行ログか再現コードが添えてある |
+      | 不成立のときの代替案が、検証で得た事実から出ていること | - |
+
+      <!-- /table -->

@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-implemented-screen
+kind: checksheet
+name: "実装した画面のレビュー観点 チェックシート"
+description: 実装した画面をブラウザで操作してレビューするときの観点を並べ、実装した画面をレビューするときに参照する。
+aliases:
+  - 画面の実装のレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:画面
+    main: true
+  - name: topic:ブラウザ
+  - name: scope:ui
+  - name: action:実装
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+  - to: ui-information-hierarchy
+    type: references
+    when: 情報の階層と見た目の決まりを確認するとき
+  - to: ui-business-screen-elements
+    type: references
+    when: 業務系・管理画面の UI 要素を確認するとき
+sources:
+  - title: "NN/g: 10 Usability Heuristics for User Interface Design"
+    url: https://www.nngroup.com/articles/ten-usability-heuristics/
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      実装した画面をブラウザで操作してレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | 極端なデータ（0 件・大量・長文・絵文字）で崩れないこと | - |
+      | キーボードだけで主な操作を実行できること | - |
+      | 再読み込み・戻る・別タブでも、入力や選択が失われないこと | - |
+      | ブラウザのコンソールにエラーが出ていないこと | - |
+      | 今の画面・ビューで機能しない部品を出していないこと | 押しても何も変わらない部品を名指しで指摘する |
+      | 同じ種類の操作部品の寸法と、アイコンと文字の上下の位置が統一されていること | 規約 [情報の階層と見た目](id:ui-information-hierarchy) |
+      | 本文の区画に操作の説明文が無く、絵文字をアイコンに使用せず、移った先・選択中・フォーカスを片側だけの枠線で示していないこと | 規約 [情報の階層と見た目](id:ui-information-hierarchy) |
+      | 操作部品とデータの表示に、状態の抜けが無いこと | 規約 [情報の階層と見た目](id:ui-information-hierarchy) の状態の行と突き合わせる |
+      | タブ・ビュー・絞り込みを切り替えても、枠の幅や高さが揺れないこと | 切り替えの前後のスクリーンショットを比べる |
+      | 配置した UI 要素が規約 [業務画面のUI要素](id:ui-business-screen-elements) のとおりであること | 業務系・管理画面に適用する |
+      | 管理画面は「熟練者（ショートカット・一括操作）」と「支援技術の利用者」の視点で批評すること | - |
+      | UX を Nielsen の 10 原則に沿って批評すること | [10 Usability Heuristics](https://www.nngroup.com/articles/ten-usability-heuristics/) |
+      | 画面設計の `action` を持つ要素を PC 幅とスマホ幅で全て操作し、記載どおりに動くこと | スマホ幅でだけ出る・隠れる要素は `visible_when` の条件どおりかも確認する |
+
+      <!-- /table -->

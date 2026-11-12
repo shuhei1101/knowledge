@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-composite-uc-scenario
+kind: checksheet
+name: "複合ユースケースのシナリオのレビュー観点 チェックシート"
+description: 複合ユースケースのシナリオをレビューするときの観点を並べ、複合ユースケースのシナリオをレビューするときに参照する。
+aliases:
+  - 複合 UC シナリオのレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:シナリオ
+    main: true
+  - name: topic:複合ユースケース
+  - name: topic:ユースケース
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+  - to: template-scenario
+    type: references
+    when: シナリオの書式を確認するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      複合ユースケースのシナリオをレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | 図が単一ユースケースをノードとして連鎖させ、ユースケースの内部へ踏み込んでいないこと | テンプレート [シナリオ](id:template-scenario) の複合ユースケース |
+      | ノード名とリンク先が単一ユースケースのファイルと 1:1 になっていること | リンクの解決先が実在するかを確認する |
+      | 正常シナリオが一本道で、結末が分かれる分岐を別シナリオへ切り出していること | - |
+      | 期待値がシナリオ終了時点で観測できる値になっていること | 中間地点でしか見られない値は粒度が粗いサイン |
+      | 他のシナリオで既に確認している重複部分が Mock に置き換えられていること | セットアップの Mock 行で宣言させる |
+
+      <!-- /table -->

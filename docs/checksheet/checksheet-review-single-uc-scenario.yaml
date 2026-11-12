@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-single-uc-scenario
+kind: checksheet
+name: "単一ユースケースのシナリオのレビュー観点 チェックシート"
+description: 単一ユースケースのシナリオをレビューするときの観点を並べ、単一ユースケースのシナリオをレビューするときに参照する。
+aliases:
+  - 単一 UC シナリオのレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:シナリオ
+    main: true
+  - name: topic:ユースケース
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+  - to: template-scenario
+    type: references
+    when: シナリオの書式を確認するとき
+  - to: flowchart-scenario
+    type: references
+    when: シナリオの粒度を確認するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      単一ユースケースのシナリオをレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | 図がサブシステム境界を participant として記載されていること | 内部モジュールを participant にしていないか |
+      | 異常シナリオが業務的に意味のあるものに絞られていること | 個別 API のバリデーションはインターフェース定義の領分 |
+      | セットアップに分岐を決定的に誘発する値が仕込まれていること | - |
+      | 期待値がテストのアサートにそのまま落ちる粒度になっていること | - |
+      | 粒度が「{対象}を{動詞}する」の 1 動詞句で表せること | 判定フローチャート [シナリオ](id:flowchart-scenario) |
+      | 既存の単一ユースケースがあるのに同じ操作を新規で作っていないこと | 既存シナリオの一覧と突き合わせる |
+      | 他のシナリオで既に確認している重複部分が Mock に置き換えられていること | セットアップの Mock 行で宣言させる |
+
+      <!-- /table -->
