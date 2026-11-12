@@ -2,7 +2,7 @@
 id: claude-context-placement
 kind: rule
 name: 注入文の書き分けと書き方
-description: SessionStart の additionalContext・MCP の instructions・ツールの description・CLAUDE.md・スキル・フックの書き分けと注入文の記載方法を定め、エージェントに参照させる文を記載するときに参照する。
+description: SessionStart の additionalContext・MCP の instructions・ツールの description・CLAUDE.md・エージェントフロー・スキル・フックの書き分けと注入文の記載方法を定め、エージェントに参照させる文を記載するときに参照する。
 tags:
   - name: scope:claude
   - name: topic:コンテキスト
@@ -24,7 +24,7 @@ tags:
   - name: action:参照
 status: current
 visibility: internal
-rev: 2
+rev: 3
 last_reviewed: '2026-11-03'
 sources:
   - title: "Claude Code: Hooks reference"
@@ -60,7 +60,8 @@ items:
     name: 概要
     body: |-
       エージェントに参照させる文の記載先と、その書き方の決まり。
-      記載先は SessionStart の `additionalContext`・MCP の instructions・ツールの description・CLAUDE.md・スキル・フック。
+      記載先は SessionStart の `additionalContext`・MCP の instructions・ツールの description・CLAUDE.md・フック。
+      手順の記載先は、エージェントフローとスキル。
       文を置くファイル（`content/prompts/` の YAML）は [プロンプトファイル](id:prompt-file) が決める。
   - id: placement-01
     group: 何をどこに書くか
@@ -74,7 +75,8 @@ items:
       | MCP の instructions | 扱う作業の分類、いつこの MCP を探すか、grep・Read との使い分け、ツール間の順序 | ツールの description の繰り返し・宣伝 |
       | ツールの description | 何をする・いつ使う・いつ使わない・何を返さない・引数の意味 | ほかのツールの説明 |
       | CLAUDE.md | プロジェクト固有の約束事（文書の場所など） | MCP の使い方 |
-      | スキル | 複数ステップの作業手順 | 常に要る前提 |
+      | エージェントフロー | 複数の工程を順に進める手順（判定は [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice)） | 常に要る前提 |
+      | スキル | 起動の仕組みで指定できない特別な理由があるときの手順 | 常に要る前提 |
       | フック（PreToolUse など） | 必ず守らせたいこと | 説明の文 |
 
       <!-- /table -->

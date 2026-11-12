@@ -1,0 +1,84 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: run_only
+    detail: 生成の対象にデータのテンプレートが加わり、ER 図のテンプレートの中身が変わる。シナリオは件数を書かず、手順と結果の形は変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 追加したスキーマと生成したテンプレートが、スキーマ自身の検査とテンプレートの一致の検査の対象に入る。手順と結果の形は変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: none
+    detail: 検索できる文書にデータのテンプレートが加わるだけ
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: none
+    detail: 書き込みの流れを変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: none
+    detail: 読める文書が加わるだけ
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-2.yaml
+    impact: none
+    detail: 登録の流れを変えない
+    depends_on: []
+  - kind: composite
+    scenario: docs/scenario/SC-72-1.yaml
+    impact: none
+    detail: 導入の流れを変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: none
+    detail: 'テンプレートは visibility: internal で Pages に出ない'
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-148-1.yaml
+    impact: none
+    detail: 対応表を変えない
+    depends_on: []
+docs:
+  - page: schemas/design/data.schema.yaml
+    new: true
+    change: 'データの設計書のスキーマを、案 A-143 のキー（fields[].immutable を除く）・決まり（x-rules）・実例「データ: 動画」から抜き出した見本で作る'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T10:02:03.323478+00:00'
+  - page: docs/template/template-data.yaml
+    new: true
+    change: データのテンプレートを生成する（メタデータは手で記載する）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T10:02:03.323478+00:00'
+  - page: schemas/design/er.schema.yaml
+    new: false
+    change: tables[].source（必須）・tables[].columns[].source・tables[].indexes[].where・tables[].transaction を追加し、description・x-rules に DB 設計のレイヤーであることを記載する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T10:02:03.323478+00:00'
+  - page: docs/template/template-er.yaml
+    new: false
+    change: スキーマの変更に合わせて生成し直す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T10:02:03.323478+00:00'
+scope_out:
+  - item: 各プロジェクトの既存の ER 図の設計書への tables[].source の追記と、データの設計書への移行
+    reason: 起点 Issue で対象外（新しい設計書から使用する）。design-schemas/v5.0.0 を取り込む側の作業で、この PR の必須のキーを前提にする
+    plan: shuhei1101/ai-monitor#3390
+  - item: AI Monitor の設計の工程への、データの構造を先に決める工程の追加
+    reason: AI Monitor の配布物の範囲で、このテンプレートを前提にする後続
+    plan: shuhei1101/ai-monitor#3361
+  - item: ER 図の er.entities・er.relations を mdmark の map で描く変換
+    reason: mdmark の機能の範囲
+    plan: shuhei1101/mdmark#465
+  - item: 規約『V字モデル』へのデータ・ER 図の行と対応するテストの追加
+    reason: ER 図にも行が無く、データの構造は usage[] で読み書きするインターフェースの結合テストが確認するため、テストのレベルを新設しない
+    plan: none

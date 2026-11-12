@@ -30,12 +30,13 @@ sources:
     note: compact で SessionStart が再実行される
 status: current
 visibility: internal
-rev: 1
+rev: 2
 items:
   - id: overview
     name: 概要
     body: |-
       エージェントに渡す文・処理を、SessionStart のフック・MCP の instructions・ツールでの取得のどれに置くかを判定する。
+      機能を呼ぶインターフェースと、複数の工程を順に進める手順の指定方法は、判定フローチャート [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice) で決める。
   - id: session-context-placement-flow-01
     group: エージェントに渡す文・処理の置き場所 判定フローチャート
     name: 判定フロー

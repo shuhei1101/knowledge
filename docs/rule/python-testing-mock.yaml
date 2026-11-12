@@ -29,7 +29,7 @@ tags:
   - name: action:集約
 status: current
 visibility: internal
-rev: 4
+rev: 5
 last_reviewed: '2026-10-30'
 items:
   - id: overview
@@ -46,6 +46,7 @@ items:
       | 対象         | パターン                                                             |
       | ------------ | -------------------------------------------------------------------- |
       | LLM          | `make_chat_mock(*responses)` — 固定文字列を順に返すファクトリ        |
+      | エージェント | Claude Code のエージェント・サブエージェント・スキルの代わりに、決めた順にツールを呼ぶ・決めた出力を返却する関数。エージェントの判断はテストしない |
       | 呼び出し検証 | クロージャに `calls` リストを持つ spy 関数（`_chat.calls` で参照）   |
       | エラー注入   | `make_chat_error(LlmRateLimitError("..."))` — raise するだけの関数   |
       | HTTP         | fetch を型エイリアス化していれば Mock 関数注入。httpx2 直なら `MockTransport` を関数注入（SDK は `http_client=` に渡す） |

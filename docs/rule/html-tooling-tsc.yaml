@@ -27,8 +27,8 @@ tags:
   - name: action:運用
 status: current
 visibility: internal
-rev: 4
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-11-12'
 items:
   - id: overview
     name: 概要
@@ -98,6 +98,6 @@ items:
       例外は手書きで維持する `shared/vendor/`（外部依存の vendoring）と openapi 生成型 `shared/api/schema.d.ts`（コミットする）。
       次の生成 `.js` は、`.ts` と同じ階層へコミットする。
 
-      - ビルドしない配信先（GitHub Pages・配布先）と共用する生成 `.js`
+      - ビルドしない配信先（GitHub Pages・プラグインの同梱物・配布先）と共用する生成 `.js`
       - 配信・テスト・Storybook・モックの配信が、ビルドせずにパスを直接参照する生成 `.js`
       コミットする生成 `.js` はプロジェクトの設計書に列挙し、列挙したものに限る。

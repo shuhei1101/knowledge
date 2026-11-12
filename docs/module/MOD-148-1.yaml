@@ -2,20 +2,6 @@ id: "MOD-148-1"
 visibility: internal
 title: "slop-check / hooks"
 lead: プラグイン slop-check の PostToolUse のフック。Python の標準ライブラリだけで書いた単一ファイルのスクリプトを `python3` で起動し、プラグインのフォルダの対応表の JSON のコピーを読む。
-directory: |-
-  ```
-  plugins/slop-check/
-  ├── .claude-plugin/
-  │   └── plugin.json                       # プラグイン slop-check の定義
-  └── hooks/
-      ├── hooks.json                        # PostToolUse の matcher とコマンド
-      └── post-tool-use/
-          ├── slop_check.py                 # 書き込んだ中身の照合（フックの入口と照合）
-          └── word-list-ai-slop.json        # 対応表のコピー（scripts/build_word_list.py が書き出す）
-  tests/
-  ├── unit/slop-check/test_slop_check.py    # slop_check.py の単体テスト
-  └── integration/slop-check/test_slop_check.py  # 書き込んだ中身の照合の結合テスト
-  ```
 diagrams:
   - name: 全体
     diagram: |-

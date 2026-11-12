@@ -1,8 +1,11 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 title: ER 図
-description: データストアの構造（DB スキーマ / JSON / YAML）を業務ドメインの分類ごとにまとめる。
+description: |-
+  データストアの構造（DB スキーマ / JSON / YAML）を業務ドメインの分類ごとにまとめる。
+  データの設計書のオブジェクトを、テーブル・カラム・制約・インデックスとして保存する DB 設計のレイヤー。
 x-rules:
   - 1 ファイル = 分類 1 つにする。
+  - '`source` を持つテーブル・カラムの項目の意味・一意の範囲・状態の遷移はデータの設計書に従い、`description`・`notes` には DB の都合（正規化・型の選び方・制約の理由）だけを記載する。'
   - 全テーブルの一覧と全体図は、各分類のテーブルから横断の一覧として生成する。
 x-kind: er
 x-folder: docs/er
@@ -78,6 +81,7 @@ properties:
       required:
       - name
       - title
+      - source
       - datastore
       - summary
       - columns
@@ -94,6 +98,15 @@ properties:
           title: 論理名
           x-used-by:
             - 生成で、節の見出しにする。
+        source:
+          $ref: common.schema.yaml#/$defs/ref
+          title: 保存するデータ
+          description: このテーブルが保存する、データの設計書のキー（`{ID}#fields[{キー}]`）。オブジェクト全体を保存するときは `{ID}#`。
+          x-used-by:
+            - 検査で、指すデータの設計書とキーが実在するかを確認する。
+            - レビューで、データの設計書のどのキーを保存するかを辿り、保存しないキーが無いかを確認する。
+          examples:
+            - DATA-1#fields[segments[]]
         datastore:
           type: string
           title: データストア
@@ -134,6 +147,14 @@ properties:
           description: 物理削除か論理削除か。
           x-used-by:
             - 実装で、削除を物理削除か論理削除にする。
+        transaction:
+          type: string
+          title: 同じトランザクションのテーブル
+          description: このテーブルと同じトランザクションで書き込むテーブルの物理名。
+          x-used-by:
+            - 実装で、トランザクションの境界にする。
+          examples:
+            - videos
         access:
           type: string
           title: アクセス方式
@@ -174,6 +195,15 @@ properties:
                 title: 論理名
                 x-used-by:
                   - 生成で、表の論理名にする。
+              source:
+                $ref: common.schema.yaml#/$defs/ref
+                title: 保存するキー
+                description: このカラムが保存する、データの設計書のキー（`{ID}#fields[{キー}]`）。JSON の列は、入れるキーの親。
+                x-used-by:
+                  - 検査で、指すデータの設計書とキーが実在するかを確認する。
+                  - レビューで、データの設計書のキーと型・必須・一意の範囲が合うかを確認する。
+                examples:
+                  - DATA-1#fields[segments[].artifacts[]]
               type:
                 type: string
                 title: 型
@@ -305,6 +335,14 @@ properties:
                 title: 種別
                 x-used-by:
                   - 実装で、インデックスの種別にする。
+              where:
+                type: string
+                title: 条件
+                description: 一部の行だけのインデックスの条件。
+                x-used-by:
+                  - 実装で、部分インデックスの条件にする。
+                examples:
+                  - status IN ('queued', 'running', 'succeeded')
               notes:
                 type: string
                 title: 補足
@@ -391,6 +429,7 @@ examples:
   tables:
   - name: tasks
     title: タスク
+    source: DATA-1#
     datastore: PostgreSQL
     summary: ユーザーが管理するタスク
     primary_key: id
@@ -416,6 +455,7 @@ examples:
       description: 所有ユーザー
     - name: title
       title: タイトル
+      source: DATA-1#fields[title]
       type: varchar(200)
       not_null: true
       check: 1〜200 文字
@@ -432,13 +472,16 @@ examples:
     - name: tasks_user_id_ix
       columns: user_id
       kind: BTREE
+      where: status <> 'archived'
       notes: ユーザー別の一覧用
   - name: comments
     title: コメント
+    source: DATA-1#fields[comments[]]
     datastore: PostgreSQL
     summary: タスクへのコメント
     primary_key: id
     scale: ～1000 万
+    transaction: tasks
     columns:
     - name: id
       title: ID
