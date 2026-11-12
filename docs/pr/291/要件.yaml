@@ -1,13 +1,13 @@
 use_cases:
   - kind: single
     scenario: docs/scenario/SC-72-5.yaml
-    impact: changed
-    detail: 設計書を書き込むと、原本の `schemas/design/` のスキーマで検査される。用語集もスキーマで検査してから書き込む
+    impact: run_only
+    detail: 設計書を書き込むときのスキーマが原本の `schemas/design/` に変わる。シナリオの記述は変わらない
     depends_on: []
   - kind: single
     scenario: docs/scenario/SC-72-6.yaml
-    impact: changed
-    detail: 設計書を原本の `schemas/design/` のスキーマで検査し、AI Monitor の配布物のコピーを検査の対象から外す
+    impact: run_only
+    detail: 設計書を原本の `schemas/design/` のスキーマで検査し、AI Monitor の配布物のコピーが無くなる。シナリオの記述は変わらない
     depends_on: []
   - kind: single
     scenario: docs/scenario/SC-72-4.yaml
