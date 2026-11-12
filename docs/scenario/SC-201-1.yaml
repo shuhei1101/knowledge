@@ -9,6 +9,9 @@ scenarios:
       - name: スキーマ
         description: 設計書の種類の全てのテンプレートがスキーマから生成した状態の knowledge のクローンで、`schemas/design/er.schema.yaml` のキーの `x-rules` に 1 件追加し、他のスキーマは変えていないもの
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         actor D as 開発者
         participant G as 生成のスクリプト
@@ -24,6 +27,9 @@ scenarios:
           G->>T: items だけを置き換えて書き出す
         end
         G-->>D: 書き換えたテンプレートのパスを出して終了コード 0
+      ```
+
+      <!-- /map -->
     expected:
       - '`docs/template/template-er.yaml` の `items` に、追加した `x-rules` の決まりが出る'
       - '`docs/template/template-er.yaml` の `items` 以外のキー（`id`・`name`・`description`・`tags`・`status`・`visibility`・`rev`）は実行の前と同じ値'
@@ -38,6 +44,9 @@ scenarios:
       - name: スキーマ
         description: '`schemas/design/er.schema.yaml` のキーの `$ref` が、無い `$defs` を指す knowledge のクローン'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         actor D as 開発者
         participant G as 生成のスクリプト
@@ -45,6 +54,9 @@ scenarios:
         D->>G: 生成のコマンドを実行する
         G->>S: 全てのスキーマを読み込み、$ref を解決する
         G-->>D: 解決できない $ref のスキーマのパスと項目を出して終了コード 2
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 2
       - 標準エラーに、スキーマのパスと解決できない `$ref` の項目が出る
@@ -57,6 +69,9 @@ scenarios:
       - name: テンプレート
         description: '`docs/template/template-er.yaml` を削除した knowledge のクローン'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         actor D as 開発者
         participant G as 生成のスクリプト
@@ -64,6 +79,9 @@ scenarios:
         D->>G: 生成のコマンドを実行する
         G->>T: 全ての種類のスキーマに対応するテンプレートの文書があるかを確認する
         G-->>D: 無いテンプレートの ID とスキーマのパスを出して終了コード 2
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 2
       - 標準エラーに、無いテンプレートの ID（`template-er`）とスキーマのパス（`schemas/design/er.schema.yaml`）が出る

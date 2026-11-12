@@ -52,7 +52,7 @@ items:
       | scenarios[].setup[].name | セットアップ | string | 必須 | - | - | 前提を作る Factory 関数名か状態の名前。 | E2E テストで、呼ぶ Factory 関数か作る状態にする。 | - |
       | scenarios[].setup[].description | 説明 | string | 必須 | - | - | その前提の意味・役割・依存関係。Mock の行は差し替える依存と応答。 | E2E テストで、前提の役割と Mock の応答にする。 | - |
       | scenarios[].setup[].notes | 補足 | string | - | - | - | 引数に指定する重要な値・分岐を決定的に誘発する値。 | E2E テストで、分岐を決定的に起こす値にする。 | - |
-      | scenarios[].flow | フロー | string | 必須 | - | - | 単一ユースケースは `sequenceDiagram`、複合ユースケースは単一ユースケースをノードとして連鎖させる `flowchart TD`。 | 設計で、インターフェース定義の操作の流れと関わる相手を決める。<br>生成で、シーケンス図・フロー図にする。 | - |
+      | scenarios[].flow | フロー | string | 必須 | - | - | mdmark の map の図。単一ユースケースは `sequenceDiagram`、複合ユースケースは単一ユースケースをノードとして連鎖させる `flowchart TD`。 | 設計で、インターフェース定義の操作の流れと関わる相手を決める。<br>生成で、シーケンス図・フロー図にする。 | - |
       | scenarios[].expected | 期待値 | array | 必須 | - | minItems: `1` | フローの終了時点で外部から観測できる状態・戻り値。1 要素 = 1 つの確認項目。 | E2E テストで、確認する項目にする。 | - |
       | scenarios[].test | テスト | string | - | - | pattern: `^test_[A-Za-z0-9_]+$` | 対応するテスト関数（`正常シナリオ` → `test_normal` / `正常シナリオ（{条件}）` → `test_normal_when_{条件}` / `異常シナリオ（{条件}）` → `test_error_when_{条件}`。`{条件}` は英訳）。 | 検査で、テストのファイルにその名前の関数があるかを確認する。<br>レビューで、項目ごとにテストがあるかを確認する。 | - |
       | scenarios[].uses | 使用する単一ユースケース | array | - | - | - | 複合ユースケースのノードが指す単一ユースケースのシナリオ。 | テストで、複合ユースケースの E2E がつなぐ単一ユースケースのシナリオを参照する。<br>検査で、指すシナリオが実在するかを確認する。 | - |
@@ -78,7 +78,7 @@ items:
       | reading | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
       | scenarios[].setup | `Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず配置する。 | - | - |
       | scenarios[].setup[].name | `Mock` の行を必ず配置する。 | - | - |
-      | scenarios[].flow | 1 図 = 結末 1 本の一本道にする。<br>ユーザー視点で観測できる境界まで記載する。<br>複合ユースケースのノード名は `{UC名}:{シナリオ名}` にし、`click` で単一ユースケースのセクションへリンクする。 | - | - |
+      | scenarios[].flow | `<!-- map -->` から `<!-- /map -->` の範囲に、```mermaid のコードブロックを 1 つ記載する。<br>1 図 = 結末 1 本の一本道にする。<br>ユーザー視点で観測できる境界まで記載する。<br>複合ユースケースのノード名は `{UC名}:{シナリオ名}` にし、`click` で単一ユースケースのセクションへリンクする。 | - | - |
       | scenarios[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
 
@@ -106,6 +106,8 @@ items:
           description: ユーザー A に紐づくプロフィール
           notes: '`visible: true`'
         flow: |-
+          <!-- map -->
+
           ```mermaid
           sequenceDiagram
             actor U as ユーザー
@@ -122,6 +124,8 @@ items:
             BE-->>FE: 200 OK
             FE-->>U: 詳細画面へ遷移
           ```
+
+          <!-- /map -->
         expected:
         - プロフィール表示画面に編集後の氏名・自己紹介が表示されている
         - DB の該当プロフィールが編集後の値になっている
@@ -133,6 +137,8 @@ items:
         - name: createUser
           description: ログイン中のユーザー A
         flow: |-
+          <!-- map -->
+
           ```mermaid
           sequenceDiagram
             actor U as ユーザー
@@ -142,6 +148,8 @@ items:
             FE->>FE: 入力の検証に失敗
             FE-->>U: 選択欄の下にエラーを表示
           ```
+
+          <!-- /map -->
         expected:
         - エラーが表示され、画像が選ばれていない
         test: test_error_when_image_too_large

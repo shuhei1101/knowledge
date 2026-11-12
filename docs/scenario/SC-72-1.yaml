@@ -11,9 +11,15 @@ scenarios:
       - name: 端末の設定
         description: '`~/.config/dev-docs/settings.yaml` の `sources[]` に knowledge が無い'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       flowchart TD
         A[利用者が dev-docs に knowledge を登録する] --> B[利用者が画面で knowledge の文書を読む]
         A --> C[エージェントが knowledge の文書を検索・取得する]
+      ```
+
+      <!-- /map -->
     expected:
       - '`sources[]` に knowledge の行があり、`scope.read` が全ての作業場所、`scope.write` が knowledge のクローンと worktree'
       - 画面で develop の knowledge の全ての種類の文書が開ける
@@ -31,8 +37,14 @@ scenarios:
         description: '`dev-docs.yaml` の documents の行が存在しないスキーマを指すクローン'
         notes: '`schema: schemas/missing.schema.yaml`'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       flowchart TD
         A[利用者が dev-docs に knowledge を登録する] -->|点検で誤り| X[登録しない]
+      ```
+
+      <!-- /map -->
     expected:
       - '`sources[]` に knowledge の行が追加されていない'
       - 誤りのあるファイル（`dev-docs.yaml`）と内容が利用者へ返る

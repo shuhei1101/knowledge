@@ -114,6 +114,16 @@ $defs:
       - 生成で、図にする。
     x-rules:
       - '```mermaid のコードブロックで記載する。'
+  map:
+    $ref: "#/$defs/markdown"
+    title: 図
+    description: mdmark の map の図。`<!-- map -->` から `<!-- /map -->` の範囲に記載した Mermaid の図を、座標を記載せずに自動で配置する。
+    x-used-by:
+      - 生成で、自動で配置した図にする。
+    x-rules:
+      - '`<!-- map -->` から `<!-- /map -->` の範囲に、```mermaid のコードブロックを 1 つ記載する。'
+      - Mermaid の 1 行目は `flowchart` か `sequenceDiagram` にする。
+      - '説明・案内・配置の上書きが要るときだけ、範囲の中に補足 `<!-- map-data: {JSON のオブジェクト} -->` を 1 つ記載する。'
   flowchart:
     type: object
     title: フローチャート
