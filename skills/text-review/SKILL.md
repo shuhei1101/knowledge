@@ -34,7 +34,7 @@ argument-hint: "<ファイルのパス | フォルダのパス | コミット | 
 | ドキュメントの部品 | `doc-parts` |
 | ユーザ配下ルール記載時の規約 | `claude-rule-writing` |
 
-- dev-docs の `search_docs`（`mcp__plugin_dev-docs_dev-docs__search_docs`）が使えるなら、`source` を `knowledge`、`filter` を `id` の `eq` で上の ID、`view` を `full` にして読む
+- project-index の `search_docs`（`mcp__plugin_project-index_project-index__search_docs`）が使えるなら、`source` を `knowledge`、`filter` を `id` の `eq` で上の ID、`view` を `full` にして読む
 - ツールが無い（ToolSearch で探しても無い）か、規約が見つからないなら、`${CLAUDE_PLUGIN_ROOT}/docs/rule/{ID}.yaml` を読む
 
 ### すべてを調べて修正する箇所の一覧を作る
