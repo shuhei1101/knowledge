@@ -1,0 +1,68 @@
+docs:
+  - page: docs/rule/dev-design-doc-purpose.yaml
+    new: true
+    change: '#215: 設計書を作成する目的（品質をそろえる・漏れを見つける・考えるべき点を考えさせる・手戻りを減らす・ノイズを除く）と守ること（テンプレートは YAML のスキーマを正本にする・設計書と実装で二重管理にしない）の規約を新設し、エイリアスに「設計」「設計書」を置く'
+    status: todo
+  - page: schemas/design/common.schema.yaml
+    new: false
+    change: '#215: schemas/design の各スキーマ（common・layout ほか全て）のキーの description・x-rules・x-used-by が「そのキーで考えさせること」の分かる記載かを点検し、分からないキーの記載を直す'
+    status: todo
+  - page: docs/flowchart/flowchart-folder-content-type.yaml
+    new: true
+    change: '#225: 判定フローチャート『フォルダの中身の種類の決め方』を A-79 の判定の順（ファイルのエントリか → 直下にファイルを持たないフォルダか → 直下のファイルは同じ役割か → 1 つの機能だけが参照するか → 機能ごとに分けたフォルダか）と結果で新設する'
+    status: todo
+  - page: schemas/design/layout.schema.yaml
+    new: false
+    change: '#225: entries[].content_types の x-rules から判定フローチャート『フォルダの中身の種類の決め方』を ID で指す'
+    status: todo
+  - page: docs/template/template-layout.yaml
+    new: false
+    change: '#225・#215: スキーマの変更を scripts/build_templates.py で生成し直す（#215 の点検で直したスキーマに当たる他の docs/template/template-*.yaml も生成し直す）'
+    status: todo
+  - page: docs/rule/dev-folder-layout.yaml
+    new: false
+    change: '#225: related に判定フローチャート『フォルダの中身の種類の決め方』を足し、レビューの観点から中身の種類の付け方を指す'
+    status: todo
+  - page: docs/rule/dev-logging.yaml
+    new: true
+    change: '#232: 言語に依らないログの規約を新設する（影響で判定するレベルの共通の定義と OpenTelemetry の SeverityNumber への対応・本番でも INFO 以上を観測基盤へ送る・観点（本番障害・外部連携・お金・セキュリティ・監査・データ整合・性能・監視の経路）× レベルの表・書き方（出してはいけないデータ・固定のイベント名・例外は 1 回だけ記録・OpenTelemetry の命名））'
+    status: todo
+  - page: docs/flowchart/flowchart-log-level.yaml
+    new: true
+    change: '#232: ログを出すか・どのレベルかの判定フローチャートを新設する'
+    status: todo
+  - page: docs/rule/python-shared-logger.yaml
+    new: false
+    change: '#232: レベル運用の表を共通の規約のレベルの定義を指す形に直し、Python の logging のレベル名との対応だけを残す'
+    status: todo
+  - page: docs/rule/react-shared-logger-implementation.yaml
+    new: false
+    change: '#232: ログレベルの項目を共通の規約のレベルの定義を指す形に直し、debug・info・warn・error との対応だけを残す'
+    status: todo
+  - page: docs/rule/python-fastapi-auth-error.yaml
+    new: false
+    change: '#232: 『認証失敗のログレベル』を共通の規約の観点の表（セキュリティ）と突き合わせ、食い違えば共通の規約を指す形に直す'
+    status: todo
+  - page: docs/flowchart/flowchart-fallback.yaml
+    new: false
+    change: '#232: ※4（リトライしたことをログに残す）・※5（WARNING 以上でログに残す）を共通の規約の観点の表（外部連携）と突き合わせ、食い違えば共通の規約を指す形に直す'
+    status: todo
+  - page: docs/rule/python-llm-exception-retry.yaml
+    new: false
+    change: '#232: 『リトライ時のログ』のレベル（warning・error）を共通の規約と突き合わせ、食い違えば共通の規約を指す形に直す'
+    status: todo
+  - page: rules.yaml
+    new: false
+    change: 新設する規約・判定フローチャートを、当たるパス（設計書・スキーマ、フォルダ構成の設計書、ログを出すコード）の行として登録する（規約『索引への登録』に沿って登録するかを判断する）
+    status: todo
+scope_out:
+  - item: docs/rule/react-shared-logger-tag.yaml の書き換え
+    reason: タグの命名の決まりだけを持ち、レベルの表を持たないため、共通の規約を指す形に直す箇所が無い
+    plan: none
+  - item: 新設するログの規約に合わせた各プロジェクトのロガーの実装・ログの出力箇所の見直し
+    reason: knowledge は規約を持つリポジトリで、各プロジェクトのコードは各プロジェクトの作業で直す
+    plan: none
+  - item: 設計書を作成する目的の記載先を新しい規約ではなく schemas/design/common.schema.yaml にする案
+    reason: 「設計」「設計書」のエイリアスで dev-docs の検索に当てられるのは文書（規約）で、スキーマは配信の範囲の外のため、規約の新設を推奨とした。確定はレビューで行う
+    plan: none
+use_cases: []
