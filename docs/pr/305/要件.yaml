@@ -1,0 +1,13 @@
+docs:
+  - page: docs/checksheet/checksheet-review-interface-module.yaml
+    new: false
+    change: 機能を呼ぶインターフェース・手順の指定方法の種類が判定フローチャート『機能を呼ぶインターフェースの選び方』の結果と合っていることの行と、モジュール構成のブラウザのスクリプトのファイルを .ts で記載し .js を手書きしていないことの行を追加し、related に flowchart-interface-choice と html-core-buildless を追加する
+    status: todo
+  - page: docs/checksheet/checksheet-review-code-test.yaml
+    new: false
+    change: ブラウザのスクリプトを .js で記載していないことの行を、.ts で記載し .js を手書きしていないことを確かめる行に修正し、例外を script-extension-02・script-extension-04 への参照にする
+    status: todo
+scope_out:
+  - item: ai-monitor の docs/checksheet/reviewer-レビュー観点-実装・テストコード.md の .js の行の修正
+    reason: ai-monitor の移行済みのチェックシートは削除して knowledge を参照する側で、削除と参照の変更は shuhei1101/ai-monitor#3195 が受け持つ
+    plan: none
