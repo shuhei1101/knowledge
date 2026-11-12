@@ -352,9 +352,9 @@ def test_normal_when_templates_out_of_date(
         "    body: |-\n"
         "      <!-- table: data -->\n"
         "\n"
-        "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
-        "      | --- | --- | --- | --- | --- | --- | --- | --- |\n"
-        "      | id | ID | string | - | - | - | 変わらない ID。 | - |\n"
+        "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
+        "      | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+        "      | id | ID | string | - | - | - | 変わらない ID。 | - | - |\n"
         "\n"
         "      <!-- /table -->\n"
     )

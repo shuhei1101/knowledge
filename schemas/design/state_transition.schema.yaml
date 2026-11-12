@@ -26,11 +26,17 @@ properties:
     type: string
     title: タイトル
     description: '`状態遷移: {エンティティ名}`。'
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
     pattern: '^状態遷移: .+$'
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
     description: 対象を 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
     x-rules:
       - 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。
       - 対象そのものが変わったときだけ書き換える。
@@ -40,18 +46,28 @@ properties:
   state_transitions:
     $ref: common.schema.yaml#/$defs/state_transitions
     title: 状態遷移
+    x-used-by:
+      - 実装で、状態の値と許可する遷移の判定にする。
+      - テストで、許可した遷移と許可しない遷移のケースにする。
+      - 生成で、状態遷移図と状態・遷移の表にする。
     x-heading: 状態遷移図
     x-shape: diagram
     x-diagram: state
   refs:
     type: array
     title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
     items:
       $ref: common.schema.yaml#/$defs/ref
   decisions:
     type: array
     title: 検討事項
     description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
     items:
       $ref: common.schema.yaml#/$defs/decision
   notes:

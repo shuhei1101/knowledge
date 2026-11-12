@@ -28,11 +28,17 @@ properties:
     type: string
     title: タイトル
     description: '`データフロー: {データ名}`。'
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
     pattern: '^データフロー: .+$'
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
     description: 対象を 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
     x-rules:
       - 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。
       - 対象そのものが変わったときだけ書き換える。
@@ -43,14 +49,21 @@ properties:
     type: string
     title: 発生源
     description: 外部エンティティかシステムの中の処理。
+    x-used-by:
+      - レビューで、データの発生源が図の Level 0 の外部の相手と一致するかを確認する。
   sink:
     type: string
     title: 出口
     description: 外部エンティティかデータストア。
+    x-used-by:
+      - レビューで、データの出口が図の Level 0 の外部の相手・データストアと一致するかを確認する。
   levels:
     type: array
     title: 図
     description: Level 0（外部の境界）と Level 1（主要な処理とデータストア）は必須。Level 2 は複雑な処理だけ。
+    x-used-by:
+      - 生成で、レベルごとのデータフロー図にする。
+      - 実装で、処理とデータストアの間で受け渡すデータを参照する。
     x-shape: sections
     x-key: name
     minItems: 1
@@ -65,13 +78,19 @@ properties:
           type: string
           title: レベル
           description: '`Level 0` / `Level 1` / `Level 2: {親の処理}の分解`。'
+          x-used-by:
+            - 生成で、図の見出しにする。
         description:
           $ref: common.schema.yaml#/$defs/markdown
           title: 説明
+          x-used-by:
+            - 生成で、図の説明にする。
         diagram:
           $ref: common.schema.yaml#/$defs/flowchart
           title: 図
           description: ノードの `kind` で外部の相手・処理・データストアを分けた図。
+          x-used-by:
+            - 生成で、データフロー図にする。
           x-rules:
             - 辺のラベルに流れるデータの名前を記載する。
             - 処理は動詞句、データは名詞で記載する。
@@ -83,6 +102,9 @@ properties:
     type: array
     title: データ辞書
     description: 処理の境界を越える主要な流れだけ。
+    x-used-by:
+      - 実装で、処理の境界を越えるデータの構造にする。
+      - レビューで、信頼境界を越える流れの脅威と対策を確認する。
     x-heading: データ辞書
     x-shape: table
     x-key: name
@@ -99,22 +121,34 @@ properties:
         name:
           type: string
           title: データフロー名
+          x-used-by:
+            - 設計で、図の矢印のラベルと流れを対応させる。
         from:
           type: string
           title: 発生元
+          x-used-by:
+            - レビューで、図の矢印の元と一致するかを確認する。
         to:
           type: string
           title: 到達先
+          x-used-by:
+            - レビューで、図の矢印の先と一致するかを確認する。
         structure:
           type: string
           title: 構造
           description: ペイロードの型（`{name, email}`）。
+          x-used-by:
+            - 実装で、受け渡すデータの型にする。
         crosses_boundary:
           type: boolean
           title: 信頼境界を越える
+          x-used-by:
+            - レビューで、脅威の検討が要る流れかを判断する。
         sensitivity:
           type: string
           title: 機密の区分
+          x-used-by:
+            - 実装で、暗号化・マスク・ログへの出力の可否を決める。
           enum:
           - 個人情報
           - 機密
@@ -122,6 +156,9 @@ properties:
           type: array
           title: 脅威
           description: 信頼境界を越える流れの STRIDE の脅威。
+          x-used-by:
+            - 実装で、脅威ごとの対策を入れる。
+            - レビューで、信頼境界を越える流れに脅威の検討があるかを確認する。
           items:
             type: string
             enum:
@@ -134,18 +171,28 @@ properties:
         volume:
           type: string
           title: 頻度と量
+          x-used-by:
+            - 実装で、処理の方式（一括・逐次）と上限の値を決める。
         notes:
           type: string
           title: 補足
+          x-used-by:
+            - 実装で、流れの前提・制約を参照する。
   refs:
     type: array
     title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
     items:
       $ref: common.schema.yaml#/$defs/ref
   decisions:
     type: array
     title: 検討事項
     description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
     items:
       $ref: common.schema.yaml#/$defs/decision
   notes:

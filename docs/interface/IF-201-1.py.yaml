@@ -12,7 +12,7 @@ flows:
         description: 差し替えない
       - name: リポジトリ
         description: '`schemas/design/` に `er.schema.yaml`・`config.schema.yaml`・`common.schema.yaml`・`index.schema.yaml` を、`docs/template/` に `template-er.yaml`・`template-config.yaml` を持つ一時フォルダ。`template-config.yaml` は今のスキーマから生成した状態で、`template-er.yaml` は `items` が古い'
-        notes: '`er.schema.yaml` はトップの `x-rules`、キーの `$ref`・`enum`・`x-rules`・`x-bad-examples`・入れ子の配列、トップの `examples` を 1 件持つ'
+        notes: '`er.schema.yaml` はトップの `x-rules`、キーの `$ref`・`enum`・`x-rules`・`x-bad-examples`・`x-used-by`・入れ子の配列、トップの `examples` を 1 件持つ'
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
@@ -180,11 +180,11 @@ constraints:
     notes: '`item-list-01`・`example-sample-01` は今のテンプレートの項目の ID と同じにして、生成の前後の差分を本文だけにする'
   - item: キーの表
     constraint: |-
-      列は `名前`・`title`・`型`・`必須`・`選択肢`・`制約`・`description`・`examples`。
+      列は `名前`・`title`・`型`・`必須`・`選択肢`・`制約`・`description`・`使用先`・`examples`。
       行は `properties` を深さ優先でスキーマの並びのとおりにたどり、オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` の名前にする。
-      `$ref` は解決した先のキーを使用し、`title`・`description`・`examples` はキーの側の値があればそれを優先する。
+      `$ref` は解決した先のキーを使用し、`title`・`description`・`x-used-by`・`examples` はキーの側の値があればそれを優先する。
       たどっている途中の親が解決した `$ref` と同じ先を、子が再び `$ref` で指すとき（再帰する `$ref`）は、そのキーの行だけを出して、その先の子はたどらない。
-      `型` は `type`（解決した先を含む）。`type` が配列なら要素を ` / ` でつなぎ、`type` が無く `anyOf`・`oneOf` だけを持つなら各要素の `type` を ` / ` でつなぐ。`必須` は親の `required` に名前があれば `必須`、`選択肢` は `enum` の要素を ` / ` でつなぐ。
+      `型` は `type`（解決した先を含む）。`type` が配列なら要素を ` / ` でつなぎ、`type` が無く `anyOf`・`oneOf` だけを持つなら各要素の `type` を ` / ` でつなぐ。`必須` は親の `required` に名前があれば `必須`、`選択肢` は `enum` の要素を ` / ` でつなぐ。`使用先` は `x-used-by` の要素。
       `制約` は `const`・`pattern`・`format`・`minLength`・`maxLength`・`minItems`・`maxItems`・`minimum`・`maximum` を `{キー}: {値}` で `, ` でつなぐ。
       `if`・`then`・`else`・`allOf`・`anyOf` の条件つきの必須は `必須` にせず、条件は `description` が持つ。
       `x-hidden: true` のキーも行に出す（設計書を記載するときに要るため）。
@@ -200,7 +200,7 @@ constraints:
       キーの表とキーごとの決まりの表に共通する。
       値の無いセルは `-` にする。
       文字列はそのまま、文字列でない値（数・真偽・オブジェクト・配列）は 1 行の YAML（フロースタイル）のインラインコードにする。
-      複数の要素を持つ値（`examples`・`enum`・型）は、要素ごとに上の書き方にして ` / ` でつなぐ。`x-rules` だけは `<br>` でつなぐ。
+      複数の要素を持つ値（`examples`・`enum`・型）は、要素ごとに上の書き方にして ` / ` でつなぐ。`x-rules`・`x-used-by` だけは `<br>` でつなぐ。
       `examples`・`enum` の要素と `制約` の値は、文字列もインラインコードにする（`<color>`・`\[`・`*` のような値を Markdown として読ませない）。値がバッククォートを含むときは 2 つのバッククォートで囲む。
       セルの中の改行は `<br>` にし、`|` は `\|` にする
   - item: テンプレートの種類のスキーマとの関係

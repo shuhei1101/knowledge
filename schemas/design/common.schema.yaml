@@ -15,12 +15,17 @@ $defs:
     type: string
     title: 概要
     description: 1 行の要約。
+    x-used-by:
+      - 生成で、設計書の一覧と表の 1 行の説明にする。
     minLength: 1
     pattern: "^[^\\n]+$"
   id:
     type: string
     title: ID
     description: 設計書の変わらない ID。最上位の `id` に持つ。
+    x-used-by:
+      - 検査で、ほかの設計書の参照（`{ID}#{項目のパス}`）の解決先にする。
+      - 生成で、ページの名前と、ほかの設計書からのリンク先にする。
     x-rules:
       - 設計書を改名・移動しても変えない。
       - '`{種別の接頭辞}-{連番}`、または設計書を作った PR の番号を挟んだ `{種別の接頭辞}-{PR の番号}-{PR の中の連番}` で振る。'
@@ -32,6 +37,10 @@ $defs:
     type: string
     title: 参照
     description: 設計書の項目を指す。`{ID}#{項目のパス}` で記載する。
+    x-used-by:
+      - 検査で、指す設計書と項目が実在するかを確認する。
+      - 生成で、指す設計書の項目へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
     x-rules:
       - ID は指す設計書の最上位の `id` にする。
       - 同じ設計書の中は `#{項目のパス}` だけでよい。
@@ -54,10 +63,15 @@ $defs:
     $ref: "#/$defs/markdown"
     title: 理由
     description: そうしている理由。参照する側の判断が変わるものだけを記載する。
+    x-used-by:
+      - レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。
   status:
     type: string
     title: 状態
     description: 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。
+    x-used-by:
+      - 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。
+      - 生成で、状態の表示にする。
     enum:
     - planned
     - implemented
@@ -67,47 +81,26 @@ $defs:
     type: string
     title: 公開
     description: Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。
+    x-used-by:
+      - 生成で、Pages に出すかを決める。
     enum:
     - user
     - developer
-  implementation:
-    type: string
-    title: 実装
-    description: 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。
-    pattern: "^[^#\\s]+(#\\S+)?$"
-    examples:
-      - "src/app/features/schemas/loader.py#load_catalog"
   test:
     type: string
     title: テスト
     description: 対応するテスト関数の名前。
+    x-used-by:
+      - 検査で、テストのファイルにその名前の関数があるかを確認する。
+      - レビューで、項目ごとにテストがあるかを確認する。
     pattern: "^test_[A-Za-z0-9_]+$"
-  introduced:
-    type: object
-    title: 導入
-    description: 入ったバージョンと PR。
-    additionalProperties: false
-    properties:
-      version:
-        type: string
-        title: バージョン
-        description: 入ったバージョンのタグ。
-        examples:
-          - v0.3.0
-      pr:
-        type: integer
-        title: PR
-        description: 入れた PR の番号。
-  aliases:
-    type: array
-    title: 別名
-    description: 検索でヒットさせたい言い換え。
-    items:
-      type: string
   notes:
     type: object
     title: 補足
     description: 項目に分けられない残り。セクションの名前 → 本文。
+    x-used-by:
+      - 実装で、項目に分けられない前提・制約を参照する。
+      - 生成で、セクションの名前を見出しにした節にする。
     x-rules:
       - 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。
     additionalProperties:
@@ -116,37 +109,17 @@ $defs:
     $ref: "#/$defs/markdown"
     title: 図
     description: 手で記載する Mermaid の図。図の構文は `mermaid.parse()` で検証する。
+    x-used-by:
+      - 検査で、図の構文を確認する。
+      - 生成で、図にする。
     x-rules:
       - '```mermaid のコードブロックで記載する。'
-  glossary:
-    type: array
-    title: 用語
-    description: 図の中で `※{番号}` を付けた用語の定義。番号は図の中の登場順。
-    x-key: mark
-    items:
-      type: object
-      additionalProperties: false
-      required:
-      - mark
-      - term
-      - definition
-      properties:
-        mark:
-          type: string
-          title: マーカー
-          description: "`※1` の形式。"
-          pattern: "^※[0-9]+$"
-        term:
-          type: string
-          title: 用語
-        definition:
-          $ref: "#/$defs/markdown"
-          title: 定義
-          description: 1 行の定義。
   flowchart:
     type: object
     title: フローチャート
     description: '`flowchart` の元のデータ。図はこのノード・辺・枠・リンクから生成する。'
+    x-used-by:
+      - 生成で、図にする。
     x-rules:
       - '使用する項目の `x-shape: diagram` と `x-diagram` で図の種類を決める。'
     additionalProperties: false
@@ -158,12 +131,16 @@ $defs:
         type: string
         title: 向き
         description: 図の向き（`TD` = 上から下 / `LR` = 左から右）。記載しなければ図の種類の既定（判定は `TD`、データフロー・アーキテクチャは `LR`）。
+        x-used-by:
+          - 生成で、図の向きにする。
         enum:
         - TD
         - LR
       nodes:
         type: array
         title: ノード
+        x-used-by:
+          - 生成で、図のノードにする。
         x-key: id
         items:
           $ref: "#/$defs/flowchart_node"
@@ -171,6 +148,8 @@ $defs:
         type: array
         title: 辺
         description: 図に描く順の辺。
+        x-used-by:
+          - 生成で、図の矢印にする。
         items:
           type: object
           additionalProperties: false
@@ -182,18 +161,28 @@ $defs:
               type: string
               title: 元
               description: 元のノードの `id`。
+              x-used-by:
+                - 生成で、矢印の元にする。
+                - 検査で、`nodes` にある `id` かを確認する。
             to:
               type: string
               title: 先
               description: 先のノードの `id`。
+              x-used-by:
+                - 生成で、矢印の先にする。
+                - 検査で、`nodes` にある `id` かを確認する。
             label:
               type: string
               title: ラベル
               description: 矢印のラベル。判定は `YES` / `NO`、データフローは流れるデータの名前。
+              x-used-by:
+                - 生成で、矢印のラベルにする。
             line:
               type: string
               title: 線
               description: 線の意味（`flow` = 処理の流れ / `read` = 読み取り / `write` = 書き込み / `reply` = 応答 / `loop` = 前の処理へ戻る）。記載しなければ `flow`。
+              x-used-by:
+                - 生成で、線の種類にする。
               enum:
               - flow
               - read
@@ -204,10 +193,14 @@ $defs:
               type: string
               title: 詳細
               description: 線のツールチップに出す詳細。ラベルを短く保つために記載する。
+              x-used-by:
+                - 生成で、線のツールチップにする。
       frame:
         type: object
         title: 枠
         description: 図の中で 1 つのシステムを囲む枠。
+        x-used-by:
+          - 生成で、システムを囲む枠にする。
         additionalProperties: false
         required:
         - label
@@ -216,15 +209,21 @@ $defs:
           label:
             type: string
             title: 表示
+            x-used-by:
+              - 生成で、枠の見出しにする。
           nodes:
             type: array
             title: 中のノード
             description: 枠の中に配置するノードの `id`。
+            x-used-by:
+              - 生成で、枠の中に置くノードを決める。
             items:
               type: string
       clicks:
         type: array
         title: リンク
+        x-used-by:
+          - 生成で、ノードを押したときに開くリンクにする。
         x-key: id
         items:
           type: object
@@ -237,10 +236,14 @@ $defs:
               type: string
               title: ノード
               description: リンクを付けるノードの `id`。
+              x-used-by:
+                - 生成で、リンクを付けるノードを決める。
             href:
               type: string
               title: リンク先
               description: 押したときに開く先（相対パス + アンカー）。
+              x-used-by:
+                - 生成で、リンク先にする。
   flowchart_node:
     type: object
     title: ノード
@@ -253,17 +256,23 @@ $defs:
         type: string
         title: ID
         description: 図の中で一意なノードの ID。空白を含めない。
+        x-used-by:
+          - 生成で、辺・枠・リンクが指すノードを決める。
         pattern: "^\\S+$"
       label:
         type: string
         title: 表示
         description: ノードに出す文言。半角の括弧は描画を崩すので全角で記載する。
+        x-used-by:
+          - 生成で、ノードの文言にする。
       kind:
         type: string
         title: 要素の種類
         description: |-
           ノードが何を表すか（データフロー・アーキテクチャは `actor` = 人・外部の相手 / `process` = 処理 / `store` = データストア / `system` = システム・サブシステム / `external` = 外部システム、判定は `start` = 開始 / `question` = 質問 / `action` = アクション / `result` = 結果）。
           記載しなければ `process`。
+        x-used-by:
+          - 生成で、ノードの形と色にする。
         enum:
         - actor
         - process
@@ -278,10 +287,16 @@ $defs:
         type: string
         title: 説明
         description: ノードのツールチップに出す説明の文。表示を短く保つために記載する。
+        x-used-by:
+          - 生成で、ノードのツールチップにする。
   state_transitions:
     type: object
     title: 状態遷移
     description: 状態の一覧と遷移の表。状態遷移図はここから生成する。
+    x-used-by:
+      - 生成で、状態遷移図と状態・遷移の表にする。
+      - 実装で、状態の値と許可する遷移の判定にする。
+      - テストで、許可した遷移と許可しない遷移のケースにする。
     additionalProperties: false
     required:
     - states
@@ -291,6 +306,8 @@ $defs:
       states:
         type: array
         title: 状態
+        x-used-by:
+          - 実装で、状態の値の一覧にする。
         x-key: name
         x-shape: table
         minItems: 1
@@ -305,49 +322,76 @@ $defs:
               type: string
               title: 状態名
               description: 業務用語での状態の名前。遷移の元・先はこの名前で指す。
+              x-used-by:
+                - 生成で、図の状態の名前にする。
+                - 設計で、遷移の元・先から状態を指す名前にする。
             identifier:
               type: string
               title: 識別子
               description: 実装上の値・ラベル・フラグ。
+              x-used-by:
+                - 実装で、状態を表す値・ラベル・フラグにする。
               examples:
                 - status = draft
             sub_identifier:
               type: string
               title: 備考識別子
               description: 複数の識別子で状態を表すときの補助の識別子（assignee・補助ラベル 等）。
+              x-used-by:
+                - 実装で、識別子と組み合わせて状態を判定する値にする。
             entry_condition:
               type: string
               title: 入る条件
               description: この状態に入る条件。
+              x-used-by:
+                - 実装で、状態に入る前に確認する条件にする。
+                - テストで、条件を満たさないときに状態に入らないケースにする。
             entry_value:
               type: string
               title: 入る値
               description: この状態に入ったときに入る値。
+              x-used-by:
+                - 実装で、状態に入ったときに書き込む値にする。
               examples:
                 - '`started_at` が入る'
             on_enter:
               type: string
               title: 入る時の処理
+              x-used-by:
+                - 実装で、状態に入ったときに実行する処理にする。
             on_exit:
               type: string
               title: 出る時の処理
+              x-used-by:
+                - 実装で、状態を出るときに実行する処理にする。
             notes:
               $ref: "#/$defs/markdown"
               title: 補足
+              x-used-by:
+                - 実装で、状態の前提・制約を参照する。
       initial:
         type: string
         title: 初期状態
         description: 作成時に入る状態の名前。
+        x-used-by:
+          - 実装で、作成時に入れる状態にする。
+          - 生成で、図の開始の矢印にする。
       final:
         type: array
         title: 終了状態
         description: 消える前の最後の状態の名前。
+        x-used-by:
+          - 実装で、遷移を受け付けない状態にする。
+          - 生成で、図の終了の矢印にする。
         items:
           type: string
       transitions:
         type: array
         title: 遷移
         description: 許可された遷移。図はこの並びで描く。
+        x-used-by:
+          - 実装で、許可する遷移の一覧にする。
+          - テストで、遷移ごとのケースにする。
         x-shape: table
         minItems: 1
         items:
@@ -361,33 +405,52 @@ $defs:
               type: string
               title: 元
               description: 元の状態の名前。どの状態からも入る遷移は `全状態`。
+              x-used-by:
+                - 実装で、遷移を許可する元の状態にする。
             to:
               type: string
               title: 先
               description: 先の状態の名前。入る前の状態へ戻る遷移は `元の状態`。
+              x-used-by:
+                - 実装で、遷移の先の状態にする。
             trigger:
               type: string
               title: きっかけ
               description: 遷移のきっかけになる操作や出来事。
+              x-used-by:
+                - 実装で、遷移を起こす操作・出来事にする。
+                - 生成で、矢印のラベルにする。
             condition:
               type: string
               title: 条件
               description: きっかけに付く条件。図では `{きっかけ} [{条件}]` と描く。
+              x-used-by:
+                - 実装で、遷移する前に確認する条件にする。
+                - 生成で、矢印のラベルに添える。
             action:
               type: string
               title: そのときの処理
+              x-used-by:
+                - 実装で、遷移のときに実行する処理にする。
             self:
               type: boolean
               title: 状態を出ない
               description: 状態を出ずに処理だけを実行する遷移（元と先が同じ）。
+              x-used-by:
+                - 実装で、状態を変えずに処理だけを実行する遷移にする。
+                - 生成で、自分へ戻る矢印にする。
             representative:
               type: string
               title: 代表
               description: "`全状態` / `元の状態` の遷移を図で代表させる状態の名前。図には代表との遷移だけを描く。"
+              x-used-by:
+                - 生成で、`全状態`・`元の状態` の遷移を描く代表の状態にする。
             note:
               type: string
               title: 注記
               description: "`全状態` の遷移に図で添える注記。"
+              x-used-by:
+                - 生成で、`全状態` の遷移の注記にする。
           allOf:
             - if:
                 properties:
@@ -411,6 +474,9 @@ $defs:
     type: object
     title: ER 図
     description: 実体（テーブルとカラム）と関連。ER 図はここから生成する。
+    x-used-by:
+      - 生成で、ER 図にする。
+      - レビューで、テーブルどうしの関連と多重度が要件と合うかを確認する。
     additionalProperties: false
     required:
     - entities
@@ -418,6 +484,8 @@ $defs:
       entities:
         type: array
         title: 実体
+        x-used-by:
+          - 生成で、ER 図のテーブルにする。
         x-key: name
         items:
           type: object
@@ -429,10 +497,15 @@ $defs:
               type: string
               title: 名前
               description: 図に出すテーブルの論理名。他の分類のテーブルは名前だけで配置する。
+              x-used-by:
+                - 生成で、テーブルの名前にする。
+                - 設計で、関連の元・先からテーブルを指す名前にする。
             columns:
               type: array
               title: カラム
               description: 図に描くカラム。記載しなければ、同じ設計書のテーブルのカラムから作る。
+              x-used-by:
+                - 生成で、テーブルに描くカラムにする。
               items:
                 type: object
                 additionalProperties: false
@@ -443,26 +516,29 @@ $defs:
                   type:
                     type: string
                     title: 型
+                    x-used-by:
+                      - 生成で、カラムの型にする。
                   name:
                     type: string
                     title: 名前
+                    x-used-by:
+                      - 生成で、カラムの名前にする。
+                      - 設計で、関連の元の列・先の列から指す名前にする。
                     pattern: "^\\S+$"
                   key:
                     type: string
                     title: キー
+                    x-used-by:
+                      - 生成で、主キー・外部キー・一意キーの印にする。
                     enum:
                     - PK
                     - FK
                     - UK
-                  comment:
-                    type: string
-                    title: 注記
-                    description: 外部キーの参照先。
-                    examples:
-                      - '参照: ユーザー.ID'
       relations:
         type: array
         title: 関連
+        x-used-by:
+          - 生成で、ER 図の関連の線にする。
         items:
           type: object
           additionalProperties: false
@@ -477,17 +553,27 @@ $defs:
             from:
               type: string
               title: 元
+              x-used-by:
+                - 生成で、線の元のテーブルにする。
             to:
               type: string
               title: 先
+              x-used-by:
+                - 生成で、線の先のテーブルにする。
             from_column:
               type: string
               title: 元の列
               description: 関連が結ぶ元の実体の列の名前。
+              x-used-by:
+                - 実装で、外部キーの列にする。
+                - 生成で、線の元の列にする。
             to_column:
               type: string
               title: 先の列
               description: 関連が結ぶ先の実体の列の名前。
+              x-used-by:
+                - 実装で、外部キーが参照する列にする。
+                - 生成で、線の先の列にする。
             from_cardinality:
               $ref: "#/$defs/er_cardinality"
               title: 元の多重度
@@ -497,10 +583,15 @@ $defs:
             label:
               type: string
               title: ラベル
+              x-used-by:
+                - 生成で、線のラベルにする。
   er_cardinality:
     type: string
     title: 多重度
     description: 関連の片端の多重度（`1` = ちょうど 1 / `0..1` = 0 か 1 / `1..n` = 1 以上 / `0..n` = 0 以上）。
+    x-used-by:
+      - 生成で、線の端の多重度の印にする。
+      - 実装で、外部キーの必須・一意の制約にする。
     enum:
     - "1"
     - "0..1"
@@ -512,6 +603,9 @@ $defs:
     type: string
     title: 検討事項
     description: 話し合いの記録の検討事項の ID。本文の文の中に記載せず、この項目に持つ。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
     pattern: "^[A-Z]+-[0-9]+$"
     examples:
       - "D-313"

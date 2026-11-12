@@ -40,76 +40,76 @@ items:
     body: |-
       <!-- table: data -->
 
-      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
-      | --- | --- | --- | --- | --- | --- | --- | --- |
-      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `IF-12` / `IF-3038-1` |
-      | title | タイトル | string | 必須 | - | - | 日本語の論理名。ファイル名に合わせる。 | - |
-      | entry | 入口 | object | 必須 | - | - | 操作の入口。冒頭のメタ情報の行に出す。 | - |
-      | entry.kind | 種類 | string | 必須 | `endpoint` / `mcp_tool` / `operation` / `trigger` / `screen` | - | `endpoint`（HTTP を返却する。値はメソッド + パス）/ `mcp_tool`（MCP ツール名）/ `operation`（呼び出す識別子 + 境界の種別）/ `trigger`（起動契機 + 周期）/ `screen`（画面の実装ファイル）。 | - |
-      | entry.value | 値 | string | 必須 | - | - | 操作を指す値。 | `POST /auth/signin` / `add_labels` / `` heartbeat 周期（`heartbeat_interval_sec` ごと） `` |
-      | entry.api | 呼び出し API | string | - | - | - | `screen` のときの呼び出す API（Mock）。 | - |
-      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
-      | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`。規約『V字モデル』）。 | - |
-      | identifier | 識別子 | string | - | - | - | 操作の識別子（OpenAPI の operationId に該当する）。 | - |
-      | permissions | 必要な権限 | string | - | - | - | - | - |
-      | idempotent | 冪等 | boolean | - | - | - | 同じ要求を繰り返しても結果が変わらないか。 | - |
-      | side_effects | 副作用 | string | - | - | - | 書き込むデータ・外部への送信。 | - |
-      | callers | 呼び出し元 | array | - | - | - | - | - |
-      | exclusivity | 排他 | string | - | - | - | 同時に呼ばれたときの扱い。 | - |
-      | request | リクエスト | array | - | - | - | 呼び出し元から受け取る引数。周期・イベントで自分から動く処理は持たない。 | - |
-      | request[].name | パラメータ | string | 必須 | - | - | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 フィールド = 1 要素に展開する。 | - |
-      | request[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙。 | - |
-      | request[].required | 必須 | boolean | 必須 | - | - | - | - |
-      | request[].default | デフォルト | string | - | - | - | 省略時の値。省略できて既定の値が無いときは `なし（{省略時の挙動}）`。 | - |
-      | request[].location | 配置場所 | string | - | `path` / `query` / `header` / `cookie` / `body` / `argument` | - | HTTP のパラメータの配置場所。MCP ツール・関数の引数は `argument`。 | - |
-      | request[].description | 説明 | string | 必須 | - | - | - | - |
-      | request[].constraints | 制限 | string | - | - | - | そのフィールド単体にかかる上限・形式。 | - |
-      | request[].format | 形式 | string | - | - | - | 文字列の形式（`date-time` / `uri` 等）。 | - |
-      | request[].example | 例 | string | - | - | - | - | - |
-      | request[].nullable | 空を許す | boolean | - | - | - | - | - |
-      | request[].notes | 補足 | string | - | - | - | - | - |
-      | request[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | - |
-      | request_example | リクエスト例 | string | - | - | - | ネスト構造の実形が分かる代表 1 ケース（JSON のコードブロック）。 | - |
-      | response | レスポンス | array | - | - | - | - | - |
-      | response[].name | フィールド | string | 必須 | - | - | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 フィールド = 1 要素に展開する。 | - |
-      | response[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙。 | - |
-      | response[].description | 説明 | string | 必須 | - | - | - | - |
-      | response[].constraints | 制限 | string | - | - | - | そのフィールド単体にかかる上限・形式。 | - |
-      | response[].format | 形式 | string | - | - | - | 文字列の形式（`date-time` / `uri` 等）。 | - |
-      | response[].example | 例 | string | - | - | - | - | - |
-      | response[].notes | 補足 | string | - | - | - | - | - |
-      | response_example | レスポンス例 | string | - | - | - | JSON のコードブロック。 | - |
-      | response_notes | レスポンスの注記 | string | - | - | - | 冪等性など表に載らない挙動（`> [!NOTE]` のコールアウトで出す）。 | - |
-      | status_codes | ステータスコード | array | - | - | - | HTTP を返却する操作の出口。 | - |
-      | status_codes[].code | ステータスコード | string | 必須 | - | - | - | - |
-      | status_codes[].condition | 発生条件 | string | 必須 | - | - | - | - |
-      | status_codes[].notes | 補足 | string | - | - | - | - | - |
-      | exceptions | 例外 | array | - | - | - | HTTP を返却しない操作の出口。異常の行は異常系のフローと 1:1。 | - |
-      | exceptions[].name | 例外 | string | 必須 | - | - | 送出する例外のクラス名。正常終了の行は `なし（正常終了）`。 | - |
-      | exceptions[].condition | 発生条件 | string | 必須 | - | - | - | - |
-      | exceptions[].notes | 補足 | string | - | - | - | - | - |
-      | error_format | エラーの形式 | string | - | - | - | エラー応答の形式（RFC 9457 の type・title・status・detail 等）。 | - |
-      | constraints | 制約 | array | - | - | - | 操作全体にかかる制約。関連する項目は制限を設けないときも行を配置する。 | - |
-      | constraints[].item | 項目 | string | 必須 | - | - | タイムアウト・認可・レート制限・合計サイズ・許可値の定義・周期・閾値など。 | - |
-      | constraints[].constraint | 制約 | string | 必須 | - | - | 設けないときも `制限なし` と記載する。 | - |
-      | constraints[].decided_by | 決定値 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 値の出所になる非機能要件の項目。 | `IF-12#flows[正常系]` / `#functions[resolve_base].exceptions` / `CFG-3#` / `#notes[main.py の補足]` / `#functions[main#3]` |
-      | constraints[].notes | 補足 | string | - | - | - | - | - |
-      | flows | フロー | array | 必須 | - | minItems: `1` | 正常系と異常系のフロー。1 フロー = 結合テストの 1 ケース。 | - |
-      | flows[].name | フロー名 | string | 必須 | - | pattern: `^(正常系\|異常系)(（.+）)?$` | 正常の基本形は `正常系`。正常な結末が条件で分かれるときは `正常系（{条件}）`、異常は `異常系（{原因}・{ステータスか例外名}）`。 | - |
-      | flows[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行でフローの中身を要約する。 | - |
-      | flows[].setup | セットアップ | array | 必須 | - | minItems: `1` | 事前に要るデータ・状態と、分岐・異常を決定的に誘発する入力。 | - |
-      | flows[].setup[].name | セットアップ | string | 必須 | - | - | 前提を作る Factory 関数名か状態の名前。 | - |
-      | flows[].setup[].description | 説明 | string | 必須 | - | - | その前提の意味・役割・依存関係。Mock の行は差し替える依存と応答。 | - |
-      | flows[].setup[].notes | 補足 | string | - | - | - | 引数に指定する重要な値・分岐を決定的に誘発する値。 | - |
-      | flows[].flow | フロー | string | 必須 | - | - | Mermaid の `sequenceDiagram`。1 図 = 結末 1 本の一本道。 | - |
-      | flows[].expected | 期待値 | array | 必須 | - | minItems: `1` | フローの終了時点で外部から観測できる状態・戻り値。1 要素 = 1 つの確認項目。 | - |
-      | flows[].test | テスト | string | - | - | pattern: `^test_[A-Za-z0-9_]+$` | 対応する結合テストの関数（`正常系` → `test_normal` / `正常系（{条件}）` → `test_normal_when_{条件}` / `異常系（{条件}）` → `test_error_when_{条件}`。`{条件}` は英訳）。 | - |
-      | flows[].refs | 関連 | array | - | - | - | - | - |
-      | flows[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
-      | flows[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
-      | refs | 関連 | array | - | - | - | - | - |
-      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
-      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 検査で、ほかの設計書の参照（`{ID}#{項目のパス}`）の解決先にする。<br>生成で、ページの名前と、ほかの設計書からのリンク先にする。 | `IF-12` / `IF-3038-1` |
+      | title | タイトル | string | 必須 | - | - | 日本語の論理名。ファイル名に合わせる。 | 生成で、ページの見出しにする。<br>dev-docs の検索で、文書の名前にする。 | - |
+      | entry | 入口 | object | 必須 | - | - | 操作の入口。冒頭のメタ情報の行に出す。 | 実装で、操作の入口（エンドポイント・MCP ツール・画面操作・周期の処理）を作る。<br>生成で、冒頭のメタ情報の行にする。 | - |
+      | entry.kind | 種類 | string | 必須 | `endpoint` / `mcp_tool` / `operation` / `trigger` / `screen` | - | `endpoint`（HTTP を返却する。値はメソッド + パス）/ `mcp_tool`（MCP ツール名）/ `operation`（呼び出す識別子 + 境界の種別）/ `trigger`（起動契機 + 周期）/ `screen`（画面の実装ファイル）。 | 実装で、入口の種類（HTTP・MCP・画面・周期・イベント）を決める。 | - |
+      | entry.value | 値 | string | 必須 | - | - | 操作を指す値。 | 実装で、メソッドとパス・ツール名・識別子にする。 | `POST /auth/signin` / `add_labels` / `` heartbeat 周期（`heartbeat_interval_sec` ごと） `` |
+      | entry.api | 呼び出し API | string | - | - | - | `screen` のときの呼び出す API（Mock）。 | 結合テストで、画面が呼ぶ API の Mock にする。 | - |
+      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>dev-docs の検索で、文書の概要文にする。 | - |
+      | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`。規約『V字モデル』）。 | テストで、結合テストを作るファイルにする。<br>検査で、テストのファイルがあるかを確認する。 | - |
+      | identifier | 識別子 | string | - | - | - | 操作の識別子（OpenAPI の operationId に該当する）。 | 実装で、ハンドラ・ツールの関数の名前にする。 | - |
+      | permissions | 必要な権限 | string | - | - | - | - | 実装で、操作の前に確認する権限にする。<br>テストで、権限が無いときのケースにする。 | - |
+      | idempotent | 冪等 | boolean | - | - | - | 同じ要求を繰り返しても結果が変わらないか。 | 実装で、同じ要求の繰り返しを受け付けるか、重複を弾くかを決める。<br>実装で、呼び出し元が失敗したときに再試行してよいかを決める。 | - |
+      | side_effects | 副作用 | string | - | - | - | 書き込むデータ・外部への送信。 | 実装で、書き込むデータと外部への送信にする。<br>テストで、副作用を確認する項目にする。 | - |
+      | callers | 呼び出し元 | array | - | - | - | - | レビューで、呼び出し元のシナリオと入出力が一致するかを確認する。 | - |
+      | exclusivity | 排他 | string | - | - | - | 同時に呼ばれたときの扱い。 | 実装で、同時に呼ばれたときのロック・キューにする。 | - |
+      | request | リクエスト | array | - | - | - | 呼び出し元から受け取る引数。周期・イベントで自分から動く処理は持たない。 | 実装で、引数の型と検証にする。<br>生成で、リクエストの表にする。 | - |
+      | request[].name | パラメータ | string | 必須 | - | - | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 フィールド = 1 要素に展開する。 | 実装で、引数・フィールドの名前にする。 | - |
+      | request[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙。 | 実装で、引数の型にする。 | - |
+      | request[].required | 必須 | boolean | 必須 | - | - | - | 実装で、無いときにエラーにするかを決める。<br>テストで、引数を省いたときのケースにする。 | - |
+      | request[].default | デフォルト | string | - | - | - | 省略時の値。省略できて既定の値が無いときは `なし（{省略時の挙動}）`。 | 実装で、引数を省いたときの値にする。 | - |
+      | request[].location | 配置場所 | string | - | `path` / `query` / `header` / `cookie` / `body` / `argument` | - | HTTP のパラメータの配置場所。MCP ツール・関数の引数は `argument`。 | 実装で、値を取り出す場所（パス・クエリ・ヘッダ・本文・引数）にする。 | - |
+      | request[].description | 説明 | string | 必須 | - | - | - | 呼び出し元の実装で、渡す値を決める。 | - |
+      | request[].constraints | 制限 | string | - | - | - | そのフィールド単体にかかる上限・形式。 | 実装で、フィールドの検証にする。<br>テストで、制限の境界のケースにする。 | - |
+      | request[].format | 形式 | string | - | - | - | 文字列の形式（`date-time` / `uri` 等）。 | 実装で、文字列の形式の検証にする。 | - |
+      | request[].example | 例 | string | - | - | - | - | テストで、要求の値にする。 | - |
+      | request[].nullable | 空を許す | boolean | - | - | - | - | 実装で、`null` を受け付けるかを決める。 | - |
+      | request[].notes | 補足 | string | - | - | - | - | 実装で、引数の前提を参照する。 | - |
+      | request[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | request_example | リクエスト例 | string | - | - | - | ネスト構造の実形が分かる代表 1 ケース（JSON のコードブロック）。 | テストで、要求の本文の見本にする。 | - |
+      | response | レスポンス | array | - | - | - | - | 実装で、戻り値の型にする。<br>呼び出し元の実装で、受け取る値を決める。<br>生成で、レスポンスの表にする。 | - |
+      | response[].name | フィールド | string | 必須 | - | - | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 フィールド = 1 要素に展開する。 | 実装で、戻り値のフィールドの名前にする。 | - |
+      | response[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙。 | 実装で、フィールドの型にする。 | - |
+      | response[].description | 説明 | string | 必須 | - | - | - | 呼び出し元の実装で、値の意味を参照する。 | - |
+      | response[].constraints | 制限 | string | - | - | - | そのフィールド単体にかかる上限・形式。 | テストで、戻り値の上限・形式を確認する。 | - |
+      | response[].format | 形式 | string | - | - | - | 文字列の形式（`date-time` / `uri` 等）。 | 実装で、文字列の形式にする。 | - |
+      | response[].example | 例 | string | - | - | - | - | テストで、期待する戻り値の見本にする。 | - |
+      | response[].notes | 補足 | string | - | - | - | - | 実装で、戻り値の前提を参照する。 | - |
+      | response_example | レスポンス例 | string | - | - | - | JSON のコードブロック。 | テストで、戻り値の見本にする。 | - |
+      | response_notes | レスポンスの注記 | string | - | - | - | 冪等性など表に載らない挙動（`> [!NOTE]` のコールアウトで出す）。 | 呼び出し元の実装で、表に載らない挙動を参照する。 | - |
+      | status_codes | ステータスコード | array | - | - | - | HTTP を返却する操作の出口。 | 実装で、返すステータスコードにする。<br>テストで、ステータスコードごとのケースにする。 | - |
+      | status_codes[].code | ステータスコード | string | 必須 | - | - | - | 実装で、返すステータスコードにする。 | - |
+      | status_codes[].condition | 発生条件 | string | 必須 | - | - | - | 実装で、そのコードを返す条件にする。 | - |
+      | status_codes[].notes | 補足 | string | - | - | - | - | 実装で、コードの前提を参照する。 | - |
+      | exceptions | 例外 | array | - | - | - | HTTP を返却しない操作の出口。異常の行は異常系のフローと 1:1。 | 実装で、送出する例外にする。<br>テストで、異常系のケースにする。 | - |
+      | exceptions[].name | 例外 | string | 必須 | - | - | 送出する例外のクラス名。正常終了の行は `なし（正常終了）`。 | 実装で、例外のクラスにする。 | - |
+      | exceptions[].condition | 発生条件 | string | 必須 | - | - | - | 実装で、例外を送出する条件にする。 | - |
+      | exceptions[].notes | 補足 | string | - | - | - | - | 実装で、例外の前提を参照する。 | - |
+      | error_format | エラーの形式 | string | - | - | - | エラー応答の形式（RFC 9457 の type・title・status・detail 等）。 | 実装で、エラー応答の形式にする。<br>呼び出し元の実装で、エラーの読み方にする。 | - |
+      | constraints | 制約 | array | - | - | - | 操作全体にかかる制約。関連する項目は制限を設けないときも行を配置する。 | 実装で、タイムアウト・認可・レート制限・上限などの値にする。<br>テストで、制約の境界のケースにする。 | - |
+      | constraints[].item | 項目 | string | 必須 | - | - | タイムアウト・認可・レート制限・合計サイズ・許可値の定義・周期・閾値など。 | レビューで、制約の項目に漏れが無いかを確認する。 | - |
+      | constraints[].constraint | 制約 | string | 必須 | - | - | 設けないときも `制限なし` と記載する。 | 実装で、制約の値と処理にする。 | - |
+      | constraints[].decided_by | 決定値 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 値の出所になる非機能要件の項目。 | 実装で、値の出所の非機能要件を参照する。<br>レビューで、値が非機能要件の決定値と一致するかを確認する。 | `IF-12#flows[正常系]` / `#functions[resolve_base].exceptions` / `CFG-3#` / `#notes[main.py の補足]` / `#functions[main#3]` |
+      | constraints[].notes | 補足 | string | - | - | - | - | 実装で、制約の前提を参照する。 | - |
+      | flows | フロー | array | 必須 | - | minItems: `1` | 正常系と異常系のフロー。1 フロー = 結合テストの 1 ケース。 | 結合テストで、フローごとのテスト関数にする。<br>設計で、モジュール構成の処理の順と呼ぶ相手を決める。 | - |
+      | flows[].name | フロー名 | string | 必須 | - | pattern: `^(正常系\|異常系)(（.+）)?$` | 正常の基本形は `正常系`。正常な結末が条件で分かれるときは `正常系（{条件}）`、異常は `異常系（{原因}・{ステータスか例外名}）`。 | 結合テストで、テスト関数の名前に対応させる。<br>設計で、ほかの設計書の参照（`flows[正常系]`）からフローを指す。 | - |
+      | flows[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行でフローの中身を要約する。 | 生成で、フローの一覧の説明にする。<br>結合テストで、関数の docstring の要約にする。 | - |
+      | flows[].setup | セットアップ | array | 必須 | - | minItems: `1` | 事前に要るデータ・状態と、分岐・異常を決定的に誘発する入力。 | 結合テストで、前提を作る Factory・Mock にする。 | - |
+      | flows[].setup[].name | セットアップ | string | 必須 | - | - | 前提を作る Factory 関数名か状態の名前。 | 結合テストで、呼ぶ Factory 関数か作る状態にする。 | - |
+      | flows[].setup[].description | 説明 | string | 必須 | - | - | その前提の意味・役割・依存関係。Mock の行は差し替える依存と応答。 | 結合テストで、前提の役割と Mock の応答にする。 | - |
+      | flows[].setup[].notes | 補足 | string | - | - | - | 引数に指定する重要な値・分岐を決定的に誘発する値。 | 結合テストで、分岐を決定的に起こす値にする。 | - |
+      | flows[].flow | フロー | string | 必須 | - | - | Mermaid の `sequenceDiagram`。1 図 = 結末 1 本の一本道。 | 設計で、モジュール構成の処理の順と呼ぶ相手を決める。<br>生成で、シーケンス図にする。 | - |
+      | flows[].expected | 期待値 | array | 必須 | - | minItems: `1` | フローの終了時点で外部から観測できる状態・戻り値。1 要素 = 1 つの確認項目。 | 結合テストで、確認する項目にする。 | - |
+      | flows[].test | テスト | string | - | - | pattern: `^test_[A-Za-z0-9_]+$` | 対応する結合テストの関数（`正常系` → `test_normal` / `正常系（{条件}）` → `test_normal_when_{条件}` / `異常系（{条件}）` → `test_error_when_{条件}`。`{条件}` は英訳）。 | 検査で、テストのファイルにその名前の関数があるかを確認する。<br>レビューで、項目ごとにテストがあるかを確認する。 | - |
+      | flows[].refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | flows[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | flows[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+      | refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
 
       <!-- /table -->
   - id: key-rules-01

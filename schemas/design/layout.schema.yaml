@@ -31,12 +31,17 @@ properties:
     type: string
     title: タイトル
     description: 設計書の表示名。
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
     examples:
     - aituber
   repository:
     type: string
     title: リポジトリ
     description: 対象のリポジトリ（`owner/name`）。
+    x-used-by:
+      - 実装で、フォルダ構成を当てるリポジトリにする。
     x-rules:
       - アーキテクチャ図の `repository.repositories[].name` のどれかと同じ値にする。
     pattern: ^[^/\s]+/[^/\s]+$
@@ -46,6 +51,9 @@ properties:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
     description: リポジトリのフォルダ構成を 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
     x-rules:
       - 初回に記載した内容のまま保ち、後から情報を追加しない。
       - 対象そのものが変わったときだけ書き換える。
@@ -55,6 +63,8 @@ properties:
     type: array
     title: 中身の種類
     description: エントリの `content_types` に付ける中身の種類の語彙。
+    x-used-by:
+      - 設計で、エントリの `content_types` の語彙にする。
     x-heading: 中身の種類
     x-shape: table
     x-key: name
@@ -70,6 +80,8 @@ properties:
           type: string
           title: 種類
           description: 種類の単語（英語）。
+          x-used-by:
+            - 設計で、エントリの `content_types` から種類を指す。
           pattern: ^[a-z][a-z0-9_]*$
           examples:
           - config
@@ -77,6 +89,8 @@ properties:
           type: string
           title: 分類
           description: '`role`（役割）か `feature`（機能）。'
+          x-used-by:
+            - レビューで、フォルダの切り方が役割と機能のどちらかを確認する。
           enum:
           - role
           - feature
@@ -84,12 +98,17 @@ properties:
           $ref: common.schema.yaml#/$defs/summary
           title: 説明
           description: 種類の意味を 1 行で説明する。
+          x-used-by:
+            - 実装で、ファイルの中身の種類を決める。
           examples:
           - 設定ファイル
   entries:
     type: array
     title: エントリ
     description: リポジトリの直下のフォルダとファイル。
+    x-used-by:
+      - 実装で、リポジトリの直下のフォルダとファイルにする。
+      - 生成で、ファイルツリーにする。
     x-heading: エントリ
     x-shape: sections
     x-key: name
@@ -100,6 +119,8 @@ properties:
     type: array
     title: Git で管理しないもの
     description: '`.gitignore` に記載するパターンと、管理しない理由。'
+    x-used-by:
+      - 実装で、`.gitignore` の行にする。
     x-heading: Git で管理しないもの
     x-shape: table
     x-key: pattern
@@ -114,23 +135,33 @@ properties:
           type: string
           title: パターン
           description: '`.gitignore` の 1 行のパターン。'
+          x-used-by:
+            - 実装で、`.gitignore` の 1 行にする。
           examples:
           - tmp/
         reason:
           type: string
           title: 理由
           description: Git で管理しない理由。
+          x-used-by:
+            - レビューで、Git で管理しない理由が成り立つかを確認する。
           examples:
           - 一時ファイル
   refs:
     type: array
     title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
     items:
       $ref: common.schema.yaml#/$defs/ref
   decisions:
     type: array
     title: 検討事項
     description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
     items:
       $ref: common.schema.yaml#/$defs/decision
   notes:
@@ -142,6 +173,9 @@ $defs:
     type: object
     title: エントリ
     description: フォルダかファイル 1 つ。`type` が `folder` のときだけ、配下のエントリと配下の決まりを持つ。
+    x-used-by:
+      - 実装で、フォルダとファイルを置く場所にする。
+      - レビューで、置いたファイルがエントリと一致するかを確認する。
     additionalProperties: false
     required:
     - type
@@ -152,6 +186,8 @@ $defs:
         type: string
         title: 種別
         description: '`folder` か `file`。'
+        x-used-by:
+          - 実装で、フォルダとファイルを分ける。
         enum:
         - folder
         - file
@@ -159,6 +195,8 @@ $defs:
         type: string
         title: 名前
         description: 親のフォルダからの名前。可変の部分は英語の `{名前}` で記載する。
+        x-used-by:
+          - 実装で、フォルダ・ファイルの名前にする。
         x-rules:
           - 区切りの `/` を含めず、1 階層の名前にする。
         pattern: ^[^/]+$
@@ -169,12 +207,16 @@ $defs:
         $ref: common.schema.yaml#/$defs/summary
         title: 配置するもの
         description: このフォルダかファイルに配置するものを 1 行で記載する。
+        x-used-by:
+          - 実装で、新しいファイルを置くフォルダを決める。
         examples:
         - 全ての機能が参照する設定・ログ・例外
       content_types:
         type: array
         title: 中身の種類
         description: 中身の種類。最上位の `content_types[].name` の単語を選ぶ。
+        x-used-by:
+          - レビューで、役割と機能の切り方がフォルダの中で混ざっていないかを確認する。
         uniqueItems: true
         items:
           type: string
@@ -185,6 +227,8 @@ $defs:
         type: object
         title: 生成元
         description: 生成物・複製のエントリの生成元と、生成するコマンド。
+        x-used-by:
+          - 実装で、生成物を手で書き換えず、生成元を直してコマンドで作り直す。
         additionalProperties: false
         required:
         - path
@@ -194,18 +238,24 @@ $defs:
             type: string
             title: 生成元のパス
             description: 生成元のリポジトリの直下からのパス。
+            x-used-by:
+              - 実装で、生成物を直すときに書き換える生成元にする。
             examples:
             - frontend/
           command:
             $ref: common.schema.yaml#/$defs/ref
             title: 生成するコマンド
             description: 生成するコマンドを持つ『開発コマンド』の分類への参照。
+            x-used-by:
+              - 実装で、生成物を作り直すコマンドを参照する。
             examples:
             - CMD-1#categories[ビルド・生成]
       placeholders:
         type: array
         title: 可変の部分
         description: '`name`・`naming` の `{名前}` ごとの、値の語彙への参照。'
+        x-used-by:
+          - 実装で、`{名前}` に入れる値の候補を参照する。
         items:
           type: object
           additionalProperties: false
@@ -217,24 +267,33 @@ $defs:
               type: string
               title: 名前
               description: '`{名前}` の名前。'
+              x-used-by:
+                - 実装で、置き換える `{名前}` を決める。
               examples:
               - stage
             from:
               $ref: common.schema.yaml#/$defs/ref
               title: 語彙
               description: 値の語彙を持つ設計書の項目への参照。
+              x-used-by:
+                - 実装で、`{名前}` の値の語彙を持つ設計書を参照する。
               examples:
               - AG-1#stages
       children:
         type: array
         title: 配下のエントリ
         description: '`type` が `folder` のときだけ記載する、配下のフォルダとファイル。'
+        x-used-by:
+          - 実装で、フォルダの配下に置くフォルダとファイルにする。
         items:
           $ref: '#/$defs/entry'
       naming:
         type: array
         title: ファイル名の決まり
         description: '`type` が `folder` のときだけ記載する、配下のファイル名のパターン（英語）。'
+        x-used-by:
+          - 実装で、配下のファイル名にする。
+          - レビューで、ファイル名がパターンに合うかを確認する。
         x-rules:
           - 1 つのパターンを 1 つの値にする。
         items:
@@ -249,6 +308,8 @@ $defs:
         type: array
         title: 参照する構成要素
         description: '`type` が `folder` のときだけ記載する、配下を参照する構成要素の設計書への参照。'
+        x-used-by:
+          - レビューで、フォルダを参照する構成要素と依存の向きを確認する。
         items:
           $ref: common.schema.yaml#/$defs/ref
         examples:
@@ -258,10 +319,14 @@ $defs:
         type: boolean
         title: ID の起点
         description: '`type` が `folder` のときだけ記載する。配下のファイルの文書の ID を、このフォルダからのパスにするか。'
+        x-used-by:
+          - 検索で、dev-docs が配下の文書の ID をフォルダからのパスにする。
       convention:
         type: string
         title: 配下の規約
         description: '`type` が `folder` のときだけ記載する、配下の配置を定める knowledge の規約の ID。'
+        x-used-by:
+          - 実装で、配下の配置を定める規約を参照する。
         examples:
         - python-architecture-layout
     allOf:

@@ -85,7 +85,17 @@ _DATA_KEYWORDS = frozenset({"examples", "enum", "const", "default", "x-bad-examp
 _NAMED_SCHEMA_KEYWORDS = frozenset({"properties", "patternProperties", "$defs", "dependentSchemas"})
 
 # 表の列
-_KEY_TABLE_COLUMNS = ("名前", "title", "型", "必須", "選択肢", "制約", "description", "examples")
+_KEY_TABLE_COLUMNS = (
+    "名前",
+    "title",
+    "型",
+    "必須",
+    "選択肢",
+    "制約",
+    "description",
+    "使用先",
+    "examples",
+)
 _KEY_RULES_COLUMNS = ("名前", "決まり", "悪い例", "理由")
 
 # 表の範囲のマーカー
@@ -418,6 +428,8 @@ def _render_key_table(rows: Sequence[KeyRow]) -> str:
                 _format_cell(_join_code(schema.get("enum"))),
                 _format_cell(constraints or None),
                 _format_cell(schema.get("description")),
+                # 使用先は 1 件 1 行で出す（セルの書き方が改行を <br> にする）
+                _format_cell("\n".join(_strings(schema.get("x-used-by"))) or None),
                 _format_cell(_join_code(schema.get("examples"))),
             ]
         )

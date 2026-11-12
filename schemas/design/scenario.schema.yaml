@@ -28,32 +28,43 @@ properties:
     type: string
     title: タイトル
     description: 単一ユースケースは機能名、複合ユースケースは業務シナリオの論理名。ファイル名に合わせる。
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
     description: 対象を 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
     x-rules:
       - 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。
       - 対象そのものが変わったときだけ書き換える。
     x-bad-examples:
       - value: 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。
         reason: 仕様を冒頭リードに記載している。仕様は各項目へ分ける
-  issue:
-    type: integer
-    title: 対応 Issue
-    description: 起点の Issue の番号。
   test_file:
     type: string
     title: 対応テストファイル
     description: |-
       `tests/e2e/{単一ユースケース,複合ユースケース}/…`（規約『V字モデル』）。
+    x-used-by:
+      - テストで、E2E テストを作るファイルにする。
+      - 検査で、テストのファイルがあるかを確認する。
+      - 計画で、作業 PR の影響するユースケースから E2E の対象を集める。
     pattern: ^tests/.+
   primary_actor:
     type: string
     title: 主アクター
+    x-used-by:
+      - E2E テストで、操作する主体にする。
+      - レビューで、主アクターの目的が満たされるかを確認する。
   stakeholders:
     type: array
     title: 関係者と関心
+    x-used-by:
+      - レビューで、関係者ごとの関心が成功時の保証で守られるかを確認する。
     x-shape: table
     x-key: name
     items:
@@ -66,39 +77,61 @@ properties:
         name:
           type: string
           title: 関係者
+          x-used-by:
+            - レビューで、関心を守る相手にする。
         interest:
           type: string
           title: 関心
+          x-used-by:
+            - レビューで、成功時の保証と失敗しても守ることに関心が入っているかを確認する。
   trigger:
     type: string
     title: きっかけ
+    x-used-by:
+      - E2E テストで、シナリオを始める操作にする。
+      - 設計で、インターフェース定義の入口の種類を決める。
   preconditions:
     type: array
     title: 事前条件
+    x-used-by:
+      - E2E テストで、事前に用意する状態にする。
     x-shape: list
     items:
       type: string
   success_guarantee:
     $ref: common.schema.yaml#/$defs/markdown
     title: 成功時に保証すること
+    x-used-by:
+      - E2E テストで、正常シナリオの終わりに確認する状態にする。
   minimal_guarantee:
     $ref: common.schema.yaml#/$defs/markdown
     title: 失敗しても守ること
+    x-used-by:
+      - E2E テストで、異常シナリオの終わりに確認する状態にする。
   frequency:
     type: string
     title: 頻度
+    x-used-by:
+      - 設計で、非機能要件の性能の値を決める前提にする。
   priority:
     type: string
     title: 優先度
+    x-used-by:
+      - 計画で、着手の順を決める。
   reading:
     $ref: common.schema.yaml#/$defs/markdown
     title: 置き換え
     description: 1 ファイルで複数のレイヤー・役割を代表するときの置き換えの表。
+    x-used-by:
+      - E2E テストで、1 つのファイルで代表させたレイヤー・役割へ置き換える。
     x-heading: 置き換え
   scenarios:
     type: array
     title: シナリオ
     description: 正常・異常のシナリオを並列に並べる。異常の無い機能は `異常シナリオ` を持たない。
+    x-used-by:
+      - E2E テストで、シナリオごとのテスト関数にする。
+      - 生成で、シナリオごとの節にする。
     x-heading: シナリオ
     x-shape: sections
     x-key: name
@@ -116,11 +149,16 @@ properties:
           type: string
           title: シナリオ名
           description: 基本形は `正常シナリオ`。正常な結末が条件で分かれるときは `正常シナリオ（{条件}）`、異常は `異常シナリオ（{条件}）`。
+          x-used-by:
+            - E2E テストで、テスト関数の名前に対応させる。
+            - 設計で、ほかの設計書の参照（`scenarios[正常シナリオ]`）からシナリオを指す。
           pattern: ^(正常|異常)シナリオ(（.+）)?$
         setup:
           type: array
           title: セットアップ
           description: 事前に要るデータ・状態と、分岐・異常を決定的に誘発する入力。
+          x-used-by:
+            - E2E テストで、前提を作る Factory・Mock にする。
           x-rules:
             - '`Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず配置する。'
           x-heading: セットアップ
@@ -137,20 +175,29 @@ properties:
                 type: string
                 title: セットアップ
                 description: 前提を作る Factory 関数名か状態の名前。
+                x-used-by:
+                  - E2E テストで、呼ぶ Factory 関数か作る状態にする。
                 x-rules:
                   - '`Mock` の行を必ず配置する。'
               description:
                 type: string
                 title: 説明
                 description: その前提の意味・役割・依存関係。Mock の行は差し替える依存と応答。
+                x-used-by:
+                  - E2E テストで、前提の役割と Mock の応答にする。
               notes:
                 type: string
                 title: 補足
                 description: 引数に指定する重要な値・分岐を決定的に誘発する値。
+                x-used-by:
+                  - E2E テストで、分岐を決定的に起こす値にする。
         flow:
           $ref: common.schema.yaml#/$defs/mermaid
           title: フロー
           description: 単一ユースケースは `sequenceDiagram`、複合ユースケースは単一ユースケースをノードとして連鎖させる `flowchart TD`。
+          x-used-by:
+            - 設計で、インターフェース定義の操作の流れと関わる相手を決める。
+            - 生成で、シーケンス図・フロー図にする。
           x-rules:
             - 1 図 = 結末 1 本の一本道にする。
             - ユーザー視点で観測できる境界まで記載する。
@@ -160,6 +207,8 @@ properties:
           type: array
           title: 期待値
           description: フローの終了時点で外部から観測できる状態・戻り値。1 要素 = 1 つの確認項目。
+          x-used-by:
+            - E2E テストで、確認する項目にする。
           x-heading: 期待値
           x-shape: list
           minItems: 1
@@ -173,17 +222,26 @@ properties:
           type: array
           title: 使用する単一ユースケース
           description: 複合ユースケースのノードが指す単一ユースケースのシナリオ。
+          x-used-by:
+            - テストで、複合ユースケースの E2E がつなぐ単一ユースケースのシナリオを参照する。
+            - 検査で、指すシナリオが実在するかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         notes:
@@ -191,12 +249,18 @@ properties:
   refs:
     type: array
     title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
     items:
       $ref: common.schema.yaml#/$defs/ref
   decisions:
     type: array
     title: 検討事項
     description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
     items:
       $ref: common.schema.yaml#/$defs/decision
   notes:
@@ -207,7 +271,6 @@ examples:
 - id: SC-1
   title: プロフィール編集
   lead: ログイン中のユーザーが自身のプロフィール（氏名・自己紹介・アバター画像）を編集する単一ユースケース。
-  issue: 12
   test_file: tests/e2e/単一ユースケース/test_profile_edit.py
   primary_actor: ログイン中のユーザー
   trigger: プロフィール編集画面を開く

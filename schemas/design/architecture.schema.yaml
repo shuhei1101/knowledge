@@ -27,10 +27,16 @@ properties:
     type: string
     title: タイトル
     description: '`アーキテクチャ図`。'
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
     description: 対象を 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
     x-rules:
       - 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。
       - 対象そのものが変わったときだけ書き換える。
@@ -41,6 +47,9 @@ properties:
     $ref: common.schema.yaml#/$defs/flowchart
     title: システム全体図
     description: アクター・サブシステム・外部システムの関係を 1 枚で示す。
+    x-used-by:
+      - 生成で、システム全体図にする。
+      - 設計で、機能をどのサブシステムに置くかを決めるときに、サブシステムと外部システムのつながりを参照する。
     x-rules:
       - 向きは `LR` にする。
       - 自プロジェクトのサブシステムは枠で囲み、外部システムは枠の外に配置する（ノードの `kind` を `external`）。
@@ -52,6 +61,8 @@ properties:
   repository:
     type: object
     title: リポジトリ構成
+    x-used-by:
+      - 実装で、変更を入れるリポジトリとフォルダを決める。
     x-heading: リポジトリ構成
     additionalProperties: false
     required:
@@ -61,12 +72,16 @@ properties:
       style:
         type: string
         title: 方式
+        x-used-by:
+          - 実装で、変更を 1 つのリポジトリに入れるか、リポジトリごとに分けるかを決める。
         enum:
         - モノレポ
         - ポリレポ
       repositories:
         type: array
         title: リポジトリ
+        x-used-by:
+          - 実装で、サブシステムの変更を入れるリポジトリを決める。
         x-shape: table
         x-key: name
         minItems: 1
@@ -80,17 +95,27 @@ properties:
               type: string
               title: リポジトリ
               description: '`owner/name`。'
+              x-used-by:
+                - 実装で、変更を入れるリポジトリにする。
             subsystem:
               type: string
               title: サブシステム
               description: ポリレポのとき。
+              x-used-by:
+                - 実装で、サブシステムとリポジトリを対応させる。
       notes:
         type: string
         title: 補足
+        x-used-by:
+          - 実装で、リポジトリ構成の前提を参照する。
   subsystems:
     type: array
     title: サブシステム一覧
     description: 独立してテスト・デプロイできる単位。
+    x-used-by:
+      - 設計で、機能をどのサブシステムに置くかを決める。
+      - 計画で、作業 PR の計画書を対象システムごとに分ける。
+      - 生成で、サブシステム一覧の表にする。
     x-heading: サブシステム一覧
     x-shape: table
     x-key: scope
@@ -109,31 +134,50 @@ properties:
           type: string
           title: サブシステム
           description: 業務的な役割で命名する。
+          x-used-by:
+            - 計画で、作業 PR の対象システムの計画書の名前にする。
+            - 生成で、表の行の名前にする。
         scope:
           type: string
           title: scope
           description: 英小文字のケバブケースの識別子。
+          x-used-by:
+            - 生成で、図のノードとサブシステムを対応させる識別子にする。
+            - 実装で、エージェントの名前・ログのラベルの識別子にする。
           pattern: ^[a-z0-9]+(-[a-z0-9]+)*$
         role:
           type: string
           title: 役割
           description: 責務の境界が読み取れる 1 行。
+          x-used-by:
+            - 設計で、機能をどのサブシステムに置くかを責務の境界で判断する。
+            - レビューで、サブシステムの責務の外の処理が入っていないかを確認する。
         runtime:
           type: string
           title: 言語・ランタイム
           description: 言語とメジャーバージョンまで。
+          x-used-by:
+            - 実装で、言語とバージョンを決め、言語の規約を参照する。
         runs_on:
           type: string
           title: どこで動くか
+          x-used-by:
+            - 実装で、動く場所の制約（プロセス・端末・クラウド）を参照する。
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         reason:
@@ -142,18 +186,15 @@ properties:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   external_systems:
     type: array
     title: 外部システム連携
     description: 境界を越えて通信する相手。
+    x-used-by:
+      - 設計で、外部ライブラリ・外部 API の設計書を作る対象にする。
+      - 生成で、外部システム連携の表にする。
     x-rules:
       - 1 要素 = 外部疎通のテスト 1 ファイルにする。
     x-heading: 外部システム連携
@@ -174,12 +215,18 @@ properties:
           description: |-
             子プロセスとして起動する CLI も含む。
             銘柄が決まっていないときは `{種別}（銘柄未定）`。
+          x-used-by:
+            - 生成で、表の行の名前にする。
         purpose:
           type: string
           title: 用途
+          x-used-by:
+            - レビューで、外部システムに頼る範囲が用途に収まっているかを確認する。
         direction:
           type: string
           title: 方向
+          x-used-by:
+            - 実装で、送信と受信のどちらの処理を作るかを決める。
           enum:
           - 送信のみ
           - 受信のみ
@@ -188,29 +235,44 @@ properties:
           type: string
           title: 技術
           description: プロトコル・形式。
+          x-used-by:
+            - 実装で、通信に使うプロトコル・形式を決める。
         detail:
           $ref: common.schema.yaml#/$defs/ref
           title: 詳細
           description: |-
             API なら `設計書/外部API/`、それ以外（SDK・CLI 等）なら `設計書/外部ライブラリ/` の設計書。
             持たないのは銘柄未定の行と初期構築の工程の行だけ（設計書はその外部システムを使用し始める設計の工程で作る）。
+          x-used-by:
+            - 実装で、外部 API・外部ライブラリの設計書を参照する。
         test_file:
           type: string
           title: 対応する非機能要件のテスト
           description: 外部疎通のテストのファイル（`tests/external/test_{名前}.py`）。1 外部システム = 1 ファイル（規約『V字モデル』）。
+          x-used-by:
+            - テストで、外部疎通のテストを作るファイルにする。
+            - 検査で、テストのファイルがあるかを確認する。
           pattern: ^tests/external/.+
         cost:
           type: string
           title: 料金・副作用
+          x-used-by:
+            - 実行で、テスト・動作確認の前に、料金と副作用からユーザーの確認が要るかを判断する。
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         reason:
@@ -219,35 +281,42 @@ properties:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   quality_goals:
     $ref: common.schema.yaml#/$defs/markdown
     title: 品質目標
+    x-used-by:
+      - 設計で、方式を選ぶときに優先する品質の目標を参照する。
+      - レビューで、方式が品質目標と食い違わないかを確認する。
     x-heading: 品質目標
   constraints:
     $ref: common.schema.yaml#/$defs/markdown
     title: 制約
+    x-used-by:
+      - 設計で、方式を選ぶときに守る制約を参照する。
     x-heading: 制約
   crosscutting:
     $ref: common.schema.yaml#/$defs/markdown
     title: 横断の方針
+    x-used-by:
+      - 実装で、サブシステムをまたぐ方針（ログ・エラー・認証 等）を参照する。
     x-heading: 横断の方針
   refs:
     type: array
     title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
     items:
       $ref: common.schema.yaml#/$defs/ref
   decisions:
     type: array
     title: 検討事項
     description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
     items:
       $ref: common.schema.yaml#/$defs/decision
   notes:

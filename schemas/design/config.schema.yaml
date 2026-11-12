@@ -23,6 +23,9 @@ properties:
     type: string
     title: タイトル
     description: '`設定: {サブシステム名}`。'
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
     pattern: '^設定: .+$'
   lead:
     $ref: common.schema.yaml#/$defs/markdown
@@ -30,10 +33,16 @@ properties:
     description: |-
       設定値の一覧であることと、実装・サンプルのファイルへのポインタ。
       初回に記載した内容のまま保ち、後から情報を追加しない。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
   files:
     type: array
     title: ファイル一覧
     description: 設定ファイルを持たないサブシステムは持たない。
+    x-used-by:
+      - 実装で、設定を読むファイルとその置き場所を決める。
+      - 生成で、ファイル一覧の表にする。
     x-heading: ファイル一覧
     x-shape: table
     x-key: file
@@ -48,16 +57,25 @@ properties:
           type: string
           title: ファイル
           description: リポジトリの直下からの相対パス・ホーム起点の絶対パス・ファイル名のいずれか。
+          x-used-by:
+            - 実装で、設定を読むファイルのパスにする。
         manages:
           type: string
           title: 管理する値
+          x-used-by:
+            - 実装で、ファイルごとに持たせる値を決める。
         notes:
           type: string
           title: 補足
+          x-used-by:
+            - 実装で、ファイルの前提を参照する。
   settings:
     type: array
     title: キー一覧
     description: 設定のキー 1 つ = 1 要素。
+    x-used-by:
+      - 実装で、設定を読み込む型と既定値にする。
+      - 生成で、キー一覧の表にする。
     x-heading: キー一覧
     x-shape: table
     x-key: key
@@ -75,46 +93,73 @@ properties:
           type: string
           title: キー
           description: 階層はドットで結ぶ（`logging.level`）。配列の要素の子は `parent[].child`。
+          x-used-by:
+            - 実装で、設定ファイルから値を取り出すキーにする。
+            - 設計で、ほかの設計書の参照（`settings[logging.level]`）からキーを指す。
         title:
           type: string
           title: 論理名
           description: 業務用語。
+          x-used-by:
+            - 生成で、表の論理名にする。
           x-rules:
             - 設計書の中で一意にする。
         file:
           type: string
           title: ファイル
           description: このキーを持つファイル（`files` の `file`）。
+          x-used-by:
+            - 実装で、キーを読むファイルにする。
         type:
           type: string
           title: 型
           description: 取りうる値が限られるときはリテラルの列挙。
+          x-used-by:
+            - 実装で、値の型と検証にする。
         required:
           type: boolean
           title: 必須
+          x-used-by:
+            - 実装で、無いときにエラーにするかを決める。
         default:
           type: string
           title: 既定値
           description: 必須のキーには記載しない。
+          x-used-by:
+            - 実装で、キーが無いときの値にする。
         description:
           type: string
           title: 説明
+          x-used-by:
+            - 実装で、値の意味を参照する。
+            - 生成で、表の説明にする。
         missing:
           type: string
           title: 欠落時の挙動
           description: 必須のキーが無いときの挙動（`起動時にエラー` 等）。
+          x-used-by:
+            - 実装で、必須のキーが無いときの処理にする。
+            - テストで、キーが無いときのケースにする。
         env_var:
           type: string
           title: 環境変数名
           description: 同じ値を上書きする環境変数。
+          x-used-by:
+            - 実装で、値を上書きする環境変数の名前にする。
         secret:
           type: boolean
           title: 秘密
           description: 秘密の値か。秘密なら例・実値を記載せず、表示を伏せる。
+          x-used-by:
+            - 実装で、ログ・画面で値を伏せる。
+            - 生成で、例と実値を出さない。
         reload:
           type: string
           title: 反映
           description: '`immediate`（即時）/ `reload`（再読み込み）/ `restart`（再起動）。'
+          x-used-by:
+            - 実装で、値を変えたときに再読み込みするか、再起動が要るかを決める。
+            - 反映作業で、再起動の作業が要るかを判断する。
           enum:
           - immediate
           - reload
@@ -122,18 +167,24 @@ properties:
         allowed:
           type: string
           title: 許す値や範囲
-        per_env:
-          type: string
-          title: 環境ごとの値
+          x-used-by:
+            - 実装で、値の検証の範囲にする。
+            - テストで、範囲の外の値のケースにする。
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         reason:
@@ -142,18 +193,15 @@ properties:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   overrides:
     type: array
     title: 環境ごとの差分
     description: 環境ごとのファイルが共通の同名キーを上書きする値。
+    x-used-by:
+      - 実装で、環境ごとのファイルが上書きする値にする。
+      - 生成で、環境ごとの差分の表にする。
     x-heading: 環境ごとの差分
     x-shape: table
     items:
@@ -168,27 +216,43 @@ properties:
           type: string
           title: ファイル
           description: '`settings.{環境}.yaml` など。'
+          x-used-by:
+            - 実装で、上書きするファイルにする。
         key:
           type: string
           title: キー
+          x-used-by:
+            - 実装で、上書きするキーにする。
         value:
           type: string
           title: 値
+          x-used-by:
+            - 実装で、その環境での値にする。
         description:
           type: string
           title: 説明
+          x-used-by:
+            - 実装で、上書きする理由と意味を参照する。
         notes:
           type: string
           title: 補足
+          x-used-by:
+            - 実装で、上書きの前提を参照する。
   refs:
     type: array
     title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
     items:
       $ref: common.schema.yaml#/$defs/ref
   decisions:
     type: array
     title: 検討事項
     description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
     items:
       $ref: common.schema.yaml#/$defs/decision
   notes:
