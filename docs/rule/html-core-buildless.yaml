@@ -67,4 +67,4 @@ items:
     body: |-
       - HTML に直接記載する `<script>` の処理は `.ts` へ分け、生成した `.js` を `<script src>` で読み込む。
         1 枚の HTML で配る雛形も同じ。
-        - 値だけを持つ `<script>`（`type="importmap"`・`type="application/json"`）は対象外。
+        - 値だけを持つ `<script>`（`type="importmap"`・`type="application/json"`）と、`tsc` を挟めないもの（[js で記載してよい場合](id:html-core-buildless#script-extension-02)）は対象外。
