@@ -1,0 +1,25 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-148-1.yaml
+    impact: changed
+    detail: エージェントが文書を書き込むツールが、dev-docs のプラグインから project-index のプラグインのツールに変わる。書き込んだ中身の照合と通知の流れは変わらない
+    depends_on: []
+docs:
+  - page: skills/text-review/SKILL.md
+    new: false
+    change: 規約を読む MCP の名前とツールの完全名を project-index のプラグインのものへ書き換える
+    status: todo
+  - page: docs/skill/text-review.yaml
+    new: false
+    change: 前提・依存・フロー図・シーケンス図の MCP の名前 dev-docs を project-index へ書き換える
+    status: todo
+scope_out:
+  - item: テンプレート『スキル』（docs/template/template-skill.yaml）の記述例のシーケンス図の MCP の名前 dev-docs
+    reason: 記述例で、呼ぶツールではない。テンプレートの改訂はユーザーの確認が要る
+    plan: to_file
+  - item: アーキテクチャ図（ARCH-72-1）・シナリオ（SC-72-3・SC-72-4）・使い方の、文書の MCP と画面を dev-docs が持つという記述と、配信の設定 dev-docs.yaml の名前
+    reason: 要望はツールの完全名の書き換えで、配信元の設定の名前は shuhei1101/dev-docs#163 で変わる。書き換える範囲は dev-docs#163 の決着に依る
+    plan: to_file
+  - item: docs/pr/148/要件.md のツールの完全名
+    reason: 過去の PR の記録
+    plan: none
