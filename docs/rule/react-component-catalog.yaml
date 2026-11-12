@@ -44,10 +44,10 @@ items:
       対象は React。
   - id: ui-library-01
     group: UI ライブラリ
-    name: shadcn/ui の Base UI 版だけを使う
+    name: shadcn/ui の Base UI バージョンだけを使用する
     body: |-
-      - UI 部品は、shadcn/ui（Base UI 版）だけを使う。
-        `pnpm dlx shadcn@latest add {name}` で追加し、`shared/components/ui/` に置く。
+      - UI 部品は、shadcn/ui（Base UI バージョン）だけを使用する。
+        `pnpm dlx shadcn@latest add {name}` で追加し、`shared/components/ui/` に配置する。
   - id: ui-library-02
     group: UI ライブラリ
     name: 表は TanStack Table v9 で組む
@@ -82,7 +82,7 @@ items:
     name: 非同期処理中のボタン
     body: |-
       - 非同期処理中は、ボタンを押せなくしてスピナーを出す。
-        この要件は `<LoadingButton>` で満たす（`isLoading={isPending}` を渡すと、disable と Loader2 のスピナー表示になる）。
+        この要件は `<LoadingButton>` で満たす（`isLoading={isPending}` を指定すると、disable と Loader2 のスピナー表示になる）。
   - id: usage-button-01
     group: 用途別 > ボタン
     name: ボタン系の一覧

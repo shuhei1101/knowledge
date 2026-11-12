@@ -23,7 +23,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      複数 feature で共有される型だけを置く。
+      複数 feature で共有される型だけを配置する。
   - id: placement-policy-01
     group: 配置方針
     name: 横断的な識別子型
@@ -33,17 +33,17 @@ items:
     group: 配置方針
     name: feature 固有の型
     body: |-
-      - 特定 feature でしか使わない型 → `features/{feature}/types.py`
+      - 特定 feature でしか使用しない型 → `features/{feature}/types.py`
   - id: placement-policy-03
     group: 配置方針
     name: 複数 feature になってから引き上げる
     body: |-
-      - 複数 feature で使われるようになってから shared に引き上げる（YAGNI）
+      - 複数 feature で使用されるようになってから shared に引き上げる（YAGNI）
   - id: placement-policy-04
     group: 配置方針
-    name: 業務 DTO は shared に置かない
+    name: 業務 DTO は shared に配置しない
     body: |-
-      - `User` のような業務 DTO を shared に置かない（feature 間の密結合になる）
+      - `User` のような業務 DTO を shared に配置しない（feature 間の密結合になる）
   - id: placement-policy-05
     group: 配置方針
     name: 標準型の別名は不要
@@ -54,7 +54,7 @@ items:
     name: type と NewType の使い分け
     body: |-
       使い分けは [core/型ヒント](id:python-core-type-hint)。
-      プロジェクト内で統一し、新規は `type` 文を使う。
+      プロジェクト内で統一し、新規は `type` 文を使用する。
   - id: common-function-alias-01
     group: 共通の関数型エイリアス
     name: 共通の関数型エイリアス

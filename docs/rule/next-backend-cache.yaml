@@ -47,7 +47,7 @@ items:
     group: "\"use cache\" + cacheLife + cacheTag"
     name: データ取得関数に use cache
     body: |-
-      - データ取得関数の先頭に `"use cache"` を置き、`cacheLife` を併記する
+      - データ取得関数の先頭に `"use cache"` を配置し、`cacheLife` を併記する
   - id: use-cache-02
     group: "\"use cache\" + cacheLife + cacheTag"
     name: cacheTag を付ける
@@ -71,7 +71,7 @@ items:
     group: invalidate API の使い分け
     name: Route Handler からの即時削除
     body: |-
-      `updateTag` が使えない Route Handler・Webhook から即時に削除するときは `revalidateTag(tag, { expire: 0 })`。
+      `updateTag` が使用できない Route Handler・Webhook から即時に削除するときは `revalidateTag(tag, { expire: 0 })`。
 
       Server Action の典型は次のとおり。
       自分が参照する単体は `updateTag(`resource:${id}`)`、他人の一覧は `revalidateTag("resources", "max")`、最後に `refresh()`。

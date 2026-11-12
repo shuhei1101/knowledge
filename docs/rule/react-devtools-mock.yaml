@@ -63,9 +63,9 @@ items:
       `afterEach(() => server.resetHandlers())` で、上書きを他のテストへ漏らさない。
       テストでは、handler の無いリクエストをエラーにする。
 
-      通常の E2E は本物の API に対して走るので、MSW は使わない。
-      特定のレスポンスを返したいときや障害をシミュレートしたいときは、`page.route()` で fetch を intercept する。
-      MSW の handler を共有したいときは `@msw/playwright` を使う。
+      通常の E2E は本物の API に対して走るので、MSW は使用しない。
+      特定のレスポンスを返却したいときや障害をシミュレートしたいときは、`page.route()` で fetch を intercept する。
+      MSW の handler を共有したいときは `@msw/playwright` を使用する。
   - id: mocking-msw-03
     group: モック（MSW）
     name: handlers.ts を source of truth にする

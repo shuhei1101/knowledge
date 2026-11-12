@@ -62,9 +62,9 @@ items:
       - ただし 3 箇所目以降のための過剰抽象化はしない（閾値は [architecture/リファクタリング判断](id:python-architecture-refactoring-criteria)）
   - id: dry-03
     group: DRY
-    name: テスト関数には当てない
+    name: テスト関数には適用しない
     body: |-
-      - テスト関数の本文には当てない（[testing/テスト戦略](id:python-testing-strategy#test-function-format-01) の「テスト関数の書式」）
+      - テスト関数の本文には適用しない（[testing/テスト戦略](id:python-testing-strategy#test-function-format-01) の「テスト関数の書式」）
   - id: solid-01
     group: SOLID
     name: SOLID の適用表
@@ -95,17 +95,17 @@ items:
     name: 関数ファースト
     body: |-
       関数ファースト。
-      クラスを使ってよいものは [architecture/TypeScriptスタイル適用](id:python-architecture-typescript-style)。
+      クラスを使用してよいものは [architecture/TypeScriptスタイル適用](id:python-architecture-typescript-style)。
 
-      サービス / Repository / Provider / Validator 等は関数で書く。
+      サービス / Repository / Provider / Validator 等は関数で記載する。
   - id: class-and-function-02
     group: クラスと関数
     name: 可変なモジュール変数を持たない
     body: |-
       - 可変なモジュール変数を持たない。
-        やむを得ず持つなら `_` 付きにし、関数を通して触る（定数は可）
+        やむを得ず持つなら `_` 付きにし、関数を経由して触る（定数は可）
   - id: class-and-function-03
     group: クラスと関数
-    name: 使わない言語機能
+    name: 使用しない言語機能
     body: |-
-      - メタクラスの自作・属性の動的な差し込み・import の書き換え・`__del__` を使わない（標準ライブラリとライブラリが要求するものは可）
+      - メタクラスの自作・属性の動的な差し込み・import の書き換え・`__del__` を使用しない（標準ライブラリとライブラリが要求するものは可）

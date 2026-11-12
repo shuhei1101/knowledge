@@ -41,13 +41,13 @@ items:
   - id: overview
     name: 概要
     body: |-
-      LLM 出力を Pydantic モデルとして受け取るには、各 SDK の組み込みの構造化出力を使い、`AsyncChatFn` の実装の中に閉じる。
-      Instructor は複数プロバイダーが要るリポジトリだけで使う。
+      LLM 出力を Pydantic モデルとして受け取るには、各 SDK の組み込みの構造化出力を使用し、`AsyncChatFn` の実装の中に閉じる。
+      Instructor は複数プロバイダーが要るリポジトリだけで使用する。
   - id: common-01
     group: SDK と Instructor に共通
     name: Field の description と Literal
     body: |-
-      - スキーマの `Field(description=...)` が抽出精度に効くので書く。
+      - スキーマの `Field(description=...)` が抽出精度に影響するので記載する。
         固定選択肢は `Literal`、ネスト・`list[...]` も可
   - id: common-02
     group: SDK と Instructor に共通
@@ -88,7 +88,7 @@ items:
       def make_extract_event_fn(*, client, model) -> ExtractEventFn: ...
       ```
 
-      呼び出し側は記事を渡すだけ。
+      呼び出し側は記事を指定するだけ。
   - id: file-structure-01
     group: ファイル構成
     name: スキーマと関数のファイル構成

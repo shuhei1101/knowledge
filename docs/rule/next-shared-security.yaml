@@ -68,7 +68,7 @@ items:
 
       CSP は要件に応じて nonce 方式（proxy.ts で nonce 生成 → ヘッダに付与）。
       nonce 方式は全ページが動的描画になり Cache Components と併用できない。
-      Cache Components を使う場合は `headers()` で nonce なしの CSP を付ける。
+      Cache Components を使用する場合は `headers()` で nonce なしの CSP を付ける。
   - id: csrf-01
     group: CSRF
     name: Server Actions の CSRF 対策
@@ -81,12 +81,12 @@ items:
       - route.ts の mutation は Origin ヘッダ検証、または SameSite=strict cookie で防御
   - id: sql-injection-01
     group: SQL Injection
-    name: sql.raw に値を渡さない
+    name: sql.raw に値を指定しない
     body: |-
-      - `sql.raw` に文字列結合した値を渡さない
+      - `sql.raw` に文字列結合した値を指定しない
   - id: open-redirect-01
     group: Open Redirect
-    name: redirect に外部入力を渡さない
+    name: redirect に外部入力を指定しない
     body: |-
       - `redirect()` に URL クエリ等の外部入力を直接渡さない
   - id: open-redirect-02
@@ -113,10 +113,10 @@ items:
     group: その他
     name: 外部入力は Zod で許可フィールドのみ
     body: |-
-      - 全外部入力（body / action input / URL クエリ）を許可フィールドだけ Zod で parse してから DB に渡す
+      - 全外部入力（body / action input / URL クエリ）を許可フィールドだけ Zod で parse してから DB に指定する
   - id: others-02
     group: その他
-    name: secret の置き場所
+    name: secret の配置先
     body: |-
       - secret は env / Vercel ダッシュボードのみ。
         `NEXT_PUBLIC_` を付けない。

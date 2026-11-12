@@ -42,23 +42,23 @@ items:
     name: 概要
     body: |-
       対象は React。
-      置き場所の判定は [設定値の置き場所](id:flowchart-config-location) に従う。
+      配置先の判定は [設定値の置き場所](id:flowchart-config-location) に従う。
   - id: env-01
     group: 環境変数
     name: VITE_ の値は公開される
     body: |-
       - `VITE_` で始まる値は、ブラウザの JS にバンドルされて公開される。
-        秘匿値には `VITE_` を付けず、フロントエンドに置かない。
+        秘匿値には `VITE_` を付けず、フロントエンドに配置しない。
   - id: env-02
     group: 環境変数
     name: import.meta.env は 1 か所で検証する
     body: |-
-      - `import.meta.env` は、1 つのファイルで Zod に通して読み、散在して読まない。
+      - `import.meta.env` は、1 つのファイルで Zod で検証して参照し、散在して参照しない。
   - id: constant-01
     group: 定数
     name: 環境で変わらない定数は constants.ts
     body: |-
-      - 環境で変わらない定数は、`shared/core/constants.ts` に置く（UPPER_SNAKE_CASE）。
+      - 環境で変わらない定数は、`shared/core/constants.ts` に配置する（UPPER_SNAKE_CASE）。
   - id: sample-01
     group: サンプルファイル
     name: サンプルファイルをテンプレートにする

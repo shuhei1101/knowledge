@@ -60,7 +60,7 @@ items:
     group: トップレベル構成
     name: 任意フォルダの扱い
     body: |-
-      任意フォルダはプロジェクトで使う場合のみ作る。
+      任意フォルダはプロジェクトで使用する場合のみ作る。
       `{command}/` の `__main__.py` は引数を解釈して `features/{command}/` の公開 API を呼ぶだけにし、処理は `features/{command}/` に配置する。
   - id: feature-folder-01
     group: feature フォルダ
@@ -119,10 +119,10 @@ items:
       ```
   - id: integrations-folder-02
     group: integrations/
-    name: プロンプトファイルの置き場所
+    name: プロンプトファイルの配置先
     body: |-
-      プロンプトファイルは `content/prompts/` に置く（`integrations/llm/` にはローダーと provider 実装のみ）。
-      置き場所は [コンテンツの置き場所](id:dev-content-location) に従う。
+      プロンプトファイルは `content/prompts/` に配置する（`integrations/llm/` にはローダーと provider 実装のみ）。
+      配置先は [コンテンツの置き場所](id:dev-content-location) に従う。
   - id: server-folder-01
     group: server/（FastAPI 使用時）
     name: server の構成例
@@ -137,9 +137,9 @@ items:
       ```
   - id: server-folder-02
     group: server/（FastAPI 使用時）
-    name: route の置き場所
+    name: route の配置先
     body: |-
-      route の置き場所は `features/{feature}/route.py` を基本にする（feature 内で完結）。
+      route の配置先は `features/{feature}/route.py` を基本にする（feature 内で完結）。
       `server/app.py` から `include_router` で集約。
   - id: tests-folder-01
     group: tests/

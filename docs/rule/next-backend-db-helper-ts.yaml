@@ -28,12 +28,12 @@ items:
     group: app/api/v{N}/{resource}/dbHelper.ts
     name: リソース内に閉じる処理だけ
     body: |-
-      - リソース内に閉じる共通処理だけを置く
+      - リソース内に閉じる共通処理だけを配置する
   - id: db-helper-ts-03
     group: app/api/v{N}/{resource}/dbHelper.ts
     name: 横断利用は shared に格上げ
     body: |-
-      - 複数リソース横断で使うものは `app/(shared)/lib/` に格上げ（`app/(shared)/lib/pagination.ts` 等）
+      - 複数リソース横断で使用するものは `app/(shared)/lib/` に格上げ（`app/(shared)/lib/pagination.ts` 等）
   - id: db-helper-ts-04
     group: app/api/v{N}/{resource}/dbHelper.ts
     name: 純粋関数を優先

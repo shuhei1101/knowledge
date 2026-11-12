@@ -78,9 +78,9 @@ items:
     group: 設計原則
     name: vendor 例外は境界でラップ
     body: |-
-      - vendor 例外（openai / anthropic / httpx2）は境界でラップして外に流さない
+      - vendor 例外（openai / anthropic / httpx2）は境界でラップして外に送信しない
         - features / server は `LlmError` 系だけ知ればよく、vendor 入れ替えで変わらない
-        - リトライ判定が型で書ける
+        - リトライ判定が型で記載できる
   - id: design-principle-03
     group: 設計原則
     name: メッセージと原因連鎖

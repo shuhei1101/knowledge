@@ -38,30 +38,31 @@ items:
   - id: overview
     name: 概要
     body: |-
-      プロンプトは 1 つにつき 1 枚の YAML に書き、言語ごとの本文を部品の `texts[]` に持つ。
+      プロンプトは 1 つにつき 1 枚の YAML に記載し、言語ごとの本文を部品の `texts[]` に持つ。
       対象は LLM の呼び出し・フックの注入文・MCP の instructions・ツールの description・エージェントのシステムプロンプト。
   - id: layout-01
     group: 配置
     name: 1 プロンプト 1 枚の YAML
     body: |-
-      - 1 つのプロンプト（LLM の呼び出し 1 種類・フックの注入文・MCP の instructions・ツールの description・エージェントのシステムプロンプト）に YAML 1 枚を置く
+      - プロンプト 1 つを YAML 1 枚に記載する。
+        対象のプロンプトは、LLM の呼び出し 1 種類・フックの注入文・MCP の instructions・ツールの description・エージェントのシステムプロンプト
   - id: layout-02
     group: 配置
     name: prompts/{id}.yaml の配置
     body: |-
-      - `prompts/{id}.yaml` に置き、`prompts/` の下をサブフォルダで分けてよい。
+      - `prompts/{id}.yaml` に配置し、`prompts/` の下をサブフォルダで分けてよい。
         `{id}` は `prompts/` からのパスから `.yaml` を除いたもの（例: `prompts/node/reflection.yaml` の `id` は `node/reflection`）
   - id: layout-03
     group: 配置
-    name: content/prompts/ に置く
+    name: content/prompts/ に配置する
     body: |-
-      - 置き場所はリポジトリ直下の `content/prompts/`（[コンテンツの置き場所](id:dev-content-location)）
-      - プラグインのフックが読む文は、プラグインのルートの `content/prompts/` に置く
+      - 配置先はリポジトリ直下の `content/prompts/`（[コンテンツの置き場所](id:dev-content-location)）
+      - プラグインのフックが参照する文は、プラグインのルートの `content/prompts/` に配置する
   - id: layout-04
     group: 配置
-    name: コードは読んで描画するだけ
+    name: コードは参照して描画するだけ
     body: |-
-      - コードは YAML を読んで描画するだけにし、本文をコードに埋め込まない
+      - コードは YAML を参照して描画するだけにし、本文をコードに埋め込まない
   - id: structure-01
     group: 構造
     name: 1 枚の構造
@@ -81,11 +82,11 @@ items:
       | `kind` | ✅ | 文の種類。`llm`（LLM の呼び出し）/ `hook`（フックの注入文）/ `instructions`（MCP のサーバーの instructions）/ `tool`（ツールの description）/ `agent`（Claude Code のエージェントに `--append-system-prompt` で指定するシステムプロンプト） |
       | `lang` | ✅ | 注入する言語（BCP 47 の言語タグ）。各部品の `texts[]` からこの言語の本文を選ぶ |
       | `tags` | - | 分類のタグ |
-      | `vars` | - | 本文で使う変数。変数名 → 変数の定義（`structure-05`） |
-      | `examples[]` | - | 名前付きのサンプルの値の組（`id`・`name`・`values`）。画面で組ごとに描画する。`values` で省いた変数は `vars.{名前}.example` を使う |
+      | `vars` | - | 本文で使用する変数。変数名 → 変数の定義（`structure-05`） |
+      | `examples[]` | - | 名前付きのサンプルの値の組（`id`・`name`・`values`）。画面で組ごとに描画する。`values` で省いた変数は `vars.{名前}.example` を使用する |
       | `output` | - | 出力の形式。`kind: llm` のときだけ |
-      | `parts` | ✅ | 部品の配列。並びが積み順になる |
-      | `x-{名前}` | - | プロジェクト固有の拡張。どの階層にも置ける。それ以外の知らないキーは検査で落とす |
+      | `parts` | ✅ | 部品の配列。並びが追加順になる |
+      | `x-{名前}` | - | プロジェクト固有の拡張。どの階層にも配置できる。それ以外の知らないキーは検査で落とす |
 
       <!-- /table -->
   - id: structure-03
@@ -102,9 +103,9 @@ items:
       | キー | 必須 | 内容 |
       | --- | --- | --- |
       | `id` | ✅ | 部品の識別子 |
-      | `role` | `kind: llm` のとき ✅ | `system` / `user` など、積む先。`kind: llm` 以外では書かない |
-      | `tags` | - | 部品の分類。精度評価で部品を差し替えるときに使う |
-      | `when` | - | 使う条件。`vars` を使う Jinja2 の式で、無い部品は常に使う |
+      | `role` | `kind: llm` のとき ✅ | `system` / `user` など、追加先。`kind: llm` 以外では記載しない |
+      | `tags` | - | 部品の分類。精度評価で部品を差し替えるときに使用する |
+      | `when` | - | 使用する条件。`vars` を使用する Jinja2 の式で、無い部品は常に使用する |
       | `texts[]` | ✅ | 言語ごとの本文。各要素は `lang`（BCP 47 の言語タグ）と `text`（本文） |
 
       <!-- /table -->
@@ -120,11 +121,11 @@ items:
       | --- | --- | --- |
       | `type` | ✅ | `string` / `integer` / `number` / `boolean` / `array` / `object` |
       | `description` | ✅ | 何が入るか。画面のツールチップに出す |
-      | `required` | -（既定 `false`） | 必須か。必須でない変数は、渡されなければ `default` か `None` として渡す |
+      | `required` | -（既定 `false`） | 必須か。必須でない変数は、指定されなければ `default` か `None` として指定する |
       | `example` | `vars` の直下で ✅ | `type` に合うサンプルの値 |
-      | `default` | - | 渡されないときの値 |
+      | `default` | - | 指定されないときの値 |
       | `enum` | - | 取りうる値の一覧 |
-      | `source` | - | 値の出どころ |
+      | `source` | - | 値の出典 |
       | `items` | `type: array` のとき ✅ | 配列の要素の定義 |
       | `properties` | `type: object` のとき ✅ | キー名 → 変数の定義 |
 
@@ -159,7 +160,7 @@ items:
           texts:
             - lang: ja
               text: |
-                新しいファイルは、まず {{ write_tool }} で空の内容で作り、案内されたルールを読んでから中身を書いてください。
+                新しいファイルは、まず {{ write_tool }} で空の内容で作り、案内されたルールを参照してから中身を書いてください。
         - id: edit-tool
           when: "{{ edit_tool }}"
           texts:
@@ -225,7 +226,7 @@ items:
     group: 本文
     name: 本文はブロックスカラー
     body: |-
-      - 本文は YAML のブロックスカラー（`|`）に Jinja2 で書き、未定義の変数はエラーにする（StrictUndefined）
+      - 本文は YAML のブロックスカラー（`|`）に Jinja2 で記載し、未定義の変数はエラーにする（StrictUndefined）
   - id: body-text-02
     group: 本文
     name: 実行時は lang の本文
@@ -235,17 +236,17 @@ items:
     group: 本文
     name: 言語の間の同期
     body: |-
-      - 言語の間で使う変数をそろえ、1 つの言語の本文を修正したら同じ変更でほかの言語も修正する
+      - 言語の間で使用する変数をそろえ、1 つの言語の本文を修正したら同じ変更でほかの言語も修正する
   - id: body-text-04
     group: 本文
-    name: 値は変数で渡す
+    name: 値は変数で指定する
     body: |-
-      - 字数・件数などの値は本文に書かず、変数で渡す
+      - 字数・件数などの値は本文に記載せず、変数で指定する
   - id: body-text-05
     group: 本文
     name: 日本語固有の中身
     body: |-
-      - 日本語でしか書けない中身（キャラクターの語尾・話し方）は入力の値として渡す
+      - 日本語でしか記載できない中身（キャラクターの語尾・話し方）は入力の値として指定する
   - id: body-text-06
     group: 本文
     name: 部品の並び順
@@ -255,12 +256,12 @@ items:
     group: 検査
     name: 検査の対象
     body: |-
-      構造はスキーマ `schemas/prompt.schema.yaml`（`## スキーマの指し方`）で検査し、スキーマで見られない次を独自の検査で検査する。
+      構造はスキーマ `schemas/prompt.schema.yaml`（`## スキーマの指し方`）で検査し、スキーマで確認されない次を独自の検査で検査する。
   - id: inspection-02
     group: 検査
     name: vars 外の変数の禁止
     body: |-
-      - `vars` に無い変数を本文で使っていない
+      - `vars` に無い変数を本文で使用していない
   - id: inspection-03
     group: 検査
     name: lang の本文の有無
@@ -286,8 +287,8 @@ items:
     group: 検査
     name: スキーマと検査の参照先
     body: |-
-      スキーマの書き方は knowledge の `schemas/meta.schema.yaml` に、適用する範囲と検査の通し方は [YAML](id:dev-yaml) の `## スキーマ` と `## 検査` に従う。
-      スキーマには、`when` の式の書き方・`vars.*.type` に書ける型・`output` の意味を書く。
+      スキーマの記載方法は knowledge の `schemas/meta.schema.yaml` に、適用する範囲と検査の実行方法は [YAML](id:dev-yaml) の `## スキーマ` と `## 検査` に従う。
+      スキーマには、`when` の式の記載方法・`vars.*.type` に記載できる型・`output` の意味を記載する。
   - id: schema-ref-01
     group: スキーマの指し方
     name: モードラインで knowledge のスキーマを指す

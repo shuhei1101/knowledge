@@ -33,14 +33,14 @@ items:
     name: 概要
     body: |-
       対象は React。
-      スタイルは Tailwind v4 と shadcn/ui で書く。
-      トークンの名前と段階は規約『[デザイントークン](id:ui-token)』に従い、この規約には書かない。
+      スタイルは Tailwind v4 と shadcn/ui で記載する。
+      トークンの名前と段階は規約『[デザイントークン](id:ui-token)』に従い、この規約には記載しない。
   - id: token-01
     group: トークン
     name: トークンは :root の 3 ティアで持つ
     body: |-
       - トークンは `:root` の 3 ティアで持つ。
-        置き場所は `shared/styles/` にする。
+        配置先は `shared/styles/` にする。
   - id: token-02
     group: トークン
     name: theme inline で割り当てる
@@ -55,5 +55,5 @@ items:
     group: 任意値
     name: 任意値を lint で禁止する
     body: |-
-      - `w-[321px]` のような任意値と、トークンに無い色を書かない。
+      - `w-[321px]` のような任意値と、トークンに無い色を記載しない。
         eslint-plugin-better-tailwindcss で禁止する。

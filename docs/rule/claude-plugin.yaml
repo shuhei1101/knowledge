@@ -76,7 +76,7 @@ items:
     group: 定数管理ルール
     name: 定数ファイルの用途
     body: |-
-      - スキル・エージェントとそこから呼ぶ Bash のコマンドが使う定数を持つプラグインは、`{CLAUDE_PLUGIN_ROOT}/scripts/constants.sh` を用意する
+      - スキル・エージェントとそこから呼ぶ Bash のコマンドが使用する定数を持つプラグインは、`{CLAUDE_PLUGIN_ROOT}/scripts/constants.sh` を用意する
   - id: constant-management-02
     group: 定数管理ルール
     name: constants.sh の適用ルール
@@ -119,10 +119,10 @@ items:
       - スキル・エージェントファイル内では手動 `source` を呼ばない
   - id: constant-management-05
     group: 定数管理ルール
-    name: フックが読む設定の置き場所
+    name: フックが参照する設定の配置先
     body: |-
-      - フックが自分で読む設定は `constants.sh` に置かない
-        - プラグインと一緒に配る値はプラグイン内のファイルに置き、フックが `${CLAUDE_PLUGIN_ROOT}` を起点に読む
+      - フックが自分で参照する設定は `constants.sh` に配置しない
+        - プラグインと一緒に配る値はプラグイン内のファイルに配置し、フックが `${CLAUDE_PLUGIN_ROOT}` を起点に参照する
         - 利用者の環境ごと・プロジェクトごとに変わる値は、`## 設定ファイル` に従って受け取る
   - id: settings-file-01
     group: 設定ファイル
@@ -132,28 +132,29 @@ items:
       本体を `${XDG_CONFIG_HOME:-~/.config}` の YAML に記載して受け取る。
   - id: settings-file-02
     group: 設定ファイル
-    name: env に置く設定の指定
+    name: env に配置する設定の指定
     body: |-
-      - 既定のパス（`settings-file-03`）と違う場所に配置するときだけ、ユーザースコープの `~/.claude/settings.json` の `env` に、`{ツール名}_CONFIG` でパスを書く
+      - 既定のパス（`settings-file-03`）と違う場所に配置するときだけ、`{ツール名}_CONFIG` でパスを記載する。
+        記載先はユーザースコープの `~/.claude/settings.json` の `env`
         - 環境変数の名前の付け方は [設定値の置き場所](id:flowchart-config-location) に従う
-        - プラグインは値の先頭の `~` をホームに展開して読む
-        - `env` のプロジェクトスコープ（`.claude/settings.json` / `.claude/settings.local.json`）には書かない。
-          プロジェクトごとの違いは YAML の `projects` に書く
-        - `env` にパスが無いときは既定のパスを読み、ファイルも無いときは設定なし（プラグインの既定値）で動く
-        - MCP サーバーは常駐で `env` が渡らないため、サーバーを起動する環境に同じ環境変数を渡す。
-          `match` に使う起動したプロジェクトの直下は、[MCP サーバー作成ルール](id:claude-mcp) の常駐サーバーの決まりどおり PreToolUse フックでツールの引数に入れて受ける
+        - プラグインは値の先頭の `~` をホームに展開して参照する
+        - `env` のプロジェクトスコープ（`.claude/settings.json` / `.claude/settings.local.json`）には記載しない。
+          プロジェクトごとの違いは YAML の `projects` に記載する
+        - `env` にパスが無いときは既定のパスを参照し、ファイルも無いときは設定なし（プラグインの既定値）で動く
+        - MCP サーバーは常駐で `env` が渡らないため、サーバーを起動する環境に同じ環境変数を指定する。
+          `match` に使用する起動したプロジェクトの直下は、[MCP サーバー作成ルール](id:claude-mcp) の常駐サーバーの決まりどおり PreToolUse フックでツールの引数に入れて受ける
   - id: settings-file-03
     group: 設定ファイル
-    name: 設定の本体の置き場所
+    name: 設定の本体の配置先
     body: |-
-      - 本体は `${XDG_CONFIG_HOME:-~/.config}/{プラグイン名}/settings.yaml` に置く（判定フローチャート『[設定値の置き場所](id:flowchart-config-location)』の環境の値と同じ）
+      - 本体は `${XDG_CONFIG_HOME:-~/.config}/{プラグイン名}/settings.yaml` に配置する（判定フローチャート『[設定値の置き場所](id:flowchart-config-location)』の環境の値と同じ）
       - 実行中に書き換わる状態・ログは `${XDG_STATE_HOME:-~/.local/state}/{プラグイン名}` に配置する
         - 場所を変えるときだけ `env` の `{ツール名}_STATE_DIR` で上書きする
   - id: settings-file-04
     group: 設定ファイル
     name: サンプルファイルの用意
     body: |-
-      - 必要なキーの一覧として、実値を入れないサンプル `settings.sample.yaml` をプラグインの中に置く
+      - 必要なキーの一覧として、実値を入れないサンプル `settings.sample.yaml` をプラグインの中に配置する
   - id: settings-file-05
     group: 設定ファイル
     name: global と projects の構成
@@ -162,8 +163,8 @@ items:
 
       | キー | 中身 |
       | --- | --- |
-      | `global` | どのプロジェクトで起動しても効く値 |
-      | `projects` | 要素ごとに `match` と、そのプロジェクトで効く値を持つ並び |
+      | `global` | どのプロジェクトで起動しても有効な値 |
+      | `projects` | 要素ごとに `match` と、そのプロジェクトで有効な値を持つ並び |
 
       `match` は絶対パスかプロジェクト名で記載する。
 
@@ -177,10 +178,10 @@ items:
         辞書はキーごとに重ね、並びは `global` の後ろに `projects` の要素を追加する
   - id: settings-file-06
     group: 設定ファイル
-    name: 単純な値は env に置く
+    name: 単純な値は env に配置する
     body: |-
-      - 単純な値 1 つ（プロジェクトごとに変えない、キーと値で書ける値）だけを受け取るプラグインは、ユーザースコープの `env` で直接受け取ってよい
-        - 受け取る値が増えたり、プロジェクトごとに変える値ができたりしたら、設定ファイルへ移す（`settings-file-08` に当たる値は移さない）
+      - 単純な値 1 つ（プロジェクトごとに変えない、キーと値で記載できる値）だけを受け取るプラグインは、ユーザースコープの `env` で直接受け取ってよい
+        - 受け取る値が増えたり、プロジェクトごとに変える値ができたりしたら、設定ファイルへ移す（`settings-file-08` に該当する値は移さない）
 
       ```yaml
       global:
@@ -195,19 +196,19 @@ items:
     group: 設定ファイル
     name: リポジトリの設定ファイルとバージョン
     body: |-
-      - リポジトリと一緒に変わる設定の置き場所と、設定ファイルの `version`・移し替えは、[YAML](id:dev-yaml) の `## 設定ファイル` に従う。
-        `version` は設定ファイルのもので、プラグインの manifest には当てない（`no-version-01`）。
+      - リポジトリと一緒に変わる設定の配置先と、設定ファイルの `version`・移し替えは、[YAML](id:dev-yaml) の `## 設定ファイル` に従う。
+        `version` は設定ファイルのもので、プラグインの manifest には適用しない（`no-version-01`）。
   - id: settings-file-08
     group: 設定ファイル
-    name: YAML を読めない仕組みも読む値は env に置く
+    name: YAML を参照できない仕組みも参照する値は env に配置する
     body: |-
       - 設定ファイルを持つプラグインでも、`.mcp.json` など YAML を参照できない仕組みも参照する値は、ユーザースコープの `env` に配置する。
         例は [MCP サーバー作成ルール](id:claude-mcp) の `## 登録` の `{ツール名}_PORT`
-        - サーバーと `.mcp.json` の両方が同じ `env` を読む
+        - サーバーと `.mcp.json` の両方が同じ `env` を参照する
         - 同じ値を設定ファイルと `env` の 2 か所に記載しない
   - id: no-version-01
-    group: version を置かない規約
-    name: version を置かない
+    group: version を配置しない規約
+    name: version を配置しない
     body: |-
       `.claude-plugin/marketplace.json` に載るプラグインは、`plugins[].version` と `plugin.json` の `version` のどちらにも値を配置しない。
   - id: reload-timing-01

@@ -1,0 +1,45 @@
+use_cases: []
+docs:
+  - page: docs/rule/claude-hook.yaml
+    new: false
+    change: PreToolUse のフックが JSON を出力するときは hookSpecificOutput に hookEventName と permissionDecision を記載し、updatedInput を返すときは必須にする決まりを追加する（#244）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:18:13.078142+00:00'
+  - page: rules.yaml
+    new: false
+    change: claude-hook.yaml の行の paths にプラグインのフックのスクリプト（**/hooks/**）を追加する（#244）。template-container.yaml・template-test-fixture.yaml の行の paths を docs/ の下の置き場所へ修正する（#255）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:18:13.078142+00:00'
+  - page: docs/template/template-container.yaml
+    new: false
+    change: 本文の配置の記述（dev/設計書/コンテナ構成/…）を docs/ の下の置き場所へ修正する（#255）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:18:13.078142+00:00'
+  - page: docs/template/template-test-fixture.yaml
+    new: false
+    change: 本文の配置の記述（dev/設計書/テストフィクスチャ.md）を docs/ の下の置き場所へ修正する（#255）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:18:13.078142+00:00'
+  - page: docs/rule
+    new: false
+    change: 規約に残る AI slop の単語を、対応表 docs/word-list/word-list-ai-slop.yaml の OK の単語へ修正する（意味が通らない箇所は残す。#260）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:18:13.078142+00:00'
+scope_out:
+  - item: dev-docs・mdmark・MindStella のフックへの permissionDecision の追加
+    reason: 各リポジトリの作業で、起票済み（shuhei1101/dev-docs#158・shuhei1101/mdmark#463・shuhei1101/mindstella#479）。knowledge では対応しない
+    plan: none
+  - item: template-container.yaml の dev/設計書/外部ライブラリ・dev/設計書/外部API を指す記述（49・50・140 行目）
+    reason: コンテナ構成・テストフィクスチャ以外の設計書の置き場所で、#254 の範囲
+    plan: '#254'
+  - item: コンテナ構成・テストフィクスチャの置き場所を ai-monitor#3307 の置き場所の表へ追加すること
+    reason: 判断が分かれる。ai-monitor の表はマージ済みの PR ドキュメントで、今の置き場所の決まりは docs/{kind}/ の形。knowledge が docs/{kind}/ の形に合わせれば食い違わないため、今は対応しない判断。レビューで確定する
+    plan: none
+  - item: docs/rule 以外のフォルダに残る AI slop の単語
+    reason: フォルダごとの別の Issue（#261・#262・#263・#264）の範囲
+    plan: '#261'
