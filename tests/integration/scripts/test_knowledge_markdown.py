@@ -132,12 +132,22 @@ def test_normal(run_script: RunScript) -> None:
     ]
 
 
-def test_normal_when_kind_specific_keys(run_script: RunScript) -> None:
-    """スキルの固有のキーを、スキーマの title を見出しにした節で出す（正常系）。"""
-    # 準備
+def test_normal_when_kind_specific_keys(run_script: RunScript, tmp_path: Path) -> None:
+    """種類に固有のキーを、スキーマの title を見出しにした節で出す（正常系）。"""
+    # 準備: 固有のキーの title を持つ種類のスキーマを、配信元の schemas/ に配置する
+    (tmp_path / "schemas").mkdir()
+    (tmp_path / "schemas" / "sample.schema.yaml").write_text(
+        "properties:\n"
+        "  arguments:\n"
+        "    title: 引数\n"
+        "  preconditions:\n"
+        "    title: 事前条件\n",
+        encoding="utf-8",
+    )
+    shutil.copy(_ROOT / "dev-docs.yaml", tmp_path / "dev-docs.yaml")
     stdin = (
         "id: text-review\n"
-        "kind: skill\n"
+        "kind: sample\n"
         "name: 文章の点検\n"
         "description: 文章を点検する。\n"
         "arguments:\n"
@@ -152,7 +162,7 @@ def test_normal_when_kind_specific_keys(run_script: RunScript) -> None:
         "    body: スキルの概要\n"
     )
     # 実行
-    result = run_script("knowledge_markdown", _ROOT, stdin)
+    result = run_script("knowledge_markdown", tmp_path, stdin)
     # 検証
     assert result.exit_code == 0
     assert "## 引数\n\n<!-- table: data -->\n\n" in result.stdout
