@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-user-confirmation
+kind: rule
+name: "ユーザー確認が必須な事項"
+description: ユーザーの資源・要件・ユーザーが直接参照するものに触れる論点の型を定め、作業中の論点をユーザーへ確認するか、作業する人とレビューで決めるかを判断するときに参照する。
+aliases:
+  - ユーザー確認
+tags:
+  - name: scope:dev
+  - name: topic:ユーザー
+    main: true
+  - name: topic:論点
+  - name: topic:コスト
+  - name: topic:権限
+  - name: topic:要件
+  - name: action:確認
+  - name: action:判断
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-12'
+related:
+  - to: dev-paid-api-execution
+    type: references
+    when: 従量課金の実行の見積もりと閾値を確認するとき
+  - to: dev-resource-values
+    type: references
+    when: 資源の値を導けるかを確認するとき
+  - to: convention-issue-presentation
+    type: references
+    when: ユーザーへ論点を提示するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      ユーザーの資源（費用・アカウント・環境）・要件そのもの・ユーザーが直接参照するものに触れる論点は、技術的に自明でもユーザーへ回す。
+      それ以外の技術選定・構成・配置先は、作業する人とレビューで決めきり、ユーザーへ回さない。
+  - id: issue-type-01
+    group: 論点の型
+    name: "ユーザーへ確認する論点の型"
+    body: |-
+      <!-- table: data -->
+
+      | 論点の型 | 例 |
+      | --- | --- |
+      | 費用が発生する | 有料 API の契約、見積もりが規約 [開発時の従量課金APIの実行](id:dev-paid-api-execution) の閾値を超える従量課金の実行、従量課金の月の上限を超えている間の従量課金の実行（見積もりが閾値以下でも）、クラウドリソースの作成 |
+      | ユーザーの操作・権限が要る | 外部サービスへの登録、API キーの発行、sudo での導入 |
+      | 要件を変える | PoC 不成立による要件の縮小、スコープの追加・削除 |
+      | 外へ出る・戻せない | 公開リポジトリへの掲載、外部サービスへのデータ送信、公開済みインターフェースの互換性破壊 |
+      | 手元の資産を戻せなくする | DB スキーマの変更、既存データの移行、既存成果物の一括書き換え |
+      | 資源の量を決める | 使用する API とモデルの選択、規約 [資源の値の決め方](id:dev-resource-values) で導けずユーザーの意向でしか決まらない値（待てる時間・予算 等） |
+      | ユーザーが参照・操作するものを作る | テンプレートの新規作成・改訂、画面一覧・画面遷移、モックの画面 |
+      | ユーザーの目に触れる単語を決める | 画面に表示する名称、通知やコメントの文面 |
+
+      <!-- /table -->
