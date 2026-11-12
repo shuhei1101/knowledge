@@ -217,6 +217,8 @@ $defs:
         description: 中身の種類。最上位の `content_types[].name` の単語を選ぶ。
         x-used-by:
           - レビューで、役割と機能の切り方がフォルダの中で混ざっていないかを確認する。
+        x-rules:
+          - 付ける単語は判定フローチャート『フォルダの中身の種類の決め方』（`flowchart-folder-content-type`）で決める。
         uniqueItems: true
         items:
           type: string
