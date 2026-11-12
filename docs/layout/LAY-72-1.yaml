@@ -4,7 +4,7 @@ title: knowledge
 repository: shuhei1101/knowledge
 lead: |-
   文書の原本は `docs/` の種類のフォルダ、スキーマは `schemas/`、検査と変換のスクリプトは `scripts/` に分ける。
-  プラグイン knowledge は直下の `hooks/`・`skills/`・`.claude-plugin/`、プラグイン slop-check は `plugins/slop-check/` に配置する。
+  プラグイン knowledge は直下の `skills/`・`.claude-plugin/`、プラグイン slop-check は `plugins/slop-check/` に配置する。
 tags:
   - name: topic:フォルダ
     main: true
@@ -104,6 +104,10 @@ entries:
       - type: file
         name: changelog.yaml
         contents: knowledge のバージョンごとの変更履歴
+        content_types: [knowledge_doc]
+      - type: file
+        name: terms.yaml
+        contents: 複数のリポジトリで同じ意味で使用する用語の用語集
         content_types: [knowledge_doc]
       - type: folder
         name: rule
@@ -223,7 +227,7 @@ entries:
                     naming: ['疎通確認.{ext}', '実行.{ext}', '確認.{ext}', '切り戻し.{ext}', dry-run.log]
   - type: folder
     name: schemas
-    contents: 文書を検査する JSON Schema。直下は knowledge の文書の種類のスキーマと、AI Monitor の配布物の設計書のスキーマのコピー
+    contents: 文書を検査する JSON Schema。直下は knowledge の文書の種類のスキーマ
     content_types: [schema]
     naming: ['{kind}.schema.yaml']
     used_by: [IF-72-3#]
@@ -234,11 +238,6 @@ entries:
         content_types: [schema]
         naming: ['{kind}.schema.yaml']
         used_by: [IF-72-3#, IF-201-1#]
-      - type: folder
-        name: conversions
-        contents: AI Monitor の配布物の、バージョンごとの設計書の変換
-        content_types: [schema]
-        naming: [versions.yaml, '{version}.py']
   - type: folder
     name: scripts
     contents: dev-docs の validators・converters と、CI と手元の CLI の単一ファイルのスクリプト
@@ -348,18 +347,6 @@ entries:
             generated_from:
               path: scripts/lint/package-lock.json
               command: CMD-72-1#categories[環境構築（クローン直後）]
-  - type: folder
-    name: hooks
-    contents: プラグイン knowledge のフック
-    content_types: [hook, knowledge_plugin]
-    children:
-      - type: file
-        name: hooks.json
-        contents: プラグイン knowledge が Claude Code に登録するフックの一覧
-      - type: file
-        name: files.yaml
-        contents: '`hooks/` のファイルの一覧（dev-docs の files の行）'
-        content_types: [file_list]
   - type: folder
     name: skills
     contents: プラグイン knowledge のスキルの本体
