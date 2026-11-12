@@ -1,0 +1,11 @@
+confirmations:
+  - topic: map の型の置き場所
+    decision: '`common.schema.yaml` に `$defs/map` を追加し、`flow` から参照する（推奨案 A）。#251 がインターフェース定義の `flow` とモジュール構成の図を map にするときも同じ型を参照できるため'
+    decided_by: reviewer
+    approver: reviewer
+    thread: https://github.com/shuhei1101/knowledge/pull/272#discussion_r4549717989
+  - topic: map で効かない `click` のリンクの決まりの扱い
+    decision: '`scenarios[].flow` の `x-rules` から `click` で単一ユースケースへリンクする部分を削除し、指す先は `scenarios[].uses` に持たせる（推奨案 A）。mdmark の map は `click` の行を読み捨てるため'
+    decided_by: reviewer
+    approver: reviewer
+    thread: https://github.com/shuhei1101/knowledge/pull/272#discussion_r4549717034
