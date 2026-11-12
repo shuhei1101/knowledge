@@ -45,10 +45,10 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-12T09:37:08.752913+00:00'
   - process: インターフェース定義設計
-    status: skipped
-    reason: IF-201-1 の入出力と約束を変えない。生成の対象の種類が 1 つ増えるだけ
+    status: done
     updated_by: planner
-    updated_at: '2026-11-12T09:37:08.752913+00:00'
+    updated_at: '2026-11-12T09:48:15.397848+00:00'
+    note: IF-201-1 のテンプレートの対応表に data → template-data を追加する
   - process: 部品設計
     status: skipped
     reason: 変更が画面に及ばない
@@ -77,6 +77,6 @@ tasks:
     note: TEMPLATE_IDS への登録・テンプレートの生成・E2E の _TEMPLATES への追加
   - process: 結合テスト作成
     status: skipped
-    reason: IF-201-1・IF-72-3 の約束を変えない。test_build_templates.py・test_check_all.py は実行のみ
+    reason: 対応表に行が増えるだけで、IF-201-1・IF-72-3 の結合テストの前提と結果が変わらない。test_build_templates.py・test_check_all.py は実行のみ
     updated_by: planner
     updated_at: '2026-11-12T09:37:08.752913+00:00'
