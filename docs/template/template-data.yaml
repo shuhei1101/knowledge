@@ -1,0 +1,183 @@
+# yaml-language-server: $schema=../../schemas/template.schema.yaml
+id: template-data
+kind: template
+name: "テンプレート: データ"
+description: 利用者と決めるデータの構造を、書き込みの単位のオブジェクトごとにキーの表で記載する書式を定め、データの設計書を作る・更新するときに参照する。
+tags:
+  - name: scope:テンプレート
+  - name: topic:データ
+    main: true
+  - name: topic:構造
+  - name: topic:キー
+  - name: topic:状態遷移
+  - name: topic:データストア
+  - name: topic:テンプレート
+  - name: topic:スキーマ
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      利用者と決めるデータの構造を、オブジェクトのキーの表で記載する。
+      1 ファイル = 書き込みの単位（1 つのトランザクションで整合を保つまとまり）のオブジェクト 1 つ。
+  - id: rules-01
+    name: 決まり
+    body: |-
+      - 1 つのオブジェクトにまとめるのは同じ使われ方をするデータだけにし、種類ごとに使用するキーが分かれるものは種類ごとに別のオブジェクトにする。
+      - 1 つのデータが 2 つのオブジェクトにまたがるときは、持ち主のオブジェクトを 1 つ決め、ほかのオブジェクトは `ref` で参照する。
+      - 関連の図は記載せず、親子の関連はキーの入れ子、ほかのオブジェクトとの関連は `ref` で表す。
+      - テーブルの分け方・物理名・データベースの型・インデックス・削除時の連動は記載せず、ER 図の設計書に記載する。
+  - id: item-list-01
+    name: 項目
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 検査で、ほかの設計書の参照（`{ID}#{項目のパス}`）の解決先にする。<br>生成で、ページの名前と、ほかの設計書からのリンク先にする。 | `IF-12` / `IF-3038-1` |
+      | title | タイトル | string | 必須 | - | pattern: `^データ: .+$` | `データ: {オブジェクトの名前}`。 | 生成で、ページの見出しにする。<br>dev-docs の検索で、文書の名前にする。 | - |
+      | lead | 冒頭リード | string | - | - | - | 何のデータで、誰が読み書きするかを 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>dev-docs の検索で、文書の概要文にする。 | - |
+      | datastore | 保存先 | string | 必須 | - | - | 保存先の種類（`SQLite`・`PostgreSQL`・`YAML`・`JSON` 等）。 | 設計で、ER 図の設計書のデータストアにする。 | `SQLite` |
+      | fields | キー | array | 必須 | - | minItems: `1` | オブジェクトのキー 1 つ = 1 要素。並びは親から子の順。 | レビューで、利用者が持つ項目と意味を確認する。<br>設計で、ER 図の設計書のテーブル・カラムの `source` から指す。<br>生成で、キーの表にする。 | - |
+      | fields[].key | キー | string | 必須 | - | - | オブジェクトの中のキー。階層は `.`、配列の要素は `[]` でつなぐ。 | 設計で、ほかの設計書の参照（`fields[segments[].segment_id]`）からキーを指す。 | `segments[].artifacts[].version` |
+      | fields[].title | 論理名 | string | 必須 | - | - | 画面のラベルと同じ名詞。 | 生成で、表の論理名にする。<br>画面の実装で、ラベルにする。 | `作成日時` |
+      | fields[].type | 型 | string | 必須 | `string` / `int` / `bool` / `datetime` / `enum` / `object` / `array` / `ref` | - | 論理の型。`ref` はほかのオブジェクトの参照。 | 設計で、ER 図の設計書のカラムの型を決める。 | - |
+      | fields[].required | 必須 | boolean | - | - | - | - | 設計で、ER 図の設計書のカラムの NOT NULL を決める。 | - |
+      | fields[].description | 説明 | string | 必須 | - | - | `enum` は値と意味を並べる。 | レビューで、利用者が項目の意味を確認する。<br>実装で、値の意味を参照する。 | `` `current`（最新）/ `stale`（要更新） `` |
+      | fields[].example | 例 | string | - | - | - | - | テストで、Factory の値にする。 | `2` |
+      | fields[].unique | 一意の範囲 | string | - | - | - | 識別子は `全体`、親の中で一意なら親の範囲。 | 設計で、ER 図の設計書の一意の制約にする。 | `セグメントの中` |
+      | fields[].ref | 参照先 | string | - | - | - | `type` が `ref` のときの参照先の `{オブジェクトの名前}.{キー}`。 | 設計で、ER 図の設計書の外部キーにする。 | `台本.id` |
+      | keys | 複合の鍵 | array | - | - | - | 2 つ以上のキーを合わせた一意の鍵と、冪等の鍵。 | 設計で、ER 図の設計書の一意の制約とインデックスにする。<br>インターフェース定義で、冪等の鍵にする。 | - |
+      | keys[].fields | キー | array | 必須 | - | minItems: `1` | 鍵にする `fields[].key`。 | 設計で、一意の制約のカラムにする。 | `['segments[].segment_id', 'segments[].artifacts[].kind']` |
+      | keys[].where | 条件 | string | - | - | - | 一部だけを一意にするときの条件。 | 設計で、ER 図の設計書の部分インデックスの条件にする。 | `` `script_id` がある `` |
+      | keys[].used_by | 使用するインターフェース | string | - | - | - | この鍵を冪等の鍵にするインターフェース。 | インターフェース定義で、冪等の鍵を確認する。 | `動画作成を始める操作` |
+      | states | 状態の遷移 | array | - | - | - | 状態を持つキー 1 つ = 1 要素。 | レビューで、利用者が状態の移り変わりを確認する。<br>設計で、状態遷移の設計書にする。 | - |
+      | states[].field | キー | string | 必須 | - | - | 状態の `fields[].key`。 | 生成で、セクションの見出しにする。 | `segments[].artifacts[].state` |
+      | states[].transitions | 遷移 | array | 必須 | - | minItems: `1` | - | 実装で、状態を変える処理の条件にする。<br>生成で、遷移の表にする。 | - |
+      | states[].transitions[].from | 元の値 | string | 必須 | - | - | 最初の遷移は `（なし）`。 | 実装で、遷移の前の値の検査にする。 | `current` |
+      | states[].transitions[].to | 先の値 | string | 必須 | - | - | - | 実装で、遷移の後に書き込む値にする。 | `stale` |
+      | states[].transitions[].trigger | きっかけ | string | 必須 | - | - | - | 実装で、状態を変える処理を決める。 | `上流の成果物のバージョンが増えた` |
+      | lifecycle | 保持と削除 | array | - | - | - | 配列・オブジェクトのキーごとの、増え方と保持と削除。 | レビューで、利用者が保持する期間と削除の方針を確認する。<br>設計で、ER 図の設計書のレコード規模・保持期間・削除の方針にする。 | - |
+      | lifecycle[].key | キー | string | 必須 | - | - | 対象の `fields[].key`。オブジェクト全体は `（全体）`。 | 生成で、表の行の見出しにする。 | `segments[]` |
+      | lifecycle[].growth | 増え方 | string | - | - | - | 増え方と規模。 | 設計で、ER 図の設計書のレコード規模にする。 | `動画 1 本に 5〜20 件` |
+      | lifecycle[].retention | 保持期間 | string | - | - | - | - | 実装で、古いデータを削除する処理にする。 | `無期限` |
+      | lifecycle[].deletion | 削除の方針 | string | - | - | - | - | 実装で、削除の処理にする。 | `削除しない` |
+      | usage | 読み書きするインターフェース | array | - | - | - | このオブジェクトを読み書きするインターフェース 1 つ = 1 要素。 | レビューで、ユースケースごとに読み書きするキーを確認する。<br>インターフェース定義で、入出力のキーにする。 | - |
+      | usage[].interface | インターフェース | string | 必須 | - | - | - | インターフェース定義で、そのインターフェースの設計書を決める。 | `動画の取得` |
+      | usage[].access | 読み書き | string | 必須 | `read` / `write` | - | - | インターフェース定義で、読み取りか書き込みかを決める。 | - |
+      | usage[].fields | キー | array | 必須 | - | minItems: `1` | 読み書きする `fields[].key`。 | インターフェース定義で、入出力のキーにする。 | `[segment_plan.approval]` |
+      | refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+
+      <!-- /table -->
+  - id: key-rules-01
+    name: キーごとの決まり
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | 決まり | 悪い例 | 理由 |
+      | --- | --- | --- | --- |
+      | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
+      | lead | 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。<br>対象そのものが変わったときだけ書き換える。 | - | - |
+      | fields[].title | 動詞を入れない。 | 作成した時刻 | 動詞が入っていて、画面のラベルと同じ名詞になっていない |
+      | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+
+      <!-- /table -->
+  - id: example-sample-01
+    name: 記載例
+    body: |-
+      ```yaml
+      id: DATA-1
+      title: 'データ: 動画'
+      lead: 動画作成で作る動画 1 本。セグメントの一覧と、成果物ごとのバージョンと利用者の OK を持つ。
+      datastore: SQLite
+      fields:
+      - key: id
+        title: 動画 ID
+        type: string
+        required: true
+        description: 動画 1 本の識別子
+        unique: 全体
+      - key: script_id
+        title: 台本 ID
+        type: ref
+        description: 元にした台本。台本を削除すると空になる
+        unique: 値があるものの中
+        ref: 台本.id
+      - key: segments[]
+        title: セグメント
+        type: array
+        description: この動画のセグメントの一覧。配列の順が、動画の中の順
+      - key: segments[].segment_id
+        title: セグメント ID
+        type: ref
+        required: true
+        description: 中身を持つセグメント
+        unique: 全体
+        ref: セグメント.id
+      - key: segments[].artifacts[]
+        title: 成果物
+        type: array
+        description: セグメントの成果物ごとのバージョンと OK
+      - key: segments[].artifacts[].kind
+        title: 種類
+        type: enum
+        required: true
+        description: '`lines`（セリフ）/ `direction`（演出）/ `video`（セグメントの mp4）'
+        example: lines
+        unique: セグメントの中
+      - key: segments[].artifacts[].version
+        title: バージョン
+        type: int
+        required: true
+        description: 1 から始まり、作成し直すたびに 1 増える
+        example: '2'
+      - key: segments[].artifacts[].state
+        title: 状態
+        type: enum
+        required: true
+        description: '`current`（最新）/ `stale`（要更新）'
+        example: current
+      - key: finished_at
+        title: 完成日時
+        type: datetime
+        description: 最後に完成にした時刻
+      keys:
+      - fields:
+        - script_id
+        where: '`script_id` がある'
+        used_by: 動画作成を始める操作
+      states:
+      - field: segments[].artifacts[].state
+        transitions:
+        - from: （なし）
+          to: current
+          trigger: 成果物を書き込んだ
+        - from: current
+          to: stale
+          trigger: 上流の成果物のバージョンが増えた
+      lifecycle:
+      - key: （全体）
+        growth: 動画作成を始めるたびに 1 件。～1000
+        retention: 無期限
+        deletion: 制作の削除で、セグメントと一緒に削除する
+      - key: segments[]
+        growth: 動画 1 本に 5〜20 件
+        retention: 動画と同じ
+        deletion: 切り方で引き継がなかったセグメントは、利用者が切り方を OK にしたときに削除する
+      usage:
+      - interface: 動画作成を始める
+        access: write
+        fields:
+        - id
+        - script_id
+      - interface: 動画の取得
+        access: read
+        fields:
+        - id
+        - segments[]
+        - finished_at
+      ```

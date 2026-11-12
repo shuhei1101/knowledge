@@ -1,0 +1,456 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: データ
+description: |-
+  利用者と決めるデータの構造を、オブジェクトのキーの表で記載する。
+  1 ファイル = 書き込みの単位（1 つのトランザクションで整合を保つまとまり）のオブジェクト 1 つ。
+x-rules:
+  - 1 つのオブジェクトにまとめるのは同じ使われ方をするデータだけにし、種類ごとに使用するキーが分かれるものは種類ごとに別のオブジェクトにする。
+  - 1 つのデータが 2 つのオブジェクトにまたがるときは、持ち主のオブジェクトを 1 つ決め、ほかのオブジェクトは `ref` で参照する。
+  - 関連の図は記載せず、親子の関連はキーの入れ子、ほかのオブジェクトとの関連は `ref` で表す。
+  - テーブルの分け方・物理名・データベースの型・インデックス・削除時の連動は記載せず、ER 図の設計書に記載する。
+x-kind: data
+x-folder: docs/data
+x-id-prefix: DATA
+type: object
+additionalProperties: false
+required:
+- id
+- title
+- datastore
+- fields
+properties:
+  id:
+    $ref: common.schema.yaml#/$defs/id
+    title: ID
+    description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
+    x-rules:
+      - 設計書を作るときに振り、改名・移動でも変えない。
+  title:
+    type: string
+    title: タイトル
+    description: '`データ: {オブジェクトの名前}`。'
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
+    pattern: '^データ: .+$'
+  lead:
+    $ref: common.schema.yaml#/$defs/markdown
+    title: 冒頭リード
+    description: 何のデータで、誰が読み書きするかを 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
+    x-rules:
+      - 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。
+      - 対象そのものが変わったときだけ書き換える。
+  datastore:
+    type: string
+    title: 保存先
+    description: 保存先の種類（`SQLite`・`PostgreSQL`・`YAML`・`JSON` 等）。
+    x-used-by:
+      - 設計で、ER 図の設計書のデータストアにする。
+    examples:
+      - SQLite
+  fields:
+    type: array
+    title: キー
+    description: オブジェクトのキー 1 つ = 1 要素。並びは親から子の順。
+    x-used-by:
+      - レビューで、利用者が持つ項目と意味を確認する。
+      - 設計で、ER 図の設計書のテーブル・カラムの `source` から指す。
+      - 生成で、キーの表にする。
+    x-heading: キー
+    x-shape: table
+    x-key: key
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - key
+      - title
+      - type
+      - description
+      properties:
+        key:
+          type: string
+          title: キー
+          description: オブジェクトの中のキー。階層は `.`、配列の要素は `[]` でつなぐ。
+          x-used-by:
+            - 設計で、ほかの設計書の参照（`fields[segments[].segment_id]`）からキーを指す。
+          examples:
+            - segments[].artifacts[].version
+        title:
+          type: string
+          title: 論理名
+          description: 画面のラベルと同じ名詞。
+          x-used-by:
+            - 生成で、表の論理名にする。
+            - 画面の実装で、ラベルにする。
+          x-rules:
+            - 動詞を入れない。
+          examples:
+            - 作成日時
+          x-bad-examples:
+            - value: 作成した時刻
+              reason: 動詞が入っていて、画面のラベルと同じ名詞になっていない
+        type:
+          type: string
+          title: 型
+          description: 論理の型。`ref` はほかのオブジェクトの参照。
+          x-used-by:
+            - 設計で、ER 図の設計書のカラムの型を決める。
+          enum:
+          - string
+          - int
+          - bool
+          - datetime
+          - enum
+          - object
+          - array
+          - ref
+        required:
+          type: boolean
+          title: 必須
+          x-used-by:
+            - 設計で、ER 図の設計書のカラムの NOT NULL を決める。
+        description:
+          type: string
+          title: 説明
+          description: '`enum` は値と意味を並べる。'
+          x-used-by:
+            - レビューで、利用者が項目の意味を確認する。
+            - 実装で、値の意味を参照する。
+          examples:
+            - '`current`（最新）/ `stale`（要更新）'
+        example:
+          type: string
+          title: 例
+          x-used-by:
+            - テストで、Factory の値にする。
+          examples:
+            - '2'
+        unique:
+          type: string
+          title: 一意の範囲
+          description: 識別子は `全体`、親の中で一意なら親の範囲。
+          x-used-by:
+            - 設計で、ER 図の設計書の一意の制約にする。
+          examples:
+            - セグメントの中
+        ref:
+          type: string
+          title: 参照先
+          description: '`type` が `ref` のときの参照先の `{オブジェクトの名前}.{キー}`。'
+          x-used-by:
+            - 設計で、ER 図の設計書の外部キーにする。
+          examples:
+            - 台本.id
+  keys:
+    type: array
+    title: 複合の鍵
+    description: 2 つ以上のキーを合わせた一意の鍵と、冪等の鍵。
+    x-used-by:
+      - 設計で、ER 図の設計書の一意の制約とインデックスにする。
+      - インターフェース定義で、冪等の鍵にする。
+    x-heading: 複合の鍵
+    x-shape: table
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - fields
+      properties:
+        fields:
+          type: array
+          title: キー
+          description: 鍵にする `fields[].key`。
+          x-used-by:
+            - 設計で、一意の制約のカラムにする。
+          minItems: 1
+          items:
+            type: string
+          examples:
+            - - segments[].segment_id
+              - segments[].artifacts[].kind
+        where:
+          type: string
+          title: 条件
+          description: 一部だけを一意にするときの条件。
+          x-used-by:
+            - 設計で、ER 図の設計書の部分インデックスの条件にする。
+          examples:
+            - '`script_id` がある'
+        used_by:
+          type: string
+          title: 使用するインターフェース
+          description: この鍵を冪等の鍵にするインターフェース。
+          x-used-by:
+            - インターフェース定義で、冪等の鍵を確認する。
+          examples:
+            - 動画作成を始める操作
+  states:
+    type: array
+    title: 状態の遷移
+    description: 状態を持つキー 1 つ = 1 要素。
+    x-used-by:
+      - レビューで、利用者が状態の移り変わりを確認する。
+      - 設計で、状態遷移の設計書にする。
+    x-heading: 状態の遷移
+    x-shape: sections
+    x-key: field
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - field
+      - transitions
+      properties:
+        field:
+          type: string
+          title: キー
+          description: 状態の `fields[].key`。
+          x-used-by:
+            - 生成で、セクションの見出しにする。
+          examples:
+            - segments[].artifacts[].state
+        transitions:
+          type: array
+          title: 遷移
+          x-used-by:
+            - 実装で、状態を変える処理の条件にする。
+            - 生成で、遷移の表にする。
+          x-shape: table
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - from
+            - to
+            - trigger
+            properties:
+              from:
+                type: string
+                title: 元の値
+                description: 最初の遷移は `（なし）`。
+                x-used-by:
+                  - 実装で、遷移の前の値の検査にする。
+                examples:
+                  - current
+              to:
+                type: string
+                title: 先の値
+                x-used-by:
+                  - 実装で、遷移の後に書き込む値にする。
+                examples:
+                  - stale
+              trigger:
+                type: string
+                title: きっかけ
+                x-used-by:
+                  - 実装で、状態を変える処理を決める。
+                examples:
+                  - 上流の成果物のバージョンが増えた
+  lifecycle:
+    type: array
+    title: 保持と削除
+    description: 配列・オブジェクトのキーごとの、増え方と保持と削除。
+    x-used-by:
+      - レビューで、利用者が保持する期間と削除の方針を確認する。
+      - 設計で、ER 図の設計書のレコード規模・保持期間・削除の方針にする。
+    x-heading: 保持と削除
+    x-shape: table
+    x-key: key
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - key
+      properties:
+        key:
+          type: string
+          title: キー
+          description: 対象の `fields[].key`。オブジェクト全体は `（全体）`。
+          x-used-by:
+            - 生成で、表の行の見出しにする。
+          examples:
+            - segments[]
+        growth:
+          type: string
+          title: 増え方
+          description: 増え方と規模。
+          x-used-by:
+            - 設計で、ER 図の設計書のレコード規模にする。
+          examples:
+            - 動画 1 本に 5〜20 件
+        retention:
+          type: string
+          title: 保持期間
+          x-used-by:
+            - 実装で、古いデータを削除する処理にする。
+          examples:
+            - 無期限
+        deletion:
+          type: string
+          title: 削除の方針
+          x-used-by:
+            - 実装で、削除の処理にする。
+          examples:
+            - 削除しない
+  usage:
+    type: array
+    title: 読み書きするインターフェース
+    description: このオブジェクトを読み書きするインターフェース 1 つ = 1 要素。
+    x-used-by:
+      - レビューで、ユースケースごとに読み書きするキーを確認する。
+      - インターフェース定義で、入出力のキーにする。
+    x-heading: 読み書きするインターフェース
+    x-shape: table
+    x-key: interface
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - interface
+      - access
+      - fields
+      properties:
+        interface:
+          type: string
+          title: インターフェース
+          x-used-by:
+            - インターフェース定義で、そのインターフェースの設計書を決める。
+          examples:
+            - 動画の取得
+        access:
+          type: string
+          title: 読み書き
+          x-used-by:
+            - インターフェース定義で、読み取りか書き込みかを決める。
+          enum:
+          - read
+          - write
+        fields:
+          type: array
+          title: キー
+          description: 読み書きする `fields[].key`。
+          x-used-by:
+            - インターフェース定義で、入出力のキーにする。
+          minItems: 1
+          items:
+            type: string
+          examples:
+            - - segment_plan.approval
+  refs:
+    type: array
+    title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
+    items:
+      $ref: common.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
+    items:
+      $ref: common.schema.yaml#/$defs/decision
+  notes:
+    $ref: common.schema.yaml#/$defs/notes
+    x-heading: 補足
+    x-shape: sections
+examples:
+- id: DATA-1
+  title: 'データ: 動画'
+  lead: 動画作成で作る動画 1 本。セグメントの一覧と、成果物ごとのバージョンと利用者の OK を持つ。
+  datastore: SQLite
+  fields:
+  - key: id
+    title: 動画 ID
+    type: string
+    required: true
+    description: 動画 1 本の識別子
+    unique: 全体
+  - key: script_id
+    title: 台本 ID
+    type: ref
+    description: 元にした台本。台本を削除すると空になる
+    unique: 値があるものの中
+    ref: 台本.id
+  - key: segments[]
+    title: セグメント
+    type: array
+    description: この動画のセグメントの一覧。配列の順が、動画の中の順
+  - key: segments[].segment_id
+    title: セグメント ID
+    type: ref
+    required: true
+    description: 中身を持つセグメント
+    unique: 全体
+    ref: セグメント.id
+  - key: segments[].artifacts[]
+    title: 成果物
+    type: array
+    description: セグメントの成果物ごとのバージョンと OK
+  - key: segments[].artifacts[].kind
+    title: 種類
+    type: enum
+    required: true
+    description: '`lines`（セリフ）/ `direction`（演出）/ `video`（セグメントの mp4）'
+    example: lines
+    unique: セグメントの中
+  - key: segments[].artifacts[].version
+    title: バージョン
+    type: int
+    required: true
+    description: 1 から始まり、作成し直すたびに 1 増える
+    example: '2'
+  - key: segments[].artifacts[].state
+    title: 状態
+    type: enum
+    required: true
+    description: '`current`（最新）/ `stale`（要更新）'
+    example: current
+  - key: finished_at
+    title: 完成日時
+    type: datetime
+    description: 最後に完成にした時刻
+  keys:
+  - fields:
+    - script_id
+    where: '`script_id` がある'
+    used_by: 動画作成を始める操作
+  states:
+  - field: segments[].artifacts[].state
+    transitions:
+    - from: （なし）
+      to: current
+      trigger: 成果物を書き込んだ
+    - from: current
+      to: stale
+      trigger: 上流の成果物のバージョンが増えた
+  lifecycle:
+  - key: （全体）
+    growth: 動画作成を始めるたびに 1 件。～1000
+    retention: 無期限
+    deletion: 制作の削除で、セグメントと一緒に削除する
+  - key: segments[]
+    growth: 動画 1 本に 5〜20 件
+    retention: 動画と同じ
+    deletion: 切り方で引き継がなかったセグメントは、利用者が切り方を OK にしたときに削除する
+  usage:
+  - interface: 動画作成を始める
+    access: write
+    fields:
+    - id
+    - script_id
+  - interface: 動画の取得
+    access: read
+    fields:
+    - id
+    - segments[]
+    - finished_at

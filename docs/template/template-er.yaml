@@ -25,10 +25,12 @@ items:
     name: 概要
     body: |-
       データストアの構造（DB スキーマ / JSON / YAML）を業務ドメインの分類ごとにまとめる。
+      データの設計書のオブジェクトを、テーブル・カラム・制約・インデックスとして保存する DB 設計のレイヤー。
   - id: rules-01
     name: 決まり
     body: |-
       - 1 ファイル = 分類 1 つにする。
+      - 項目の意味・一意の範囲・状態の遷移はデータの設計書に従い、この設計書には記載しない。
       - 全テーブルの一覧と全体図は、各分類のテーブルから横断の一覧として生成する。
   - id: item-list-01
     name: 項目
@@ -59,6 +61,7 @@ items:
       | tables | テーブル | array | - | - | - | テーブル 1 つ = 1 要素。並びは依存の上流から下流。 | 実装で、テーブル・ファイルの定義とマイグレーションにする。<br>生成で、テーブルごとの節にする。 | - |
       | tables[].name | 物理名 | string | 必須 | - | - | DB は snake_case、JSON / YAML はファイルのパス。 | 実装で、テーブル名・ファイルのパスにする。<br>設計で、ほかの設計書の参照からテーブルを指す。 | - |
       | tables[].title | 論理名 | string | 必須 | - | - | - | 生成で、節の見出しにする。 | - |
+      | tables[].source | 保存するデータ | string | 必須 | - | - | このテーブルが保存する、データの設計書の `{オブジェクトの名前}.{キー}`。オブジェクト全体を保存するときはオブジェクトの名前だけ。 | レビューで、データの設計書のどのキーを保存するかを辿り、保存しないキーが無いかを確認する。 | `動画.segments[]` |
       | tables[].datastore | データストア | string | 必須 | - | - | `PostgreSQL` / `SQLite` / `JSON` / `YAML` 等。 | 実装で、読み書きに使うライブラリ・ドライバを決める。 | - |
       | tables[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、テーブルの一覧の説明にする。 | - |
       | tables[].primary_key | 主キー | string | - | - | - | 複合キーは `(col_a, col_b)`。 | 実装で、主キーの制約にする。 | - |
@@ -66,11 +69,13 @@ items:
       | tables[].growth | 増え方 | string | - | - | - | - | 実装で、保持期間とアーカイブの要否を決める。 | - |
       | tables[].retention | 保持期間 | string | - | - | - | - | 実装で、古い行を消す処理にする。 | - |
       | tables[].deletion | 削除の方針 | string | - | - | - | 物理削除か論理削除か。 | 実装で、削除を物理削除か論理削除にする。 | - |
+      | tables[].transaction | 同じトランザクションのテーブル | string | - | - | - | このテーブルと同じトランザクションで書き込むテーブルの物理名。 | 実装で、トランザクションの境界にする。 | `videos` |
       | tables[].access | アクセス方式 | string | - | - | - | JSON / YAML のとき、全件か キーで検索するか。 | 実装で、全件を読むか、キーで検索するかを決める。 | - |
       | tables[].description | 説明 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | 実装で、テーブルの役割と前提を参照する。 | - |
       | tables[].columns | カラム | array | 必須 | - | minItems: `1` | - | 実装で、カラムの定義にする。<br>生成で、カラムの表にする。 | - |
       | tables[].columns[].name | 物理名 | string | 必須 | - | - | - | 実装で、カラム名・キー名にする。 | - |
       | tables[].columns[].title | 論理名 | string | 必須 | - | - | - | 生成で、表の論理名にする。 | - |
+      | tables[].columns[].source | 保存するキー | string | - | - | - | このカラムが保存する、データの設計書の `{オブジェクトの名前}.{キー}`。JSON の列は、入れるキーの親。 | レビューで、データの設計書のキーと型・必須・一意の範囲が合うかを確認する。 | `動画.segments[].artifacts[]` |
       | tables[].columns[].type | 型 | string | 必須 | - | - | DB は DBMS のネイティブ型、JSON / YAML は `string` / `number` / `boolean` / `object` / `array`。 | 実装で、カラムの型にする。 | - |
       | tables[].columns[].length | 長さ・精度 | string | - | - | - | 長さ・精度・小数の桁。 | 実装で、型の長さ・精度にする。<br>テストで、境界の長さのケースにする。 | - |
       | tables[].columns[].not_null | NOT NULL | boolean | - | - | - | - | 実装で、NOT NULL の制約にする。 | - |
@@ -91,6 +96,7 @@ items:
       | tables[].indexes[].name | 名前 | string | 必須 | - | - | 実 DB と一致させる（`{table}_{column}_{kind}`）。 | 実装で、インデックスの名前にする。 | - |
       | tables[].indexes[].columns | カラム | string | 必須 | - | - | - | 実装で、インデックスのカラムにする。 | - |
       | tables[].indexes[].kind | 種別 | string | 必須 | - | - | - | 実装で、インデックスの種別にする。 | - |
+      | tables[].indexes[].where | 条件 | string | - | - | - | 一部の行だけのインデックスの条件。 | 実装で、部分インデックスの条件にする。 | `status IN ('queued', 'running', 'succeeded')` |
       | tables[].indexes[].notes | 補足 | string | - | - | - | - | 実装で、インデックスを使う検索を参照する。 | - |
       | tables[].refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | tables[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
@@ -158,6 +164,7 @@ items:
       tables:
       - name: tasks
         title: タスク
+        source: タスク
         datastore: PostgreSQL
         summary: ユーザーが管理するタスク
         primary_key: id
@@ -183,6 +190,7 @@ items:
           description: 所有ユーザー
         - name: title
           title: タイトル
+          source: タスク.title
           type: varchar(200)
           not_null: true
           check: 1〜200 文字
@@ -199,13 +207,16 @@ items:
         - name: tasks_user_id_ix
           columns: user_id
           kind: BTREE
+          where: status <> 'archived'
           notes: ユーザー別の一覧用
       - name: comments
         title: コメント
+        source: タスク.comments[]
         datastore: PostgreSQL
         summary: タスクへのコメント
         primary_key: id
         scale: ～1000 万
+        transaction: tasks
         columns:
         - name: id
           title: ID
