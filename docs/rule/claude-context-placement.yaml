@@ -59,73 +59,73 @@ items:
   - id: overview
     name: 概要
     body: |-
-      エージェントに参照させる文の記載先と、その書き方の決まり。
+      エージェントに参照させる文の記載先と、その記載方法の決まり。
       記載先は SessionStart の `additionalContext`・MCP の instructions・ツールの description・CLAUDE.md・フック。
       手順の記載先は、エージェントフローとスキル。
-      文を置くファイル（`content/prompts/` の YAML）は [プロンプトファイル](id:prompt-file) が決める。
+      文を配置するファイル（`content/prompts/` の YAML）は [プロンプトファイル](id:prompt-file) が決める。
   - id: placement-01
-    group: 何をどこに書くか
-    name: 置き場所ごとに書くこと
+    group: 何をどこに記載するか
+    name: 配置先ごとに記載すること
     body: |-
       <!-- table: data -->
 
-      | 置き場所 | 書くこと | 書かないこと |
+      | 配置先 | 記載すること | 記載しないこと |
       | --- | --- | --- |
-      | SessionStart のフック | 起動時の処理と、MCP を持たないプラグインの常に守る決まりの `additionalContext` だけ（判定は [エージェントに渡す文・処理の置き場所](id:flowchart-session-context-placement)） | MCP を持つプラグインの使い方・手順（instructions に置く）・CLAUDE.md のコピー・セッションごとに変わる事実（ツールで取得させる） |
+      | SessionStart のフック | 起動時の処理と、MCP を持たないプラグインの常に守る決まりの `additionalContext` だけ（判定は [エージェントに渡す文・処理の置き場所](id:flowchart-session-context-placement)） | MCP を持つプラグインの使用方法・手順（instructions に配置する）・CLAUDE.md のコピー・セッションごとに変わる事実（ツールで取得させる） |
       | MCP の instructions | 扱う作業の分類、いつこの MCP を探すか、grep・Read との使い分け、ツール間の順序 | ツールの description の繰り返し・宣伝 |
-      | ツールの description | 何をする・いつ使う・いつ使わない・何を返さない・引数の意味 | ほかのツールの説明 |
-      | CLAUDE.md | プロジェクト固有の約束事（文書の場所など） | MCP の使い方 |
+      | ツールの description | 何をする・いつ使用する・いつ使用しない・何を返却しない・引数の意味 | ほかのツールの説明 |
+      | CLAUDE.md | プロジェクト固有の約束事（文書の場所など） | MCP の使用方法 |
       | エージェントフロー | 複数の工程を順に進める手順（判定は [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice)） | 常に要る前提 |
       | スキル | 起動の仕組みで指定できない特別な理由があるときの手順 | 常に要る前提 |
       | フック（PreToolUse など） | 必ず守らせたいこと | 説明の文 |
 
       <!-- /table -->
   - id: placement-02
-    group: 何をどこに書くか
-    name: 同じ文を 2 か所に置かない
+    group: 何をどこに記載するか
+    name: 同じ文を 2 か所に配置しない
     body: |-
-      - 同じ文を 2 か所に置かない
-        別の置き場所へ移すときは、元の場所を参照先の 1 行にする
+      - 同じ文を 2 か所に配置しない
+        別の配置先へ移すときは、元の場所を参照先の 1 行にする
   - id: writing-01
-    group: 書き方
-    name: 事実の文で書く
+    group: 記載方法
+    name: 事実の文で記載する
     body: |-
-      - 命令ではなく事実の文で書く
-        MUST・必ず・禁止は使わず、守らせたいものはフックで担保する
+      - 命令ではなく事実の文で記載する
+        MUST・必ず・禁止は使用せず、守らせたいものはフックで担保する
   - id: writing-02
-    group: 書き方
-    name: 使う場面と例の数
+    group: 記載方法
+    name: 使用する場面と例の数
     body: |-
-      - 使う場面は作業の言葉で 3〜5 個、典型的な例は 1〜3 個にする（網羅しない）
+      - 使用する場面は作業の言葉で 3〜5 個、典型的な例は 1〜3 個にする（網羅しない）
   - id: writing-03
-    group: 書き方
-    name: 使わない場面を対にする
+    group: 記載方法
+    name: 使用しない場面を対にする
     body: |-
-      - 使う場面と対にして、使わない場面（grep・Read で足りる場面）も同じくらいの数を書く
+      - 使用する場面と対にして、使用しない場面（grep・Read で足りる場面）も同じくらいの数を記載する
   - id: writing-04
-    group: 書き方
+    group: 記載方法
     name: 参照先を示す
     body: |-
       - 詳しいことは写さず、`describe` やスキルなど参照先を示す
   - id: writing-05
-    group: 書き方
+    group: 記載方法
     name: 長さと要点の位置
     body: |-
       - 公式の上限は `additionalContext` 10,000 字・instructions 4,096 字
         SessionStart の文は 1,000 字以内を目安にし、要点を先頭に配置する
   - id: writing-07
-    group: 書き方
+    group: 記載方法
     name: サブエージェントへの届け方
     body: |-
       - サブエージェントには SessionStart が届かないので、使い分けは description・instructions で届ける。
         足りないと分かったら SubagentStart のフックで入れる
   - id: writing-08
-    group: 書き方
+    group: 記載方法
     name: 最小の文から始める
     body: |-
-      - 最小の文から始め、使われていないと分かったら追加する
+      - 最小の文から始め、使用されていないと分かったら追加する
   - id: writing-09
-    group: 書き方
-    name: 使われないときはツールの結果を疑う
+    group: 記載方法
+    name: 使用されないときはツールの結果を疑う
     body: |-
-      - 使われないときは、文言より先にツールの結果（空の結果・遅さ）を疑う
+      - 使用されないときは、文言より先にツールの結果（空の結果・遅さ）を疑う

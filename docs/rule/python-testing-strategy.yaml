@@ -34,7 +34,7 @@ items:
     group: テスト関数の書式
     name: テスト関数の docstring
     body: |-
-      - 各テスト関数に 1 行 docstring を書く。
+      - 各テスト関数に 1 行 docstring を記載する。
         内容は設計書テスト表の概要をそのまま反映し、末尾に（正常系）/（異常系）を付ける
   - id: test-function-format-02
     group: テスト関数の書式
@@ -44,16 +44,16 @@ items:
         例外検証のように実行と検証が一体になる場合は `# 実行・検証` にまとめる
   - id: test-function-format-03
     group: テスト関数の書式
-    name: テスト関数に分岐を書かない
+    name: テスト関数に分岐を記載しない
     body: |-
-      - テスト関数に分岐・ループ・計算を書かない。
-        期待値は計算せず値で書き、複数の条件は `parametrize` で並べる
+      - テスト関数に分岐・ループ・計算を記載しない。
+        期待値は計算せず値で記載し、複数の条件は `parametrize` で並べる
   - id: test-function-format-04
     group: テスト関数の書式
     name: 入力と期待値は値で記載
     body: |-
-      - 入力と期待値は、他のテスト関数と重複しても値で書く。
-        fixture は共通のまま使う
+      - 入力と期待値は、他のテスト関数と重複しても値で記載する。
+        fixture は共通のまま使用する
 
       ```python
       def test_is_minor_when_age_19():

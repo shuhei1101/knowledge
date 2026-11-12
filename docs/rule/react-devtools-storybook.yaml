@@ -39,13 +39,13 @@ items:
     group: Storybook
     name: 共通コンポーネントの story
     body: |-
-      - 共通コンポーネント（`shared/components/`）の `.stories.tsx` は、対象の横に置く。
+      - 共通コンポーネント（`shared/components/`）の `.stories.tsx` は、対象の横に配置する。
   - id: storybook-02
     group: Storybook
     name: 画面の部品は story を作らない
     body: |-
       - 画面の `components/` の部品は、story を作らない（E2E で確認する）。
-        画面の本体の story は任意で、置くときは `{screen}-screen.stories.tsx` にする。
+        画面の本体の story は任意で、配置するときは `{screen}-screen.stories.tsx` にする。
   - id: storybook-03
     group: Storybook
     name: 状態のある部品は play 関数
@@ -84,13 +84,13 @@ items:
       ```json
       {
         "title": "Storybook の framework の選び方",
-        "scope": "部品を Storybook に載せるとき",
+        "scope": "部品を Storybook に掲載するとき",
         "updated": "2026-11-07",
         "width": 1338,
         "height": 776,
         "nodes": [
-          {"id": "start", "kind": "start", "x": 424, "y": 24, "w": 140, "h": 140, "name": "部品を Storybook に載せたい"},
-          {"id": "q1", "kind": "question", "x": 334, "y": 220, "w": 320, "h": 164, "name": "部品をブラウザのフレームワーク（React・Vue など）のコンポーネントで書くか ※1"},
+          {"id": "start", "kind": "start", "x": 424, "y": 24, "w": 140, "h": 140, "name": "部品を Storybook に掲載したい"},
+          {"id": "q1", "kind": "question", "x": 334, "y": 220, "w": 320, "h": 164, "name": "部品をブラウザのフレームワーク（React・Vue など）のコンポーネントで記載するか ※1"},
           {"id": "q2", "kind": "question", "x": 724, "y": 242, "w": 280, "h": 120, "name": "Next.js のアプリか"},
           {"id": "r1", "kind": "result", "x": 1074, "y": 274, "w": 240, "h": 56, "name": "@storybook/nextjs-vite"},
           {"id": "r2", "kind": "result", "x": 744, "y": 418, "w": 240, "h": 92, "name": "そのフレームワークの framework（@storybook/react-vite・@storybook/vue3-vite など）"},
@@ -114,5 +114,5 @@ items:
 
       - ※1 フレームワークのコンポーネント: 部品の実装がブラウザで描かれるコンポーネント（`.tsx`・`.vue` など）で、ストーリーから直に import できる
       - ※2 サーバーのテンプレート: 部品の実装がサーバーで HTML を組み立てるマクロ・部分テンプレートで、ブラウザからは import できない
-      - ※3 部品を描画するサーバー: 作業ブランチのコードで部品を引数つきで描画し、HTML の断片を返すサーバー
-      - ※4 静的な部品の断片: 実装を持たない部品の状態 1 つを HTML 1 ファイル（`.storybook/fragments/{部品}/{案}.html`）で持ち、部品を描画するサーバーが返す
+      - ※3 部品を描画するサーバー: 作業ブランチのコードで部品を引数つきで描画し、HTML の断片を返却するサーバー
+      - ※4 静的な部品の断片: 実装を持たない部品の状態 1 つを HTML 1 ファイル（`.storybook/fragments/{部品}/{案}.html`）で持ち、部品を描画するサーバーが返却する

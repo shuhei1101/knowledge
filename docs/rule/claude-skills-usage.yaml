@@ -37,12 +37,12 @@ items:
       - 本ルールはSKILL.mdにのみ適用すること
         - CLAUDE.md・AGENT.md には適用されない
   - id: skill-dynamic-context-01
-    group: スキル内の動的コンテキスト注入の書き方
+    group: スキル内の動的コンテキスト注入の記載方法
     name: 動的コンテキスト注入
     body: |-
       - `` !`<command>` `` は、スキルの内容を Claude へ送信する前にシェルで実行され、出力で置き換わる
         - インライン形式は `!` が行頭か空白の直後にあるときだけ認識される（`` KEY=!`cmd` `` はリテラルのまま）
-        - 複数行のコマンドは、`` ```! `` で開くフェンスコードブロックを使う
+        - 複数行のコマンドは、`` ```! `` で開くフェンスコードブロックを使用する
         - 出力は再展開されない。
           コマンドが失敗するとスキル全体の呼び出しが中止される
   - id: skill-variable-expansion-01
@@ -70,13 +70,13 @@ items:
         - 例: `` `$GH_KIT_LABEL_TYPE_FEAT` `` は `$GH_KIT_LABEL_TYPE_FEAT` という文字列がそのまま Claude に渡る（値を判断材料にできない）
   - id: user-env-var-03
     group: ユーザー定義環境変数を値として展開する
-    name: 値を渡す方法
+    name: 値を指定する方法
     body: |-
-      - 値を渡したい場合は動的コンテキスト注入の `` !`echo "$VAR"` `` 形式を使う
+      - 値を指定したい場合は動的コンテキスト注入の `` !`echo "$VAR"` `` 形式を使用する
         - 例: `` !`echo "$GH_KIT_LABEL_TYPE_FEAT"` `` はスキル読み込み時に `echo` が実行され、値（例: `type:feat`）が本文に埋め込まれる
   - id: frontmatter-01
     group: フロントマター
     name: 呼ぶ場面と許可するツール
     body: |-
-      - 呼ぶ場面は `description` と `when_to_use` に記載し、当てるファイルが決まるスキルは `paths` で絞る
+      - 呼ぶ場面は `description` と `when_to_use` に記載し、適用するファイルが決まるスキルは `paths` で絞る
       - スキルが実行するコマンドは `allowed-tools` で許可する（`Bash(${CLAUDE_SKILL_DIR}/scripts/*)` など）

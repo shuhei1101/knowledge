@@ -50,12 +50,12 @@ items:
     name: make_provider_chat の構成
     body: |-
       - 各プロバイダは `make_{provider}_chat(*, api_key, model, timeout, max_tokens) -> AsyncChatFn` のファクトリ関数
-        - クライアント生成をクロージャに閉じ、`AsyncChatFn` 互換の関数を返す
+        - クライアント生成をクロージャに閉じ、`AsyncChatFn` 互換の関数を返却する
   - id: structure-03
     group: 構成
     name: Mock も同じ構造
     body: |-
-      - Mock も同じ構造: `make_mock_chat(*responses)` で固定文字列を順に返す
+      - Mock も同じ構造: `make_mock_chat(*responses)` で固定文字列を順に返却する
   - id: structure-04
     group: 構成
     name: プロバイダの配線と切り替え

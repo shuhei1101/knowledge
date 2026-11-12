@@ -48,13 +48,13 @@ items:
     name: 概要
     body: |-
       対象は React。
-      スタックによらないキー操作の決まりは、規約『[キーボード操作](id:ui-keyboard)』に従い、この規約には書かない。
+      スタックによらないキー操作の決まりは、規約『[キーボード操作](id:ui-keyboard)』に従い、この規約には記載しない。
   - id: library-01
     group: ライブラリ
-    name: "@tanstack/react-hotkeys を使う"
+    name: "@tanstack/react-hotkeys を使用する"
     body: |-
       - ショートカットは、`@tanstack/react-hotkeys` で実装する。
-        IME・スコープ・一覧・再割り当て・表示・競合の検出が、このライブラリに揃っている。
+        IME・スコープ・一覧・再割り当て・表示・競合の検出が、このライブラリにそろっている。
   - id: library-02
     group: ライブラリ
     name: バージョンを固定する
@@ -68,9 +68,9 @@ items:
         ライブラリの差し替えを、このフック 1 つで済ませる。
   - id: hook-02
     group: 薄いフック
-    name: 定義は 1 か所に置く
+    name: 定義は 1 か所に配置する
     body: |-
-      - ショートカットの定義（ID・キー・説明・スコープ）は 1 か所に置く。
+      - ショートカットの定義（ID・キー・説明・スコープ）は 1 か所に配置する。
         `useShortcut(id)` は ID から定義を引き、部品にキーを書き込まない。
   - id: display-01
     group: 表示
@@ -88,4 +88,4 @@ items:
     group: テスト
     name: IME の変換中は発火しない
     body: |-
-      - `isComposing: true` と `keyCode: 229` の keydown で、ショートカットが発火しないことを単体テストで確かめる。
+      - `isComposing: true` と `keyCode: 229` の keydown で、ショートカットが発火しないことを単体テストで確認する。

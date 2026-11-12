@@ -23,7 +23,7 @@ items:
     group: drizzle/schema.ts — 主キー（ID）設計
     name: UUID は gen_random_uuid
     body: |-
-      - UUID は `sql\`gen_random_uuid()\`` をデフォルトに使う（Postgres ネイティブ）
+      - UUID は `sql\`gen_random_uuid()\`` をデフォルトに使用する（Postgres ネイティブ）
   - id: drizzle-schema-id-02
     group: drizzle/schema.ts — 主キー（ID）設計
     name: identity は不変
@@ -36,6 +36,6 @@ items:
       - 主キーを `bigint` にする必要があるテーブル（数十億行）が出てきたら個別検討
   - id: drizzle-schema-id-04
     group: drizzle/schema.ts — 主キー（ID）設計
-    name: 独自 ID は使わない
+    name: 独自 ID は使用しない
     body: |-
-      - ULID / NanoID 等の独自 ID は 特別な理由がない限り使わない
+      - ULID / NanoID 等の独自 ID は 特別な理由がない限り使用しない

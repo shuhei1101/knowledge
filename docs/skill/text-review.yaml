@@ -42,18 +42,18 @@ arguments:
   - name: 範囲
     description: ファイルのパス・フォルダのパス（配下をすべて）・Git のコミットか範囲（変わったファイル）のどれでもよい
 preconditions:
-  - knowledge の規約を dev-docs かファイルで読める
+  - knowledge の規約を dev-docs かファイルで参照できる
 externals:
   - name: 利用者
-    exchange: 範囲を受け取り、サマリーを返す
+    exchange: 範囲を受け取り、サマリーを返却する
   - name: Git
     exchange: コミットで変わったファイルの一覧
-    when_absent: コミットを渡されなければ呼ばない
+    when_absent: コミットを指定されなければ呼ばない
   - name: dev-docs
-    exchange: 文章に関わる規約の本文（ID で引く）
+    exchange: 文章に関わる規約の本文（ID で検索する）
     when_absent: knowledge の規約のファイルを直接読む
   - name: 範囲のファイル
-    exchange: 本文を読み、修正した本文を記載する
+    exchange: 本文を参照し、修正した本文を記載する
 flow: |-
   <!-- html -->
 
@@ -66,13 +66,13 @@ flow: |-
     "width": 560,
     "height": 730,
     "nodes": [
-      { "id": "ask", "kind": "external", "x": 170, "y": 10, "w": 220, "h": 56, "name": "スキルを起動", "sub": "範囲を渡す" },
+      { "id": "ask", "kind": "external", "x": 170, "y": 10, "w": 220, "h": 56, "name": "スキルを起動", "sub": "範囲を指定する" },
       { "id": "range", "kind": "script", "x": 170, "y": 100, "w": 220, "h": 56, "name": "範囲をファイルに展開", "sub": "ファイル・フォルダ・コミット" },
       { "id": "any", "kind": "dm", "x": 170, "y": 190, "w": 220, "h": 56, "name": "ファイルがあるか" },
-      { "id": "none", "kind": "external", "x": 420, "y": 190, "w": 130, "h": 56, "name": "見つからないと返す" },
+      { "id": "none", "kind": "external", "x": 420, "y": 190, "w": 130, "h": 56, "name": "見つからないと返却する" },
       { "id": "has", "kind": "dm", "x": 170, "y": 280, "w": 220, "h": 56, "name": "dev-docs があるか" },
-      { "id": "viadd", "kind": "mcp", "x": 20, "y": 380, "w": 220, "h": 56, "name": "規約を dev-docs で読む", "sub": "search_docs" },
-      { "id": "direct", "kind": "data", "x": 320, "y": 380, "w": 220, "h": 56, "name": "規約のファイルを読む" },
+      { "id": "viadd", "kind": "mcp", "x": 20, "y": 380, "w": 220, "h": 56, "name": "規約を dev-docs で参照する", "sub": "search_docs" },
+      { "id": "direct", "kind": "data", "x": 320, "y": 380, "w": 220, "h": 56, "name": "規約のファイルを参照する" },
       { "id": "scan", "kind": "llm", "x": 170, "y": 480, "w": 220, "h": 56, "name": "すべてを調べる", "sub": "修正する箇所の一覧を作る" },
       { "id": "fix", "kind": "llm", "x": 170, "y": 570, "w": 220, "h": 56, "name": "まとめて修正する", "sub": "一覧が空なら飛ばす" },
       { "id": "sum", "kind": "external", "x": 170, "y": 660, "w": 220, "h": 56, "name": "サマリーを出す" }
@@ -101,7 +101,7 @@ sequence: |-
   <mdmark-sequence>
   {
     "title": "文章を点検して修正する",
-    "scope": "コミットを渡し、dev-docs があるとき",
+    "scope": "コミットを指定し、dev-docs があるとき",
     "updated": "2026-10-29",
     "participants": [
       { "id": "user", "kind": "external", "name": "利用者" },
@@ -114,9 +114,9 @@ sequence: |-
       { "from": "user", "to": "skill", "label": "範囲（コミット）" },
       { "from": "skill", "to": "git", "label": "変わったファイルを取る" },
       { "from": "git", "to": "skill", "label": "ファイルの一覧", "reply": true },
-      { "from": "skill", "to": "dd", "label": "文章の規約を ID で引く", "tip": "search_docs。配信元は knowledge" },
+      { "from": "skill", "to": "dd", "label": "文章の規約を ID で検索する", "tip": "search_docs。配信元は knowledge" },
       { "from": "dd", "to": "skill", "label": "規約の本文", "reply": true },
-      { "from": "skill", "to": "fs", "label": "本文を読む" },
+      { "from": "skill", "to": "fs", "label": "本文を参照する" },
       { "from": "fs", "to": "skill", "label": "本文", "reply": true },
       { "from": "skill", "to": "fs", "label": "修正した本文を記載する" },
       { "from": "skill", "to": "user", "label": "サマリー", "reply": true }
@@ -129,10 +129,10 @@ sequence: |-
 branches:
   - name: 正常
     when: 規約に反する文がある
-    result: 反する文だけが修正され、サマリーにファイルごとの修正した箇所・当てた規約・件数が出る
+    result: 反する文だけが修正され、サマリーにファイルごとの修正した箇所・適用した規約・件数が出る
   - name: 正常（修正する箇所が無い）
     when: 反する文が無い
     result: ファイルは変わらず、サマリーが「修正する箇所はありませんでした」になる
   - name: 異常（範囲にファイルが無い）
     when: 無いパスか、文章のファイルを含まないコミット
-    result: 規約を読まず、渡した範囲と見つからないことが出る
+    result: 規約を参照せず、指定した範囲と見つからないことが出る

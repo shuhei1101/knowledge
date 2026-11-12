@@ -35,7 +35,7 @@ items:
     group: error.tsx / global-error.tsx
     name: Props の error は unknown
     body: |-
-      - Props: `error: unknown`（`instanceof Error` で絞ってから `digest` を読む）, `retry: () => void`
+      - Props: `error: unknown`（`instanceof Error` で絞ってから `digest` を参照する）, `retry: () => void`
   - id: error-tsx-03
     group: error.tsx / global-error.tsx
     name: useEffect でログに出す
@@ -55,7 +55,7 @@ items:
     group: error.tsx / global-error.tsx
     name: global-error は html と body を自前で記載
     body: |-
-      - `global-error.tsx` は `<html><body>` を自前で書く（ルート layout 自体が落ちる前提）
+      - `global-error.tsx` は `<html><body>` を自前で記載する（ルート layout 自体が落ちる前提）
   - id: layout-01
     group: 配置
     name: 配置のツリー

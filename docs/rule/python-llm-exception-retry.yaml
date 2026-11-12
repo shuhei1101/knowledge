@@ -77,11 +77,12 @@ items:
     group: stamina によるリトライ
     name: retry_after の優先
     body: |-
-      - `on` に渡すフック関数は、`LlmRateLimitError.retry_after`（Retry-After ヘッダから抽出してコンストラクタに渡す）があればその秒数（float）を返して待ちに使う。
+      - `on` に指定するフック関数は、`LlmRateLimitError.retry_after` があればその秒数（float）を返却して待ちに使用する。
+        `retry_after` は Retry-After ヘッダから抽出してコンストラクタに指定する。
         フックが返却した待ちは `wait_max` で抑えられない。
         そのため `retry_after` が `wait_max` を超えるときは False を返却してリトライせず、その値を 503 の Retry-After で返却する。
         無ければ既定のバックオフ。
-        同じ値を 503 の Retry-After にも使う（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
+        同じ値を 503 の Retry-After にも使用する（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
   - id: stamina-retry-05
     group: stamina によるリトライ
     name: リトライ時のログ
@@ -92,7 +93,7 @@ items:
     name: テストではリトライの待ちを止める
     body: |-
       - テストでは `stamina.set_testing(True, attempts=...)` でバックオフの待ちを無効にする。
-        試行の回数は `attempts`（既定は 1）になるので、リトライを確かめるテストでは `stamina-retry-01` と同じ回数を渡す
+        試行の回数は `attempts`（既定は 1）になるので、リトライを確認するテストでは `stamina-retry-01` と同じ回数を指定する
   - id: timeout-01
     group: タイムアウト
     name: クライアントとデコレータのタイムアウト

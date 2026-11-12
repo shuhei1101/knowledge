@@ -30,24 +30,24 @@ items:
       対象は React。
   - id: use-form-hook-01
     group: hook
-    name: hook の置き場所
+    name: hook の配置先
     body: |-
-      - 画面の `hooks/use-{feature}-form.ts` に置く。
+      - 画面の `hooks/use-{feature}-form.ts` に配置する。
   - id: use-form-hook-02
     group: hook
-    name: defaultValues にサーバーの値を流す
+    name: defaultValues にサーバーの値を指定する
     body: |-
-      - `defaultValues` に、サーバーの値を流す。
+      - `defaultValues` に、サーバーの値を指定する。
   - id: use-form-hook-03
     group: hook
-    name: 非同期の取得は values を使う
+    name: 非同期の取得は values を使用する
     body: |-
-      - 非同期に取得した値は、`values` で渡す（変更で自動的に reset され、`isDirty` も正しく動く）。
+      - 非同期に取得した値は、`values` で指定する（変更で自動的に reset され、`isDirty` も正しく動く）。
   - id: use-form-hook-04
     group: hook
     name: hook にするのは必要なときだけ
     body: |-
-      - hook にするのは、初期値の変換が重いときと、複数の箇所で使うときだけにする。
+      - hook にするのは、初期値の変換が重いときと、複数の箇所で使用するときだけにする。
   - id: rules-01
     group: ルール
     name: Zod スキーマは form.ts から import する

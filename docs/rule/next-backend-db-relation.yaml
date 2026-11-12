@@ -38,10 +38,10 @@ items:
     group: drizzle/schema.ts — Relations と Index
     name: 複合 index の列順
     body: |-
-      - 複合 index はクエリパターンに合わせる（等価条件の列を先頭、範囲条件の列をその後ろに置く）
+      - 複合 index はクエリパターンに合わせる（等価条件の列を先頭、範囲条件の列をその後ろに配置する）
   - id: drizzle-schema-relations-index-04
     group: drizzle/schema.ts — Relations と Index
-    name: 過剰な index を避ける
+    name: 過剰な index を使用しない
     body: |-
       - 過剰な index は INSERT/UPDATE を遅くする → 必要なものだけ
   - id: drizzle-schema-relations-index-05
