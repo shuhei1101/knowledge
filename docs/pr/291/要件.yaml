@@ -29,6 +29,12 @@ docs:
     new: true
     change: knowledge の用語集を新設し、判定フローチャート『用語の登録』で knowledge に登録すると判定した呼び名（AI slop・判定フローチャート・配信元・表し方・A.I.VOICE 2 など）を登録する
     status: todo
+  - page: docs/template/template-scenario.yaml
+    new: false
+    change: 原本のスキーマに追加した `visibility` を、設計書のテンプレート（architecture・dev-command・external-library・interface・layout・module・nonfunctional・scenario・test-procedure）に生成し直す。layout は `tags`・`aliases` も出す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T10:53:19.158889+00:00'
 scope_out:
   - item: 生成物の README.md を作るコマンドを開発コマンドへ載せる
     reason: '#283 の判断で #280 に README の生成だけを残した。今回の要望に含まれない'
