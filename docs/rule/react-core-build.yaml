@@ -52,14 +52,14 @@ items:
     name: Vite でビルドし tsc は型チェックだけ
     body: |-
       - Vite（React + TS）でビルドする。
-        tsc は型チェック（`--noEmit`）だけに使う。
+        tsc は型チェック（`--noEmit`）だけに使用する。
   - id: build-02
     group: ビルド
     name: React Compiler を入れる
     body: |-
       - React Compiler を入れる。
-        新しいコードで `useMemo`・`useCallback` を書かない。
-        細かく制御したいときだけ、escape hatch として使う。
+        新しいコードで `useMemo`・`useCallback` を記載しない。
+        細かく制御したいときだけ、escape hatch として使用する。
   - id: build-03
     group: ビルド
     name: 推測で memo を入れない
@@ -85,11 +85,11 @@ items:
     group: package.json と Vite の root
     name: package.json はリポジトリの直下
     body: |-
-      - `package.json` と各ツールの設定（Vite・tsconfig・ESLint・Vitest・Playwright・Storybook・orval・shadcn）は、リポジトリの直下に置く。
+      - `package.json` と各ツールの設定（Vite・tsconfig・ESLint・Vitest・Playwright・Storybook・orval・shadcn）は、リポジトリの直下に配置する。
         Vite の `root` は `frontend/` にする。
   - id: root-02
     group: package.json と Vite の root
     name: tsconfig の別名
     body: |-
       - `tsconfig` の `@/*` は `frontend/src/*` を指す。
-        Router・Storybook・shadcn の CLI のパスが直下の設定で解決されることは、導入時に確かめる。
+        Router・Storybook・shadcn の CLI のパスが直下の設定で解決されることは、導入時に確認する。

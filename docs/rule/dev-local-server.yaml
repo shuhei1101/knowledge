@@ -30,7 +30,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      開発のローカルサーバー（dev サーバー・プレビュー・Storybook・MCP サーバー）の立て方。
+      開発のローカルサーバー（dev サーバー・プレビュー・Storybook・MCP サーバー）の起動方法。
       dev サーバーは tmux、必ず動いていてほしい常駐サーバー（MCP・gateway など）は systemd --user で起動する。
   - id: naming-01
     group: セッション名
@@ -53,9 +53,9 @@ items:
       - 使用中かは `ss -ltnH "( sport = :{ポート} )"` で確認する（空なら空いている）
   - id: log-01
     group: ログ
-    name: ログとポートの置き場所
+    name: ログとポートの配置先
     body: |-
-      - ログとポートは worktree の直下の `.dev/` に置き、`.dev/` を gitignore する
+      - ログとポートは worktree の直下の `.dev/` に配置し、`.dev/` を gitignore する
       - 起動コマンドを `set -o pipefail; {コマンド} 2>&1 | tee -a {worktree}/.dev/{役割}.log` で包む
       - ログは `tail -n 80 .dev/{役割}.log`、直近の画面は `tmux capture-pane -p -t "={セッション名}" -S -80` で確認する
   - id: start-01
@@ -74,16 +74,16 @@ items:
       ```
 
       - `has-session`・`kill-session`・`capture-pane` の `-t` には `=` を付けて完全一致で指定する
-      - 実行ファイルはフルパス（`.venv/bin/python`・`node_modules/.bin/...`）で指定し、環境変数は `-e` で渡す
-      - 起動は Bash の通常の実行で行い、`run_in_background` は使わない（Claude Code の終了時に片付けられる）
+      - 実行ファイルはフルパス（`.venv/bin/python`・`node_modules/.bin/...`）で指定し、環境変数は `-e` で指定する
+      - 起動は Bash の通常の実行で行い、`run_in_background` は使用しない（Claude Code の終了時に片付けられる）
       - プロセスが終わったらセッションも閉じる（tmux の既定）。
-        `has-session` を生死の判定に使う
+        `has-session` を生死の判定に使用する
   - id: start-02
     group: 起動
     name: 既にあるとき
     body: |-
-      - `has-session` で動いていればそのまま使い、ポートは `.dev/{役割}.port` から読む
-      - ポートが応答しなければ、`kill-session` してから起動し直す
+      - `has-session` で動いていればそのまま使用し、ポートは `.dev/{役割}.port` から参照する
+      - ポートが応答しなければ、`kill-session` してから再起動する
   - id: ready-01
     group: 起動の確認
     name: 起動の確認

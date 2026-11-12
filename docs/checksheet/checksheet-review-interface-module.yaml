@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-interface-module
+kind: checksheet
+name: "インターフェース定義・モジュール構成のレビュー観点 チェックシート"
+description: インターフェース定義とモジュール構成の設計書をレビューするときの観点を並べ、それらの設計書をレビューするときに参照する。
+aliases:
+  - インターフェース定義のレビュー観点
+  - モジュール構成のレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:インターフェース
+    main: true
+  - name: topic:モジュール
+  - name: topic:設計書
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+  - to: dev-folder-layout
+    type: references
+    when: フォルダ構成の設計書をあわせてレビューするとき
+  - to: dev-precheck
+    type: references
+    when: 事前確認の配置を確認するとき
+  - to: flowchart-interface-choice
+    type: references
+    when: 機能を呼ぶインターフェース・手順の指定方法の種類を確認するとき
+  - to: html-core-buildless
+    type: references
+    when: ブラウザのスクリプトの拡張子を確認するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      インターフェース定義とモジュール構成の設計書をレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | 状態を持つ箇所で、取りうる状態と遷移が漏れなく記載されていること | - |
+      | 失敗経路（例外・タイムアウト・部分成功）の扱いが決まっていること | 正常系だけの設計は指摘する |
+      | 設定値・定数がハードコードされず、設定 / 定数のページに配置されていること | - |
+      | インターフェース定義とモジュール構成で型と名前が一致していること | - |
+      | 採用したライブラリの API が公式ドキュメントのシグネチャどおりになっていること | 引数名・戻り値・例外まで確認する |
+      | 使用する外部ライブラリ・外部 API の設計書があり、プロセス境界を越える相手にはアーキテクチャ図の外部システム連携に行があり、詳細がその設計書を指していること | - |
+      | 適切にログ出力が設計されていること | エラーなどを適切にログ出力するよう記載されているか |
+      | インターフェース定義側に具体的なプロバイダー依存の記述が無いこと | プロバイダー依存（特定 API や特定ライブラリ）はモジュール構成側にインターフェースや関数型を用いて抽象化する（今後の横展開、拡張性を考慮されていること。いわゆる Adapter パターン） |
+      | モジュール構成の設計書が物理ファイル 1 つにつき 1 つで、全ての要素の `container` が同じ物理ファイルを指していること | 分類の構成図・決まりは分類ごとの設計書（`モジュール構成/分類/`）が持ち、要素は持たない。ファイルの配置はフォルダ構成の設計書が持つ |
+      | モジュール構成と一緒に修正したフォルダ構成の設計書が、規約 [フォルダ構成の切り方とレビュー](id:dev-folder-layout) のレビューの観点に該当しないこと | フォルダを追加・移動するのにフォルダ構成の設計書があって修正していない場合も指摘する |
+      | 費用のかかる処理より前に、非機能要件で決めた時点の事前確認がフローに配置されていること | 規約 [事前確認](id:dev-precheck) |
+      | 新しく作った機能を呼ぶインターフェース（フック・MCP ツール・API・CLI）と、エージェントに指定する手順の指定方法（エージェントフロー・サブエージェント・スキル）の種類が、判定フローチャート [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice) の結果と合っていること | - |
+      | モジュール構成の設計書が、ブラウザのスクリプトを `.ts` のファイルで設計し、`.js` を手書きする設計（ファイル名が `.js.yaml` の設計書など）になっていないこと | `.js` で記載してよいのは [js で記載してよい場合](id:html-core-buildless#script-extension-02) だけ。HTML に直接記載する `<script>` の処理も `.ts` へ分けているかを確認する（[HTML に直接記載する script](id:html-core-buildless#script-extension-04)） |
+
+      <!-- /table -->

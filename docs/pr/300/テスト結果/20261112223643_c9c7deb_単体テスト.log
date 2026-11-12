@@ -1,0 +1,47 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-plugins-project-index-tool-names
+configfile: pytest.ini
+collected 229 items
+
+tests/unit/scripts/test_build_pages.py ...................               [  8%]
+tests/unit/scripts/test_build_templates.py ........................      [ 18%]
+tests/unit/scripts/test_build_word_list.py ...                           [ 20%]
+tests/unit/scripts/test_check_all.py ................................... [ 35%]
+............                                                             [ 40%]
+tests/unit/scripts/test_common.py ....................                   [ 49%]
+tests/unit/scripts/test_knowledge_checks.py ............................ [ 61%]
+.....                                                                    [ 63%]
+tests/unit/scripts/test_knowledge_markdown.py .......................... [ 75%]
+........                                                                 [ 78%]
+tests/unit/scripts/test_lint.py ............                             [ 83%]
+tests/unit/scripts/test_maid.py ......                                   [ 86%]
+tests/unit/slop-check/test_slop_check.py .......F....................... [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_is_target[write_docs] __________________________
+
+tool_name = 'mcp__plugin_project-index_project-index__write_docs'
+
+    @pytest.mark.parametrize(
+        "tool_name",
+        [
+            pytest.param("Write", id="write"),
+            pytest.param("mcp__plugin_project-index_project-index__write_docs", id="write_docs"),
+            pytest.param("mcp__plugin_ai-monitor_ai-monitor-tools__comment", id="comment"),
+            pytest.param("mcp__plugin_mindstella_mindstella__reply", id="mindstella_reply"),
+        ],
+    )
+    def test_is_target(tool_name: str) -> None:
+        """対象のツール（正常系）。"""
+        # 実行
+        result = is_target(tool_name)
+        # 検証
+>       assert result is True
+E       assert False is True
+
+tests/unit/slop-check/test_slop_check.py:183: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/slop-check/test_slop_check.py::test_is_target[write_docs]
+======================== 1 failed, 228 passed in 6.40s =========================

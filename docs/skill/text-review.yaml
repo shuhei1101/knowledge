@@ -2,7 +2,7 @@
 id: text-review
 type: skill
 title: 文章を点検して修正する
-summary: ファイル・フォルダ・Git のコミットで渡した範囲の文章を、knowledge の文章の規約に合わせて点検して修正し、結果をサマリーで返却する
+summary: ファイル・フォルダ・Git のコミットで指定した範囲の文章を、knowledge の文章の規約に合わせて点検して修正し、結果をサマリーで返却する
 tags:
   - topic:文章
   - topic:スキル
@@ -32,13 +32,13 @@ steps:
         command: git diff-tree --no-commit-id --name-only -r --diff-filter=d {コミット}
       - type: command
         command: git diff --name-only --diff-filter=d {範囲}
-  - name: ファイルが無いときは返して終える
+  - name: ファイルが無いときは返却して終える
     when: 展開したファイルが 0 件のとき
-    body: 規約を読まずに、渡した範囲と見つからないことを出して終える。
-  - name: 規約を読む
+    body: 規約を参照せずに、指定した範囲と見つからないことを出して終える。
+  - name: 規約を参照する
     body: |-
-      次の規約を読む。
-      『ユーザ配下ルール記載時の規約』は、範囲に `.claude/rules/` のファイルがあるときだけ読む。
+      次の規約を参照する。
+      『ユーザ配下ルール記載時の規約』は、範囲に `.claude/rules/` のファイルがあるときだけ参照する。
 
       | 規約 | ID |
       | --- | --- |
@@ -48,14 +48,14 @@ steps:
       | ドキュメントの部品 | `doc-parts` |
       | ユーザ配下ルール記載時の規約 | `claude-rule-writing` |
 
-      - dev-docs の `search_docs` が使えるなら、`source` を `knowledge`、`filter` を `id` の `eq` で上の ID、`view` を `full` にして読む
-      - ツールが無いか、規約が見つからないなら、`${CLAUDE_PLUGIN_ROOT}/docs/rule/{ID}.yaml` を読む
+      - project-index の `search_docs`（`mcp__plugin_project-index_project-index__search_docs`）が使えるなら、`source` を `knowledge`、`filter` を `id` の `eq` で上の ID、`view` を `full` にして参照する
+      - ツールが無いか、規約が見つからないなら、`${CLAUDE_PLUGIN_ROOT}/docs/rule/{ID}.yaml` を参照する
     calls:
       - type: tool
         tool: Read
   - name: すべてを調べて修正する箇所の一覧を作る
     body: |-
-      すべてのファイルの本文を読み、規約に反する箇所を、ファイル・箇所・当てる規約・修正後の文で一覧にする。
+      すべてのファイルの本文を参照し、規約に反する箇所を、ファイル・箇所・適用する規約・修正後の文で一覧にする。
       一覧を作り終えるまで、ファイルは修正しない。
     calls:
       - type: tool
@@ -68,7 +68,7 @@ steps:
         tool: Edit
   - name: サマリーを出す
     body: |-
-      ファイルごとに、修正した箇所・当てた規約・件数を出す。
+      ファイルごとに、修正した箇所・適用した規約・件数を出す。
       一覧が空なら「修正する箇所はありませんでした」を出す。
 refs:
   - convention-writing-style#

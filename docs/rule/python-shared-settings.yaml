@@ -40,9 +40,9 @@ items:
   - id: overview
     name: 概要
     body: |-
-      既定値・環境の値・checkout の上書き・環境変数を `Settings(BaseSettings)` で型安全に読む（`shared/settings.py`）。
-      置き場所の判断（秘匿値・環境の値・既定値・定数のどこに置くか）は [設定値の置き場所](id:flowchart-config-location) に従う。
-      ここは Python での読み方だけを決める。
+      既定値・環境の値・checkout の上書き・環境変数を `Settings(BaseSettings)` で型安全に参照する（`shared/settings.py`）。
+      配置先の判断（秘匿値・環境の値・既定値・定数のどこに配置するか）は [設定値の置き場所](id:flowchart-config-location) に従う。
+      ここは Python での参照方法だけを決める。
   - id: loading-01
     group: 読み込み
     name: 設定の 3 レイヤーの読み込み
@@ -64,30 +64,30 @@ items:
         `init_settings` → `env_settings` → `file_secret_settings` → YAML の順にして、環境変数・引数が 3 レイヤーより勝つようにする
   - id: loading-04
     group: 読み込み
-    name: 既定値は YAML だけに置く
+    name: 既定値は YAML だけに配置する
     body: |-
-      - 既定値の YAML が無くても飛ばされるので、項目の既定値はコードに持たず YAML だけに置く（欠けたら必須項目の検証エラーで起動時に止まる）
+      - 既定値の YAML が無くても飛ばされるので、項目の既定値はコードに持たず YAML だけに配置する（欠けたら必須項目の検証エラーで起動時に止まる）
   - id: loading-05
     group: 読み込み
     name: YAML 読み込みの依存
     body: |-
-      - YAML を読むには `pydantic-settings[yaml]` を入れる
+      - YAML を参照するには `pydantic-settings[yaml]` を入れる
   - id: loading-06
     group: 読み込み
     name: "~ の展開"
     body: |-
-      - `~` は `Path.expanduser()` で展開してから渡す
+      - `~` は `Path.expanduser()` で展開してから指定する
   - id: loading-07
     group: 読み込み
     name: 秘匿値の secrets_dir
     body: |-
-      - 秘匿値だけ `${XDG_CONFIG_HOME:-~/.config}/{project}/secrets/` に分けるときは `secrets_dir` で読む
+      - 秘匿値だけ `${XDG_CONFIG_HOME:-~/.config}/{project}/secrets/` に分けるときは `secrets_dir` で参照する
   - id: type-validation-01
     group: 型と検証
     name: API キーは SecretStr
     body: |-
       - API キーは `SecretStr`（ログに出ない）。
-        外部クライアントに渡す時だけ `get_secret_value()`
+        外部クライアントに指定する時だけ `get_secret_value()`
   - id: type-validation-02
     group: 型と検証
     name: extra は ignore
@@ -118,7 +118,7 @@ items:
     group: 運用
     name: 秘匿値ファイルのサンプル
     body: |-
-      - 秘匿値を持つファイルは、キーとプレースホルダだけを書いたサンプル（`settings.sample.yaml`）を対で置いて git 管理する
+      - 秘匿値を持つファイルは、キーとプレースホルダだけを記載したサンプル（`settings.sample.yaml`）を対で配置して git 管理する
   - id: operation-02
     group: 運用
     name: Settings は main.py で 1 度だけ作る

@@ -28,7 +28,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      knowledge のスキル（文章を点検して修正する `/knowledge:text-review`）を Claude Code で使いたいときに実行する。
+      knowledge のスキル（文章を点検して修正する `/knowledge:text-review`）を Claude Code で使用したいときに実行する。
       プラグイン slop-check を入れると、書き込むツールの実行の後に、書き込んだ中身にある AI slop の単語と置き換え先が通知される。
   - id: prerequisite-01
     group: 前提
@@ -52,8 +52,8 @@ items:
       claude plugin install knowledge@knowledge
       ```
 
-      既定はユーザースコープで、どのプロジェクトでも使える。
-      特定のプロジェクトだけで使うときは、そのプロジェクトの直下で `--scope project` を付ける。
+      既定はユーザースコープで、どのプロジェクトでも使用できる。
+      特定のプロジェクトだけで使用するときは、そのプロジェクトの直下で `--scope project` を付ける。
   - id: step-install-slop-check-01
     group: 手順 > AI slop の単語の通知を入れる
     name: slop-check のインストール
@@ -99,5 +99,5 @@ items:
       claude plugin marketplace remove knowledge
       ```
 
-      マーケットプレイスを削除すると、そこから入れたプラグインも外れる。
+      マーケットプレイスを削除すると、そこから入れたプラグインもアンインストールされる。
       AI slop の単語の通知だけを止めるときは、1 行目だけを実行する。

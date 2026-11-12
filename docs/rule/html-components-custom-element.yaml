@@ -33,7 +33,7 @@ items:
     name: Light DOM の custom element
     body: |-
       - 共通 UI は Light DOM の autonomous custom element で作る。
-        - Shadow DOM は使わない。
+        - Shadow DOM は使用しない。
         - セットアップは `connectedCallback` で（constructor ではなく）。
           移動で再度呼ばれるため、中身は 1 回だけ組む。
         - 中身は `innerHTML` か `<template>` のクローンで組む。

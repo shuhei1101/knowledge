@@ -35,7 +35,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      関数の型エイリアスで DI している依存は Mock も普通の関数で書く（`AsyncMock` より読みやすい）。
+      関数の型エイリアスで DI している依存は Mock も普通の関数で記載する（`AsyncMock` より参照しやすい）。
       引数注入していない依存は `monkeypatch` / `mock.patch` で差し替えてよい。
   - id: integration-mock-pattern-01
     group: 結合テストの Mock パターン
@@ -45,13 +45,13 @@ items:
 
       | 対象         | パターン                                                             |
       | ------------ | -------------------------------------------------------------------- |
-      | LLM          | `make_chat_mock(*responses)` — 固定文字列を順に返すファクトリ        |
+      | LLM          | `make_chat_mock(*responses)` — 固定文字列を順に返却するファクトリ        |
       | エージェント | Claude Code のエージェント・サブエージェント・スキルの代わりに、決めた順にツールを呼ぶ・決めた出力を返却する関数。エージェントの判断はテストしない |
       | 呼び出し検証 | クロージャに `calls` リストを持つ spy 関数（`_chat.calls` で参照）   |
       | エラー注入   | `make_chat_error(LlmRateLimitError("..."))` — raise するだけの関数   |
-      | HTTP         | fetch を型エイリアス化していれば Mock 関数注入。httpx2 直なら `MockTransport` を関数注入（SDK は `http_client=` に渡す） |
-      | 時刻         | `NowFn` に固定時刻関数を渡す（freezegun より関数注入がシンプル）     |
-      | ID 生成      | `iter(["id-1", ...])` + `next` を返す関数                            |
+      | HTTP         | fetch を型エイリアス化していれば Mock 関数注入。httpx2 直なら `MockTransport` を関数注入（SDK は `http_client=` に指定する） |
+      | 時刻         | `NowFn` に固定時刻関数を指定する（freezegun より関数注入がシンプル）     |
+      | ID 生成      | `iter(["id-1", ...])` + `next` を返却する関数                            |
       | 永続化       | クロージャの dict による in-memory `save` / `find`                   |
       | 環境変数     | `monkeypatch.setenv` → `Settings()`                                  |
 
@@ -60,9 +60,9 @@ items:
     group: 結合テストの Mock パターン
     name: Mock を conftest に集約
     body: |-
-      - よく使う Mock は conftest の fixture に集約
+      - よく使用する Mock は conftest の fixture に集約
   - id: integration-mock-pattern-03
     group: 結合テストの Mock パターン
-    name: 実通信テストの置き場所
+    name: 実通信テストの配置先
     body: |-
-      - 本物の外部サービスに通信するテストを結合テストに書かない（課金・不安定 → 外部疎通テスト（`tests/external/`）へ）
+      - 本物の外部サービスに通信するテストを結合テストに記載しない（課金・不安定 → 外部疎通テスト（`tests/external/`）へ）

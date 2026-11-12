@@ -30,7 +30,7 @@ last_reviewed: '2026-10-30'
 related:
   - to: flowchart-react-state-placement
     type: requires
-    when: 新しい値の置き場所を決めるとき
+    when: 新しい値の配置先を決めるとき
 sources:
   - title: "React: You Might Not Need an Effect"
     url: https://react.dev/learn/you-might-not-need-an-effect
@@ -43,9 +43,9 @@ items:
       対象は React。
   - id: effect-01
     group: useEffect
-    name: 外部のシステムと同期するときだけ使う
+    name: 外部のシステムと同期するときだけ使用する
     body: |-
-      - `useEffect` は、React の外のシステム（ブラウザの API・WebSocket・外部ライブラリの購読）と同期するときだけ使う。
+      - `useEffect` は、React の外のシステム（ブラウザの API・WebSocket・外部ライブラリの購読）と同期するときだけ使用する。
         購読は、cleanup で解除する。
   - id: effect-02
     group: useEffect

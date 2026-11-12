@@ -45,9 +45,10 @@ items:
       - 入力は Zod パース（LoginSchema / SignupSchema をファイル内に定義）
   - id: auth-action-03
     group: app/(shared)/actions/auth.ts — 認証 Server Action
-    name: Better Auth API を使う
+    name: Better Auth API を使用する
     body: |-
-      - Better Auth API を使う: `auth.api.signInEmail` / `signUpEmail` / `signOut`（いずれも `headers: await headers()` を渡す）
+      - Better Auth API を使用する: `auth.api.signInEmail` / `signUpEmail` / `signOut`。
+        いずれも `headers: await headers()` を指定する
   - id: auth-action-04
     group: app/(shared)/actions/auth.ts — 認証 Server Action
     name: 結果は ActionResult

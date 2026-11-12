@@ -46,32 +46,32 @@ items:
   - id: overview
     name: 概要
     body: |-
-      Next.js での環境変数と設定の読み方。
+      Next.js での環境変数と設定の参照方法。
 
-      置き場所の判定は [設定値の置き場所](id:flowchart-config-location) に従う。
+      配置先の判定は [設定値の置き場所](id:flowchart-config-location) に従う。
   - id: next-placement-01
-    group: Next.js での置き場所
-    name: 秘匿値の置き場所
+    group: Next.js での配置先
+    name: 秘匿値の配置先
     body: |-
       - 秘匿値: dev は `.env.local`、prod は Vercel ダッシュボード
   - id: next-placement-02
-    group: Next.js での置き場所
+    group: Next.js での配置先
     name: 定数は constants.ts
     body: |-
       - 環境で変わらない定数: `app/(shared)/constants.ts`（UPPER_SNAKE_CASE）
   - id: next-placement-03
-    group: Next.js での置き場所
+    group: Next.js での配置先
     name: サンプルファイルのテンプレート
     body: |-
       - `.env.sample` / `settings.sample.yaml` をテンプレとして git 管理（必要変数の正式リスト）
   - id: next-public-prefix-01
     group: NEXT_PUBLIC_ プレフィックス
-    name: NEXT_PUBLIC_ はクライアントで読む値のみ
+    name: NEXT_PUBLIC_ はクライアントで参照する値のみ
     body: |-
-      - クライアントで読む値のみ付ける（ブラウザ JS にバンドルされ公開される）
+      - クライアントで参照する値のみ付ける（ブラウザ JS にバンドルされ公開される）
   - id: rules-01
     group: ルール
-    name: runtimeConfig は使わない
+    name: runtimeConfig は使用しない
     body: |-
       - `serverRuntimeConfig` / `publicRuntimeConfig` は Next.js 16 で廃止 → `process.env.*` を直接使う
   - id: rules-02
@@ -84,12 +84,12 @@ items:
     name: env を型安全に一元化
     body: |-
       - env は `@t3-oss/env-nextjs` + Zod で型安全に一元化（`env.ts`）。
-        `process.env` を散在的に読まない
+        `process.env` を散在的に参照しない
   - id: rules-04
     group: ルール
     name: YAML の loader
     body: |-
-      - YAML は `app/(shared)/config.ts` の loader で 設定の 3 レイヤーを重ねて読み、Zod schema で parse、モジュールキャッシュ
+      - YAML は `app/(shared)/config.ts` の loader で 設定の 3 レイヤーを重ねて参照し、Zod schema で parse、モジュールキャッシュ
   - id: config-exposure-01
     group: クライアントへの config 公開
     name: クライアントへの config 公開の表

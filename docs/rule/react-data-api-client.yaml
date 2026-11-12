@@ -41,7 +41,7 @@ last_reviewed: '2026-10-30'
 related:
   - to: react-data-query
     type: references
-    when: 生成した hook を画面で使うとき
+    when: 生成した hook を画面で使用するとき
 sources:
   - title: "orval: output"
     url: https://orval.dev/docs/reference/configuration/output
@@ -61,30 +61,30 @@ items:
     name: 生成物は専用のフォルダに出す
     body: |-
       - 生成物は、`shared/api/generated/` だけに出す。
-        orval の `clean` が出力先を削除するので、手書きのファイルを置かない。
+        orval の `clean` が出力先を削除するので、手書きのファイルを配置しない。
   - id: mutator-01
     group: mutator
     name: fetch を呼ぶ場所は api-client.ts
     body: |-
-      - mutator は `shared/adapters/api-client.ts` に置き、fetch を呼ぶ場所を 1 か所にする。
+      - mutator は `shared/adapters/api-client.ts` に配置し、fetch を呼ぶ場所を 1 か所にする。
         失敗したレスポンスは、ここで `AppError` に変換して throw する。
   - id: url-01
     group: URL
-    name: URL を文字列で書かない
+    name: URL を文字列で記載しない
     body: |-
-      - API の URL は、生成された関数を通して使う。
+      - API の URL は、生成された関数を経由して使用する。
         画面の遷移は、型付きの `<Link>`・`navigate` で行う。
   - id: websocket-01
     group: WebSocket
     name: 受けた値は setQueryData に反映する
     body: |-
-      - WebSocket は `shared/adapters/ws-client.ts` に置き、受けた値を `queryClient.setQueryData` に反映する。
+      - WebSocket は `shared/adapters/ws-client.ts` に配置し、受けた値を `queryClient.setQueryData` に反映する。
   - id: websocket-02
     group: WebSocket
     name: WsClient は EventTarget で実装する
     body: |-
       - `WsClient` は `EventTarget` を継承して実装し、購読側は `addEventListener` で受ける。
-        コンポーネントからは、hook で包んで使う。
+        コンポーネントからは、hook で包んで使用する。
   - id: websocket-03
     group: WebSocket
     name: 再接続はジッター付きの指数バックオフ

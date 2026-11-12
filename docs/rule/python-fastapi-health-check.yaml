@@ -36,7 +36,7 @@ items:
     group: ヘルスチェック
     name: /healthz は生存判定のみ
     body: |-
-      - `/healthz` は `{"status": "ok"}` を返すだけ（プロセス生存判定）
+      - `/healthz` は `{"status": "ok"}` を返却するだけ（プロセス生存判定）
   - id: health-check-02
     group: ヘルスチェック
     name: 疎通確認を入れない
@@ -48,7 +48,7 @@ items:
     body: |-
       | 用途      | エンドポイント | 中身                                         |
       | --------- | -------------- | -------------------------------------------- |
-      | liveness  | `/healthz`     | 200 を返すだけ                               |
+      | liveness  | `/healthz`     | 200 を返却するだけ                               |
       | readiness | `/readyz`      | `app.state.ready` フラグ確認、未起動なら 503 |
   - id: liveness-readiness-02
     group: liveness / readiness を分ける場合
@@ -56,8 +56,8 @@ items:
     body: |-
       lifespan の startup 完了時に `app.state.ready = True`。
   - id: dependency-status-01
-    group: 依存先の状態を見たい場合
+    group: 依存先の状態を確認したい場合
     name: 依存先の診断用エンドポイント
     body: |-
       `/healthz/deep` のような診断用エンドポイントを別に作る。
-      認証必須にし、load balancer の probe には使わない（監視・運用向け）。
+      認証必須にし、load balancer の probe には使用しない（監視・運用向け）。

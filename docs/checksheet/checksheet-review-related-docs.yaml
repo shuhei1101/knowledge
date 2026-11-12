@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-related-docs
+kind: checksheet
+name: "関連ドキュメントの修正のレビュー観点 チェックシート"
+description: 決定を関連ドキュメントへ反映した修正をレビューするときの観点を並べ、関連ドキュメントの修正をレビューするときに参照する。
+aliases:
+  - 関連ドキュメントのレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:文書
+    main: true
+  - name: action:反映
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+  - to: checksheet-design-change-impact
+    type: references
+    when: 設計変更の影響範囲を洗い出すとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      決定を関連ドキュメントへ反映した修正をレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | 反映元の決定内容と、更新後の記述が一致していること | 決定の経緯のコメントと突き合わせる |
+      | 反映先が原本のページになっていること | コピーを修正していないか |
+      | 同じ内容を持つ他のページに反映漏れが無いこと | - |
+      | 反映のついでに関係ない記述を書き換えていないこと | 規約 [既存文章の維持](id:convention-keep-existing-text) |
+
+      <!-- /table -->

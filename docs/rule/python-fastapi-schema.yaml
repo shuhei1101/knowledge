@@ -48,7 +48,7 @@ items:
     name: API に出る選択肢は StrEnum
     body: |-
       - API に出る選択肢は `StrEnum`（OpenAPI に名前付きのスキーマとして出る）
-        - 内部だけで使う選択肢は `Literal`（[shared/定数](id:python-shared-constant)）
+        - 内部だけで使用する選択肢は `Literal`（[shared/定数](id:python-shared-constant)）
   - id: camelcase-01
     group: camelCase 対応
     name: camelCase の扱い
@@ -60,4 +60,4 @@ items:
     name: レスポンスは戻り値の型注釈
     body: |-
       レスポンススキーマは戻り値の型注釈（`-> Response`）で指定する。
-      `from_domain` で明示変換して返すのを基本にし、返す型と宣言したい型が合わないときだけ `response_model=` を使う。
+      `from_domain` で明示変換して返却するのを基本にし、返却する型と宣言したい型が合わないときだけ `response_model=` を使用する。

@@ -53,33 +53,33 @@ items:
   - id: overview
     name: 概要
     body: |-
-      AI エージェントが読み書きする文書の置き方・メタデータ・関連・配信の決まり。
+      AI エージェントが読み書きする文書の配置方法・メタデータ・関連・配信の決まり。
   - id: placement-01
-    group: 置き方
-    name: 文書の正本は YAML
+    group: 配置方法
+    name: 文書の原本は YAML
     body: |-
-      - 文書の正本は YAML にする。
+      - 文書の原本は YAML にする。
         markdown にするのは、道具が markdown を前提にするファイル（README・CLAUDE.md・AGENTS.md・SKILL.md・PR の本文など）だけ
   - id: placement-02
-    group: 置き方
+    group: 配置方法
     name: 大きな文書は項目に分ける
     body: |-
       - 大きな文書は項目ごとに分け、長い自由記述は項目の本文のキーに入れる
   - id: placement-03
-    group: 置き方
+    group: 配置方法
     name: YAML ファイルの単位
     body: |-
       - YAML ファイルを分ける単位は [YAML ファイルの単位](id:flowchart-yaml-file-unit) で決める
   - id: placement-04
-    group: 置き方
+    group: 配置方法
     name: フロントマターの扱い
     body: |-
-      - 道具がフロントマターを要求するファイル（SKILL.md など）のほかは、フロントマターを使わない
+      - 道具がフロントマターを要求するファイル（SKILL.md など）のほかは、フロントマターを使用しない
   - id: folder-01
     group: フォルダ
-    name: 文書は docs/ 1 つに置く
+    name: 文書は docs/ 1 つに配置する
     body: |-
-      - 文書は `docs/` 1 つに置き、その下は種類だけをフォルダにする
+      - 文書は `docs/` 1 つに配置し、その下は種類だけをフォルダにする
         種類のフォルダの中はフラットにする
   - id: folder-02
     group: フォルダ
@@ -98,9 +98,9 @@ items:
       - 文書どうしの参照は ID で記載し、パスで記載しない
   - id: folder-05
     group: フォルダ
-    name: スキーマの置き場所
+    name: スキーマの配置先
     body: |-
-      - 種類ごとのスキーマは `schemas/{種類}.schema.yaml` に置く
+      - 種類ごとのスキーマは `schemas/{種類}.schema.yaml` に配置する
 
       ```text
       repo/
@@ -119,7 +119,7 @@ items:
     name: 言語の規約を注入する拡張子
     body: |-
       - 実装の言語の規約を注入したい文書は、拡張子の前に `.{lang}` を挟む（例: `validate.py.yaml`・`サインイン画面.tsx.md`）
-        `{lang}` はその言語の拡張子（`py`・`ts`・`tsx`・`html`・`css` 等）で、rule-inject の索引の `paths` がその拡張子に当たって言語の規約を注入する
+        `{lang}` はその言語の拡張子（`py`・`ts`・`tsx`・`html`・`css` 等）で、rule-inject の索引の `paths` がその拡張子に該当して言語の規約を注入する
       - 複数の言語にまたがる文書は `.py.ts.md` のようにドットで区切って並べる
   - id: metadata-01
     group: メタデータ
@@ -132,17 +132,17 @@ items:
       | `id` | 変わらない ID | 必須 |
       | `kind` | 文書の種類（英語の定数） | 必須 |
       | `name` | タイトル | 必須 |
-      | `description` | 本文を読まずに中身が分かる 1 文。書き方は [文書のタグと description の記載](id:dev-doc-tag-description) | 必須 |
+      | `description` | 本文を参照せずに中身が分かる 1 文。記載方法は [文書のタグと description の記載](id:dev-doc-tag-description) | 必須 |
       | `tags` | タグ（[文書のタグと description の記載](id:dev-doc-tag-description)）。各要素は `name` と、主題なら `main: true` | 必須 |
       | `status` | 状態（英語の定数） | 必須 |
       | `visibility` | 公開範囲（`public` / `internal`） | 必須 |
       | `rev` | 変更ごとに増えるバージョン。書き込む側が 1 つ上げる | 必須 |
       | `aliases` | 本文や会話でこの文書を呼ぶ別の名前 | 任意 |
       | `related` | 関連（`## 関連`） | 任意 |
-      | `sources` | 参考にした出典（URL・ライブラリとバージョン・確かめた日）。本文には決めたことだけを記載する | 任意 |
+      | `sources` | 参考にした出典（URL・ライブラリとバージョン・確認した日）。本文には決めたことだけを記載する | 任意 |
       | `code_refs` | 対応するコードのパスとシンボル | 任意 |
       | `interfaces` | 定義している公開インターフェース | 任意 |
-      | `last_reviewed` | 最後に内容を確かめた日 | 手順書・規約など鮮度を見たい種類だけ。種類のスキーマで決める |
+      | `last_reviewed` | 最後に内容を確認した日 | 手順書・規約など鮮度を確認したい種類だけ。種類のスキーマで決める |
 
       <!-- /table -->
   - id: metadata-02
@@ -155,12 +155,12 @@ items:
     group: メタデータ
     name: メタデータは多めに持つ
     body: |-
-      - 紐付けに使えるメタデータは多めに持たせ、返す量は読み取りのツールで絞る（[文書の MCP サーバーの設計](id:claude-mcp-docs-server)）
+      - 紐付けに使用できるメタデータは多めに持たせ、返却する量は読み取りのツールで絞る（[文書の MCP サーバーの設計](id:claude-mcp-docs-server)）
   - id: related-01
     group: 関連
     name: 関連の要素
     body: |-
-      - 各要素に `to`（相手の ID）・`type`（関係の種類）・`when`（いつ読むか、1 文）を持たせる
+      - 各要素に `to`（相手の ID）・`type`（関係の種類）・`when`（いつ参照するか、1 文）を持たせる
         機械で判定できるときだけ `paths`（glob）を併記する
       - 関連を張る相手と各要素の中身は [関連の張り方](id:flowchart-related-link) で決める
   - id: related-02
@@ -174,7 +174,7 @@ items:
     name: 関連は片側だけ記載
     body: |-
       - 片側だけ記載し、逆向きはツールで出す
-        `change_together` だけは両側に記載し、修正し忘れの検査に使う
+        `change_together` だけは両側に記載し、修正し忘れの検査に使用する
       - どちらに記載するかは [関連の張り方](id:flowchart-related-link) の結果に従う
   - id: related-04
     group: 関連
@@ -183,7 +183,7 @@ items:
       - `when` を記載できない関連は張らない
         本文でリンクしている相手は重ねない
         件数の上限は種類のスキーマで決める
-      - 張るかは [関連の張り方](id:flowchart-related-link) の先頭で当てる
+      - 張るかは [関連の張り方](id:flowchart-related-link) の先頭で適用する
   - id: related-05
     group: 関連
     name: 参照切れは CI で止める
@@ -202,18 +202,18 @@ items:
         YAML の原本は成果物に入れない
   - id: delivery-03
     group: 配信
-    name: ブランチ配信の方式は使わない
+    name: ブランチ配信の方式は使用しない
     body: |-
-      - ブランチのフォルダをそのまま配信する Pages の方式は使わない
+      - ブランチのフォルダをそのまま配信する Pages の方式は使用しない
   - id: delivery-04
     group: 配信
     name: dev-docs の使用
     body: |-
-      - 開発ドキュメントサーバーは dev-docs を使う
-      - 各リポジトリは、直下に `dev-docs.yaml`・スキーマ・検査と変換のスクリプトだけを置く
+      - 開発ドキュメントサーバーは dev-docs を使用する
+      - 各リポジトリは、直下に `dev-docs.yaml`・スキーマ・検査と変換のスクリプトだけを配置する
   - id: delivery-05
     group: 配信
-    name: dev-docs の立て方
+    name: dev-docs の起動方法
     body: |-
       - `/dev-docs:global-setup` で端末を準備し、`/dev-docs:setup {リポジトリ}` で配信元を登録する
       - 手順の詳細は dev-docs の [dev-docsを入れる](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/dev-docs%E3%82%92%E5%85%A5%E3%82%8C%E3%82%8B.md)・[配信元を配信する](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E9%85%8D%E4%BF%A1%E5%85%83%E3%82%92%E9%85%8D%E4%BF%A1%E3%81%99%E3%82%8B.md) を参照する
@@ -234,33 +234,33 @@ items:
     group: 配信
     name: YAML でない文書の files.yaml
     body: |-
-      - Markdown・ソースコードなど YAML でない文書は、検索したいものをすべて、フォルダの直下の管理用の YAML（`files.yaml`）の行に載せる
+      - Markdown・ソースコードなど YAML でない文書は、検索したいものをすべて、フォルダの直下の管理用の YAML（`files.yaml`）の行に記載する
         行にはパス・タグ・説明を記載する
   - id: files-yaml-01
     group: 配信
-    name: files.yaml に載せるファイルの判定
+    name: files.yaml に記載するファイルの判定
     body: |-
-      - 除外の条件に当たらないファイルは全て載せ、1 行を 1 ファイルにする
+      - 除外の条件に該当しないファイルは全て記載し、1 行を 1 ファイルにする
 
       <!-- flow -->
 
       ```json
       {
-        "title": "files.yaml に載せるファイル",
-        "scope": "files.yaml に載せるかを決めたいファイルがあるとき",
+        "title": "files.yaml に記載するファイル",
+        "scope": "files.yaml に記載するかを決めたいファイルがあるとき",
         "updated": "2026-11-02",
         "width": 1028,
         "height": 1136,
         "nodes": [
-          {"id": "start", "kind": "start", "x": 424, "y": 24, "w": 180, "h": 180, "name": "files.yaml に載せるか決めたいファイルがある"},
-          {"id": "q0", "kind": "question", "x": 334, "y": 260, "w": 360, "h": 164, "name": "生成物・ロック・バイナリ・ベンダーのコードに当たるか ※1"},
+          {"id": "start", "kind": "start", "x": 424, "y": 24, "w": 180, "h": 180, "name": "files.yaml に記載するか決めたいファイルがある"},
+          {"id": "q0", "kind": "question", "x": 334, "y": 260, "w": 360, "h": 164, "name": "生成物・ロック・バイナリ・ベンダーのコードに該当するか ※1"},
           {"id": "q1", "kind": "question", "x": 334, "y": 480, "w": 360, "h": 164, "name": "再エクスポートや空の __init__ だけのファイルか"},
-          {"id": "r1", "kind": "result", "x": 764, "y": 534, "w": 240, "h": 56, "name": "載せない"},
+          {"id": "r1", "kind": "result", "x": 764, "y": 534, "w": 240, "h": 56, "name": "記載しない"},
           {"id": "q2", "kind": "question", "x": 374, "y": 700, "w": 280, "h": 120, "name": "テストか"},
-          {"id": "r2", "kind": "result", "x": 24, "y": 714, "w": 240, "h": 92, "name": "載せる。related の tests で対象のコードを指す"},
+          {"id": "r2", "kind": "result", "x": 24, "y": 714, "w": 240, "h": 92, "name": "記載する。related の tests で対象のコードを指す"},
           {"id": "q3", "kind": "question", "x": 374, "y": 876, "w": 280, "h": 124, "name": "対応する設計書があるか"},
-          {"id": "r3", "kind": "result", "x": 764, "y": 892, "w": 240, "h": 92, "name": "載せる。related の implements でその設計書を指す"},
-          {"id": "r4", "kind": "result", "x": 394, "y": 1056, "w": 240, "h": 56, "name": "載せる"}
+          {"id": "r3", "kind": "result", "x": 764, "y": 892, "w": 240, "h": 92, "name": "記載する。related の implements でその設計書を指す"},
+          {"id": "r4", "kind": "result", "x": 394, "y": 1056, "w": 240, "h": 56, "name": "記載する"}
         ],
         "wires": [
           {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[514, 204], [514, 260]]},
@@ -278,7 +278,7 @@ items:
 
       <!-- /flow -->
 
-      - ※1 除外の条件の見分け方: Q0・Q1 の除外の条件は、dev-docs の [文書のメタデータ](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/%E3%82%B3%E3%82%A2%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%97%E3%83%88/%E6%96%87%E6%9B%B8%E3%81%AE%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF.md) の「載せるファイルの判定」に従う
+      - ※1 除外の条件の見分け方: Q0・Q1 の除外の条件は、dev-docs の [文書のメタデータ](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/%E3%82%B3%E3%82%A2%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%97%E3%83%88/%E6%96%87%E6%9B%B8%E3%81%AE%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF.md) の「記載するファイルの判定」に従う
   - id: files-yaml-02
     group: 配信
     name: files.yaml の行の列に入れる値
@@ -289,10 +289,10 @@ items:
       | --- | --- | --- |
       | `path` | files.yaml のフォルダからの相対パス。1 行 1 ファイル | glob |
       | `name` | 何のファイルかを表す日本語の名詞句（例 `タスクのリポジトリ`） | クラス名・ファイル名の繰り返し |
-      | `description` | [文書のタグと description の記載](id:dev-doc-tag-description) の description の書き方 | 関数の一覧・実装の手順 |
-      | `tags` | [タグと用語の登録](id:dev-tag-term-registration) の `tag-scope-02` のソースコードの行（`topic:`・`tool:`） | `kind:`・`scope:`・状態・評価の語 |
+      | `description` | [文書のタグと description の記載](id:dev-doc-tag-description) の description の記載方法 | 関数の一覧・実装の手順 |
+      | `tags` | [タグと用語の登録](id:dev-tag-term-registration) の `tag-scope-02` のソースコードの行（`topic:`・`tool:`） | `kind:`・`scope:`・状態・評価の単語 |
       | `related` | `implements`・`tests`・`see_also` | import で分かる依存 |
-      | `status` | `deprecated` など検索で外したい状態だけ | - |
+      | `status` | `deprecated` など検索で除外したい状態だけ | - |
 
       <!-- /table -->
   - id: files-yaml-03
@@ -301,14 +301,14 @@ items:
     body: |-
       - 設計書と 1 対 1 のコードは、コード側の files.yaml の行に `implements` を記載する
       - 設計書には逆向き（設計書 → コード）を記載しない
-        逆向きは被参照で引く（dev-docs の `trace_related`）
+        逆向きは被参照で検索する（dev-docs の `trace_related`）
   - id: files-yaml-04
     group: 配信
     name: files.yaml の related の type
     body: |-
       - files.yaml の行の `related` の `type` は `implements`・`tests`・`see_also` から選ぶ
-        `implements`（対応する設計書）・`tests`（テストの対象のコード）に当たらず、一緒に読むとよい相手は `see_also` にする
-      - `related-02` の `type`（`requires`・`references`・`replaces`・`part_of`・`change_together`）は YAML の文書に使う
+        `implements`（対応する設計書）・`tests`（テストの対象のコード）に該当せず、一緒に参照するとよい相手は `see_also` にする
+      - `related-02` の `type`（`requires`・`references`・`replaces`・`part_of`・`change_together`）は YAML の文書に使用する
   - id: delivery-09
     group: 配信
     name: 設定のキー
@@ -318,26 +318,26 @@ items:
     group: 更新
     name: 参照元の確認
     body: |-
-      - 他の文書から参照されている文書を変える前に、参照元を引いて影響の範囲を確認する。
-        YAML の文書は dev-docs の `trace_related`（`direction: in`）、Markdown とコードは検索で引く
+      - 他の文書から参照されている文書を変える前に、参照元を検索して影響の範囲を確認する。
+        YAML の文書は dev-docs の `trace_related`（`direction: in`）、Markdown とコードは検索で参照する
   - id: update-02
     group: 更新
     name: 改名
     body: |-
-      - 改名したら、引いた参照元を全て新しい名前に修正する
+      - 改名したら、検索した参照元を全て新しい名前に修正する
   - id: update-03
     group: 更新
     name: 削除
     body: |-
       - 削除した文書の履歴は git log に任せ、履歴のコメントを残さない
   - id: placement-criteria-01
-    group: 置く場所の判定
-    name: knowledge に置く決まり
+    group: 配置する場所の判定
+    name: knowledge に配置する決まり
     body: |-
-      - 特定の道具（エージェントの運用・MCP のツール・ラベル・PR の計画の書式）を前提にせず、手元のセッションやほかの開発でもそのまま使用できる決まりは、knowledge に置く
-      - 特定の道具を前提にする手順は、その道具のリポジトリに置き、一般の決まりは knowledge の文書を参照する
+      - 特定の道具（エージェントの運用・MCP のツール・ラベル・PR の計画の書式）を前提にせず、手元のセッションやほかの開発でもそのまま使用できる決まりは、knowledge に配置する
+      - 特定の道具を前提にする手順は、その道具のリポジトリに配置し、一般の決まりは knowledge の文書を参照する
   - id: placement-criteria-02
-    group: 置く場所の判定
+    group: 配置する場所の判定
     name: プロジェクトが独自のテンプレートを持つ条件
     body: |-
       - プロジェクトが独自のテンプレートを持つのは、knowledge に無い固有の設計書の種類が要るときだけにする

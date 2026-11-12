@@ -46,28 +46,28 @@ items:
     group: XSS
     name: dangerouslySetInnerHTML は sanitize したものだけ
     body: |-
-      - `dangerouslySetInnerHTML` には、DOMPurify で sanitize したものだけを渡す。
+      - `dangerouslySetInnerHTML` には、DOMPurify で sanitize したものだけを指定する。
   - id: xss-02
     group: XSS
     name: ユーザー入力の URL は protocol を限定する
     body: |-
-      - ユーザー入力の URL を `<a href>` に流すときは、protocol を http と https に限定する。
+      - ユーザー入力の URL を `<a href>` に指定するときは、protocol を http と https に限定する。
   - id: open-redirect-01
     group: Open Redirect
     name: リダイレクト先を検証する
     body: |-
       - `navigate` に、URL の search などの外部入力を直接渡さない。
-        `/` で始まり、`//` で始まらないことを検証してから渡す。
+        `/` で始まり、`//` で始まらないことを検証してから指定する。
   - id: input-01
     group: 外部入力
-    name: 外部入力は Zod で許可したフィールドだけ通す
+    name: 外部入力は Zod で許可したフィールドだけ許可する
     body: |-
-      - 外部入力（URL の search・API のレスポンス・WebSocket のメッセージ）は、許可したフィールドだけを Zod で parse してから使う。
+      - 外部入力（URL の search・API のレスポンス・WebSocket のメッセージ）は、許可したフィールドだけを Zod で parse してから使用する。
   - id: secret-01
     group: 秘匿値
     name: 秘匿値をバンドルに入れない
     body: |-
-      - 秘匿値は、フロントエンドのコードにもビルドの環境変数にも置かない。
+      - 秘匿値は、フロントエンドのコードにもビルドの環境変数にも配置しない。
   - id: audit-01
     group: 依存
     name: CI で依存を監査する

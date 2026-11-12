@@ -61,7 +61,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      ruff / pyright / import-linter の設定の正本は各リポジトリの `pyproject.toml`。
+      ruff / pyright / import-linter の設定の原本は各リポジトリの `pyproject.toml`。
       次の雛形を初期値にする（ツール構成は [core/スタイル](id:python-core-style)）。
 
       ```toml
@@ -123,14 +123,14 @@ items:
       ]
       ignore = [
           "E501",   # 行長は formatter に任せる
-          "RUF001", "RUF002", "RUF003",   # 日本語の文字列 / docstring / コメントの全角記号を紛らわしい Unicode として指すため外す
+          "RUF001", "RUF002", "RUF003",   # 日本語の文字列 / docstring / コメントの全角記号を紛らわしい Unicode として指すため除外する
       ]
 
       [tool.ruff.lint.flake8-tidy-imports.banned-api]
       "asyncio.gather".msg = "asyncio.TaskGroup を使う"
       "asyncio.wait_for".msg = "asyncio.timeout を使う"
       "fastapi.HTTPException".msg = "AppError 系を raise し、error_handlers で HTTP に変換する"
-      "os.environ".msg = "Settings 経由で読む"
+      "os.environ".msg = "Settings 経由で参照する"
       "starlette.middleware.base.BaseHTTPMiddleware".msg = "pure ASGI ミドルウェアにする"
 
       [tool.ruff.lint.per-file-ignores]
@@ -222,7 +222,7 @@ items:
     group: Python バージョン方針
     name: 最低ラインは 3.14
     body: |-
-      - `requires-python = ">=3.14"` を最低ライン（`from __future__ import annotations` を使わない）
+      - `requires-python = ">=3.14"` を最低ライン（`from __future__ import annotations` を使用しない）
   - id: python-version-03
     group: Python バージョン方針
     name: マルチバージョン対応をしない
@@ -237,7 +237,7 @@ items:
     group: 新機能の採用判断
     name: 新機能の採用判断
     body: |-
-      新しいバージョンで入った機能は、そのバージョンの What's New で実験的な扱いでないことと、依存ライブラリが対応していることを確かめてから採用する。
+      新しいバージョンで入った機能は、そのバージョンの What's New で実験的な扱いでないことと、依存ライブラリが対応していることを確認してから採用する。
   - id: lower-baseline-01
     group: 最低ラインを下げる場合
     name: 最低ラインを下げる条件
@@ -247,7 +247,7 @@ items:
     group: 依存管理 — uv 標準
     name: uv を標準にする
     body: |-
-      `uv` を標準とする（pip / poetry は使わない）。
+      `uv` を標準とする（pip / poetry は使用しない）。
       高速・venv 管理込み・lockfile・Python バージョン管理を統合。
   - id: command-cheatsheet-01
     group: コマンド早見表
@@ -271,7 +271,7 @@ items:
     group: コマンド早見表
     name: activate は不要
     body: |-
-      venv の activate は不要（`uv run` が .venv を見る）。
+      venv の activate は不要（`uv run` が .venv を使用する）。
       `pip install` で venv に直接入れない（uv の状態と乖離）。
   - id: git-management-01
     group: Git 管理
@@ -286,7 +286,7 @@ items:
     group: Git 管理
     name: CI では locked で検証
     body: |-
-      CI では `uv sync --locked` でロックとの乖離を検証（`--frozen` は検証せずロックをそのまま使う）。
+      CI では `uv sync --locked` でロックとの乖離を検証（`--frozen` は検証せずロックをそのまま使用する）。
   - id: dependency-group-01
     group: 依存グループ
     name: optional-dependencies の用途
@@ -321,9 +321,9 @@ items:
       - `[project.scripts]` に `mypkg = "mypkg.__main__:main"`
   - id: cli-entrypoint-02
     group: CLI エントリポイント
-    name: main は int を返す
+    name: main は int を返却する
     body: |-
-      - `main() -> int` を返す関数、`__main__.py` で `sys.exit(main())`
+      - `main() -> int` を返却する関数、`__main__.py` で `sys.exit(main())`
   - id: cli-entrypoint-03
     group: CLI エントリポイント
     name: サブコマンドは argparse
