@@ -44,6 +44,8 @@ TEMPLATES_DIR = PurePosixPath("docs/template")
 
 # スキーマの x-kind → テンプレートの ID
 TEMPLATE_IDS = {
+    "agent": "template-agent",
+    "agent_flow": "template-agent-flow",
     "architecture": "template-architecture",
     "component": "template-component",
     "config": "template-config",
@@ -51,10 +53,16 @@ TEMPLATE_IDS = {
     "dataflow": "template-dataflow",
     "dev_command": "template-dev-command",
     "er": "template-er",
+    "eval_case": "template-eval-case",
+    "eval_criterion": "template-eval-criterion",
+    "evaluation": "template-evaluation",
     "external_api": "template-external-api",
     "interface": "template-interface",
+    "launch": "template-launch",
     "layout": "template-layout",
     "library": "template-external-library",
+    "llm_call": "template-llm-call",
+    "mcp_server": "template-mcp-server",
     "module": "template-module",
     "nonfunctional": "template-nonfunctional",
     "scenario": "template-scenario",
