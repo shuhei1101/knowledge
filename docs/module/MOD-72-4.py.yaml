@@ -283,7 +283,7 @@ functions:
     usecase: 文書の違反の検査
     role: 読み込み
     scope: public
-    summary: '`alias_type` を持つ行の文書から、正規化した名前 → （文書の ID、`name` か `aliases`）の索引を作る'
+    summary: '`alias_type` を持つ行の文書（`records` を持つ行は要素）から、正規化した名前 → （文書の ID、`name` か `aliases`）の索引を作る'
     args:
       - name: root
         title: 配信元の直下
@@ -301,8 +301,11 @@ functions:
     process: |-
       1. `alias_type` を持つ行ごとに、行のファイルを列挙する（documents の行のファイルの列挙）
       2. 列挙したファイルを並列に読む（ファイルの並列の読み込み）
-      3. 各ファイルを読み（文書の読み込み）、最上位の `id` が文字列の文書の `name`（文字列のとき）と `aliases` の文字列の要素を、名前の正規化を適用したキーで索引に加える
-         - 読めないファイル・読めない文書・`id` の無い文書の場合、そのファイルを飛ばす（その文書の誤りはその文書の検査で出る）
+      3. 各ファイルを読み（文書の読み込み）、照合の相手を取り出す。行が `records` を持たないときは文書そのもの 1 件、行が `records` を持つときは文書の `records` のキーの配列の要素ごとに 1 件
+         - 読めないファイル・読めない文書の場合、そのファイルを飛ばす（その文書の誤りはその文書の検査で出る）
+         - `records` のキーの値が配列でない場合、そのファイルを飛ばす
+      4. 相手ごとに、`id` が文字列の相手の `name`（文字列のとき）と `aliases` の文字列の要素を、名前の正規化を適用したキーで索引に加える
+         - `id` の無い相手の場合、その相手を飛ばす
     unit_tests:
       - name: test_build_name_index
         case: 正常
@@ -316,11 +319,19 @@ functions:
         condition: '`docs/rule/a.yaml` と、読めない YAML の `docs/rule/c.yaml`'
         mock: なし（一時ディレクトリ）
         expected: '`a` の名前だけを持つ'
+      - name: test_build_name_index_when_records
+        case: 正常
+        summary: records を持つ行の要素を集める
+        condition: '`docs/terms.yaml` の行が `alias_type: term`・`records: terms` を持つ。`docs/terms.yaml` は `id: terms`・`name: 用語集` と、`terms` に `{id: ai-slop, name: AI slop, aliases: [AI らしい単語]}` と `id` の無い要素 `{name: 名前だけ}` を持つ'
+        mock: なし（一時ディレクトリ）
+        expected: '`{"ai slop": [("ai-slop", "name")], "ai らしい単語": [("ai-slop", "aliases")]}`（文書そのものの `用語集` と `id` の無い要素は入らない）'
     callees:
       - MOD-72-2#functions[list_row_files]
       - MOD-72-2#functions[read_texts]
       - MOD-72-2#functions[load_document]
       - '#functions[normalize_name]'
+    refs:
+      - IF-72-1#constraints[`aliases` の衝突]
   - name: check_aliases
     title: aliases の衝突の検査
     kind: 関数
