@@ -164,7 +164,7 @@ constraints:
   - item: テンプレートの対応表
     constraint: |-
       `x-kind` → テンプレートの ID の固定の対応。
-      `architecture` → `template-architecture`、`component` → `template-component`、`config` → `template-config`、`dataflow` → `template-dataflow`、`dev_command` → `template-dev-command`、`er` → `template-er`、`external_api` → `template-external-api`、`interface` → `template-interface`、`layout` → `template-layout`、`library` → `template-external-library`、`module` → `template-module`、`nonfunctional` → `template-nonfunctional`、`scenario` → `template-scenario`、`screen` → `template-screen-design`、`state_transition` → `template-state-transition`、`test_procedure` → `template-test-procedure`。
+      `agent` → `template-agent`、`agent_flow` → `template-agent-flow`、`architecture` → `template-architecture`、`component` → `template-component`、`config` → `template-config`、`dataflow` → `template-dataflow`、`dev_command` → `template-dev-command`、`er` → `template-er`、`eval_case` → `template-eval-case`、`eval_criterion` → `template-eval-criterion`、`evaluation` → `template-evaluation`、`external_api` → `template-external-api`、`interface` → `template-interface`、`launch` → `template-launch`、`layout` → `template-layout`、`library` → `template-external-library`、`llm_call` → `template-llm-call`、`mcp_server` → `template-mcp-server`、`module` → `template-module`、`nonfunctional` → `template-nonfunctional`、`scenario` → `template-scenario`、`screen` → `template-screen-design`、`state_transition` → `template-state-transition`、`test_procedure` → `template-test-procedure`。
       テンプレートの文書のパスは `docs/template/{テンプレートの ID}.yaml`
     notes: 対応表に無い `x-kind` の種類のスキーマを `schemas/design/` に追加したら、対応表とテンプレートの文書も追加する
   - item: 書き出しの順序
@@ -211,5 +211,5 @@ constraints:
       `body` はブロックスカラー（`|-`）で書き出す。
       組み立てた `items` が今の `items` と同じなら、ファイルを書き換えない
   - item: 生成の検査
-    constraint: 'しない（スキーマの検査は「全ての文書の検査」、テンプレートの文書の検査は `write_docs` と「全ての文書の検査」が担う）'
+    constraint: しない（スキーマの検査は「全ての文書の検査」、テンプレートの文書の検査は `write_docs` と「全ての文書の検査」が担う）
 test_file: tests/integration/scripts/test_build_templates.py
