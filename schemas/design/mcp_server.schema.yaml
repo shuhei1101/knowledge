@@ -1,0 +1,377 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: MCP サーバーの定義
+description: |-
+  MCP サーバー 1 つの、接続の仕方・提供するツール・エージェントごとの使用の仕方を記載する設計書。
+  ツールの引数・戻り値・副作用は『インターフェース定義』に、instructions とツールの description の本文はプロンプトファイルに記載する。
+x-rules:
+  - 1 ファイル = 1 MCP サーバーにする。
+  - instructions のプロンプトファイルの id は `mcp/{server}/instructions`、ツールの description は `mcp/{server}/tools/{ツールの名前}`（`_` は `-` にする）にし、この設計書には記載しない。
+x-kind: mcp_server
+x-folder: docs/mcp-server
+x-id-prefix: MCP
+type: object
+additionalProperties: false
+required:
+- id
+- title
+- lead
+- server
+- repository
+- connection
+properties:
+  id:
+    $ref: common.schema.yaml#/$defs/id
+    title: ID
+    description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
+    x-used-by:
+      - 設計で、『エージェントの定義』の `progress.server`・エージェントフローの `steps[].calls[].server` から指す。
+    x-rules:
+      - 設計書を作るときに振り、改名・移動でも変えない。
+    examples:
+    - MCP-1
+  title:
+    type: string
+    title: タイトル
+    description: MCP サーバーの名前。
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
+    examples:
+    - aituber の MCP
+  lead:
+    $ref: common.schema.yaml#/$defs/markdown
+    title: 冒頭リード
+    description: MCP サーバーを 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
+    x-rules:
+      - 初回に記載した内容のまま保ち、後から情報を追加しない。
+    examples:
+    - 記録を検索・取得・書き込みする
+  server:
+    type: string
+    title: サーバー名
+    description: クライアントの設定に記載するサーバー名。
+    x-used-by:
+      - 変換で、クライアントの設定のキーと、ツールの完全な名前（Claude Code では `mcp__{server}__{tool}`）を作る。
+      - 実装で、プロンプトファイルの id（`mcp/{server}/...`）を導く。
+    pattern: ^[a-z0-9]+(-[a-z0-9]+)*$
+    examples:
+    - aituber
+  repository:
+    type: string
+    title: リポジトリ
+    description: サーバーを実装するリポジトリ（`owner/name`）。
+    x-used-by:
+      - 計画で、サーバーの変更を起票するリポジトリにする。
+    pattern: ^[^/\s]+/[^/\s]+$
+    examples:
+    - shuhei1101/aituber
+  external:
+    type: boolean
+    title: 外部のサーバー
+    description: ほかのリポジトリのサーバーを使用するだけなら `true`。記載しなければ `false`。
+    x-used-by:
+      - 設計で、`true` なら `tools` を記載せず、`connection`・`clients` だけを記載する。
+  connection:
+    type: object
+    title: 接続
+    description: クライアントからの接続の仕方。
+    x-used-by:
+      - 変換で、クライアントの MCP の設定を作る。
+    x-shape: attributes
+    additionalProperties: false
+    required:
+    - type
+    properties:
+      type:
+        type: string
+        title: 種類
+        description: '`stdio` か `http`。'
+        x-used-by:
+          - 変換で、クライアントの MCP の設定の種類にする。
+        enum:
+        - stdio
+        - http
+      command:
+        type: string
+        title: コマンド
+        description: '`type` が `stdio` のときに起動するコマンド。'
+        x-used-by:
+          - 変換で、クライアントの MCP の設定の `command` にする。
+        examples:
+        - uv run aituber-mcp
+      url:
+        type: string
+        title: URL
+        description: '`type` が `http` のときに接続する URL。可変の部分は `{環境変数の名前}` にする。'
+        x-used-by:
+          - 変換で、クライアントの MCP の設定の `url` にし、可変の部分の値は『起動の構成』の `env` から取得する。
+        examples:
+        - http://127.0.0.1:{AITUBER_PORT}/mcp
+      env:
+        type: array
+        title: 環境変数
+        description: '`type` が `stdio` のときに、サーバーのプロセスに指定する環境変数の名前。'
+        x-used-by:
+          - 変換で、クライアントの MCP の設定の `env` にする。
+        items:
+          type: string
+          pattern: ^[A-Z][A-Z0-9_]*$
+        examples:
+        - - AITUBER_DB_PATH
+    allOf:
+    - if:
+        properties:
+          type:
+            const: stdio
+      then:
+        required:
+        - command
+        properties:
+          url: false
+    - if:
+        properties:
+          type:
+            const: http
+      then:
+        required:
+        - url
+        properties:
+          command: false
+          env: false
+  tools:
+    type: array
+    title: ツール
+    description: サーバーが提供するツール。`external` が `true` でなければ記載する。
+    x-used-by:
+      - 実装で、サーバーに登録するツールの一覧にする。
+    x-heading: ツール
+    x-shape: table
+    x-key: name
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - name
+      - interface
+      properties:
+        name:
+          type: string
+          title: 名前
+          description: ツールの名前。
+          x-used-by:
+            - 実装で、ツールの登録名にする。
+            - 検査で、プロンプトファイルとインターフェース定義の名前と一致するかを確認する。
+          pattern: ^[a-z][a-z0-9_]*$
+          examples:
+          - search
+        interface:
+          $ref: common.schema.yaml#/$defs/ref
+          title: インターフェース定義
+          description: ツールの引数・戻り値・副作用を記載した『インターフェース定義』への参照。
+          x-used-by:
+            - 実装で、ツールの引数・戻り値・副作用にする。
+            - 実装で、インターフェース定義の `read_only`・`destructive` からツールの `annotations` の `readOnlyHint`・`destructiveHint` を導く。
+          examples:
+          - IF-21#
+  clients:
+    type: array
+    title: クライアント
+    description: エージェントごとの使用の仕方。
+    x-used-by:
+      - 変換で、エージェントの起動の設定に MCP の設定・許可するツール・引数を入れる処理を作る。
+    x-heading: クライアント
+    x-shape: sections
+    x-key: agent
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - agent
+      - allow
+      properties:
+        agent:
+          $ref: common.schema.yaml#/$defs/ref
+          title: エージェント
+          description: サーバーを使用する『エージェントの定義』への参照。
+          x-used-by:
+            - 変換で、そのエージェントの起動の設定にサーバーを記載する。
+          examples:
+          - AG-1#
+        allow:
+          type: array
+          title: 許可するツール
+          description: 使用させるツールの `tools[].name`。
+          x-used-by:
+            - 変換で、『起動の構成』の許可するツールの一覧にする。
+            - 検査で、エージェントフローが呼ぶツールと進み具合の書き込みのツールがあるかを確認する。
+          minItems: 1
+          items:
+            type: string
+          examples:
+          - - search
+            - write_progress
+        inject:
+          type: array
+          title: 入れる引数
+          description: 呼び出しのときに入れる引数。
+          x-used-by:
+            - 変換で、呼び出しの前に引数を入れる処理（Claude Code ではフック）を作る。
+          x-rules:
+            - 『起動の構成』には記載せず、ここから生成する。
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - arg
+            - from
+            properties:
+              arg:
+                type: string
+                title: 引数
+                description: 引数の名前。
+                x-used-by:
+                  - 変換で、値を入れる引数の名前にする。
+                examples:
+                - session_id
+              from:
+                $ref: '#/$defs/value_source'
+        headers:
+          type: array
+          title: ヘッダー
+          description: 接続のときに付けるヘッダー。LLM に見せない値（呼び出しの ID など）を指定する。
+          x-used-by:
+            - 変換で、『起動の構成』で生成する MCP の設定の `headers` にする。
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - name
+            - from
+            properties:
+              name:
+                type: string
+                title: 名前
+                description: ヘッダーの名前。
+                x-used-by:
+                  - 変換で、MCP の設定の `headers` のキーにする。
+                examples:
+                - X-Aituber-Call-Id
+              from:
+                $ref: '#/$defs/value_source'
+        exclude:
+          type: array
+          title: 除く引数
+          description: 呼び出しのときに除く引数の名前。
+          x-used-by:
+            - 変換で、呼び出しの前に引数を除く処理を作る。
+          x-rules:
+            - 『起動の構成』には記載せず、ここから生成する。
+          items:
+            type: string
+          examples:
+          - - dry_run
+  refs:
+    type: array
+    title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
+    items:
+      $ref: common.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
+    items:
+      $ref: common.schema.yaml#/$defs/decision
+  notes:
+    $ref: common.schema.yaml#/$defs/notes
+    x-heading: 補足
+    x-shape: sections
+allOf:
+- if:
+    properties:
+      external:
+        const: true
+    required:
+    - external
+  then:
+    properties:
+      tools: false
+  else:
+    required:
+    - tools
+$defs:
+  value_source:
+    type: object
+    title: 値の参照先
+    description: 引数・ヘッダーに入れる値を取得する場所と名前。
+    x-shape: attributes
+    additionalProperties: false
+    required:
+    - source
+    - name
+    properties:
+      source:
+        type: string
+        title: 取得元
+        description: '`env`（環境変数）/ `session`（セッションの情報）/ `call`（起動する側が呼び出しごとに生成する値）。'
+        x-used-by:
+          - 変換で、値を取得する場所にする。
+        enum:
+        - env
+        - session
+        - call
+      name:
+        type: string
+        title: 名前
+        description: 環境変数・セッションの情報・呼び出しごとの値の名前。
+        x-used-by:
+          - 変換で、値を取得するときの名前にする。
+        examples:
+        - session_id
+examples:
+- id: MCP-1
+  title: aituber の MCP
+  lead: 記録を検索・取得・書き込みする
+  server: aituber
+  repository: shuhei1101/aituber
+  connection:
+    type: http
+    url: http://127.0.0.1:{AITUBER_PORT}/mcp
+  tools:
+  - name: search
+    interface: IF-21#
+  - name: write_progress
+    interface: IF-22#
+  clients:
+  - agent: AG-1#
+    allow:
+    - search
+    - write_progress
+    inject:
+    - arg: cwd
+      from:
+        source: session
+        name: cwd
+    - arg: session_id
+      from:
+        source: session
+        name: session_id
+  - agent: AG-2#
+    allow:
+    - search
+    headers:
+    - name: X-Aituber-Call-Id
+      from:
+        source: call
+        name: call_id
+  refs:
+  - AG-1#
