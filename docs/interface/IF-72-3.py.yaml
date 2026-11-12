@@ -69,7 +69,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml`（`docs/rule/` の行と、`schema` が `schemas/design/scenario.schema.yaml` の `docs/scenario/` の行）・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・`schemas/knowledge-common.schema.yaml` と、`common.schema.yaml#/$defs/id` を `$ref` で指す `schemas/design/scenario.schema.yaml`・`schemas/design/common.schema.yaml` と、スキーマに合い、既存のキーの引用符の無い値に ` #bar` を付けた行（`title: シナリオ #bar`）を 1 つ持つ `docs/scenario/` の設計書と、違反の無い `docs/rule/` の文書を持ち、`schemas/` の直下に `common.schema.yaml` を持たない一時フォルダ'
+        description: '`dev-docs.yaml`（`docs/rule/` の行と、`schema` が `schemas/design/scenario.schema.yaml` の `docs/scenario/` の行）・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・`schemas/knowledge-common.schema.yaml` と、`common.schema.yaml#/$defs/id` を `$ref` で指す `schemas/design/scenario.schema.yaml`・`schemas/design/common.schema.yaml` と、スキーマに合い、既存のキーの引用符の無い値に ` # bar` を付けた行（`title: シナリオ # bar`。コメントの前の空白が 1 つで、yamllint の `comments` の `min-spaces-from-content` だけに該当する）を 1 つ持つ `docs/scenario/` の設計書と、違反の無い `docs/rule/` の文書を持ち、`schemas/` の直下に `common.schema.yaml` を持たない一時フォルダ'
     flow: |-
       sequenceDiagram
         participant C as 呼び出し元
@@ -88,7 +88,7 @@ flows:
         S-->>C: 終了コード 1 と設計書の lint の行
     expected:
       - 終了コードが 1
-      - '標準出力に `{設計書のパス}:{行}: -: yamllint/comments: {内容}` の行が 1 件だけ出て、行は ` #bar` を付けた行'
+      - '標準出力に `{設計書のパス}:{行}: -: yamllint/comments: {内容}` の行が 1 件だけ出て、行は ` # bar` を付けた行'
       - 標準出力に、設計書のスキーマの違反と解けない `$ref` の行が出ない
     test: test_normal_when_design_documents
   - name: 正常系（リポジトリのスキーマ）
