@@ -195,16 +195,17 @@ properties:
                 x-used-by:
                   - E2E テストで、分岐を決定的に起こす値にする。
         flow:
-          $ref: common.schema.yaml#/$defs/mermaid
+          $ref: common.schema.yaml#/$defs/map
           title: フロー
-          description: 単一ユースケースは `sequenceDiagram`、複合ユースケースは単一ユースケースをノードとして連鎖させる `flowchart TD`。
+          description: mdmark の map の図。単一ユースケースは `sequenceDiagram`、複合ユースケースは単一ユースケースをノードとして連鎖させる `flowchart TD`。
           x-used-by:
             - 設計で、インターフェース定義の操作の流れと関わる相手を決める。
             - 生成で、シーケンス図・フロー図にする。
           x-rules:
+            - '`<!-- map -->` から `<!-- /map -->` の範囲に、```mermaid のコードブロックを 1 つ記載する。'
             - 1 図 = 結末 1 本の一本道にする。
             - ユーザー視点で観測できる境界まで記載する。
-            - 複合ユースケースのノード名は `{UC名}:{シナリオ名}` にし、`click` で単一ユースケースのセクションへリンクする。
+            - 複合ユースケースのノード名は `{UC名}:{シナリオ名}` にする。
           x-heading: フロー
         expected:
           type: array
@@ -290,6 +291,8 @@ examples:
       description: ユーザー A に紐づくプロフィール
       notes: '`visible: true`'
     flow: |-
+      <!-- map -->
+
       ```mermaid
       sequenceDiagram
         actor U as ユーザー
@@ -306,6 +309,8 @@ examples:
         BE-->>FE: 200 OK
         FE-->>U: 詳細画面へ遷移
       ```
+
+      <!-- /map -->
     expected:
     - プロフィール表示画面に編集後の氏名・自己紹介が表示されている
     - DB の該当プロフィールが編集後の値になっている
@@ -317,6 +322,8 @@ examples:
     - name: createUser
       description: ログイン中のユーザー A
     flow: |-
+      <!-- map -->
+
       ```mermaid
       sequenceDiagram
         actor U as ユーザー
@@ -326,6 +333,8 @@ examples:
         FE->>FE: 入力の検証に失敗
         FE-->>U: 選択欄の下にエラーを表示
       ```
+
+      <!-- /map -->
     expected:
     - エラーが表示され、画像が選ばれていない
     test: test_error_when_image_too_large

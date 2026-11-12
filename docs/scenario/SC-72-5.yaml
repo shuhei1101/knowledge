@@ -12,6 +12,9 @@ scenarios:
         description: スキーマに合い、ID の重複・参照切れ・mermaid の誤りが無い規約の YAML
         notes: '`tags` はタグの名前の配列（`["scope:dev"]`）、`main_tags` は主題のタグの名前（`["scope:dev"]`）で渡す'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant E as エージェント
         participant M as dev-docs の文書の MCP
@@ -23,6 +26,9 @@ scenarios:
         V-->>M: 終了コード 0 と空の違反の配列
         M->>W: 文書を書き込む
         M-->>E: 書き込んだ文書
+      ```
+
+      <!-- /map -->
     expected:
       - 作業ツリーの文書の `tags`・`main_tags` 以外の項目が渡した内容になる
       - '作業ツリーの文書の `tags` が `- name:` の要素で書かれ、`main_tags` で渡したタグの要素に `main: true` が付く（`[{name: scope:dev, main: true}]`）'
@@ -35,6 +41,9 @@ scenarios:
       - name: 書き込む内容
         description: スキーマには合うが、`subgraph` の `end` が抜けた mermaid を持つ規約の YAML
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant E as エージェント
         participant M as dev-docs の文書の MCP
@@ -43,6 +52,9 @@ scenarios:
         M->>V: 標準入力に文書の YAML
         V-->>M: 終了コード 0 と違反の配列
         M-->>E: isError と違反の一覧
+      ```
+
+      <!-- /map -->
     expected:
       - 作業ツリーの文書が変わらない
       - 応答が `isError` で、違反の `path` が mermaid を持つ項目のパス、`rule` に文書の行と maid の内容が入る
@@ -54,6 +66,9 @@ scenarios:
       - name: 書き込む内容
         description: スキーマと検査のスクリプトには合うが、項目の `body` の `flow` のマーカーの中の `json` のコードブロックを部品の定義として読み込めない規約の YAML
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant E as エージェント
         participant M as dev-docs の文書の MCP
@@ -65,6 +80,9 @@ scenarios:
         M->>C: check --text -（標準入力に項目の body の値）
         C-->>M: diagram_invalid の行と終了コード 1
         M-->>E: isError と違反の一覧
+      ```
+
+      <!-- /map -->
     expected:
       - 作業ツリーの文書が変わらない
       - 応答が `isError` で、違反の `path` が項目の `body` のパス、決まりに mdmark の `diagram_invalid` と行、直し方に mdmark の内容が入る
@@ -75,11 +93,17 @@ scenarios:
       - name: 作業場所
         description: knowledge のクローンの外の作業場所
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant E as エージェント
         participant M as dev-docs の文書の MCP
         E->>M: write_docs に source knowledge と文書
         M-->>E: isError と scope.write の外であること
+      ```
+
+      <!-- /map -->
     expected:
       - knowledge の作業ツリーの文書が変わらない
       - 応答が `isError` で、`scope.write` の外であることが分かる
