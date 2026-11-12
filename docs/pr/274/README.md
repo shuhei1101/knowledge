@@ -1,0 +1,1 @@
+# knowledge のフォルダ構成の設計書（layout）を作成し、repository.layout・directory の内容を移す
