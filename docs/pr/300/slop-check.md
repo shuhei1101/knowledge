@@ -31,4 +31,18 @@
 
 ## テスト結果
 
+### 単体
+
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| [tests/unit/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/develop/tests/unit/slop-check/test_slop_check.py) | 全実行 | 変更 | ✅ | ツール名を project-index の完全名にした。Python 3.14 で `tests/unit` の 229 テスト、Python 3.12 で `tests/unit/slop-check` の 31 テストが pass<br>`テスト結果/20261112223744_ab66309_単体テスト.log` |
+
+### lint
+
+| 検査 | 結果 | 補足 |
+| --- | --- | --- |
+| ruff check・ruff format --check・pyright | ✅ | 違反 0 件（pyright の warning 10 件は作業 PR が変えていないファイル）<br>`テスト結果/20261112223744_ab66309_lint.log` |
+
+### 結合
+
 なし
