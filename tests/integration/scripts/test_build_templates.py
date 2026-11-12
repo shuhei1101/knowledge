@@ -23,7 +23,7 @@ _COMMON = (
     "    minLength: 1\n"
 )
 
-# トップの x-rules、キーの $ref・enum・x-rules・x-bad-examples・入れ子の配列、トップの examples を 1 件持つスキーマ
+# トップの x-rules、キーの $ref・enum・x-rules・x-bad-examples・x-used-by・入れ子の配列、トップの examples を 1 件持つスキーマ
 _ER = (
     "$schema: https://json-schema.org/draft/2020-12/schema\n"
     "title: ER 図\n"
@@ -39,6 +39,9 @@ _ER = (
     "    type: string\n"
     "    title: ID\n"
     "    description: 変わらない ID。\n"
+    "    x-used-by:\n"
+    "      - 検査で、参照の解決先にする。\n"
+    "      - 生成で、ページの名前にする。\n"
     "    x-rules:\n"
     "      - 改名でも変えない。\n"
     "  lead:\n"
@@ -56,6 +59,8 @@ _ER = (
     "  tables:\n"
     "    type: array\n"
     "    title: テーブル\n"
+    "    x-used-by:\n"
+    "      - 実装で、テーブルの定義にする。\n"
     "    items:\n"
     "      type: object\n"
     "      required:\n"
@@ -129,9 +134,9 @@ _TEMPLATE_CONFIG = (
     "    body: |-\n"
     "      <!-- table: data -->\n"
     "\n"
-    "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
-    "      | --- | --- | --- | --- | --- | --- | --- | --- |\n"
-    "      | name | 名前 | string | - | - | - | - | - |\n"
+    "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
+    "      | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+    "      | name | 名前 | string | - | - | - | - | - | - |\n"
     "\n"
     "      <!-- /table -->\n"
 )
@@ -179,13 +184,13 @@ def test_normal(run_script: RunScript, tmp_path: Path) -> None:
     assert doc["items"][2]["body"] == (
         "<!-- table: data -->\n"
         "\n"
-        "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
-        "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
-        "| id | ID | string | 必須 | - | - | 変わらない ID。 | - |\n"
-        "| lead | 冒頭リード | string | - | - | minLength: `1` | 1 行の説明。 | - |\n"
-        "| kind | 種別 | string | - | `db` / `json` | - | - | - |\n"
-        "| tables | テーブル | array | - | - | - | - | - |\n"
-        "| tables[].name | 物理名 | string | 必須 | - | pattern: `^[a-z_]+$` | - | `tasks` |\n"
+        "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+        "| id | ID | string | 必須 | - | - | 変わらない ID。 | 検査で、参照の解決先にする。<br>生成で、ページの名前にする。 | - |\n"
+        "| lead | 冒頭リード | string | - | - | minLength: `1` | 1 行の説明。 | - | - |\n"
+        "| kind | 種別 | string | - | `db` / `json` | - | - | - | - |\n"
+        "| tables | テーブル | array | - | - | - | - | 実装で、テーブルの定義にする。 | - |\n"
+        "| tables[].name | 物理名 | string | 必須 | - | pattern: `^[a-z_]+$` | - | - | `tasks` |\n"
         "\n"
         "<!-- /table -->"
     )
@@ -255,12 +260,12 @@ def test_normal_recursive_ref(run_script: RunScript, tmp_path: Path) -> None:
     assert doc["items"][1]["body"] == (
         "<!-- table: data -->\n"
         "\n"
-        "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n"
-        "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
-        "| name | 名前 | string | - | - | - | - | - |\n"
-        "| entries | エントリ | array | - | - | - | - | - |\n"
-        "| entries[].name | 名前 | string | - | - | - | - | - |\n"
-        "| entries[].children | 配下 | array | - | - | - | - | - |\n"
+        "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+        "| name | 名前 | string | - | - | - | - | - | - |\n"
+        "| entries | エントリ | array | - | - | - | - | - | - |\n"
+        "| entries[].name | 名前 | string | - | - | - | - | - | - |\n"
+        "| entries[].children | 配下 | array | - | - | - | - | - | - |\n"
         "\n"
         "<!-- /table -->"
     )
