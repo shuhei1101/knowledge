@@ -137,11 +137,7 @@ def test_normal_when_kind_specific_keys(run_script: RunScript, tmp_path: Path) -
     # 準備: 固有のキーの title を持つ種類のスキーマを、配信元の schemas/ に配置する
     (tmp_path / "schemas").mkdir()
     (tmp_path / "schemas" / "sample.schema.yaml").write_text(
-        "properties:\n"
-        "  arguments:\n"
-        "    title: 引数\n"
-        "  preconditions:\n"
-        "    title: 事前条件\n",
+        "properties:\n  arguments:\n    title: 引数\n  preconditions:\n    title: 事前条件\n",
         encoding="utf-8",
     )
     shutil.copy(_ROOT / "dev-docs.yaml", tmp_path / "dev-docs.yaml")
