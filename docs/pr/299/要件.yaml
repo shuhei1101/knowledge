@@ -1,0 +1,101 @@
+docs:
+  - page: docs/checksheet/checksheet-review-common.yaml
+    new: true
+    change: reviewer-共通観点を一部移行する（案のレビュー依頼の URL の行を除く）
+    status: todo
+  - page: docs/checksheet/checksheet-review-interface-module.yaml
+    new: true
+    change: reviewer-レビュー観点-インターフェース定義・モジュール構成を移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-single-uc-scenario.yaml
+    new: true
+    change: reviewer-レビュー観点-単一 UC シナリオを移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-composite-uc-scenario.yaml
+    new: true
+    change: reviewer-レビュー観点-複合 UC シナリオを移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-screen-list-transition.yaml
+    new: true
+    change: reviewer-レビュー観点-画面一覧・画面遷移を一部移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-mock-html.yaml
+    new: true
+    change: reviewer-レビュー観点-モック HTML を一部移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-implemented-screen.yaml
+    new: true
+    change: reviewer-レビュー観点-実装した画面を一部移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-poc.yaml
+    new: true
+    change: reviewer-レビュー観点-PoC を移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-bug-investigation.yaml
+    new: true
+    change: reviewer-レビュー観点-不具合の調査を移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-question-answer.yaml
+    new: true
+    change: reviewer-レビュー観点-質問への回答を移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-related-docs.yaml
+    new: true
+    change: reviewer-レビュー観点-関連ドキュメントを一部移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-code-test.yaml
+    new: true
+    change: reviewer-レビュー観点-実装・テストコードを一部移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-requirements.yaml
+    new: true
+    change: reviewer-レビュー観点-要件を一部移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-as-is-design.yaml
+    new: true
+    change: reviewer-レビュー観点-現状設計書（リバースエンジニアリング）を一部移行する
+    status: todo
+  - page: docs/checksheet/checksheet-review-foundation.yaml
+    new: true
+    change: reviewer-レビュー観点-土台の一般の 3 行を移行する
+    status: todo
+  - page: docs/rule/dev-user-confirmation.yaml
+    new: true
+    change: 規約『ユーザー確認が必須な事項』を移行する
+    status: todo
+  - page: docs/rule/dev-change-origin.yaml
+    new: true
+    change: 規約『変更の由来の調査』を一部移行する（PR ドキュメントの行を除く）
+    status: todo
+  - page: docs/rule/dev-estimate-points.yaml
+    new: true
+    change: 規約『見積もりポイント』を一部移行する（E2E 実行の行を除く）
+    status: todo
+  - page: docs/flowchart/flowchart-mock-necessity.yaml
+    new: true
+    change: 判定フローチャート『モック要否』の判定の軸を移行する
+    status: todo
+  - page: docs/flowchart/flowchart-screen-design-necessity.yaml
+    new: true
+    change: 判定フローチャート『画面設計要否』の判定の軸を移行する
+    status: todo
+  - page: rules.yaml
+    new: false
+    change: 新しい文書のうち強制注入の基準に該当するものの行を追加する
+    status: todo
+scope_out:
+  - item: ai-monitor から移行した文書を削除し、reviewer のフェーズから knowledge のチェックシートを ID で参照する
+    reason: ai-monitor のリポジトリの変更で、shuhei1101/ai-monitor#3195 が受け持つ
+    plan: none
+  - item: reviewer-レビュー観点-方針決めの成果物・反映作業・マージ提案と、ラベル・計画・エージェントの運用の文書（A-150 の No 8a・10・14・16）
+    reason: AI Monitor の方針決めの工程・PR ドキュメント・ラベル・計画を前提にする（Issue の対象外）
+    plan: none
+  - item: reviewer-レビュー観点-土台の一般の 3 行以外の行（非機能要件・テスト実行方法・開発コマンド・事前確認・ドキュメントの骨格・目次）
+    reason: A-150 で AI Monitor のフェーズ『初期構築』の定めと判定した
+    plan: none
+  - item: レビュー観点に、ブラウザのスクリプトを .js で手書きしていないことの確認を設計と実装の両方で追加する
+    reason: 移す行の文言は変えない。観点の追加は別の Issue
+    plan: '#288'
+  - item: レビュー観点に、インターフェースと手順の指定方法の種類が判定フローチャート『機能を呼ぶインターフェースの選び方』の結果と合っているかの確認を追加する
+    reason: 移す行の文言は変えない。観点の追加は別の Issue
+    plan: '#285'
