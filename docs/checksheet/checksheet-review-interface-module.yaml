@@ -28,6 +28,12 @@ related:
   - to: dev-precheck
     type: references
     when: 事前確認の配置を確認するとき
+  - to: flowchart-interface-choice
+    type: references
+    when: 機能を呼ぶインターフェース・手順の指定方法の種類を確認するとき
+  - to: html-core-buildless
+    type: references
+    when: ブラウザのスクリプトの拡張子を確認するとき
 items:
   - id: overview
     name: "概要"
@@ -52,5 +58,7 @@ items:
       | モジュール構成の設計書が物理ファイル 1 つにつき 1 つで、全ての要素の `container` が同じ物理ファイルを指していること | 分類の構成図・決まりは分類ごとの設計書（`モジュール構成/分類/`）が持ち、要素は持たない。ファイルの配置はフォルダ構成の設計書が持つ |
       | モジュール構成と一緒に修正したフォルダ構成の設計書が、規約 [フォルダ構成の切り方とレビュー](id:dev-folder-layout) のレビューの観点に該当しないこと | フォルダを追加・移動するのにフォルダ構成の設計書があって修正していない場合も指摘する |
       | 費用のかかる処理より前に、非機能要件で決めた時点の事前確認がフローに配置されていること | 規約 [事前確認](id:dev-precheck) |
+      | 新しく作った機能を呼ぶインターフェース（フック・MCP ツール・API・CLI）と、エージェントに指定する手順の指定方法（エージェントフロー・サブエージェント・スキル）の種類が、判定フローチャート [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice) の結果と合っていること | - |
+      | モジュール構成の設計書が、ブラウザのスクリプトを `.ts` のファイルで設計し、`.js` を手書きする設計（ファイル名が `.js.yaml` の設計書など）になっていないこと | `.js` で記載してよいのは [js で記載してよい場合](id:html-core-buildless#script-extension-02) だけ。HTML に直接記載する `<script>` の処理も `.ts` へ分けているかを確認する（[HTML に直接記載する script](id:html-core-buildless#script-extension-04)） |
 
       <!-- /table -->
