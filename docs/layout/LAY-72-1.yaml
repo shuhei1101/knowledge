@@ -1,0 +1,532 @@
+id: LAY-72-1
+visibility: internal
+title: knowledge
+repository: shuhei1101/knowledge
+lead: |-
+  文書の原本は `docs/` の種類のフォルダ、スキーマは `schemas/`、検査と変換のスクリプトは `scripts/` に分ける。
+  プラグイン knowledge は直下の `hooks/`・`skills/`・`.claude-plugin/`、プラグイン slop-check は `plugins/slop-check/` に配置する。
+tags:
+  - name: topic:フォルダ
+    main: true
+  - name: topic:構成
+  - name: topic:リポジトリ
+  - name: topic:gitignore
+content_types:
+  - name: knowledge_doc
+    group: role
+    summary: knowledge の規約・テンプレート・判定フローチャートなどの文書の原本（YAML）
+  - name: design_doc
+    group: role
+    summary: knowledge 自身の AI Monitor の設計書（YAML）
+  - name: pr_doc
+    group: role
+    summary: 作業 PR ごとの計画書・テスト結果・反映作業
+  - name: index
+    group: role
+    summary: フォルダの目次の原本と、そこから生成した README.md
+  - name: schema
+    group: role
+    summary: 文書を検査する JSON Schema
+  - name: script
+    group: role
+    summary: 検査と変換のスクリプトと、その依存のロック
+  - name: test
+    group: role
+    summary: 単体・結合・E2E のテスト
+  - name: tool_config
+    group: role
+    summary: lint・型検査・テスト・配信の道具の設定
+  - name: ci
+    group: role
+    summary: GitHub Actions のワークフロー
+  - name: plugin_manifest
+    group: role
+    summary: プラグインとマーケットプレイスの定義
+  - name: hook
+    group: role
+    summary: Claude Code のフックの登録と本体
+  - name: skill
+    group: role
+    summary: スキルの本体
+  - name: file_list
+    group: role
+    summary: YAML でないファイルの名前・概要文・タグの一覧（files.yaml）
+  - name: knowledge_plugin
+    group: feature
+    summary: プラグイン knowledge
+  - name: slop_check
+    group: feature
+    summary: プラグイン slop-check
+  - name: pages
+    group: feature
+    summary: 公開の文書の GitHub Pages への配信
+entries:
+  - type: folder
+    name: .claude-plugin
+    contents: プラグイン knowledge と、knowledge のマーケットプレイスの定義
+    content_types: [plugin_manifest, knowledge_plugin]
+    children:
+      - type: file
+        name: plugin.json
+        contents: プラグイン knowledge の定義
+      - type: file
+        name: marketplace.json
+        contents: プラグイン knowledge・slop-check を掲載するマーケットプレイスの定義
+  - type: folder
+    name: .github
+    contents: GitHub の設定
+    children:
+      - type: folder
+        name: workflows
+        contents: CI のワークフロー
+        content_types: [ci]
+        used_by: [IF-72-4#, IF-137-2#]
+        children:
+          - type: file
+            name: docs-check.yml
+            contents: PR ごとに全ての文書の検査を実行するワークフロー
+          - type: file
+            name: pages.yml
+            contents: master への push で公開の文書を GitHub Pages へ配信するワークフロー
+            content_types: [ci, pages]
+  - type: folder
+    name: docs
+    contents: 文書の原本。種類のフォルダと、作業 PR の計画の `pr/` に分ける
+    children:
+      - type: file
+        name: index.yaml
+        contents: '`docs/` の目次の原本'
+        content_types: [index]
+      - type: file
+        name: README.md
+        contents: '`index.yaml` から生成した `docs/` の目次'
+        content_types: [index]
+      - type: file
+        name: changelog.yaml
+        contents: knowledge のバージョンごとの変更履歴
+        content_types: [knowledge_doc]
+      - type: folder
+        name: rule
+        contents: 規約
+        content_types: [knowledge_doc]
+        naming: ['{scope}-{topic}.yaml']
+      - type: folder
+        name: template
+        contents: テンプレート。設計書の種類のテンプレートの `items` は `schemas/design/` から生成する
+        content_types: [knowledge_doc]
+        naming: ['template-{name}.yaml']
+        used_by: [IF-201-1#]
+      - type: folder
+        name: flowchart
+        contents: 判定フローチャート
+        content_types: [knowledge_doc]
+        naming: ['flowchart-{name}.yaml']
+      - type: folder
+        name: decision-table
+        contents: 判定表
+        content_types: [knowledge_doc]
+        naming: ['decision-table-{name}.yaml']
+      - type: folder
+        name: checksheet
+        contents: チェックシート
+        content_types: [knowledge_doc]
+        naming: ['checksheet-{name}.yaml']
+      - type: folder
+        name: guide
+        contents: 使い方
+        content_types: [knowledge_doc]
+        naming: ['guide-{name}.yaml']
+      - type: folder
+        name: skill
+        contents: スキルの設計書
+        content_types: [knowledge_doc]
+        naming: ['{skill}.yaml']
+      - type: folder
+        name: word-list
+        contents: 単語の対応表の原本
+        content_types: [knowledge_doc]
+        naming: ['word-list-{name}.yaml']
+        used_by: [IF-148-2#]
+      - type: folder
+        name: architecture
+        contents: アーキテクチャ図
+        content_types: [design_doc, index]
+        naming: ['ARCH-{issue}-{n}.yaml', index.yaml, README.md]
+      - type: folder
+        name: nonfunctional
+        contents: 非機能要件
+        content_types: [design_doc, index]
+        naming: ['NFR-{issue}-{n}.yaml', index.yaml, README.md]
+      - type: folder
+        name: scenario
+        contents: 複合・単一ユースケースのシナリオ
+        content_types: [design_doc, index]
+        naming: ['SC-{issue}-{n}.yaml', index.yaml, README.md]
+      - type: folder
+        name: interface
+        contents: インターフェース定義
+        content_types: [design_doc, index]
+        naming: ['IF-{issue}-{n}.{lang}.yaml', index.yaml, README.md]
+      - type: folder
+        name: module
+        contents: モジュール構成と、分類ごとのまとめの設計書
+        content_types: [design_doc, index]
+        naming: ['MOD-{issue}-{n}.yaml', 'MOD-{issue}-{n}.{lang}.yaml', index.yaml, README.md]
+      - type: folder
+        name: library
+        contents: 外部ライブラリ・CLI
+        content_types: [design_doc, index]
+        naming: ['LIB-{issue}-{n}.yaml', index.yaml, README.md]
+      - type: folder
+        name: test-procedure
+        contents: テスト実行方法
+        content_types: [design_doc, index]
+        naming: ['TP-{issue}-{n}.yaml', index.yaml, README.md]
+      - type: folder
+        name: dev-command
+        contents: 開発コマンド
+        content_types: [design_doc, index]
+        naming: ['CMD-{issue}-{n}.yaml', index.yaml, README.md]
+      - type: folder
+        name: layout
+        contents: フォルダ構成
+        content_types: [design_doc, index]
+        naming: ['LAY-{issue}-{n}.yaml', index.yaml, README.md]
+      - type: folder
+        name: pr
+        contents: 作業 PR ごとの計画書と記録
+        content_types: [pr_doc]
+        children:
+          - type: folder
+            name: '{pr}'
+            contents: 1 つの作業 PR の計画書と記録
+            content_types: [pr_doc]
+            naming: [README.md, 要件.md, 要件.yaml, タスク一覧.yaml, 確認ログ.yaml, '{subsystem}.md']
+            children:
+              - type: folder
+                name: テスト結果
+                contents: テストと検査の実行結果のログ
+                content_types: [pr_doc]
+                naming: ['{timestamp}_{commit}_{test}.log']
+              - type: folder
+                name: 反映作業
+                contents: マージの前後の反映作業の一覧と、作業ごとのスクリプト
+                content_types: [pr_doc]
+                children:
+                  - type: file
+                    name: index.yaml
+                    contents: 反映作業の一覧
+                  - type: folder
+                    name: '{work}'
+                    contents: 1 つの反映作業のスクリプトと dry-run のログ
+                    content_types: [pr_doc]
+                    naming: ['疎通確認.{ext}', '実行.{ext}', '確認.{ext}', '切り戻し.{ext}', dry-run.log]
+  - type: folder
+    name: schemas
+    contents: 文書を検査する JSON Schema。直下は knowledge の文書の種類のスキーマと、AI Monitor の配布物の設計書のスキーマのコピー
+    content_types: [schema]
+    naming: ['{kind}.schema.yaml']
+    used_by: [IF-72-3#]
+    children:
+      - type: folder
+        name: design
+        contents: 各プロジェクトが `design-schemas/v*` のタグで指す設計書のスキーマの原本
+        content_types: [schema]
+        naming: ['{kind}.schema.yaml']
+        used_by: [IF-72-3#, IF-201-1#]
+      - type: folder
+        name: conversions
+        contents: AI Monitor の配布物の、バージョンごとの設計書の変換
+        content_types: [schema]
+        naming: [versions.yaml, '{version}.py']
+  - type: folder
+    name: scripts
+    contents: dev-docs の validators・converters と、CI と手元の CLI の単一ファイルのスクリプト
+    content_types: [script]
+    children:
+      - type: file
+        name: _common.py
+        contents: 文書の YAML の読み込み・項目のパスと行の対応・違反の型・ファイルの並列の読み込み・dev-docs.yaml の読み込み
+      - type: file
+        name: _maid.py
+        contents: maid の在りかの確認と、打ち切りつきの呼び出し
+      - type: file
+        name: _lint.py
+        contents: markdownlint-cli2・textlint・yamllint の在りかの確認と呼び出し
+      - type: file
+        name: knowledge_checks.py
+        contents: validators の knowledge-checks（文書の違反の検査）
+      - type: file
+        name: knowledge_checks.py.lock
+        contents: knowledge_checks.py の依存のロック
+        generated_from:
+          path: scripts/knowledge_checks.py
+          command: CMD-72-1#categories[依存の追加・更新・削除]
+      - type: file
+        name: knowledge_markdown.py
+        contents: converters の knowledge-markdown（文書の Markdown への変換）
+      - type: file
+        name: knowledge_markdown.py.lock
+        contents: knowledge_markdown.py の依存のロック
+        generated_from:
+          path: scripts/knowledge_markdown.py
+          command: CMD-72-1#categories[依存の追加・更新・削除]
+      - type: file
+        name: check_all.py
+        contents: 全ての文書の検査（CI と手元の CLI）
+      - type: file
+        name: check_all.py.lock
+        contents: check_all.py の依存のロック
+        generated_from:
+          path: scripts/check_all.py
+          command: CMD-72-1#categories[依存の追加・更新・削除]
+      - type: file
+        name: build_pages.py
+        contents: Pages の成果物の作成（CI と手元の CLI）
+        content_types: [script, pages]
+      - type: file
+        name: build_pages.py.lock
+        contents: build_pages.py の依存のロック
+        generated_from:
+          path: scripts/build_pages.py
+          command: CMD-72-1#categories[依存の追加・更新・削除]
+      - type: file
+        name: build_word_list.py
+        contents: 対応表のコピーの作成（手元の CLI）
+        content_types: [script, slop_check]
+      - type: file
+        name: build_word_list.py.lock
+        contents: build_word_list.py の依存のロック
+        generated_from:
+          path: scripts/build_word_list.py
+          command: CMD-72-1#categories[依存の追加・更新・削除]
+      - type: file
+        name: build_templates.py
+        contents: 設計書のテンプレートの生成（手元の CLI）
+      - type: file
+        name: build_templates.py.lock
+        contents: build_templates.py の依存のロック
+        generated_from:
+          path: scripts/build_templates.py
+          command: CMD-72-1#categories[依存の追加・更新・削除]
+      - type: file
+        name: files.yaml
+        contents: '`scripts/` のファイルの一覧（dev-docs の files の行）'
+        content_types: [file_list]
+      - type: folder
+        name: lint
+        contents: lint の設定とカスタムルールと npm の依存
+        content_types: [tool_config]
+        children:
+          - type: file
+            name: package.json
+            contents: markdownlint-cli2・textlint とルールの npm の依存
+          - type: file
+            name: package-lock.json
+            contents: npm の依存のロック
+            generated_from:
+              path: scripts/lint/package.json
+              command: CMD-72-1#categories[依存の追加・更新・削除]
+          - type: file
+            name: .markdownlint-cli2.jsonc
+            contents: markdownlint の設定
+          - type: file
+            name: .textlintrc.json
+            contents: textlint の設定
+          - type: file
+            name: .yamllint.yaml
+            contents: yamllint の設定
+          - type: file
+            name: .yamllint-schemas.yaml
+            contents: スキーマの yamllint の設定
+          - type: file
+            name: no-inline-strong.mjs
+            contents: markdownlint のカスタムルール（文中の太字）
+          - type: folder
+            name: node_modules
+            contents: lint の CLI とルールの npm の依存
+            generated_from:
+              path: scripts/lint/package-lock.json
+              command: CMD-72-1#categories[環境構築（クローン直後）]
+  - type: folder
+    name: hooks
+    contents: プラグイン knowledge のフック
+    content_types: [hook, knowledge_plugin]
+    children:
+      - type: file
+        name: hooks.json
+        contents: プラグイン knowledge が Claude Code に登録するフックの一覧
+      - type: file
+        name: files.yaml
+        contents: '`hooks/` のファイルの一覧（dev-docs の files の行）'
+        content_types: [file_list]
+  - type: folder
+    name: skills
+    contents: プラグイン knowledge のスキルの本体
+    content_types: [skill, knowledge_plugin]
+    children:
+      - type: folder
+        name: '{skill}'
+        contents: 1 つのスキルの本体
+        content_types: [skill, knowledge_plugin]
+        naming: [SKILL.md]
+      - type: file
+        name: files.yaml
+        contents: '`skills/` のファイルの一覧（dev-docs の files の行）'
+        content_types: [file_list]
+  - type: folder
+    name: plugins
+    contents: knowledge のマーケットプレイスに掲載する、knowledge 以外のプラグイン
+    children:
+      - type: folder
+        name: slop-check
+        contents: プラグイン slop-check
+        content_types: [slop_check]
+        children:
+          - type: file
+            name: ruff.toml
+            contents: slop-check のフックの ruff の設定
+            content_types: [tool_config, slop_check]
+          - type: folder
+            name: .claude-plugin
+            contents: プラグイン slop-check の定義
+            content_types: [plugin_manifest, slop_check]
+            children:
+              - type: file
+                name: plugin.json
+                contents: プラグイン slop-check の定義
+          - type: folder
+            name: hooks
+            contents: プラグイン slop-check のフック
+            content_types: [hook, slop_check]
+            children:
+              - type: file
+                name: hooks.json
+                contents: PostToolUse の matcher とコマンド
+              - type: folder
+                name: post-tool-use
+                contents: PostToolUse のフックの本体と、フックが参照する対応表のコピー
+                content_types: [hook, slop_check]
+                used_by: [IF-148-1#]
+                children:
+                  - type: file
+                    name: slop_check.py
+                    contents: 書き込んだ中身の照合（フックの入口と照合）
+                  - type: file
+                    name: word-list-ai-slop.json
+                    contents: 対応表のコピー
+                    generated_from:
+                      path: docs/word-list/word-list-ai-slop.yaml
+                      command: CMD-72-1#categories[ビルド・生成]
+  - type: folder
+    name: tests
+    contents: テスト。層のフォルダの下を、テストする対象ごとに分ける
+    content_types: [test]
+    children:
+      - type: folder
+        name: unit
+        contents: 単体テスト
+        content_types: [test]
+        children:
+          - type: folder
+            name: scripts
+            contents: '`scripts/` の単体テスト。1 物理ファイル = 1 テストファイル'
+            content_types: [test]
+            naming: [conftest.py, 'test_{module}.py']
+          - type: folder
+            name: slop-check
+            contents: slop_check.py の単体テスト
+            content_types: [test, slop_check]
+            naming: [test_slop_check.py]
+      - type: folder
+        name: integration
+        contents: 結合テスト
+        content_types: [test]
+        children:
+          - type: folder
+            name: scripts
+            contents: '`scripts/` の結合テスト。1 インターフェース定義 = 1 テストファイル'
+            content_types: [test]
+            naming: [conftest.py, 'test_{script}.py']
+          - type: folder
+            name: slop-check
+            contents: 書き込んだ中身の照合の結合テスト
+            content_types: [test, slop_check]
+            naming: [conftest.py, test_slop_check.py]
+      - type: folder
+        name: e2e
+        contents: E2E テスト
+        content_types: [test]
+        children:
+          - type: file
+            name: conftest.py
+            contents: E2E テストの共通の fixture
+          - type: folder
+            name: 単一ユースケース
+            contents: 単一ユースケースのシナリオ 1 件 = 1 テストファイル
+            content_types: [test]
+            naming: ['test_{scenario}.py']
+          - type: folder
+            name: 複合ユースケース
+            contents: 複合ユースケースのシナリオ 1 件 = 1 テストファイル
+            content_types: [test]
+            naming: ['test_{scenario}.py']
+  - type: folder
+    name: _site
+    contents: 公開の文書だけを 1 枚の HTML にまとめた Pages の成果物
+    content_types: [pages]
+    generated_from:
+      path: docs/
+      command: CMD-72-1#categories[ビルド・生成]
+  - type: file
+    name: dev-docs.yaml
+    contents: dev-docs の配信元の設定（文書の種類ごとのパス・スキーマ・検査と変換のスクリプト・画面のタブ）
+    content_types: [tool_config]
+  - type: file
+    name: ai-monitor-version.ini
+    contents: '`schemas/` 直下に取り込んだ AI Monitor の配布物のバージョン'
+  - type: file
+    name: version.ini
+    contents: knowledge のバージョン
+  - type: file
+    name: rules.yaml
+    contents: rule-inject の索引（触るファイルのパスと規約の対応）
+  - type: file
+    name: CLAUDE.md
+    contents: knowledge で作業するエージェントへの案内
+  - type: file
+    name: README.md
+    contents: knowledge の説明と導入方法
+  - type: file
+    name: .gitignore
+    contents: Git で管理しないもののパターン
+  - type: file
+    name: pyrightconfig.json
+    contents: pyright の設定
+    content_types: [tool_config]
+  - type: file
+    name: pytest.ini
+    contents: pytest の設定
+    content_types: [tool_config]
+  - type: file
+    name: ruff.toml
+    contents: ruff の設定
+    content_types: [tool_config]
+gitignore:
+  - pattern: docs/generated/
+    reason: AI Monitor が YAML の設計書から生成する Markdown（生成物）
+  - pattern: __pycache__/
+    reason: Python のバイトコードのキャッシュ
+  - pattern: .pytest_cache/
+    reason: pytest のキャッシュ
+  - pattern: .ruff_cache/
+    reason: ruff のキャッシュ
+  - pattern: _site/
+    reason: Pages の成果物（生成物）
+  - pattern: scripts/lint/node_modules/
+    reason: npm の依存（ロックから入れ直せる）
+refs:
+  - ARCH-72-1#
+  - CMD-72-1#
+  - MOD-72-1#
+  - MOD-148-1#
