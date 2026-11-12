@@ -1,0 +1,44 @@
+docs:
+  - page: docs/rule/convention-writing-style.yaml
+    new: false
+    change: word-choice-principle-02 の表の 1 行目の悪い例を「送る・足す・題」に戻し、writing-style-check-01・-02 の group を「文章の書き方」に戻す（#301）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T14:04:52.942399+00:00'
+  - page: docs/rule/convention-doc-presentation.yaml
+    new: false
+    change: 資料の本文（資料の本文には原本だけを記載し、経緯・履歴・旧構成からの変化を記載しない。PR ドキュメントと変更履歴は対象外。参照した資料は出典のメタデータを持つ文書ではそこに、持たない資料では末尾の表にタイトル付きのリンクで記載する）と、テンプレートと資料（テンプレートが無ければ先に作る・テンプレートの 1 単位を 1 ファイルにする・図の要素をメタデータに持たせて図はそこから描く）の項目を追加する（#247）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T14:04:52.942399+00:00'
+  - page: docs/rule/dev-yaml.yaml
+    new: false
+    change: 設定ファイルの group に、後から引数が付きうる値の構造は規約『設定の構造の拡張性』に従う参照を追加する（#247）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T14:04:52.942399+00:00'
+  - page: docs/rule/dev-vscode-extension-distribution.yaml
+    new: false
+    change: .vsix の group に、手動でアップロードする .vsix は Marketplace に公開済みのバージョンより上のバージョンにする項目を追加する（#247）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T14:04:52.942399+00:00'
+  - page: rules.yaml
+    new: false
+    change: 規約『設定の構造の拡張性』の行を、mdmark のマーカーを解釈するコード（**/mdmark/**/src/{render,parts,diagram}/**）を paths にして追加する。他の追加した項目は既存の行で注入される（#247）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T14:04:52.942399+00:00'
+  - page: docs/rule/dev-config-extensibility.yaml
+    new: true
+    change: 規約『設定の構造の拡張性』を新設し、設定ファイル・スキーマ・マーカーの引数は拡張性を最優先にし、後から引数が付きうる値はオブジェクトにする決まりを記載する（#247）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T14:31:59.910801+00:00'
+scope_out:
+  - item: 話し合いのワークスペースの CLAUDE.md（/mnt/c/Users/shuhe/repo/tmp/何でも会話/CLAUDE.md）の 4 行の削除
+    reason: knowledge の外のファイルで、行に「knowledge#247 で削除」とあり、ワークスペースのエージェントが規約に入ったのを見て削除する
+    plan: none
+  - item: ローカルルールの 4 件以外の行（キーの表・タグ・用語とエイリアス など）の規約への移し替え
+    reason: 'D-362 で (2) 文書の決まりに当たるのは #247 の 4 件だけで、キーの表は #221 で移し済み'
+    plan: none
