@@ -1,0 +1,210 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-schemas-design-schema-key-usage
+configfile: pytest.ini
+collected 229 items
+
+tests/unit/scripts/test_build_pages.py ...................               [  8%]
+tests/unit/scripts/test_build_templates.py FF......FF.....F........      [ 18%]
+tests/unit/scripts/test_build_word_list.py ...                           [ 20%]
+tests/unit/scripts/test_check_all.py ................F.................. [ 35%]
+............                                                             [ 40%]
+tests/unit/scripts/test_common.py ....................                   [ 49%]
+tests/unit/scripts/test_knowledge_checks.py ............................ [ 61%]
+.....                                                                    [ 63%]
+tests/unit/scripts/test_knowledge_markdown.py .......................... [ 75%]
+........                                                                 [ 78%]
+tests/unit/scripts/test_lint.py ............                             [ 83%]
+tests/unit/scripts/test_maid.py ......                                   [ 86%]
+tests/unit/slop-check/test_slop_check.py ............................... [100%]
+
+=================================== FAILURES ===================================
+__________________________________ test_main ___________________________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x71fade0a5430>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x71faddd5b850>
+capsys = <_pytest.capture.CaptureFixture object at 0x71fade07a8b0>
+
+    def test_main(
+        repo_factory: RepoFactory,
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """items が古いテンプレートだけ書き換える（正常系）。"""
+        # 準備
+        root = repo_factory(_REPO_FILES)
+        monkeypatch.chdir(root)
+        # 実行
+        code = main([])
+        # 検証
+        assert code == 0
+>       assert capsys.readouterr().out == "docs/template/template-er.yaml\n"
+E       AssertionError: assert 'docs/templat...ate-er.yaml\n' == 'docs/templat...ate-er.yaml\n'
+E         
+E         + docs/template/template-config.yaml
+E           docs/template/template-er.yaml
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-schemas-design-schema-key-usage/tests/unit/scripts/test_build_templates.py:289: AssertionError
+___________________________ test_main_when_unchanged ___________________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x71fadddf05c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x71fade011310>
+capsys = <_pytest.capture.CaptureFixture object at 0x71fade07ad70>
+
+    def test_main_when_unchanged(
+        repo_factory: RepoFactory,
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """2 回目の起動（正常系）。"""
+        # 準備
+        root = repo_factory(_REPO_FILES)
+        monkeypatch.chdir(root)
+        main([])
+        capsys.readouterr()
+        # 実行
+        code = main([])
+        # 検証
+        assert code == 0
+        assert capsys.readouterr().out == ""
+>       assert (root / "docs/template/template-er.yaml").read_text(encoding="utf-8") == _TEMPLATE_ER
+E       AssertionError: assert '# yaml-langu...\n      ```\n' == '# yaml-langu...\n      ```\n'
+E         
+E         Skipping 430 identical leading characters in diff, use -v to show
+E         - ription | 使用先 | examples |
+E         ?          ------
+E         + ription | examples |
+E         -       | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+E         ?                                                       ------...
+E         
+E         ...Full output truncated, use '-vv' to show
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-schemas-design-schema-key-usage/tests/unit/scripts/test_build_templates.py:312: AssertionError
+_______________________________ test_build_items _______________________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x71fadddf2610>
+
+    def test_build_items(repo_factory: RepoFactory) -> None:
+        """5 項目の並び（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {"schemas/design/common.schema.yaml": _COMMON, "schemas/design/er.schema.yaml": _ER}
+        )
+        schemas = load_schemas(root)
+        # 実行
+        result = build_items("er.schema.yaml", schemas)
+        # 検証
+>       assert result == _ER_ITEMS
+E       AssertionError: assert [{'id': 'over... tasks\n```'}] == [{'id': 'over... tasks\n```'}]
+E         
+E         At index 2 diff: {'id': 'item-list-01', 'name': '項目', 'body': '<!-- table: data -->\n\n| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| id | ID | string | 必須 | - | - | 変わらない ID。 | - |\n| lead | 冒頭リード | string | - | - | minLength: `1` | 1 行の説明。 | - |\n| kind | 種別 | string | - | `db` / `json` | - | - | - |\n| tables | テーブル | array | - | - | - | - | - |\n| tables[].name | 物理名 | string | 必須 | - | pattern: `^[a-z_]+$` | - | `tasks` |\n\n<!-- /table -->'} != {'id': 'item-list-01', 'name': '項目', 'body': '<!-- tab...
+E         
+E         ...Full output truncated, use '-vv' to show
+
+tests/unit/scripts/test_build_templates.py:432: AssertionError
+________________________ test_build_items_when_no_rules ________________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x71fadddf2a30>
+
+    def test_build_items_when_no_rules(repo_factory: RepoFactory) -> None:
+        """決まりも悪い例も持たない（正常系）。"""
+        # 準備
+        root = repo_factory({"schemas/design/config.schema.yaml": _CONFIG})
+        schemas = load_schemas(root)
+        # 実行
+        result = build_items("config.schema.yaml", schemas)
+        # 検証
+>       assert result == _CONFIG_ITEMS
+E       AssertionError: assert [{'id': 'over... /table -->'}] == [{'id': 'over... /table -->'}]
+E         
+E         At index 1 diff: {'id': 'item-list-01', 'name': '項目', 'body': '<!-- table: data -->\n\n| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| name | 名前 | string | - | - | - | - | - |\n\n<!-- /table -->'} != {'id': 'item-list-01', 'name': '項目', 'body': '<!-- table: data -->\n\n| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| name | 名前 | string | - | - | - | - | - | - |\n\n<!-- /table -->'}
+E         Use -v to get more diff
+
+tests/unit/scripts/test_build_templates.py:443: AssertionError
+____________________________ test_render_key_table _____________________________
+
+    def test_render_key_table() -> None:
+        """列と制約と型（正常系）。"""
+        # 準備
+        rows = [
+            KeyRow(
+                name="a",
+                schema={
+                    "type": ["string", "null"],
+                    "title": "A",
+                    "minLength": 1,
+                    "pattern": "^x$",
+                    "enum": ["x", "y"],
+                    "examples": ["x", "y"],
+                },
+                required=True,
+            ),
+            KeyRow(
+                name="b",
+                schema={
+                    "title": "B",
+                    "anyOf": [{"type": "string"}, {"type": "integer"}],
+                    "x-used-by": ["実装で、b にする。", "レビューで、b を確認する。"],
+                },
+                required=False,
+            ),
+        ]
+        # 実行
+        result = _render_key_table(rows)
+        # 検証
+>       assert result == (
+            "<!-- table: data -->\n"
+            "\n"
+            "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
+            "| a | A | string / null | 必須 | `x` / `y` | pattern: `^x$`, minLength: `1` | - | - | `x` / `y` |\n"
+            "| b | B | string / integer | - | - | - | - | 実装で、b にする。<br>レビューで、b を確認する。 | - |\n"
+            "\n"
+            "<!-- /table -->"
+        )
+E       AssertionError: assert '<!-- table: ...-- /table -->' == '<!-- table: ...-- /table -->'
+E         
+E         Skipping 61 identical leading characters in diff, use -v to show
+E         - ription | 使用先 | examples |
+E         ?          ------
+E         + ription | examples |
+E         - | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+E         ?                                                 ------...
+E         
+E         ...Full output truncated, use '-vv' to show
+
+tests/unit/scripts/test_build_templates.py:609: AssertionError
+_________________________ test_check_design_templates __________________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x71fade0a5b10>
+
+    def test_check_design_templates(repo_factory: RepoFactory) -> None:
+        """一致する（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {
+                "schemas/design/common.schema.yaml": _TEMPLATE_SOURCE_COMMON,
+                "schemas/design/er.schema.yaml": _TEMPLATE_SOURCE_ER,
+                "docs/template/template-er.yaml": _GENERATED_TEMPLATE_ER,
+            }
+        )
+        # 実行
+        result = check_all.check_design_templates(root)
+        # 検証
+>       assert result == []
+E       AssertionError: assert [('docs/templ... で作り直してください')] == []
+E         
+E         Left contains one more item: ('docs/template/template-er.yaml', 3, 'items', 'テンプレートがスキーマ schemas/design/er.schema.yaml と一致しません。uv run --frozen --script scripts/build_templates.py で作り直してください')
+E         Use -v to get more diff
+
+tests/unit/scripts/test_check_all.py:588: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/scripts/test_build_templates.py::test_main - AssertionError...
+FAILED tests/unit/scripts/test_build_templates.py::test_main_when_unchanged
+FAILED tests/unit/scripts/test_build_templates.py::test_build_items - Asserti...
+FAILED tests/unit/scripts/test_build_templates.py::test_build_items_when_no_rules
+FAILED tests/unit/scripts/test_build_templates.py::test_render_key_table - As...
+FAILED tests/unit/scripts/test_check_all.py::test_check_design_templates - As...
+======================== 6 failed, 223 passed in 5.75s =========================
+exit=1
