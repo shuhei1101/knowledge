@@ -27,6 +27,13 @@ properties:
       - 設計書を作るときに振り、改名・移動でも変えない。
     examples:
     - LAY-1
+  visibility:
+    $ref: common.schema.yaml#/$defs/doc_visibility
+    title: 公開範囲
+  tags:
+    $ref: common.schema.yaml#/$defs/tags
+  aliases:
+    $ref: common.schema.yaml#/$defs/aliases
   title:
     type: string
     title: タイトル
