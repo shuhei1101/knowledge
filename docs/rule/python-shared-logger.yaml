@@ -80,17 +80,16 @@ items:
     group: レベル運用
     name: ログレベルの運用表
     body: |-
-      <!-- table: data -->
+      レベルの判定は規約 [ログのレベルと記載方法](id:dev-logging#level-01) に従う。
+      共通のレベルと `logging` のレベル名の対応は次のとおり。
 
-      | レベル   | 用途                                             |
-      | -------- | ------------------------------------------------ |
-      | debug    | 開発時のみ（トレース、引数 dump）                |
-      | info     | 業務イベント（リクエスト受領、ユースケース完了） |
-      | warning  | 想定内エラー（retry で吸収、無効入力）           |
-      | error    | 想定外エラー（人間が対応すべき）                 |
-      | critical | プロセス継続不能                                 |
-
-      <!-- /table -->
+      | 共通のレベル | `logging` のレベル |
+      | --- | --- |
+      | DEBUG | debug |
+      | INFO | info |
+      | WARN | warning |
+      | ERROR | error |
+      | FATAL | critical |
   - id: writing-01
     group: 書き方
     name: 集計用の構造化引数
@@ -117,3 +116,7 @@ items:
     body: |-
       開発 / Docker / serverless とも stdout のまま。
       単発スクリプトのファイル保存はランチャー（bat / sh）側で tee。
+related:
+  - to: dev-logging
+    type: references
+    when: ログのレベル・出すログ・出してはいけないデータを決めるとき

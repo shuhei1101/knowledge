@@ -32,6 +32,9 @@ related:
   - to: react-shared-logger-tag
     type: requires
     when: logger.create に渡す tag を決めるとき
+  - to: dev-logging
+    type: references
+    when: ログのレベル・出すログ・出してはいけないデータを決めるとき
 items:
   - id: overview
     name: 概要
@@ -59,6 +62,7 @@ items:
     name: ログレベル
     body: |-
       - レベルは debug・info・warn・error にする。
+        - 判定は規約 [ログのレベルと記載方法](id:dev-logging#level-01) に従い、FATAL は error で出す。
         - `VITE_LOG_LEVEL` で設定し、開発中は `localStorage.setItem("log.level", ...)` で動的に変えられる。
         - production は、warn 以上に強制的に絞る。
   - id: ctx-writing-01

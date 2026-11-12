@@ -1,0 +1,134 @@
+id: dev-logging
+kind: rule
+name: ログのレベルと記載方法
+description: 言語に依らないログのレベルの定義・観点ごとに出すログとレベル・出してはいけないデータとイベント名や例外の記録の記載方法を定め、ログを出す箇所とレベルを決めるときや言語ごとのロガーの規約を作るときに参照する。
+aliases:
+  - ログレベル
+  - ログの規約
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-12'
+sources:
+  - id: OL
+    title: 'OpenTelemetry: Logs Data Model'
+    url: https://opentelemetry.io/docs/specs/otel/logs/data-model/
+    note: SeverityNumber
+  - id: OE
+    title: 'OpenTelemetry: Exceptions in logs'
+    url: https://opentelemetry.io/docs/specs/semconv/exceptions/exceptions-logs/
+  - id: OR
+    title: 'OpenTelemetry: Recording errors'
+    url: https://opentelemetry.io/docs/specs/semconv/general/recording-errors/
+  - id: NM
+    title: 'OpenTelemetry: Naming'
+    url: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/general/naming.md
+  - id: OG
+    title: 'OpenTelemetry: GenAI attributes'
+    url: https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/registry/attributes/gen-ai.md
+  - id: OW
+    title: OWASP Logging Cheat Sheet
+    url: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
+related:
+  - to: python-shared-logger
+    type: references
+    when: Python でログを出すとき
+  - to: react-shared-logger-implementation
+    type: references
+    when: React でログを出すとき
+  - to: flowchart-log-level
+    type: references
+    when: ログを出すか・どのレベルかを決めるとき
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      言語に依らないログのレベル・出すログ・記載方法の決まり。
+      ログを出す箇所とレベルは [判定フローチャート](id:flowchart-log-level) で決める。
+      言語ごとのロガーの実装は、言語の規約（[JSON Lines 構造化ログ](id:python-shared-logger)・[logger.ts](id:react-shared-logger-implementation)）に従う。
+  - id: level-01
+    group: レベル
+    name: レベルの共通の定義
+    body: |-
+      判定の軸は影響。
+      名前と数値は OpenTelemetry の SeverityNumber に統一する（OL）。
+
+      | レベル | SeverityNumber | 判定文 |
+      | --- | --- | --- |
+      | FATAL | 21〜24 | プロセスやシステムが処理を続けられない（落ちた・利用できない） |
+      | ERROR | 17〜20 | 今の処理（リクエスト・ジョブ・1 回の呼び出し）が目的の結果を出せずに終わった。動き続けているなら、どれほど重大でも ERROR |
+      | WARN | 13〜16 | 異常はあったが吸収して結果を出せた（リトライ・代わりの手段・既定値）、または放っておくと問題になる予兆 |
+      | INFO | 9〜12 | 正常だが、後で行動・調査・集計に使用する出来事（起動・停止・設定の変更を含む） |
+      | DEBUG | 5〜8 | 開発時の調査だけに使用する |
+  - id: level-02
+    group: レベル
+    name: レベルの扱い
+    body: |-
+      - 人が今すぐ対応するかはレベルでは決めず、監視の側の深刻度で決める
+      - 本番でも INFO 以上を観測基盤へ送信する（課金・監査・セキュリティの INFO を本番で落とさない）
+      - レベルの大小は名前ではなく SeverityNumber で比べる（エラーは 17 以上）
+  - id: viewpoint-01
+    group: 観点ごとに出すログ
+    name: 観点 × レベルの表
+    body: |-
+      <!-- table: data -->
+
+      | 観点 | INFO | WARN | ERROR | FATAL |
+      | --- | --- | --- | --- | --- |
+      | 本番障害 | 起動・停止・設定の読み込みの完了 | リトライ・代わりの手段で続行した、ディスクの残りが少ないなどの予兆 | 1 件のリクエストやジョブが失敗した、動くが致命的（データが欠ける恐れなど） | 起動の中止、クラッシュ、利用できない |
+      | 外部連携 | 呼び出しの結果（件数が多ければメトリクスへ） | タイムアウト・429・5xx をリトライで吸収した | リトライの回数を全て消費し、その層で処理を終えた | 必須の外部の依存先に接続できず起動できない |
+      | お金 | 有料 API の 1 回ごとの利用量と金額 | 予算の閾値に近づいた、普段の速さを大きく超えている | 予算の超過で呼び出しを打ち切った、決済の失敗 | - |
+      | セキュリティ | 認証の成功、トークンの発行や失効 | 認証の失敗、入力検証の失敗、利用の上限超過 | 認可の失敗、失効したトークンの再使用、攻撃の兆候 | - |
+      | 監査 | 管理操作、権限や設定の変更、機微データへのアクセス | - | 監査のログを記録できなかった | - |
+      | データ整合 | 移行の完了 | 不整合を見つけて補正した | 補正できない不整合、移行の失敗 | 保存先が壊れて続けられない |
+      | 性能 | -（メトリクスで持つ） | 遅延が閾値を超えた（メトリクスで取れない場合だけ） | タイムアウトで処理を打ち切った | - |
+      | 監視の経路 | ログの仕組みの開始 | ログの送信の失敗（取りこぼし） | - | - |
+
+      <!-- /table -->
+  - id: viewpoint-02
+    group: 観点ごとに出すログ
+    name: セキュリティの行のレベル
+    body: '- セキュリティの行は OWASP の必ず出すもの（OW）を元にし、レベルは攻撃の疑わしさではなく共通の定義で付ける（疑わしいものも、プロセスが動いていれば ERROR）'
+  - id: viewpoint-03
+    group: 観点ごとに出すログ
+    name: お金の行の属性
+    body: |-
+      - お金の行の「1 回ごとの利用量と金額」は、外部の有料 API を呼ぶ全ての箇所で出す
+      - トークン数は OpenTelemetry の GenAI の属性名（`gen_ai.usage.*`。OG）に合わせる
+      - 金額は OpenTelemetry に属性が無いため、アプリ名を頭に付けた自前の属性で金額と通貨を持つ
+  - id: writing-01
+    group: 記載方法
+    name: 出してはいけないデータ
+    body: |-
+      - パスワード・トークン・鍵・接続文字列・セッション ID・機微な個人情報・攻撃のペイロードは、どのレベルでも出さない（OW）
+      - ファイルパス・内部のホスト名・個人を指せる情報はマスクしてから出す
+  - id: writing-02
+    group: 記載方法
+    name: 固定のイベント名
+    body: '- イベント名は固定の文字列にし、ID などの変わる値は別の属性に分ける（監視が名前で絞れるようにする）'
+  - id: writing-03
+    group: 記載方法
+    name: 例外は 1 回だけ記録する
+    body: |-
+      - 同じ例外は 1 回だけ記録する（OR）
+      - 呼び出し元へ再送出する例外と、エラー応答を返却するために送出する例外（FastAPI の `HTTPException` など）はその場で記録しない（OE）
+      - 失敗には `error.type` を、例外には `exception.type`・`exception.message`・`exception.stacktrace` を付ける
+  - id: writing-04
+    group: 記載方法
+    name: 属性名
+    body: '- 属性名は OpenTelemetry の命名の規則（小文字・ドット区切り・snake_case。NM）に従い、自前の属性はアプリ名を頭に付ける'
+tags:
+  - name: scope:dev
+  - name: topic:ログ
+    main: true
+  - name: topic:ロガー
+  - name: topic:セキュリティ
+  - name: topic:例外
+  - name: topic:コスト
+  - name: topic:本番
+  - name: topic:監査ログ
+  - name: tool:opentelemetry
+  - name: action:出力
+  - name: action:記録
+  - name: action:監視
+  - name: action:判定

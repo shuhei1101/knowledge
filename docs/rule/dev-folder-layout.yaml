@@ -14,6 +14,9 @@ related:
   - to: python-architecture-layout
     type: references
     when: Python のソースコードのフォルダを切るとき
+  - to: flowchart-folder-content-type
+    type: references
+    when: エントリに付ける中身の種類を決めるとき
 items:
   - id: overview
     name: 概要
@@ -43,7 +46,7 @@ items:
       | 観点 | 確認すること |
       | --- | --- |
       | 同じ種類が散る | 同じ `content_types` の組を持つエントリが複数あるとき、1 つにまとめられないか |
-      | 種類が混ざる | 役割も機能も一致しない中身が入り、再分割が要るフォルダが無いか |
+      | 種類が混ざる | 役割も機能も一致しない中身が入り、再分割が要るフォルダが無いか（[フォルダの中身の種類の決め方](id:flowchart-folder-content-type) で再分割になるフォルダ） |
       | まとめすぎ | 1 つのフォルダに複数の機能の単語が付き、機能が増えたときに分けにくくならないか |
       | 共通のものが深い | `used_by` が複数なのに、1 つの機能のフォルダの下にないか |
       | 管理しないもの | 生成物・一時ファイルが `gitignore` にあるか。`generated_from` のエントリを手で編集していないか |
