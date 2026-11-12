@@ -32,48 +32,48 @@ items:
     body: |-
       <!-- table: data -->
 
-      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
-      | --- | --- | --- | --- | --- | --- | --- | --- |
-      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `IF-12` / `IF-3038-1` |
-      | title | タイトル | string | 必須 | - | pattern: `^データフロー: .+$` | `データフロー: {データ名}`。 | - |
-      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
-      | source | 発生源 | string | - | - | - | 外部エンティティかシステムの中の処理。 | - |
-      | sink | 出口 | string | - | - | - | 外部エンティティかデータストア。 | - |
-      | levels | 図 | array | 必須 | - | minItems: `1` | Level 0（外部の境界）と Level 1（主要な処理とデータストア）は必須。Level 2 は複雑な処理だけ。 | - |
-      | levels[].name | レベル | string | 必須 | - | - | `Level 0` / `Level 1` / `Level 2: {親の処理}の分解`。 | - |
-      | levels[].description | 説明 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | - |
-      | levels[].diagram | 図 | object | 必須 | - | - | ノードの `kind` で外部の相手・処理・データストアを分けた図。 | - |
-      | levels[].diagram.direction | 向き | string | - | `TD` / `LR` | - | 図の向き（`TD` = 上から下 / `LR` = 左から右）。記載しなければ図の種類の既定（判定は `TD`、データフロー・アーキテクチャは `LR`）。 | - |
-      | levels[].diagram.nodes | ノード | array | 必須 | - | - | - | - |
-      | levels[].diagram.nodes[].id | ID | string | 必須 | - | pattern: `^\S+$` | 図の中で一意なノードの ID。空白を含めない。 | - |
-      | levels[].diagram.nodes[].label | 表示 | string | 必須 | - | - | ノードに出す文言。半角の括弧は描画を崩すので全角で記載する。 | - |
-      | levels[].diagram.nodes[].kind | 要素の種類 | string | - | `actor` / `process` / `store` / `system` / `external` / `start` / `question` / `action` / `result` | - | ノードが何を表すか（データフロー・アーキテクチャは `actor` = 人・外部の相手 / `process` = 処理 / `store` = データストア / `system` = システム・サブシステム / `external` = 外部システム、判定は `start` = 開始 / `question` = 質問 / `action` = アクション / `result` = 結果）。<br>記載しなければ `process`。 | - |
-      | levels[].diagram.nodes[].hint | 説明 | string | - | - | - | ノードのツールチップに出す説明の文。表示を短く保つために記載する。 | - |
-      | levels[].diagram.edges | 辺 | array | 必須 | - | - | 図に描く順の辺。 | - |
-      | levels[].diagram.edges[].from | 元 | string | 必須 | - | - | 元のノードの `id`。 | - |
-      | levels[].diagram.edges[].to | 先 | string | 必須 | - | - | 先のノードの `id`。 | - |
-      | levels[].diagram.edges[].label | ラベル | string | - | - | - | 矢印のラベル。判定は `YES` / `NO`、データフローは流れるデータの名前。 | - |
-      | levels[].diagram.edges[].line | 線 | string | - | `flow` / `read` / `write` / `reply` / `loop` | - | 線の意味（`flow` = 処理の流れ / `read` = 読み取り / `write` = 書き込み / `reply` = 応答 / `loop` = 前の処理へ戻る）。記載しなければ `flow`。 | - |
-      | levels[].diagram.edges[].tip | 詳細 | string | - | - | - | 線のツールチップに出す詳細。ラベルを短く保つために記載する。 | - |
-      | levels[].diagram.frame | 枠 | object | - | - | - | 図の中で 1 つのシステムを囲む枠。 | - |
-      | levels[].diagram.frame.label | 表示 | string | 必須 | - | - | - | - |
-      | levels[].diagram.frame.nodes | 中のノード | array | 必須 | - | - | 枠の中に配置するノードの `id`。 | - |
-      | levels[].diagram.clicks | リンク | array | - | - | - | - | - |
-      | levels[].diagram.clicks[].id | ノード | string | 必須 | - | - | リンクを付けるノードの `id`。 | - |
-      | levels[].diagram.clicks[].href | リンク先 | string | 必須 | - | - | 押したときに開く先（相対パス + アンカー）。 | - |
-      | dictionary | データ辞書 | array | - | - | - | 処理の境界を越える主要な流れだけ。 | - |
-      | dictionary[].name | データフロー名 | string | 必須 | - | - | - | - |
-      | dictionary[].from | 発生元 | string | 必須 | - | - | - | - |
-      | dictionary[].to | 到達先 | string | 必須 | - | - | - | - |
-      | dictionary[].structure | 構造 | string | 必須 | - | - | ペイロードの型（`{name, email}`）。 | - |
-      | dictionary[].crosses_boundary | 信頼境界を越える | boolean | - | - | - | - | - |
-      | dictionary[].sensitivity | 機密の区分 | string | - | `個人情報` / `機密` | - | - | - |
-      | dictionary[].threats | 脅威 | array | - | - | - | 信頼境界を越える流れの STRIDE の脅威。 | - |
-      | dictionary[].volume | 頻度と量 | string | - | - | - | - | - |
-      | dictionary[].notes | 補足 | string | - | - | - | - | - |
-      | refs | 関連 | array | - | - | - | - | - |
-      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
-      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 検査で、ほかの設計書の参照（`{ID}#{項目のパス}`）の解決先にする。<br>生成で、ページの名前と、ほかの設計書からのリンク先にする。 | `IF-12` / `IF-3038-1` |
+      | title | タイトル | string | 必須 | - | pattern: `^データフロー: .+$` | `データフロー: {データ名}`。 | 生成で、ページの見出しにする。<br>dev-docs の検索で、文書の名前にする。 | - |
+      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>dev-docs の検索で、文書の概要文にする。 | - |
+      | source | 発生源 | string | - | - | - | 外部エンティティかシステムの中の処理。 | レビューで、データの発生源が図の Level 0 の外部の相手と一致するかを確認する。 | - |
+      | sink | 出口 | string | - | - | - | 外部エンティティかデータストア。 | レビューで、データの出口が図の Level 0 の外部の相手・データストアと一致するかを確認する。 | - |
+      | levels | 図 | array | 必須 | - | minItems: `1` | Level 0（外部の境界）と Level 1（主要な処理とデータストア）は必須。Level 2 は複雑な処理だけ。 | 生成で、レベルごとのデータフロー図にする。<br>実装で、処理とデータストアの間で受け渡すデータを参照する。 | - |
+      | levels[].name | レベル | string | 必須 | - | - | `Level 0` / `Level 1` / `Level 2: {親の処理}の分解`。 | 生成で、図の見出しにする。 | - |
+      | levels[].description | 説明 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | 生成で、図の説明にする。 | - |
+      | levels[].diagram | 図 | object | 必須 | - | - | ノードの `kind` で外部の相手・処理・データストアを分けた図。 | 生成で、データフロー図にする。 | - |
+      | levels[].diagram.direction | 向き | string | - | `TD` / `LR` | - | 図の向き（`TD` = 上から下 / `LR` = 左から右）。記載しなければ図の種類の既定（判定は `TD`、データフロー・アーキテクチャは `LR`）。 | 生成で、図の向きにする。 | - |
+      | levels[].diagram.nodes | ノード | array | 必須 | - | - | - | 生成で、図のノードにする。 | - |
+      | levels[].diagram.nodes[].id | ID | string | 必須 | - | pattern: `^\S+$` | 図の中で一意なノードの ID。空白を含めない。 | 生成で、辺・枠・リンクが指すノードを決める。 | - |
+      | levels[].diagram.nodes[].label | 表示 | string | 必須 | - | - | ノードに出す文言。半角の括弧は描画を崩すので全角で記載する。 | 生成で、ノードの文言にする。 | - |
+      | levels[].diagram.nodes[].kind | 要素の種類 | string | - | `actor` / `process` / `store` / `system` / `external` / `start` / `question` / `action` / `result` | - | ノードが何を表すか（データフロー・アーキテクチャは `actor` = 人・外部の相手 / `process` = 処理 / `store` = データストア / `system` = システム・サブシステム / `external` = 外部システム、判定は `start` = 開始 / `question` = 質問 / `action` = アクション / `result` = 結果）。<br>記載しなければ `process`。 | 生成で、ノードの形と色にする。 | - |
+      | levels[].diagram.nodes[].hint | 説明 | string | - | - | - | ノードのツールチップに出す説明の文。表示を短く保つために記載する。 | 生成で、ノードのツールチップにする。 | - |
+      | levels[].diagram.edges | 辺 | array | 必須 | - | - | 図に描く順の辺。 | 生成で、図の矢印にする。 | - |
+      | levels[].diagram.edges[].from | 元 | string | 必須 | - | - | 元のノードの `id`。 | 生成で、矢印の元にする。<br>検査で、`nodes` にある `id` かを確認する。 | - |
+      | levels[].diagram.edges[].to | 先 | string | 必須 | - | - | 先のノードの `id`。 | 生成で、矢印の先にする。<br>検査で、`nodes` にある `id` かを確認する。 | - |
+      | levels[].diagram.edges[].label | ラベル | string | - | - | - | 矢印のラベル。判定は `YES` / `NO`、データフローは流れるデータの名前。 | 生成で、矢印のラベルにする。 | - |
+      | levels[].diagram.edges[].line | 線 | string | - | `flow` / `read` / `write` / `reply` / `loop` | - | 線の意味（`flow` = 処理の流れ / `read` = 読み取り / `write` = 書き込み / `reply` = 応答 / `loop` = 前の処理へ戻る）。記載しなければ `flow`。 | 生成で、線の種類にする。 | - |
+      | levels[].diagram.edges[].tip | 詳細 | string | - | - | - | 線のツールチップに出す詳細。ラベルを短く保つために記載する。 | 生成で、線のツールチップにする。 | - |
+      | levels[].diagram.frame | 枠 | object | - | - | - | 図の中で 1 つのシステムを囲む枠。 | 生成で、システムを囲む枠にする。 | - |
+      | levels[].diagram.frame.label | 表示 | string | 必須 | - | - | - | 生成で、枠の見出しにする。 | - |
+      | levels[].diagram.frame.nodes | 中のノード | array | 必須 | - | - | 枠の中に配置するノードの `id`。 | 生成で、枠の中に置くノードを決める。 | - |
+      | levels[].diagram.clicks | リンク | array | - | - | - | - | 生成で、ノードを押したときに開くリンクにする。 | - |
+      | levels[].diagram.clicks[].id | ノード | string | 必須 | - | - | リンクを付けるノードの `id`。 | 生成で、リンクを付けるノードを決める。 | - |
+      | levels[].diagram.clicks[].href | リンク先 | string | 必須 | - | - | 押したときに開く先（相対パス + アンカー）。 | 生成で、リンク先にする。 | - |
+      | dictionary | データ辞書 | array | - | - | - | 処理の境界を越える主要な流れだけ。 | 実装で、処理の境界を越えるデータの構造にする。<br>レビューで、信頼境界を越える流れの脅威と対策を確認する。 | - |
+      | dictionary[].name | データフロー名 | string | 必須 | - | - | - | 設計で、図の矢印のラベルと流れを対応させる。 | - |
+      | dictionary[].from | 発生元 | string | 必須 | - | - | - | レビューで、図の矢印の元と一致するかを確認する。 | - |
+      | dictionary[].to | 到達先 | string | 必須 | - | - | - | レビューで、図の矢印の先と一致するかを確認する。 | - |
+      | dictionary[].structure | 構造 | string | 必須 | - | - | ペイロードの型（`{name, email}`）。 | 実装で、受け渡すデータの型にする。 | - |
+      | dictionary[].crosses_boundary | 信頼境界を越える | boolean | - | - | - | - | レビューで、脅威の検討が要る流れかを判断する。 | - |
+      | dictionary[].sensitivity | 機密の区分 | string | - | `個人情報` / `機密` | - | - | 実装で、暗号化・マスク・ログへの出力の可否を決める。 | - |
+      | dictionary[].threats | 脅威 | array | - | - | - | 信頼境界を越える流れの STRIDE の脅威。 | 実装で、脅威ごとの対策を入れる。<br>レビューで、信頼境界を越える流れに脅威の検討があるかを確認する。 | - |
+      | dictionary[].volume | 頻度と量 | string | - | - | - | - | 実装で、処理の方式（一括・逐次）と上限の値を決める。 | - |
+      | dictionary[].notes | 補足 | string | - | - | - | - | 実装で、流れの前提・制約を参照する。 | - |
+      | refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
 
       <!-- /table -->
   - id: key-rules-01

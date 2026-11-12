@@ -29,49 +29,43 @@ items:
     body: |-
       <!-- table: data -->
 
-      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
-      | --- | --- | --- | --- | --- | --- | --- | --- |
-      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `IF-12` / `IF-3038-1` |
-      | title | タイトル | string | 必須 | - | pattern: `^設定: .+$` | `設定: {サブシステム名}`。 | - |
-      | lead | 冒頭リード | string | - | - | - | 設定値の一覧であることと、実装・サンプルのファイルへのポインタ。<br>初回に記載した内容のまま保ち、後から情報を追加しない。 | - |
-      | files | ファイル一覧 | array | - | - | - | 設定ファイルを持たないサブシステムは持たない。 | - |
-      | files[].file | ファイル | string | 必須 | - | - | リポジトリの直下からの相対パス・ホーム起点の絶対パス・ファイル名のいずれか。 | - |
-      | files[].manages | 管理する値 | string | 必須 | - | - | - | - |
-      | files[].notes | 補足 | string | - | - | - | - | - |
-      | settings | キー一覧 | array | - | - | - | 設定のキー 1 つ = 1 要素。 | - |
-      | settings[].key | キー | string | 必須 | - | - | 階層はドットで結ぶ（`logging.level`）。配列の要素の子は `parent[].child`。 | - |
-      | settings[].title | 論理名 | string | 必須 | - | - | 業務用語。 | - |
-      | settings[].file | ファイル | string | 必須 | - | - | このキーを持つファイル（`files` の `file`）。 | - |
-      | settings[].type | 型 | string | 必須 | - | - | 取りうる値が限られるときはリテラルの列挙。 | - |
-      | settings[].required | 必須 | boolean | - | - | - | - | - |
-      | settings[].default | 既定値 | string | - | - | - | 必須のキーには記載しない。 | - |
-      | settings[].description | 説明 | string | 必須 | - | - | - | - |
-      | settings[].missing | 欠落時の挙動 | string | - | - | - | 必須のキーが無いときの挙動（`起動時にエラー` 等）。 | - |
-      | settings[].env_var | 環境変数名 | string | - | - | - | 同じ値を上書きする環境変数。 | - |
-      | settings[].secret | 秘密 | boolean | - | - | - | 秘密の値か。秘密なら例・実値を記載せず、表示を伏せる。 | - |
-      | settings[].reload | 反映 | string | - | `immediate` / `reload` / `restart` | - | `immediate`（即時）/ `reload`（再読み込み）/ `restart`（再起動）。 | - |
-      | settings[].allowed | 許す値や範囲 | string | - | - | - | - | - |
-      | settings[].per_env | 環境ごとの値 | string | - | - | - | - | - |
-      | settings[].refs | 関連 | array | - | - | - | - | - |
-      | settings[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
-      | settings[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | - |
-      | settings[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | - |
-      | settings[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
-      | settings[].implementation | 実装 | string | - | - | pattern: `^[^#\s]+(#\S+)?$` | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/schemas/loader.py#load_catalog` |
-      | settings[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
-      | settings[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ。 | `v0.3.0` |
-      | settings[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
-      | settings[].aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | - |
-      | settings[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
-      | overrides | 環境ごとの差分 | array | - | - | - | 環境ごとのファイルが共通の同名キーを上書きする値。 | - |
-      | overrides[].file | ファイル | string | 必須 | - | - | `settings.{環境}.yaml` など。 | - |
-      | overrides[].key | キー | string | 必須 | - | - | - | - |
-      | overrides[].value | 値 | string | 必須 | - | - | - | - |
-      | overrides[].description | 説明 | string | - | - | - | - | - |
-      | overrides[].notes | 補足 | string | - | - | - | - | - |
-      | refs | 関連 | array | - | - | - | - | - |
-      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
-      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 検査で、ほかの設計書の参照（`{ID}#{項目のパス}`）の解決先にする。<br>生成で、ページの名前と、ほかの設計書からのリンク先にする。 | `IF-12` / `IF-3038-1` |
+      | title | タイトル | string | 必須 | - | pattern: `^設定: .+$` | `設定: {サブシステム名}`。 | 生成で、ページの見出しにする。<br>dev-docs の検索で、文書の名前にする。 | - |
+      | lead | 冒頭リード | string | - | - | - | 設定値の一覧であることと、実装・サンプルのファイルへのポインタ。<br>初回に記載した内容のまま保ち、後から情報を追加しない。 | 生成で、ページの冒頭の説明にする。<br>dev-docs の検索で、文書の概要文にする。 | - |
+      | files | ファイル一覧 | array | - | - | - | 設定ファイルを持たないサブシステムは持たない。 | 実装で、設定を読むファイルとその置き場所を決める。<br>生成で、ファイル一覧の表にする。 | - |
+      | files[].file | ファイル | string | 必須 | - | - | リポジトリの直下からの相対パス・ホーム起点の絶対パス・ファイル名のいずれか。 | 実装で、設定を読むファイルのパスにする。 | - |
+      | files[].manages | 管理する値 | string | 必須 | - | - | - | 実装で、ファイルごとに持たせる値を決める。 | - |
+      | files[].notes | 補足 | string | - | - | - | - | 実装で、ファイルの前提を参照する。 | - |
+      | settings | キー一覧 | array | - | - | - | 設定のキー 1 つ = 1 要素。 | 実装で、設定を読み込む型と既定値にする。<br>生成で、キー一覧の表にする。 | - |
+      | settings[].key | キー | string | 必須 | - | - | 階層はドットで結ぶ（`logging.level`）。配列の要素の子は `parent[].child`。 | 実装で、設定ファイルから値を取り出すキーにする。<br>設計で、ほかの設計書の参照（`settings[logging.level]`）からキーを指す。 | - |
+      | settings[].title | 論理名 | string | 必須 | - | - | 業務用語。 | 生成で、表の論理名にする。 | - |
+      | settings[].file | ファイル | string | 必須 | - | - | このキーを持つファイル（`files` の `file`）。 | 実装で、キーを読むファイルにする。 | - |
+      | settings[].type | 型 | string | 必須 | - | - | 取りうる値が限られるときはリテラルの列挙。 | 実装で、値の型と検証にする。 | - |
+      | settings[].required | 必須 | boolean | - | - | - | - | 実装で、無いときにエラーにするかを決める。 | - |
+      | settings[].default | 既定値 | string | - | - | - | 必須のキーには記載しない。 | 実装で、キーが無いときの値にする。 | - |
+      | settings[].description | 説明 | string | 必須 | - | - | - | 実装で、値の意味を参照する。<br>生成で、表の説明にする。 | - |
+      | settings[].missing | 欠落時の挙動 | string | - | - | - | 必須のキーが無いときの挙動（`起動時にエラー` 等）。 | 実装で、必須のキーが無いときの処理にする。<br>テストで、キーが無いときのケースにする。 | - |
+      | settings[].env_var | 環境変数名 | string | - | - | - | 同じ値を上書きする環境変数。 | 実装で、値を上書きする環境変数の名前にする。 | - |
+      | settings[].secret | 秘密 | boolean | - | - | - | 秘密の値か。秘密なら例・実値を記載せず、表示を伏せる。 | 実装で、ログ・画面で値を伏せる。<br>生成で、例と実値を出さない。 | - |
+      | settings[].reload | 反映 | string | - | `immediate` / `reload` / `restart` | - | `immediate`（即時）/ `reload`（再読み込み）/ `restart`（再起動）。 | 実装で、値を変えたときに再読み込みするか、再起動が要るかを決める。<br>反映作業で、再起動の作業が要るかを判断する。 | - |
+      | settings[].allowed | 許す値や範囲 | string | - | - | - | - | 実装で、値の検証の範囲にする。<br>テストで、範囲の外の値のケースにする。 | - |
+      | settings[].refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | settings[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | settings[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
+      | settings[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | settings[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
+      | settings[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+      | overrides | 環境ごとの差分 | array | - | - | - | 環境ごとのファイルが共通の同名キーを上書きする値。 | 実装で、環境ごとのファイルが上書きする値にする。<br>生成で、環境ごとの差分の表にする。 | - |
+      | overrides[].file | ファイル | string | 必須 | - | - | `settings.{環境}.yaml` など。 | 実装で、上書きするファイルにする。 | - |
+      | overrides[].key | キー | string | 必須 | - | - | - | 実装で、上書きするキーにする。 | - |
+      | overrides[].value | 値 | string | 必須 | - | - | - | 実装で、その環境での値にする。 | - |
+      | overrides[].description | 説明 | string | - | - | - | - | 実装で、上書きする理由と意味を参照する。 | - |
+      | overrides[].notes | 補足 | string | - | - | - | - | 実装で、上書きの前提を参照する。 | - |
+      | refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
 
       <!-- /table -->
   - id: key-rules-01

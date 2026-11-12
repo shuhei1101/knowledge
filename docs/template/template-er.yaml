@@ -35,78 +35,72 @@ items:
     body: |-
       <!-- table: data -->
 
-      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
-      | --- | --- | --- | --- | --- | --- | --- | --- |
-      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `IF-12` / `IF-3038-1` |
-      | title | タイトル | string | 必須 | - | pattern: `^ER 図: .+$` | `ER 図: {分類名}`。 | - |
-      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
-      | overview | 概要 | string | - | - | - | 索引の設計書だけが持つ。データストアの種別とバージョン・物理名の命名規則・全テーブルの共通カラム。 | - |
-      | er | ER 図 | object | - | - | - | 当該分類のテーブル間の関連。 | - |
-      | er.entities | 実体 | array | 必須 | - | - | - | - |
-      | er.entities[].name | 名前 | string | 必須 | - | - | 図に出すテーブルの論理名。他の分類のテーブルは名前だけで配置する。 | - |
-      | er.entities[].columns | カラム | array | - | - | - | 図に描くカラム。記載しなければ、同じ設計書のテーブルのカラムから作る。 | - |
-      | er.entities[].columns[].type | 型 | string | 必須 | - | - | - | - |
-      | er.entities[].columns[].name | 名前 | string | 必須 | - | pattern: `^\S+$` | - | - |
-      | er.entities[].columns[].key | キー | string | - | `PK` / `FK` / `UK` | - | - | - |
-      | er.entities[].columns[].comment | 注記 | string | - | - | - | 外部キーの参照先。 | `参照: ユーザー.ID` |
-      | er.relations | 関連 | array | - | - | - | - | - |
-      | er.relations[].from | 元 | string | 必須 | - | - | - | - |
-      | er.relations[].to | 先 | string | 必須 | - | - | - | - |
-      | er.relations[].from_column | 元の列 | string | 必須 | - | - | 関連が結ぶ元の実体の列の名前。 | - |
-      | er.relations[].to_column | 先の列 | string | 必須 | - | - | 関連が結ぶ先の実体の列の名前。 | - |
-      | er.relations[].from_cardinality | 元の多重度 | string | 必須 | `1` / `0..1` / `1..n` / `0..n` | - | 関連の片端の多重度（`1` = ちょうど 1 / `0..1` = 0 か 1 / `1..n` = 1 以上 / `0..n` = 0 以上）。 | `0..n` |
-      | er.relations[].to_cardinality | 先の多重度 | string | 必須 | `1` / `0..1` / `1..n` / `0..n` | - | 関連の片端の多重度（`1` = ちょうど 1 / `0..1` = 0 か 1 / `1..n` = 1 以上 / `0..n` = 0 以上）。 | `0..n` |
-      | er.relations[].label | ラベル | string | - | - | - | - | - |
-      | tables | テーブル | array | - | - | - | テーブル 1 つ = 1 要素。並びは依存の上流から下流。 | - |
-      | tables[].name | 物理名 | string | 必須 | - | - | DB は snake_case、JSON / YAML はファイルのパス。 | - |
-      | tables[].title | 論理名 | string | 必須 | - | - | - | - |
-      | tables[].datastore | データストア | string | 必須 | - | - | `PostgreSQL` / `SQLite` / `JSON` / `YAML` 等。 | - |
-      | tables[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | - |
-      | tables[].primary_key | 主キー | string | - | - | - | 複合キーは `(col_a, col_b)`。 | - |
-      | tables[].scale | レコード規模 | string | - | - | - | 想定行数のオーダー（`～10 万`）。 | - |
-      | tables[].growth | 増え方 | string | - | - | - | - | - |
-      | tables[].retention | 保持期間 | string | - | - | - | - | - |
-      | tables[].deletion | 削除の方針 | string | - | - | - | 物理削除か論理削除か。 | - |
-      | tables[].access | アクセス方式 | string | - | - | - | JSON / YAML のとき、全件か キーで検索するか。 | - |
-      | tables[].description | 説明 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | - |
-      | tables[].columns | カラム | array | 必須 | - | minItems: `1` | - | - |
-      | tables[].columns[].name | 物理名 | string | 必須 | - | - | - | - |
-      | tables[].columns[].title | 論理名 | string | 必須 | - | - | - | - |
-      | tables[].columns[].type | 型 | string | 必須 | - | - | DB は DBMS のネイティブ型、JSON / YAML は `string` / `number` / `boolean` / `object` / `array`。 | - |
-      | tables[].columns[].length | 長さ・精度 | string | - | - | - | 長さ・精度・小数の桁。 | - |
-      | tables[].columns[].not_null | NOT NULL | boolean | - | - | - | - | - |
-      | tables[].columns[].primary_key | 主キー | boolean | - | - | - | - | - |
-      | tables[].columns[].unique | 一意 | boolean | - | - | - | - | - |
-      | tables[].columns[].foreign_key | 外部キー | object | - | - | - | - | - |
-      | tables[].columns[].foreign_key.table | 参照先 | string | 必須 | - | - | `{分類}/{テーブル名}.{カラム}`（他の分類は分類名を付ける）。 | - |
-      | tables[].columns[].foreign_key.on_delete | 削除時の動き | string | - | - | - | - | - |
-      | tables[].columns[].check | 検査制約 | string | - | - | - | - | - |
-      | tables[].columns[].default | 既定 | string | - | - | - | - | - |
-      | tables[].columns[].auto | 自動で入る値 | string | - | `採番` / `作成日時` / `更新日時` / `作成者` | - | - | - |
-      | tables[].columns[].description | 説明 | string | 必須 | - | - | - | - |
-      | tables[].columns[].example | 例 | string | - | - | - | - | - |
-      | tables[].columns[].enum_values | 値の選択肢 | string | - | - | - | `'a' / 'b'` の形式で値と意味を並べる。 | - |
-      | tables[].columns[].sensitivity | 区分 | string | - | `個人情報` / `機密` | - | 個人情報・機密に該当するときだけ記載する。 | - |
-      | tables[].columns[].notes | 補足 | string | - | - | - | - | - |
-      | tables[].indexes | インデックス | array | - | - | - | 検索に使用する追加のインデックスだけ。PK / UK はカラムが持つ。 | - |
-      | tables[].indexes[].name | 名前 | string | 必須 | - | - | 実 DB と一致させる（`{table}_{column}_{kind}`）。 | - |
-      | tables[].indexes[].columns | カラム | string | 必須 | - | - | - | - |
-      | tables[].indexes[].kind | 種別 | string | 必須 | - | - | - | - |
-      | tables[].indexes[].notes | 補足 | string | - | - | - | - | - |
-      | tables[].refs | 関連 | array | - | - | - | - | - |
-      | tables[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
-      | tables[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | - |
-      | tables[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | - |
-      | tables[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
-      | tables[].implementation | 実装 | string | - | - | pattern: `^[^#\s]+(#\S+)?$` | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/schemas/loader.py#load_catalog` |
-      | tables[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
-      | tables[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ。 | `v0.3.0` |
-      | tables[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
-      | tables[].aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | - |
-      | tables[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
-      | refs | 関連 | array | - | - | - | - | - |
-      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
-      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 検査で、ほかの設計書の参照（`{ID}#{項目のパス}`）の解決先にする。<br>生成で、ページの名前と、ほかの設計書からのリンク先にする。 | `IF-12` / `IF-3038-1` |
+      | title | タイトル | string | 必須 | - | pattern: `^ER 図: .+$` | `ER 図: {分類名}`。 | 生成で、ページの見出しにする。<br>dev-docs の検索で、文書の名前にする。 | - |
+      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>dev-docs の検索で、文書の概要文にする。 | - |
+      | overview | 概要 | string | - | - | - | 索引の設計書だけが持つ。データストアの種別とバージョン・物理名の命名規則・全テーブルの共通カラム。 | 実装で、データストアの種別・物理名の命名規則・共通カラムを参照する。 | - |
+      | er | ER 図 | object | - | - | - | 当該分類のテーブル間の関連。 | 生成で、分類の ER 図にする。<br>レビューで、テーブルどうしの関連と多重度が要件と合うかを確認する。 | - |
+      | er.entities | 実体 | array | 必須 | - | - | - | 生成で、ER 図のテーブルにする。 | - |
+      | er.entities[].name | 名前 | string | 必須 | - | - | 図に出すテーブルの論理名。他の分類のテーブルは名前だけで配置する。 | 生成で、テーブルの名前にする。<br>設計で、関連の元・先からテーブルを指す名前にする。 | - |
+      | er.entities[].columns | カラム | array | - | - | - | 図に描くカラム。記載しなければ、同じ設計書のテーブルのカラムから作る。 | 生成で、テーブルに描くカラムにする。 | - |
+      | er.entities[].columns[].type | 型 | string | 必須 | - | - | - | 生成で、カラムの型にする。 | - |
+      | er.entities[].columns[].name | 名前 | string | 必須 | - | pattern: `^\S+$` | - | 生成で、カラムの名前にする。<br>設計で、関連の元の列・先の列から指す名前にする。 | - |
+      | er.entities[].columns[].key | キー | string | - | `PK` / `FK` / `UK` | - | - | 生成で、主キー・外部キー・一意キーの印にする。 | - |
+      | er.relations | 関連 | array | - | - | - | - | 生成で、ER 図の関連の線にする。 | - |
+      | er.relations[].from | 元 | string | 必須 | - | - | - | 生成で、線の元のテーブルにする。 | - |
+      | er.relations[].to | 先 | string | 必須 | - | - | - | 生成で、線の先のテーブルにする。 | - |
+      | er.relations[].from_column | 元の列 | string | 必須 | - | - | 関連が結ぶ元の実体の列の名前。 | 実装で、外部キーの列にする。<br>生成で、線の元の列にする。 | - |
+      | er.relations[].to_column | 先の列 | string | 必須 | - | - | 関連が結ぶ先の実体の列の名前。 | 実装で、外部キーが参照する列にする。<br>生成で、線の先の列にする。 | - |
+      | er.relations[].from_cardinality | 元の多重度 | string | 必須 | `1` / `0..1` / `1..n` / `0..n` | - | 関連の片端の多重度（`1` = ちょうど 1 / `0..1` = 0 か 1 / `1..n` = 1 以上 / `0..n` = 0 以上）。 | 生成で、線の端の多重度の印にする。<br>実装で、外部キーの必須・一意の制約にする。 | `0..n` |
+      | er.relations[].to_cardinality | 先の多重度 | string | 必須 | `1` / `0..1` / `1..n` / `0..n` | - | 関連の片端の多重度（`1` = ちょうど 1 / `0..1` = 0 か 1 / `1..n` = 1 以上 / `0..n` = 0 以上）。 | 生成で、線の端の多重度の印にする。<br>実装で、外部キーの必須・一意の制約にする。 | `0..n` |
+      | er.relations[].label | ラベル | string | - | - | - | - | 生成で、線のラベルにする。 | - |
+      | tables | テーブル | array | - | - | - | テーブル 1 つ = 1 要素。並びは依存の上流から下流。 | 実装で、テーブル・ファイルの定義とマイグレーションにする。<br>生成で、テーブルごとの節にする。 | - |
+      | tables[].name | 物理名 | string | 必須 | - | - | DB は snake_case、JSON / YAML はファイルのパス。 | 実装で、テーブル名・ファイルのパスにする。<br>設計で、ほかの設計書の参照からテーブルを指す。 | - |
+      | tables[].title | 論理名 | string | 必須 | - | - | - | 生成で、節の見出しにする。 | - |
+      | tables[].datastore | データストア | string | 必須 | - | - | `PostgreSQL` / `SQLite` / `JSON` / `YAML` 等。 | 実装で、読み書きに使うライブラリ・ドライバを決める。 | - |
+      | tables[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、テーブルの一覧の説明にする。 | - |
+      | tables[].primary_key | 主キー | string | - | - | - | 複合キーは `(col_a, col_b)`。 | 実装で、主キーの制約にする。 | - |
+      | tables[].scale | レコード規模 | string | - | - | - | 想定行数のオーダー（`～10 万`）。 | 実装で、インデックス・ページングの要否を決める。 | - |
+      | tables[].growth | 増え方 | string | - | - | - | - | 実装で、保持期間とアーカイブの要否を決める。 | - |
+      | tables[].retention | 保持期間 | string | - | - | - | - | 実装で、古い行を消す処理にする。 | - |
+      | tables[].deletion | 削除の方針 | string | - | - | - | 物理削除か論理削除か。 | 実装で、削除を物理削除か論理削除にする。 | - |
+      | tables[].access | アクセス方式 | string | - | - | - | JSON / YAML のとき、全件か キーで検索するか。 | 実装で、全件を読むか、キーで検索するかを決める。 | - |
+      | tables[].description | 説明 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | 実装で、テーブルの役割と前提を参照する。 | - |
+      | tables[].columns | カラム | array | 必須 | - | minItems: `1` | - | 実装で、カラムの定義にする。<br>生成で、カラムの表にする。 | - |
+      | tables[].columns[].name | 物理名 | string | 必須 | - | - | - | 実装で、カラム名・キー名にする。 | - |
+      | tables[].columns[].title | 論理名 | string | 必須 | - | - | - | 生成で、表の論理名にする。 | - |
+      | tables[].columns[].type | 型 | string | 必須 | - | - | DB は DBMS のネイティブ型、JSON / YAML は `string` / `number` / `boolean` / `object` / `array`。 | 実装で、カラムの型にする。 | - |
+      | tables[].columns[].length | 長さ・精度 | string | - | - | - | 長さ・精度・小数の桁。 | 実装で、型の長さ・精度にする。<br>テストで、境界の長さのケースにする。 | - |
+      | tables[].columns[].not_null | NOT NULL | boolean | - | - | - | - | 実装で、NOT NULL の制約にする。 | - |
+      | tables[].columns[].primary_key | 主キー | boolean | - | - | - | - | 実装で、主キーの制約にする。 | - |
+      | tables[].columns[].unique | 一意 | boolean | - | - | - | - | 実装で、一意の制約にする。 | - |
+      | tables[].columns[].foreign_key | 外部キー | object | - | - | - | - | 実装で、外部キーの制約にする。 | - |
+      | tables[].columns[].foreign_key.table | 参照先 | string | 必須 | - | - | `{分類}/{テーブル名}.{カラム}`（他の分類は分類名を付ける）。 | 実装で、外部キーの参照先にする。 | - |
+      | tables[].columns[].foreign_key.on_delete | 削除時の動き | string | - | - | - | - | 実装で、参照先を削除したときの動き（`CASCADE` 等）にする。 | - |
+      | tables[].columns[].check | 検査制約 | string | - | - | - | - | 実装で、検査制約にする。 | - |
+      | tables[].columns[].default | 既定 | string | - | - | - | - | 実装で、カラムの既定値にする。 | - |
+      | tables[].columns[].auto | 自動で入る値 | string | - | `採番` / `作成日時` / `更新日時` / `作成者` | - | - | 実装で、自動で入れる値（作成日時・連番 等）にする。 | - |
+      | tables[].columns[].description | 説明 | string | 必須 | - | - | - | 実装で、カラムの意味を参照する。 | - |
+      | tables[].columns[].example | 例 | string | - | - | - | - | テストで、Factory の値にする。 | - |
+      | tables[].columns[].enum_values | 値の選択肢 | string | - | - | - | `'a' / 'b'` の形式で値と意味を並べる。 | 実装で、値の列挙型と検査制約にする。 | - |
+      | tables[].columns[].sensitivity | 区分 | string | - | `個人情報` / `機密` | - | 個人情報・機密に該当するときだけ記載する。 | 実装で、暗号化・マスク・ログへの出力の可否を決める。 | - |
+      | tables[].columns[].notes | 補足 | string | - | - | - | - | 実装で、カラムの前提を参照する。 | - |
+      | tables[].indexes | インデックス | array | - | - | - | 検索に使用する追加のインデックスだけ。PK / UK はカラムが持つ。 | 実装で、マイグレーションのインデックスにする。 | - |
+      | tables[].indexes[].name | 名前 | string | 必須 | - | - | 実 DB と一致させる（`{table}_{column}_{kind}`）。 | 実装で、インデックスの名前にする。 | - |
+      | tables[].indexes[].columns | カラム | string | 必須 | - | - | - | 実装で、インデックスのカラムにする。 | - |
+      | tables[].indexes[].kind | 種別 | string | 必須 | - | - | - | 実装で、インデックスの種別にする。 | - |
+      | tables[].indexes[].notes | 補足 | string | - | - | - | - | 実装で、インデックスを使う検索を参照する。 | - |
+      | tables[].refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | tables[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | tables[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
+      | tables[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | tables[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
+      | tables[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+      | refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
 
       <!-- /table -->
   - id: key-rules-01
@@ -146,7 +140,6 @@ items:
           - type: uuid
             name: task_id
             key: FK
-            comment: '参照: タスク.id'
         relations:
         - from: ユーザー
           to: タスク

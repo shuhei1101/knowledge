@@ -29,78 +29,68 @@ items:
     body: |-
       <!-- table: data -->
 
-      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | examples |
-      | --- | --- | --- | --- | --- | --- | --- | --- |
-      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | `IF-12` / `IF-3038-1` |
-      | title | タイトル | string | 必須 | - | - | `アーキテクチャ図`。 | - |
-      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | - |
-      | overview | システム全体図 | object | 必須 | - | - | アクター・サブシステム・外部システムの関係を 1 枚で示す。 | - |
-      | overview.direction | 向き | string | - | `TD` / `LR` | - | 図の向き（`TD` = 上から下 / `LR` = 左から右）。記載しなければ図の種類の既定（判定は `TD`、データフロー・アーキテクチャは `LR`）。 | - |
-      | overview.nodes | ノード | array | 必須 | - | - | - | - |
-      | overview.nodes[].id | ID | string | 必須 | - | pattern: `^\S+$` | 図の中で一意なノードの ID。空白を含めない。 | - |
-      | overview.nodes[].label | 表示 | string | 必須 | - | - | ノードに出す文言。半角の括弧は描画を崩すので全角で記載する。 | - |
-      | overview.nodes[].kind | 要素の種類 | string | - | `actor` / `process` / `store` / `system` / `external` / `start` / `question` / `action` / `result` | - | ノードが何を表すか（データフロー・アーキテクチャは `actor` = 人・外部の相手 / `process` = 処理 / `store` = データストア / `system` = システム・サブシステム / `external` = 外部システム、判定は `start` = 開始 / `question` = 質問 / `action` = アクション / `result` = 結果）。<br>記載しなければ `process`。 | - |
-      | overview.nodes[].hint | 説明 | string | - | - | - | ノードのツールチップに出す説明の文。表示を短く保つために記載する。 | - |
-      | overview.edges | 辺 | array | 必須 | - | - | 図に描く順の辺。 | - |
-      | overview.edges[].from | 元 | string | 必須 | - | - | 元のノードの `id`。 | - |
-      | overview.edges[].to | 先 | string | 必須 | - | - | 先のノードの `id`。 | - |
-      | overview.edges[].label | ラベル | string | - | - | - | 矢印のラベル。判定は `YES` / `NO`、データフローは流れるデータの名前。 | - |
-      | overview.edges[].line | 線 | string | - | `flow` / `read` / `write` / `reply` / `loop` | - | 線の意味（`flow` = 処理の流れ / `read` = 読み取り / `write` = 書き込み / `reply` = 応答 / `loop` = 前の処理へ戻る）。記載しなければ `flow`。 | - |
-      | overview.edges[].tip | 詳細 | string | - | - | - | 線のツールチップに出す詳細。ラベルを短く保つために記載する。 | - |
-      | overview.frame | 枠 | object | - | - | - | 図の中で 1 つのシステムを囲む枠。 | - |
-      | overview.frame.label | 表示 | string | 必須 | - | - | - | - |
-      | overview.frame.nodes | 中のノード | array | 必須 | - | - | 枠の中に配置するノードの `id`。 | - |
-      | overview.clicks | リンク | array | - | - | - | - | - |
-      | overview.clicks[].id | ノード | string | 必須 | - | - | リンクを付けるノードの `id`。 | - |
-      | overview.clicks[].href | リンク先 | string | 必須 | - | - | 押したときに開く先（相対パス + アンカー）。 | - |
-      | repository | リポジトリ構成 | object | 必須 | - | - | - | - |
-      | repository.style | 方式 | string | 必須 | `モノレポ` / `ポリレポ` | - | - | - |
-      | repository.repositories | リポジトリ | array | 必須 | - | minItems: `1` | - | - |
-      | repository.repositories[].name | リポジトリ | string | 必須 | - | - | `owner/name`。 | - |
-      | repository.repositories[].subsystem | サブシステム | string | - | - | - | ポリレポのとき。 | - |
-      | repository.notes | 補足 | string | - | - | - | - | - |
-      | subsystems | サブシステム一覧 | array | 必須 | - | minItems: `1` | 独立してテスト・デプロイできる単位。 | - |
-      | subsystems[].name | サブシステム | string | 必須 | - | - | 業務的な役割で命名する。 | - |
-      | subsystems[].scope | scope | string | 必須 | - | pattern: `^[a-z0-9]+(-[a-z0-9]+)*$` | 英小文字のケバブケースの識別子。 | - |
-      | subsystems[].role | 役割 | string | 必須 | - | - | 責務の境界が読み取れる 1 行。 | - |
-      | subsystems[].runtime | 言語・ランタイム | string | 必須 | - | - | 言語とメジャーバージョンまで。 | - |
-      | subsystems[].runs_on | どこで動くか | string | - | - | - | - | - |
-      | subsystems[].refs | 関連 | array | - | - | - | - | - |
-      | subsystems[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
-      | subsystems[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | - |
-      | subsystems[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | - |
-      | subsystems[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
-      | subsystems[].implementation | 実装 | string | - | - | pattern: `^[^#\s]+(#\S+)?$` | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/schemas/loader.py#load_catalog` |
-      | subsystems[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
-      | subsystems[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ。 | `v0.3.0` |
-      | subsystems[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
-      | subsystems[].aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | - |
-      | subsystems[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
-      | external_systems | 外部システム連携 | array | - | - | - | 境界を越えて通信する相手。 | - |
-      | external_systems[].name | 外部システム | string | 必須 | - | - | 子プロセスとして起動する CLI も含む。<br>銘柄が決まっていないときは `{種別}（銘柄未定）`。 | - |
-      | external_systems[].purpose | 用途 | string | 必須 | - | - | - | - |
-      | external_systems[].direction | 方向 | string | 必須 | `送信のみ` / `受信のみ` / `双方向` | - | - | - |
-      | external_systems[].protocol | 技術 | string | - | - | - | プロトコル・形式。 | - |
-      | external_systems[].detail | 詳細 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | API なら `設計書/外部API/`、それ以外（SDK・CLI 等）なら `設計書/外部ライブラリ/` の設計書。<br>持たないのは銘柄未定の行と初期構築の工程の行だけ（設計書はその外部システムを使用し始める設計の工程で作る）。 | `IF-12#flows[正常系]` / `#functions[resolve_base].exceptions` / `CFG-3#` / `#notes[main.py の補足]` / `#functions[main#3]` |
-      | external_systems[].test_file | 対応する非機能要件のテスト | string | - | - | pattern: `^tests/external/.+` | 外部疎通のテストのファイル（`tests/external/test_{名前}.py`）。1 外部システム = 1 ファイル（規約『V字モデル』）。 | - |
-      | external_systems[].cost | 料金・副作用 | string | - | - | - | - | - |
-      | external_systems[].refs | 関連 | array | - | - | - | - | - |
-      | external_systems[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
-      | external_systems[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | - |
-      | external_systems[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | - |
-      | external_systems[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | - |
-      | external_systems[].implementation | 実装 | string | - | - | pattern: `^[^#\s]+(#\S+)?$` | 実装の場所。リポジトリの直下からのファイルのパスに、`#` とシンボルの名前を続けてよい。 | `src/app/features/schemas/loader.py#load_catalog` |
-      | external_systems[].introduced | 導入 | object | - | - | - | 入ったバージョンと PR。 | - |
-      | external_systems[].introduced.version | バージョン | string | - | - | - | 入ったバージョンのタグ。 | `v0.3.0` |
-      | external_systems[].introduced.pr | PR | integer | - | - | - | 入れた PR の番号。 | - |
-      | external_systems[].aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | - |
-      | external_systems[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
-      | quality_goals | 品質目標 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | - |
-      | constraints | 制約 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | - |
-      | crosscutting | 横断の方針 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | - |
-      | refs | 関連 | array | - | - | - | - | - |
-      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | - |
-      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | - |
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 検査で、ほかの設計書の参照（`{ID}#{項目のパス}`）の解決先にする。<br>生成で、ページの名前と、ほかの設計書からのリンク先にする。 | `IF-12` / `IF-3038-1` |
+      | title | タイトル | string | 必須 | - | - | `アーキテクチャ図`。 | 生成で、ページの見出しにする。<br>dev-docs の検索で、文書の名前にする。 | - |
+      | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>dev-docs の検索で、文書の概要文にする。 | - |
+      | overview | システム全体図 | object | 必須 | - | - | アクター・サブシステム・外部システムの関係を 1 枚で示す。 | 生成で、システム全体図にする。<br>設計で、機能をどのサブシステムに置くかを決めるときに、サブシステムと外部システムのつながりを参照する。 | - |
+      | overview.direction | 向き | string | - | `TD` / `LR` | - | 図の向き（`TD` = 上から下 / `LR` = 左から右）。記載しなければ図の種類の既定（判定は `TD`、データフロー・アーキテクチャは `LR`）。 | 生成で、図の向きにする。 | - |
+      | overview.nodes | ノード | array | 必須 | - | - | - | 生成で、図のノードにする。 | - |
+      | overview.nodes[].id | ID | string | 必須 | - | pattern: `^\S+$` | 図の中で一意なノードの ID。空白を含めない。 | 生成で、辺・枠・リンクが指すノードを決める。 | - |
+      | overview.nodes[].label | 表示 | string | 必須 | - | - | ノードに出す文言。半角の括弧は描画を崩すので全角で記載する。 | 生成で、ノードの文言にする。 | - |
+      | overview.nodes[].kind | 要素の種類 | string | - | `actor` / `process` / `store` / `system` / `external` / `start` / `question` / `action` / `result` | - | ノードが何を表すか（データフロー・アーキテクチャは `actor` = 人・外部の相手 / `process` = 処理 / `store` = データストア / `system` = システム・サブシステム / `external` = 外部システム、判定は `start` = 開始 / `question` = 質問 / `action` = アクション / `result` = 結果）。<br>記載しなければ `process`。 | 生成で、ノードの形と色にする。 | - |
+      | overview.nodes[].hint | 説明 | string | - | - | - | ノードのツールチップに出す説明の文。表示を短く保つために記載する。 | 生成で、ノードのツールチップにする。 | - |
+      | overview.edges | 辺 | array | 必須 | - | - | 図に描く順の辺。 | 生成で、図の矢印にする。 | - |
+      | overview.edges[].from | 元 | string | 必須 | - | - | 元のノードの `id`。 | 生成で、矢印の元にする。<br>検査で、`nodes` にある `id` かを確認する。 | - |
+      | overview.edges[].to | 先 | string | 必須 | - | - | 先のノードの `id`。 | 生成で、矢印の先にする。<br>検査で、`nodes` にある `id` かを確認する。 | - |
+      | overview.edges[].label | ラベル | string | - | - | - | 矢印のラベル。判定は `YES` / `NO`、データフローは流れるデータの名前。 | 生成で、矢印のラベルにする。 | - |
+      | overview.edges[].line | 線 | string | - | `flow` / `read` / `write` / `reply` / `loop` | - | 線の意味（`flow` = 処理の流れ / `read` = 読み取り / `write` = 書き込み / `reply` = 応答 / `loop` = 前の処理へ戻る）。記載しなければ `flow`。 | 生成で、線の種類にする。 | - |
+      | overview.edges[].tip | 詳細 | string | - | - | - | 線のツールチップに出す詳細。ラベルを短く保つために記載する。 | 生成で、線のツールチップにする。 | - |
+      | overview.frame | 枠 | object | - | - | - | 図の中で 1 つのシステムを囲む枠。 | 生成で、システムを囲む枠にする。 | - |
+      | overview.frame.label | 表示 | string | 必須 | - | - | - | 生成で、枠の見出しにする。 | - |
+      | overview.frame.nodes | 中のノード | array | 必須 | - | - | 枠の中に配置するノードの `id`。 | 生成で、枠の中に置くノードを決める。 | - |
+      | overview.clicks | リンク | array | - | - | - | - | 生成で、ノードを押したときに開くリンクにする。 | - |
+      | overview.clicks[].id | ノード | string | 必須 | - | - | リンクを付けるノードの `id`。 | 生成で、リンクを付けるノードを決める。 | - |
+      | overview.clicks[].href | リンク先 | string | 必須 | - | - | 押したときに開く先（相対パス + アンカー）。 | 生成で、リンク先にする。 | - |
+      | repository | リポジトリ構成 | object | 必須 | - | - | - | 実装で、変更を入れるリポジトリとフォルダを決める。 | - |
+      | repository.style | 方式 | string | 必須 | `モノレポ` / `ポリレポ` | - | - | 実装で、変更を 1 つのリポジトリに入れるか、リポジトリごとに分けるかを決める。 | - |
+      | repository.repositories | リポジトリ | array | 必須 | - | minItems: `1` | - | 実装で、サブシステムの変更を入れるリポジトリを決める。 | - |
+      | repository.repositories[].name | リポジトリ | string | 必須 | - | - | `owner/name`。 | 実装で、変更を入れるリポジトリにする。 | - |
+      | repository.repositories[].subsystem | サブシステム | string | - | - | - | ポリレポのとき。 | 実装で、サブシステムとリポジトリを対応させる。 | - |
+      | repository.notes | 補足 | string | - | - | - | - | 実装で、リポジトリ構成の前提を参照する。 | - |
+      | subsystems | サブシステム一覧 | array | 必須 | - | minItems: `1` | 独立してテスト・デプロイできる単位。 | 設計で、機能をどのサブシステムに置くかを決める。<br>計画で、作業 PR の計画書を対象システムごとに分ける。<br>生成で、サブシステム一覧の表にする。 | - |
+      | subsystems[].name | サブシステム | string | 必須 | - | - | 業務的な役割で命名する。 | 計画で、作業 PR の対象システムの計画書の名前にする。<br>生成で、表の行の名前にする。 | - |
+      | subsystems[].scope | scope | string | 必須 | - | pattern: `^[a-z0-9]+(-[a-z0-9]+)*$` | 英小文字のケバブケースの識別子。 | 生成で、図のノードとサブシステムを対応させる識別子にする。<br>実装で、エージェントの名前・ログのラベルの識別子にする。 | - |
+      | subsystems[].role | 役割 | string | 必須 | - | - | 責務の境界が読み取れる 1 行。 | 設計で、機能をどのサブシステムに置くかを責務の境界で判断する。<br>レビューで、サブシステムの責務の外の処理が入っていないかを確認する。 | - |
+      | subsystems[].runtime | 言語・ランタイム | string | 必須 | - | - | 言語とメジャーバージョンまで。 | 実装で、言語とバージョンを決め、言語の規約を参照する。 | - |
+      | subsystems[].runs_on | どこで動くか | string | - | - | - | - | 実装で、動く場所の制約（プロセス・端末・クラウド）を参照する。 | - |
+      | subsystems[].refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | subsystems[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | subsystems[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
+      | subsystems[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | subsystems[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
+      | subsystems[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+      | external_systems | 外部システム連携 | array | - | - | - | 境界を越えて通信する相手。 | 設計で、外部ライブラリ・外部 API の設計書を作る対象にする。<br>生成で、外部システム連携の表にする。 | - |
+      | external_systems[].name | 外部システム | string | 必須 | - | - | 子プロセスとして起動する CLI も含む。<br>銘柄が決まっていないときは `{種別}（銘柄未定）`。 | 生成で、表の行の名前にする。 | - |
+      | external_systems[].purpose | 用途 | string | 必須 | - | - | - | レビューで、外部システムに頼る範囲が用途に収まっているかを確認する。 | - |
+      | external_systems[].direction | 方向 | string | 必須 | `送信のみ` / `受信のみ` / `双方向` | - | - | 実装で、送信と受信のどちらの処理を作るかを決める。 | - |
+      | external_systems[].protocol | 技術 | string | - | - | - | プロトコル・形式。 | 実装で、通信に使うプロトコル・形式を決める。 | - |
+      | external_systems[].detail | 詳細 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | API なら `設計書/外部API/`、それ以外（SDK・CLI 等）なら `設計書/外部ライブラリ/` の設計書。<br>持たないのは銘柄未定の行と初期構築の工程の行だけ（設計書はその外部システムを使用し始める設計の工程で作る）。 | 実装で、外部 API・外部ライブラリの設計書を参照する。 | `IF-12#flows[正常系]` / `#functions[resolve_base].exceptions` / `CFG-3#` / `#notes[main.py の補足]` / `#functions[main#3]` |
+      | external_systems[].test_file | 対応する非機能要件のテスト | string | - | - | pattern: `^tests/external/.+` | 外部疎通のテストのファイル（`tests/external/test_{名前}.py`）。1 外部システム = 1 ファイル（規約『V字モデル』）。 | テストで、外部疎通のテストを作るファイルにする。<br>検査で、テストのファイルがあるかを確認する。 | - |
+      | external_systems[].cost | 料金・副作用 | string | - | - | - | - | 実行で、テスト・動作確認の前に、料金と副作用からユーザーの確認が要るかを判断する。 | - |
+      | external_systems[].refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | external_systems[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | external_systems[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
+      | external_systems[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | external_systems[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
+      | external_systems[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+      | quality_goals | 品質目標 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | 設計で、方式を選ぶときに優先する品質の目標を参照する。<br>レビューで、方式が品質目標と食い違わないかを確認する。 | - |
+      | constraints | 制約 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | 設計で、方式を選ぶときに守る制約を参照する。 | - |
+      | crosscutting | 横断の方針 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | 実装で、サブシステムをまたぐ方針（ログ・エラー・認証 等）を参照する。 | - |
+      | refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
 
       <!-- /table -->
   - id: key-rules-01
