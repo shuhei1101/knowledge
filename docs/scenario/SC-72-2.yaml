@@ -11,6 +11,9 @@ scenarios:
       - name: 端末の設定
         description: '`sources[]` に knowledge が無い'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         actor U as 利用者
         participant S as dev-docs の setup
@@ -27,6 +30,9 @@ scenarios:
         S->>A: reload
         A-->>S: 配信中
         S-->>U: 追加した配信元と点検の結果
+      ```
+
+      <!-- /map -->
     expected:
       - '`sources[]` に knowledge の行があり、`config` が knowledge の `dev-docs.yaml` の絶対パス'
       - '`scope.read` が全ての作業場所、`scope.write` が knowledge のクローンと worktree'
@@ -40,6 +46,9 @@ scenarios:
         description: '`dev-docs.yaml` の documents の行が存在しないスキーマを指す'
         notes: '`schema: schemas/missing.schema.yaml`'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         actor U as 利用者
         participant S as dev-docs の setup
@@ -49,6 +58,9 @@ scenarios:
         S->>A: check_project
         A-->>S: 違反（キーのパスと理由）
         S-->>U: 違反を示して止まる
+      ```
+
+      <!-- /map -->
     expected:
       - '`sources[]` に knowledge の行が追加されていない'
       - 違反のキーのパス（`documents[...].schema`）と理由が利用者へ返る

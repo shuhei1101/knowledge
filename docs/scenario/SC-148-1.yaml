@@ -12,6 +12,9 @@ scenarios:
         description: 対応表の単語を 2 つ含む文
         notes: 'Write の `content` に「設定を直す。この形で記載する。」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant E as エージェント
         participant C as Claude Code
@@ -24,6 +27,9 @@ scenarios:
         H->>H: 書き込んだ中身を対応表の各行で照合する
         H-->>C: additionalContext に通知の文
         C-->>E: 書き込みの結果と通知の文
+      ```
+
+      <!-- /map -->
     expected:
       - ファイルが書き込む中身のとおりに書き込まれる
       - 'フックの出力の `hookSpecificOutput.additionalContext` に通知の文が入り、表に `| 直す | 修正 |` と `| 形 | スキーマ・構造（形状の意味なら「形状」） |` の 2 行だけが対応表の並びの順で出る'
@@ -38,6 +44,9 @@ scenarios:
         description: 対応表の単語を含まない文と、`allow` に当たる複合語・前後に漢字が続く漢字 1 文字の単語だけを含む文
         notes: 'Write の `content` に「設定を修正して割り当てる。形式と円形を確認する。」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant E as エージェント
         participant C as Claude Code
@@ -47,6 +56,9 @@ scenarios:
         H->>H: 書き込んだ中身を対応表の各行で照合する
         H-->>C: 出力なし
         C-->>E: 書き込みの結果
+      ```
+
+      <!-- /map -->
     expected:
       - フックの標準出力が空で、終了コードが 0
     test: test_normal_when_no_word_hits
@@ -61,6 +73,9 @@ scenarios:
         description: 対応表の単語を含まない差分
         notes: 'Edit の `new_string` に「設定を修正する。」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant E as エージェント
         participant C as Claude Code
@@ -73,6 +88,9 @@ scenarios:
         H->>H: ファイル全体を対応表の各行で照合する
         H-->>C: additionalContext に通知の文
         C-->>E: 修正の結果と通知の文
+      ```
+
+      <!-- /map -->
     expected:
       - 通知の文の表に `| 版 | バージョン |` の行が出る
       - フックの出力に `decision` が無く、終了コードが 0
@@ -85,6 +103,9 @@ scenarios:
         description: dev-docs の `write_docs` で書き込む文書の文字列の項目に、対応表の単語を含む
         notes: '`operations[].set` の文字列の項目に「設定を足す。」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant E as エージェント
         participant C as Claude Code
@@ -97,6 +118,9 @@ scenarios:
         H->>H: ツールの入力から書き込んだ文字列を取り出し、対応表の各行で照合する
         H-->>C: additionalContext に通知の文
         C-->>E: ツールの結果と通知の文
+      ```
+
+      <!-- /map -->
     expected:
       - 通知の文の表に `| 足す | 追加 |` の行が出る
       - フックの出力に `decision` が無く、終了コードが 0
@@ -111,6 +135,9 @@ scenarios:
         description: 対応表の単語を含む文
         notes: 'Write の `content` に「設定を直す。」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant E as エージェント
         participant C as Claude Code
@@ -121,6 +148,9 @@ scenarios:
         H->>H: 対応表を読めない
         H-->>C: 出力なし（標準エラーに理由）
         C-->>E: 書き込みの結果
+      ```
+
+      <!-- /map -->
     expected:
       - ファイルが書き込む中身のとおりに書き込まれる
       - フックの標準出力が空で、終了コードが 0

@@ -9,6 +9,9 @@ scenarios:
       - name: 作業場所
         description: 'knowledge のクローンの外の作業場所（例: 別のリポジトリのクローン）'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant E as エージェント
         participant M as dev-docs の文書の MCP
@@ -18,6 +21,9 @@ scenarios:
         M-->>E: タグの名前ごとの件数
         E->>M: search_docs に文書の ID
         M-->>E: 文書の本文
+      ```
+
+      <!-- /map -->
     expected:
       - '`search_docs` が knowledge の規約を返し、各行が `name`・`description`・`tags` を持つ'
       - 規約の `tags` がタグの名前（`topic:文章` など）の文字列の配列で返り、`tags` の `eq` でタグの名前に一致する規約が当たる
@@ -35,11 +41,17 @@ scenarios:
       - name: 作業場所
         description: knowledge のクローンの外の作業場所
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant E as エージェント
         participant M as dev-docs の文書の MCP
         E->>M: search_docs に source knowledge
         M-->>E: scope.read の外として返す
+      ```
+
+      <!-- /map -->
     expected:
       - knowledge の文書が 1 件も返らず、`scope.read` の外であることが分かる応答が返る
     test: test_error_when_out_of_read_scope
