@@ -226,14 +226,14 @@ entries:
     contents: 文書を検査する JSON Schema。直下は knowledge の文書の種類のスキーマと、AI Monitor の配布物の設計書のスキーマのコピー
     content_types: [schema]
     naming: ['{kind}.schema.yaml']
-    used_by: [IF-72-1#, IF-72-3#]
+    used_by: [IF-72-3#]
     children:
       - type: folder
         name: design
         contents: 各プロジェクトが `design-schemas/v*` のタグで指す設計書のスキーマの原本
         content_types: [schema]
         naming: ['{kind}.schema.yaml']
-        used_by: [IF-201-1#]
+        used_by: [IF-72-3#, IF-201-1#]
       - type: folder
         name: conversions
         contents: AI Monitor の配布物の、バージョンごとの設計書の変換
