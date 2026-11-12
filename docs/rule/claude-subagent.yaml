@@ -17,7 +17,7 @@ tags:
   - name: action:委譲
 status: current
 visibility: internal
-rev: 4
+rev: 5
 last_reviewed: '2026-11-05'
 items:
   - id: overview
@@ -60,6 +60,9 @@ items:
       | サブエージェントの内部処理もメインで必要                             | メインエージェントで実行する |
 
       <!-- /table -->
+
+      この表は、手順の中の工程を委譲するかを決める。
+      手順そのものをエージェントフロー・サブエージェント・スキルのどれにするかは、判定フローチャート [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice) で決める（手順そのものをサブエージェントにするのはレビューだけ）。
   - id: constraint-caution-01
     group: 制約と注意事項
     name: 戻り値のみが返る

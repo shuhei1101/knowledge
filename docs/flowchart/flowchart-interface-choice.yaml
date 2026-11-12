@@ -1,0 +1,180 @@
+id: flowchart-interface-choice
+kind: flowchart
+name: 機能を呼ぶインターフェースの選び方 判定フローチャート
+description: 機能を呼ぶインターフェース（フック・MCP ツール・API・CLI）と、エージェントに指定する新しい手順の指定方法（エージェントフロー・サブエージェント・スキル）を判定し、機能や手順をエージェント・人に提供する方法を決めるときに参照する。
+aliases:
+  - 機能を呼ぶインターフェースの選び方
+  - エージェントへの手順の指定方法
+sources:
+  - title: 'Claude Code: Extend Claude Code'
+    url: https://code.claude.com/docs/en/features-overview
+    note: 毎回必ず起きることはフック、手順はスキル、外部とのつなぎは MCP
+  - title: 'Claude Code: Skills'
+    url: https://code.claude.com/docs/en/skills
+  - title: 'Anthropic: Writing effective tools for agents'
+    url: https://www.anthropic.com/engineering/writing-tools-for-agents
+    note: API をそのまま包むツールを作らず、関連する操作を 1 本にまとめる
+  - title: 'Anthropic: Equipping agents for the real world with Agent Skills'
+    url: https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
+    note: 決まった結果が欲しい処理はコードにする
+  - title: 'MCP 仕様: Tools'
+    url: https://modelcontextprotocol.io/specification/2025-06-18/server/tools
+    note: 入力の検証・権限はサーバー側が持つ
+  - title: 'CircleCI: MCP vs CLI'
+    url: https://circleci.com/blog/mcp-vs-cli
+    note: 手元ですばやく回す操作は CLI、共有する基盤への操作は MCP
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: 機能を呼ぶインターフェース（フック・MCP ツール・API・CLI）と、エージェントに指定する新しい手順の指定方法（エージェントフロー・サブエージェント・スキル）を判定する。
+  - id: interface-choice-flow-01
+    group: 機能を呼ぶインターフェースの選び方 判定フローチャート
+    name: 判定フロー
+    body: |-
+      <!-- flow -->
+
+      ```json
+      {
+        "title": "機能を呼ぶインターフェースの選び方",
+        "scope": "機能や手順をエージェント・人に提供するとき",
+        "updated": "2026-11-12",
+        "width": 1778,
+        "height": 1836,
+        "nodes": [
+          {"id": "start", "kind": "start", "x": 894, "y": 24, "w": 120, "h": 120, "name": "機能や手順を提供したい"},
+          {"id": "q0", "kind": "question", "x": 814, "y": 200, "w": 280, "h": 164, "name": "エージェントに複数の工程を順に進める手順を指定するか ※1"},
+          {"id": "qa", "kind": "question", "x": 1164, "y": 200, "w": 280, "h": 164, "name": "起動の仕組み（システムプロンプト・索引）で指定できない特別な理由があるか ※2"},
+          {"id": "rs", "kind": "result", "x": 1514, "y": 236, "w": 240, "h": 92, "name": "スキル ※3"},
+          {"id": "qb", "kind": "question", "x": 1164, "y": 420, "w": 280, "h": 164, "name": "レビュー（敵対的な検証）か ※4"},
+          {"id": "rsub", "kind": "result", "x": 1514, "y": 446, "w": 240, "h": 112, "name": "Agent ツールでサブエージェントを起動し、エージェントフローの ID か指示を指定する"},
+          {"id": "rflow", "kind": "result", "x": 1184, "y": 640, "w": 240, "h": 92, "name": "エージェントフローにし、エージェントが MCP で参照する ※5"},
+          {"id": "q1", "kind": "question", "x": 814, "y": 420, "w": 280, "h": 164, "name": "エージェントがターンの途中で判断して呼ぶか"},
+          {"id": "q5", "kind": "question", "x": 444, "y": 420, "w": 280, "h": 164, "name": "ネットワーク越しに呼ぶか、常駐プロセスの状態を使用するか"},
+          {"id": "rapi", "kind": "result", "x": 134, "y": 466, "w": 240, "h": 72, "name": "API（HTTP エンドポイント）"},
+          {"id": "rcli", "kind": "result", "x": 464, "y": 640, "w": 240, "h": 72, "name": "CLI"},
+          {"id": "q2", "kind": "question", "x": 814, "y": 860, "w": 280, "h": 164, "name": "決まったイベントで毎回必ず走らせるか ※6"},
+          {"id": "rhook", "kind": "result", "x": 1164, "y": 914, "w": 240, "h": 56, "name": "フック"},
+          {"id": "q3", "kind": "question", "x": 814, "y": 1080, "w": 280, "h": 164, "name": "中身は知識・決まりだけで、実行は既存の道具で足りるか ※7"},
+          {"id": "rdoc", "kind": "result", "x": 504, "y": 1116, "w": 240, "h": 92, "name": "判定フローチャート『エージェントに渡す文・処理の置き場所』で決める"},
+          {"id": "q4", "kind": "question", "x": 814, "y": 1300, "w": 280, "h": 164, "name": "入力の検証・状態遷移の確認・権限の制限が要る書き込みか ※8"},
+          {"id": "rmcp", "kind": "result", "x": 1164, "y": 1354, "w": 240, "h": 56, "name": "MCP ツール ※9"},
+          {"id": "q6", "kind": "question", "x": 814, "y": 1520, "w": 280, "h": 164, "name": "多くのエージェント・工程から日常的に呼ぶか"},
+          {"id": "rmcp2", "kind": "result", "x": 504, "y": 1574, "w": 240, "h": 56, "name": "MCP ツール"},
+          {"id": "rcli2", "kind": "result", "x": 834, "y": 1740, "w": 240, "h": 72, "name": "CLI（エージェントはシェルから呼ぶ）"}
+        ],
+        "wires": [
+          {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[954, 144], [954, 200]]},
+          {"id": "j-q0-qa", "from": "q0", "to": "qa", "line": "flow", "points": [[1094, 282], [1164, 282]], "label": "YES", "labelAt": [1129, 282]},
+          {"id": "j-q0-q1", "from": "q0", "to": "q1", "line": "flow", "points": [[954, 364], [954, 420]], "label": "NO", "labelAt": [954, 392]},
+          {"id": "j-qa-rs", "from": "qa", "to": "rs", "line": "flow", "points": [[1444, 282], [1514, 282]], "label": "YES", "labelAt": [1479, 282]},
+          {"id": "j-qa-qb", "from": "qa", "to": "qb", "line": "flow", "points": [[1304, 364], [1304, 420]], "label": "NO", "labelAt": [1304, 392]},
+          {"id": "j-qb-rsub", "from": "qb", "to": "rsub", "line": "flow", "points": [[1444, 502], [1514, 502]], "label": "YES", "labelAt": [1479, 502]},
+          {"id": "j-qb-rflow", "from": "qb", "to": "rflow", "line": "flow", "points": [[1304, 584], [1304, 640]], "label": "NO", "labelAt": [1304, 612]},
+          {"id": "j-q1-q5", "from": "q1", "to": "q5", "line": "flow", "points": [[814, 502], [724, 502]], "label": "NO", "labelAt": [769, 502]},
+          {"id": "j-q5-rapi", "from": "q5", "to": "rapi", "line": "flow", "points": [[444, 502], [374, 502]], "label": "YES", "labelAt": [409, 502]},
+          {"id": "j-q5-rcli", "from": "q5", "to": "rcli", "line": "flow", "points": [[584, 584], [584, 640]], "label": "NO", "labelAt": [584, 612]},
+          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[954, 584], [954, 860]], "label": "YES", "labelAt": [954, 722]},
+          {"id": "j-q2-rhook", "from": "q2", "to": "rhook", "line": "flow", "points": [[1094, 942], [1164, 942]], "label": "YES", "labelAt": [1129, 942]},
+          {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[954, 1024], [954, 1080]], "label": "NO", "labelAt": [954, 1052]},
+          {"id": "j-q3-rdoc", "from": "q3", "to": "rdoc", "line": "flow", "points": [[814, 1162], [744, 1162]], "label": "YES", "labelAt": [779, 1162]},
+          {"id": "j-q3-q4", "from": "q3", "to": "q4", "line": "flow", "points": [[954, 1244], [954, 1300]], "label": "NO", "labelAt": [954, 1272]},
+          {"id": "j-q4-rmcp", "from": "q4", "to": "rmcp", "line": "flow", "points": [[1094, 1382], [1164, 1382]], "label": "YES", "labelAt": [1129, 1382]},
+          {"id": "j-q4-q6", "from": "q4", "to": "q6", "line": "flow", "points": [[954, 1464], [954, 1520]], "label": "NO", "labelAt": [954, 1492]},
+          {"id": "j-q6-rmcp2", "from": "q6", "to": "rmcp2", "line": "flow", "points": [[814, 1602], [744, 1602]], "label": "YES", "labelAt": [779, 1602]},
+          {"id": "j-q6-rcli2", "from": "q6", "to": "rcli2", "line": "flow", "points": [[954, 1684], [954, 1740]], "label": "NO", "labelAt": [954, 1712]}
+        ]
+      }
+      ```
+
+      <!-- /flow -->
+  - id: interface-choice-flow-02
+    group: 機能を呼ぶインターフェースの選び方 判定フローチャート
+    name: ※1 複数の工程を順に進める手順
+    body: |-
+      - ※1 複数の工程を順に進める手順: 工程に順番があり、工程ごとにツール・コマンドを呼ぶもの。
+        常に守る決まり・前提の配置先は判定フローチャート [エージェントに渡す文・処理の置き場所](id:flowchart-session-context-placement) で決める
+  - id: interface-choice-flow-03
+    group: 機能を呼ぶインターフェースの選び方 判定フローチャート
+    name: ※2 特別な理由
+    body: |-
+      - ※2 特別な理由: 起動の構成のシステムプロンプトやエージェントフローの索引では指定できない場合（起動の仕組みを持たず、利用者の Claude Code にプラグインで配布するだけ、など）。
+        利用者がスラッシュコマンドで起動したいだけなら、エージェントフローにして起動の指示で呼ばせる
+  - id: interface-choice-flow-04
+    group: 機能を呼ぶインターフェースの選び方 判定フローチャート
+    name: ※3 スキル
+    body: '- ※3 スキル: SKILL.md はエージェントフローから生成し、利用者とエージェントの両方が呼べるようにする'
+  - id: interface-choice-flow-05
+    group: 機能を呼ぶインターフェースの選び方 判定フローチャート
+    name: ※4 レビュー
+    body: |-
+      - ※4 レビュー: 成果物を、作ったエージェントの文脈を持たないクリーンなコンテキストで敵対的に検証させるもの。
+        計画と実装のように作業を分けるだけなら、分けた側も計画を全て参照しないと作業できないので、同じコンテキストで進める。
+        サブエージェントの種類・モデル・使用させるツールは、エージェントフローに記載し、エージェントのファイル（`agents/*.md`）とスキルの `context: fork` は使用しない
+  - id: interface-choice-flow-06
+    group: 機能を呼ぶインターフェースの選び方 判定フローチャート
+    name: ※5 MCP で参照する
+    body: |-
+      - ※5 MCP で参照する: エージェントフローの索引を起動の構成のシステムプロンプトに入れ、エージェントが条件に合うエージェントフローを MCP で取得する。
+        SessionStart のフックで注入したときは、SessionStart（compact）で再度注入する。
+        MCP にエージェントフローを掲載できない環境では、手順のファイルのパスを CLAUDE.md かシステムプロンプトで示し、Read で参照させる
+  - id: interface-choice-flow-07
+    group: 機能を呼ぶインターフェースの選び方 判定フローチャート
+    name: ※6 決まったイベント
+    body: |-
+      - ※6 決まったイベント: ツールの実行の前後・セッションの開始など。
+        必ず守らせたいことも、このイベントで走らせるフックにする。
+        フックをセッションへ指定する方法は判定フローチャート [MCP・フックの渡し方](id:flowchart-mcp-hook-delivery) で決める
+  - id: interface-choice-flow-08
+    group: 機能を呼ぶインターフェースの選び方 判定フローチャート
+    name: ※7 知識・決まりだけ
+    body: '- ※7 知識・決まりだけ: 中身が文だけで、実行は既存のツール・コマンドで足りるもの'
+  - id: interface-choice-flow-09
+    group: 機能を呼ぶインターフェースの選び方 判定フローチャート
+    name: ※8 検証が要る書き込み
+    body: '- ※8 検証が要る書き込み: 入力の検証・状態遷移の確認・権限の制限・監査を、呼ぶ側ではなくサーバー側で持つ必要がある書き込み'
+  - id: interface-choice-flow-10
+    group: 機能を呼ぶインターフェースの選び方 判定フローチャート
+    name: ※9 MCP ツール
+    body: |-
+      - ※9 MCP ツール: 既存の API をそのまま包むだけのツールにせず、関連する操作は 1 本にまとめる。
+        作り方は規約 [MCP サーバー作成ルール](id:claude-mcp)、セッションへの指定方法は判定フローチャート [MCP・フックの渡し方](id:flowchart-mcp-hook-delivery) に従う
+  - id: interface-choice-rule-01
+    group: どのインターフェースにも共通の決まり
+    name: 処理の本体とインターフェースの数
+    body: |-
+      - 処理の本体はどのインターフェースでも関数か CLI に配置し、インターフェースはそれを呼ぶだけにする
+      - 1 つの処理にインターフェースは 1 つにする
+  - id: interface-choice-reason-01
+    group: 手順の指定方法の比較
+    name: 手順の指定方法ごとの利点と欠点
+    body: |-
+      <!-- table: data -->
+
+      | 方法 | 利点 | 欠点 |
+      | --- | --- | --- |
+      | エージェントフロー（MCP で参照する） | 変更がリロードとプラグインの更新なしに有効になり、すぐに試せる。手順の配置先が 1 つになる | 圧縮の後に参照していた手順は自動で戻らないので、エージェントフローの索引をシステムプロンプトに入れておく |
+      | Agent ツールで起動するサブエージェント | 指示を呼ぶ側が動的に作れる。ファイルを配布しないので、リロードが要らない | 呼ぶたびに指示を組み立てる |
+      | エージェントのファイル（`agents/*.md`）・スキルの `context: fork` | 呼び出しが短い | プラグインで配布すると、変更のたびにリロードとプラグインの更新が要り、すぐに試せない |
+      | スキル | 圧縮の後に、参照していたスキルが自動で読み込まれる。利用者がスラッシュコマンドで起動できる | プラグインで配布すると、変更のたびにリロードとプラグインの更新が要り、すぐに試せない |
+
+      <!-- /table -->
+tags:
+  - name: scope:判定フローチャート
+  - name: topic:判定フローチャート
+  - name: topic:フローチャート
+  - name: topic:インターフェース
+    main: true
+  - name: topic:フック
+  - name: topic:スキル
+  - name: topic:サブエージェント
+  - name: topic:エージェント
+  - name: topic:cli
+  - name: topic:api
+  - name: topic:手順
+  - name: tool:mcp
+  - name: tool:claude-code
+  - name: action:判定
+  - name: action:選択

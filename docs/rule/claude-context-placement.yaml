@@ -24,7 +24,7 @@ tags:
   - name: action:参照
 status: current
 visibility: internal
-rev: 2
+rev: 3
 last_reviewed: '2026-11-03'
 sources:
   - title: "Claude Code: Hooks reference"
@@ -74,7 +74,8 @@ items:
       | MCP の instructions | 扱う作業の分類、いつこの MCP を探すか、grep・Read との使い分け、ツール間の順序 | ツールの description の繰り返し・宣伝 |
       | ツールの description | 何をする・いつ使う・いつ使わない・何を返さない・引数の意味 | ほかのツールの説明 |
       | CLAUDE.md | プロジェクト固有の約束事（文書の場所など） | MCP の使い方 |
-      | スキル | 複数ステップの作業手順 | 常に要る前提 |
+      | エージェントフロー | 複数の工程を順に進める手順（判定は [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice)） | 常に要る前提 |
+      | スキル | 起動の仕組みで指定できない特別な理由があるときの手順 | 常に要る前提 |
       | フック（PreToolUse など） | 必ず守らせたいこと | 説明の文 |
 
       <!-- /table -->
