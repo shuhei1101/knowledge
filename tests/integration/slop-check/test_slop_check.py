@@ -141,7 +141,7 @@ def test_normal_when_mcp_tool(run_hook: RunHook, plugin_factory: PluginFactory) 
     # 準備
     root = plugin_factory(_ALL)
     stdin = _input(
-        "mcp__plugin_dev-docs_dev-docs__write_docs",
+        "mcp__plugin_project-index_project-index__write_docs",
         {"operations": [{"op": "update", "id": "直す", "set": {"body": "設定を足す。"}}]},
     )
     # 実行
@@ -155,7 +155,7 @@ def test_normal_when_tool_not_target(run_hook: RunHook, plugin_factory: PluginFa
     """対象の一覧に無いツールは照合せずに何も出力しない（正常系）。"""
     # 準備
     root = plugin_factory(_ALL)
-    stdin = _input("mcp__plugin_dev-docs_dev-docs__search_docs", {"term": "直す"})
+    stdin = _input("mcp__plugin_project-index_project-index__search_docs", {"term": "直す"})
     # 実行
     result = run_hook(stdin, root)
     # 検証

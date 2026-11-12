@@ -170,7 +170,7 @@ def test_main_when_unexpected_error(
     "tool_name",
     [
         pytest.param("Write", id="write"),
-        pytest.param("mcp__plugin_dev-docs_dev-docs__write_docs", id="write_docs"),
+        pytest.param("mcp__plugin_project-index_project-index__write_docs", id="write_docs"),
         pytest.param("mcp__plugin_ai-monitor_ai-monitor-tools__comment", id="comment"),
         pytest.param("mcp__plugin_mindstella_mindstella__reply", id="mindstella_reply"),
     ],
@@ -187,7 +187,7 @@ def test_is_target(tool_name: str) -> None:
     "tool_name",
     [
         pytest.param("Read", id="read"),
-        pytest.param("mcp__plugin_dev-docs_dev-docs__search_docs", id="search_docs"),
+        pytest.param("mcp__plugin_project-index_project-index__search_docs", id="search_docs"),
         pytest.param("mcp__other__comment", id="other_server"),
     ],
 )
@@ -211,7 +211,7 @@ def test_is_target_when_not_target(tool_name: str) -> None:
             id="copy",
         ),
         pytest.param(
-            "mcp__plugin_dev-docs_dev-docs__write_docs",
+            "mcp__plugin_project-index_project-index__write_docs",
             {"operations": [{"id": "word-list-ai-slop"}]},
             id="write_docs",
         ),
@@ -230,7 +230,7 @@ def test_is_word_list_write(tool_name: str, tool_input: dict[str, object]) -> No
     [
         pytest.param("Write", {"file_path": "/r/docs/rule/a.yaml"}, id="rule"),
         pytest.param(
-            "mcp__plugin_dev-docs_dev-docs__write_docs",
+            "mcp__plugin_project-index_project-index__write_docs",
             {"operations": [{"id": "word-list-ai-slop"}, {"id": "convention-writing-style"}]},
             id="write_docs_mixed",
         ),
@@ -273,7 +273,7 @@ def test_extract_text_when_mcp() -> None:
         "operations": [{"id": "直す", "set": {"body": "設定を足す。"}}],
     }
     # 実行
-    result = extract_text("mcp__plugin_dev-docs_dev-docs__write_docs", tool_input)
+    result = extract_text("mcp__plugin_project-index_project-index__write_docs", tool_input)
     # 検証
     assert result == "設定を足す。"
 
