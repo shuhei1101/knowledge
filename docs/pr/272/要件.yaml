@@ -1,0 +1,53 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: run_only
+    detail: map で記載するスキーマからテンプレート『シナリオ』を生成し直す。生成の手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 変えたスキーマがスキーマ自身の検査と例の検査を通り、テンプレートがスキーマと一致することを確かめる。検査の手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: run_only
+    detail: map で書き直したシナリオを画面で開いて読めることを確かめる。読む手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: none
+    detail: knowledge の文書のスキーマと書き込みの検査の結果を変えない
+    depends_on: []
+  - kind: composite
+    scenario: docs/scenario/SC-72-1.yaml
+    impact: none
+    detail: 規約の引き方を変えない
+    depends_on: []
+docs:
+  - page: schemas/design/scenario.schema.yaml
+    new: false
+    change: '`scenarios[].flow` を map で記載する型の参照にし、`description`・`x-rules`・`x-used-by` と記載例の図を map に合わせる'
+    status: todo
+  - page: schemas/design/common.schema.yaml
+    new: false
+    change: map で記載する本文の型を追加する（置き場所は要件.md の `未確定` の推奨 A。B に決まったらこの行を削除する）。`$defs/mermaid` は残す
+    status: todo
+  - page: docs/scenario/
+    new: false
+    change: 全ての設計書の `scenarios[].flow` を map で記載し直す。図の中身は変えない
+    status: todo
+  - page: docs/template/template-scenario.yaml
+    new: false
+    change: '`scripts/build_templates.py` で生成し直す'
+    status: todo
+scope_out:
+  - item: '`common.schema.yaml` の `$defs/mermaid` の削除'
+    reason: 'インターフェース定義の `flow` とモジュール構成の `diagrams[].diagram` が参照したままで、使われなくなるのは #251 の後'
+    plan: '#251'
+  - item: '`schemas/` 直下の AI Monitor の配布物のスキーマ（`schemas/scenario.schema.yaml`）の `flow` を map にすること'
+    reason: AI Monitor の配布物のコピーで、knowledge の原本の変更は shuhei1101/ai-monitor#3188 で AI Monitor が受け取る。`flow` の型は文字列のため、map で書き直した `docs/scenario/` も配布物のスキーマの検査を通る
+    plan: none
+  - item: maid の検査（`scripts/_maid.py`・`knowledge_checks.py` の mermaid の検査）の削除
+    reason: インターフェース定義・モジュール構成の Mermaid が残る間は削除できない。この PR の後に進める後続
+    plan: '#146'
