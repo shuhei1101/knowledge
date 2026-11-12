@@ -16,6 +16,7 @@ additionalProperties: false
 required:
 - id
 - title
+- implementation
 - story
 - states
 properties:
@@ -44,6 +45,16 @@ properties:
     x-used-by:
       - 生成で、ページの冒頭の説明にする。
       - dev-docs の検索で、文書の概要文にする。
+  implementation:
+    type: string
+    title: 実装
+    description: 部品の実装の場所。リポジトリの直下からのファイルのパスに、`#` と部品の名前（マクロ・コンポーネント）を続ける。
+    x-used-by:
+      - 実装で、部品の実装ファイルとシンボルを引く。
+      - レビューで、部品設計と実装の差分を突き合わせる。
+    pattern: "^[^#\\s]+(#\\S+)?$"
+    examples:
+      - "src/app/components/macros.html#header_controls"
   story:
     type: string
     title: Storybook
@@ -62,7 +73,7 @@ properties:
     title: 対応テストファイル
     description: ストーリーを開いて確認する結合テストのファイル（規約『V字モデル』）。
     x-used-by:
-      - ストーリーを開いて確認する結合テストを作るファイルにする。
+      - テストで、ストーリーを開いて確認する結合テストを作るファイルにする。
       - 検査で、テストのファイルがあるかを確認する。
     pattern: ^tests/.+
     examples:
@@ -94,7 +105,7 @@ properties:
           description: 実装の引数の名前。
           x-used-by:
             - 実装で、引数の名前にする。
-            - 状態の `args` から引数を指す。
+            - 設計で、状態の `args` から引数を指す。
           pattern: ^[A-Za-z_][A-Za-z0-9_]*(\[\])?(\.[A-Za-z_][A-Za-z0-9_]*(\[\])?)*$
           examples:
           - "status"
@@ -458,6 +469,7 @@ examples:
 - id: CMP-1
   title: 列見出し
   lead: 表の列見出しの中身。見出しの文字（押すと並べ替え）と、絞り込み・固定のボタンを並べる。
+  implementation: src/app/components/macros.html#header_controls
   story: Plan/HeaderControls
   test_file: tests/integration/storybook/test_計画画面の部品.py
   args:

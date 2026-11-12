@@ -50,9 +50,9 @@ properties:
     description: |-
       `tests/e2e/{単一ユースケース,複合ユースケース}/…`（規約『V字モデル』）。
     x-used-by:
-      - E2E テストを作るファイルにする。
+      - テストで、E2E テストを作るファイルにする。
       - 検査で、テストのファイルがあるかを確認する。
-      - 作業 PR の影響するユースケースから、E2E の対象を集める。
+      - 計画で、作業 PR の影響するユースケースから E2E の対象を集める。
     pattern: ^tests/.+
   primary_actor:
     type: string
@@ -89,7 +89,7 @@ properties:
     title: きっかけ
     x-used-by:
       - E2E テストで、シナリオを始める操作にする。
-      - インターフェース定義で、入口の種類を決める。
+      - 設計で、インターフェース定義の入口の種類を決める。
   preconditions:
     type: array
     title: 事前条件
@@ -112,7 +112,7 @@ properties:
     type: string
     title: 頻度
     x-used-by:
-      - 非機能要件で、性能の値を決める前提にする。
+      - 設計で、非機能要件の性能の値を決める前提にする。
   priority:
     type: string
     title: 優先度
@@ -151,7 +151,7 @@ properties:
           description: 基本形は `正常シナリオ`。正常な結末が条件で分かれるときは `正常シナリオ（{条件}）`、異常は `異常シナリオ（{条件}）`。
           x-used-by:
             - E2E テストで、テスト関数の名前に対応させる。
-            - ほかの設計書の参照（`scenarios[正常シナリオ]`）からシナリオを指す。
+            - 設計で、ほかの設計書の参照（`scenarios[正常シナリオ]`）からシナリオを指す。
           pattern: ^(正常|異常)シナリオ(（.+）)?$
         setup:
           type: array
@@ -196,7 +196,7 @@ properties:
           title: フロー
           description: 単一ユースケースは `sequenceDiagram`、複合ユースケースは単一ユースケースをノードとして連鎖させる `flowchart TD`。
           x-used-by:
-            - インターフェース定義で、操作の流れと関わる相手を決める。
+            - 設計で、インターフェース定義の操作の流れと関わる相手を決める。
             - 生成で、シーケンス図・フロー図にする。
           x-rules:
             - 1 図 = 結末 1 本の一本道にする。
@@ -223,7 +223,7 @@ properties:
           title: 使用する単一ユースケース
           description: 複合ユースケースのノードが指す単一ユースケースのシナリオ。
           x-used-by:
-            - 複合ユースケースの E2E で、つなぐ単一ユースケースのシナリオを引く。
+            - テストで、複合ユースケースの E2E がつなぐ単一ユースケースのシナリオを引く。
             - 検査で、指すシナリオが実在するかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref

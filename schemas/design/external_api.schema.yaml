@@ -44,7 +44,7 @@ properties:
     title: 使用箇所
     description: 呼び出す境界層のパス（リポジトリの直下から）。
     x-used-by:
-      - API の仕様が変わったときに、直す境界層のファイルを探す。
+      - 保守で、API の仕様が変わったときに、修正する境界層のファイルを探す。
     items:
       type: string
   verification:
@@ -52,7 +52,7 @@ properties:
     title: 動作確認
     description: 動かして確認したか。
     x-used-by:
-      - 実装の前に、API を動かして確認済みかを判断する。
+      - 実装で、実装の前に API を動かして確認済みかを判断する。
       - レビューで、確認していない API に理由があるかを確認する。
     x-shape: attributes
     additionalProperties: false
@@ -63,7 +63,7 @@ properties:
         type: string
         title: 状態
         x-used-by:
-          - 実装の前に、動作確認が要るかを判断する。
+          - 実装で、実装の前に動作確認が要るかを判断する。
         enum:
         - 済
         - 未確認
@@ -72,14 +72,14 @@ properties:
         title: 確認日
         description: '`YYYY-MM-DD`。'
         x-used-by:
-          - 確認の記録が古くなっていないかを判断する。
+          - 保守で、確認の記録が古くなっていないかを判断する。
         pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
       detail:
         type: string
         title: 確認内容
         description: 確認した内容か、確認できない理由。
         x-used-by:
-          - 確認していない API を使ってよいかの判断にする。
+          - 実装で、確認していない API を使用してよいかを判断する。
   version:
     type: object
     title: 現在のバージョン情報
@@ -102,13 +102,13 @@ properties:
         type: string
         title: 確認日
         x-used-by:
-          - バージョンの情報が古くなっていないかを判断する。
+          - 保守で、バージョンの情報が古くなっていないかを判断する。
         pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
       sunset:
         type: string
         title: 廃止予定日
         x-used-by:
-          - 廃止の前に移行する作業を計画する。
+          - 計画で、廃止の前に移行する作業を計画する。
   base_urls:
     type: array
     title: ベース URL
@@ -138,12 +138,12 @@ properties:
     type: string
     title: 公式 URL
     x-used-by:
-      - 仕様を確かめるときに、公式のページを開く。
+      - 実装で、仕様を確認するときに公式のページを開く。
   docs_url:
     type: string
     title: 公式ドキュメント
     x-used-by:
-      - 仕様を確かめるときに、公式のドキュメントを開く。
+      - 実装で、仕様を確認するときに公式のドキュメントを開く。
   terms_url:
     type: string
     title: 利用規約
@@ -153,12 +153,12 @@ properties:
     type: string
     title: 連絡先
     x-used-by:
-      - 障害・不具合を問い合わせる先にする。
+      - 保守で、障害・不具合を問い合わせる先にする。
   status_page:
     type: string
     title: 障害情報の確認先
     x-used-by:
-      - 呼び出しが失敗したときに、提供元の障害かを確認する。
+      - 保守で、呼び出しが失敗したときに提供元の障害かを確認する。
   auth:
     type: object
     title: 認証セットアップ
@@ -188,7 +188,7 @@ properties:
         title: 取得手順
         description: キー取得の公式ページの URL と番号付きの手順。
         x-used-by:
-          - 認証の値を発行する作業の手順にする。
+          - 反映作業で、認証の値を発行する作業の手順にする。
       env_vars:
         type: array
         title: 環境変数
@@ -207,7 +207,7 @@ properties:
     type: array
     title: レートリミット
     x-used-by:
-      - 非機能要件で、レート制限の値の出所にする。
+      - 設計で、非機能要件のレート制限の値の出所にする。
       - 実装で、呼び出しの間隔と同時実行数を決める。
     x-heading: レートリミット
     x-shape: table
@@ -244,7 +244,7 @@ properties:
     type: array
     title: 課金単価
     x-used-by:
-      - 実行の前に、料金を見積もってユーザーの確認が要るかを判断する。
+      - 実行で、実行の前に料金を見積もってユーザーの確認が要るかを判断する。
     x-heading: 課金単価
     x-shape: table
     items:
@@ -258,23 +258,23 @@ properties:
           type: string
           title: 対象
           x-used-by:
-            - 料金を見積もる単位にする。
+            - 実行で、料金を見積もる単位にする。
         price:
           type: string
           title: 単価
           x-used-by:
-            - 料金の見積もりにする。
+            - 実行で、料金の見積もりにする。
         notes:
           type: string
           title: 補足
           x-used-by:
-            - 料金の見積もりの前提を参照する。
+            - 実行で、料金の見積もりの前提を参照する。
   pricing_url:
     type: string
     title: 課金の公式ページ
     description: 課金の公式ページの URL。
     x-used-by:
-      - 単価が変わっていないかを公式のページで確認する。
+      - 保守で、単価が変わっていないかを公式のページで確認する。
     x-rules:
       - 課金単価を記載するときは必ず持つ。
   error_format:
@@ -319,7 +319,7 @@ properties:
           title: 名前
           description: '`{METHOD} {パス}`。パスはベース URL からの相対。'
           x-used-by:
-            - ほかの設計書の参照（`endpoints[GET /tasks]`）からエンドポイントを指す。
+            - 設計で、ほかの設計書の参照（`endpoints[GET /tasks]`）からエンドポイントを指す。
             - 生成で、節の見出しにする。
         method:
           type: string
@@ -354,7 +354,7 @@ properties:
           type: array
           title: 分類タグ
           x-used-by:
-            - 公式のドキュメントで、エンドポイントの分類を引く。
+            - 実装で、公式のドキュメントからエンドポイントの分類を引く。
           items:
             type: string
         permissions:
@@ -642,13 +642,13 @@ properties:
           title: 発生日
           description: 事象を確認した日（`YYYY-MM-DD`）。再確認して続いていたら更新する。
           x-used-by:
-            - 事象が今も続いているかを確かめ直す時期を判断する。
+            - 保守で、事象が今も続いているかを確認し直す時期を判断する。
           pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
         state:
           type: string
           title: 状態
           x-used-by:
-            - 回避策を入れたままにするかを判断する。
+            - 保守で、回避策を入れたままにするかを判断する。
           enum:
           - 未解決
           - 回避策あり
@@ -696,7 +696,7 @@ properties:
                 title: 結果
                 description: 得られるものと、本来やりたかったことからのずれ。
                 x-used-by:
-                  - 回避策を選ぶときに、得られるものとずれを比べる。
+                  - 実装で、回避策を選ぶときに得られるものとずれを比べる。
               recommended:
                 type: boolean
                 title: 推奨
@@ -708,13 +708,13 @@ properties:
           title: 上流の Issue
           description: 上流の Issue の URL。
           x-used-by:
-            - 上流で解消したかを確かめる先にする。
+            - 保守で、上流で解消したかを確認する先にする。
         fixed_in:
           type: string
           title: 解消版
           description: 解消したバージョン。達したら回避策を削除する候補になる。
           x-used-by:
-            - 解消した版へ上げた後に、回避策を外す。
+            - 保守で、解消した版へ上げた後に回避策を外す。
         refs:
           type: array
           title: 関連

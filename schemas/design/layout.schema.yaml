@@ -64,7 +64,7 @@ properties:
     title: 中身の種類
     description: エントリの `content_types` に付ける中身の種類の語彙。
     x-used-by:
-      - エントリの `content_types` の語彙にする。
+      - 設計で、エントリの `content_types` の語彙にする。
     x-heading: 中身の種類
     x-shape: table
     x-key: name
@@ -81,7 +81,7 @@ properties:
           title: 種類
           description: 種類の単語（英語）。
           x-used-by:
-            - エントリの `content_types` から種類を指す。
+            - 設計で、エントリの `content_types` から種類を指す。
           pattern: ^[a-z][a-z0-9_]*$
           examples:
           - config
@@ -320,7 +320,7 @@ $defs:
         title: ID の起点
         description: '`type` が `folder` のときだけ記載する。配下のファイルの文書の ID を、このフォルダからのパスにするか。'
         x-used-by:
-          - dev-docs の配信で、配下の文書の ID をフォルダからのパスにする。
+          - 検索で、dev-docs が配下の文書の ID をフォルダからのパスにする。
       convention:
         type: string
         title: 配下の規約

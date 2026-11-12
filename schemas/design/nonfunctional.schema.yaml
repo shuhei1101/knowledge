@@ -46,7 +46,7 @@ properties:
     title: 一覧
     description: 外部の制約から逆算したアプリの値。一覧の表は各要素から生成する。
     x-used-by:
-      - 実装とテストで、守る値を引く。
+      - 実装で、守る値を引く。
       - 生成で、非機能要件の一覧の表と要素ごとのページにする。
     x-rules:
       - 決まっていない項目も同じ一覧に配置し、決定値を `未確定` にする。
@@ -74,7 +74,7 @@ properties:
           description: 設計書の中で一意な要素の ID。1 要素 1 ページにするときのページの ID になる。
           x-used-by:
             - 生成で、要素を 1 ページにするときのページの ID にする。
-            - ほかの設計書の参照から要素を指す。
+            - 設計で、ほかの設計書の参照から要素を指す。
           x-rules:
             - 並びの順に `NFR-{番号}` を振る。
             - 新しく追加する要素には、既にある番号の最大の次を振る。
@@ -143,14 +143,14 @@ properties:
           type: string
           title: 単位
           x-used-by:
-            - 実装とテストで、値の単位にする。
+            - 実装で、値の単位にする。
         rationale:
           type: string
           title: 根拠
           description: 外部の制約そのままでない理由。未確定なら何が分かれば決まるか。
           x-used-by:
             - レビューで、外部の制約そのままでない値の根拠を確認する。
-            - 値を変えるときに、根拠が今も成り立つかを判断する。
+            - 設計で、値を変えるときに根拠が今も成り立つかを判断する。
         measurement:
           type: string
           title: 測り方
@@ -161,7 +161,7 @@ properties:
           title: 対応テスト
           description: 非機能要件テストのファイル（`tests/nfr/test_{英語名}.py`）。測れない項目は持たない（規約『V字モデル』）。
           x-used-by:
-            - 非機能要件のテストを作るファイルにする。
+            - テストで、非機能要件のテストを作るファイルにする。
             - 検査で、テストのファイルがあるかを確認する。
           pattern: ^tests/.+
         verification:
@@ -184,25 +184,25 @@ properties:
               title: 端末
               description: 確認した端末（OS・ブラウザなど）。
               x-used-by:
-                - 確認した端末と違う端末で確認し直すかを判断する。
+                - 保守で、確認した端末と違う端末で確認し直すかを判断する。
             version:
               type: string
               title: バージョン
               description: 確認した端末のバージョン（OS・ブラウザのバージョン）。
               x-used-by:
-                - 確認したバージョンと違うバージョンで確認し直すかを判断する。
+                - 保守で、確認したバージョンと違うバージョンで確認し直すかを判断する。
             date:
               type: string
               title: 確認日
               description: '`YYYY-MM-DD`。'
               x-used-by:
-                - 確認の記録が古くなっていないかを判断する。
+                - 保守で、確認の記録が古くなっていないかを判断する。
               pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
             result:
               type: string
               title: 合否
               x-used-by:
-                - 不合格の要件を直す対象にする。
+                - 実装で、不合格の要件を修正する対象にする。
               enum:
               - 合格
               - 不合格
@@ -211,7 +211,7 @@ properties:
               title: 確認内容
               description: 不合格のとき、起きた事象。
               x-used-by:
-                - 不合格の要件を直すときに、起きた事象を参照する。
+                - 実装で、不合格の要件を修正するときに起きた事象を参照する。
           examples:
           - device: Windows 11 の PC の Edge
             version: Edge 140

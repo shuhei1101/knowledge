@@ -44,7 +44,7 @@ properties:
     title: 前提
     description: 全種別に共通の前提（言語ランタイム・依存サービス・環境変数）。
     x-used-by:
-      - テストを実行する前に、ランタイム・依存サービス・環境変数を揃える。
+      - 実行で、テストを実行する前にランタイム・依存サービス・環境変数を揃える。
     x-heading: 前提
     x-shape: list
     items:
@@ -54,7 +54,7 @@ properties:
     title: テスト種別
     description: テスト種別ごとの実行コマンド。
     x-used-by:
-      - テストを作る・実行するときに、種別ごとのコマンドを引く。
+      - テストで、種別ごとの実行のコマンドを引く。
       - 生成で、種別ごとの節にする。
     x-rules:
       - 初期構築では種別だけを作り、コマンドはテストを作る担当が確定させる。
@@ -81,7 +81,7 @@ properties:
           description: 設計書の中で一意な要素の ID。1 要素 1 ページにするときのページの ID になる。
           x-used-by:
             - 生成で、種別を 1 ページにするときのページの ID にする。
-            - ほかの設計書の参照（`TP-1#layers[lint]` 等）から種別を指す。
+            - 設計で、ほかの設計書の参照（`TP-1#layers[lint]` 等）から種別を指す。
           x-rules:
             - 並びの順に `TL-{番号}` を振る。
             - 新しく追加する要素には、既にある番号の最大の次を振る。
@@ -93,7 +93,7 @@ properties:
           type: string
           title: 種別
           x-used-by:
-            - テストのレベル（単体・結合・E2E・lint）とテストの置き場所を対応させる。
+            - テストで、テストのレベル（単体・結合・E2E・lint）とテストの置き場所を対応させる。
             - 生成で、節の見出しにする。
           enum:
           - 非機能要件テスト
@@ -109,13 +109,13 @@ properties:
           title: 説明
           description: 使用するツールと実行の方式。
           x-used-by:
-            - テストを作るときに、使うツールと実行の方式を参照する。
+            - テストで、使用するツールと実行の方式を参照する。
         prerequisites:
           type: array
           title: 前提
           description: 種別に固有の前提（起動しておくもの・Mock の状況・誤実行を防ぐフラグ）。
           x-used-by:
-            - 種別のテストを実行する前に、起動しておくもの・Mock・フラグを揃える。
+            - 実行で、種別のテストを実行する前に、起動しておくもの・Mock・フラグを揃える。
           x-rules:
             - 料金・副作用のある種別は必ず記載する。
           x-shape: list
@@ -126,13 +126,13 @@ properties:
           title: 全件実行
           description: 1 コマンドのコードブロック（`bash`）。
           x-used-by:
-            - 実装・テスト作成の後に、全件を実行するコマンドにする。
+            - 実行で、実装・テスト作成の後に全件を実行するコマンドにする。
             - レビューで、置かれたテストのログが同じコマンドの出力かを照合する。
         run_one:
           type: object
           title: 個別実行
           x-used-by:
-            - 失敗したテストだけを実行し直すコマンドにする。
+            - 実行で、失敗したテストだけを実行し直すコマンドにする。
           additionalProperties: false
           required:
           - label
@@ -149,45 +149,45 @@ properties:
               title: コマンド
               description: プレースホルダの形式（`{シナリオファイルパス}`）の 1 コマンドのコードブロック。
               x-used-by:
-                - 失敗したテストだけを実行し直すときに、プレースホルダを置き換えて実行する。
+                - 実行で、失敗したテストだけを実行し直すときにプレースホルダを置き換えて実行する。
         carry_over:
           $ref: common.schema.yaml#/$defs/markdown
           title: セッションを跨いで実行する形式
           description: E2E テストだけが持つ。結果と状態を配置するフォルダ（`RUN_DIR`）と、その中のファイルの名前を記載する。
           x-used-by:
-            - E2E を実行するときに、結果と状態を配置するフォルダとファイルを決める。
+            - 実行で、E2E の結果と状態を配置するフォルダとファイルを決める。
         monitoring:
           $ref: common.schema.yaml#/$defs/markdown
           title: 実行中の進行の監視
           description: E2E テストだけが持つ。
           x-used-by:
-            - E2E の実行中に、進行を確認する方法にする。
+            - 実行で、E2E の実行中に進行を確認する方法にする。
         abort:
           $ref: common.schema.yaml#/$defs/markdown
           title: 実行の中断
           description: 中断の仕方。E2E テストは合図ファイル（`$RUN_DIR/abort`）。
           x-used-by:
-            - 実行を中断するときの手順にする。
+            - 実行で、実行を中断するときの手順にする。
         duration:
           type: string
           title: 所要時間の目安
           x-used-by:
-            - 実行を待つ時間と、ほかの全件実行と重ねないかの判断にする。
+            - 実行で、実行を待つ時間と、ほかの全件実行と重ねないかを判断する。
         parallel:
           type: boolean
           title: 並列にできる
           x-used-by:
-            - ほかの作業の全件実行と同時に流してよいかの判断にする。
+            - 実行で、ほかの作業の全件実行と同時に流してよいかを判断する。
         external_cost:
           type: string
           title: 外部への依存と費用
           x-used-by:
-            - 実行の前に、外部への依存と費用の確認が要るかを判断する。
+            - 実行で、実行の前に外部への依存と費用の確認が要るかを判断する。
         results:
           type: string
           title: 結果の配置場所
           x-used-by:
-            - 実行した後に、結果のログを探す場所にする。
+            - 実行で、実行した後に結果のログを探す場所にする。
         notes:
           $ref: common.schema.yaml#/$defs/notes
   refs:

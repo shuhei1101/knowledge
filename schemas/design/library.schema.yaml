@@ -45,7 +45,7 @@ properties:
     type: string
     title: 種類
     x-used-by:
-      - 依存の定義（言語のパッケージ・CLI・CDN）のどこに入れるかを決める。
+      - 実装で、依存の定義（言語のパッケージ・CLI・CDN）のどこに入れるかを決める。
     enum:
     - ライブラリ
     - フレームワーク
@@ -59,7 +59,7 @@ properties:
     title: 識別子
     description: パッケージの識別子（purl）。
     x-used-by:
-      - 脆弱性の情報とライセンスを引く識別子にする。
+      - 保守で、脆弱性の情報とライセンスを引く識別子にする。
     examples:
       - pkg:pypi/ruamel.yaml
   supplier:
@@ -89,7 +89,7 @@ properties:
     title: 使用箇所
     description: 呼び出す境界層のパス（リポジトリの直下から）。エージェントの手順から呼ぶ CLI は手順を持つドキュメントのパス。
     x-used-by:
-      - ライブラリを上げる・外すときに、直す境界層のファイルを探す。
+      - 保守で、ライブラリを上げる・外すときに修正する境界層のファイルを探す。
     items:
       type: string
   upstream:
@@ -97,14 +97,14 @@ properties:
     title: 上流リポジトリ
     description: GitHub の `owner/repo`。規約『不具合の報告』の上流 Issue の検索がここを参照する。
     x-used-by:
-      - 不具合に当たったときに、上流の Issue を検索する。
+      - 保守で、不具合に当たったときに上流の Issue を検索する。
     pattern: ^[^/\s]+/[^/\s]+$
   verification:
     type: object
     title: 動作確認
     description: 動かして確認したか。
     x-used-by:
-      - 実装の前に、ライブラリを動かして確認済みかを判断する。
+      - 実装で、実装の前にライブラリを動かして確認済みかを判断する。
       - レビューで、確認していないライブラリに理由があるかを確認する。
     x-shape: attributes
     additionalProperties: false
@@ -115,7 +115,7 @@ properties:
         type: string
         title: 状態
         x-used-by:
-          - 実装の前に、動作確認が要るかを判断する。
+          - 実装で、実装の前に動作確認が要るかを判断する。
         enum:
         - 済
         - 未確認
@@ -124,64 +124,71 @@ properties:
         title: 確認日
         description: '`YYYY-MM-DD`。'
         x-used-by:
-          - 確認の記録が古くなっていないかを判断する。
+          - 保守で、確認の記録が古くなっていないかを判断する。
         pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
       detail:
         type: string
         title: 確認内容
         description: 確認した内容か、確認できない理由。
         x-used-by:
-          - 確認していないライブラリを使ってよいかの判断にする。
+          - 実装で、確認していないライブラリを使用してよいかを判断する。
   version:
     type: object
     title: 現在のバージョン情報
     x-used-by:
-      - ライブラリを上げるかを判断する。
+      - 保守で、ライブラリを上げるかを判断する。
     x-heading: 現在のバージョン情報
     x-shape: attributes
     additionalProperties: false
     required:
-    - source
+    - current
     - checked_on
     properties:
+      current:
+        type: string
+        title: バージョン
+        description: 採用しているバージョン。
+        x-used-by:
+          - 保守で、最新版と比べて上げるかを判断する。
+          - 実行で、動作確認したバージョンと実行環境のバージョンを比べる。
       latest:
         type: string
         title: 最新版
         x-used-by:
-          - 依存の定義のバージョンと比べて、上げるかを判断する。
+          - 保守で、採用しているバージョンと比べて上げるかを判断する。
       checked_on:
         type: string
         title: 確認日
         description: 最新バージョンを確認した日（`YYYY-MM-DD`）。
         x-used-by:
-          - 最新版の情報が古くなっていないかを判断する。
+          - 保守で、最新版の情報が古くなっていないかを判断する。
         pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
       source:
         type: string
         title: バージョンの出所
         description: 突き合わせる依存の定義（`uv.lock` / `pyproject.toml` / CDN の URL）。
         x-used-by:
-          - 採用しているバージョンを、依存の定義から引く。
+          - 保守で、採用しているバージョンを突き合わせる依存の定義を引く。
       pinning:
         type: string
         title: バージョンの固定方法
         x-used-by:
-          - 依存を上げるときに、バージョンの指定の書き方にする。
+          - 保守で、依存を上げるときのバージョンの指定の書き方にする。
       support_until:
         type: string
         title: サポート期限
         x-used-by:
-          - サポートが切れる前に上げる作業を計画する。
+          - 計画で、サポートが切れる前に上げる作業を計画する。
       security_until:
         type: string
         title: セキュリティ対応の期限
         x-used-by:
-          - セキュリティ対応が切れる前に上げる作業を計画する。
+          - 計画で、セキュリティ対応が切れる前に上げる作業を計画する。
       lts:
         type: boolean
         title: LTS
         x-used-by:
-          - 上げる先のバージョンを LTS から選ぶ。
+          - 保守で、上げる先のバージョンを LTS から選ぶ。
   license:
     type: string
     title: ライセンス
@@ -192,18 +199,18 @@ properties:
     type: string
     title: 公式 URL
     x-used-by:
-      - 仕様を確かめるときに、公式のページを開く。
+      - 実装で、仕様を確認するときに公式のページを開く。
   docs_url:
     type: string
     title: 公式ドキュメント
     description: API リファレンスの URL。
     x-used-by:
-      - 仕様を確かめるときに、API リファレンスを開く。
+      - 実装で、仕様を確認するときに API リファレンスを開く。
   selection:
     type: object
     title: 選定の記録
     x-used-by:
-      - 置き換えを検討するときに、前に比べた候補と理由を参照する。
+      - 設計で、置き換えを検討するときに前に比べた候補と理由を参照する。
     x-heading: 選定の記録
     additionalProperties: false
     properties:
@@ -211,7 +218,7 @@ properties:
         $ref: common.schema.yaml#/$defs/markdown
         title: 比べた候補
         x-used-by:
-          - 置き換えを検討するときに、前に比べた候補を参照する。
+          - 設計で、置き換えを検討するときに前に比べた候補を参照する。
       decision:
         $ref: common.schema.yaml#/$defs/markdown
         title: 決めた理由
@@ -227,7 +234,7 @@ properties:
     title: インストール手順
     description: バージョンを固定したコマンドと、追加の設定（コードブロック）。
     x-used-by:
-      - 環境を作るときに、ライブラリを入れるコマンドにする。
+      - 実行で、環境を作るときにライブラリを入れるコマンドにする。
     x-heading: インストール手順
   catalogs:
     type: array
@@ -257,7 +264,7 @@ properties:
           title: バージョン
           description: 一覧を作ったバージョン。
           x-used-by:
-            - ライブラリを上げたときに、一覧を作り直すかを判断する。
+            - 保守で、ライブラリを上げたときに一覧を作り直すかを判断する。
         entries:
           type: array
           title: 対象
@@ -281,7 +288,7 @@ properties:
                 description: 対象の名前（関数・コンポーネント・コマンド 等）。
                 x-used-by:
                   - 実装で、呼ぶ関数・コンポーネント・コマンドの名前にする。
-                  - ほかの設計書の参照から対象を指す。
+                  - 設計で、ほかの設計書の参照から対象を指す。
               kind:
                 type: string
                 title: 種別
@@ -470,7 +477,7 @@ properties:
     type: array
     title: 利用上限
     x-used-by:
-      - 非機能要件で、利用上限の値の出所にする。
+      - 設計で、非機能要件の利用上限の値の出所にする。
       - 実装で、上限に達したときの処理にする。
     x-heading: 利用上限
     x-shape: table
@@ -537,13 +544,13 @@ properties:
           title: 発生日
           description: 事象を確認した日（`YYYY-MM-DD`）。再確認して続いていたら更新する。
           x-used-by:
-            - 事象が今も続いているかを確かめ直す時期を判断する。
+            - 保守で、事象が今も続いているかを確認し直す時期を判断する。
           pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
         state:
           type: string
           title: 状態
           x-used-by:
-            - 回避策を入れたままにするかを判断する。
+            - 保守で、回避策を入れたままにするかを判断する。
           enum:
           - 未解決
           - 回避策あり
@@ -591,7 +598,7 @@ properties:
                 title: 結果
                 description: 得られるものと、本来やりたかったことからのずれ。
                 x-used-by:
-                  - 回避策を選ぶときに、得られるものとずれを比べる。
+                  - 実装で、回避策を選ぶときに得られるものとずれを比べる。
               recommended:
                 type: boolean
                 title: 推奨
@@ -603,13 +610,13 @@ properties:
           title: 上流の Issue
           description: 上流の Issue の URL。
           x-used-by:
-            - 上流で解消したかを確かめる先にする。
+            - 保守で、上流で解消したかを確認する先にする。
         fixed_in:
           type: string
           title: 解消版
           description: 解消したバージョン。達したら回避策を削除する候補になる。
           x-used-by:
-            - 解消した版へ上げた後に、回避策を外す。
+            - 保守で、解消した版へ上げた後に回避策を外す。
         refs:
           type: array
           title: 関連
@@ -671,6 +678,7 @@ examples:
     date: '2026-07-24'
     detail: 円形の選択とプレビューを最小のコードで動かした
   version:
+    current: 11.0.5
     latest: 11.0.5
     checked_on: '2026-07-24'
     source: package.json
