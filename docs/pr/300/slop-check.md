@@ -41,8 +41,10 @@
 
 | 検査 | 結果 | 補足 |
 | --- | --- | --- |
-| ruff check・ruff format --check・pyright | ✅ | 違反 0 件（pyright の warning 10 件は作業 PR が変えていないファイル）<br>`テスト結果/20261112223744_ab66309_lint.log` |
+| ruff check・ruff format --check・pyright | ✅ | 違反 0 件（pyright の warning 10 件は作業 PR が変えていないファイル）<br>`テスト結果/20261112224354_a1528bd_lint.log`<br>`テスト結果/20261112223744_ab66309_lint.log` |
 
 ### 結合
 
-なし
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| [tests/integration/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/develop/tests/integration/slop-check/test_slop_check.py) | 全実行 | 変更 | ✅ | `test_normal_when_mcp_tool`・`test_normal_when_tool_not_target` のツール名を project-index の完全名にした。10 テスト pass<br>`テスト結果/20261112224354_a1528bd_結合テスト.log` |
