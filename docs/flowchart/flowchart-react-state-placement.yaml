@@ -37,16 +37,16 @@ sources:
     note: Context と useReducer の組み合わせ
   - title: Does TanStack Query replace client state?
     url: https://tanstack.com/query/latest/docs/framework/react/guides/does-this-replace-client-state
-    note: サーバーのデータは TanStack Query に置く
+    note: サーバーのデータは TanStack Query に配置する
   - title: Working with Zustand
     url: https://tkdodo.eu/blog/working-with-zustand
-    note: store を公開せず、カスタム hook と atomic selector で使う
+    note: store を公開せず、カスタム hook と atomic selector で使用する
 items:
   - id: overview
     name: 概要
     body: |-
-      React のフロントエンドで、新しい値をどこに置くかを判定する。
-      React の外のシステムと同期するときだけ `useEffect` を使う（[useEffect](id:react-state-effect)）。
+      React のフロントエンドで、新しい値をどこに配置するかを判定する。
+      React の外のシステムと同期するときだけ `useEffect` を使用する（[useEffect](id:react-state-effect)）。
   - id: react-state-placement-flow-01
     group: React の状態の置き場所 判定フローチャート
     name: 判定フロー
@@ -56,12 +56,12 @@ items:
       ```json
       {
         "title": "React の状態の置き場所",
-        "scope": "React のフロントエンドで新しい値の置き場所を決めるとき",
+        "scope": "React のフロントエンドで新しい値の配置先を決めるとき",
         "updated": "2026-11-06",
         "width": 1768,
         "height": 2108,
         "nodes": [
-          {"id": "start", "kind": "start", "x": 824, "y": 24, "w": 120, "h": 120, "name": "新しい値の置き場所を決めたい"},
+          {"id": "start", "kind": "start", "x": 824, "y": 24, "w": 120, "h": 120, "name": "新しい値の配置先を決めたい"},
           {"id": "q0", "kind": "question", "x": 744, "y": 200, "w": 280, "h": 164, "name": "props・既存の state から計算できるか"},
           {"id": "r1", "kind": "result", "x": 1174, "y": 246, "w": 240, "h": 72, "name": "state にしない。描画中に計算する"},
           {"id": "q1", "kind": "question", "x": 744, "y": 420, "w": 280, "h": 124, "name": "サーバーのデータか"},
@@ -74,11 +74,11 @@ items:
           {"id": "q4", "kind": "question", "x": 334, "y": 1040, "w": 280, "h": 124, "name": "項目が多い、または検証が複雑か"},
           {"id": "r4", "kind": "result", "x": 24, "y": 1066, "w": 240, "h": 72, "name": "React Hook Form + Zod"},
           {"id": "r5", "kind": "result", "x": 354, "y": 1274, "w": 240, "h": 56, "name": "useState"},
-          {"id": "q5", "kind": "question", "x": 744, "y": 1220, "w": 280, "h": 164, "name": "使うのは 1 コンポーネントだけか"},
+          {"id": "q5", "kind": "question", "x": 744, "y": 1220, "w": 280, "h": 164, "name": "使用するのは 1 コンポーネントだけか"},
           {"id": "q6", "kind": "question", "x": 1154, "y": 1240, "w": 280, "h": 124, "name": "複数の値が連動するか"},
           {"id": "r6", "kind": "result", "x": 1504, "y": 1274, "w": 240, "h": 56, "name": "useReducer"},
           {"id": "r5-2", "kind": "result", "x": 1174, "y": 1512, "w": 240, "h": 56, "name": "useState"},
-          {"id": "q7", "kind": "question", "x": 704, "y": 1440, "w": 360, "h": 200, "name": "近い親に持ち上げて props か children で渡せるか"},
+          {"id": "q7", "kind": "question", "x": 704, "y": 1440, "w": 360, "h": 200, "name": "近い親に持ち上げて props か children で指定できるか"},
           {"id": "r7", "kind": "result", "x": 354, "y": 1512, "w": 240, "h": 56, "name": "親へ持ち上げる"},
           {"id": "q8", "kind": "question", "x": 684, "y": 1696, "w": 400, "h": 240, "name": "頻繁に更新される・一部だけ購読したい・React の外から参照する、のどれかか"},
           {"id": "r8", "kind": "result", "x": 1174, "y": 1788, "w": 240, "h": 56, "name": "Zustand ※3"},
@@ -113,26 +113,26 @@ items:
       <!-- /flow -->
   - id: react-state-placement-flow-02
     group: React の状態の置き場所 判定フローチャート
-    name: ※1 URL に置く値
+    name: ※1 URL に配置する値
     body: |-
-      - ※1 URL に置く値: タブ・フィルタ・ソート・ページ・選択中の ID。
+      - ※1 URL に配置する値: タブ・フィルタ・ソート・ページ・選択中の ID。
         個人情報・フォームの入力中の値・読み込み中とエラーの表示・スクロール位置は、URL に出さない
   - id: react-state-placement-flow-05
     group: React の状態の置き場所 判定フローチャート
     name: ※2 戻したい値
     body: |-
-      - ※2 戻したい値: 戻る・別の画面からリンクで入り直す・再読み込みの後に戻したい値（スクロール位置・最後のタブや絞り込み・端末ごとの好み）。
+      - ※2 戻したい値: 戻る・別の画面からリンクで再度入る・再読み込みの後に戻したい値（スクロール位置・最後のタブや絞り込み・端末ごとの好み）。
         スクロール位置は TanStack Router の `scrollRestoration` で戻す（[URL の状態](id:react-state-url-state#scroll-restoration-01)）
   - id: react-state-placement-flow-03
     group: React の状態の置き場所 判定フローチャート
-    name: ※3 Zustand の使い方
+    name: ※3 Zustand の使用方法
     body: |-
-      - ※3 Zustand の使い方: store は公開せず、カスタム hook だけを export する。
+      - ※3 Zustand の使用方法: store は公開せず、カスタム hook だけを export する。
         selector で必要な値だけを購読し、actions は state と分ける。
-        永続化は `persist` を使い、保存先（sessionStorage・localStorage）は [画面の状態の保持先](id:flowchart-screen-state-retention) の結果に合わせる。
+        永続化は `persist` を使用し、保存先（sessionStorage・localStorage）は [画面の状態の保持先](id:flowchart-screen-state-retention) の結果に合わせる。
         サーバーのデータとフォームの値は入れない。
-        画面をまたぐ store は `shared/stores/` に置く
+        画面をまたぐ store は `shared/stores/` に配置する
   - id: react-state-placement-flow-04
     group: React の状態の置き場所 判定フローチャート
-    name: ※4 Context の使い方
-    body: "- ※4 Context の使い方: 1 つの Context は 1 つの責務にする。\n  Provider と同じファイルに `use{Name}` を export し、Provider の外で呼んだら throw する。\n  SPA ではルートの上に置いた Provider がページを移っても消えないので、ページをまたぐだけなら Context で足りる"
+    name: ※4 Context の使用方法
+    body: "- ※4 Context の使用方法: 1 つの Context は 1 つの責務にする。\n  Provider と同じファイルに `use{Name}` を export し、Provider の外で呼んだら throw する。\n  SPA ではルートの上に配置した Provider がページを移っても消えないので、ページをまたぐだけなら Context で足りる"
