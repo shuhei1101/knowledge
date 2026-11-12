@@ -71,8 +71,8 @@ tags:
   - name: action:集計
 status: current
 visibility: internal
-rev: 12
-last_reviewed: '2026-11-06'
+rev: 13
+last_reviewed: '2026-11-12'
 related:
   - to: claude-plugin
     type: references
@@ -386,3 +386,9 @@ items:
       | claude-plugin の `no-version-01` | プラグインの manifest に version を配置しない | `config-file-05` の `version` は設定ファイルのもの。プラグインの manifest には適用しない |
 
       <!-- /table -->
+  - id: config-file-09
+    group: 設定ファイル
+    name: 後から引数が付きうる値はオブジェクトにする
+    body: |-
+      - 設定ファイル・スキーマ・マーカーの引数は、拡張性を最優先に設計する
+      - 後から引数が付きうる値は、今は値が 1 つでも文字列にせず、キーを追加できるオブジェクトにする
