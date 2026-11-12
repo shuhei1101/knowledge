@@ -5,7 +5,7 @@ description: |-
   データの設計書のオブジェクトを、テーブル・カラム・制約・インデックスとして保存する DB 設計のレイヤー。
 x-rules:
   - 1 ファイル = 分類 1 つにする。
-  - 項目の意味・一意の範囲・状態の遷移はデータの設計書に従い、この設計書には記載しない。
+  - '`source` を持つテーブル・カラムの項目の意味・一意の範囲・状態の遷移はデータの設計書に従い、`description`・`notes` には DB の都合（正規化・型の選び方・制約の理由）だけを記載する。'
   - 全テーブルの一覧と全体図は、各分類のテーブルから横断の一覧として生成する。
 x-kind: er
 x-folder: docs/er
@@ -99,13 +99,14 @@ properties:
           x-used-by:
             - 生成で、節の見出しにする。
         source:
-          type: string
+          $ref: common.schema.yaml#/$defs/ref
           title: 保存するデータ
-          description: このテーブルが保存する、データの設計書の `{オブジェクトの名前}.{キー}`。オブジェクト全体を保存するときはオブジェクトの名前だけ。
+          description: このテーブルが保存する、データの設計書のキー（`{ID}#fields[{キー}]`）。オブジェクト全体を保存するときは `{ID}#`。
           x-used-by:
+            - 検査で、指すデータの設計書とキーが実在するかを確認する。
             - レビューで、データの設計書のどのキーを保存するかを辿り、保存しないキーが無いかを確認する。
           examples:
-            - 動画.segments[]
+            - DATA-1#fields[segments[]]
         datastore:
           type: string
           title: データストア
@@ -195,13 +196,14 @@ properties:
                 x-used-by:
                   - 生成で、表の論理名にする。
               source:
-                type: string
+                $ref: common.schema.yaml#/$defs/ref
                 title: 保存するキー
-                description: このカラムが保存する、データの設計書の `{オブジェクトの名前}.{キー}`。JSON の列は、入れるキーの親。
+                description: このカラムが保存する、データの設計書のキー（`{ID}#fields[{キー}]`）。JSON の列は、入れるキーの親。
                 x-used-by:
+                  - 検査で、指すデータの設計書とキーが実在するかを確認する。
                   - レビューで、データの設計書のキーと型・必須・一意の範囲が合うかを確認する。
                 examples:
-                  - 動画.segments[].artifacts[]
+                  - DATA-1#fields[segments[].artifacts[]]
               type:
                 type: string
                 title: 型
@@ -427,7 +429,7 @@ examples:
   tables:
   - name: tasks
     title: タスク
-    source: タスク
+    source: DATA-1#
     datastore: PostgreSQL
     summary: ユーザーが管理するタスク
     primary_key: id
@@ -453,7 +455,7 @@ examples:
       description: 所有ユーザー
     - name: title
       title: タイトル
-      source: タスク.title
+      source: DATA-1#fields[title]
       type: varchar(200)
       not_null: true
       check: 1〜200 文字
@@ -474,7 +476,7 @@ examples:
       notes: ユーザー別の一覧用
   - name: comments
     title: コメント
-    source: タスク.comments[]
+    source: DATA-1#fields[comments[]]
     datastore: PostgreSQL
     summary: タスクへのコメント
     primary_key: id

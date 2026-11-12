@@ -139,13 +139,14 @@ properties:
           examples:
             - セグメントの中
         ref:
-          type: string
+          $ref: common.schema.yaml#/$defs/ref
           title: 参照先
-          description: '`type` が `ref` のときの参照先の `{オブジェクトの名前}.{キー}`。'
+          description: '`type` が `ref` のときの参照先のデータの設計書のキー（`{ID}#fields[{キー}]`）。同じオブジェクトの中は `#fields[{キー}]`。'
           x-used-by:
+            - 検査で、指すデータの設計書とキーが実在するかを確認する。
             - 設計で、ER 図の設計書の外部キーにする。
           examples:
-            - 台本.id
+            - DATA-2#fields[id]
   keys:
     type: array
     title: 複合の鍵
@@ -380,7 +381,7 @@ examples:
     type: ref
     description: 元にした台本。台本を削除すると空になる
     unique: 値があるものの中
-    ref: 台本.id
+    ref: DATA-2#fields[id]
   - key: segments[]
     title: セグメント
     type: array
@@ -391,7 +392,7 @@ examples:
     required: true
     description: 中身を持つセグメント
     unique: 全体
-    ref: セグメント.id
+    ref: DATA-3#fields[id]
   - key: segments[].artifacts[]
     title: 成果物
     type: array
