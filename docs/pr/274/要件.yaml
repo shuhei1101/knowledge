@@ -1,0 +1,51 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: dev-docs.yaml へ足すフォルダ構成の行と、新しい設計書が全ての文書の検査の対象に入る。シナリオの流れは変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: run_only
+    detail: フォルダ構成の設計書が検索の対象に入る。シナリオの流れは変わらない
+    depends_on: []
+docs:
+  - page: docs/layout/LAY-72-1.yaml
+    new: true
+    change: knowledge のフォルダ構成の設計書を、テンプレート『フォルダ構成』の書式（entries[] の入れ子・gitignore[]・generated_from・content_types）で作る。ARCH-72-1 の repository.layout と MOD-72-1・MOD-148-1 の directory の内容を移す
+    status: todo
+  - page: docs/layout/index.yaml
+    new: true
+    change: フォルダ構成のフォルダの目次を作り、README.md を生成する
+    status: todo
+  - page: docs/index.yaml
+    new: false
+    change: layout/ の行を追加する
+    status: todo
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: repository.layout を除く（内容は LAY-72-1 へ移す）
+    status: todo
+  - page: docs/module/MOD-72-1.yaml
+    new: false
+    change: directory を除く（ツリーは LAY-72-1 の scripts/ のエントリへ移す）
+    status: todo
+  - page: docs/module/MOD-148-1.yaml
+    new: false
+    change: directory を除く（ツリーは LAY-72-1 の plugins/slop-check/・tests/ のエントリへ移す）
+    status: todo
+  - page: schemas/layout.schema.yaml
+    new: true
+    change: AI Monitor の配布物のフォルダ構成のスキーマのコピーを置き、LAY-72-1 を検査できるようにする
+    status: todo
+  - page: dev-docs.yaml
+    new: false
+    change: documents[] にフォルダ構成（layout）の行を追加する
+    status: todo
+scope_out:
+  - item: テンプレートのレビューの観点（規約『フォルダ構成の切り方とレビュー』）で見つかったフォルダ構成の問題の対処
+    reason: Issue の決まったことで、問題は別の Issue で対処する。見つかった問題はモジュール構成設計の段で起票し、この行を問題ごとの行へ分ける
+    plan: to_file
+  - item: schemas/ の AI Monitor の配布物のコピーのうち layout 以外（architecture・module・files のスキーマから repository.layout・directory を除く変更など）の追従
+    reason: AI Monitor v0.4.0 の配布物へ追従する Issue の範囲。この PR は設計書からキーを除くだけで、今のコピーのスキーマでも検査を通る。layout のコピーだけを先に置くかは判断が分かれるため、レビューで確定する（要件.md の未確定）
+    plan: to_file
