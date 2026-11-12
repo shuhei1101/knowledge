@@ -2,7 +2,7 @@
 id: claude-hook
 kind: rule
 name: フック作成ガイド
-description: フックをスクリプトとして作る決まりと、Bash コマンドを一度だけ止めるワンタイムトークンの使用方法を定め、Claude Code のフックを作る・修正するときに参照する。
+description: フックをスクリプトとして作る決まり、PreToolUse のフックの出力に記載する permissionDecision と、Bash コマンドを一度だけ止めるワンタイムトークンの使用方法を定め、Claude Code のフックを作る・修正するときに参照する。
 tags:
   - name: scope:claude
   - name: topic:naming
@@ -23,10 +23,12 @@ tags:
   - name: tool:claude-code
   - name: tool:mcp
   - name: action:作成
+  - name: topic:権限
+  - name: action:出力
 status: current
 visibility: internal
-rev: 9
-last_reviewed: '2026-11-05'
+rev: 10
+last_reviewed: '2026-11-12'
 sources:
   - title: "Claude Code: Hooks reference"
     url: https://code.claude.com/docs/en/hooks
@@ -73,3 +75,39 @@ items:
       - トークン命名規約:
         - フックごとに一意のトークンファイル名を使う。
         - トークン名に `session_id` を含める。
+  - id: pretooluse-output-01
+    group: PreToolUse の出力
+    name: permissionDecision の記載
+    body: |-
+      PreToolUse のフックが JSON を出力するときは、`hookSpecificOutput` に `hookEventName` と `permissionDecision`（`allow`・`deny`・`ask`・`defer`）を記載する。
+      `updatedInput` を返却するときは `permissionDecision` を省略しない。
+
+      ```json
+      {
+        "hookSpecificOutput": {
+          "hookEventName": "PreToolUse",
+          "permissionDecision": "allow",
+          "updatedInput": { "command": "..." }
+        }
+      }
+      ```
+  - id: pretooluse-output-02
+    group: PreToolUse の出力
+    name: permissionDecision の選び方
+    body: |-
+      <!-- table: data -->
+
+      | フックの処理 | 出力 |
+      | --- | --- |
+      | 自分の MCP のツールの入力に値を追加するだけ | `permissionDecision: allow` |
+      | 利用者に確認させる | `permissionDecision: ask` |
+      | 呼び出しを止める | `permissionDecision: deny` と、理由を `permissionDecisionReason` |
+      | 許可・拒否を判断しない | 出力なしで終了コード 0 |
+
+      <!-- /table -->
+
+      `allow` にしても、設定の `deny`・`ask` のルールは評価される。
+  - id: pretooluse-output-03
+    group: PreToolUse の出力
+    name: 最上位の decision を使用しない
+    body: PreToolUse では、最上位の `decision`・`reason` を使用しない。
