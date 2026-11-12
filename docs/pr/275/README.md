@@ -1,0 +1,1 @@
+# 設計書のテンプレート（agent・mcp_server・agent_flow・launch・llm_call・evaluation・eval_criterion・eval_case）を schemas/design に追加する
