@@ -339,7 +339,7 @@ functions:
       type: Iterator[KeyRow]
       description: キーの行
     process: |-
-      1. `properties` のキーごとに、`$ref` を引いた先に、キーの側の `title`・`description`・`examples`・`x-rules`・`x-bad-examples` を重ねる（`$ref` を解決した先がさらに `$ref` を持てば、その解決器で続けて引く）
+      1. `properties` のキーごとに、`$ref` を引いた先に、キーの側の `title`・`description`・`examples`・`x-rules`・`x-bad-examples`・`x-used-by` を重ねる（`$ref` を解決した先がさらに `$ref` を持てば、その解決器で続けて引く）
       2. 親の `required` に名前があれば `required` を真にした行を返す
       3. 子へ潜る前に、そのキーの `$ref` と、配列のときは `items` の `$ref` を解決した先を集める。先は `resolver.lookup` が返した `resolved.contents` の `id()` で、`$ref` がさらに `$ref` を持つときは引いた全ての先を集める。そのために `_resolve` は、重ねた dict と解決器に加えて、引いた先の `id()` の集合（`$ref` が無ければ空）も返す
       4. 集めた先が 1 つでも `ancestors` にあれば（再帰する `$ref`）、行だけを返して子はたどらない
@@ -348,9 +348,9 @@ functions:
       - name: test_iter_keys
         case: 正常
         summary: 入れ子と $ref
-        condition: オブジェクトの子・配列の要素の子・`$ref` で `title` だけキーの側にあるキーを持つスキーマ
+        condition: オブジェクトの子・配列の要素の子・`$ref` で `title`・`x-used-by` だけキーの側にあるキーを持つスキーマ
         mock: なし
-        expected: '名前が `a`・`a.b`・`c`・`c[].d` の順で、`$ref` のキーの `title` がキーの側、`description` が解決した先の値'
+        expected: '名前が `a`・`a.b`・`c`・`c[].d` の順で、`$ref` のキーの `title` がキーの側、`description` が解決した先の値、`x-used-by` がキーの側の値'
       - name: test_iter_keys_when_ref_recursive
         case: 正常
         summary: 再帰する $ref
@@ -374,16 +374,16 @@ functions:
       type: str
       description: 表の Markdown
     process: |-
-      1. 列を `名前`・`title`・`型`・`必須`・`選択肢`・`制約`・`description`・`examples` にする
-      2. `型` は `type`（配列なら要素を ` / ` でつなぐ。無ければ `anyOf`・`oneOf` の要素の `type` を ` / ` でつなぐ）、`制約` は `CONSTRAINT_KEYS` の順に `{キー}: {値}`（値はインラインコード）を `, ` でつなぐ。`選択肢`（`enum`）と `examples` は要素ごとにインラインコードにして ` / ` でつなぐ
+      1. 列を `名前`・`title`・`型`・`必須`・`選択肢`・`制約`・`description`・`使用先`・`examples` にする
+      2. `型` は `type`（配列なら要素を ` / ` でつなぐ。無ければ `anyOf`・`oneOf` の要素の `type` を ` / ` でつなぐ）、`制約` は `CONSTRAINT_KEYS` の順に `{キー}: {値}`（値はインラインコード）を `, ` でつなぐ。`選択肢`（`enum`）と `examples` は要素ごとにインラインコードにして ` / ` でつなぐ。`使用先` は `x-used-by` の文字列を `<br>` でつなぐ（無ければ値の無いセル）
       3. 各セルをセルの書き方にする（セルの書き方）
     unit_tests:
       - name: test_render_key_table
         case: 正常
         summary: 列と制約と型
-        condition: '`type: [string, "null"]`・`pattern`・`minLength`・`enum`・`examples` 2 件を持つキー、`anyOf` だけを持つキー'
+        condition: '`type: [string, "null"]`・`pattern`・`minLength`・`enum`・`examples` 2 件を持つキー、`anyOf` だけを持つキー。`x-used-by` を 2 件持つキーと持たないキー'
         mock: なし
-        expected: '型が `string / null` と `anyOf` の要素の型を ` / ` でつないだ値、制約が `` pattern: `…`, minLength: `…` `` の順、`選択肢`・`examples` が要素ごとのインラインコードの行'
+        expected: '型が `string / null` と `anyOf` の要素の型を ` / ` でつないだ値、制約が `` pattern: `…`, minLength: `…` `` の順、`選択肢`・`examples` が要素ごとのインラインコードの行。`使用先` が 2 件を `<br>` でつないだ値と `-`'
     refs:
       - IF-201-1#constraints[キーの表]
   - name: _render_key_rules
