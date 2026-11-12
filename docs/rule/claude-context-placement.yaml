@@ -2,7 +2,7 @@
 id: claude-context-placement
 kind: rule
 name: 注入文の書き分けと書き方
-description: SessionStart の additionalContext・MCP の instructions・ツールの description・CLAUDE.md・スキル・フックの書き分けと注入文の記載方法を定め、エージェントに参照させる文を記載するときに参照する。
+description: SessionStart の additionalContext・MCP の instructions・ツールの description・CLAUDE.md・エージェントフロー・スキル・フックの書き分けと注入文の記載方法を定め、エージェントに参照させる文を記載するときに参照する。
 tags:
   - name: scope:claude
   - name: topic:コンテキスト
@@ -60,7 +60,7 @@ items:
     name: 概要
     body: |-
       エージェントに参照させる文の記載先と、その書き方の決まり。
-      記載先は SessionStart の `additionalContext`・MCP の instructions・ツールの description・CLAUDE.md・スキル・フック。
+      記載先は SessionStart の `additionalContext`・MCP の instructions・ツールの description・CLAUDE.md・エージェントフロー・スキル・フック。
       文を置くファイル（`content/prompts/` の YAML）は [プロンプトファイル](id:prompt-file) が決める。
   - id: placement-01
     group: 何をどこに書くか
