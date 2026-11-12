@@ -613,9 +613,9 @@ functions:
       - name: test_build_validators_when_design_schema
         case: 正常
         summary: 設計書のスキーマの $ref を同じフォルダで解く
-        condition: '`schemas/design/scenario.schema.yaml` が `common.schema.yaml#/$defs/id` を `$ref` で指し、`schemas/design/common.schema.yaml` を持ち、`schemas/` の直下に `common.schema.yaml` を持たない一時フォルダ'
+        condition: '`schemas/design/scenario.schema.yaml` が `common.schema.yaml#/$defs/id` を `$ref` で指し、`schemas/design/common.schema.yaml`（`$defs/id` の `pattern` が `^SC-\d+-\d+$`）と、`$defs/id` の `pattern` が違う（`^X-\d+$`）`schemas/common.schema.yaml` を持つ一時フォルダ'
         mock: なし（一時ディレクトリ）
-        expected: 値が検査器で、`$defs/id` の `pattern` に合わない `id` の文書に誤りを返す
+        expected: '値が検査器で、`id: bad` の文書に `schemas/design/common.schema.yaml` の `pattern`（`^SC-\d+-\d+$`）の誤りを返却する'
   - name: check_target
     title: 文書 1 件の検査
     kind: 関数
