@@ -5,7 +5,8 @@ description: |-
   ツールの引数・戻り値・副作用は『インターフェース定義』に、instructions とツールの description の本文はプロンプトファイルに記載する。
 x-rules:
   - 1 ファイル = 1 MCP サーバーにする。
-  - instructions のプロンプトファイルの id は `mcp/{server}/instructions`、ツールの description は `mcp/{server}/tools/{ツールの名前}`（`_` は `-` にする）にし、この設計書には記載しない。
+  - instructions のプロンプトファイルの id は `mcp/{server}/instructions` にし、この設計書には記載しない。
+  - ツールの description のプロンプトファイルの id は `mcp/{server}/tools/{ツールの名前}`（`_` は `-` にする）にし、この設計書には記載しない。
 x-kind: mcp_server
 x-folder: docs/mcp-server
 x-id-prefix: MCP

@@ -1,0 +1,97 @@
+# yaml-language-server: $schema=../../schemas/template.schema.yaml
+id: template-eval-criterion
+kind: template
+name: 'テンプレート: 精度評価の観点'
+description: 精度評価の観点 1 つの、確認の方法・質問・採点の基準・合格の点・タグを記載する書式を定め、精度評価の観点を作る・修正するときに参照する。
+tags:
+  - name: scope:テンプレート
+  - name: topic:精度評価
+    main: true
+  - name: topic:観点
+  - name: topic:テンプレート
+  - name: topic:スキーマ
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      精度評価の観点 1 つの、確認の方法・質問・採点の基準・合格の点・タグを記載するファイル。
+      確認の方法（`method`）ごとに持つキーが変わる。
+  - id: rules-01
+    name: 決まり
+    body: |-
+      - 1 ファイル = 1 つの観点にする。
+      - 観点の id はファイル名（`.yaml` を除いたもの）から導き、ファイルに記載しない。
+      - 観点の id はほかのファイルから指すので、一度決めたら変えない。
+      - 機械で判定できる観点は `rule`、文で基準を記載できる観点は `llm`、人にしか判定できない観点は `human` にする。
+      - `human` の観点は、採点の LLM が採点の基準で点を付けた後、人が出力と LLM の点と理由を参照して点を確定する。
+      - `aspect:` の語彙は、プロジェクトの精度評価の仕組みの設計書に記載する。
+  - id: item-list-01
+    name: 項目
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | title | 表示名 | string | 必須 | - | - | 観点の表示名。 | 実行で、結果の一覧の見出しにする。 | `状態に合う` |
+      | method | 確認の方法 | string | 必須 | `rule` / `llm` / `human` | - | `rule`（判定の関数が合否と理由を返却する）/ `llm`（採点の LLM が採点の基準で点を付ける）/ `human`（採点の LLM の点を人が確定する）。 | 検査で、確認の方法ごとのキーの要否を確認する。<br>実行で、採点の流れを決める。 | - |
+      | tags | タグ | array | 必須 | - | minItems: `1` | 何を確認するかの `aspect:{語彙}` を 1 つ以上と、難しい観点の `difficulty:high`。 | 実行で、タグごとに点を集計する。<br>レビューで、対象に要る `aspect:` が全て付いた観点と、`difficulty:high` の観点が 1 つ以上あるかを確認する。 | `[aspect:状況の判断, difficulty:high]` |
+      | question | 質問 | string | - | - | - | 採点の LLM と人への質問。ケースの値は `{名前}` で入れる。`method` が `llm`・`human` のときは必須。 | 実行で、採点のプロンプトと人の採点の画面の質問にする。 | `{need} が閾値を越えているとき、それを満たす行動を選んでいるか` |
+      | rubric | 採点の基準 | array | - | - | minItems: `5`, maxItems: `5` | 点ごとの採点の基準。`method` が `llm`・`human` のときは必須。 | 実行で、採点のプロンプトの基準にする。 | - |
+      | rubric[].score | 点 | number | 必須 | `0` / `0.25` / `0.5` / `0.75` / `1` | - | この行の点。 | 実行で、採点の結果の値にする。 | - |
+      | rubric[].description | 様子 | string | 必須 | - | - | その点になる出力の様子。ケースの値は `{名前}` で入れる。 | 実行で、採点のプロンプトの基準の文にする。 | `{need} を満たす行動の中で、最も合うものを選んでいる` |
+      | pass | 合格の点 | number | - | `0` / `0.25` / `0.5` / `0.75` / `1` | - | 合格の点。`method` が `llm`・`human` のときは必須。 | 実行で、実行の回数 × 採点の回数の平均と比べて、観点 × ケースの合否を出す。 | - |
+      | check | 判定の関数 | object | - | - | - | `method` が `rule` のときの判定の関数。`method` が `rule` のときは必須。 | 実行で、出力を判定する。 | - |
+      | check.function | 関数 | string | 必須 | - | pattern: `^[A-Za-z_][\w.]*:[A-Za-z_]\w*$` | 判定の関数。コードの配置の `{モジュール}:{関数}`。関数は出力・ケース・`args` を受け、`{pass, reason}` を返却する。 | 実行で、判定の関数を呼ぶ。 | `aituber.evals.checks.mermaid:is_valid` |
+      | check.args | 引数 | object | - | - | - | 関数に指定する引数。 | 実行で、判定の関数に引数を指定する。 | `{field: body}` |
+      | check.gate | 足切り | boolean | - | - | - | `true` なら、不合格の出力はほかの観点で採点しない。記載しなければ `false`。 | 実行で、`rule` の観点を採点の LLM より先に実行し、不合格の出力のほかの観点の採点を止める。 | - |
+
+      <!-- /table -->
+  - id: key-rules-01
+    name: キーごとの決まり
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | 決まり | 悪い例 | 理由 |
+      | --- | --- | --- | --- |
+      | title | 表示名は id と別に、自由に変えてよい。 | - | - |
+      | tags | 語彙に無いタグが要るときは、プロジェクトの語彙に追加してから付ける。 | - | - |
+      | rubric | 5 つの点を全て記載する。 | - | - |
+
+      <!-- /table -->
+  - id: example-sample-01
+    name: 記載例 1
+    body: |-
+      ```yaml
+      title: 状態に合う
+      method: llm
+      tags:
+      - aspect:状況の判断
+      question: '{need} が閾値を越えているとき、それを満たす行動を選んでいるか'
+      rubric:
+      - score: 1
+        description: '{need} を満たす行動の中で、最も合うものを選んでいる'
+      - score: 0.75
+        description: '{need} を満たす行動を選んでいるが、より合う選択肢がある'
+      - score: 0.5
+        description: '{need} をいくらか満たすが、ほかの状態を損ねる行動を選んでいる'
+      - score: 0.25
+        description: '{need} にほとんど関係しない行動を選んでいる'
+      - score: 0
+        description: '{need} を悪化させる行動を選んでいる'
+      pass: 0.75
+      ```
+  - id: example-sample-02
+    name: 記載例 2
+    body: |-
+      ```yaml
+      title: Mermaid の図が描画できる
+      method: rule
+      tags:
+      - aspect:形式
+      check:
+        function: aituber.evals.checks.mermaid:is_valid
+        gate: true
+      ```
