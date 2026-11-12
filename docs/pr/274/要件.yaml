@@ -13,39 +13,72 @@ docs:
   - page: docs/layout/LAY-72-1.yaml
     new: true
     change: knowledge のフォルダ構成の設計書を、テンプレート『フォルダ構成』の書式（entries[] の入れ子・gitignore[]・generated_from・content_types）で作る。ARCH-72-1 の repository.layout と MOD-72-1・MOD-148-1 の directory の内容を移す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:24:49.591649+00:00'
   - page: docs/layout/index.yaml
     new: true
     change: フォルダ構成のフォルダの目次を作り、README.md を生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:24:49.591649+00:00'
   - page: docs/index.yaml
     new: false
     change: layout/ の行を追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:24:49.591649+00:00'
   - page: docs/architecture/ARCH-72-1.yaml
     new: false
     change: repository.layout を除く（内容は LAY-72-1 へ移す）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:24:49.591649+00:00'
   - page: docs/module/MOD-72-1.yaml
     new: false
     change: directory を除く（ツリーは LAY-72-1 の scripts/ のエントリへ移す）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:24:49.591649+00:00'
   - page: docs/module/MOD-148-1.yaml
     new: false
     change: directory を除く（ツリーは LAY-72-1 の plugins/slop-check/・tests/ のエントリへ移す）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:24:49.591649+00:00'
   - page: schemas/layout.schema.yaml
     new: true
     change: AI Monitor の配布物のフォルダ構成のスキーマのコピーを置き、LAY-72-1 を検査できるようにする
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:24:49.591649+00:00'
   - page: dev-docs.yaml
     new: false
     change: documents[] にフォルダ構成（layout）の行を追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:24:49.591649+00:00'
+  - page: schemas/common.schema.yaml
+    change: layout のスキーマが参照する $defs/tags を持つ AI Monitor の develop の配布物のコピーへ更新する（tags の定義の追加だけ）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:24:49.591649+00:00'
 scope_out:
-  - item: テンプレートのレビューの観点（規約『フォルダ構成の切り方とレビュー』）で見つかったフォルダ構成の問題の対処
-    reason: Issue の決まったことで、問題は別の Issue で対処する。見つかった問題はモジュール構成設計の段で起票し、この行を問題ごとの行へ分ける
-    plan: to_file
   - item: schemas/ の AI Monitor の配布物のコピーのうち layout 以外（architecture・module・files のスキーマから repository.layout・directory を除く変更など）の追従
     reason: AI Monitor v0.4.0 の配布物へ追従する Issue の範囲。この PR は設計書からキーを除くだけで、今のコピーのスキーマでも検査を通る。layout のコピーだけを先に置くかは判断が分かれるため、レビューで確定する（要件.md の未確定）
     plan: to_file
+  - item: プラグイン knowledge とプラグイン slop-check の置き場所が分かれている（同じ種類が散る）
+    reason: Issue の決まったことで、見つかった問題は別の Issue で対処する
+    plan: '#278'
+  - item: schemas/ の直下に knowledge の文書のスキーマと AI Monitor の配布物のコピーが混ざっている（種類が混ざる）
+    reason: Issue の決まったことで、見つかった問題は別の Issue で対処する
+    plan: '#279'
+  - item: docs/ の README.md と schemas/ の配布物のコピーを作るコマンドが開発コマンドに無く、generated_from を記載できない（管理しないもの）
+    reason: Issue の決まったことで、見つかった問題は別の Issue で対処する
+    plan: '#280'
+  - item: docs/template/ にスキーマから items を生成するテンプレートと手書きのテンプレートが混ざっている（種類が混ざる・管理しないもの）
+    reason: Issue の決まったことで、見つかった問題は別の Issue で対処する
+    plan: '#281'
+  - item: プラグイン knowledge の hooks/ が空の hooks.json だけを持つ（切りすぎない）
+    reason: Issue の決まったことで、見つかった問題は別の Issue で対処する
+    plan: '#282'
