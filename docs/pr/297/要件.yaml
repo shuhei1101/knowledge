@@ -1,0 +1,29 @@
+use_cases: []
+docs:
+  - page: docs/changelog.yaml
+    new: false
+    change: 全てのバージョンの行の name・body に残る AI slop の単語を、対応表 docs/word-list/word-list-ai-slop.yaml の OK の単語へ修正する（PR へのリンクは変えない。意味が通らない箇所は残す）
+    status: todo
+  - page: docs/guide
+    new: false
+    change: guide-setup-apply-rule-index.yaml・guide-setup-docs-mcp.yaml・guide-setup-import-rule-changes.yaml・guide-setup-install-plugin.yaml に残る AI slop の単語を、対応表の OK の単語へ修正する（意味が通らない箇所は残す）
+    status: todo
+  - page: docs/decision-table
+    new: false
+    change: decision-table-alias-exclusion.yaml・decision-table-dataflow.yaml・decision-table-poc.yaml に残る AI slop の単語を、対応表の OK の単語へ修正する（意味が通らない箇所は残す）
+    status: todo
+  - page: docs/skill/text-review.yaml
+    new: false
+    change: 残る AI slop の単語を、対応表の OK の単語へ修正する（意味が通らない箇所は残す）
+    status: todo
+  - page: docs/checksheet/checksheet-design-change-impact.yaml
+    new: false
+    change: 残る AI slop の単語を、対応表の OK の単語へ修正する（意味が通らない箇所は残す）
+    status: todo
+scope_out:
+  - item: docs/word-list の対応表そのもの
+    reason: NG の単語を値に持つため対象外（起点 Issue の本文）
+    plan: none
+  - item: docs/rule・docs/template と schemas/design・設計書のフォルダに残る AI slop の単語
+    reason: フォルダごとの別の Issue（#260・#261・#262・#263）の範囲
+    plan: '#261'
