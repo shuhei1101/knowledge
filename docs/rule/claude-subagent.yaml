@@ -2,7 +2,7 @@
 id: claude-subagent
 kind: rule
 name: サブエージェント委譲ガイド
-description: スキルのステップをサブエージェントへ委譲するときのマーカー、判断基準、制約を定め、スキルの処理をサブエージェントに委譲するかを決めるときに参照する。
+description: 手順（エージェントフロー・スキル）の中の工程をサブエージェントへ委譲するときのマーカー、判断基準、制約を定め、手順の中の工程をサブエージェントに委譲するかを決めるときに参照する。
 tags:
   - name: scope:claude
   - name: topic:エージェント
@@ -17,13 +17,13 @@ tags:
   - name: action:委譲
 status: current
 visibility: internal
-rev: 4
+rev: 5
 last_reviewed: '2026-11-05'
 items:
   - id: overview
     name: 概要
     body: |-
-      スキル内のステップ処理をサブエージェントに委譲する方法と判断基準。
+      手順（エージェントフロー・スキル）の中の工程をサブエージェントに委譲する方法と判断基準。
   - id: delegation-marker-01
     group: 委譲マーカー
     name: 委譲マーカー
@@ -60,6 +60,9 @@ items:
       | サブエージェントの内部処理もメインで必要                             | メインエージェントで実行する |
 
       <!-- /table -->
+
+      この表は、手順の中の工程を委譲するかを決める。
+      手順そのものをエージェントフロー・サブエージェント・スキルのどれにするかは、判定フローチャート [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice) で決める（手順そのものをサブエージェントにするのはレビューだけ）。
   - id: constraint-caution-01
     group: 制約と注意事項
     name: 戻り値のみが返る

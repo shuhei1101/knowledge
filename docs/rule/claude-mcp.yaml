@@ -74,7 +74,7 @@ tags:
   - name: action:適用
 status: current
 visibility: internal
-rev: 14
+rev: 15
 last_reviewed: '2026-11-06'
 sources:
   - title: "Anthropic: Writing effective tools for agents"
@@ -303,6 +303,10 @@ items:
     body: |-
       - 設定が変わらないプラグイン MCP サーバーは `/reload-plugins` で再接続されないので、反映にはセッション再起動が必要。
         `/mcp` で接続状態を確認する
+  - id: scope-01
+    group: MCP にするか
+    name: MCP にするかの判定
+    body: '- 機能を MCP ツールにするかは、判定フローチャート [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice) で決める'
 related:
   - to: claude-mcp-docs-server
     type: references
