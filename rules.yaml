@@ -235,6 +235,14 @@ rules:
     args:
       operations.id:
         - "re:^LAY-"
+  - rule: docs/flowchart/flowchart-folder-content-type.yaml
+    paths:
+      - "**/docs/layout/*.yaml"
+    tools:
+      - "mcp__*__write_docs"
+    args:
+      operations.id:
+        - "re:^LAY-"
   - rule: docs/rule/html-core-server-rendering.yaml
     paths:
       - "**/templates/**/*.{html,j2}"

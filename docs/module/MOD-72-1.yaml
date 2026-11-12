@@ -2,36 +2,6 @@ id: "MOD-72-1"
 visibility: internal
 title: "検査と変換のスクリプト / scripts"
 lead: dev-docs の validators・converters の約束で動く文書の検査・変換と、CI と手元から全ての文書を検査する CLI・Pages の成果物を作る CLI の、`scripts/` の単一ファイルのスクリプト。
-directory: |-
-  ```
-  scripts/
-  ├── _common.py                  # 文書の YAML の読み込み・項目のパスと行の対応・違反の型・ファイルの並列の読み込み・dev-docs.yaml の読み込み
-  ├── _maid.py                    # maid の在りかの確認と、打ち切りつきの呼び出し
-  ├── _lint.py                    # markdownlint-cli2・textlint・yamllint の在りかの確認と呼び出し
-  ├── knowledge_checks.py         # validators の knowledge-checks（文書の違反の検査）
-  ├── knowledge_checks.py.lock    # knowledge_checks.py の依存のロック（uv lock --script）
-  ├── knowledge_markdown.py       # converters の knowledge-markdown（文書の Markdown への変換）
-  ├── knowledge_markdown.py.lock
-  ├── check_all.py                # 全ての文書の検査（CI と手元の CLI）
-  ├── check_all.py.lock
-  ├── build_pages.py              # Pages の成果物の作成（CI と手元の CLI）
-  ├── build_pages.py.lock
-  ├── build_word_list.py          # 対応表のコピーの作成（手元の CLI）
-  ├── build_word_list.py.lock
-  ├── build_templates.py          # 設計書のテンプレートの生成（手元の CLI）
-  ├── build_templates.py.lock
-  ├── files.yaml                  # scripts/ のファイルの一覧（dev-docs の files の行）
-  └── lint/                       # lint の設定と npm の依存（npm ci --prefix scripts/lint）
-      ├── package.json
-      ├── package-lock.json
-      ├── .markdownlint-cli2.jsonc
-      ├── .textlintrc.json
-      ├── .yamllint.yaml
-      └── no-inline-strong.mjs    # markdownlint のカスタムルール（文中の太字）
-  tests/
-  ├── unit/scripts/               # 1 物理ファイル = 1 テストファイル（test_common.py など）
-  └── integration/scripts/        # 1 インターフェース定義 = 1 テストファイル
-  ```
 diagrams:
   - name: 全体
     diagram: |-

@@ -33,12 +33,13 @@ sources:
     note: プラグインの `.mcp.json`・`hooks/hooks.json`
 status: current
 visibility: internal
-rev: 1
+rev: 2
 items:
   - id: overview
     name: 概要
     body: |-
-      Claude Code のセッションへ MCP・フック・ツールの絞り込みを渡すとき、プラグイン・起動の引数・リポジトリのファイルのどれにするかを判定する。
+      Claude Code のセッションへ MCP・フック・ツールの絞り込みを指定するとき、プラグイン・起動の引数・リポジトリのファイルのどれにするかを判定する。
+      機能を MCP・フックのどれにするかは、判定フローチャート [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice) で決める。
   - id: mcp-hook-delivery-flow-01
     group: MCP・フックの渡し方 判定フローチャート
     name: 判定フロー
@@ -48,17 +49,17 @@ items:
       ```json
       {
         "title": "MCP・フックの渡し方",
-        "scope": "セッションへ MCP・フックを渡すとき",
+        "scope": "セッションへ MCP・フックを指定するとき",
         "updated": "2026-11-03",
         "width": 948,
         "height": 756,
         "nodes": [
-          {"id": "start", "kind": "start", "x": 414, "y": 24, "w": 120, "h": 120, "name": "セッションへ MCP・フックを渡したい"},
-          {"id": "q1", "kind": "question", "x": 334, "y": 200, "w": 280, "h": 164, "name": "起動する場所が決まらないセッションでも使うか ※1"},
+          {"id": "start", "kind": "start", "x": 414, "y": 24, "w": 120, "h": 120, "name": "セッションへ MCP・フックを指定したい"},
+          {"id": "q1", "kind": "question", "x": 334, "y": 200, "w": 280, "h": 164, "name": "起動する場所が決まらないセッションでも使用するか ※1"},
           {"id": "r1", "kind": "result", "x": 684, "y": 254, "w": 240, "h": 56, "name": "プラグインにして配る"},
           {"id": "q2", "kind": "question", "x": 334, "y": 420, "w": 280, "h": 164, "name": "起動する側のプログラムが起動のコマンドを組み立てるか ※2"},
-          {"id": "r2", "kind": "result", "x": 24, "y": 466, "w": 240, "h": 72, "name": "起動の引数で渡す ※3"},
-          {"id": "r3", "kind": "result", "x": 354, "y": 640, "w": 240, "h": 92, "name": "リポジトリに .mcp.json と .claude/settings.json を置く ※4"}
+          {"id": "r2", "kind": "result", "x": 24, "y": 466, "w": 240, "h": 72, "name": "起動の引数で指定する ※3"},
+          {"id": "r3", "kind": "result", "x": 354, "y": 640, "w": 240, "h": 92, "name": "リポジトリに .mcp.json と .claude/settings.json を配置する ※4"}
         ],
         "wires": [
           {"id": "j-start-q1", "from": "start", "to": "q1", "line": "flow", "points": [[474, 144], [474, 200]]},
@@ -75,7 +76,7 @@ items:
     group: MCP・フックの渡し方 判定フローチャート
     name: ※1 起動する場所が決まらないセッション
     body: |-
-      - ※1 起動する場所が決まらないセッション: 手元の任意のフォルダで開くセッションや、プロジェクトを問わず全エージェントが使うもの。
+      - ※1 起動する場所が決まらないセッション: 手元の任意のフォルダで開くセッションや、プロジェクトを問わず全エージェントが使用するもの。
         例: dev-docs・rule-inject
   - id: mcp-hook-delivery-flow-03
     group: MCP・フックの渡し方 判定フローチャート
@@ -92,23 +93,23 @@ items:
     group: MCP・フックの渡し方 判定フローチャート
     name: ※4 リポジトリのファイル
     body: |-
-      - ※4 リポジトリのファイル: 人がリポジトリの中（作業ツリーを含む）で起動するときに使う。
+      - ※4 リポジトリのファイル: 人がリポジトリの中（作業ツリーを含む）で起動するときに使用する。
         `.mcp.json` のサーバーは、`.claude/settings.json` の `enabledMcpjsonServers` で承認しておく
   - id: delivery-target-01
     group: 渡すものごとの置き場所
-    name: 渡すものごとの置き場所の表
+    name: 指定するものごとの配置先の表
     body: |-
       <!-- table: data -->
 
-      | 渡すもの | プラグイン | 起動の引数 | リポジトリのファイル |
+      | 指定するもの | プラグイン | 起動の引数 | リポジトリのファイル |
       | --- | --- | --- | --- |
       | MCP の接続先 | プラグインの `.mcp.json` | `--mcp-config` | `.mcp.json` |
       | フック | プラグインの `hooks/hooks.json` | `--settings` の `hooks` | `.claude/settings.json` の `hooks` |
-      | 使い方の説明・手順 | MCP の `instructions` | MCP の `instructions` | MCP の `instructions` |
+      | 使用方法の説明・手順 | MCP の `instructions` | MCP の `instructions` | MCP の `instructions` |
       | 起動時の処理（サーバーの起動・環境変数の設定・後片付け） | SessionStart のフック | `--settings` の SessionStart のフック | `.claude/settings.json` の SessionStart のフック |
       | ツールの絞り込み | 持てない | `--settings` の `permissions.deny`・`--disallowedTools` | `.claude/settings.json` の `permissions.deny` |
-      | 更新の反映 | バージョンを上げて配り、各端末で更新する | 起動のたびに今のファイルを読む | ブランチの今のファイルを読む |
+      | 更新の反映 | バージョンを上げて配り、各端末で更新する | 起動のたびに今のファイルを読み込む | ブランチの今のファイルを読み込む |
 
       <!-- /table -->
 
-      使い方の説明・手順と起動時の処理の置き場所は、判定フローチャート [エージェントに渡す文・処理の置き場所](id:flowchart-session-context-placement) で決める。
+      使用方法の説明・手順と起動時の処理の配置先は、判定フローチャート [エージェントに渡す文・処理の置き場所](id:flowchart-session-context-placement) で決める。
