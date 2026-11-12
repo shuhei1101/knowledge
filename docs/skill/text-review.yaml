@@ -17,7 +17,7 @@ tags:
   - name: action:点検
 status: current
 visibility: internal
-rev: 3
+rev: 4
 related:
   - to: convention-writing-style
     type: requires
@@ -42,14 +42,14 @@ arguments:
   - name: 範囲
     description: ファイルのパス・フォルダのパス（配下をすべて）・Git のコミットか範囲（変わったファイル）のどれでもよい
 preconditions:
-  - knowledge の規約を dev-docs かファイルで参照できる
+  - knowledge の規約を project-index かファイルで参照できる
 externals:
   - name: 利用者
     exchange: 範囲を受け取り、サマリーを返却する
   - name: Git
     exchange: コミットで変わったファイルの一覧
     when_absent: コミットを指定されなければ呼ばない
-  - name: dev-docs
+  - name: project-index
     exchange: 文章に関わる規約の本文（ID で検索する）
     when_absent: knowledge の規約のファイルを直接読む
   - name: 範囲のファイル
@@ -70,8 +70,8 @@ flow: |-
       { "id": "range", "kind": "script", "x": 170, "y": 100, "w": 220, "h": 56, "name": "範囲をファイルに展開", "sub": "ファイル・フォルダ・コミット" },
       { "id": "any", "kind": "dm", "x": 170, "y": 190, "w": 220, "h": 56, "name": "ファイルがあるか" },
       { "id": "none", "kind": "external", "x": 420, "y": 190, "w": 130, "h": 56, "name": "見つからないと返却する" },
-      { "id": "has", "kind": "dm", "x": 170, "y": 280, "w": 220, "h": 56, "name": "dev-docs があるか" },
-      { "id": "viadd", "kind": "mcp", "x": 20, "y": 380, "w": 220, "h": 56, "name": "規約を dev-docs で参照する", "sub": "search_docs" },
+      { "id": "has", "kind": "dm", "x": 170, "y": 280, "w": 220, "h": 56, "name": "project-index があるか" },
+      { "id": "viadd", "kind": "mcp", "x": 20, "y": 380, "w": 220, "h": 56, "name": "規約を project-index で参照する", "sub": "search_docs" },
       { "id": "direct", "kind": "data", "x": 320, "y": 380, "w": 220, "h": 56, "name": "規約のファイルを参照する" },
       { "id": "scan", "kind": "llm", "x": 170, "y": 480, "w": 220, "h": 56, "name": "すべてを調べる", "sub": "修正する箇所の一覧を作る" },
       { "id": "fix", "kind": "llm", "x": 170, "y": 570, "w": 220, "h": 56, "name": "まとめて修正する", "sub": "一覧が空なら飛ばす" },
@@ -101,13 +101,13 @@ sequence: |-
   <mdmark-sequence>
   {
     "title": "文章を点検して修正する",
-    "scope": "コミットを指定し、dev-docs があるとき",
+    "scope": "コミットを指定し、project-index があるとき",
     "updated": "2026-10-29",
     "participants": [
       { "id": "user", "kind": "external", "name": "利用者" },
       { "id": "skill", "kind": "llm", "name": "スキル" },
       { "id": "git", "kind": "script", "name": "Git" },
-      { "id": "dd", "kind": "mcp", "name": "dev-docs" },
+      { "id": "dd", "kind": "mcp", "name": "project-index" },
       { "id": "fs", "kind": "data", "name": "範囲のファイル" }
     ],
     "steps": [
