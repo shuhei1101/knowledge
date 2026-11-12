@@ -31,7 +31,7 @@ docs:
     status: todo
   - page: docs/template/template-scenario.yaml
     new: false
-    change: 原本のスキーマに追加した `visibility` を、設計書のテンプレート（architecture・dev-command・external-library・interface・layout・module・nonfunctional・scenario・test-procedure）に生成し直す。layout は `tags`・`aliases` も出す
+    change: 原本のスキーマに追加した `visibility` を、設計書の全てのテンプレート（目次を除く）に生成し直す。layout は `tags`・`aliases` も出し、component は最上位の `visibility` を文書の公開範囲にする
     status: done
     updated_by: planner
     updated_at: '2026-11-12T10:53:19.158889+00:00'
