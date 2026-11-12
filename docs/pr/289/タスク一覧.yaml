@@ -65,16 +65,20 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-12T09:42:39.034097+00:00'
   - process: ドキュメント修正
-    status: todo
+    status: done
     note: 要件.yaml の docs（スキーマ 2 件・テンプレート 2 件）
+    updated_by: planner
+    updated_at: '2026-11-12T10:12:57.514147+00:00'
   - process: 単体テスト作成
     status: skipped
     reason: TEMPLATE_IDS に行を追加するだけで、関数の振る舞いを変えない
     updated_by: planner
     updated_at: '2026-11-12T09:37:08.752913+00:00'
   - process: 実装
-    status: todo
-    note: TEMPLATE_IDS への登録・テンプレートの生成・E2E の _TEMPLATES への追加
+    status: done
+    note: 'TEMPLATE_IDS への登録・テンプレートの生成。生成の E2E は #287 で削除されたため変更しない'
+    updated_by: planner
+    updated_at: '2026-11-12T10:12:57.514147+00:00'
   - process: 結合テスト作成
     status: skipped
     reason: 対応表に行が増えるだけで、IF-201-1・IF-72-3 の結合テストの前提と結果が変わらない。test_build_templates.py・test_check_all.py は実行のみ

@@ -48,19 +48,27 @@ docs:
   - page: schemas/design/data.schema.yaml
     new: true
     change: 'データの設計書のスキーマを、案 A-143 のキー（fields[].immutable を除く）・決まり（x-rules）・実例「データ: 動画」から抜き出した見本で作る'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T10:02:03.323478+00:00'
   - page: docs/template/template-data.yaml
     new: true
     change: データのテンプレートを生成する（メタデータは手で記載する）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T10:02:03.323478+00:00'
   - page: schemas/design/er.schema.yaml
     new: false
     change: tables[].source（必須）・tables[].columns[].source・tables[].indexes[].where・tables[].transaction を追加し、description・x-rules に DB 設計のレイヤーであることを記載する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T10:02:03.323478+00:00'
   - page: docs/template/template-er.yaml
     new: false
     change: スキーマの変更に合わせて生成し直す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T10:02:03.323478+00:00'
 scope_out:
   - item: 各プロジェクトの既存の ER 図の設計書への tables[].source の追記と、データの設計書への移行
     reason: 起点 Issue で対象外（新しい設計書から使用する）。design-schemas/v5.0.0 を取り込む側の作業で、この PR の必須のキーを前提にする
