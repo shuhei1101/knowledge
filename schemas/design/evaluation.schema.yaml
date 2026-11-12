@@ -1,0 +1,125 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: 精度評価のスイート
+description: |-
+  精度評価 1 つの、評価の対象・つなぐ順番・再評価する変更を記載する設計書。
+  評価の仕組みがそのまま参照するファイルで、観点は『精度評価の観点』、ケースは『精度評価のケース』のファイルを原本にする。
+x-rules:
+  - 1 ファイル = 1 つの評価にする。
+  - スイートは評価の仕組みが参照する場所に配置し、同じフォルダの `criteria/` に観点、`cases/` にケースを配置する。
+  - 全ての評価で共通の観点は、プロジェクトのフォルダ構成の設計書で決めた共通のフォルダに配置する。
+  - 実行の回数・採点のモデル・採点の回数は設定に、結果・速度と費用・対応の記録は結果のデータベースに記載し、このファイルには記載しない。
+  - 観点 × ケースの単位で合否を出し、全ての観点 × ケースが合格したときに評価を合格にする。
+  - '`human` の観点に人の採点が済んでいないうちは、評価全体を判定保留にする。'
+x-kind: evaluation
+x-id-prefix: EVAL
+type: object
+additionalProperties: false
+required:
+- id
+- title
+- lead
+- targets
+- rerun_on
+properties:
+  id:
+    $ref: common.schema.yaml#/$defs/id
+    title: ID
+    description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
+    x-rules:
+      - 設計書を作るときに振り、改名・移動でも変えない。
+    examples:
+    - EVAL-1
+  title:
+    type: string
+    title: タイトル
+    description: 精度評価の名前。
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - 実行で、結果の画面の見出しにする。
+    examples:
+    - 行動選択ノードの精度評価
+  lead:
+    $ref: common.schema.yaml#/$defs/markdown
+    title: 冒頭リード
+    description: 何を確認するかを 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
+    x-rules:
+      - 初回に記載した内容のまま保ち、後から情報を追加しない。
+    examples:
+    - 状態と予定に合った行動を選べるか
+  targets:
+    type: array
+    title: 評価の対象
+    description: 評価の対象（『エージェントの定義』か『LLM の呼び出し』）への参照。並びの順につなぐ。
+    x-used-by:
+      - 実行で、対象を並びの順に実行し、途中の出力は後処理まで実行して最後の出力だけを採点する。
+      - 設計で、対象の設計書から精度評価を逆引きする。
+    minItems: 1
+    items:
+      $ref: common.schema.yaml#/$defs/ref
+    examples:
+    - - LLM-3#
+      - LLM-1#
+  extra_criteria:
+    type: array
+    title: 追加の観点のフォルダ
+    description: 同じフォルダの `criteria/` と共通の観点のほかに使用する観点のフォルダの、リポジトリの直下からのパス。
+    x-used-by:
+      - 実行で、使用できる観点の一覧に加える。
+    items:
+      type: string
+      pattern: ^\S+/$
+    examples:
+    - - content/evals/to_document/criteria/
+  rerun_on:
+    type: array
+    title: 再評価する変更
+    description: 再評価する変更（`model`・`prompt`・`inputs`・`criteria`・`cases`）。
+    x-used-by:
+      - 実行で、対象の設計書と観点・ケースの差分から再評価を起票する。
+    minItems: 1
+    uniqueItems: true
+    items:
+      type: string
+      enum:
+      - model
+      - prompt
+      - inputs
+      - criteria
+      - cases
+    examples:
+    - - model
+      - prompt
+      - criteria
+  refs:
+    type: array
+    title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
+    items:
+      $ref: common.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
+    items:
+      $ref: common.schema.yaml#/$defs/decision
+examples:
+- id: EVAL-1
+  title: 行動選択ノードの精度評価
+  lead: 状態と予定に合った行動を選べるか
+  targets:
+  - LLM-3#
+  - LLM-1#
+  rerun_on:
+  - model
+  - prompt
+  - criteria
+  refs:
+  - LLM-1#

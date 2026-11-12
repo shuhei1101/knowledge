@@ -1,0 +1,166 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: 精度評価のケース
+description: |-
+  精度評価のケース 1 つの、場面・入力・採点する観点とその上書きを記載するファイル。
+  評価の仕組みは、本番と同じ入力の組み立てを経由して評価の対象に入力を指定する。
+x-rules:
+  - 1 ファイル = 1 つのケースにする。
+  - ケースの id はファイル名（`.yaml` を除いたもの）から導き、ファイルに記載しない。
+  - ケースの id はほかのファイルから指すので、一度決めたら変えない。
+  - 入力の組み立て方は、プロジェクトの精度評価の仕組みの設計書で決める。
+x-kind: eval_case
+type: object
+additionalProperties: false
+required:
+- summary
+- split
+- inputs
+properties:
+  summary:
+    $ref: common.schema.yaml#/$defs/summary
+    title: 概要
+    description: どんな場面で、何を確認するか。
+    x-used-by:
+      - 実行で、結果の一覧の説明にする。
+    examples:
+    - 朝に空腹が閾値を越えている
+  split:
+    type: string
+    title: 用途
+    description: '`tune`（プロンプトを修正するときに参照する）か `holdout`（修正が有効かの確認だけに使用し、修正する側には点だけを示す）。'
+    x-used-by:
+      - 実行で、修正するときに指定する結果を分ける。
+    enum:
+    - tune
+    - holdout
+  inputs:
+    type: object
+    title: 入力
+    description: 入力のデータ。キーは、最初の対象が『LLM の呼び出し』なら `inputs[].from` の指すデータ、『エージェントの定義』ならきっかけのメッセージ。
+    x-used-by:
+      - 実行で、評価の対象に指定する入力を組み立てる。
+    minProperties: 1
+    additionalProperties:
+      $ref: '#/$defs/input'
+  criteria:
+    type: array
+    title: 採点する観点
+    description: このケースで採点する観点。記載しなければ、使用できる全ての観点。
+    x-used-by:
+      - 実行で、採点する観点を選ぶ。
+    items:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          title: 観点の id
+          description: 観点のファイル名から導いた id。`custom` を記載しないときは必須。
+          x-used-by:
+            - 実行で、採点する観点を選ぶ。
+          examples:
+          - state_fit
+        values:
+          type: object
+          title: プレースホルダーの値
+          description: 観点の `question`・`rubric` のプレースホルダーの値。省いた値はケースの入力から埋める。
+          x-used-by:
+            - 実行で、採点のプロンプトのプレースホルダーを埋める。
+            - 検査で、埋まらないプレースホルダーのある観点を不合格にする。
+          examples:
+          - need: 空腹
+        rubric:
+          type: array
+          title: 採点の基準の上書き
+          description: 採点の基準の上書き。記載した点の行だけを置き換える。
+          x-used-by:
+            - 実行で、採点のプロンプトの基準を置き換える。
+          items:
+            $ref: eval_criterion.schema.yaml#/$defs/rubric_row
+        custom:
+          $ref: eval_criterion.schema.yaml
+          title: このケースだけの観点
+          description: このケースだけで採点する観点。『精度評価の観点』のファイルと同じキーで記載する。
+          x-used-by:
+            - 実行で、採点する観点に加える。
+      oneOf:
+      - required:
+        - id
+      - required:
+        - custom
+$defs:
+  input:
+    type: object
+    title: 入力の値
+    description: 入力 1 つの値。`sample`（と `override`）か `value` のどちらかで記載する。
+    additionalProperties: false
+    properties:
+      sample:
+        type: string
+        title: サンプル
+        description: サンプルの ID。サンプルは本番の表と同じスキーマで検査する。
+        x-used-by:
+          - 実行で、入力の組み立ての元にする。
+        examples:
+        - character/akane
+      override:
+        type: object
+        title: 上書き
+        description: サンプルの一部を上書きする値（深い置き換え）。
+        x-used-by:
+          - 実行で、サンプルの値を置き換える。
+        examples:
+        - hunger: 85
+      value:
+        title: 値
+        description: サンプルを使用しないときの値。
+        x-used-by:
+          - 実行で、入力の値にする。
+        examples:
+        - '07:30'
+    oneOf:
+    - required:
+      - sample
+      properties:
+        value: false
+    - required:
+      - value
+      properties:
+        sample: false
+        override: false
+examples:
+- summary: 朝に空腹が閾値を越えている
+  split: tune
+  inputs:
+    character:
+      sample: character/akane
+    character_status:
+      sample: character_status/normal
+      override:
+        hunger: 85
+    time:
+      value: '07:30'
+  criteria:
+  - id: state_fit
+    values:
+      need: 空腹
+  - id: character_likeness
+  - custom:
+      title: 朝食の時間帯を考える
+      method: llm
+      tags:
+      - aspect:状況の判断
+      - difficulty:high
+      question: 朝食の時間帯であることを踏まえて行動を選んでいるか
+      rubric:
+      - score: 1
+        description: 朝食の時間帯と空腹の両方を踏まえている
+      - score: 0.75
+        description: 両方を踏まえているが、選択肢の選び方に無駄がある
+      - score: 0.5
+        description: どちらか一方だけを踏まえている
+      - score: 0.25
+        description: 時間帯を誤って解釈している
+      - score: 0
+        description: どちらも踏まえていない
+      pass: 0.75
