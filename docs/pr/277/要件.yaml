@@ -1,0 +1,77 @@
+docs:
+  - page: docs/flowchart/flowchart-accuracy-evaluation.yaml
+    new: true
+    change: 判定フローチャート『精度評価をするか』を新設する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:29:18.996011+00:00'
+  - page: docs/flowchart/flowchart-interface-choice.yaml
+    new: true
+    change: 判定フローチャート『機能を呼ぶインターフェースの選び方』を新設し、機能を呼ぶインターフェースと新しい手順の指定方法を 1 枚で判定する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:29:18.996011+00:00'
+  - page: docs/rule/python-testing-layers.yaml
+    new: false
+    change: 4 種類のテストの比較の表の結合テストの行と E2E テストの行に、Claude Code のエージェントを Mock にし判断はテストしない決まりを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:29:18.996011+00:00'
+  - page: docs/rule/python-testing-mock.yaml
+    new: false
+    change: Mock の方式の比較の表にエージェントの行を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:29:18.996011+00:00'
+  - page: docs/rule/testing-core-e2e.yaml
+    new: false
+    change: 外部 I/O をモックに切り替える行の対象に、Claude Code のエージェント・サブエージェント・スキルを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:29:18.996011+00:00'
+  - page: docs/rule/claude-context-placement.yaml
+    new: false
+    change: 置き場所の表のスキルの行を起動の仕組みで指定できない特別な理由があるときに修正し、エージェントフローの行を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:29:18.996011+00:00'
+  - page: docs/rule/claude-subagent.yaml
+    new: false
+    change: 委譲の判断基準の表は手順の中の工程を委譲するかを決めるものと記載し、手順そのものの指定方法は新しい判定フローチャートを参照する（要件の未確定の推奨 A）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:29:18.996011+00:00'
+  - page: docs/rule/claude-mcp.yaml
+    new: false
+    change: 項目『MCP にするかの判定』を追加し、判定フローチャート『機能を呼ぶインターフェースの選び方』を参照する（概要の項目を持たない）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:29:18.996011+00:00'
+  - page: docs/flowchart/flowchart-session-context-placement.yaml
+    new: false
+    change: 概要から判定フローチャート『機能を呼ぶインターフェースの選び方』を参照し、質問の境を示す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:29:18.996011+00:00'
+  - page: docs/flowchart/flowchart-mcp-hook-delivery.yaml
+    new: false
+    change: 概要から判定フローチャート『機能を呼ぶインターフェースの選び方』を参照し、質問の境を示す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:29:18.996011+00:00'
+scope_out:
+  - item: エージェントフローのテンプレート（#224 の agent_flow）から判定フローチャート『機能を呼ぶインターフェースの選び方』を参照する
+    reason: '#224 が未マージで、テンプレート agent_flow が develop に無い。#231 の終わりの条件に含まれるので、この PR のマージ前に #224 が入ればこの PR で参照を追加する。入らなければ起票して後続へ回す（確定はレビュー）'
+    plan: '#286'
+  - item: 精度評価の設計書のテンプレート（#224 の evaluation）から判定フローチャート『精度評価をするか』を参照する
+    reason: '#224 が未マージで、テンプレート evaluation が develop に無い'
+    plan: '#286'
+  - item: 判定フローチャート『精度評価をするか』を rules.yaml に掲載する
+    reason: 規約『ルール索引への登録』の glob が狭い基準を満たすファイル（精度評価の設計書）がまだ無い。#224 の evaluation が入った後に判定し直す
+    plan: '#286'
+  - item: 新しいインターフェースの種類が判定フローチャートの結果と合うかを、レビューの観点（ai-monitor の reviewer のチェックシート）に追加する
+    reason: '終わりの条件に含まれず、移し元が指すレビューの観点は ai-monitor にある。knowledge へ移すのは #267 の範囲'
+    plan: '#285'
+  - item: 判定フローチャート『機能を呼ぶインターフェースの選び方』を rules.yaml に掲載する
+    reason: 規約『ルール索引への登録』の「短い（1 ルール 4KB 以内）」を満たさない（フロー図の定義だけで 4KB を超える）。タグと aliases で案内し、規約『注入文の書き分けと書き方』・『MCP サーバー作成ルール』など掲載済みの文書から参照する
+    plan: none

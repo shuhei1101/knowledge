@@ -187,6 +187,16 @@ documents:
     metadata:
       name: title
       visibility: visibility
+  - id: layout
+    title: フォルダ構成
+    alias_type: doc
+    paths: ["docs/layout/*.yaml"]
+    exclude: [index.yaml]
+    schema: schemas/layout.schema.yaml
+    metadata:
+      name: title
+      description: lead
+      visibility: visibility
   - id: index
     title: 目次
     paths:

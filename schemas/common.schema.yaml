@@ -98,6 +98,30 @@ $defs:
     description: 検索で当てたい言い換え。
     items:
       type: string
+  tags:
+    type: array
+    title: タグ
+    description: |-
+      設計書を検索で絞り込むタグ。`name` にタグの名前（`action:`・`topic:`・`tool:` などで始める）、最も分量の多い主題 1 つに `main: true` を書く。
+      付け方は knowledge の規約『文書のタグと description の記載』に従う。
+    uniqueItems: true
+    items:
+      type: object
+      additionalProperties: false
+      required: [name]
+      properties:
+        name:
+          type: string
+          title: タグの名前
+          minLength: 1
+        main:
+          type: boolean
+          title: 主題
+          description: 最も分量の多い主題のタグだけ `true` にする。
+    examples:
+      - - name: topic:タグ
+          main: true
+        - name: action:記載
   notes:
     type: object
     title: 補足

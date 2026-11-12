@@ -47,7 +47,7 @@ tags:
   - name: action:起動
 status: current
 visibility: internal
-rev: 4
+rev: 5
 last_reviewed: '2026-10-30'
 items:
   - id: overview
@@ -135,8 +135,9 @@ items:
     group: ルール
     name: 外部 I/O はモックに切り替える
     body: |-
-      - 外部 I/O（LLM・TTS など）は、`playwright.config.ts` の `webServer` の `env` に渡す環境変数で、モックに切り替える。
+      - 外部 I/O（LLM・TTS・Claude Code のエージェントなど）は、`playwright.config.ts` の `webServer` の `env` に渡す環境変数で、モックに切り替える。
         実課金と非決定性に依存させない。
+        エージェント（サブエージェント・スキルを含む）のモックは決めた動きだけをし、エージェントの判断はテストしない。
   - id: rules-08
     group: ルール
     name: 検証対象

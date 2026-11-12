@@ -1,0 +1,18 @@
+docs:
+  - page: docs/rule/html-core-buildless.yaml
+    new: false
+    change: script-extension-02 の .js の例外を tsc を挟めないものだけに限り、生成 .js を commit して配るもの（GitHub Pages・プラグインの同梱物・配布物）は .ts で記載する項目と、インラインの <script> の処理を .ts へ分ける項目（値だけを持つ importmap・application/json は対象外）を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T09:07:49.399613+00:00'
+  - page: docs/rule/html-tooling-tsc.yaml
+    new: false
+    change: generated-js-gitignore-01 のビルドしない配信先の例にプラグインの同梱物を加える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T09:07:49.399613+00:00'
+use_cases: []
+scope_out:
+  - item: レビューの観点で、設計（モジュール構成・部品設計の .js.yaml）と実装の両方でブラウザのスクリプトを .js で手書きしていないことを確かめる
+    reason: '観点の置き場は ai-monitor の reviewer のチェックシートで、knowledge への移行は #267 が扱う。観点の文言はこの PR で決める例外の範囲を前提にする'
+    plan: '#288'
