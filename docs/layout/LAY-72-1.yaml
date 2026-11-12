@@ -32,7 +32,7 @@ content_types:
     summary: 検査と変換のスクリプトと、その依存のロック
   - name: test
     group: role
-    summary: 単体・結合・E2E のテスト
+    summary: 単体・結合のテスト
   - name: tool_config
     group: role
     summary: lint・型検査・テスト・配信の道具の設定
@@ -453,24 +453,6 @@ entries:
             contents: 書き込んだ中身の照合の結合テスト
             content_types: [test, slop_check]
             naming: [conftest.py, test_slop_check.py]
-      - type: folder
-        name: e2e
-        contents: E2E テスト
-        content_types: [test]
-        children:
-          - type: file
-            name: conftest.py
-            contents: E2E テストの共通の fixture
-          - type: folder
-            name: 単一ユースケース
-            contents: 単一ユースケースのシナリオ 1 件 = 1 テストファイル
-            content_types: [test]
-            naming: ['test_{scenario}.py']
-          - type: folder
-            name: 複合ユースケース
-            contents: 複合ユースケースのシナリオ 1 件 = 1 テストファイル
-            content_types: [test]
-            naming: ['test_{scenario}.py']
   - type: folder
     name: _site
     contents: 公開の文書だけを 1 枚の HTML にまとめた Pages の成果物

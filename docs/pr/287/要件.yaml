@@ -48,19 +48,27 @@ docs:
   - page: docs/layout/LAY-72-1.yaml
     new: false
     change: '`tests/` の `e2e` のフォルダの行を削除し、役割 `test` の summary を単体・結合のテストにする'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T09:23:27.514864+00:00'
   - page: docs/test-procedure/TP-72-1.yaml
     new: false
-    change: 'TL-6（E2E テスト）を TL-4・TL-5 と同じく `run_all: 未確定` だけにし、`tests/e2e/` を指す説明・前提・コマンド・引き継ぎ・監視・中断を削除する'
-    status: todo
+    change: 'TL-6（E2E テスト）を TL-4・TL-5 と同じく ID・種別・`run_all: 未確定` だけにし、`tests/e2e/` を指す説明・前提・コマンド・引き継ぎ・監視・中断・所要時間・並列・費用・結果の置き場所を削除する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T09:23:27.514864+00:00'
   - page: docs/interface/IF-137-2.yml.yaml
     new: false
     change: YAML の検査の notes と、notes の確かめ方から、E2E テストが確認する記述を削除する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T09:23:27.514864+00:00'
   - page: docs/module/MOD-137-1.py.yaml
     new: false
     change: notes の変換を子プロセスで呼ぶの、E2E テストが `run` を差し替える記述を削除する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T09:23:27.514864+00:00'
 scope_out:
   - item: シナリオの `test_file` と、notes の「E2E テストの動かし方」
     reason: D-311 A で、シナリオは残し `test_file` は作り直すときの対応のマーカーとして残すと決まっている。点検のスクリプト・dev-docs は `test_file` の実在を検査しない
