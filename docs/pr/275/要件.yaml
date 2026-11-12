@@ -18,39 +18,57 @@ docs:
   - page: schemas/design/agent.schema.yaml
     new: true
     change: 'エージェントの定義（x-kind: agent・AG）のスキーマを A-71 から新設する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:01:27.290358+00:00'
   - page: schemas/design/mcp_server.schema.yaml
     new: true
     change: 'MCP サーバーの定義（x-kind: mcp_server・MCP）のスキーマを A-72 から新設する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:01:27.290358+00:00'
   - page: schemas/design/agent_flow.schema.yaml
     new: true
     change: 'エージェントフロー（x-kind: agent_flow。ID はパスから導く）のスキーマを A-73 から新設する。type: skill と skill のオブジェクトを持つ'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:01:27.290358+00:00'
   - page: schemas/design/launch.schema.yaml
     new: true
     change: '起動の構成（x-kind: launch・LCH）のスキーマを A-89 から新設する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:01:27.290358+00:00'
   - page: schemas/design/llm_call.schema.yaml
     new: true
     change: 'LLM の呼び出し（x-kind: llm_call・LLM。type で choose・score・generate・extract を分ける）のスキーマを A-90 から新設する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:01:27.290358+00:00'
   - page: schemas/design/evaluation.schema.yaml
     new: true
     change: '精度評価のスイート（x-kind: evaluation・EVAL）のスキーマを A-91 から新設する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:01:27.290358+00:00'
   - page: schemas/design/eval_criterion.schema.yaml
     new: true
     change: '精度評価の観点（x-kind: eval_criterion。ID はファイル名から導く）のスキーマを A-91 から新設する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:01:27.290358+00:00'
   - page: schemas/design/eval_case.schema.yaml
     new: true
     change: '精度評価のケース（x-kind: eval_case。ID はファイル名から導く）のスキーマを A-91 から新設する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:01:27.290358+00:00'
   - page: schemas/design/interface.schema.yaml
     new: false
     change: MCP のツールの annotations を導くため、read_only・destructive を任意のキーとして追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:01:27.290358+00:00'
   - page: scripts/build_templates.py
     new: false
     change: TEMPLATE_IDS に 8 種類の x-kind → テンプレートの ID を追加する
@@ -90,7 +108,9 @@ docs:
   - page: docs/template/template-interface.yaml
     new: false
     change: インターフェース定義のスキーマの read_only・destructive の追加に合わせて生成し直す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:01:27.290358+00:00'
   - page: docs/template/template-skill.yaml
     new: false
     change: テンプレート『スキル』を削除する（TH-620）
@@ -105,7 +125,7 @@ docs:
     status: todo
   - page: dev-docs.yaml
     new: false
-    change: skill の配信元の schema を schemas/design/agent_flow.schema.yaml へ替える
+    change: skill の配信元の schema を schemas/design/agent_flow.schema.yaml へ替え、kind を持たない agent_flow の文書に合わせて converter を外し、metadata を title・summary・tags から引く
     status: todo
   - page: docs/skill/text-review.yaml
     new: false
@@ -123,6 +143,16 @@ docs:
     status: done
     updated_by: planner
     updated_at: '2026-11-12T11:31:30.336306+00:00'
+  - page: schemas/design/common.schema.yaml
+    new: false
+    change: エージェントの定義・LLM の呼び出しが使用する model と、起動の構成・LLM の呼び出しが使用する timeout を共通の型として追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:01:59.398120+00:00'
+  - page: tests/integration/scripts/test_knowledge_markdown.py
+    new: false
+    change: 'schemas/skill.schema.yaml の削除に合わせて、種類に固有のキーの節を確かめるケース（test_normal_when_kind_specific_keys）の kind: skill を、固有のキーを持つほかの種類に替える'
+    status: todo
 scope_out:
   - item: 'agent_flow の type: skill から SKILL.md を作る変換と、skills/text-review/SKILL.md の生成物への置き換え'
     reason: 計画の行で別の Issue に切り出すと決まっている。この作業 PR の agent_flow のスキーマを前提にする

@@ -65,8 +65,10 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-12T11:31:41.093208+00:00'
   - process: ドキュメント修正
-    status: todo
+    status: done
     note: 'schemas/design に 8 種類のスキーマを新設し、インターフェース定義に read_only・destructive を追加する。テンプレート『スキル』を削除し、text-review を agent_flow の type: skill に書き直す'
+    updated_by: planner
+    updated_at: '2026-11-12T12:02:33.880983+00:00'
   - process: 単体テスト作成
     status: skipped
     reason: build_templates.py の処理は変えず、TEMPLATE_IDS の対応表に行を追加するだけ。生成したテンプレートとスキーマの一致は check_all.py の既存の検査で確かめる
