@@ -72,39 +72,57 @@ docs:
   - page: scripts/build_templates.py
     new: false
     change: TEMPLATE_IDS に 8 種類の x-kind → テンプレートの ID を追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: docs/template/template-agent.yaml
     new: true
     change: エージェントの定義のテンプレートをスキーマから生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: docs/template/template-mcp-server.yaml
     new: true
     change: MCP サーバーの定義のテンプレートをスキーマから生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: docs/template/template-agent-flow.yaml
     new: true
     change: エージェントフローのテンプレートをスキーマから生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: docs/template/template-launch.yaml
     new: true
     change: 起動の構成のテンプレートをスキーマから生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: docs/template/template-llm-call.yaml
     new: true
     change: LLM の呼び出しのテンプレートをスキーマから生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: docs/template/template-evaluation.yaml
     new: true
     change: 精度評価のスイートのテンプレートをスキーマから生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: docs/template/template-eval-criterion.yaml
     new: true
     change: 精度評価の観点のテンプレートをスキーマから生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: docs/template/template-eval-case.yaml
     new: true
     change: 精度評価のケースのテンプレートをスキーマから生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: docs/template/template-interface.yaml
     new: false
     change: インターフェース定義のスキーマの read_only・destructive の追加に合わせて生成し直す
@@ -114,23 +132,33 @@ docs:
   - page: docs/template/template-skill.yaml
     new: false
     change: テンプレート『スキル』を削除する（TH-620）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: schemas/skill.schema.yaml
     new: false
     change: スキルのスキーマを削除する（TH-620）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: rules.yaml
     new: false
     change: template-skill.yaml を docs/skill/*.yaml に当てる行を削除する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: dev-docs.yaml
     new: false
     change: skill の配信元の schema を schemas/design/agent_flow.schema.yaml へ替え、kind を持たない agent_flow の文書に合わせて converter を外し、metadata を title・summary・tags から引く
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: docs/skill/text-review.yaml
     new: false
     change: 'agent_flow の type: skill の書式に書き直す'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
   - page: docs/interface/IF-201-1.py.yaml
     new: false
     change: x-kind → テンプレートの ID の対応に 8 種類を追加する
@@ -152,7 +180,15 @@ docs:
   - page: tests/integration/scripts/test_knowledge_markdown.py
     new: false
     change: 'schemas/skill.schema.yaml の削除に合わせて、種類に固有のキーの節を確かめるケース（test_normal_when_kind_specific_keys）の kind: skill を、固有のキーを持つほかの種類に替える'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:41:49.659622+00:00'
+  - page: docs/interface/IF-72-2.py.yaml
+    new: false
+    change: 正常系（種類に固有のキーがある）のフローを、skill の文書から、配信元の schemas/ に置いた種類のスキーマを使う文書に替える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T12:42:01.521625+00:00'
 scope_out:
   - item: 'agent_flow の type: skill から SKILL.md を作る変換と、skills/text-review/SKILL.md の生成物への置き換え'
     reason: 計画の行で別の Issue に切り出すと決まっている。この作業 PR の agent_flow のスキーマを前提にする
