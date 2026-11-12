@@ -1,0 +1,1 @@
+# 規約『フック』に PreToolUse の permissionDecision の決まりを追加し、rules.yaml のコンテナ構成・テストフィクスチャの paths と docs/rule の AI slop を修正する
