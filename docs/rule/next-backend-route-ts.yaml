@@ -34,12 +34,12 @@ items:
     name: 概要
     body: |-
       HTTP ハンドラ（GET / POST / PATCH / DELETE）。
-      `withRouteErrorHandling` でラップし、認証 → Zod パース → `service.ts` 呼び出しの順に書く。
+      `withRouteErrorHandling` でラップし、認証 → Zod パース → `service.ts` 呼び出しの順に記載する。
   - id: rules-01
     group: ルール
     name: withRouteErrorHandling でラップ
     body: |-
-      - すべての handler を `withRouteErrorHandling` でラップ（try/catch は書かない）
+      - すべての handler を `withRouteErrorHandling` でラップ（try/catch は記載しない）
   - id: rules-02
     group: ルール
     name: 認証必須なら getAuthContext
@@ -57,9 +57,9 @@ items:
       - レスポンス封筒: `{ data, meta? }` / `{ error: { code, message, field? } }`
   - id: rules-05
     group: ルール
-    name: mutation は 204 を返す
+    name: mutation は 204 を返却する
     body: |-
-      - 成功 (mutation) は `204 No Content` を返す（body なし）
+      - 成功 (mutation) は `204 No Content` を返却する（body なし）
   - id: rules-06
     group: ルール
     name: HTTP メソッドの使い分け
@@ -69,9 +69,9 @@ items:
     group: ルール
     name: 一覧はページに分ける
     body: |-
-      - 件数が増えうる一覧は最初からページに分け、次のページを取る手がかり（URL か cursor）を返す
+      - 件数が増えうる一覧は最初からページに分け、次のページを取る手がかり（URL か cursor）を返却する
   - id: rules-08
     group: ルール
-    name: 長い処理は 202 を返す
+    name: 長い処理は 202 を返却する
     body: |-
-      - 時間のかかる処理は、受け付けた時点で 202 と状態を照会する先を返し、完了まで待たせない
+      - 時間のかかる処理は、受け付けた時点で 202 と状態を照会する先を返却し、完了まで待たせない

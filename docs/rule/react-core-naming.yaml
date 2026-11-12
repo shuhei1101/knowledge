@@ -80,7 +80,7 @@ items:
     group: コンポーネント
     name: 画面のファイルと名前
     body: |-
-      - 画面は、画面名のフォルダの中に `{screen}-screen.tsx` で置き、コンポーネント名は `{Screen}Screen` にする。
+      - 画面は、画面名のフォルダの中に `{screen}-screen.tsx` で配置し、コンポーネント名は `{Screen}Screen` にする。
   - id: component-03
     group: コンポーネント
     name: 接尾辞の表
@@ -90,7 +90,7 @@ items:
       | 接尾辞 | 役割 |
       | --- | --- |
       | `Screen` | 画面の本体 |
-      | `Layout` | 画面の中で使う再利用のシェル（header + content + actions） |
+      | `Layout` | 画面の中で使用する再利用のシェル（header + content + actions） |
       | `Card` | 一覧の中の 1 件 |
       | `Item` | フィードの 1 件 |
       | `Dialog`・`Sheet` | shadcn/ui のモーダル系（[ダイアログ](id:react-component-dialog)） |
@@ -135,7 +135,7 @@ items:
       <!-- /table -->
   - id: zod-02
     group: Zod スキーマ
-    name: Schema を使い Scheme を使わない
+    name: Schema を使用し Scheme を使用しない
     body: |-
-      - 新しいコードは `Schema` を使い、`Scheme` を使わない。
+      - 新しいコードは `Schema` を使用し、`Scheme` を使用しない。
         既存コードの `Scheme` は、触るときに `Schema` へ改名する。

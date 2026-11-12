@@ -37,7 +37,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      GIL 前提で設計する（フリースレッドビルド・subinterpreters を使うときは、Python のドキュメントと依存ライブラリで対応状況を確かめる）。
+      GIL 前提で設計する（フリースレッドビルド・subinterpreters を使用するときは、Python のドキュメントと依存ライブラリで対応状況を確認する）。
   - id: decision-flow-01
     group: 判断フロー
     name: 並列処理の判断フロー
@@ -76,7 +76,7 @@ items:
       - `if __name__ == "__main__":` ガード必須（Windows / macOS、3.14 以降は Linux も）
   - id: shared-state-01
     group: 共有状態
-    name: 共有状態は避ける
+    name: 共有状態は使用しない
     body: |-
-      共有状態は避け、Producer / Consumer でキューに流すのが基本。
+      共有状態は避け、Producer / Consumer でキューに送信するのが基本。
       必要なら threading.Lock / multiprocessing.Queue 等。

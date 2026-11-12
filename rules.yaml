@@ -4,10 +4,10 @@ default_on: [write, mcp]
 rules:
   - rule: docs/template/template-container.yaml
     paths:
-      - "**/dev/設計書/コンテナ構成/**/*.{md,yaml}"
+      - "**/docs/container/**/*.{md,yaml}"
   - rule: docs/template/template-test-fixture.yaml
     paths:
-      - "**/dev/設計書/テストフィクスチャ.{md,yaml}"
+      - "**/docs/test-fixture.{md,yaml}"
   - rule: docs/template/template-design-policy.yaml
     paths:
       - "**/docs/design-policy.md"
@@ -55,6 +55,9 @@ rules:
       - "mcp__*__update_body"
       - "mcp__*__update_body_if_unchanged"
       - "mcp__*__create_draft_pr"
+  - rule: docs/rule/dev-config-extensibility.yaml
+    paths:
+      - "**/mdmark/**/src/{render,parts,diagram}/**"
   - rule: docs/rule/convention-doc-presentation.yaml
     paths:
       - "**/*.md"
@@ -158,9 +161,8 @@ rules:
       - "**/.claude-plugin/*.json"
   - rule: docs/rule/claude-hook.yaml
     paths:
-      - "**/.claude/hooks/**"
+      - "**/hooks/**"
       - "**/settings.json"
-      - "**/hooks/hooks.json"
   - rule: docs/rule/claude-context-placement.yaml
     paths:
       - "**/hooks/**"

@@ -23,22 +23,22 @@ last_reviewed: '2026-10-30'
 related:
   - to: python-fastapi-schema
     type: references
-    when: API の入出力のスキーマを書くとき
+    when: API の入出力のスキーマを記載するとき
 items:
   - id: overview
     name: 概要
     body: |-
-      DB を使うリポジトリは SQLAlchemy 2.1 と Alembic を使う。
+      DB を使用するリポジトリは SQLAlchemy 2.1 と Alembic を使用する。
   - id: orm-01
     group: ORM
     name: モデルは Mapped で宣言する
     body: |-
-      - モデルは `Mapped[]` を使う宣言（`DeclarativeBase`）で書く
+      - モデルは `Mapped[]` を使用する宣言（`DeclarativeBase`）で記載する
   - id: orm-02
     group: ORM
     name: API のスキーマは別に持つ
     body: |-
-      - API の入出力のスキーマは Pydantic で別に持ち、ORM のモデルをレスポンスに使わない（DB の型を OpenAPI に出さない）
+      - API の入出力のスキーマは Pydantic で別に持ち、ORM のモデルをレスポンスに使用しない（DB の型を OpenAPI に出さない）
   - id: migration-01
     group: マイグレーション
     name: スキーマの変更は Alembic

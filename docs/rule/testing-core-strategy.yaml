@@ -54,7 +54,7 @@ last_reviewed: '2026-10-30'
 related:
   - to: react-core-folder-structure
     type: references
-    when: テストファイルの置き場所を決めるとき
+    when: テストファイルの配置先を決めるとき
 items:
   - id: overview
     name: 概要
@@ -75,7 +75,7 @@ items:
       | Component | Vitest + Testing Library | コンポーネントの描画・操作 | 中 |
       | Integration | Vitest | 画面と API のモック（MSW）・service / db / API（実 DB か testcontainers） | 中 |
       | E2E | Playwright | ブラウザでの重要なフロー | 少 |
-      | External | Vitest | 外部 API ラッパーの実接続（実際に使うパラメータ値の網羅） | 少 |
+      | External | Vitest | 外部 API ラッパーの実接続（実際に使用するパラメータ値の網羅） | 少 |
 
       <!-- /table -->
   - id: test-level-02
@@ -83,12 +83,12 @@ items:
     name: Unit の単位
     body: |-
       - Unit / Component の単位は 1 ファイル。
-        同じファイルの中のヘルパーは実物のまま使い、ファイルの外・プロセスの外の依存は Mock する。
+        同じファイルの中のヘルパーは実物のまま使用し、ファイルの外・プロセスの外の依存は Mock する。
   - id: test-level-03
     group: テストレベル
     name: 分岐カバレッジ
     body: |-
-      - Unit は分岐ごとに 1 つ以上のテストを置き、分岐カバレッジを極力 100% にする。
+      - Unit は分岐ごとに 1 つ以上のテストを配置し、分岐カバレッジを極力 100% にする。
   - id: test-level-04
     group: テストレベル
     name: External は CI で実行しない
@@ -103,9 +103,9 @@ items:
         条件分岐のない唯一のケースは `{関数名}` だけにする。
   - id: test-function-format-02
     group: テスト関数の書式
-    name: 確認内容はコメントに書く
+    name: 確認内容はコメントに記載する
     body: |-
-      - 何を確認するか（設計書のテスト表の概要 + 正常系 / 異常系）を、テストの直前のコメントに書く。
+      - 何を確認するか（設計書のテスト表の概要 + 正常系 / 異常系）を、テストの直前のコメントに記載する。
   - id: test-function-format-03
     group: テスト関数の書式
     name: 準備・実行・検証の区切り
@@ -128,7 +128,7 @@ items:
     group: 時刻
     name: 時刻は固定日時で検証する
     body: |-
-      - 時刻に関わる処理は、固定日時を渡して JST への変換を検証する。
+      - 時刻に関わる処理は、固定日時を指定して JST への変換を検証する。
   - id: coverage-01
     group: カバレッジ
     name: 結合・E2E はカバレッジで縛らない

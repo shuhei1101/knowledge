@@ -54,7 +54,7 @@ items:
     group: FastAPI アプリ構成
     name: 依存配線は build_handlers から
     body: |-
-      - `handlers` が `None` のときは `main.py` の `build_handlers(settings)` で依存を配線し、テストは Mock の Handlers を渡す
+      - `handlers` が `None` のときは `main.py` の `build_handlers(settings)` で依存を配線し、テストは Mock の Handlers を指定する
   - id: lifespan-01
     group: lifespan
     name: lifespan の startup と shutdown
@@ -70,7 +70,7 @@ items:
     group: lifespan
     name: settings をグローバルに持たない
     body: |-
-      - settings をグローバル変数で持たない（モジュールロード時に env が読まれてテストしづらい）
+      - settings をグローバル変数で持たない（モジュールロード時に env が参照されてテストしづらい）
   - id: route-reference-01
     group: ルートからの参照
     name: ルートからの handlers の参照
@@ -94,13 +94,13 @@ items:
     name: ビルドした SPA を配る
     body: |-
       - ビルドした SPA（`index.html` と `assets/`）は FastAPI が配る。
-        `assets/` を `StaticFiles` でマウントし、API のルーターの後ろに、API に当たらない GET で `index.html` を返すルートを最後に置く（画面の切り替えはフロントのルーターが行う）
+        `assets/` を `StaticFiles` でマウントし、API のルーターの後ろに、API に該当しない GET で `index.html` を返却するルートを最後に配置する（画面の切り替えはフロントのルーターが行う）
   - id: custom-middleware-01
     group: カスタム middleware
     name: pure ASGI ミドルウェア
     body: |-
       pure ASGI ミドルウェア（`__call__(self, scope, receive, send)` を持つクラス）が標準。
-      `BaseHTTPMiddleware` は ContextVar の変更が上位へ伝わらないので使わない。
+      `BaseHTTPMiddleware` は ContextVar の変更が上位へ伝わらないので使用しない。
       例: X-Request-Id の付与。
   - id: others-01
     group: その他

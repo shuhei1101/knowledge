@@ -88,61 +88,61 @@ items:
     body: |-
       - 複数 feature のオーケストレーションだけ `server/routes/`
   - id: writing-01
-    group: 書き方
+    group: 記載方法
     name: APIRouter の設定
     body: |-
       - `APIRouter(prefix=, tags=)` を router 側で設定（`include_router` には付けない）
         - `tags` は 1 つ必須（operationId の `{tag}` になる。[fastapi/アプリケーション](id:python-fastapi-application)）
   - id: writing-02
-    group: 書き方
+    group: 記載方法
     name: 引数は Annotated
     body: |-
       - 引数は `Annotated[T, Path/Query/Header/Depends(...)]` パターン
   - id: writing-03
-    group: 書き方
+    group: 記載方法
     name: Depends の型エイリアス化
     body: |-
       - 共通ロジック（認証等）は `Depends` を型エイリアス化（`CurrentUser = Annotated[User, Depends(get_current_user)]`）
   - id: writing-04
-    group: 書き方
+    group: 記載方法
     name: レスポンススキーマの指定
     body: |-
       - レスポンススキーマは戻り値の型注釈で指定する（返却する型と合わないときだけ `response_model=`。[fastapi/スキーマ](id:python-fastapi-schema)）。
         作成系は `status_code=201` を明示する。
         エラーレスポンスは 422 を含めて `ProblemDetail` モデルを `APIRouter(responses=...)` で一括宣言し、OpenAPI に反映する（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
   - id: writing-05
-    group: 書き方
+    group: 記載方法
     name: SSE のストリーミング
     body: |-
       - ストリーミング（SSE）は `response_class=EventSourceResponse`（`fastapi.sse`）で `ServerSentEvent` を yield する。
         終端は `ServerSentEvent(raw_data="[DONE]")`
   - id: writing-06
-    group: 書き方
+    group: 記載方法
     name: body は Pydantic で受ける
     body: |-
       - body を `dict` / `list` で受けない（必ず Pydantic）
   - id: writing-07
-    group: 書き方
+    group: 記載方法
     name: route から外部を叩かない
     body: |-
       - route 内で直接 DB / 外部 API を叩かない（service.py へ）
   - id: writing-08
-    group: 書き方
+    group: 記載方法
     name: 画面の HTML のテンプレート
     body: |-
       - 画面の HTML はテンプレートで組み立て、[html/core/サーバー描画](id:html-core-server-rendering) に従う
   - id: writing-09
-    group: 書き方
+    group: 記載方法
     name: 一覧はページに分ける
     body: |-
-      - 件数が増えうる一覧は最初からページに分け、次のページを取る手がかり（URL か cursor）を返す
+      - 件数が増えうる一覧は最初からページに分け、次のページを取る手がかり（URL か cursor）を返却する
   - id: writing-10
-    group: 書き方
-    name: 長い処理は 202 を返す
+    group: 記載方法
+    name: 長い処理は 202 を返却する
     body: |-
-      - 時間のかかる処理は、受け付けた時点で 202 と状態を照会する先を返し、完了まで待たせない
+      - 時間のかかる処理は、受け付けた時点で 202 と状態を照会する先を返却し、完了まで待たせない
   - id: writing-11
-    group: 書き方
+    group: 記載方法
     name: handlers は get_handlers で受ける
     body: |-
       - 配線済み関数の束は型付きの `get_handlers` を `Annotated[Handlers, Depends(get_handlers)]` で受ける（[fastapi/アプリケーション](id:python-fastapi-application)）

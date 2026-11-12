@@ -21,12 +21,12 @@ items:
   - id: overview
     name: 概要
     body: |-
-      `dev/設計書/テストフィクスチャ.md` の書式定義。
+      `docs/test-fixture.md` の書式定義。
 
       テストシナリオの `## 前提条件` から参照される、テストで使う Factory-as-Fixture の一覧。
       1 factory = 1 責務、依存関係は引数で明示、cleanup は各 factory 内で完結（LIFO 逆順 delete）。
 
-      配置先は `dev/設計書/テストフィクスチャ.md`（1 ファイル運用）。
+      配置先は `docs/test-fixture.md`（1 ファイル運用）。
       factory 数が 30 個超えて可読性が落ちたら分類別サブフォルダに分割検討。
 
       新規追加時は同ファイルの `## Factory 一覧` に 1 行追加 + 詳細セクション `## `{Factory 名}`` を追加する。

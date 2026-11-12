@@ -5,8 +5,8 @@ name: VS Code 拡張機能の配布
 description: VS Code 拡張機能のバージョンの更新・.vsix の作成・Marketplace と Open VSX への公開・利用者への入れ替えの依頼・ID の扱いを定め、VS Code 拡張機能のコードを変更するときと公開するときに参照する。
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-11-05'
+rev: 2
+last_reviewed: '2026-11-12'
 sources:
   - title: 'VS Code: Publishing Extensions'
     url: https://code.visualstudio.com/api/working-with-extensions/publishing-extension
@@ -19,7 +19,7 @@ items:
     name: 概要
     body: |-
       VS Code 拡張機能のバージョン・.vsix・公開・利用者への入れ替えの依頼の決まり。
-      Claude プラグインは [version を置かない](id:claude-plugin#no-version-01) に従い、この規約を当てない。
+      Claude プラグインは [version を置かない](id:claude-plugin#no-version-01) に従い、この規約を適用しない。
   - id: version-01
     group: バージョン
     name: コードを変えた PR でバージョンを上げる
@@ -28,6 +28,12 @@ items:
     group: .vsix
     name: タグで .vsix を作る
     body: '- タグ（例: `vscode-v{X}.{Y}.{Z}`）の push で CI が .vsix を作り、そのタグの GitHub Release に添える'
+  - id: vsix-02
+    group: .vsix
+    name: 手動の .vsix は公開済みより上のバージョン
+    body: |-
+      - 手動でアップロードする .vsix は、Marketplace に公開済みのバージョンより上のバージョンにする
+        - 同じバージョンは上書きできない
   - id: publish-01
     group: 公開
     name: Marketplace と Open VSX への公開

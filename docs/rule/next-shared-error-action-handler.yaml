@@ -25,7 +25,7 @@ items:
     group: handleActionError — Server Action のエラー変換
     name: 全 Server Action を try/catch で囲む
     body: |-
-      - 全 Server Action を try/catch で囲み、catch で `handleActionError(e)` を返す
+      - 全 Server Action を try/catch で囲み、catch で `handleActionError(e)` を返却する
   - id: handle-action-error-02
     group: handleActionError — Server Action のエラー変換
     name: 戻り値は ActionResult
@@ -46,7 +46,7 @@ items:
     group: handleActionError — Server Action のエラー変換
     name: 予期しないエラーは INTERNAL
     body: |-
-      - 予期しないエラーはログに stack を記録し `code: "INTERNAL"` の汎用メッセージを返す
+      - 予期しないエラーはログに stack を記録し `code: "INTERNAL"` の汎用メッセージを返却する
   - id: handle-action-error-06
     group: handleActionError — Server Action のエラー変換
     name: redirect と notFound は catch しない

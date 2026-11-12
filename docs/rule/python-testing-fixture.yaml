@@ -33,8 +33,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      シナリオテスト等で「複数インスタンスを作りたい」「引数付きでリソースを作りたい」ケースは、fixture が関数を返す構造にする。
-      値を返す fixture で名前をハードコードする（`user_a` 等）のは避ける。
+      シナリオテスト等で「複数インスタンスを作りたい」「引数付きでリソースを作りたい」ケースは、fixture が関数を返却する構造にする。
+      名前（`user_a` 等）をハードコードした fixture は作らない。
   - id: factory-as-fixture-01
     group: Factory-as-Fixture パターン（DB リソース準備の推奨形）
     name: fixture は 1 責務
@@ -72,20 +72,20 @@ items:
     group: Factory-as-Fixture パターン（DB リソース準備の推奨形）
     name: 名前のハードコード禁止
     body: |-
-      - アンチパターン: fixture 内で名前ハードコード（`user_a` 等）→ 常に factory を返す構造にする
+      - アンチパターン: fixture 内で名前ハードコード（`user_a` 等）→ 常に factory を返却する構造にする
   - id: factory-as-fixture-06
     group: Factory-as-Fixture パターン（DB リソース準備の推奨形）
     name: 手動 cleanup の禁止
     body: |-
-      - アンチパターン: `try/finally` で手動 cleanup を書く → fixture の `yield` に任せる
+      - アンチパターン: `try/finally` で手動 cleanup を記載する → fixture の `yield` に任せる
   - id: app-fixture-01
     group: アプリの fixture
     name: LifespanManager で起動する
     body: |-
-      - アプリの fixture は `build_fastapi(handlers=...)` を `LifespanManager` で起動して返す（lifespan もテストされる）
+      - アプリの fixture は `build_fastapi(handlers=...)` を `LifespanManager` で起動して返却する（lifespan もテストされる）
   - id: app-fixture-02
     group: アプリの fixture
     name: AsyncClient で叩く
     body: |-
       - クライアントの fixture は `AsyncClient(transport=ASGITransport(app=app))`。
-        同期の `TestClient` は使わない
+        同期の `TestClient` は使用しない

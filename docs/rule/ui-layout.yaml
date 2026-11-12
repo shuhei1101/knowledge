@@ -69,7 +69,7 @@ related:
     when: 余白・角丸などの値を決めるとき
   - to: ui-operation-accessibility
     type: references
-    when: 押す部品の大きさと WCAG 2.2 の達成基準を確かめるとき
+    when: 押す部品の大きさと WCAG 2.2 の達成基準を確認するとき
 items:
   - id: overview
     name: 概要
@@ -81,13 +81,13 @@ items:
     name: 画面の骨格はビューポートのブレークポイント
     body: |-
       - 画面の骨格は、ビューポートのブレークポイント `md`（48rem）で切り替える。
-        Tailwind のモバイルファーストに合わせ、狭い画面の書き方を既定にして、`md` 以上を広げる側に書く。
+        Tailwind のモバイルファーストに合わせ、狭い画面の記載方法を既定にして、`md` 以上を広げる側に記載する。
   - id: responsive-02
     group: レスポンシブの基準
     name: 部品の並びは container queries
     body: |-
       - 部品の並びは、container queries で切り替える。
-        サイドパネルの中に置いた部品も、置き場所の幅で正しく切り替わる。
+        サイドパネルの中に配置した部品も、配置先の幅で正しく切り替わる。
   - id: responsive-03
     group: レスポンシブの基準
     name: スマホでも主な操作まで完了できる
@@ -138,7 +138,7 @@ items:
     group: 落とし穴チェックリスト > テキスト・コード
     name: 長い文字列の折り返し
     body: |-
-      - 長い URL / トークン / ファイルパス / 半角混在の日本語長文を含む親に `overflow-wrap: anywhere` を当てる
+      - 長い URL / トークン / ファイルパス / 半角混在の日本語長文を含む親に `overflow-wrap: anywhere` を適用する
   - id: pitfall-text-code-02
     group: 落とし穴チェックリスト > テキスト・コード
     name: pre と code の横スクロール
@@ -201,14 +201,14 @@ items:
       - `label` + `input` の横並びはスマホ時に縦積み
   - id: pitfall-viewport-01
     group: 落とし穴チェックリスト > ビューポート・高さ
-    name: 100dvh を使う
+    name: 100dvh を使用する
     body: |-
-      - `100vh` / `min-height: 100vh` / `100svh` は使わず `100dvh` を使う
+      - `100vh` / `min-height: 100vh` / `100svh` は使用せず `100dvh` を使用する
   - id: pitfall-viewport-02
     group: 落とし穴チェックリスト > ビューポート・高さ
-    name: 100vw を使わない
+    name: 100vw を使用しない
     body: |-
-      - `100vw` は使わず `100%` を使う
+      - `100vw` は使用せず `100%` を使用する
   - id: pitfall-flex-grid-01
     group: 落とし穴チェックリスト > Flexbox / Grid
     name: flex 子の min-width
@@ -216,14 +216,14 @@ items:
       - flex 子要素には `min-width: 0` を明示
   - id: pitfall-flex-grid-02
     group: 落とし穴チェックリスト > Flexbox / Grid
-    name: grid の列数固定を避ける
+    name: grid の列数固定を使用しない
     body: |-
-      - `grid-template-columns: repeat(N, 1fr)` の N 列固定は使わず、`repeat(auto-fit, minmax(MIN, 1fr))` か `@media` で 1 列化
+      - `grid-template-columns: repeat(N, 1fr)` の N 列固定にせず、`repeat(auto-fit, minmax(MIN, 1fr))` か `@media` で 1 列化
   - id: pitfall-flex-grid-03
     group: 落とし穴チェックリスト > Flexbox / Grid
     name: sticky と align-self
     body: |-
-      - flex/grid の子に `position: sticky` を使うときは `align-self: start` を付ける
+      - flex/grid の子に `position: sticky` を使用するときは `align-self: start` を付ける
   - id: pitfall-touch-01
     group: 落とし穴チェックリスト > タッチ・操作性
     name: hover 前提の UI

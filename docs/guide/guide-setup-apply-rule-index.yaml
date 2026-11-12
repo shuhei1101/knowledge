@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=../../schemas/guide.schema.yaml
 id: guide-setup-apply-rule-index
 kind: guide
-name: 規約の索引を当てる
-description: rule-inject の索引を当てる手順と、反映・確認・元に戻す方法を示し、この規約を使う環境を新しく用意したときに参照する。
+name: 規約の索引を適用する
+description: rule-inject の索引を適用する手順と、反映・確認・元に戻す方法を示し、この規約を使用する環境を新しく用意したときに参照する。
 tags:
   - name: scope:使い方
   - name: topic:セットアップ手順
@@ -33,7 +33,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      この規約を使う環境を新しく用意したときに実行する。
+      この規約を使用する環境を新しく用意したときに実行する。
   - id: prerequisite-01
     group: 前提
     name: "前提: rule-inject の導入"
@@ -48,9 +48,9 @@ items:
       ```
   - id: step-clone-02
     group: 手順 > このリポジトリを clone する
-    name: clone 先のパスを使う
+    name: clone 先のパスを使用する
     body: |-
-      clone した先の絶対パスを次の手順で使う。
+      clone した先の絶対パスを次の手順で使用する。
   - id: step-env-var-01
     group: 手順 > 索引のパスを設定ファイルに記載する
     name: 索引のパスを設定ファイルに記載
@@ -63,7 +63,7 @@ items:
           - {clone した先の絶対パス}/rules.yaml
       ```
 
-      ほかの索引も使うときは、`global.indexes` に並べる。
+      ほかの索引も使用するときは、`global.indexes` に並べる。
       絶対パスか、`~` から始まるパスで記載しないと索引が参照されず、規約が案内されない。
 
       設定ファイルを既定と違う場所に配置するときだけ、`~/.claude/settings.json` の `env` の `RULE_INJECT_CONFIG` に設定ファイルのパスを記載する。
@@ -77,7 +77,7 @@ items:
     group: 確認 > 規約が案内される
     name: 規約が案内されることを確認
     body: |-
-      索引の `paths` に当たるファイルを Claude Code で触ると、当たる規約の場所が案内される。
+      索引の `paths` にヒットするファイルを Claude Code で触ると、ヒットする規約の場所が案内される。
   - id: rollback-01
     group: 元に戻す
     name: 元に戻す

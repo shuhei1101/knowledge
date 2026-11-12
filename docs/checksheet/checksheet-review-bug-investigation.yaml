@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-bug-investigation
+kind: checksheet
+name: "不具合の調査のレビュー観点 チェックシート"
+description: 不具合の調査の結果をレビューするときの観点を並べ、不具合の原因の調査をレビューするときに参照する。
+aliases:
+  - 不具合調査のレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:不具合
+    main: true
+  - name: topic:ログ
+  - name: action:調査
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      不具合の調査の結果をレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | 不具合の調査で、残っているログを全て確認していること | サーバーのログ・OTel のログ・AI のセッションのログなど、確認できるものを列挙してから調べさせる |
+      | 不具合の調査で、公式ドキュメントと公式 Issue に同じ事例が無いかを確認していること | 既知の事象なら回避策も記載されている |
+
+      <!-- /table -->

@@ -47,7 +47,7 @@ items:
       パッケージ化が必要になったら py-project へ昇格する。
   - id: layout-01
     group: 配置
-    name: scripts サブフォルダに置く
+    name: scripts サブフォルダに配置する
     body: |-
       ルート直下ではなく `scripts/`（or `tools/`）サブフォルダ。
       共通ヘルパーは `_common.py`。
@@ -55,7 +55,7 @@ items:
     group: 必須要素
     name: モジュール docstring
     body: |-
-      1. モジュール docstring: 1 行目で何をするか + 使い方
+      1. モジュール docstring: 1 行目で何をするか + 使用方法
          - Usage はインデントなしでコピペ実行可能なコマンド、その上に `#` で説明、任意引数は `[角括弧]`
   - id: required-elements-03
     group: 必須要素
@@ -64,14 +64,14 @@ items:
       3. 引数は argparse でパース（パス等の即値ハードコード禁止）
   - id: required-elements-04
     group: 必須要素
-    name: main は終了コードを返す
+    name: main は終了コードを返却する
     body: |-
-      4. `main() -> int` で終了コードを返し、`if __name__ == "__main__": sys.exit(main())`
+      4. `main() -> int` で終了コードを返却し、`if __name__ == "__main__": sys.exit(main())`
   - id: required-elements-05
     group: 必須要素
     name: トップレベルに処理を記載しない
     body: |-
-      5. トップレベルに処理を書かない（import しただけで実行されてしまう）
+      5. トップレベルに処理を記載しない（import しただけで実行されてしまう）
   - id: required-elements-06
     group: 必須要素
     name: 出力は print

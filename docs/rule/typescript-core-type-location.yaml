@@ -25,27 +25,27 @@ items:
     body: |-
       対象は TypeScript。
   - id: placement-01
-    group: 置き場所
-    name: 型の置き場所の表
+    group: 配置先
+    name: 型の配置先の表
     body: |-
       <!-- table: data -->
 
-      | 型 | 置き場所 |
+      | 型 | 配置先 |
       | --- | --- |
       | フォームのスキーマと型 | 画面の `form.ts` |
       | URL の search のスキーマと型 | 画面の `search.ts` |
       | API のリクエスト・レスポンスの型 | 生成物（手書きしない） |
       | Component の Props | コンポーネントのファイルの中（export しない） |
       | hook の引数・戻り値の型 | hook のファイルの中 |
-      | 複数のフィーチャで共通のドメインの型 | 共通層の `types.ts`（3 つ以上のファイルで使うもの） |
+      | 複数のフィーチャで共通のドメインの型 | 共通層の `types.ts`（3 つ以上のファイルで使用するもの） |
 
       <!-- /table -->
   - id: placement-02
-    group: 置き場所
-    name: グローバルな types.d.ts を使わない
+    group: 配置先
+    name: グローバルな types.d.ts を使用しない
     body: |-
-      - グローバルな `types.d.ts` を使わない。
-        型は、所有するコードの近くに置く。
+      - グローバルな `types.d.ts` を使用しない。
+        型は、所有するコードの近くに配置する。
   - id: zod-01
     group: Zod
     name: z.infer で型を導出する

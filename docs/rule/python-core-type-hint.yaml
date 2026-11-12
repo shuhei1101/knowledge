@@ -34,7 +34,7 @@ items:
     name: 概要
     body: |-
       Python 3.14+ 必須。
-      PEP 695 で書く。
+      PEP 695 で記載する。
   - id: basic-03
     group: 基本
     name: Any は最終手段
@@ -54,14 +54,14 @@ items:
     body: |-
       プロジェクト内でどちらかに統一する（混在しない）。
   - id: typing-features-01
-    group: 使うべき typing 機能
+    group: 使用するべき typing 機能
     name: typing 機能の使いどき表
     body: |-
       <!-- table: data -->
 
       | 機能                       | 使いどき                                                 |
       | -------------------------- | -------------------------------------------------------- |
-      | `Self`                     | 自分自身の型を返すメソッド                               |
+      | `Self`                     | 自分自身の型を返却するメソッド                               |
       | `@override`                | スーパークラスのメソッド上書き（タイポ検出）             |
       | `Annotated`                | Pydantic Field / FastAPI Depends・Query のメタデータ付与 |
       | `TYPE_CHECKING`            | 重いモジュールの型のみ import / 循環 import 回避         |
@@ -69,17 +69,17 @@ items:
 
       <!-- /table -->
   - id: typing-features-02
-    group: 使うべき typing 機能
+    group: 使用するべき typing 機能
     name: TYPE_CHECKING の制限
     body: |-
-      - Pydantic のモデルのフィールドと FastAPI のルートの引数・戻り値が使う型は `TYPE_CHECKING` の中で import しない（実行時に型を解決する）
+      - Pydantic のモデルのフィールドと FastAPI のルートの引数・戻り値が使用する型は `TYPE_CHECKING` の中で import しない（実行時に型を解決する）
   - id: typing-features-03
-    group: 使うべき typing 機能
+    group: 使用するべき typing 機能
     name: DTO 使い分けの参照
     body: |-
       - DTO 使い分け（Pydantic / dataclass / TypedDict / Protocol）は [architecture/TypeScriptスタイル適用](id:python-architecture-typescript-style)
   - id: typing-features-04
-    group: 使うべき typing 機能
+    group: 使用するべき typing 機能
     name: デコレータと overload の参照
     body: |-
       - デコレータ・`@overload` は [core/デコレーター](id:python-core-decorator)

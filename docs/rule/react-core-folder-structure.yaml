@@ -116,10 +116,10 @@ items:
       | `src/app/` | `createRouter`（context に queryClient）・Provider・共通シェル |
       | `src/routes/` | 薄いルートのファイル（URL・`validateSearch`・loader だけ） |
       | `features/{domain}/{screen}/` | 1 画面。`search.ts` に URL の Zod、`queries.ts` に queryOptions の合成と invalidate、`store.ts` に画面の store、`form.ts` にフォームの Zod |
-      | `features/{domain}/shared/` | そのドメインの中だけで使う部品 |
+      | `features/{domain}/shared/` | そのドメインの中だけで使用する部品 |
       | `shared/styles/` | トークン・要素の既定。Tailwind の `@theme inline` もここ |
       | `shared/components/ui/` | shadcn/ui が追加する部品 |
-      | `shared/components/` | ドメインをまたいで使う自前の部品 |
+      | `shared/components/` | ドメインをまたいで使用する自前の部品 |
       | `shared/adapters/` | 外部接続のアダプター（`api-client.ts`・`ws-client.ts`） |
       | `shared/api/generated/` | orval の生成物だけ |
       | `shared/stores/` | 画面をまたぐ Zustand の store |
@@ -130,27 +130,27 @@ items:
       <!-- /table -->
   - id: feature-01
     group: features
-    name: 画面は features に置く
+    name: 画面は features に配置する
     body: |-
-      - 画面は `features/{domain}/{screen}/` に置く。
-        画面を持たないドメインの部品・query も同じ場所に置く。
+      - 画面は `features/{domain}/{screen}/` に配置する。
+        画面を持たないドメインの部品・query も同じ場所に配置する。
   - id: feature-02
     group: features
     name: ドメインの中の共通は shared
     body: |-
-      - ドメインの中の共通は `features/{domain}/shared/` に置く。
+      - ドメインの中の共通は `features/{domain}/shared/` に配置する。
         `_` を付けない（TanStack Router では `_` が pathless layout の意味になる）。
   - id: feature-03
     group: features
-    name: 使う場所の近くに置く
+    name: 使用する場所の近くに配置する
     body: |-
-      - 部品・hook は、使う場所の近くに置く。
-        使う範囲が広がったら上のフォルダへ移す。
+      - 部品・hook は、使用する場所の近くに配置する。
+        使用する範囲が広がったら上のフォルダへ移す。
   - id: feature-04
     group: features
     name: 共通化を先に考える
     body: |-
-      - 部品・hook・スタイルを書く前に、共通化できるかを先に考える。
+      - 部品・hook・スタイルを記載する前に、共通化できるかを先に考える。
         同じコードを 2 か所へ記載しそうになったら、共通化の合図にする。
         画面にロジックやスタイルを重複させない。
   - id: feature-05
@@ -173,18 +173,18 @@ items:
     group: テストと stories
     name: unit・結合テストと stories は対象の横
     body: |-
-      - unit・結合テストと stories は、対象の横に置く。
+      - unit・結合テストと stories は、対象の横に配置する。
   - id: test-02
     group: テストと stories
     name: e2e だけ tests/e2e
     body: |-
-      - e2e だけ `frontend/tests/e2e/` に置く。
-        共通の道具は `src/testing/` に置く。
+      - e2e だけ `frontend/tests/e2e/` に配置する。
+        共通の道具は `src/testing/` に配置する。
   - id: barrel-01
     group: barrel
-    name: barrel を使わない
+    name: barrel を使用しない
     body: |-
-      - barrel（`index.ts`）を使わず、ファイルを直接 import する。
+      - barrel（`index.ts`）を使用せず、ファイルを直接 import する。
         公開範囲は import の向きの lint で縛る。
   - id: import-01
     group: import の向き
@@ -193,13 +193,13 @@ items:
       - eslint-plugin-boundaries v7 で、`app・routes → features → shared` の向きだけを許す。
   - id: orval-01
     group: orval
-    name: 生成物の置き場所
+    name: 生成物の配置先
     body: |-
       - orval の生成物は `shared/api/generated/` に出す。
-        手書きのファイルを置かない。
+        手書きのファイルを配置しない。
   - id: orval-02
     group: orval
     name: mutator と queries.ts
     body: |-
-      - mutator は `shared/adapters/api-client.ts` に置く。
+      - mutator は `shared/adapters/api-client.ts` に配置する。
         `queries.ts` は queryOptions の合成と invalidate だけを持つ。

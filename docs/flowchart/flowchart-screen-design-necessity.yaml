@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=../../schemas/flowchart.schema.yaml
+id: flowchart-screen-design-necessity
+kind: flowchart
+name: "画面設計要否 判定フローチャート"
+description: 変更で画面設計と、画面設計を元にした結合テストを作るかを判定し、変更の作業で画面設計を作るかを決めるときに参照する。
+aliases:
+  - 画面設計要否
+tags:
+  - name: scope:判定フローチャート
+  - name: topic:判定フローチャート
+  - name: topic:フローチャート
+  - name: topic:画面
+    main: true
+  - name: topic:結合テスト
+  - name: action:判定
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: template-screen-design
+    type: references
+    when: 画面設計の elements を確認するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      変更で画面設計と、画面設計を元にした結合テストを作るかを判定し、変更の作業で画面設計を作るかを決めるときに参照する。
+  - id: screen-design-necessity-flow-01
+    group: 画面設計要否 判定フローチャート
+    name: "判定フロー"
+    body: |-
+      <!-- flow -->
+
+      ```json
+      {
+        "title": "画面設計要否",
+        "scope": "変更の作業で画面設計を作るかを決めるとき",
+        "updated": "2026-11-12",
+        "width": 948,
+        "height": 652,
+        "nodes": [
+          {"id": "start", "kind": "start", "x": 414, "y": 24, "w": 120, "h": 120, "name": "作業で画面設計を作るかを決めたい"},
+          {"id": "q1", "kind": "question", "x": 334, "y": 200, "w": 280, "h": 120, "name": "変更が画面に及ぶか ※1"},
+          {"id": "r1", "kind": "result", "x": 684, "y": 232, "w": 240, "h": 56, "name": "画面設計を作らない"},
+          {"id": "q2", "kind": "question", "x": 334, "y": 376, "w": 280, "h": 140, "name": "UI 項目か操作が増える・変わる・消えるか ※2 ※3"},
+          {"id": "r2", "kind": "result", "x": 24, "y": 410, "w": 240, "h": 72, "name": "画面設計と、画面設計を元にした結合テストを作る"},
+          {"id": "r3", "kind": "result", "x": 354, "y": 572, "w": 240, "h": 56, "name": "画面設計を作らない"}
+        ],
+        "wires": [
+          {"id": "j-start-q1", "from": "start", "to": "q1", "line": "flow", "points": [[474, 144], [474, 200]]},
+          {"id": "j-q1-r1", "from": "q1", "to": "r1", "line": "flow", "points": [[614, 260], [684, 260]], "label": "NO", "labelAt": [649, 260]},
+          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[474, 320], [474, 376]], "label": "YES", "labelAt": [474, 348]},
+          {"id": "j-q2-r2", "from": "q2", "to": "r2", "line": "flow", "points": [[334, 446], [264, 446]], "label": "YES", "labelAt": [299, 446]},
+          {"id": "j-q2-r3", "from": "q2", "to": "r3", "line": "flow", "points": [[474, 516], [474, 572]], "label": "NO", "labelAt": [474, 544]}
+        ]
+      }
+      ```
+
+      <!-- /flow -->
+  - id: screen-design-necessity-flow-02
+    group: 画面設計要否 判定フローチャート
+    name: "※1 画面"
+    body: |-
+      - ※1 画面: 利用者が開いて閲覧・操作するもの。
+        本体が Markdown などで元の HTML を触らず、共通のスタイル・スクリプト（ドキュメントサイトの共通レイアウト 等）やブラウザの拡張機能で見た目を適用するものも含む
+  - id: screen-design-necessity-flow-03
+    group: 画面設計要否 判定フローチャート
+    name: "※2 UI 項目"
+    body: |-
+      - ※2 UI 項目: ボタン・入力欄・ソート・表示のラベル・ダイアログなど、画面設計の `elements` の 1 要素に該当するもの。
+        本体の HTML のほか、JS や拡張機能が追加するものも含む。
+        Markdown の本文の見出し・段落・表は含まない
+  - id: screen-design-necessity-flow-04
+    group: 画面設計要否 判定フローチャート
+    name: "※3 UI 項目か操作の変化"
+    body: |-
+      - ※3 UI 項目か操作の変化: CSS だけの変更と、スタイル・スクリプトの参照の付け替えは、それが適用される UI 項目の変化として扱う
+  - id: screen-design-necessity-note-01
+    group: 補足
+    name: "結合テストを作るか"
+    body: |-
+      結合テストを作るかは、インターフェース定義のテストの有無と合わせて決める。

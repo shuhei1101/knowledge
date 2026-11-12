@@ -51,22 +51,22 @@ items:
     name: 概要
     body: |-
       対象は React。
-      利用者が画面で見ているものに影響する状態（タブ・フィルタ・ソート・ページ・選択中の ID）は、URL の search に置く。
+      利用者が画面で確認しているものに影響する状態（タブ・フィルタ・ソート・ページ・選択中の ID）は、URL の search に配置する。
       共有・戻る / 進む・リロードでの復元・deep link が機能する。
       戻る / 進むで復元するのは、同じ履歴の項目に戻ったときだけ。
       リンクで入り直したときの復元は [画面の状態の保持先](id:flowchart-screen-state-retention) で決める。
-      置くか置かないかは [状態の置き場所](id:flowchart-react-state-placement) が決める。
+      配置するか配置しないかは [状態の置き場所](id:flowchart-react-state-placement) が決める。
   - id: define-01
     group: 定義
     name: validateSearch と Zod で持つ
     body: |-
       - URL の状態は、TanStack Router の `validateSearch` と Zod で持つ。
-        nuqs は使わない。
+        nuqs は使用しない。
   - id: define-02
     group: 定義
-    name: search.ts に Zod を置く
+    name: search.ts に Zod を配置する
     body: |-
-      - search の Zod スキーマは、画面の `search.ts` に置き、ルートの `validateSearch` から使う。
+      - search の Zod スキーマは、画面の `search.ts` に配置し、ルートの `validateSearch` から使用する。
   - id: validation-01
     group: 検証
     name: 不正な値は既定値に落とす
@@ -75,9 +75,9 @@ items:
         不正な値は既定値に落とす。
   - id: read-01
     group: 読み取り
-    name: 画面は getRouteApi で読む
+    name: 画面は getRouteApi で参照する
     body: |-
-      - 画面は、`getRouteApi` で取った route の `useSearch()` で読む。
+      - 画面は、`getRouteApi` で取った route の `useSearch()` で参照する。
   - id: write-01
     group: 書き込み
     name: navigate か Link で書き込む
@@ -93,13 +93,13 @@ items:
     group: 書き込み
     name: history の扱い
     body: |-
-      - フィルタ・ソートの変更は履歴に積む（既定の push）。
-        入力に合わせて何度も変わる検索語は、`replace: true` で履歴に積まない。
+      - フィルタ・ソートの変更は履歴に追加する（既定の push）。
+        入力に合わせて何度も変わる検索語は、`replace: true` で履歴に追加しない。
   - id: tab-01
     group: タブ
-    name: Tabs に URL の状態を渡す
+    name: Tabs に URL の状態を指定する
     body: |-
-      - shadcn の `<Tabs>` の `value`・`onValueChange` に、URL の状態を渡す。
+      - shadcn の `<Tabs>` の `value`・`onValueChange` に、URL の状態を指定する。
   - id: scroll-restoration-01
     group: スクロール位置
     name: scrollRestoration で復元する

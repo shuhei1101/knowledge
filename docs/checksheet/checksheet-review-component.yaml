@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-component
+kind: checksheet
+name: 部品設計のレビュー観点 チェックシート
+description: 部品設計の設計書をレビューするときの観点を並べ、部品設計をレビューするときに参照する。
+aliases:
+  - 部品設計のレビュー観点
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+  - to: template-component
+    type: references
+    when: 部品設計の書式を確認するとき
+  - to: html-core-buildless
+    type: references
+    when: ブラウザのスクリプトの拡張子を確認するとき
+items:
+  - id: overview
+    name: 概要
+    body: 部品設計の設計書をレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: チェック項目
+    body: |-
+      | 項目 | 補足 |
+      | --- | --- |
+      | `implementation` がブラウザのスクリプトを指すとき、`.ts`（`.tsx`）のファイルを指し、`.js` を手書きする設計になっていないこと | `.js` で記載してよいのは [js で記載してよい場合](id:html-core-buildless#script-extension-02) だけ。HTML に直接記載する `<script>` の処理も `.ts` へ分けているかを確認する（[HTML に直接記載する script](id:html-core-buildless#script-extension-04)） |
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:部品
+    main: true
+  - name: topic:設計書

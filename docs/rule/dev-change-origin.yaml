@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-change-origin
+kind: rule
+name: "変更の由来の調査"
+description: 対象の記述や値を変えた commit から、そう記載された目的と値の変遷を辿る手順を定め、既存の記述・固定値を変更・削除する前に理由が分からないときに参照する。
+aliases:
+  - 由来の調査
+tags:
+  - name: scope:dev
+  - name: tool:git
+  - name: topic:履歴
+    main: true
+  - name: topic:差分
+  - name: topic:定数
+  - name: action:追跡
+  - name: action:調査
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-12'
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      対象の記述を最後に変えた commit を辿り、その commit が入った PR の本文・起点の Issue・レビューのやり取りから、そう記載された目的を確認する手順。
+  - id: procedure-01
+    group: 手順
+    name: "記述を変えた commit と目的"
+    body: |-
+      `git blame` で対象ブランチ（`origin/{ブランチ}`）を対象に、対象の記述を最後に変えた commit を取得し、`git log -1 --format=%s` で件名を確認する。
+      リポジトリの直下に `.git-blame-ignore-revs` があれば、`git blame --ignore-revs-file .git-blame-ignore-revs` で調べる。
+      件名が PR 番号（`(#{PR 番号})`）を持つ場合、その PR の本文・起点の Issue・レビューのやり取り（コメント・レビュースレッド）から、そう記載された目的を確認する。
+  - id: value-change-01
+    group: 値を変えるとき
+    name: "値の変遷"
+    body: |-
+      固定値を変えるときは、`git log -L`（値の行の範囲）で、対象ブランチから値を変えた commit を全て集める。
+      初期値を設定した commit を含め、値を変えていない整形などの commit は除く。
+      `git log -S` は値を持つ識別子（定数名・設定キー）で検索し、`-L` で追えないファイルをまたぐ移動を取得する。
+      各 commit の目的を `手順` の件名からの確認方法で確認し、値の変遷として並べる。
+      今の値を設定した commit は `git show` で差分を確認し、同時に変わった箇所を影響先の候補にする。
+  - id: unreachable-01
+    group: 辿り着けないとき
+    name: "PR 番号を持たない commit"
+    body: |-
+      件名が PR 番号を持たない場合（merge commit 等）、辿れた範囲（commit の件名まで）にとどめる。

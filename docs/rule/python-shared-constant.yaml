@@ -24,24 +24,25 @@ items:
   - id: overview
     name: 概要
     body: |-
-      計算済みの不変値だけを置く。
+      計算済みの不変値だけを配置する。
       env で切り替える値は [shared/設定](id:python-shared-settings)。
-      置き場所の判断は [設定値の置き場所](id:flowchart-config-location) に従う。
+      配置先の判断は [設定値の置き場所](id:flowchart-config-location) に従う。
 
-      `constants.py` には、構造から計算されるパス（`PROJECT_ROOT` / `LOG_DIR`）と業務固定値（`MAX_TAGS_PER_POST` / `DEFAULT_PAGE_SIZE`）を置く。
-      feature 専用の定数・業務 Enum は feature の `types.py` に置く。
+      `constants.py` には、構造から計算されるパス（`PROJECT_ROOT` / `LOG_DIR`）を配置する。
+      業務固定値（`MAX_TAGS_PER_POST` / `DEFAULT_PAGE_SIZE`）も配置する。
+      feature 専用の定数・業務 Enum は feature の `types.py` に配置する。
   - id: writing-01
-    group: 書き方
+    group: 記載方法
     name: 定数の命名と型注釈
     body: |-
       - `UPPER_SNAKE_CASE` + 型注釈必須 + 説明 docstring
   - id: writing-02
-    group: 書き方
+    group: 記載方法
     name: PROJECT_ROOT の定義
     body: |-
       - `PROJECT_ROOT: Path = Path(__file__).resolve().parents[2]` のように 1 度だけ計算（カレントディレクトリ非依存、同じパス計算を散在させない）
   - id: writing-03
-    group: 書き方
+    group: 記載方法
     name: 巨大な dict は定数にしない
     body: |-
       - 巨大な dict（プロンプト等）は constants でなくファイル / config に

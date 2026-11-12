@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-foundation
+kind: checksheet
+name: "土台（初期構築）のレビュー観点 チェックシート"
+description: 新しいプロジェクトの初期構築で作ったアーキテクチャ図・フォルダ構成・ルール索引をレビューするときの観点を並べ、初期構築の成果物をレビューするときに参照する。
+aliases:
+  - 初期構築のレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:architecture
+    main: true
+  - name: topic:フォルダ
+  - name: topic:索引
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+  - to: dev-folder-layout
+    type: references
+    when: フォルダ構成の設計書のレビューの観点を確認するとき
+  - to: dev-rule-index-registration
+    type: references
+    when: ルール索引の paths の記載方法を確認するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      新しいプロジェクトの初期構築で作った成果物をレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | アーキテクチャ図のサブシステム一覧が、要件の機能を全て収容していること | どの機能がどのサブシステムに入るかを対応づけて確認する |
+      | フォルダ構成の設計書がテンプレート [フォルダ構成](id:template-layout) の書式で、規約 [フォルダ構成の切り方とレビュー](id:dev-folder-layout) のレビューの観点に該当しないこと | `.gitignore` が設計書の `gitignore` と一致するかも確認する |
+      | ルール索引の `paths` が、有効にしたいファイルに実際にヒットすること | glob を実ファイルに適用して確認する |
+
+      <!-- /table -->

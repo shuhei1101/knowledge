@@ -52,14 +52,14 @@ items:
     group: Test Fixtures（Data Factory）
     name: 1 リソース 1 fixture ファイル
     body: |-
-      - 1 リソースにつき 1 つの fixture ファイルを置き、`index.ts` でまとめて export する。
+      - 1 リソースにつき 1 つの fixture ファイルを配置し、`index.ts` でまとめて export する。
   - id: test-fixtures-02
     group: Test Fixtures（Data Factory）
     name: 4 点セットで提供する
     body: |-
       - 各 fixture は、4 点セットで提供する。
-        - `build{Resource}(overrides?)` — 既定値 + overrides を返す（DB に保存しない）
-        - `seed{Resource}(overrides?)` — 1 件を INSERT して row を返す
+        - `build{Resource}(overrides?)` — 既定値 + overrides を返却する（DB に保存しない）
+        - `seed{Resource}(overrides?)` — 1 件を INSERT して row を返却する
         - `seed{Resource}s(count)` — n 件を INSERT する
         - `clean{Resource}s()` — 全件を削除する
   - id: test-fixtures-03
@@ -84,20 +84,20 @@ items:
       - enum を網羅するヘルパー（`ALL_RESOURCE_STATUSES` など）を、`as const` で作る。
   - id: factory-as-fixture-01
     group: Factory-as-Fixture（Playwright）
-    name: fixture は関数を返す
+    name: fixture は関数を返却する
     body: |-
-      - Playwright で、複数のインスタンスや引数付きのリソースを作るときは、fixture が関数（factory）を返す構造にする。
+      - Playwright で、複数のインスタンスや引数付きのリソースを作るときは、fixture が関数（factory）を返却する構造にする。
         - 1 fixture = 1 責務にし、`createUser`・`createProfile`・`createTask` を分けて `tests/e2e/fixtures.ts` に並べる
         - 依存は、テスト本体で引数として明示する（`createProfile(userA)`）
         - cleanup は fixture の中で作成したものを追跡し、`use()` の後に作成順の逆順で delete する
         - テストは、必要な factory だけを引数で受ける（Playwright は要求された fixture だけを初期化する）
   - id: factory-as-fixture-02
     group: Factory-as-Fixture（Playwright）
-    name: 使わない書き方
+    name: 使用しない記載方法
     body: |-
       - `setupAllScenarioX()` のような god setup で全てのリソースを作らない。
-      - fixture の中で名前をハードコードした値（`userA` など）を返さず、常に factory を返す。
-      - `try/finally` で手動の cleanup を書かず、fixture の `use()` の後に任せる。
+      - fixture の中で名前をハードコードした値（`userA` など）を返却せず、常に factory を返却する。
+      - `try/finally` で手動の cleanup を記載せず、fixture の `use()` の後に任せる。
   - id: db-cleanup-01
     group: DB の cleanup 戦略
     name: DB の cleanup の順序
@@ -109,4 +109,4 @@ items:
     name: E2E 専用の seed route
     body: |-
       E2E から DB を直接触れないときは、テスト専用の route を用意する。
-      テスト環境以外では 403 を返して防御する。
+      テスト環境以外では 403 を返却して防御する。

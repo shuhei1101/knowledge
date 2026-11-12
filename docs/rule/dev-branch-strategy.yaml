@@ -45,7 +45,7 @@ items:
     group: ブランチ
     name: release と develop の同期
     body: |-
-      - release は commit が入るたびに develop へバックマージする（E2E を回し直す前と、master へマージした後）
+      - release は commit が入るたびに develop へバックマージする（E2E を再実行する前と、master へマージした後）
       - E2E が全て通った release は、master と develop の両方へ merge commit で入れる
   - id: issue-pr-01
     group: Issue と PR
