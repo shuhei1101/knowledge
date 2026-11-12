@@ -25,10 +25,16 @@ properties:
     type: string
     title: タイトル
     description: '`非機能要件`。'
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
     description: 対象を 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
     x-rules:
       - 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。
       - 対象そのものが変わったときだけ書き換える。
@@ -39,6 +45,9 @@ properties:
     type: array
     title: 一覧
     description: 外部の制約から逆算したアプリの値。一覧の表は各要素から生成する。
+    x-used-by:
+      - 実装とテストで、守る値を引く。
+      - 生成で、非機能要件の一覧の表と要素ごとのページにする。
     x-rules:
       - 決まっていない項目も同じ一覧に配置し、決定値を `未確定` にする。
       - 未確定だった項目が決まったら同じ要素を書き換える。
@@ -63,6 +72,9 @@ properties:
           type: string
           title: ID
           description: 設計書の中で一意な要素の ID。1 要素 1 ページにするときのページの ID になる。
+          x-used-by:
+            - 生成で、要素を 1 ページにするときのページの ID にする。
+            - ほかの設計書の参照から要素を指す。
           x-rules:
             - 並びの順に `NFR-{番号}` を振る。
             - 新しく追加する要素には、既にある番号の最大の次を振る。
@@ -74,10 +86,14 @@ properties:
           type: string
           title: 項目
           description: 何についての値か。1 項目 = 1 要素。
+          x-used-by:
+            - 生成で、表の行の名前とページの見出しにする。
         english_name:
           type: string
           title: 英語名
           description: テスト関数・ファイルの名前に使用する。
+          x-used-by:
+            - テストで、テストの関数・ファイルの名前にする。
           pattern: ^[a-z0-9_]+$
         category:
           type: string
@@ -85,14 +101,21 @@ properties:
           description: |-
             性能 / レート制限 / 可用性 / 耐障害 / セキュリティ / コスト / 保守性 / 動作環境 等。
             動作環境は対応端末・OS・ブラウザ・画面サイズ・入力方式・通信を 1 項目ずつ配置する。
+          x-used-by:
+            - 生成で、一覧の分類にする。
+            - レビューで、カテゴリごとに要件の漏れが無いかを確認する。
         external_constraint:
           type: string
           title: 外部の制約
           description: 外部が示す上限・下限・保証値。自主基準は `制限なし`、分からなければ `未確定`。
+          x-used-by:
+            - レビューで、決定値が外部の制約を超えていないかを確認する。
         source_kind:
           type: string
           title: 出所種別
           description: 6 種類を 1 つずつ突き合わせ、どれにも該当しないときだけ `制限なし`。
+          x-used-by:
+            - レビューで、外部の制約の出所を全ての種類と突き合わせたかを確認する。
           enum:
           - 外部 API の制限
           - 外部ライブラリの制限
@@ -107,29 +130,46 @@ properties:
           description: |-
             外部の制約を記載した設計書の参照・資料の URL・ユーザーの回答コメントの URL。
             設計書の参照は `{ID}#{項目のパス}` で記載する。
+          x-used-by:
+            - レビューで、外部の制約の出所をたどって値を確認する。
         value:
           type: string
           title: 決定値
           description: 実装とテストが参照する値。まだ決められないときは `未確定`。
+          x-used-by:
+            - 実装で、上限・待ち・回数などの値にする。
+            - テストで、境界の値にする。
         unit:
           type: string
           title: 単位
+          x-used-by:
+            - 実装とテストで、値の単位にする。
         rationale:
           type: string
           title: 根拠
           description: 外部の制約そのままでない理由。未確定なら何が分かれば決まるか。
+          x-used-by:
+            - レビューで、外部の制約そのままでない値の根拠を確認する。
+            - 値を変えるときに、根拠が今も成り立つかを判断する。
         measurement:
           type: string
           title: 測り方
+          x-used-by:
+            - テストで、値を測る方法にする。
         test_file:
           type: string
           title: 対応テスト
           description: 非機能要件テストのファイル（`tests/nfr/test_{英語名}.py`）。測れない項目は持たない（規約『V字モデル』）。
+          x-used-by:
+            - 非機能要件のテストを作るファイルにする。
+            - 検査で、テストのファイルがあるかを確認する。
           pattern: ^tests/.+
         verification:
           type: object
           title: 確認の記録
           description: 確認した結果。
+          x-used-by:
+            - レビューで、実機で確認した結果を確認する。
           x-heading: 確認の記録
           x-shape: attributes
           additionalProperties: false
@@ -143,18 +183,26 @@ properties:
               type: string
               title: 端末
               description: 確認した端末（OS・ブラウザなど）。
+              x-used-by:
+                - 確認した端末と違う端末で確認し直すかを判断する。
             version:
               type: string
               title: バージョン
               description: 確認した端末のバージョン（OS・ブラウザのバージョン）。
+              x-used-by:
+                - 確認したバージョンと違うバージョンで確認し直すかを判断する。
             date:
               type: string
               title: 確認日
               description: '`YYYY-MM-DD`。'
+              x-used-by:
+                - 確認の記録が古くなっていないかを判断する。
               pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
             result:
               type: string
               title: 合否
+              x-used-by:
+                - 不合格の要件を直す対象にする。
               enum:
               - 合格
               - 不合格
@@ -162,6 +210,8 @@ properties:
               type: string
               title: 確認内容
               description: 不合格のとき、起きた事象。
+              x-used-by:
+                - 不合格の要件を直すときに、起きた事象を参照する。
           examples:
           - device: Windows 11 の PC の Edge
             version: Edge 140
@@ -171,6 +221,9 @@ properties:
           $ref: common.schema.yaml#/$defs/markdown
           title: 超過時の挙動
           description: 決定値を超えたときに何が起きるか（分割 / 待機 / リトライ / エラー）。
+          x-used-by:
+            - 実装で、値を超えたときの処理（分割・待機・リトライ・エラー）にする。
+            - テストで、値を超えたときのケースにする。
           x-rules:
             - 黙って切り捨てない。
           x-heading: 超過時の挙動
@@ -178,6 +231,8 @@ properties:
           type: array
           title: 内訳
           description: 決定値に至る内訳（外部の上限からの差し引き、または内側の値の合計）。内訳の無い項目は持たない。
+          x-used-by:
+            - レビューで、決定値が内訳から導けるかを確認する。
           x-heading: 内訳
           x-shape: table
           x-key: part
@@ -191,17 +246,26 @@ properties:
               part:
                 type: string
                 title: 区分
+                x-used-by:
+                  - レビューで、内訳の区分に漏れが無いかを確認する。
               value:
                 type: string
                 title: 値
+                x-used-by:
+                  - レビューで、内訳の値の合計・差し引きが決定値と一致するかを確認する。
               notes:
                 type: string
                 title: 補足
                 description: なぜその値か。
+                x-used-by:
+                  - レビューで、内訳の値の根拠を確認する。
         tests:
           type: array
           title: 非機能要件テスト
           description: 測れない項目・未確定の項目は持たない。
+          x-used-by:
+            - テストで、非機能要件のテストのケースにする。
+            - 検査で、テストのファイルに関数があるかを確認する。
           x-heading: 非機能要件テスト
           x-shape: table
           x-key: name
@@ -219,59 +283,75 @@ properties:
                 type: string
                 title: テスト名
                 description: '`test_{英語名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{英語名}`）。'
+                x-used-by:
+                  - テストで、テスト関数の名前にする。
                 pattern: ^test_[a-z0-9_]+$
                 x-test-function: true
               summary:
                 type: string
                 title: 概要
+                x-used-by:
+                  - テストで、関数の docstring の要約にする。
               condition:
                 type: string
                 title: 条件
                 description: 入力・負荷・回数を数値で。決定値の境界を 1 行以上入れる。
+                x-used-by:
+                  - テストで、入力・負荷・回数にする。
               measurement:
                 type: string
                 title: 測定方法
+                x-used-by:
+                  - テストで、測定の方法にする。
               expected:
                 type: string
                 title: 期待値
                 description: 合否の判定の基準。
+                x-used-by:
+                  - テストで、合否を判定する基準にする。
               notes:
                 type: string
                 title: 補足
+                x-used-by:
+                  - テストで、ケースの前提を参照する。
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
-        reason:
-          $ref: common.schema.yaml#/$defs/reason
         status:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   refs:
     type: array
     title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
     items:
       $ref: common.schema.yaml#/$defs/ref
   decisions:
     type: array
     title: 検討事項
     description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
     items:
       $ref: common.schema.yaml#/$defs/decision
   notes:

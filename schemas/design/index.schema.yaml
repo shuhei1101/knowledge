@@ -16,18 +16,24 @@ properties:
     type: string
     title: タイトル
     description: '`dev/` と `docs/` の直下だけが持つ見出し。'
+    x-used-by:
+      - 生成で、`README.md` の見出しにする。
     x-rules:
       - それ以外のフォルダはフォルダの名前を見出しにする。
   summary:
     $ref: common.schema.yaml#/$defs/summary
     title: 概要
     description: フォルダの 1 行の説明。
+    x-used-by:
+      - 生成で、`README.md` の冒頭の説明にする。
     x-rules:
       - 親の `index.yaml` のこのフォルダの行の `summary` と同じ文言にする。
   docs_index:
     type: boolean
     title: 文書の索引に掲載するか
     description: '`false` のとき、このフォルダの配下のページを文書の索引に掲載しない（ビュワーの上タブ・サイドバーには出す）。'
+    x-used-by:
+      - 文書の索引を作るときに、配下のページを掲載するかを決める。
     x-rules:
       - ルール注入が案内する規約のように、索引で並べると起動プロンプトが太るだけのフォルダに付ける。
     default: true
@@ -36,6 +42,8 @@ properties:
     type: array
     title: 列
     description: '目次の表の列の並びと列名。`page`・`summary`・`group` 以外のキーは、各行が同じキーで値を持つ（例: 実行条件の列の `condition`）。'
+    x-used-by:
+      - 生成で、目次の表の列の並びと列名にする。
     x-rules:
       - 省略したときは、`group` を持つ行があれば `分類`・`ページ`・`概要`、無ければ `ページ`・`概要` の並びにする。
       - ページ名は `page` の列だけが持つ。
@@ -53,15 +61,22 @@ properties:
           type: string
           title: キー
           description: 行の項目のキー。
+          x-used-by:
+            - 生成で、各行から列の値を引くキーにする。
           pattern: ^[a-z][a-z0-9_]*$
         title:
           type: string
           title: 列名
           description: 表の見出しに出す名前。
+          x-used-by:
+            - 生成で、表の列の見出しにする。
   items:
     type: array
     title: 目次
     description: フォルダの直下のページとサブフォルダ。並びがサイドバーの並びになる。
+    x-used-by:
+      - 生成で、`README.md` の目次の表と、サイドバーの並びにする。
+      - 文書の索引を作るときに、たどるページとサブフォルダにする。
     x-rules:
       - 深い階層はサブフォルダの `index.yaml` が持つ。
       - 利用頻度・重要度の高い順に並べ、同じ種類を連続させる。
@@ -82,15 +97,22 @@ properties:
           description: |-
             直下のファイルは実体のファイル名（Markdown は `{ファイル名}.md`、YAML の設計書は `{ファイル名}.yaml`）、サブフォルダは `{フォルダ名}/`。
             別のフォルダと共有するページを並べるときだけ、`../` から始まる別のフォルダのページ（`../共通/後片付け.yaml`）を記載する。
+          x-used-by:
+            - 生成で、ページへのリンク先にする。
+            - 検査で、ページの実体があるかを確認する。
           pattern: ^(?:[^/\s][^/]*/?|(?:\.\./)+[^/\s.][^/]*(?:/[^/\s][^/]*)*)$
         summary:
           $ref: common.schema.yaml#/$defs/summary
           title: 概要
           description: 1 行の説明。
+          x-used-by:
+            - 生成で、目次の行の説明にする。
         group:
           type: string
           title: 分類
           description: 行をまとまりで見せるときの分類。サイドバーの見出しになる。
+          x-used-by:
+            - 生成で、目次とサイドバーのまとまりの見出しにする。
           x-rules:
             - 行のページ名と同じ値にしない。
 examples:

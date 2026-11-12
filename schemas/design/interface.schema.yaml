@@ -32,10 +32,16 @@ properties:
     type: string
     title: タイトル
     description: 日本語の論理名。ファイル名に合わせる。
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
   entry:
     type: object
     title: 入口
     description: 操作の入口。冒頭のメタ情報の行に出す。
+    x-used-by:
+      - 実装で、操作の入口（エンドポイント・MCP ツール・画面操作・周期の処理）を作る。
+      - 生成で、冒頭のメタ情報の行にする。
     x-shape: attributes
     additionalProperties: false
     required:
@@ -46,6 +52,8 @@ properties:
         type: string
         title: 種類
         description: '`endpoint`（HTTP を返却する。値はメソッド + パス）/ `mcp_tool`（MCP ツール名）/ `operation`（呼び出す識別子 + 境界の種別）/ `trigger`（起動契機 + 周期）/ `screen`（画面の実装ファイル）。'
+        x-used-by:
+          - 実装で、入口の種類（HTTP・MCP・画面・周期・イベント）を決める。
         enum:
         - endpoint
         - mcp_tool
@@ -56,6 +64,8 @@ properties:
         type: string
         title: 値
         description: 操作を指す値。
+        x-used-by:
+          - 実装で、メソッドとパス・ツール名・識別子にする。
         examples:
           - POST /auth/signin
           - add_labels
@@ -64,10 +74,15 @@ properties:
         type: string
         title: 呼び出し API
         description: '`screen` のときの呼び出す API（Mock）。'
+        x-used-by:
+          - 結合テストで、画面が呼ぶ API の Mock にする。
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
     description: 対象を 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
     x-rules:
       - 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。
       - 対象そのものが変わったときだけ書き換える。
@@ -78,35 +93,56 @@ properties:
     type: string
     title: 対応テストファイル
     description: 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`。規約『V字モデル』）。
+    x-used-by:
+      - 結合テストを作るファイルにする。
+      - 検査で、テストのファイルがあるかを確認する。
     pattern: ^tests/.+
   identifier:
     type: string
     title: 識別子
     description: 操作の識別子（OpenAPI の operationId に該当する）。
+    x-used-by:
+      - 実装で、ハンドラ・ツールの関数の名前にする。
   permissions:
     type: string
     title: 必要な権限
+    x-used-by:
+      - 実装で、操作の前に確認する権限にする。
+      - テストで、権限が無いときのケースにする。
   idempotent:
     type: boolean
     title: 冪等
     description: 同じ要求を繰り返しても結果が変わらないか。
+    x-used-by:
+      - 実装で、同じ要求の繰り返しを受け付けるか、重複を弾くかを決める。
+      - 呼び出し元で、失敗したときに再試行してよいかを決める。
   side_effects:
     $ref: common.schema.yaml#/$defs/markdown
     title: 副作用
     description: 書き込むデータ・外部への送信。
+    x-used-by:
+      - 実装で、書き込むデータと外部への送信にする。
+      - テストで、副作用を確認する項目にする。
   callers:
     type: array
     title: 呼び出し元
+    x-used-by:
+      - レビューで、呼び出し元のシナリオと入出力が一致するかを確認する。
     items:
       $ref: common.schema.yaml#/$defs/ref
   exclusivity:
     type: string
     title: 排他
     description: 同時に呼ばれたときの扱い。
+    x-used-by:
+      - 実装で、同時に呼ばれたときのロック・キューにする。
   request:
     type: array
     title: リクエスト
     description: 呼び出し元から受け取る引数。周期・イベントで自分から動く処理は持たない。
+    x-used-by:
+      - 実装で、引数の型と検証にする。
+      - 生成で、リクエストの表にする。
     x-heading: リクエスト
     x-shape: table
     x-key: name
@@ -123,21 +159,32 @@ properties:
           type: string
           title: パラメータ
           description: オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 フィールド = 1 要素に展開する。
+          x-used-by:
+            - 実装で、引数・フィールドの名前にする。
         type:
           type: string
           title: 型
           description: 実装言語の型名。取りうる値が限られるときはリテラルの列挙。
+          x-used-by:
+            - 実装で、引数の型にする。
         required:
           type: boolean
           title: 必須
+          x-used-by:
+            - 実装で、無いときにエラーにするかを決める。
+            - テストで、引数を省いたときのケースにする。
         default:
           type: string
           title: デフォルト
           description: 省略時の値。省略できて既定の値が無いときは `なし（{省略時の挙動}）`。
+          x-used-by:
+            - 実装で、引数を省いたときの値にする。
         location:
           type: string
           title: 配置場所
           description: HTTP のパラメータの配置場所。MCP ツール・関数の引数は `argument`。
+          x-used-by:
+            - 実装で、値を引く場所（パス・クエリ・ヘッダ・本文・引数）にする。
           enum:
           - path
           - query
@@ -148,32 +195,51 @@ properties:
         description:
           type: string
           title: 説明
+          x-used-by:
+            - 呼び出し元の実装で、渡す値を決める。
         constraints:
           type: string
           title: 制限
           description: そのフィールド単体にかかる上限・形式。
+          x-used-by:
+            - 実装で、フィールドの検証にする。
+            - テストで、制限の境界のケースにする。
         format:
           type: string
           title: 形式
           description: 文字列の形式（`date-time` / `uri` 等）。
+          x-used-by:
+            - 実装で、文字列の形式の検証にする。
         example:
           type: string
           title: 例
+          x-used-by:
+            - テストで、要求の値にする。
         nullable:
           type: boolean
           title: 空を許す
+          x-used-by:
+            - 実装で、`null` を受け付けるかを決める。
         notes:
           type: string
           title: 補足
+          x-used-by:
+            - 実装で、引数の前提を参照する。
         status:
           $ref: common.schema.yaml#/$defs/status
   request_example:
     $ref: common.schema.yaml#/$defs/markdown
     title: リクエスト例
     description: ネスト構造の実形が分かる代表 1 ケース（JSON のコードブロック）。
+    x-used-by:
+      - テストで、要求の本文の見本にする。
   response:
     type: array
     title: レスポンス
+    x-used-by:
+      - 実装で、戻り値の型にする。
+      - 呼び出し元の実装で、受け取る値を決める。
+      - 生成で、レスポンスの表にする。
     x-heading: レスポンス
     x-shape: table
     x-key: name
@@ -189,39 +255,60 @@ properties:
           type: string
           title: フィールド
           description: オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 フィールド = 1 要素に展開する。
+          x-used-by:
+            - 実装で、戻り値のフィールドの名前にする。
         type:
           type: string
           title: 型
           description: 実装言語の型名。取りうる値が限られるときはリテラルの列挙。
+          x-used-by:
+            - 実装で、フィールドの型にする。
         description:
           type: string
           title: 説明
+          x-used-by:
+            - 呼び出し元の実装で、値の意味を参照する。
         constraints:
           type: string
           title: 制限
           description: そのフィールド単体にかかる上限・形式。
+          x-used-by:
+            - テストで、戻り値の上限・形式を確認する。
         format:
           type: string
           title: 形式
           description: 文字列の形式（`date-time` / `uri` 等）。
+          x-used-by:
+            - 実装で、文字列の形式にする。
         example:
           type: string
           title: 例
+          x-used-by:
+            - テストで、期待する戻り値の見本にする。
         notes:
           type: string
           title: 補足
+          x-used-by:
+            - 実装で、戻り値の前提を参照する。
   response_example:
     $ref: common.schema.yaml#/$defs/markdown
     title: レスポンス例
     description: JSON のコードブロック。
+    x-used-by:
+      - テストで、戻り値の見本にする。
   response_notes:
     $ref: common.schema.yaml#/$defs/markdown
     title: レスポンスの注記
     description: 冪等性など表に載らない挙動（`> [!NOTE]` のコールアウトで出す）。
+    x-used-by:
+      - 呼び出し元の実装で、表に載らない挙動を参照する。
   status_codes:
     type: array
     title: ステータスコード
     description: HTTP を返却する操作の出口。
+    x-used-by:
+      - 実装で、返すステータスコードにする。
+      - テストで、ステータスコードごとのケースにする。
     x-rules:
       - 異常の行は異常系のフローと 1:1 にする。
     x-heading: ステータスコード
@@ -237,16 +324,25 @@ properties:
         code:
           type: string
           title: ステータスコード
+          x-used-by:
+            - 実装で、返すステータスコードにする。
         condition:
           type: string
           title: 発生条件
+          x-used-by:
+            - 実装で、そのコードを返す条件にする。
         notes:
           type: string
           title: 補足
+          x-used-by:
+            - 実装で、コードの前提を参照する。
   exceptions:
     type: array
     title: 例外
     description: HTTP を返却しない操作の出口。異常の行は異常系のフローと 1:1。
+    x-used-by:
+      - 実装で、送出する例外にする。
+      - テストで、異常系のケースにする。
     x-heading: 例外
     x-shape: table
     x-key: name
@@ -261,20 +357,32 @@ properties:
           type: string
           title: 例外
           description: 送出する例外のクラス名。正常終了の行は `なし（正常終了）`。
+          x-used-by:
+            - 実装で、例外のクラスにする。
         condition:
           type: string
           title: 発生条件
+          x-used-by:
+            - 実装で、例外を送出する条件にする。
         notes:
           type: string
           title: 補足
+          x-used-by:
+            - 実装で、例外の前提を参照する。
   error_format:
     $ref: common.schema.yaml#/$defs/markdown
     title: エラーの形式
     description: エラー応答の形式（RFC 9457 の type・title・status・detail 等）。
+    x-used-by:
+      - 実装で、エラー応答の形式にする。
+      - 呼び出し元の実装で、エラーの読み方にする。
   constraints:
     type: array
     title: 制約
     description: 操作全体にかかる制約。関連する項目は制限を設けないときも行を配置する。
+    x-used-by:
+      - 実装で、タイムアウト・認可・レート制限・上限などの値にする。
+      - テストで、制約の境界のケースにする。
     x-heading: 制約
     x-shape: table
     x-key: item
@@ -289,21 +397,33 @@ properties:
           type: string
           title: 項目
           description: タイムアウト・認可・レート制限・合計サイズ・許可値の定義・周期・閾値など。
+          x-used-by:
+            - レビューで、制約の項目に漏れが無いかを確認する。
         constraint:
           type: string
           title: 制約
           description: 設けないときも `制限なし` と記載する。
+          x-used-by:
+            - 実装で、制約の値と処理にする。
         decided_by:
           $ref: common.schema.yaml#/$defs/ref
           title: 決定値
           description: 値の出所になる非機能要件の項目。
+          x-used-by:
+            - 実装で、値の出所の非機能要件を引く。
+            - レビューで、値が非機能要件の決定値と一致するかを確認する。
         notes:
           type: string
           title: 補足
+          x-used-by:
+            - 実装で、制約の前提を参照する。
   flows:
     type: array
     title: フロー
     description: 正常系と異常系のフロー。1 フロー = 結合テストの 1 ケース。
+    x-used-by:
+      - 結合テストで、フローごとのテスト関数にする。
+      - モジュール構成で、処理の順と呼ぶ相手を決める。
     x-rules:
       - 並びは正常 → 異常にする。
       - フロー一覧は各フローの名前と概要から生成する。
@@ -325,15 +445,23 @@ properties:
           type: string
           title: フロー名
           description: 正常の基本形は `正常系`。正常な結末が条件で分かれるときは `正常系（{条件}）`、異常は `異常系（{原因}・{ステータスか例外名}）`。
+          x-used-by:
+            - 結合テストで、テスト関数の名前に対応させる。
+            - ほかの設計書の参照（`flows[正常系]`）からフローを指す。
           pattern: ^(正常系|異常系)(（.+）)?$
         summary:
           $ref: common.schema.yaml#/$defs/summary
           title: 概要
           description: 1 行でフローの中身を要約する。
+          x-used-by:
+            - 生成で、フローの一覧の説明にする。
+            - 結合テストで、関数の docstring の要約にする。
         setup:
           type: array
           title: セットアップ
           description: 事前に要るデータ・状態と、分岐・異常を決定的に誘発する入力。
+          x-used-by:
+            - 結合テストで、前提を作る Factory・Mock にする。
           x-rules:
             - '`Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず配置する。'
           x-heading: セットアップ
@@ -350,20 +478,29 @@ properties:
                 type: string
                 title: セットアップ
                 description: 前提を作る Factory 関数名か状態の名前。
+                x-used-by:
+                  - 結合テストで、呼ぶ Factory 関数か作る状態にする。
                 x-rules:
                   - '`Mock` の行を必ず配置する。'
               description:
                 type: string
                 title: 説明
                 description: その前提の意味・役割・依存関係。Mock の行は差し替える依存と応答。
+                x-used-by:
+                  - 結合テストで、前提の役割と Mock の応答にする。
               notes:
                 type: string
                 title: 補足
                 description: 引数に指定する重要な値・分岐を決定的に誘発する値。
+                x-used-by:
+                  - 結合テストで、分岐を決定的に起こす値にする。
         flow:
           $ref: common.schema.yaml#/$defs/mermaid
           title: フロー
           description: Mermaid の `sequenceDiagram`。1 図 = 結末 1 本の一本道。
+          x-used-by:
+            - モジュール構成で、処理の順と呼ぶ相手を決める。
+            - 生成で、シーケンス図にする。
           x-rules:
             - 登場人物は呼び出し元（バックエンドは `participant クライアント`、フロントエンドは `actor ユーザー`）・インターフェース・外部システムの境界だけにする。
             - 読み取りと応答は点線 `-->>`、書き込み・操作は実線 `->>` にする。
@@ -372,6 +509,8 @@ properties:
           type: array
           title: 期待値
           description: フローの終了時点で外部から観測できる状態・戻り値。1 要素 = 1 つの確認項目。
+          x-used-by:
+            - 結合テストで、確認する項目にする。
           x-heading: 期待値
           x-shape: list
           minItems: 1
@@ -384,12 +523,18 @@ properties:
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         notes:
@@ -397,12 +542,18 @@ properties:
   refs:
     type: array
     title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
     items:
       $ref: common.schema.yaml#/$defs/ref
   decisions:
     type: array
     title: 検討事項
     description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
     items:
       $ref: common.schema.yaml#/$defs/decision
   notes:

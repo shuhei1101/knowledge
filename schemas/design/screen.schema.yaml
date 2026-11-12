@@ -26,18 +26,30 @@ properties:
     type: string
     title: タイトル
     description: 日本語の画面名。ファイル名に合わせる。
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
   screen:
     type: string
     title: 画面
     description: 画面の実装ファイルのパス。
+    x-used-by:
+      - 実装で、画面を作るファイルにする。
+      - 結合テストで、開く画面にする。
   mock:
     type: string
     title: モック
     description: 採用したモックの配置場所。
+    x-used-by:
+      - 実装で、合意したモックの見た目に合わせる。
+      - レビューで、実装した画面とモックを照合する。
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
     description: 対象を 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
     x-rules:
       - 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。
       - 対象そのものが変わったときだけ書き換える。
@@ -48,11 +60,17 @@ properties:
     type: string
     title: 対応テストファイル
     description: 対応する結合テストのファイル（規約『V字モデル』）。
+    x-used-by:
+      - 画面を開いて確認する結合テストを作るファイルにする。
+      - 検査で、テストのファイルがあるかを確認する。
     pattern: ^tests/.+
   elements:
     type: array
     title: 要素一覧
     description: 画面の要素 1 つ = 1 要素。
+    x-used-by:
+      - 実装で、画面の要素にする。
+      - 生成で、要素一覧の表にする。
     x-rules:
       - ダイアログの中の要素も並べ、位置の先頭にダイアログ名を記載する。
       - 列の表示・非表示は dev-docs の画面の表の列の設定で切り替える。
@@ -72,20 +90,30 @@ properties:
           type: string
           title: 要素
           description: ボタン・入力欄・ラベル・テーブル等の日本語の論理名。
+          x-used-by:
+            - 生成で、表の行の名前にする。
+            - 入力チェックから要素を指す。
           x-rules:
             - 画面の中で一意にする。
         id:
           type: string
           title: 項目 ID
           description: 画面の中で一意な識別子。テスト・実装から参照する。
+          x-used-by:
+            - 実装で、要素の `id`・`data-testid` にする。
+            - テストで、要素を探すセレクタにする。
         kind:
           type: string
           title: 種類
           description: '`button` / `input` / `select` / `table` / `label` 等。'
+          x-used-by:
+            - 実装で、要素の HTML の要素と部品を決める。
         component:
           $ref: common.schema.yaml#/$defs/ref
           title: 部品
           description: 使用する部品の部品設計（部品設計の `{ID}#`）。
+          x-used-by:
+            - 実装で、要素に使う部品を引く。
           examples:
           - "CMP-5#"
           - "CMP-6#"
@@ -93,6 +121,9 @@ properties:
           type: array
           title: 部品へ指定する引数
           description: 部品設計の引数へ指定する値。`component` を持つ要素だけが持ち、部品設計の必須の引数を全て並べる。
+          x-used-by:
+            - 実装で、部品へ渡す値にする。
+            - レビューで、部品の必須の引数が全て渡されているかを確認する。
           x-shape: table
           x-key: name
           items:
@@ -106,6 +137,8 @@ properties:
                 type: string
                 title: 引数
                 description: 部品設計の `args` の `name`。
+                x-used-by:
+                  - 実装で、渡す部品の引数にする。
                 examples:
                 - "status"
                 - "filterable"
@@ -113,6 +146,8 @@ properties:
                 type: string
                 title: 指定する値
                 description: 固定の値か取得元（`{インターフェース定義の論理名}.{フィールドのパス}`）。
+                x-used-by:
+                  - 実装で、引数に渡す固定の値か、値を取るインターフェース定義のフィールドにする。
                 examples:
                 - "`計画画面.行の材料[].status`"
                 - "※2 で絞り込みを持つ列なら `true`"
@@ -120,6 +155,8 @@ properties:
           type: array
           title: スロットに差し込む中身
           description: 部品設計のスロットへ差し込む要素か部品。`component` を持つ要素だけが持つ。
+          x-used-by:
+            - 実装で、部品のスロットへ差し込む中身にする。
           x-shape: table
           x-key: name
           items:
@@ -133,6 +170,8 @@ properties:
                 type: string
                 title: スロット
                 description: 部品設計の `slots` の `name`。
+                x-used-by:
+                  - 実装で、差し込むスロットにする。
                 examples:
                 - "default"
                 - "actions"
@@ -140,6 +179,8 @@ properties:
                 type: string
                 title: 差し込む中身
                 description: 差し込む要素の名前か、部品の部品設計。
+                x-used-by:
+                  - 実装で、差し込む要素か部品にする。
                 examples:
                 - "行の番号"
                 - "CMP-3#"
@@ -147,21 +188,31 @@ properties:
           type: string
           title: 位置
           description: '`>` で区切った入れ子のパス。'
+          x-used-by:
+            - 実装で、要素を置く入れ子の場所にする。
           examples:
             - 削除確認ダイアログ > フッター
         description:
           type: string
           title: 説明
+          x-used-by:
+            - 実装で、要素の役割を参照する。
         label:
           type: string
           title: 表示文言
           description: 画面に固定で出る文字列。
+          x-used-by:
+            - 実装で、画面に出す文字列にする。
         placeholder:
           type: string
           title: プレースホルダ
+          x-used-by:
+            - 実装で、入力欄のプレースホルダにする。
         io:
           type: string
           title: 入出力区分
+          x-used-by:
+            - 実装で、表示だけか、入力を受けるかを決める。
           enum:
           - 入力
           - 表示
@@ -170,63 +221,101 @@ properties:
           type: string
           title: 型
           description: 値を持つ要素の型（文字列 / 数値 / 日付 / 真偽値 等）。
+          x-used-by:
+            - 実装で、値の型と入力欄の種類にする。
         visible_when:
           type: string
           title: 表示条件
           description: '`常時` か出し分けの条件。'
+          x-used-by:
+            - 実装で、要素を出す条件にする。
+            - テストで、出る状態と出ない状態のケースにする。
         enabled_when:
           type: string
           title: 活性条件
           description: 表示はされるが操作できない条件。
+          x-used-by:
+            - 実装で、要素を操作できる条件にする。
+            - テストで、操作できない状態のケースにする。
         required:
           type: boolean
           title: 必須
+          x-used-by:
+            - 実装で、入力を必須にするかを決める。
         required_label:
           type: string
           title: 要否の表示
           description: '`※必須` / `※任意` の出し方。'
+          x-used-by:
+            - 実装で、必須・任意の表示にする。
         constraints:
           type: string
           title: 制限
-          description: 入力の上限・許容値・形式。
+          description: '`min_length`・`max_length`・`range`・`pattern`・`charset` で表せない入力の制限。'
+          x-used-by:
+            - 実装で、個別のキーで表せない入力の検証にする。
         min_length:
           type: integer
           title: 最小長
+          x-used-by:
+            - 実装で、入力の最小の長さの検証にする。
+            - テストで、境界の長さのケースにする。
         max_length:
           type: integer
           title: 最大長
+          x-used-by:
+            - 実装で、入力の最大の長さの検証と `maxlength` にする。
+            - テストで、境界の長さのケースにする。
         range:
           type: object
           title: 値の範囲・刻み
+          x-used-by:
+            - 実装で、数値の入力の `min`・`max`・`step` にする。
           additionalProperties: false
           properties:
             min:
               type: string
               title: 最小
+              x-used-by:
+                - 実装で、入力の最小値にする。
             max:
               type: string
               title: 最大
+              x-used-by:
+                - 実装で、入力の最大値にする。
             step:
               type: string
               title: 刻み
+              x-used-by:
+                - 実装で、入力の刻みにする。
         pattern:
           type: string
           title: 形式
           description: 正規表現。
+          x-used-by:
+            - 実装で、入力の形式の検証にする。
         charset:
           type: string
           title: 文字種の扱い
           description: 受け付ける文字と、制限せず変換するか。
+          x-used-by:
+            - 実装で、受け付ける文字の検証と変換にする。
         width:
           type: string
           title: 表示幅
+          x-used-by:
+            - 実装で、要素の表示幅にする。
         display_format:
           type: string
           title: 表示形式
           description: 日付・時刻・数値の表示の形式と、表示の例。
+          x-used-by:
+            - 実装で、日付・時刻・数値の書式にする。
         align:
           type: string
           title: 文字揃え
+          x-used-by:
+            - 実装で、文字揃えにする。
           enum:
           - 左
           - 中央
@@ -234,12 +323,18 @@ properties:
         tab_order:
           type: integer
           title: タブ順
+          x-used-by:
+            - 実装で、キー操作の順にする。
         autofocus:
           type: boolean
           title: 初期フォーカス
+          x-used-by:
+            - 実装で、画面を開いたときにフォーカスを置く要素にする。
         initial_state:
           type: string
           title: 初期状態
+          x-used-by:
+            - 実装で、画面を開いたときの要素の状態にする。
           enum:
           - 活性
           - 非活性
@@ -248,63 +343,91 @@ properties:
           type: string
           title: 初期値
           description: 表示時点の値（`空` / 取得値 等）。
+          x-used-by:
+            - 実装で、画面を開いたときの値にする。
         hint:
           type: string
           title: 補助文
           description: ラベルの下に出す説明。
-        error_message:
-          type: string
-          title: エラーの文言
-          description: 項目ごとの誤りと修正方法。
+          x-used-by:
+            - 実装で、ラベルの下の補助文にする。
         autocomplete:
           type: string
           title: 入力の目的
           description: 自動入力の種類（HTML の `autocomplete`）。
+          x-used-by:
+            - 実装で、入力欄の `autocomplete` にする。
         inputmode:
           type: string
           title: 入力モード
+          x-used-by:
+            - 実装で、入力欄の `inputmode` にする。
         prefix:
           type: string
           title: 接頭辞
+          x-used-by:
+            - 実装で、入力欄の前に出す文字列にする。
         suffix:
           type: string
           title: 接尾辞
+          x-used-by:
+            - 実装で、入力欄の後に出す文字列にする。
         options:
           type: string
           title: 選択肢
           description: 出所・並び・既定・複数選択の可否・排他入力。
+          x-used-by:
+            - 実装で、選択肢の出所・並び・既定・複数選択にする。
         sorting:
           type: string
           title: 並べ替え・絞り込み
           description: 表の列のとき、できるかと既定の並び。
+          x-used-by:
+            - 実装で、表の列の並べ替え・絞り込みにする。
         input_example:
           type: string
           title: 入力例
+          x-used-by:
+            - テストで、入力する値にする。
         source:
           type: string
           title: 取得元
           description: '`{インターフェース定義の論理名}.{フィールドのパス}`。'
+          x-used-by:
+            - 実装で、要素に出す値を取るインターフェース定義のフィールドにする。
         target:
           type: string
           title: 送信先
           description: '`{インターフェース定義の論理名}.{フィールドのパス}`。変換・合成・除外は括弧書きで添える。'
+          x-used-by:
+            - 実装で、入力した値を送るインターフェース定義のフィールドにする。
         action:
           type: string
           title: アクション
           description: 画面の中で閉じる動きは日本語で記載する。送信・画面遷移は `action_ref` に参照で持つ。
+          x-used-by:
+            - 実装で、画面の中で閉じる動きにする。
         action_ref:
           $ref: common.schema.yaml#/$defs/ref
           title: アクションの参照
           description: 送信を伴う動きはインターフェース定義、画面遷移は遷移先の画面設計。
+          x-used-by:
+            - 実装で、送信先のインターフェース定義か遷移先の画面設計を引く。
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         reason:
@@ -313,18 +436,15 @@ properties:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   input_checks:
     type: array
     title: 入力チェック
     description: 1 要素 = 1 ケースの入力チェック。無い画面は持たない。
+    x-used-by:
+      - 実装で、入力の検証とエラーの表示にする。
+      - テストで、違反ごとのケースにする。
     x-heading: 入力チェック
     x-shape: table
     items:
@@ -341,30 +461,46 @@ properties:
           type: string
           title: 要素
           description: '`elements` の要素の名前。'
+          x-used-by:
+            - 実装で、検証する要素にする。
         violation:
           type: string
           title: 違反の条件
           description: 1 要素に 1 つの違反。
+          x-used-by:
+            - 実装で、エラーにする条件にする。
         trigger:
           type: string
           title: 検証の契機
           description: 入力のたび / フォーカスを失ったとき / 送信ボタンのクリック 等。
+          x-used-by:
+            - 実装で、検証する契機（入力・フォーカスを失ったとき・送信）にする。
         message:
           type: string
           title: エラー文言
           description: 画面に出る文字列そのまま。
+          x-used-by:
+            - 実装で、画面に出すエラーの文言にする。
         position:
           type: string
           title: 表示位置
+          x-used-by:
+            - 実装で、エラーを出す場所にする。
   refs:
     type: array
     title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
     items:
       $ref: common.schema.yaml#/$defs/ref
   decisions:
     type: array
     title: 検討事項
     description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
     items:
       $ref: common.schema.yaml#/$defs/decision
   notes:

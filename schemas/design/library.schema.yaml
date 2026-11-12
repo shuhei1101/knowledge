@@ -28,16 +28,24 @@ properties:
     type: string
     title: タイトル
     description: ライブラリ名（パッケージ名）。ファイル名に合わせる。
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
     description: ライブラリが何をするものかを 1〜3 行で要約する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
     x-rules:
       - 自プロジェクトでの用途は記載しない。
       - 初回に記載した内容のまま保ち、後から情報を追加しない。
   kind:
     type: string
     title: 種類
+    x-used-by:
+      - 依存の定義（言語のパッケージ・CLI・CDN）のどこに入れるかを決める。
     enum:
     - ライブラリ
     - フレームワーク
@@ -50,14 +58,20 @@ properties:
     type: string
     title: 識別子
     description: パッケージの識別子（purl）。
+    x-used-by:
+      - 脆弱性の情報とライセンスを引く識別子にする。
     examples:
       - pkg:pypi/ruamel.yaml
   supplier:
     type: string
     title: 提供元
+    x-used-by:
+      - レビューで、提供元の保守の状況を確認する。
   dependency_scope:
     type: string
     title: 依存の範囲
+    x-used-by:
+      - 実装で、依存を実行時・開発時のどちらに入れるかを決める。
     enum:
     - 必須
     - 任意
@@ -65,6 +79,8 @@ properties:
   adoption:
     type: string
     title: 採用状態
+    x-used-by:
+      - 実装で、採用したライブラリだけを使い、検討中・廃止のものを新しく使わない。
     enum:
     - 採用
     - 未採用
@@ -72,17 +88,24 @@ properties:
     type: array
     title: 使用箇所
     description: 呼び出す境界層のパス（リポジトリの直下から）。エージェントの手順から呼ぶ CLI は手順を持つドキュメントのパス。
+    x-used-by:
+      - ライブラリを上げる・外すときに、直す境界層のファイルを探す。
     items:
       type: string
   upstream:
     type: string
     title: 上流リポジトリ
     description: GitHub の `owner/repo`。規約『不具合の報告』の上流 Issue の検索がここを参照する。
+    x-used-by:
+      - 不具合に当たったときに、上流の Issue を検索する。
     pattern: ^[^/\s]+/[^/\s]+$
   verification:
     type: object
     title: 動作確認
     description: 動かして確認したか。
+    x-used-by:
+      - 実装の前に、ライブラリを動かして確認済みかを判断する。
+      - レビューで、確認していないライブラリに理由があるかを確認する。
     x-shape: attributes
     additionalProperties: false
     required:
@@ -91,6 +114,8 @@ properties:
       state:
         type: string
         title: 状態
+        x-used-by:
+          - 実装の前に、動作確認が要るかを判断する。
         enum:
         - 済
         - 未確認
@@ -98,83 +123,118 @@ properties:
         type: string
         title: 確認日
         description: '`YYYY-MM-DD`。'
+        x-used-by:
+          - 確認の記録が古くなっていないかを判断する。
         pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
       detail:
         type: string
         title: 確認内容
         description: 確認した内容か、確認できない理由。
+        x-used-by:
+          - 確認していないライブラリを使ってよいかの判断にする。
   version:
     type: object
     title: 現在のバージョン情報
+    x-used-by:
+      - ライブラリを上げるかを判断する。
     x-heading: 現在のバージョン情報
     x-shape: attributes
     additionalProperties: false
     required:
-    - current
+    - source
     - checked_on
     properties:
-      current:
-        type: string
-        title: バージョン
-        description: 採用しているバージョン。
       latest:
         type: string
         title: 最新版
+        x-used-by:
+          - 依存の定義のバージョンと比べて、上げるかを判断する。
       checked_on:
         type: string
         title: 確認日
         description: 最新バージョンを確認した日（`YYYY-MM-DD`）。
+        x-used-by:
+          - 最新版の情報が古くなっていないかを判断する。
         pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
       source:
         type: string
         title: バージョンの出所
         description: 突き合わせる依存の定義（`uv.lock` / `pyproject.toml` / CDN の URL）。
+        x-used-by:
+          - 採用しているバージョンを、依存の定義から引く。
       pinning:
         type: string
         title: バージョンの固定方法
+        x-used-by:
+          - 依存を上げるときに、バージョンの指定の書き方にする。
       support_until:
         type: string
         title: サポート期限
+        x-used-by:
+          - サポートが切れる前に上げる作業を計画する。
       security_until:
         type: string
         title: セキュリティ対応の期限
+        x-used-by:
+          - セキュリティ対応が切れる前に上げる作業を計画する。
       lts:
         type: boolean
         title: LTS
+        x-used-by:
+          - 上げる先のバージョンを LTS から選ぶ。
   license:
     type: string
     title: ライセンス
     description: 商用利用の可否を確認して記載する。
+    x-used-by:
+      - レビューで、配布の形とライセンスが合うかを確認する。
   official_url:
     type: string
     title: 公式 URL
+    x-used-by:
+      - 仕様を確かめるときに、公式のページを開く。
   docs_url:
     type: string
     title: 公式ドキュメント
     description: API リファレンスの URL。
+    x-used-by:
+      - 仕様を確かめるときに、API リファレンスを開く。
   selection:
     type: object
     title: 選定の記録
+    x-used-by:
+      - 置き換えを検討するときに、前に比べた候補と理由を参照する。
     x-heading: 選定の記録
     additionalProperties: false
     properties:
       candidates:
         $ref: common.schema.yaml#/$defs/markdown
         title: 比べた候補
+        x-used-by:
+          - 置き換えを検討するときに、前に比べた候補を参照する。
       decision:
         $ref: common.schema.yaml#/$defs/markdown
         title: 決めた理由
+        x-used-by:
+          - レビューで、採用の理由が今も成り立つかを確認する。
       consequences:
         $ref: common.schema.yaml#/$defs/markdown
         title: 結果
+        x-used-by:
+          - 実装で、採用で受け入れた制約を参照する。
   install:
     $ref: common.schema.yaml#/$defs/markdown
     title: インストール手順
     description: バージョンを固定したコマンドと、追加の設定（コードブロック）。
+    x-used-by:
+      - 環境を作るときに、ライブラリを入れるコマンドにする。
     x-heading: インストール手順
   catalogs:
     type: array
     title: 一覧
+    x-used-by:
+      - 実装で、使う API・コマンド・設定を引く。
+      - 生成で、一覧の表と節にする。
     x-shape: sections
     x-key: name
     minItems: 1
@@ -190,14 +250,20 @@ properties:
           type: string
           title: 単位
           description: 列挙する対象の単位（`API` / `コマンド` / `設定` / `ファイル` / `環境変数` / `同梱プラグイン` 等）。見出しは `{単位} 一覧`。
+          x-used-by:
+            - 生成で、`{単位} 一覧` の見出しにする。
         version:
           type: string
           title: バージョン
           description: 一覧を作ったバージョン。
+          x-used-by:
+            - ライブラリを上げたときに、一覧を作り直すかを判断する。
         entries:
           type: array
           title: 対象
           description: このプロジェクトで使用する対象だけ。一覧の表は各対象の種別・名前・用途から生成する。
+          x-used-by:
+            - 実装で、使う関数・コマンドの呼び方にする。
           x-shape: sections
           x-key: name
           minItems: 1
@@ -213,21 +279,33 @@ properties:
                 type: string
                 title: 名前
                 description: 対象の名前（関数・コンポーネント・コマンド 等）。
+                x-used-by:
+                  - 実装で、呼ぶ関数・コンポーネント・コマンドの名前にする。
+                  - ほかの設計書の参照から対象を指す。
               kind:
                 type: string
                 title: 種別
                 description: '`コンポーネント` / `関数` / `フック` / `クラス` / `定数` / `コマンド` 等。'
+                x-used-by:
+                  - 生成で、一覧の種別にする。
               purpose:
                 $ref: common.schema.yaml#/$defs/summary
                 title: 用途
                 description: 1 行の用途。
+                x-used-by:
+                  - 生成で、一覧の用途にする。
+                  - 実装で、目的に合う対象を選ぶ。
               description:
                 $ref: common.schema.yaml#/$defs/markdown
                 title: 説明
+                x-used-by:
+                  - 実装で、対象の挙動を参照する。
               params:
                 type: array
                 title: パラメータ
                 description: 使用するものだけでなく主要なパラメータも全て記載する。
+                x-used-by:
+                  - 実装で、渡す引数にする。
                 x-heading: パラメータ
                 x-shape: table
                 x-key: name
@@ -243,34 +321,52 @@ properties:
                       type: string
                       title: パラメータ
                       description: オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child`。
+                      x-used-by:
+                        - 実装で、引数の名前にする。
                     type:
                       type: string
                       title: 型
                       description: 取りうる値が限られるときは列挙し、各値の意味は補足に記載する。
+                      x-used-by:
+                        - 実装で、引数の型にする。
                     required:
                       type: boolean
                       title: 必須
+                      x-used-by:
+                        - 実装で、省けない引数にする。
                     default:
                       type: string
                       title: 既定
                       description: 任意のパラメータの省略時の値。
+                      x-used-by:
+                        - 実装で、省いたときに使われる値を参照する。
                     description:
                       type: string
                       title: 説明
+                      x-used-by:
+                        - 実装で、引数に入れる値を決める。
                     constraints:
                       type: string
                       title: 制限
+                      x-used-by:
+                        - 実装で、渡す前の検証にする。
                     notes:
                       type: string
                       title: 補足
+                      x-used-by:
+                        - 実装で、引数の前提を参照する。
               params_example:
                 $ref: common.schema.yaml#/$defs/markdown
                 title: パラメータ例
                 description: import 込みの最小の動く例（コードブロック）。
+                x-used-by:
+                  - 実装で、呼び出しの見本にする。
               returns:
                 type: array
                 title: 戻り値
                 description: 単純な値は `name` を `-` にした 1 要素。
+                x-used-by:
+                  - 実装で、戻り値を読む型にする。
                 x-heading: 戻り値
                 x-shape: table
                 x-key: name
@@ -286,30 +382,48 @@ properties:
                       type: string
                       title: フィールド
                       description: 返らないことがあるフィールドは `field?` と記載し、条件を補足に記載する。
+                      x-used-by:
+                        - 実装で、戻り値のフィールドの名前にする。
                     type:
                       type: string
                       title: 型
+                      x-used-by:
+                        - 実装で、フィールドの型にする。
                     description:
                       type: string
                       title: 説明
+                      x-used-by:
+                        - 実装で、値の意味を参照する。
                     constraints:
                       type: string
                       title: 制限
+                      x-used-by:
+                        - 実装で、戻り値の上限・形式を参照する。
                     notes:
                       type: string
                       title: 補足
+                      x-used-by:
+                        - 実装で、返らないことがあるフィールドの条件を参照する。
               returns_example:
                 $ref: common.schema.yaml#/$defs/markdown
                 title: 戻り値例
+                x-used-by:
+                  - テストで、Mock の戻り値にする。
               refs:
                 type: array
                 title: 関連
+                x-used-by:
+                  - 生成で、関連する設計書へのリンクにする。
+                  - レビューで、関連する設計書をたどって食い違いを確認する。
                 items:
                   $ref: common.schema.yaml#/$defs/ref
               decisions:
                 type: array
                 title: 検討事項
                 description: 根拠になった話し合いの記録の検討事項の ID。
+                x-used-by:
+                  - 生成で、話し合いの記録の検討事項へのリンクにする。
+                  - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
                 items:
                   $ref: common.schema.yaml#/$defs/decision
               reason:
@@ -318,18 +432,15 @@ properties:
                 $ref: common.schema.yaml#/$defs/status
               visibility:
                 $ref: common.schema.yaml#/$defs/visibility
-              implementation:
-                $ref: common.schema.yaml#/$defs/implementation
-              introduced:
-                $ref: common.schema.yaml#/$defs/introduced
-              aliases:
-                $ref: common.schema.yaml#/$defs/aliases
               notes:
                 $ref: common.schema.yaml#/$defs/notes
   limitations:
     type: array
     title: 制限事項
     description: 仕様として常に成り立つ制約。
+    x-used-by:
+      - 実装で、ライブラリでできないことを避ける。
+      - レビューで、制限事項に当たる使い方が無いかを確認する。
     x-heading: 制限事項
     x-shape: table
     x-key: item
@@ -343,15 +454,24 @@ properties:
         item:
           type: string
           title: 事項
+          x-used-by:
+            - 生成で、表の行の名前にする。
         content:
           type: string
           title: 内容
+          x-used-by:
+            - 実装で、守る制約にする。
         notes:
           type: string
           title: 補足
+          x-used-by:
+            - 実装で、制約の前提を参照する。
   usage_limits:
     type: array
     title: 利用上限
+    x-used-by:
+      - 非機能要件で、利用上限の値の出所にする。
+      - 実装で、上限に達したときの処理にする。
     x-heading: 利用上限
     x-shape: table
     x-key: item
@@ -366,16 +486,25 @@ properties:
           type: string
           title: 項目
           description: '`利用枠` / `到達時の挙動` / `解除時刻` 等。'
+          x-used-by:
+            - 生成で、表の行の名前にする。
         content:
           type: string
           title: 内容
+          x-used-by:
+            - 実装で、上限の値と到達時の挙動にする。
         notes:
           type: string
           title: 補足
+          x-used-by:
+            - 実装で、上限の前提を参照する。
   issues:
     type: array
     title: 不具合一覧
     description: 仕様どおりに使用しても期待どおり動かない事象。
+    x-used-by:
+      - 実装で、仕様どおりに動かない事象を避ける。
+      - 生成で、不具合一覧の節にする。
     x-rules:
       - こちらの使用方法の誤りだったものは記載しない。
       - 解消を確認したら削除する。
@@ -395,18 +524,26 @@ properties:
         title:
           type: string
           title: タイトル
+          x-used-by:
+            - 生成で、節の見出しにする。
         summary:
           $ref: common.schema.yaml#/$defs/summary
           title: 概要
           description: 1 行で事象を要約する。
+          x-used-by:
+            - 生成で、不具合の一覧の説明にする。
         occurred_on:
           type: string
           title: 発生日
           description: 事象を確認した日（`YYYY-MM-DD`）。再確認して続いていたら更新する。
+          x-used-by:
+            - 事象が今も続いているかを確かめ直す時期を判断する。
           pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
         state:
           type: string
           title: 状態
+          x-used-by:
+            - 回避策を入れたままにするかを判断する。
           enum:
           - 未解決
           - 回避策あり
@@ -415,16 +552,23 @@ properties:
           $ref: common.schema.yaml#/$defs/markdown
           title: 概要
           description: 何が起きるかを事実だけで記載する。
+          x-used-by:
+            - 実装で、起きる事象を参照する。
         conditions:
           type: array
           title: 条件
           description: 再現する状況。
+          x-used-by:
+            - 実装で、事象を避ける条件にする。
+            - テストで、事象を再現するケースにする。
           x-shape: list
           items:
             type: string
         workarounds:
           type: array
           title: 対処法
+          x-used-by:
+            - 実装で、回避策を入れる。
           x-heading: 対処法
           x-shape: table
           x-key: method
@@ -440,31 +584,47 @@ properties:
                 type: string
                 title: 方法
                 description: 回避策が無いときは `回避策なし`。
+                x-used-by:
+                  - 実装で、回避策の方法にする。
               result:
                 type: string
                 title: 結果
                 description: 得られるものと、本来やりたかったことからのずれ。
+                x-used-by:
+                  - 回避策を選ぶときに、得られるものとずれを比べる。
               recommended:
                 type: boolean
                 title: 推奨
                 description: 最初に試す 1 案だけ。
+                x-used-by:
+                  - 実装で、最初に試す回避策にする。
         upstream_issue:
           type: string
           title: 上流の Issue
           description: 上流の Issue の URL。
+          x-used-by:
+            - 上流で解消したかを確かめる先にする。
         fixed_in:
           type: string
           title: 解消版
           description: 解消したバージョン。達したら回避策を削除する候補になる。
+          x-used-by:
+            - 解消した版へ上げた後に、回避策を外す。
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         notes:
@@ -472,12 +632,18 @@ properties:
   refs:
     type: array
     title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
     items:
       $ref: common.schema.yaml#/$defs/ref
   decisions:
     type: array
     title: 検討事項
     description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
     items:
       $ref: common.schema.yaml#/$defs/decision
   notes:
@@ -485,6 +651,8 @@ properties:
     x-heading: 補足
     x-shape: sections
     description: 対象固有の解説セクション（セクションの名前 → 本文）。一覧・制限事項・不具合に属さないもの。
+    x-used-by:
+      - 実装で、一覧・制限事項・不具合に属さない対象固有の解説を参照する。
 examples:
 - id: LIB-1
   title: react-image-crop
@@ -503,7 +671,6 @@ examples:
     date: '2026-07-24'
     detail: 円形の選択とプレビューを最小のコードで動かした
   version:
-    current: 11.0.5
     latest: 11.0.5
     checked_on: '2026-07-24'
     source: package.json

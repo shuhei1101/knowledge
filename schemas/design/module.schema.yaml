@@ -32,11 +32,17 @@ properties:
     type: string
     title: タイトル
     description: '`{サブシステム名} / {分類名}`（物理ファイルの設計書は `{サブシステム名} / {分類名} / {物理ファイルの名前}`）。'
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
     pattern: ^.+ / .+$
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
     description: 対象を 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
     x-rules:
       - 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。
       - 対象そのものが変わったときだけ書き換える。
@@ -49,6 +55,9 @@ properties:
     description: |-
       属する物理ファイルごとの単体テストのファイル（1 物理ファイル = 1 テストファイル、規約『V字モデル』）。
       テストを作ったときに記入する（設計の時点では空でよい）。
+    x-used-by:
+      - 単体テストを作るファイルにする。
+      - 検査で、テストのファイルと単体テストの関数があるかを確認する。
     maxItems: 1
     items:
       type: string
@@ -59,6 +68,9 @@ properties:
     description: |-
       疎通テスト（`connectivity_tests`）を持つ関数・メソッドの、外部疎通テストのファイル（`tests/external/` の下）。
       疎通テストを作ったときに記入する（設計の時点では空でよい）。
+    x-used-by:
+      - 外部疎通のテストを作るファイルにする。
+      - 検査で、テストのファイルと疎通テストの関数があるかを確認する。
     items:
       type: string
       pattern: ^tests/external/.+
@@ -66,6 +78,9 @@ properties:
     type: array
     title: 構成図
     description: 矢印で繋がる塊 1 つ = 1 枚の図。
+    x-used-by:
+      - 生成で、構成図にする。
+      - レビューで、要素どうしの依存の向きを確認する。
     x-rules:
       - 1 枚のノードが 15 を超えるときは観点で分ける。
     x-heading: 構成図
@@ -82,10 +97,15 @@ properties:
           type: string
           title: 塊の論理名
           description: 図が 1 枚なら `全体`。
+          x-used-by:
+            - 実装で、ソースコードの名前にする。
+            - ほかの設計書の参照（`functions[main]`）から要素を指す。
         diagram:
           $ref: common.schema.yaml#/$defs/mermaid
           title: 図
           description: Mermaid の `classDiagram`。
+          x-used-by:
+            - 生成で、クラス図にする。
           x-rules:
             - 次の行に `direction` を記載する。
             - 図の中の名前は論理名で記載する。
@@ -94,6 +114,9 @@ properties:
     type: array
     title: データモデル
     description: プロパティ主体の型（dataclass・BaseModel・TypedDict・TS の type 等）。
+    x-used-by:
+      - 実装で、プロパティ主体の型（dataclass・BaseModel・TypedDict 等）にする。
+      - 生成で、要素ごとの節にする。
     x-heading: データモデル
     x-shape: sections
     x-key: name
@@ -110,37 +133,58 @@ properties:
           type: string
           title: 物理名
           description: ソースコード上の名前。項目のパスで指すときのキー。
+          x-used-by:
+            - 実装で、ソースコードの名前にする。
+            - ほかの設計書の参照（`functions[main]`）から要素を指す。
         title: &id002
           type: string
           title: 論理名
           description: 図と見出しに出す名前。
+          x-used-by:
+            - 生成で、図と見出しの名前にする。
         container: &id003
           type: string
           title: コンテナ
           description: 所属ファイル。
+          x-used-by:
+            - 実装で、要素を書くファイルにする。
+            - 検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。
           examples:
             - oauth/service.ts
         usecase: &id004
           type: string
           title: ユースケース
           description: 属するユースケース名。複数で共用するものは `共通`。
+          x-used-by:
+            - 生成で、ユースケースごとの一覧にする。
+            - レビューで、ユースケースの変更が及ぶ要素を探す。
         role: &id005
           type: string
           title: 役割
           description: 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。
+          x-used-by:
+            - レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。
         summary: &id006
           $ref: common.schema.yaml#/$defs/summary
           title: 概要
           description: 1 行で何を担うか。
+          x-used-by:
+            - 生成で、要素の一覧の説明にする。
         description: &id007
           $ref: common.schema.yaml#/$defs/markdown
           title: 説明
+          x-used-by:
+            - 実装で、要素の前提と挙動を参照する。
         inherits:
           type: string
           title: 継承元
+          x-used-by:
+            - 実装で、継承・実装する型にする。
         properties:
           type: array
           title: プロパティ
+          x-used-by:
+            - 実装で、型のフィールドにする。
           x-heading: プロパティ
           x-shape: table
           x-key: name
@@ -155,33 +199,51 @@ properties:
               name:
                 type: string
                 title: プロパティ名
+                x-used-by:
+                  - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                x-used-by:
+                  - 生成で、表の論理名にする。
               type:
                 type: string
                 title: 型
                 description: 取りうる値が有限の文字列はリテラル型で列挙する。
+                x-used-by:
+                  - 実装で、型にする。
               access:
                 type: string
                 title: 可視性
                 description: '`public` / `protected` / `private`。可視性の無い言語は `公開` / `内部 (_)` / `非公開 (__)`。'
+                x-used-by:
+                  - 実装で、可視性（公開・内部）にする。
               default:
                 type: string
                 title: デフォルト
                 description: 生成時の値。無いときは記載しない。
+                x-used-by:
+                  - 実装で、省いたときの値にする。
               description:
                 type: string
                 title: 説明
+                x-used-by:
+                  - 実装で、意味を参照する。
               example:
                 type: string
                 title: 例
+                x-used-by:
+                  - テストで、Factory の値にする。
               notes:
                 type: string
                 title: 補足
+                x-used-by:
+                  - 実装で、前提を参照する。
         methods:
           type: array
           title: メソッド
+          x-used-by:
+            - 実装で、型のメソッドにする。
           x-heading: メソッド
           x-shape: sections
           x-key: name
@@ -190,12 +252,18 @@ properties:
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         reason:
@@ -204,18 +272,15 @@ properties:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   enums:
     type: array
     title: Enum
     description: 取りうる値の列挙。`Literal` の型エイリアスも含む。
+    x-used-by:
+      - 実装で、Enum・`Literal` の型にする。
+      - 生成で、要素ごとの節にする。
     x-heading: Enum
     x-shape: sections
     x-key: name
@@ -238,6 +303,8 @@ properties:
         values:
           type: array
           title: 値一覧
+          x-used-by:
+            - 実装で、Enum のメンバーにする。
           x-heading: 値一覧
           x-shape: table
           x-key: value
@@ -254,28 +321,44 @@ properties:
                 type: string
                 title: 値
                 description: 実際に持つ値。
+                x-used-by:
+                  - 実装で、メンバーが持つ値にする。
               member:
                 type: string
                 title: メンバー名
                 description: コード上の識別子。
+                x-used-by:
+                  - 実装で、メンバーの識別子にする。
               title:
                 type: string
                 title: 論理名
+                x-used-by:
+                  - 生成で、表の論理名にする。
               description:
                 type: string
                 title: 説明
+                x-used-by:
+                  - 実装で、値の意味を参照する。
               notes:
                 type: string
                 title: 補足
+                x-used-by:
+                  - 実装で、値の前提を参照する。
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         reason:
@@ -284,18 +367,15 @@ properties:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   classes:
     type: array
     title: クラス
     description: 振る舞いを持つクラス・抽象クラス・インタフェース。
+    x-used-by:
+      - 実装で、振る舞いを持つクラス・インタフェースにする。
+      - 生成で、要素ごとの節にする。
     x-heading: クラス
     x-shape: sections
     x-key: name
@@ -318,6 +398,8 @@ properties:
         kind:
           type: string
           title: 種別
+          x-used-by:
+            - 実装で、要素の種別（クラス・抽象クラス・インタフェース・フック 等）を決める。
           enum:
           - クラス
           - 抽象クラス
@@ -325,9 +407,13 @@ properties:
         inherits:
           type: string
           title: 継承元
+          x-used-by:
+            - 実装で、継承・実装する型にする。
         properties:
           type: array
           title: プロパティ
+          x-used-by:
+            - 実装で、クラスのフィールドにする。
           x-heading: プロパティ
           x-shape: table
           x-key: name
@@ -336,6 +422,8 @@ properties:
           type: array
           title: メソッド
           description: インタフェース・抽象クラスの契約のメソッドは引数と戻り値だけを持つ。
+          x-used-by:
+            - 実装で、クラスのメソッドにする。
           x-heading: メソッド
           x-shape: sections
           x-key: name
@@ -345,6 +433,8 @@ properties:
           type: array
           title: 実装
           description: インタフェース・抽象クラスだけが持つ。この契約を満たすクラス。
+          x-used-by:
+            - 実装で、契約を満たすクラスと、それを使う条件にする。
           x-heading: 実装
           x-shape: table
           x-key: target
@@ -358,19 +448,29 @@ properties:
                 type: string
                 title: 実装
                 description: この契約を満たす実装の論理名（別の設計書なら参照）。
+                x-used-by:
+                  - 実装で、契約を満たすクラスを引く。
               notes:
                 type: string
                 title: 補足
                 description: どの条件で使用されるか。
+                x-used-by:
+                  - 実装で、その実装を使う条件にする。
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         reason:
@@ -379,18 +479,15 @@ properties:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   constants:
     type: array
     title: 定数
     description: 定数。
+    x-used-by:
+      - 実装で、定数にする。
+      - 生成で、要素ごとの節にする。
     x-rules:
       - 単純な即値は `value` だけを持ち、辞書・配列は `entries` を持つ。
       - 設定値はここではなく設計書『設定』に記載する。
@@ -417,9 +514,13 @@ properties:
           type: string
           title: 値
           description: 単純な即値。
+          x-used-by:
+            - 実装で、定数の値にする。
         entries:
           type: array
           title: 値
+          x-used-by:
+            - 実装で、辞書・配列の定数の要素にする。
           x-heading: 値
           x-shape: table
           x-key: key
@@ -434,24 +535,38 @@ properties:
                 type: string
                 title: キー
                 description: 配列は添字。
+                x-used-by:
+                  - 実装で、要素のキー・添字にする。
               value:
                 type: string
                 title: 値
+                x-used-by:
+                  - 実装で、要素の値にする。
               description:
                 type: string
                 title: 説明
+                x-used-by:
+                  - 実装で、要素の意味を参照する。
               notes:
                 type: string
                 title: 補足
+                x-used-by:
+                  - 実装で、要素の前提を参照する。
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         reason:
@@ -460,18 +575,15 @@ properties:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   functions:
     type: array
     title: 関数
     description: 関数・フック。1 関数 = 1 要素で、`container` に所属ファイルを記載する。
+    x-used-by:
+      - 実装で、関数・フックにする。
+      - 生成で、要素ごとの節にする。
     x-heading: 関数
     x-shape: sections
     x-key: name
@@ -481,6 +593,9 @@ properties:
     type: array
     title: 関数型
     description: 関数のシグネチャの型（DI・Mock の差し替え用）。処理・例外・単体テストは実装の側が持つ。
+    x-used-by:
+      - 実装で、DI・Mock の差し替えに使う関数のシグネチャの型にする。
+      - 生成で、要素ごとの節にする。
     x-heading: 関数型
     x-shape: sections
     x-key: name
@@ -503,6 +618,8 @@ properties:
         args:
           type: array
           title: 引数
+          x-used-by:
+            - 実装で、シグネチャの引数にする。
           x-heading: 引数
           x-shape: table
           x-key: name
@@ -518,24 +635,36 @@ properties:
                 type: string
                 title: 引数名
                 description: コード上の引数名。
+                x-used-by:
+                  - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                x-used-by:
+                  - 生成で、表の論理名にする。
               type:
                 type: string
                 title: 型
                 description: 実装言語の型名。取りうる値が限られるときはリテラルの列挙で記載する。
+                x-used-by:
+                  - 実装で、型にする。
               required:
                 type: boolean
                 title: 必須
+                x-used-by:
+                  - 実装で、省けるかを決める。
               default:
                 type: string
                 title: デフォルト
                 description: 省略時の値。必須の引数には記載しない。
+                x-used-by:
+                  - 実装で、省いたときの値にする。
               passing:
                 type: string
                 title: 指定方法
                 description: '`positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。'
+                x-used-by:
+                  - 実装で、位置・キーワード・依存の注入のどれで渡すかを決める。
                 enum:
                 - positional
                 - keyword
@@ -543,12 +672,18 @@ properties:
               description:
                 type: string
                 title: 説明
+                x-used-by:
+                  - 実装で、意味を参照する。
               notes:
                 type: string
                 title: 補足
+                x-used-by:
+                  - 実装で、前提を参照する。
         returns:
           type: object
           title: 戻り値
+          x-used-by:
+            - 実装で、シグネチャの戻り値にする。
           x-heading: 戻り値
           x-shape: attributes
           additionalProperties: false
@@ -559,15 +694,23 @@ properties:
             type:
               type: string
               title: 型
+              x-used-by:
+                - 実装で、戻り値の型にする。
             description:
               type: string
               title: 説明
+              x-used-by:
+                - 実装で、戻り値の意味を参照する。
             notes:
               type: string
               title: 補足
+              x-used-by:
+                - 実装で、戻り値の前提を参照する。
         implementations:
           type: array
           title: 実装
+          x-used-by:
+            - 実装で、シグネチャを満たす関数と、それを使う条件にする。
           x-heading: 実装
           x-shape: table
           x-key: target
@@ -575,12 +718,18 @@ properties:
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         reason:
@@ -589,18 +738,15 @@ properties:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   components:
     type: array
     title: 画面・コンポーネント
     description: 画面とコンポーネント（1 定義 = 1 ファイル）。Custom Element は `props` の代わりに `attributes` / `properties` / `events` を持つ。
+    x-used-by:
+      - 実装で、画面・コンポーネントにする。
+      - 生成で、要素ごとの節にする。
     x-heading: 画面・コンポーネント
     x-shape: sections
     x-key: name
@@ -623,12 +769,16 @@ properties:
         kind:
           type: string
           title: 種別
+          x-used-by:
+            - 実装で、要素の種別（クラス・抽象クラス・インタフェース・フック 等）を決める。
           enum:
           - 画面
           - コンポーネント
         props:
           type: array
           title: props
+          x-used-by:
+            - 実装で、コンポーネントの props にする。
           x-heading: props
           x-shape: table
           x-key: name
@@ -643,27 +793,43 @@ properties:
               name:
                 type: string
                 title: プロパティ名
+                x-used-by:
+                  - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                x-used-by:
+                  - 生成で、表の論理名にする。
               type:
                 type: string
                 title: 型
+                x-used-by:
+                  - 実装で、型にする。
               required:
                 type: boolean
                 title: 必須
+                x-used-by:
+                  - 実装で、省けるかを決める。
               default:
                 type: string
                 title: デフォルト
+                x-used-by:
+                  - 実装で、省いたときの値にする。
               description:
                 type: string
                 title: 説明
+                x-used-by:
+                  - 実装で、意味を参照する。
               notes:
                 type: string
                 title: 補足
+                x-used-by:
+                  - 実装で、前提を参照する。
         attributes:
           type: array
           title: attributes
+          x-used-by:
+            - 実装で、Custom Element の属性にする。
           x-heading: attributes
           x-shape: table
           x-key: name
@@ -677,21 +843,33 @@ properties:
               name:
                 type: string
                 title: 属性名
+                x-used-by:
+                  - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                x-used-by:
+                  - 生成で、表の論理名にする。
               type:
                 type: string
                 title: 型
+                x-used-by:
+                  - 実装で、型にする。
               description:
                 type: string
                 title: 説明
+                x-used-by:
+                  - 実装で、意味を参照する。
               notes:
                 type: string
                 title: 補足
+                x-used-by:
+                  - 実装で、前提を参照する。
         properties:
           type: array
           title: properties
+          x-used-by:
+            - 実装で、Custom Element のプロパティにする。
           x-heading: properties
           x-shape: table
           x-key: name
@@ -705,21 +883,33 @@ properties:
               name:
                 type: string
                 title: プロパティ名
+                x-used-by:
+                  - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                x-used-by:
+                  - 生成で、表の論理名にする。
               type:
                 type: string
                 title: 型
+                x-used-by:
+                  - 実装で、型にする。
               description:
                 type: string
                 title: 説明
+                x-used-by:
+                  - 実装で、意味を参照する。
               notes:
                 type: string
                 title: 補足
+                x-used-by:
+                  - 実装で、前提を参照する。
         events:
           type: array
           title: events
+          x-used-by:
+            - 実装で、コンポーネントが発火するイベントにする。
           x-heading: events
           x-shape: table
           x-key: name
@@ -733,22 +923,34 @@ properties:
               name:
                 type: string
                 title: イベント名
+                x-used-by:
+                  - 実装で、イベントの名前にする。
               title:
                 type: string
                 title: 論理名
+                x-used-by:
+                  - 生成で、表の論理名にする。
               detail:
                 type: string
                 title: detail の型
+                x-used-by:
+                  - 実装で、イベントの `detail` の型にする。
               description:
                 type: string
                 title: 説明
+                x-used-by:
+                  - 実装で、イベントを発火する条件と意味を参照する。
               notes:
                 type: string
                 title: 補足
+                x-used-by:
+                  - 実装で、イベントの前提を参照する。
         state:
           type: array
           title: state
           description: ローカルの状態を持たないときは持たない。
+          x-used-by:
+            - 実装で、コンポーネントのローカルの状態にする。
           x-heading: state
           x-shape: table
           x-key: name
@@ -763,25 +965,40 @@ properties:
               name:
                 type: string
                 title: 状態名
+                x-used-by:
+                  - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                x-used-by:
+                  - 生成で、表の論理名にする。
               type:
                 type: string
                 title: 型
+                x-used-by:
+                  - 実装で、型にする。
               initial:
                 type: string
                 title: 初期値
+                x-used-by:
+                  - 実装で、初期値にする。
               description:
                 type: string
                 title: 説明
+                x-used-by:
+                  - 実装で、意味を参照する。
               notes:
                 type: string
                 title: 補足
                 description: 表現手段（`useState` / `useForm` 等）。
+                x-used-by:
+                  - 実装で、前提を参照する。
         unit_tests:
           type: array
           title: 単体テスト
+          x-used-by:
+            - 単体テストで、ケースごとのテスト関数にする。
+            - 検査で、テストのファイルに関数があるかを確認する。
           x-heading: 単体テスト
           x-shape: table
           x-key: name
@@ -800,6 +1017,8 @@ properties:
                 type: string
                 title: テスト名
                 description: テスト関数の名前。
+                x-used-by:
+                  - 単体テストで、テスト関数の名前にする。
                 x-rules:
                   - '`test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）にする。'
                   - 期待値は名前に入れない。
@@ -812,40 +1031,60 @@ properties:
               case:
                 type: string
                 title: 正常/異常
+                x-used-by:
+                  - 単体テストで、正常と異常のケースを分ける。
                 enum:
                 - 正常
                 - 異常
               summary:
                 type: string
                 title: 概要
+                x-used-by:
+                  - 単体テストで、関数の docstring の要約にする。
               condition:
                 type: string
                 title: 条件
                 description: テストの条件。Mock の応答の設定もここに記載する。
+                x-used-by:
+                  - 単体テストで、入力と Mock の応答の設定にする。
               mock:
                 type: string
                 title: Mock
                 description: 差し替えるファイル外・プロセス外の依存だけ。差し替えないときも `なし` と記載する。
+                x-used-by:
+                  - 単体テストで、差し替える依存にする。
               expected:
                 type: string
                 title: 期待値
                 description: 戻り値・送出する例外と、Mock に渡った引数・呼び出しの有無。
+                x-used-by:
+                  - 単体テストで、確認する戻り値・例外・Mock に渡った引数にする。
               exception:
                 type: string
                 title: 対応する例外
                 description: 自関数で送出する例外を確認する行のとき、対応する例外の行の発生条件の要旨。
+                x-used-by:
+                  - レビューで、例外の行ごとにテストがあるかを確認する。
               notes:
                 type: string
                 title: 補足
+                x-used-by:
+                  - 単体テストで、ケースの前提を参照する。
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         reason:
@@ -854,18 +1093,15 @@ properties:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   stores:
     type: array
     title: ストア
     description: 状態管理のオブジェクト（Zustand / Redux 等）。
+    x-used-by:
+      - 実装で、状態管理のストアにする。
+      - 生成で、要素ごとの節にする。
     x-heading: ストア
     x-shape: sections
     x-key: name
@@ -888,6 +1124,8 @@ properties:
         state:
           type: array
           title: state
+          x-used-by:
+            - 実装で、ストアの状態のフィールドにする。
           x-heading: state
           x-shape: table
           x-key: name
@@ -902,24 +1140,38 @@ properties:
               name:
                 type: string
                 title: フィールド名
+                x-used-by:
+                  - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                x-used-by:
+                  - 生成で、表の論理名にする。
               type:
                 type: string
                 title: 型
+                x-used-by:
+                  - 実装で、型にする。
               initial:
                 type: string
                 title: 初期値
+                x-used-by:
+                  - 実装で、初期値にする。
               description:
                 type: string
                 title: 説明
+                x-used-by:
+                  - 実装で、意味を参照する。
               notes:
                 type: string
                 title: 補足
+                x-used-by:
+                  - 実装で、前提を参照する。
         actions:
           type: array
           title: action
+          x-used-by:
+            - 実装で、ストアの action にする。
           x-heading: action
           x-shape: sections
           x-key: name
@@ -928,12 +1180,18 @@ properties:
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         reason:
@@ -942,18 +1200,15 @@ properties:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   styles:
     type: array
     title: スタイル
     description: CSS のクラス群 1 まとまり。
+    x-used-by:
+      - 実装で、CSS のクラス群にする。
+      - 生成で、要素ごとの節にする。
     x-heading: スタイル
     x-shape: sections
     x-key: name
@@ -976,6 +1231,8 @@ properties:
         values:
           type: array
           title: 値
+          x-used-by:
+            - 実装で、クラスごとの宣言にする。
           x-heading: 値
           x-shape: table
           x-key: class_name
@@ -990,24 +1247,38 @@ properties:
               class_name:
                 type: string
                 title: クラス名
+                x-used-by:
+                  - 実装で、CSS のクラス名にする。
               target:
                 type: string
                 title: 適用対象
+                x-used-by:
+                  - 実装で、クラスを付ける要素にする。
               value:
                 type: string
                 title: 値
+                x-used-by:
+                  - 実装で、CSS の宣言にする。
               notes:
                 type: string
                 title: 補足
+                x-used-by:
+                  - 実装で、宣言の前提を参照する。
         refs:
           type: array
           title: 関連
+          x-used-by:
+            - 生成で、関連する設計書へのリンクにする。
+            - レビューで、関連する設計書をたどって食い違いを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:
           type: array
           title: 検討事項
           description: 根拠になった話し合いの記録の検討事項の ID。
+          x-used-by:
+            - 生成で、話し合いの記録の検討事項へのリンクにする。
+            - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/decision
         reason:
@@ -1016,23 +1287,23 @@ properties:
           $ref: common.schema.yaml#/$defs/status
         visibility:
           $ref: common.schema.yaml#/$defs/visibility
-        implementation:
-          $ref: common.schema.yaml#/$defs/implementation
-        introduced:
-          $ref: common.schema.yaml#/$defs/introduced
-        aliases:
-          $ref: common.schema.yaml#/$defs/aliases
         notes:
           $ref: common.schema.yaml#/$defs/notes
   refs:
     type: array
     title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
     items:
       $ref: common.schema.yaml#/$defs/ref
   decisions:
     type: array
     title: 検討事項
     description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
     items:
       $ref: common.schema.yaml#/$defs/decision
   notes:
@@ -1044,6 +1315,9 @@ $defs:
     type: object
     title: 関数
     description: 関数・メソッド・フック 1 つ。
+    x-used-by:
+      - 実装で、関数・メソッド・フックのシグネチャと処理にする。
+      - 単体テストで、ケースごとのテスト関数にする。
     x-shape: sections
     additionalProperties: false
     required:
@@ -1062,6 +1336,8 @@ $defs:
       kind:
         type: string
         title: 種別
+        x-used-by:
+          - 実装で、要素の種別（クラス・抽象クラス・インタフェース・フック 等）を決める。
         enum:
         - 関数
         - メソッド
@@ -1070,10 +1346,15 @@ $defs:
         type: string
         title: 継承元
         description: 実装する関数型・インタフェースの論理名（別の設計書なら参照）。
+        x-used-by:
+          - 実装で、継承・実装する型にする。
       scope:
         type: string
         title: 公開範囲
         description: '`public`（外から呼ぶ）/ `internal`（先頭 `_` などの内部の関数）。'
+        x-used-by:
+          - 実装で、名前の先頭の `_` の有無と公開の範囲にする。
+          - レビューで、外から呼ばれる関数だけが `public` かを確認する。
         enum:
         - public
         - internal
@@ -1081,18 +1362,29 @@ $defs:
         type: boolean
         title: 非同期
         description: 非同期関数か。
+        x-used-by:
+          - 実装で、`async` の関数にするかを決める。
       thread_safe:
         type: boolean
         title: 並行で呼べる
         description: 並行で呼んでよいか。
+        x-used-by:
+          - 実装で、ロックの要否を決める。
+          - 呼び出し元の実装で、並行で呼んでよいかを判断する。
       side_effects:
         $ref: common.schema.yaml#/$defs/markdown
         title: 副作用
         description: 引数の書き換え・外への書き込み。
+        x-used-by:
+          - 実装で、引数の書き換えと外への書き込みにする。
+          - 単体テストで、副作用を確認する項目にする。
       args:
         type: array
         title: 引数
         description: 引数の表。引数の無い関数は持たない。
+        x-used-by:
+          - 実装で、関数の引数にする。
+          - 呼び出し元の実装で、渡す値を決める。
         x-heading: 引数
         x-shape: table
         x-key: name
@@ -1101,9 +1393,13 @@ $defs:
         $ref: common.schema.yaml#/$defs/markdown
         title: 引数例
         description: 呼び出しのコード 1〜数行（コードブロック）。
+        x-used-by:
+          - 呼び出し元の実装で、呼び出しの見本にする。
       returns:
         type: object
         title: 戻り値
+        x-used-by:
+          - 実装で、戻り値にする。
         x-heading: 戻り値
         x-shape: attributes
         additionalProperties: false
@@ -1115,20 +1411,31 @@ $defs:
             type: string
             title: 型
             description: void / None も記載する。
+            x-used-by:
+              - 実装で、戻り値の型にする。
           description:
             type: string
             title: 説明
+            x-used-by:
+              - 呼び出し元の実装で、戻り値の意味を参照する。
           notes:
             type: string
             title: 補足
+            x-used-by:
+              - 実装で、戻り値の前提を参照する。
       returns_example:
         $ref: common.schema.yaml#/$defs/markdown
         title: 戻り値例
         description: 返り値の実形（コードブロック）。void / None は持たない。
+        x-used-by:
+          - 単体テストで、期待する戻り値の見本にする。
       process:
         $ref: common.schema.yaml#/$defs/markdown
         title: 処理
         description: 番号付きのステップ。1 ステップ = 意味のある処理の単位。
+        x-used-by:
+          - 実装で、処理の順と分岐にする。
+          - レビューで、実装の処理が設計の順と一致するかを確認する。
         x-rules:
           - 呼び出す関数は文末の括弧内に論理名で添える。
           - 択一の分岐は 1 つの番号の下に `- {条件}の場合、{内容}` で並べる。
@@ -1138,6 +1445,9 @@ $defs:
         type: array
         title: 例外
         description: 送出する例外。
+        x-used-by:
+          - 実装で、送出する例外にする。
+          - 単体テストで、例外ごとのケースにする。
         x-heading: 例外
         x-shape: table
         x-key: name
@@ -1152,22 +1462,32 @@ $defs:
               type: string
               title: 例外名
               description: 送出する例外のクラス名。
+              x-used-by:
+                - 実装で、例外のクラスにする。
             condition:
               type: string
               title: 発生条件
               description: 送出する条件。
+              x-used-by:
+                - 実装で、例外を送出する条件にする。
               x-rules:
                 - 同じ例外を複数の箇所から送出するときは箇所ごとに別の要素にする。
             message:
               type: string
               title: メッセージ
+              x-used-by:
+                - 実装で、例外のメッセージにする。
             notes:
               type: string
               title: 補足
+              x-used-by:
+                - 実装で、例外の前提を参照する。
       test_setup:
         type: array
         title: セットアップ
         description: 複数のテストが共有する準備。
+        x-used-by:
+          - 単体テストで、ケースが共有する fixture にする。
         x-shape: table
         x-key: name
         items:
@@ -1180,17 +1500,26 @@ $defs:
             name:
               type: string
               title: セットアップ
+              x-used-by:
+                - 単体テストで、fixture の名前にする。
             description:
               type: string
               title: 説明
+              x-used-by:
+                - 単体テストで、準備する内容にする。
             notes:
               type: string
               title: 補足
               description: fixture の物理名など。
+              x-used-by:
+                - 単体テストで、fixture の物理名を参照する。
       unit_tests:
         type: array
         title: 単体テスト
         description: 単体テストのケース。
+        x-used-by:
+          - 単体テストで、ケースごとのテスト関数にする。
+          - 検査で、テストのファイルに関数があるかを確認する。
         x-rules:
           - 条件分岐の単位で 1 行以上にする。
           - 自関数で送出する例外は異常の行にする。
@@ -1203,6 +1532,9 @@ $defs:
         type: array
         title: 疎通テスト
         description: 実 API を呼ぶラッパーの関数だけが持つ。使用するパラメータの値の組を 1 組 = 1 テストで並べる。
+        x-used-by:
+          - 外部疎通のテストで、パラメータの組ごとのテスト関数にする。
+          - 検査で、疎通テストのファイルに関数があるかを確認する。
         x-heading: 疎通テスト
         x-shape: table
         x-key: name
@@ -1220,44 +1552,61 @@ $defs:
               type: string
               title: テスト名
               description: '`test_ext_{関数の物理名}_when_{パラメータ値}`。'
+              x-used-by:
+                - 外部疎通のテストで、テスト関数の名前にする。
               pattern: ^test_ext_[a-z0-9_]+$
               x-test-function: external_test_files
             api:
               type: string
               title: 対象 API
+              x-used-by:
+                - 外部疎通のテストで、呼ぶ API にする。
             summary:
               type: string
               title: 概要
+              x-used-by:
+                - 外部疎通のテストで、関数の docstring の要約にする。
             checks:
               type: string
               title: 確認内容
               description: 認証・エンドポイント・使用するパラメータの値・応答の形式など。
+              x-used-by:
+                - 外部疎通のテストで、確認する項目にする。
             cost:
               type: string
               title: 料金・副作用
               description: 1 回あたりの料金と副作用。無いときも `なし` と記載する。
+              x-used-by:
+                - 実行の前に、料金と副作用からユーザーの確認が要るかを判断する。
             notes:
               type: string
               title: 補足
-      callers:
-        type: array
-        title: 呼び出し元
-        items:
-          $ref: common.schema.yaml#/$defs/ref
+              x-used-by:
+                - 外部疎通のテストで、ケースの前提を参照する。
       callees:
         type: array
         title: 呼び出し先
+        x-used-by:
+          - 実装で、処理から呼ぶ関数・メソッドを引く。
+          - レビューで、呼び出しの依存の向きを確認する。
+          - 変更の影響を調べるときに、呼び出し元を逆にたどる。
         items:
           $ref: common.schema.yaml#/$defs/ref
       refs:
         type: array
         title: 関連
+        x-used-by:
+          - 生成で、関連する設計書へのリンクにする。
+          - レビューで、関連する設計書をたどって食い違いを確認する。
         items:
           $ref: common.schema.yaml#/$defs/ref
       decisions:
         type: array
         title: 検討事項
         description: 根拠になった話し合いの記録の検討事項の ID。
+        x-used-by:
+          - 生成で、話し合いの記録の検討事項へのリンクにする。
+          - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
         items:
           $ref: common.schema.yaml#/$defs/decision
       reason:
@@ -1266,12 +1615,6 @@ $defs:
         $ref: common.schema.yaml#/$defs/status
       visibility:
         $ref: common.schema.yaml#/$defs/visibility
-      implementation:
-        $ref: common.schema.yaml#/$defs/implementation
-      introduced:
-        $ref: common.schema.yaml#/$defs/introduced
-      aliases:
-        $ref: common.schema.yaml#/$defs/aliases
       notes:
         $ref: common.schema.yaml#/$defs/notes
 examples:
