@@ -1,0 +1,200 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: 精度評価の観点
+description: |-
+  精度評価の観点 1 つの、確認の方法・質問・採点の基準・合格の点・タグを記載するファイル。
+  確認の方法（`method`）ごとに持つキーが変わる。
+x-rules:
+  - 1 ファイル = 1 つの観点にする。
+  - 観点の id はファイル名（`.yaml` を除いたもの）から導き、ファイルに記載しない。
+  - 観点の id はほかのファイルから指すので、一度決めたら変えない。
+  - 機械で判定できる観点は `rule`、文で基準を記載できる観点は `llm`、人にしか判定できない観点は `human` にする。
+  - '`human` の観点は、採点の LLM が採点の基準で点を付けた後、人が出力と LLM の点と理由を参照して点を確定する。'
+  - '`aspect:` の語彙は、プロジェクトの精度評価の仕組みの設計書に記載する。'
+x-kind: eval_criterion
+type: object
+additionalProperties: false
+required:
+- title
+- method
+- tags
+properties:
+  title:
+    type: string
+    title: 表示名
+    description: 観点の表示名。
+    x-used-by:
+      - 実行で、結果の一覧の見出しにする。
+    x-rules:
+      - 表示名は id と別に、自由に変えてよい。
+    examples:
+    - 状態に合う
+  method:
+    type: string
+    title: 確認の方法
+    description: '`rule`（判定の関数が合否と理由を返却する）/ `llm`（採点の LLM が採点の基準で点を付ける）/ `human`（採点の LLM の点を人が確定する）。'
+    x-used-by:
+      - 検査で、確認の方法ごとのキーの要否を確認する。
+      - 実行で、採点の流れを決める。
+    enum:
+    - rule
+    - llm
+    - human
+  tags:
+    type: array
+    title: タグ
+    description: 何を確認するかの `aspect:{語彙}` を 1 つ以上と、難しい観点の `difficulty:high`。
+    x-used-by:
+      - 実行で、タグごとに点を集計する。
+      - レビューで、対象に要る `aspect:` が全て付いた観点と、`difficulty:high` の観点が 1 つ以上あるかを確認する。
+    x-rules:
+      - 語彙に無いタグが要るときは、プロジェクトの語彙に追加してから付ける。
+    minItems: 1
+    uniqueItems: true
+    items:
+      type: string
+      pattern: ^(aspect:\S+|difficulty:high)$
+    contains:
+      pattern: '^aspect:'
+    examples:
+    - - aspect:状況の判断
+      - difficulty:high
+  question:
+    type: string
+    title: 質問
+    description: 採点の LLM と人への質問で、ケースの値は `{名前}` で入れる。`method` が `llm`・`human` のときは必須。
+    x-used-by:
+      - 実行で、採点のプロンプトと人の採点の画面の質問にする。
+    examples:
+    - '{need} が閾値を越えているとき、それを満たす行動を選んでいるか'
+  rubric:
+    type: array
+    title: 採点の基準
+    description: 点ごとの採点の基準。`method` が `llm`・`human` のときは必須。
+    x-used-by:
+      - 実行で、採点のプロンプトの基準にする。
+    x-rules:
+      - 5 つの点を全て記載する。
+    minItems: 5
+    maxItems: 5
+    items:
+      $ref: '#/$defs/rubric_row'
+  pass:
+    $ref: '#/$defs/score'
+    title: 合格の点
+    description: 合格の点。`method` が `llm`・`human` のときは必須。
+    x-used-by:
+      - 実行で、実行の回数 × 採点の回数の平均と比べて、観点 × ケースの合否を出す。
+  check:
+    type: object
+    title: 判定の関数
+    description: '`method` が `rule` のときの判定の関数。`method` が `rule` のときは必須。'
+    x-used-by:
+      - 実行で、出力を判定する。
+    x-shape: attributes
+    additionalProperties: false
+    required:
+    - function
+    properties:
+      function:
+        type: string
+        title: 関数
+        description: 判定の関数で、コードの配置の `{モジュール}:{関数}`。関数は出力・ケース・`args` を受け、`{pass, reason}` を返却する。
+        x-used-by:
+          - 実行で、判定の関数を呼ぶ。
+        pattern: ^[A-Za-z_][\w.]*:[A-Za-z_]\w*$
+        examples:
+        - aituber.evals.checks.mermaid:is_valid
+      args:
+        type: object
+        title: 引数
+        description: 関数に指定する引数。
+        x-used-by:
+          - 実行で、判定の関数に引数を指定する。
+        examples:
+        - field: body
+      gate:
+        type: boolean
+        title: 足切り
+        description: '`true` なら、不合格の出力はほかの観点で採点しない。記載しなければ `false`。'
+        x-used-by:
+          - 実行で、`rule` の観点を採点の LLM より先に実行し、不合格の出力のほかの観点の採点を止める。
+allOf:
+- if:
+    properties:
+      method:
+        const: rule
+    required:
+    - method
+  then:
+    required:
+    - check
+    properties:
+      question: false
+      rubric: false
+      pass: false
+  else:
+    required:
+    - question
+    - rubric
+    - pass
+    properties:
+      check: false
+$defs:
+  score:
+    type: number
+    title: 点
+    description: '`0`・`0.25`・`0.5`・`0.75`・`1` のどれか。'
+    enum:
+    - 0
+    - 0.25
+    - 0.5
+    - 0.75
+    - 1
+  rubric_row:
+    type: object
+    title: 採点の基準の行
+    description: 1 つの点になる出力の様子。
+    additionalProperties: false
+    required:
+    - score
+    - description
+    properties:
+      score:
+        $ref: '#/$defs/score'
+        title: 点
+        description: この行の点。
+        x-used-by:
+          - 実行で、採点の結果の値にする。
+      description:
+        type: string
+        title: 様子
+        description: その点になる出力の様子。ケースの値は `{名前}` で入れる。
+        x-used-by:
+          - 実行で、採点のプロンプトの基準の文にする。
+        examples:
+        - '{need} を満たす行動の中で、最も合うものを選んでいる'
+examples:
+- title: 状態に合う
+  method: llm
+  tags:
+  - aspect:状況の判断
+  question: '{need} が閾値を越えているとき、それを満たす行動を選んでいるか'
+  rubric:
+  - score: 1
+    description: '{need} を満たす行動の中で、最も合うものを選んでいる'
+  - score: 0.75
+    description: '{need} を満たす行動を選んでいるが、より合う選択肢がある'
+  - score: 0.5
+    description: '{need} をいくらか満たすが、ほかの状態を損ねる行動を選んでいる'
+  - score: 0.25
+    description: '{need} にほとんど関係しない行動を選んでいる'
+  - score: 0
+    description: '{need} を悪化させる行動を選んでいる'
+  pass: 0.75
+- title: Mermaid の図が描画できる
+  method: rule
+  tags:
+  - aspect:形式
+  check:
+    function: aituber.evals.checks.mermaid:is_valid
+    gate: true

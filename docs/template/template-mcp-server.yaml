@@ -1,0 +1,125 @@
+# yaml-language-server: $schema=../../schemas/template.schema.yaml
+id: template-mcp-server
+kind: template
+name: 'テンプレート: MCP サーバーの定義'
+description: MCP サーバー 1 つの、接続の仕方・提供するツール・エージェントごとの使用の仕方を記載する書式を定め、MCP サーバーの定義の設計書を作る・修正するときに参照する。
+tags:
+  - name: scope:テンプレート
+  - name: topic:mcp
+    main: true
+  - name: topic:サーバー
+  - name: topic:テンプレート
+  - name: topic:スキーマ
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      MCP サーバー 1 つの、接続の仕方・提供するツール・エージェントごとの使用の仕方を記載する設計書。
+      ツールの引数・戻り値・副作用は『インターフェース定義』に、instructions とツールの description の本文はプロンプトファイルに記載する。
+  - id: rules-01
+    name: 決まり
+    body: |-
+      - 1 ファイル = 1 MCP サーバーにする。
+      - instructions のプロンプトファイルの id は `mcp/{server}/instructions` にし、この設計書には記載しない。
+      - ツールの description のプロンプトファイルの id は `mcp/{server}/tools/{ツールの名前}`（`_` は `-` にする）にし、この設計書には記載しない。
+  - id: item-list-01
+    name: 項目
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 設計で、『エージェントの定義』の `progress.server`・エージェントフローの `steps[].calls[].server` から指す。 | `MCP-1` |
+      | title | タイトル | string | 必須 | - | - | MCP サーバーの名前。 | 生成で、ページの見出しにする。<br>dev-docs の検索で、文書の名前にする。 | `aituber の MCP` |
+      | lead | 冒頭リード | string | 必須 | - | - | MCP サーバーを 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>dev-docs の検索で、文書の概要文にする。 | `記録を検索・取得・書き込みする` |
+      | server | サーバー名 | string | 必須 | - | pattern: `^[a-z0-9]+(-[a-z0-9]+)*$` | クライアントの設定に記載するサーバー名。 | 変換で、クライアントの設定のキーと、ツールの完全な名前（Claude Code では `mcp__{server}__{tool}`）を作る。<br>実装で、プロンプトファイルの id（`mcp/{server}/...`）を導く。 | `aituber` |
+      | repository | リポジトリ | string | 必須 | - | pattern: `^[^/\s]+/[^/\s]+$` | サーバーを実装するリポジトリ（`owner/name`）。 | 計画で、サーバーの変更を起票するリポジトリにする。 | `shuhei1101/aituber` |
+      | external | 外部のサーバー | boolean | - | - | - | ほかのリポジトリのサーバーを使用するだけなら `true`。記載しなければ `false`。 | 設計で、`true` なら `tools` を記載せず、`connection`・`clients` だけを記載する。 | - |
+      | connection | 接続 | object | 必須 | - | - | クライアントからの接続の仕方。 | 変換で、クライアントの MCP の設定を作る。 | - |
+      | connection.type | 種類 | string | 必須 | `stdio` / `http` | - | `stdio` か `http`。 | 変換で、クライアントの MCP の設定の種類にする。 | - |
+      | connection.command | コマンド | string | - | - | - | `type` が `stdio` のときに起動するコマンド。 | 変換で、クライアントの MCP の設定の `command` にする。 | `uv run aituber-mcp` |
+      | connection.url | URL | string | - | - | - | `type` が `http` のときに接続する URL。可変の部分は `{環境変数の名前}` にする。 | 変換で、クライアントの MCP の設定の `url` にし、可変の部分の値は『起動の構成』の `env` から取得する。 | `http://127.0.0.1:{AITUBER_PORT}/mcp` |
+      | connection.env | 環境変数 | array | - | - | - | `type` が `stdio` のときに、サーバーのプロセスに指定する環境変数の名前。 | 変換で、クライアントの MCP の設定の `env` にする。 | `[AITUBER_DB_PATH]` |
+      | tools | ツール | array | - | - | minItems: `1` | サーバーが提供するツール。`external` が `true` でなければ記載する。 | 実装で、サーバーに登録するツールの一覧にする。 | - |
+      | tools[].name | 名前 | string | 必須 | - | pattern: `^[a-z][a-z0-9_]*$` | ツールの名前。 | 実装で、ツールの登録名にする。<br>検査で、プロンプトファイルとインターフェース定義の名前と一致するかを確認する。 | `search` |
+      | tools[].interface | インターフェース定義 | string | 必須 | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | ツールの引数・戻り値・副作用を記載した『インターフェース定義』への参照。 | 実装で、ツールの引数・戻り値・副作用にする。<br>実装で、インターフェース定義の `read_only`・`destructive` からツールの `annotations` の `readOnlyHint`・`destructiveHint` を導く。 | `IF-21#` |
+      | clients | クライアント | array | - | - | - | エージェントごとの使用の仕方。 | 変換で、エージェントの起動の設定に MCP の設定・許可するツール・引数を入れる処理を作る。 | - |
+      | clients[].agent | エージェント | string | 必須 | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | サーバーを使用する『エージェントの定義』への参照。 | 変換で、そのエージェントの起動の設定にサーバーを記載する。 | `AG-1#` |
+      | clients[].allow | 許可するツール | array | 必須 | - | minItems: `1` | 使用させるツールの `tools[].name`。 | 変換で、『起動の構成』の許可するツールの一覧にする。<br>検査で、エージェントフローが呼ぶツールと進み具合の書き込みのツールがあるかを確認する。 | `[search, write_progress]` |
+      | clients[].inject | 入れる引数 | array | - | - | - | 呼び出しのときに入れる引数。 | 変換で、呼び出しの前に引数を入れる処理（Claude Code ではフック）を作る。 | - |
+      | clients[].inject[].arg | 引数 | string | 必須 | - | - | 引数の名前。 | 変換で、値を入れる引数の名前にする。 | `session_id` |
+      | clients[].inject[].from | 値の参照先 | object | 必須 | - | - | 引数・ヘッダーに入れる値を取得する場所と名前。 | - | - |
+      | clients[].inject[].from.source | 取得元 | string | 必須 | `env` / `session` / `call` | - | `env`（環境変数）/ `session`（セッションの情報）/ `call`（起動する側が呼び出しごとに生成する値）。 | 変換で、値を取得する場所にする。 | - |
+      | clients[].inject[].from.name | 名前 | string | 必須 | - | - | 環境変数・セッションの情報・呼び出しごとの値の名前。 | 変換で、値を取得するときの名前にする。 | `session_id` |
+      | clients[].headers | ヘッダー | array | - | - | - | 接続のときに付けるヘッダー。LLM に見せない値（呼び出しの ID など）を指定する。 | 変換で、『起動の構成』で生成する MCP の設定の `headers` にする。 | - |
+      | clients[].headers[].name | 名前 | string | 必須 | - | - | ヘッダーの名前。 | 変換で、MCP の設定の `headers` のキーにする。 | `X-Aituber-Call-Id` |
+      | clients[].headers[].from | 値の参照先 | object | 必須 | - | - | 引数・ヘッダーに入れる値を取得する場所と名前。 | - | - |
+      | clients[].headers[].from.source | 取得元 | string | 必須 | `env` / `session` / `call` | - | `env`（環境変数）/ `session`（セッションの情報）/ `call`（起動する側が呼び出しごとに生成する値）。 | 変換で、値を取得する場所にする。 | - |
+      | clients[].headers[].from.name | 名前 | string | 必須 | - | - | 環境変数・セッションの情報・呼び出しごとの値の名前。 | 変換で、値を取得するときの名前にする。 | `session_id` |
+      | clients[].exclude | 除く引数 | array | - | - | - | 呼び出しのときに除く引数の名前。 | 変換で、呼び出しの前に引数を除く処理を作る。 | `[dry_run]` |
+      | refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+
+      <!-- /table -->
+  - id: key-rules-01
+    name: キーごとの決まり
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | 決まり | 悪い例 | 理由 |
+      | --- | --- | --- | --- |
+      | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
+      | lead | 初回に記載した内容のまま保ち、後から情報を追加しない。 | - | - |
+      | tools[].interface | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | clients[].agent | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | clients[].inject | 『起動の構成』には記載せず、ここから生成する。 | - | - |
+      | clients[].exclude | 『起動の構成』には記載せず、ここから生成する。 | - | - |
+      | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+
+      <!-- /table -->
+  - id: example-sample-01
+    name: 記載例
+    body: |-
+      ```yaml
+      id: MCP-1
+      title: aituber の MCP
+      lead: 記録を検索・取得・書き込みする
+      server: aituber
+      repository: shuhei1101/aituber
+      connection:
+        type: http
+        url: http://127.0.0.1:{AITUBER_PORT}/mcp
+      tools:
+      - name: search
+        interface: IF-21#
+      - name: write_progress
+        interface: IF-22#
+      clients:
+      - agent: AG-1#
+        allow:
+        - search
+        - write_progress
+        inject:
+        - arg: cwd
+          from:
+            source: session
+            name: cwd
+        - arg: session_id
+          from:
+            source: session
+            name: session_id
+      - agent: AG-2#
+        allow:
+        - search
+        headers:
+        - name: X-Aituber-Call-Id
+          from:
+            source: call
+            name: call_id
+      refs:
+      - AG-1#
+      ```

@@ -1,0 +1,180 @@
+# yaml-language-server: $schema=../../schemas/template.schema.yaml
+id: template-agent-flow
+kind: template
+name: 'テンプレート: エージェントフロー'
+description: エージェントが順に進める工程と工程で呼ぶものを記載し、スキルの SKILL.md の生成元にもなるエージェントフローの書式を定め、エージェントフローやスキルを作る・修正するときに参照する。
+tags:
+  - name: scope:テンプレート
+  - name: topic:エージェント
+    main: true
+  - name: topic:スキル
+  - name: topic:手順
+  - name: topic:テンプレート
+  - name: topic:スキーマ
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      エージェントが順に進める工程と、工程で呼ぶもの（MCP のツール・組み込みのツール・コマンド・サブエージェント・スキル・別のエージェントフロー）を記載する設計書。
+      エージェントがそのまま参照する原本で、`type` が `skill` の文書は SKILL.md の生成元にもなる。
+  - id: rules-01
+    name: 決まり
+    body: |-
+      - 1 ファイル = 1 つの手順にする。
+      - ファイルの配置はフォルダ構成の設計書の `entries[]` と `naming` で決め、段階（stage）はフォルダ構成の `placeholders` を適用してパスから導く。
+      - エージェントフローの索引は、エージェントごとに、そのエージェントのエージェントフローから `stages[]` の順で生成し、原本を持たない。
+      - `embed_only` の手順と `type` が `skill` の手順は、エージェントフローの索引に出さない。
+      - スキルにするのは、起動の仕組み（システムプロンプト・エージェントフローの索引）で指定できない理由があるときだけにする。
+      - 工程の名前は進み具合の目印になるので、変えたときは変える前の進み具合を無効にする。
+  - id: item-list-01
+    name: 項目
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[a-z0-9]+(-[a-z0-9]+)*(/[a-z0-9]+(-[a-z0-9]+)*)*$` | 文書の ID。フォルダ構成で `id_root` を付けたフォルダからのパスから `.yaml` を除いたもの。 | 設計で、`steps[].ref`・`steps[].calls[].flow`・`steps[].calls[].skill` から指す。<br>生成で、エージェントフローの索引の ID の列にする。<br>実行で、エージェントがエージェントフローを取得する ID にする。 | `brain/stream/on-event` |
+      | type | 種類 | string | - | `flow` / `skill` | - | `flow`（エージェントが MCP で参照するエージェントフロー）か `skill`（SKILL.md として配布するスキル）。記載しなければ `flow`。 | 検査で、種類ごとのキーの要否を確認する。<br>生成で、`skill` なら SKILL.md を作り、エージェントフローの索引に出さない。 | - |
+      | title | 手順の名前 | string | - | - | - | 手順の名前。記載しなければ、パスの段階の `stages[].title`。 | 生成で、エージェントフローの索引の手順の列と、Markdown に変換したときの見出しにする。 | `イベントの手順` |
+      | summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 手順の概要（1 文）。 | dev-docs の検索で、文書の概要文にする。<br>生成で、`type` が `skill` なら SKILL.md の `description` にする。 | `コメントと状態を取得し、次の一手を決めて演出指示書を書き込む` |
+      | condition | 実行条件 | string | - | - | pattern: `^[^\n]+$`, minLength: `1` | 手順を実行する条件。`type` が `flow` のときだけ記載する。 | 生成で、エージェントフローの索引の実行条件の列にする。<br>実行で、エージェントが参照する手順を決める。 | `「次へ」を受けたとき` |
+      | agents | 使用するエージェント | array | - | - | - | この手順を使用する『エージェントの定義』への参照。複数のエージェントが使用する共通の手順で記載する。 | 生成で、エージェントフローの索引をエージェントごとに作る。 | `[AG-1#, AG-2#]` |
+      | triggers | きっかけ | array | - | - | - | この手順を実行するきっかけで、『エージェントの定義』の `triggers[]` への参照。記載しなければ、パスの段階の `stages[].trigger`。 | レビューで、きっかけごとにエージェントフローがあるかを確認する。 | `['AG-1#triggers[external-event]']` |
+      | embed_only | 埋め込み専用 | boolean | - | - | - | `true` なら、ほかの手順の `steps[].ref` で埋め込むだけの部品にする。記載しなければ `false`。 | 生成で、`true` の手順をエージェントフローの索引に出さない。 | - |
+      | tags | タグ | array | - | - | - | 検索で絞り込むタグ。 | dev-docs の検索で、文書の絞り込みにする。 | `[topic:コメント]` |
+      | skill | スキル | object | - | - | - | スキルに固有の項目。`type` が `skill` のときだけ記載する。 | 生成で、SKILL.md の配置先と frontmatter にする。 | - |
+      | skill.path | 配置先 | string | 必須 | - | pattern: `^\S+/SKILL\.md$` | 生成する SKILL.md の、リポジトリの直下からのパス。 | 生成で、SKILL.md を書き出す先にする。 | `plugins/mindstella/skills/setup/SKILL.md` |
+      | skill.name | 名前 | string | - | - | - | スキルの名前。記載しなければ `path` のフォルダ名。 | 生成で、SKILL.md の `name` にする。 | `setup` |
+      | skill.arguments | 引数 | array | - | - | - | スキルの引数。 | 生成で、SKILL.md の `arguments`・`argument-hint` と、本文の引数の説明にする。 | - |
+      | skill.arguments[].name | 引数名 | string | 必須 | - | - | 引数の名前。本文では `$名前` で参照する。 | 生成で、SKILL.md の `arguments` にする。 | `workspace` |
+      | skill.arguments[].hint | 書式 | string | 必須 | - | - | 補完で出す書式。 | 生成で、SKILL.md の `argument-hint` にする。 | `ワークスペースのフォルダ` |
+      | skill.arguments[].description | 説明 | string | 必須 | - | - | 引数の意味と、省いたときの動き。 | 生成で、SKILL.md の本文の引数の説明にする。 | `ワークスペースにするフォルダ。省くと今のフォルダ` |
+      | skill.allowed_tools | 確認なしで使用するツール | array | - | - | - | スキルの実行中に確認なしで使用できるツール。 | 生成で、SKILL.md の `allowed-tools` にする。<br>検査で、`steps[].calls` の `command` が含まれるかを確認する。 | `[Bash(mindstella init *)]` |
+      | skill.frontmatter | その他の frontmatter | object | - | - | - | 上の項目に無い SKILL.md の frontmatter の項目を、SKILL.md の項目名のまま記載する。 | 生成で、SKILL.md の frontmatter に加える。 | `{paths: [docs/**]}` |
+      | skill.frontmatter_reason | その他の frontmatter の理由 | string | - | - | - | `frontmatter` を記載する理由。`frontmatter` を記載したときは必須。 | レビューで、`frontmatter` が要るかを確認する。 | `docs の編集のときだけ読み込ませるため` |
+      | steps | 工程 | array | 必須 | - | minItems: `1` | 順に進める工程。 | 生成で、Markdown の工程のセクションにする。<br>実行で、エージェントが順に進める工程にする。 | - |
+      | steps[].name | 名前 | string | 必須 | - | - | 工程の名前。手順の中で重ねない。 | 生成で、Markdown の工程の見出しにする。<br>設計で、`ref` が工程を指すキーにする。<br>実行で、進み具合の目印にする。 | `コメントを取得する` |
+      | steps[].body | 本文 | string | - | - | - | 工程でやること。 | 生成で、Markdown の工程の本文にする。 | `選別済みで未読のコメントを取得する` |
+      | steps[].ref | 埋め込む工程 | string | - | - | pattern: `^[^\s#]+#.*$` | 共通の工程を埋め込む。`{エージェントフローの id}#steps[{name}]` で記載する。 | 変換で、指した工程の中身に置き換える。 | `shared/character-state#steps[キャラクター情報を取得する]` |
+      | steps[].when | 条件 | string | - | - | - | この工程をする条件。記載しなければ毎回する。 | 生成で、Markdown の工程の頭に条件を出す。 | `細かい値や過去のことが要るとき` |
+      | steps[].calls | 呼ぶもの | array | - | - | - | 工程で呼ぶもの。互いの結果を使用しないものだけを並べる。 | 生成で、Markdown の工程に呼ぶものを出す。 | - |
+      | steps[].calls[].type | 種類 | string | 必須 | `mcp` / `tool` / `command` / `agent` / `skill` / `flow` | - | `mcp`（MCP のツール）/ `tool`（組み込みのツール）/ `command`（シェルのコマンド）/ `agent`（Agent ツールで起動するサブエージェント）/ `skill`（Skill ツールで呼ぶスキル）/ `flow`（別のエージェントフローを参照し、全ての工程を進める）。 | 検査で、種類ごとのキーの要否を確認する。<br>検査で、文書の `type` が `flow` なら、`agents` の起動の構成で使用できるか（`permissions.deny` に無いか）を確認する。 | - |
+      | steps[].calls[].server | MCP サーバー | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | `type` が `mcp` のときの『MCP サーバーの定義』への参照。 | 変換で、ツールの完全な名前（Claude Code では `mcp__{server}__{tool}`）を作る。 | `MCP-1#` |
+      | steps[].calls[].tool | ツール | string | - | - | - | `type` が `mcp`・`tool` のときのツールの名前。`mcp` は『MCP サーバーの定義』の `tools[].name`、`tool` は組み込みのツールの名前。 | 生成で、Markdown に呼ぶツールを出す。<br>検査で、`mcp` のツールがエージェントの `clients[].allow` にあるかを確認する。 | `search` |
+      | steps[].calls[].args | 引数の制約 | object | - | - | - | `type` が `mcp`・`tool` のときの引数の制約。JSON Schema の `required`・`properties`・`additionalProperties` と、引数ごとの `const`・`enum`・`pattern` で記載する。 | 生成で、Markdown に引数の制約を出す。<br>検査で、`mcp` のツールの `inputSchema` に合うかを確認する。 | `{required: [character_id]}` |
+      | steps[].calls[].command | コマンド | string | - | - | - | `type` が `command` のときに実行するコマンド。 | 生成で、Markdown にコマンドを出す。<br>検査で、文書の `type` が `skill` なら `skill.allowed_tools` にあるかを確認する。 | `mdmark export {file}` |
+      | steps[].calls[].flow | エージェントフロー | string | - | - | pattern: `^[^\s#]+#.*$` | `type` が `flow` のときに進めるエージェントフロー、または `type` が `agent` のときにサブエージェントに参照させるエージェントフローへの参照。 | 生成で、Markdown に進めるエージェントフローか起動するサブエージェントを出す。<br>検査で、指すエージェントフローがあるかを確認する。 | `review/script#` |
+      | steps[].calls[].instruction | 指示 | string | - | - | - | `type` が `agent` のときにサブエージェントに指定する指示の文。`flow` と一方だけを記載する。 | 生成で、Markdown にサブエージェントへの指示を出す。 | `成果物を確認観点で敵対的に検証し、指摘を返却する` |
+      | steps[].calls[].agent_type | サブエージェントの種類 | string | - | - | - | `type` が `agent` のときのサブエージェントの種類。記載しなければ `general-purpose`。 | 生成で、Agent ツールの `subagent_type` にする。 | `general-purpose` |
+      | steps[].calls[].model | モデル | string | - | - | - | `type` が `agent` のときのモデル。記載しなければ呼ぶ側と同じ。 | 生成で、Agent ツールの `model` にする。 | `claude-sonnet-5-5` |
+      | steps[].calls[].tools | ツールの制限 | object | - | - | - | `type` が `agent` のときに使用させるツールの制限（`allow`・`deny`）。 | 生成で、サブエージェントの許可と拒否にする。 | - |
+      | steps[].calls[].tools.allow | 許可 | array | - | - | - | 使用させるツール。 | 生成で、サブエージェントに許可するツールにする。 | - |
+      | steps[].calls[].tools.deny | 拒否 | array | - | - | - | 使用させないツール。 | 生成で、サブエージェントに拒否するツールにする。 | `[Agent, Edit, Write]` |
+      | steps[].calls[].wait | 完了を待つ | boolean | - | - | - | `type` が `agent` のとき、完了を待ってから次の工程へ進むか（記載しなければ `true`）。`false` ならバックグラウンドで起動し、完了の通知を受けてから結果を使用する。 | 生成で、Markdown に完了の待ち方を出す。 | - |
+      | steps[].calls[].session | 起動の仕方 | string | - | `new` / `reuse` | - | `type` が `agent` のとき、`new`（新しいサブエージェントを起動する）か `reuse`（前回起動した同じサブエージェントに続けて依頼する）。記載しなければ `new`。 | 生成で、Markdown に起動の仕方を出す。<br>設計で、`reuse` なら呼ぶ側の起動の構成でメッセージを送信するツールを読み込む。 | - |
+      | steps[].calls[].renew_when | 新しく起動する条件 | string | - | - | - | `session` が `reuse` のとき、前回のサブエージェントを使用せずに新しく起動する条件。 | 生成で、Markdown に新しく起動する条件を出す。 | `成果物が別のものに変わったとき` |
+      | steps[].calls[].skill | スキル | string | - | - | pattern: `^[^\s#]+#.*$` | `type` が `skill` のときに呼ぶ、`type` が `skill` のエージェントフローへの参照。 | 生成で、Markdown に呼ぶスキルを出す。 | `mindstella/setup#` |
+      | refs | 関連 | array | - | - | - | 参照する共通の手順・ノウハウへの参照。 | 生成で、関連する手順へのリンクにする。<br>レビューで、関連する手順をたどって食い違いを確認する。 | `[shared/character-state#]` |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+
+      <!-- /table -->
+  - id: key-rules-01
+    name: キーごとの決まり
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | 決まり | 悪い例 | 理由 |
+      | --- | --- | --- | --- |
+      | id | - | brain/stream/on_event | `_` でつないでいる |
+      | agents | 記載しなければ、フォルダ構成で配置先のフォルダの `used_by` にあるエージェントにする。<br>配置先のフォルダの `used_by` と両方を記載したときは、食い違いを検査する。 | - | - |
+      | skill.frontmatter | 上の項目で表せない理由があるときだけ記載する。 | - | - |
+      | steps[].body | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | steps[].calls[].server | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | steps[].calls[].args | 引数を自由にするときは記載しない。 | - | - |
+      | steps[].calls[].tools | レビュアーのサブエージェントには `Agent` を許可しない。 | - | - |
+
+      <!-- /table -->
+  - id: example-sample-01
+    name: 記載例 1
+    body: |-
+      ```yaml
+      id: brain/stream/on-event
+      summary: コメントと状態を取得し、次の一手を決めて演出指示書を書き込む
+      condition: 「次へ」を受けたとき
+      steps:
+      - name: コメントを取得する
+        body: 選別済みで未読のコメントを取得する
+        calls:
+        - type: mcp
+          server: MCP-1#
+          tool: search
+          args:
+            required:
+            - kind
+            - unread
+            properties:
+              kind:
+                const: comment
+              unread:
+                const: true
+      - name: キャラクター情報を取得する
+        ref: shared/character-state#steps[キャラクター情報を取得する]
+      - name: 演出指示書を書き込む
+        body: 次の一手を決め、演出指示書を書き込む
+        calls:
+        - type: mcp
+          server: MCP-1#
+          tool: write_direction_memo
+          args:
+            required:
+            - segment_id
+            - memo
+      ```
+  - id: example-sample-02
+    name: 記載例 2
+    body: |-
+      ```yaml
+      id: script/review
+      summary: 台本をレビュアーに検証させ、指摘を受け取る
+      condition: 台本の工程を終えたとき
+      steps:
+      - name: レビューを依頼する
+        body: 台本と参照した資料をレビュアーに指定し、指摘を受け取る
+        calls:
+        - type: agent
+          flow: review/script#
+          session: reuse
+          renew_when: 台本が別のトピックに変わったとき
+          tools:
+            deny:
+            - Agent
+            - Edit
+            - Write
+      ```
+  - id: example-sample-03
+    name: 記載例 3
+    body: |-
+      ```yaml
+      id: mindstella/setup
+      type: skill
+      summary: ワークスペースを作り、MindStella の画面の URL を出す
+      skill:
+        path: plugins/mindstella/skills/setup/SKILL.md
+        arguments:
+        - name: workspace
+          hint: ワークスペースのフォルダ
+          description: ワークスペースにするフォルダ。省くと今のフォルダ
+        allowed_tools:
+        - Bash(mindstella init *)
+      steps:
+      - name: ワークスペースを作る
+        body: 指定したフォルダにワークスペースを作る
+        calls:
+        - type: command
+          command: mindstella init $workspace
+      - name: 画面の URL を出す
+        body: 作ったワークスペースの画面の URL を出す
+      ```

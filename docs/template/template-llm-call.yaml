@@ -1,0 +1,112 @@
+# yaml-language-server: $schema=../../schemas/template.schema.yaml
+id: template-llm-call
+kind: template
+name: 'テンプレート: LLM の呼び出し'
+description: LLM・意思決定モデルを 1 回呼んで結果を受け取る処理の、モデル・プロンプト・入力・待つ上限・失敗したときの扱いを記載する書式を定め、LLM の呼び出しの設計書を作る・修正するときに参照する。
+tags:
+  - name: scope:テンプレート
+  - name: topic:llm
+    main: true
+  - name: topic:テンプレート
+  - name: topic:スキーマ
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      LLM・意思決定モデルを 1 回呼んで結果を受け取る処理（ステートレスな呼び出し）1 つの、モデル・プロンプト・入力・待つ上限・失敗したときの扱いを記載する設計書。
+      出力の書式はプロンプトファイルの `output` を原本にする。
+  - id: rules-01
+    name: 決まり
+    body: |-
+      - 1 ファイル = 1 つの呼び出しにする。
+      - ツールを使用して手順を進めるものは『エージェントの定義』に記載する。
+      - 精度評価との関係は『精度評価のスイート』の `targets` に記載し、この設計書には記載しない。
+      - 意思決定モデルに固有の値は、プロジェクトのスキーマの `x-` の拡張に記載する。
+  - id: item-list-01
+    name: 項目
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 設計で、『精度評価のスイート』の `targets`・`fallback.target` から指す。 | `LLM-1` |
+      | title | タイトル | string | 必須 | - | - | 呼び出しの名前。 | 生成で、ページの見出しにする。<br>dev-docs の検索で、文書の名前にする。 | `行動選択ノード` |
+      | lead | 冒頭リード | string | 必須 | - | - | 呼び出しを 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>dev-docs の検索で、文書の概要文にする。 | `選択肢から次の行動を 1 つ選ぶ` |
+      | component | 呼び出す側 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 呼び出す側のアーキテクチャ図の構成要素への参照。 | 実装で、呼び出しを実装するコンポーネントを決める。 | `ARCH-1#subsystems[virtual-life]` |
+      | type | 種類 | string | 必須 | `choose` / `score` / `generate` / `extract` | - | `choose`（選択肢から選ぶ）/ `score`（当てはまるか・点数を返却する）/ `generate`（文章を生成する）/ `extract`（入力から値を取り出す・分類する）。 | 検査で、種類ごとのキーの要否を確認する。<br>実装で、出力の受け取り方を決める。 | - |
+      | model | モデル | object | 必須 | - | - | 使用するモデル。 | - | - |
+      | model.name | モデルの ID | string | 必須 | - | - | 起動の仕組み・呼び出しに指定するモデルの ID。 | 実装で、起動コマンド・呼び出しのモデルの指定にする。 | `claude-opus-5-5` |
+      | model.params | 引数 | object | - | - | - | 推論の強さ・温度などの、モデルに指定する引数。 | 実装で、起動コマンド・呼び出しの引数にする。 | `{effort: medium}` |
+      | model.reason | 理由 | string | - | - | - | そのモデルにする理由。 | レビューで、費用と質の釣り合いを確認する。 | `進行の判断に推論の質が要るため` |
+      | prompt | プロンプト | string | 必須 | - | - | プロンプトファイルの id（`kind: llm`）。 | 実装で、呼び出しのプロンプトにする。<br>実装で、プロンプトファイルの `output` で出力を検査する。 | `virtual-life/choose_action` |
+      | inputs | 入力 | array | 必須 | - | minItems: `1` | プロンプトに入れる値。 | 実装で、プロンプトを組み立てる。 | - |
+      | inputs[].name | 変数名 | string | 必須 | - | - | プロンプトファイルの変数の名前。 | 実装で、プロンプトの変数に値を入れる。<br>設計で、`choices.input` から指す。 | `options` |
+      | inputs[].from | 取得元 | string | 必須 | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 値の取得元の設計書（ER 図・インターフェース定義など）への参照。 | 実装で、呼び出す側が値を取得する場所にする。 | `ER-1#tables[action_options]` |
+      | choices | 選択肢 | object | - | - | - | 選択肢の持ち方。`type` が `choose` のときだけ記載し、そのときは必須。 | 実装で、選択肢を組み立てる。 | - |
+      | choices.input | 選択肢の入力 | string | 必須 | - | - | 選択肢を入れる `inputs[].name`。 | 実装で、選択肢を入れる入力を決める。 | `options` |
+      | choices.max | 上限 | integer | - | - | minimum: `1` | 一度に指定する選択肢の上限。 | 実装で、選択肢を絞る処理の上限にする。 | `10` |
+      | timeout | 待つ上限 | object | 必須 | - | - | 呼び出しを待つ上限。 | 実装で、呼び出しの上限にする。 | - |
+      | timeout.seconds | 秒数 | integer | 必須 | - | minimum: `1` | 待つ秒数。 | 実装で、待つ上限にする。 | `8` |
+      | timeout.basis | 導き方 | string | 必須 | `measured_p999` / `published_spec` / `no_output` / `measured_x10` | - | 『タイムアウトの決め方』の結果。`measured_p999`（実測の p99.9 + 50%）/ `published_spec`（公開仕様の値で、計測の作業を残す）/ `no_output`（無出力の時間）/ `measured_x10`（実測の 10 倍か外側の作業の上限）。 | レビューで、値の導き方を確認する。 | - |
+      | timeout.measured | 導出の元の値 | string | - | - | - | 導出の元にした値。`basis` が `published_spec` でないときは必須。 | レビューで、値の根拠を確認する。 | `p99.9 が 5.2 秒（1,200 回）` |
+      | retry | 再試行 | object | - | - | - | 失敗したときの再試行（規約『資源の値の決め方』）。記載しなければ再試行しない。 | 実装で、失敗したときの処理にする。 | - |
+      | retry.max | 回数の上限 | integer | 必須 | - | minimum: `1` | 再試行の回数の上限。 | 実装で、再試行の回数の上限にする。 | `2` |
+      | retry.backoff | 間隔 | string | 必須 | `exponential_jitter` / `none` | - | `exponential_jitter`（指数バックオフ + ジッター）か `none`。 | 実装で、再試行の間隔にする。 | - |
+      | fallback | 代わりの経路 | object | - | - | - | 再試行しても失敗したときに使用する、仕様を満たす代わりの経路（判定フローチャート『フォールバックを置くか』）。記載しなければエラーにする。 | 実装で、失敗したときの処理にする。 | - |
+      | fallback.target | 代わりの呼び出し | string | 必須 | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 代わりの『LLM の呼び出し』への参照。 | 実装で、失敗したときに呼ぶ呼び出しにする。 | `LLM-2#` |
+      | fallback.basis | 根拠 | string | 必須 | - | - | 代わりの経路が仕様を満たすとした根拠（『フォールバックを置くか』の判定の結果）。 | レビューで、代わりの経路が等価かを確認する。 | `別のプロバイダの同じ用途のモデルで、精度評価に合格した` |
+      | refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+
+      <!-- /table -->
+  - id: key-rules-01
+    name: キーごとの決まり
+    body: |-
+      <!-- table: data -->
+
+      | 名前 | 決まり | 悪い例 | 理由 |
+      | --- | --- | --- | --- |
+      | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
+      | lead | 初回に記載した内容のまま保ち、後から情報を追加しない。 | - | - |
+      | component | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | inputs[].from | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | retry | 冪等でない呼び出しには記載しない。<br>各回の待つ上限と間隔の合計が、外側の待ちに収まる回数にする。 | - | - |
+      | fallback.target | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+
+      <!-- /table -->
+  - id: example-sample-01
+    name: 記載例
+    body: |-
+      ```yaml
+      id: LLM-1
+      title: 行動選択ノード
+      lead: 選択肢から次の行動を 1 つ選ぶ
+      component: ARCH-1#subsystems[virtual-life]
+      type: choose
+      model:
+        name: jev-1
+        reason: 選ぶだけなので速く安いモデルにする
+      prompt: virtual-life/choose_action
+      inputs:
+      - name: character_status
+        from: ER-1#tables[character_status]
+      - name: options
+        from: ER-1#tables[action_options]
+      choices:
+        input: options
+        max: 10
+      timeout:
+        seconds: 8
+        basis: measured_p999
+        measured: p99.9 が 5.2 秒（1,200 回）
+      retry:
+        max: 2
+        backoff: exponential_jitter
+      refs:
+      - SC-5#
+      ```

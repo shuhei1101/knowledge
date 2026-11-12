@@ -1,138 +1,79 @@
-# yaml-language-server: $schema=../../schemas/skill.schema.yaml
+# yaml-language-server: $schema=../../schemas/design/agent_flow.schema.yaml
 id: text-review
-kind: skill
-name: 文章を点検して修正する
-description: 範囲のファイルを文章の規約に合わせて点検して修正し、結果をサマリーで返却するスキルの入力・手順・分岐を記載し、スキルの動作を確認する・変更するときに参照する。
+type: skill
+title: 文章を点検して修正する
+summary: ファイル・フォルダ・Git のコミットで指定した範囲の文章を、knowledge の文章の規約に合わせて点検して修正し、結果をサマリーで返却する
 tags:
-  - name: scope:スキル
-  - name: topic:サマリー
-  - name: topic:スキル
-  - name: topic:ファイル
-  - name: topic:手順
-  - name: topic:文章
-    main: true
-  - name: action:修正
-  - name: action:入力
-  - name: action:分岐
-  - name: action:点検
-status: current
-visibility: internal
-rev: 4
-related:
-  - to: convention-writing-style
-    type: requires
-    when: 文章を点検するとき
-  - to: convention-keep-existing-text
-    type: requires
-    when: 反する文を修正するとき
-  - to: convention-issue-presentation
-    type: requires
-    when: 論点の表を点検するとき
-  - to: doc-parts
-    type: requires
-    when: ドキュメントの部品を点検するとき
-  - to: claude-rule-writing
-    type: requires
-    when: 範囲に `.claude/rules/` のファイルがあるとき
-skill: knowledge プラグインの skills/text-review/SKILL.md
-issue: 87
-primary_actor: 利用者
-trigger: 利用者がスキルを起動する
-arguments:
-  - name: 範囲
-    description: ファイルのパス・フォルダのパス（配下をすべて）・Git のコミットか範囲（変わったファイル）のどれでもよい
-preconditions:
-  - knowledge の規約を project-index かファイルで参照できる
-externals:
-  - name: 利用者
-    exchange: 範囲を受け取り、サマリーを返却する
-  - name: Git
-    exchange: コミットで変わったファイルの一覧
-    when_absent: コミットを指定されなければ呼ばない
-  - name: project-index
-    exchange: 文章に関わる規約の本文（ID で検索する）
-    when_absent: knowledge の規約のファイルを直接読む
-  - name: 範囲のファイル
-    exchange: 本文を参照し、修正した本文を記載する
-flow: |-
-  <!-- html -->
+  - topic:文章
+  - topic:スキル
+  - topic:サマリー
+  - topic:ファイル
+  - topic:手順
+  - action:修正
+  - action:点検
+skill:
+  path: skills/text-review/SKILL.md
+  arguments:
+    - name: range
+      hint: <ファイルのパス | フォルダのパス | コミット | コミットの範囲>
+      description: 点検する範囲。ファイルのパス・フォルダのパス（配下をすべて）・Git のコミットかコミットの範囲（変わったファイル）のどれでもよい
+  allowed_tools:
+    - Bash(git diff-tree *)
+    - Bash(git diff *)
+steps:
+  - name: 範囲をファイルに展開する
+    body: |-
+      - ファイルのパスはそのファイルにする
+      - フォルダのパスは配下のファイルすべてにする
+      - パスとして存在しなければコミットかコミットの範囲として扱い、変わったファイルにする
+      - 文章でないファイル（画像・バイナリ）は除く
+    calls:
+      - type: command
+        command: git diff-tree --no-commit-id --name-only -r --diff-filter=d {コミット}
+      - type: command
+        command: git diff --name-only --diff-filter=d {範囲}
+  - name: ファイルが無いときは返却して終える
+    when: 展開したファイルが 0 件のとき
+    body: 規約を参照せずに、指定した範囲と見つからないことを出して終える。
+  - name: 規約を参照する
+    body: |-
+      次の規約を参照する。
+      『ユーザ配下ルール記載時の規約』は、範囲に `.claude/rules/` のファイルがあるときだけ参照する。
 
-  ```html
-  <mdmark-flow>
-  {
-    "title": "文章を点検して修正する",
-    "scope": "起動からサマリーまで",
-    "updated": "2026-10-29",
-    "width": 560,
-    "height": 730,
-    "nodes": [
-      { "id": "ask", "kind": "external", "x": 170, "y": 10, "w": 220, "h": 56, "name": "スキルを起動", "sub": "範囲を指定する" },
-      { "id": "range", "kind": "script", "x": 170, "y": 100, "w": 220, "h": 56, "name": "範囲をファイルに展開", "sub": "ファイル・フォルダ・コミット" },
-      { "id": "any", "kind": "dm", "x": 170, "y": 190, "w": 220, "h": 56, "name": "ファイルがあるか" },
-      { "id": "none", "kind": "external", "x": 420, "y": 190, "w": 130, "h": 56, "name": "見つからないと返却する" },
-      { "id": "has", "kind": "dm", "x": 170, "y": 280, "w": 220, "h": 56, "name": "project-index があるか" },
-      { "id": "viadd", "kind": "mcp", "x": 20, "y": 380, "w": 220, "h": 56, "name": "規約を project-index で参照する", "sub": "search_docs" },
-      { "id": "direct", "kind": "data", "x": 320, "y": 380, "w": 220, "h": 56, "name": "規約のファイルを参照する" },
-      { "id": "scan", "kind": "llm", "x": 170, "y": 480, "w": 220, "h": 56, "name": "すべてを調べる", "sub": "修正する箇所の一覧を作る" },
-      { "id": "fix", "kind": "llm", "x": 170, "y": 570, "w": 220, "h": 56, "name": "まとめて修正する", "sub": "一覧が空なら飛ばす" },
-      { "id": "sum", "kind": "external", "x": 170, "y": 660, "w": 220, "h": 56, "name": "サマリーを出す" }
-    ],
-    "wires": [
-      { "id": "w1", "from": "ask", "to": "range", "line": "flow", "points": [[280, 66], [280, 100]] },
-      { "id": "w2", "from": "range", "to": "any", "line": "flow", "points": [[280, 156], [280, 190]] },
-      { "id": "w3", "from": "any", "to": "none", "line": "flow", "points": [[390, 218], [420, 218]], "label": "無い", "labelAt": [405, 206] },
-      { "id": "w4", "from": "any", "to": "has", "line": "flow", "points": [[280, 246], [280, 280]], "label": "ある", "labelAt": [300, 263] },
-      { "id": "w5", "from": "has", "to": "viadd", "line": "flow", "points": [[260, 336], [260, 358], [130, 358], [130, 380]], "label": "ある", "labelAt": [195, 358] },
-      { "id": "w6", "from": "has", "to": "direct", "line": "flow", "points": [[300, 336], [300, 358], [430, 358], [430, 380]], "label": "無い", "labelAt": [365, 358] },
-      { "id": "w7", "from": "viadd", "to": "scan", "line": "flow", "points": [[130, 436], [130, 458], [250, 458], [250, 480]] },
-      { "id": "w8", "from": "direct", "to": "scan", "line": "flow", "points": [[430, 436], [430, 458], [310, 458], [310, 480]] },
-      { "id": "w9", "from": "scan", "to": "fix", "line": "flow", "points": [[280, 536], [280, 570]] },
-      { "id": "w10", "from": "fix", "to": "sum", "line": "flow", "points": [[280, 626], [280, 660]] }
-    ]
-  }
-  </mdmark-flow>
-  ```
+      | 規約 | ID |
+      | --- | --- |
+      | 文章の書き方 | `convention-writing-style` |
+      | 既存文章の維持 | `convention-keep-existing-text` |
+      | 論点の提示 | `convention-issue-presentation` |
+      | ドキュメントの部品 | `doc-parts` |
+      | ユーザ配下ルール記載時の規約 | `claude-rule-writing` |
 
-  <!-- /html -->
-sequence: |-
-  <!-- html -->
-
-  ```html
-  <mdmark-sequence>
-  {
-    "title": "文章を点検して修正する",
-    "scope": "コミットを指定し、project-index があるとき",
-    "updated": "2026-10-29",
-    "participants": [
-      { "id": "user", "kind": "external", "name": "利用者" },
-      { "id": "skill", "kind": "llm", "name": "スキル" },
-      { "id": "git", "kind": "script", "name": "Git" },
-      { "id": "dd", "kind": "mcp", "name": "project-index" },
-      { "id": "fs", "kind": "data", "name": "範囲のファイル" }
-    ],
-    "steps": [
-      { "from": "user", "to": "skill", "label": "範囲（コミット）" },
-      { "from": "skill", "to": "git", "label": "変わったファイルを取る" },
-      { "from": "git", "to": "skill", "label": "ファイルの一覧", "reply": true },
-      { "from": "skill", "to": "dd", "label": "文章の規約を ID で検索する", "tip": "search_docs。配信元は knowledge" },
-      { "from": "dd", "to": "skill", "label": "規約の本文", "reply": true },
-      { "from": "skill", "to": "fs", "label": "本文を参照する" },
-      { "from": "fs", "to": "skill", "label": "本文", "reply": true },
-      { "from": "skill", "to": "fs", "label": "修正した本文を記載する" },
-      { "from": "skill", "to": "user", "label": "サマリー", "reply": true }
-    ]
-  }
-  </mdmark-sequence>
-  ```
-
-  <!-- /html -->
-branches:
-  - name: 正常
-    when: 規約に反する文がある
-    result: 反する文だけが修正され、サマリーにファイルごとの修正した箇所・適用した規約・件数が出る
-  - name: 正常（修正する箇所が無い）
-    when: 反する文が無い
-    result: ファイルは変わらず、サマリーが「修正する箇所はありませんでした」になる
-  - name: 異常（範囲にファイルが無い）
-    when: 無いパスか、文章のファイルを含まないコミット
-    result: 規約を参照せず、指定した範囲と見つからないことが出る
+      - project-index の `search_docs` が使えるなら、`source` を `knowledge`、`filter` を `id` の `eq` で上の ID、`view` を `full` にして参照する
+        - ツールの完全名は `mcp__plugin_project-index_project-index__search_docs`
+      - ツールが無いか、規約が見つからないなら、`${CLAUDE_PLUGIN_ROOT}/docs/rule/{ID}.yaml` を参照する
+    calls:
+      - type: tool
+        tool: Read
+  - name: すべてを調べて修正する箇所の一覧を作る
+    body: |-
+      すべてのファイルの本文を参照し、規約に反する箇所を、ファイル・箇所・適用する規約・修正後の文で一覧にする。
+      一覧を作り終えるまで、ファイルは修正しない。
+    calls:
+      - type: tool
+        tool: Read
+  - name: まとめて修正する
+    when: 一覧が空でないとき
+    body: 一覧の箇所をまとめて修正する。
+    calls:
+      - type: tool
+        tool: Edit
+  - name: サマリーを出す
+    body: |-
+      ファイルごとに、修正した箇所・適用した規約・件数を出す。
+      一覧が空なら「修正する箇所はありませんでした」を出す。
+refs:
+  - convention-writing-style#
+  - convention-keep-existing-text#
+  - convention-issue-presentation#
+  - doc-parts#
+  - claude-rule-writing#

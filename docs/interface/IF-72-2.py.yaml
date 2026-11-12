@@ -29,19 +29,19 @@ flows:
       - '`## 関連` に `related` の行数だけ箇条書きがある'
     test: test_normal
   - name: 正常系（種類に固有のキーがある）
-    summary: スキルの固有のキーを、スキーマの title を見出しにした節で出す
+    summary: 種類に固有のキーを、スキーマの title を見出しにした節で出す
     setup:
       - name: Mock
         description: 差し替えない
       - name: 標準入力
-        description: '`arguments`（オブジェクトの配列）と `preconditions`（文字列の配列）を持つ skill の文書'
+        description: '`arguments`（オブジェクトの配列）と `preconditions`（文字列の配列）を持つ文書。配信元の `schemas/` に、その `kind` のスキーマ（`arguments`・`preconditions` の `title` を持つ）を配置する'
     flow: |-
       sequenceDiagram
         participant D as dev-docs
         participant S as 文書の Markdown への変換
         participant F as 配信元の schemas
-        D->>S: 標準入力に skill の文書の YAML
-        S->>F: skill のスキーマを読む
+        D->>S: 標準入力に固有のキーを持つ文書の YAML
+        S->>F: kind のスキーマを読む
         S->>S: 固有のキーをスキーマの title の節にする
         S-->>D: 終了コード 0 と Markdown
     expected:

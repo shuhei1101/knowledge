@@ -16,6 +16,16 @@ not:
   required:
     - status_codes
     - exceptions
+allOf:
+- if:
+    properties:
+      read_only:
+        const: true
+    required:
+    - read_only
+  then:
+    properties:
+      destructive: false
 required:
 - id
 - title
@@ -119,6 +129,18 @@ properties:
     x-used-by:
       - 実装で、同じ要求の繰り返しを受け付けるか、重複を弾くかを決める。
       - 実装で、呼び出し元が失敗したときに再試行してよいかを決める。
+  read_only:
+    type: boolean
+    title: 読み取りだけ
+    description: 外へ書き込まず、読み取るだけの操作か。
+    x-used-by:
+      - 実装で、MCP ツールの `annotations` の `readOnlyHint` にする。
+  destructive:
+    type: boolean
+    title: 破壊的
+    description: 既存のデータを削除・上書きする操作か。
+    x-used-by:
+      - 実装で、MCP ツールの `annotations` の `destructiveHint` にする。
   side_effects:
     $ref: common.schema.yaml#/$defs/markdown
     title: 副作用

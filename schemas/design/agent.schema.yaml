@@ -1,0 +1,305 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: エージェントの定義
+description: |-
+  ツールを使用して手順を進める LLM のエージェント 1 つの、セッションの持ち方・モデル・きっかけ・エージェントフローを実行する段階を記載する設計書。
+  対話モード（TUI）とヘッドレスモードのどちらで起動するエージェントにも使用する。
+x-rules:
+  - 1 ファイル = 1 エージェントにする。
+  - 許可するツール・きっかけ・モデルが違う動きは、別のエージェントにする。
+  - 役割（何を決め、何を決めないか）はアーキテクチャ図のサブシステムの `role` に記載し、この設計書には記載しない。
+  - モデルを 1 回呼んで結果を受け取るだけの処理は、『LLM の呼び出し』に記載する。
+x-kind: agent
+x-folder: docs/agent
+x-id-prefix: AG
+type: object
+additionalProperties: false
+required:
+- id
+- title
+- lead
+- session
+- model
+- triggers
+properties:
+  id:
+    $ref: common.schema.yaml#/$defs/id
+    title: ID
+    description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
+    x-used-by:
+      - 設計で、『MCP サーバーの定義』の `clients[].agent`・『起動の構成』の `agent`・エージェントフローの `agents` から指す。
+    x-rules:
+      - 設計書を作るときに振り、改名・移動でも変えない。
+    examples:
+    - AG-1
+  title:
+    type: string
+    title: タイトル
+    description: エージェントの名前。
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - dev-docs の検索で、文書の名前にする。
+    examples:
+    - 配信のブレインノード
+  lead:
+    $ref: common.schema.yaml#/$defs/markdown
+    title: 冒頭リード
+    description: エージェントを 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - dev-docs の検索で、文書の概要文にする。
+    x-rules:
+      - 役割と常駐かどうかは記載しない（役割はアーキテクチャ図、常駐かどうかは `session.lifetime` が持つ）。
+      - 初回に記載した内容のまま保ち、後から情報を追加しない。
+    examples:
+    - 配信を始めるときに起動し、配信の進行を決めるエージェント
+  component:
+    $ref: common.schema.yaml#/$defs/ref
+    title: サブシステム
+    description: エージェントが受け持つアーキテクチャ図のサブシステムへの参照。サブシステムでないエージェントは記載しない。
+    x-used-by:
+      - 実装で、指したサブシステムの `role` をシステムプロンプトの役割の文にする。
+      - 実装で、`name` を記載しないときに、指したサブシステムの `scope` を識別子にする。
+    examples:
+    - ARCH-1#subsystems[brain]
+  name:
+    type: string
+    title: 識別子
+    description: 英小文字とハイフンの識別子。`component` が無いとき、または同じ `component` を指すエージェントがほかにあるときだけ記載する。
+    x-used-by:
+      - 実装で、起動の単位とログのラベルの識別子にする。
+    x-rules:
+      - '`component` を 1 つのエージェントだけが指すときは記載しない。'
+    pattern: ^[a-z0-9]+(-[a-z0-9]+)*$
+    examples:
+    - planner
+  session:
+    type: object
+    title: セッション
+    description: セッションの持ち方。
+    x-used-by:
+      - 設計で、『起動の構成』の起動コマンドと再開の手順を決める。
+    x-shape: attributes
+    additionalProperties: false
+    required:
+    - interface
+    - lifetime
+    properties:
+      interface:
+        type: string
+        title: 起動方式
+        description: '`tui`（対話モード）か `headless`（ヘッドレスモード）。'
+        x-used-by:
+          - 設計で、『起動の構成』の起動コマンドを決める。
+        enum:
+        - tui
+        - headless
+      lifetime:
+        type: string
+        title: 寿命
+        description: '`resident`（1 つのセッションを常駐させる）か `per_request`（要求ごとに起動する）。'
+        x-used-by:
+          - 設計で、『起動の構成』の再開の手順（`restart`）の要否と、起動するセッションの数を決める。
+        enum:
+        - resident
+        - per_request
+  model:
+    $ref: common.schema.yaml#/$defs/model
+    title: モデル
+    description: 使用するモデル。
+  triggers:
+    type: array
+    title: きっかけ
+    description: 起動・入力のきっかけ。
+    x-used-by:
+      - レビューで、きっかけごとにエージェントフローがあるかを確認する。
+    x-heading: きっかけ
+    x-shape: table
+    x-key: name
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - name
+      - message
+      properties:
+        name:
+          type: string
+          title: 名前
+          description: きっかけの名前（英小文字とハイフン）。エージェントの中で重ねない。
+          x-used-by:
+            - 設計で、エージェントフローの `triggers` から `{エージェントの ID}#triggers[{name}]` で指す。
+          pattern: ^[a-z0-9]+(-[a-z0-9]+)*$
+          examples:
+          - external-event
+        message:
+          $ref: common.schema.yaml#/$defs/ref
+          title: メッセージ
+          description: 受けるメッセージの『インターフェース定義』への参照。
+          x-used-by:
+            - 実装で、送信する側と受ける側のメッセージの書式にする。
+          x-rules:
+            - 'インターフェース定義の `entry.kind` にエージェントへのメッセージの種類が入るまでは、`kind: operation` で記載する。'
+          examples:
+          - IF-12#
+        scenario:
+          $ref: common.schema.yaml#/$defs/ref
+          title: シナリオ
+          description: きっかけと主アクターを記載したシナリオへの参照。
+          x-used-by:
+            - 実装で、シナリオの主アクターから送信する側の実装の場所を決める。
+          examples:
+          - SC-3#scenarios[正常シナリオ]
+  stages:
+    type: array
+    title: 段階
+    description: エージェントフローを実行する段階。並びの順がエージェントフローの索引の順になる。
+    x-used-by:
+      - 設計で、フォルダ構成の `placeholders` から段階の語彙として指す。
+      - 生成で、エージェントフローの索引の並びにする。
+    x-heading: 段階
+    x-shape: table
+    x-key: name
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - name
+      - title
+      - summary
+      properties:
+        name:
+          type: string
+          title: 名前
+          description: 段階の名前（英小文字とハイフン）。
+          x-used-by:
+            - 実装で、エージェントフローのパスの段階の部分にする。
+          pattern: ^[a-z0-9]+(-[a-z0-9]+)*$
+          examples:
+          - startup
+        title:
+          type: string
+          title: 手順の名前
+          description: この段階のエージェントフローの名前の既定。
+          x-used-by:
+            - 生成で、エージェントフローの `title` を省いたときの名前にする。
+          examples:
+          - 起動時の手順
+        summary:
+          $ref: common.schema.yaml#/$defs/summary
+          title: 説明
+          description: 段階の説明。
+          x-used-by:
+            - 生成で、エージェントフローの索引の説明にする。
+          examples:
+          - 起動した直後
+        trigger:
+          type: string
+          title: きっかけ
+          description: この段階のエージェントフローを実行するきっかけの既定。`triggers[].name` のどれか。
+          x-used-by:
+            - 生成で、エージェントフローの `triggers` を省いたときのきっかけにする。
+          examples:
+          - start
+  progress:
+    type: object
+    title: 進み具合の書き込み
+    description: エージェントフローの工程を終えるたびに呼ぶ、進み具合を書き込むツール。
+    x-used-by:
+      - 変換で、`type` が `flow` の全てのエージェントフローの各工程の最後に、進み具合（手順の ID・工程の名前・きっかけの ID）の書き込みを追加する。
+      - 実装で、再開の後に書き込み済みの工程を飛ばす。
+    x-rules:
+      - '`ref` で埋め込んだ工程は、埋め込み先の工程として 1 回書き込む。'
+      - 進み具合を書き込むツールの無いエージェントは記載せず、再開の後はエージェントフローを最初の工程から進める。
+    x-shape: attributes
+    additionalProperties: false
+    required:
+    - server
+    - tool
+    properties:
+      server:
+        $ref: common.schema.yaml#/$defs/ref
+        title: MCP サーバー
+        description: ツールを持つ『MCP サーバーの定義』への参照。
+        x-used-by:
+          - 変換で、ツールの完全な名前を作る。
+        examples:
+        - MCP-1#
+      tool:
+        type: string
+        title: ツール
+        description: ツールの名前（『MCP サーバーの定義』の `tools[].name`）。
+        x-used-by:
+          - 検査で、このエージェントの `clients[].allow` にあるかを確認する。
+        examples:
+        - write_progress
+  refs:
+    type: array
+    title: 関連
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
+    items:
+      $ref: common.schema.yaml#/$defs/ref
+  decisions:
+    type: array
+    title: 検討事項
+    description: 根拠になった話し合いの記録の検討事項の ID。
+    x-used-by:
+      - 生成で、話し合いの記録の検討事項へのリンクにする。
+      - レビューで、根拠の検討事項の結論と食い違わないかを確認する。
+    items:
+      $ref: common.schema.yaml#/$defs/decision
+  notes:
+    $ref: common.schema.yaml#/$defs/notes
+    x-heading: 補足
+    x-shape: sections
+allOf:
+- if:
+    not:
+      required:
+      - component
+  then:
+    required:
+    - name
+examples:
+- id: AG-1
+  title: 配信のブレインノード
+  lead: 配信を始めるときに起動し、配信の進行を決めるエージェント
+  component: ARCH-1#subsystems[brain]
+  name: brain-stream
+  session:
+    interface: tui
+    lifetime: resident
+  model:
+    name: claude-opus-5-5
+    params:
+      effort: medium
+    reason: 進行の判断に推論の質が要るため
+  triggers:
+  - name: start
+    message: IF-11#
+    scenario: SC-3#scenarios[正常シナリオ]
+  - name: external-event
+    message: IF-12#
+    scenario: SC-3#scenarios[正常シナリオ]
+  stages:
+  - name: startup
+    title: 起動時の手順
+    summary: 起動した直後
+    trigger: start
+  - name: on-event
+    title: イベントの手順
+    summary: 外部イベントを受けたとき
+    trigger: external-event
+  - name: resume
+    title: 再開の手順
+    summary: 圧縮・再起動の後
+  - name: shutdown
+    title: 終了の手順
+    summary: 配信を終えるとき
+  progress:
+    server: MCP-1#
+    tool: write_progress
+  refs:
+  - SC-3#

@@ -64,24 +64,44 @@ constants:
     usecase: 共通
     summary: '`x-kind` → テンプレートの ID'
     entries:
+      - key: agent
+        value: template-agent
+      - key: agent_flow
+        value: template-agent-flow
       - key: architecture
         value: template-architecture
       - key: component
         value: template-component
       - key: config
         value: template-config
+      - key: data
+        value: template-data
       - key: dataflow
         value: template-dataflow
       - key: dev_command
         value: template-dev-command
       - key: er
         value: template-er
+      - key: eval_case
+        value: template-eval-case
+      - key: eval_criterion
+        value: template-eval-criterion
+      - key: evaluation
+        value: template-evaluation
       - key: external_api
         value: template-external-api
       - key: interface
         value: template-interface
+      - key: launch
+        value: template-launch
+      - key: layout
+        value: template-layout
       - key: library
         value: template-external-library
+      - key: llm_call
+        value: template-llm-call
+      - key: mcp_server
+        value: template-mcp-server
       - key: module
         value: template-module
       - key: nonfunctional
@@ -94,10 +114,6 @@ constants:
         value: template-state-transition
       - key: test_procedure
         value: template-test-procedure
-      - key: layout
-        value: template-layout
-      - key: data
-        value: template-data
     refs:
       - IF-201-1#constraints[テンプレートの対応表]
   - name: CONSTRAINT_KEYS
