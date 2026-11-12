@@ -192,19 +192,12 @@ properties:
         event:
           type: string
           title: イベント
-          description: フックのイベント。
+          description: Claude Code の `settings.json` の `hooks` のキー（`SessionStart`・`PreToolUse` など）。
           x-used-by:
             - 実装で、`settings.json` の `hooks` のキーにする。
-          enum:
-          - session_start
-          - user_prompt_submit
-          - pre_tool_use
-          - post_tool_use
-          - pre_compact
-          - stop
-          - subagent_stop
-          - session_end
-          - notification
+          pattern: ^[A-Z][A-Za-z]+$
+          examples:
+          - SessionStart
         matcher:
           type: string
           title: 対象
@@ -359,7 +352,7 @@ examples:
     - WebFetch
     - WebSearch
   hooks:
-  - event: session_start
+  - event: SessionStart
     matcher: clear|compact
     script: containers/brain/hooks/session_start.py
     purpose: clear・圧縮のときに、返却済みの記録の削除を依頼する

@@ -254,6 +254,14 @@ properties:
     $ref: common.schema.yaml#/$defs/notes
     x-heading: 補足
     x-shape: sections
+allOf:
+- if:
+    not:
+      required:
+      - component
+  then:
+    required:
+    - name
 examples:
 - id: AG-1
   title: 配信のブレインノード

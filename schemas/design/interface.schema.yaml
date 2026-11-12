@@ -16,6 +16,16 @@ not:
   required:
     - status_codes
     - exceptions
+allOf:
+- if:
+    properties:
+      read_only:
+        const: true
+    required:
+    - read_only
+  then:
+    properties:
+      destructive: false
 required:
 - id
 - title
@@ -128,8 +138,6 @@ properties:
     description: 既存のデータを削除・上書きする操作か。
     x-used-by:
       - 実装で、MCP ツールの `annotations` の `destructiveHint` にする。
-    x-rules:
-      - '`read_only` が `true` のときは記載しない。'
   side_effects:
     $ref: common.schema.yaml#/$defs/markdown
     title: 副作用
