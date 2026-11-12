@@ -39,7 +39,7 @@ items:
           {"id": "start", "kind": "start", "x": 434, "y": 24, "w": 120, "h": 120, "name": "文書に関連を張りたい相手がいる"},
           {"id": "q0", "kind": "question", "x": 354, "y": 200, "w": 280, "h": 164, "name": "files.yaml の行の関連か"},
           {"id": "r0", "kind": "result", "x": 724, "y": 236, "w": 240, "h": 92, "name": "ドキュメント管理の files-yaml-04 で type を選ぶ"},
-          {"id": "q1", "kind": "question", "x": 354, "y": 420, "w": 280, "h": 164, "name": "いつ読むか（when）を 1 文で記載できるか"},
+          {"id": "q1", "kind": "question", "x": 354, "y": 420, "w": 280, "h": 164, "name": "いつ参照するか（when）を 1 文で記載できるか"},
           {"id": "r1", "kind": "result", "x": 24, "y": 474, "w": 240, "h": 56, "name": "関連を張らない"},
           {"id": "q2", "kind": "question", "x": 354, "y": 640, "w": 280, "h": 124, "name": "本文でリンクしている相手か"},
           {"id": "r1-2", "kind": "result", "x": 724, "y": 674, "w": 240, "h": 56, "name": "関連を張らない"},
@@ -49,7 +49,7 @@ items:
           {"id": "r3", "kind": "result", "x": 724, "y": 1076, "w": 240, "h": 92, "name": "この文書の related だけに part_of を記載する"},
           {"id": "q5", "kind": "question", "x": 354, "y": 1260, "w": 280, "h": 164, "name": "一方を修正したらもう一方も修正が要る組か ※3"},
           {"id": "r4", "kind": "result", "x": 24, "y": 1288, "w": 240, "h": 108, "name": "両方の文書の related に change_together を記載する"},
-          {"id": "q6", "kind": "question", "x": 334, "y": 1480, "w": 320, "h": 164, "name": "この文書に従う前に相手の文書を読む必要があるか ※4"},
+          {"id": "q6", "kind": "question", "x": 334, "y": 1480, "w": 320, "h": 164, "name": "この文書に従う前に相手の文書を参照する必要があるか ※4"},
           {"id": "r5", "kind": "result", "x": 724, "y": 1516, "w": 240, "h": 92, "name": "この文書の related だけに requires を記載する"},
           {"id": "r6", "kind": "result", "x": 374, "y": 1700, "w": 240, "h": 108, "name": "この文書の related だけに references を記載する ※5"}
         ],
@@ -93,9 +93,9 @@ items:
     group: 関連の張り方 判定フローチャート
     name: ※4 requires
     body: |-
-      - ※4 requires: 相手の文書を読まずに進めると、この文書の決まりを外す
+      - ※4 requires: 相手の文書を参照せずに進めると、この文書の決まりに違反する
   - id: related-link-flow-06
     group: 関連の張り方 判定フローチャート
     name: ※5 references
     body: |-
-      - ※5 references: 相手の文書を読むと判断の材料が増えるが、読まなくても進められる
+      - ※5 references: 相手の文書を参照すると判断の材料が増えるが、参照しなくても進められる

@@ -1,0 +1,134 @@
+docs:
+  - page: docs/flowchart/flowchart-session-context-placement.yaml
+    new: false
+    change: '#258: ※3 の例を MCP を持たないプラグインの決まりに差し替えるか削除する。#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-reuse-choice.yaml
+    new: true
+    change: '#250: 新しく作る候補を既存の使用・拡張・新規作成のどれにするかの判定フローチャートを新設する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/rule/dev-design-principles.yaml
+    new: false
+    change: '#250: dedup-02 から新しい判定フローチャートを参照する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-command-destination.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-config-location.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-fallback.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-interface-choice.yaml
+    new: false
+    change: '#262: 照合した。当たったのは他の文書を名前で指す箇所だけで、変更なし'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-mcp-hook-delivery.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-nonfunctional-layer.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-presentation-choice.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-react-state-placement.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-related-link.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-rule-form-choice.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-screen-state-retention.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-tag-attach.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-term-registration.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-timeout.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-word-choice.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する（NG の単語そのものを例に挙げる箇所は残す）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+  - page: docs/flowchart/flowchart-yaml-file-unit.yaml
+    new: false
+    change: '#262: AI slop の単語を修正する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:11:18.264352+00:00'
+scope_out:
+  - item: rules.yaml への新しい判定フローチャートの登録
+    reason: '判断が分かれる。今の判断: 登録しない。規約『設計原則』は rules.yaml でコードの書き込みに当たり、dedup-02 からの参照で辿れるため'
+    plan: none
+  - item: 規約『コンポーネントカタログ』の before-new-component・html-components-prefetch-catalog の common-layer-prefetch-05 の書き換え
+    reason: 新しい判定フローチャートから参照し、食い違いが無いことを確かめるだけで、既存の手順は変えない
+    plan: none
+  - item: docs/rule/prompt-file.yaml の structure-06・schemas/prompt.schema.yaml の例の「新しいファイルの作り方」
+    reason: 'rule-inject を名指ししない kind: hook の例で、#258 の対象に含めない（#258 の受付の判断）'
+    plan: none
+  - item: docs/flowchart 以外のフォルダに残る AI slop の単語
+    reason: フォルダごとの別の Issue で修正する
+    plan: '#260'
+  - item: 判定フローチャートの ※n の注記の mdmark の注釈の記法への書き換え
+    reason: 別の Issue の対象。この PR は ※n の記法を変えない
+    plan: '#173'
+  - item: 判定フローチャートの名前（name・aliases・group・図の title）と、他の文書を名前で指すリンクの文字列に含まれる AI slop の単語（『エージェントに渡す文・処理の置き場所』『MCP・フックの渡し方』『コマンドの書き先』『設定値の置き場所』『フォールバックを置くか』『React の状態の置き場所』など）
+    reason: '判断が分かれる。今の判断: 変えない。名前は ai-monitor のフェーズ・他の文書・rules.yaml から名前で参照されており、単語の置き換えではなく文書の改名になる。改名は参照元の書き換えを伴うため、#262 の単語の修正の範囲を超える'
+    plan: none

@@ -35,7 +35,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      エージェントに渡す文・処理を、SessionStart のフック・MCP の instructions・ツールでの取得のどれに置くかを判定する。
+      エージェントに指定する文・処理を、SessionStart のフック・MCP の instructions・ツールでの取得のどれに配置するかを判定する。
       機能を呼ぶインターフェースと、複数の工程を順に進める手順の指定方法は、判定フローチャート [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice) で決める。
   - id: session-context-placement-flow-01
     group: エージェントに渡す文・処理の置き場所 判定フローチャート
@@ -46,12 +46,12 @@ items:
       ```json
       {
         "title": "エージェントに渡す文・処理の置き場所",
-        "scope": "プラグインや MCP サーバーがセッションに渡すものを決めるとき",
+        "scope": "プラグインや MCP サーバーがセッションに指定するものを決めるとき",
         "updated": "2026-11-03",
         "width": 948,
         "height": 912,
         "nodes": [
-          {"id": "start", "kind": "start", "x": 414, "y": 24, "w": 120, "h": 120, "name": "エージェントに渡す文・処理がある"},
+          {"id": "start", "kind": "start", "x": 414, "y": 24, "w": 120, "h": 120, "name": "エージェントに指定する文・処理がある"},
           {"id": "q1", "kind": "question", "x": 334, "y": 200, "w": 280, "h": 120, "name": "処理を実行するか ※1"},
           {"id": "r1", "kind": "result", "x": 684, "y": 232, "w": 240, "h": 56, "name": "SessionStart のフック"},
           {"id": "q2", "kind": "question", "x": 334, "y": 376, "w": 280, "h": 164, "name": "セッションごとに変わる事実か ※2"},
@@ -77,16 +77,16 @@ items:
     group: エージェントに渡す文・処理の置き場所 判定フローチャート
     name: ※1 処理
     body: |-
-      - ※1 処理: 常駐のサーバーの起動・環境変数の設定・記録の後片付けなど、文を渡すのではなく実行するもの。
-        instructions は文を渡すだけで、処理を実行できない
+      - ※1 処理: 常駐のサーバーの起動・環境変数の設定・記録の後片付けなど、文を指定するのではなく実行するもの。
+        instructions は文を指定するだけで、処理を実行できない
   - id: session-context-placement-flow-03
     group: エージェントに渡す文・処理の置き場所 判定フローチャート
     name: ※2 セッションごとに変わる事実
     body: |-
-      - ※2 セッションごとに変わる事実: 作業場所から使える配信元など、起動した場所や時点で変わるもの
+      - ※2 セッションごとに変わる事実: 作業場所から使用できる配信元など、起動した場所や時点で変わるもの
   - id: session-context-placement-flow-04
     group: エージェントに渡す文・処理の置き場所 判定フローチャート
     name: ※3 SessionStart で注入するもの
     body: |-
-      - ※3 SessionStart で注入するもの: MCP を持たないプラグインの常に守る決まり（例: rule-inject の新しいファイルの作り方）。
-        instructions を載せるサーバーが無い
+      - ※3 SessionStart で注入するもの: MCP を持たないプラグインの常に守る決まり。
+        instructions を記載するサーバーが無い
