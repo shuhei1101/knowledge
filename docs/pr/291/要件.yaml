@@ -1,0 +1,45 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: changed
+    detail: 設計書と目次を書き込むと、AI Monitor の設計書の検証が走り、目次と README が作り直される。設計書は原本の `schemas/design/` のスキーマで検査される
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: changed
+    detail: 設計書を原本の `schemas/design/` のスキーマで検査し、AI Monitor の配布物のコピーを検査の対象から外す
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: changed
+    detail: 用語集に登録した呼び名を、エージェントが用語として照合・検索できる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: following
+    detail: 画面に用語集が載り、フックを持たないと決めた場合は「フック」のグループが無くなる
+    depends_on:
+      - docs/scenario/SC-72-4.yaml
+docs:
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: '`schemas/` のエントリから AI Monitor の配布物のコピーと `conversions/` を除き、用語集のエントリを追加する。`hooks/` を削除する結論なら `hooks/` のエントリも除く'
+    status: todo
+  - page: docs/terms.yaml
+    new: true
+    change: knowledge の用語集を新設し、判定フローチャート『用語の登録』で knowledge に登録すると判定した呼び名（AI slop・判定フローチャート・配信元・表し方・A.I.VOICE 2 など）を登録する
+    status: todo
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: 設計書の書き込みのときに AI Monitor の設計書の検証と目次の作り直しを呼ぶことを、外部システムとの境界に追加する
+    status: todo
+scope_out:
+  - item: 生成物の README.md を作るコマンドを開発コマンドへ載せる
+    reason: '#283 の判断で #280 に README の生成だけを残した。今回の要望に含まれない'
+    plan: '#280'
+  - item: プラグイン knowledge とプラグイン slop-check の置き場所を揃える
+    reason: '#282 の結論（`hooks/` を残すか）を前提にした後続で、今回の要望に含まれない'
+    plan: '#278'
+  - item: 他のプロジェクトの `schemas/` の設計書のスキーマのコピーの削除
+    reason: shuhei1101/ai-monitor#3188 の反映作業で各プロジェクトへ知らせる。knowledge の作業 PR では対応しない
+    plan: none
