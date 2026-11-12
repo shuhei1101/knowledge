@@ -35,7 +35,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      どの端末・作業場所からでも、knowledge の規約を dev-docs の画面で読み、MCP で検索・取得したいときに実行する。
+      どの端末・作業場所からでも、knowledge の規約を dev-docs の画面で参照し、MCP で検索・取得したいときに実行する。
   - id: prerequisite-01
     group: 前提
     name: "前提: dev-docs のプラグインの導入"
@@ -55,10 +55,10 @@ items:
       既にある `sources[]` の行は消えない。
   - id: step-global-setup-02
     group: 手順 > 端末を準備する
-    name: MCP のつなぎ直し
+    name: MCP の再接続
     body: |-
-      Claude Code で `/mcp` を開き、`dev-docs` につなぎ直す。
-      つなぎ直さないと、そのセッションから文書の MCP のツールを呼べない。
+      Claude Code で `/mcp` を開き、`dev-docs` に再接続する。
+      再接続しないと、そのセッションから文書の MCP のツールを呼べない。
   - id: step-clone-01
     group: 手順 > knowledge を clone する
     name: リポジトリの clone
@@ -67,8 +67,8 @@ items:
       git clone https://github.com/shuhei1101/knowledge.git {clone する先}
       ```
 
-      clone した先の絶対パスを次の手順で使う。
-      既に clone してある端末では、その場所を使う。
+      clone した先の絶対パスを次の手順で使用する。
+      既に clone してある端末では、その場所を使用する。
   - id: step-setup-01
     group: 手順 > knowledge を配信元に登録する
     name: setup の実行
@@ -80,24 +80,24 @@ items:
       点検で knowledge の `dev-docs.yaml`・スキーマ・`scripts/` に違反があると、キーのパスと理由を示して止まり、`sources[]` に行が追加されない。
   - id: step-setup-02
     group: 手順 > knowledge を配信元に登録する
-    name: 読み書きできる範囲の回答
+    name: 参照・書き込みできる範囲の回答
     body: |-
-      聞かれた `scope.read` には全ての作業場所を置くフォルダの glob、`scope.write` には knowledge のクローンのパスを答える。
+      聞かれた `scope.read` には全ての作業場所を配置するフォルダの glob、`scope.write` には knowledge のクローンのパスを回答する。
       記載する内容の表を了承すると、端末の設定の `sources[]` に次の行が追加される。
 
       ```yaml
       sources:
         - config: {knowledge のクローンの絶対パス}/dev-docs.yaml
           scope:
-            read: ["{作業場所を置くフォルダ}/**"]
+            read: ["{作業場所を配置するフォルダ}/**"]
             write: ["{knowledge のクローンの絶対パス}"]
       ```
 
       配信元の ID は、knowledge の `dev-docs.yaml` の `name`（`knowledge`）になる。
       worktree（`.claude/worktrees/*`）の中の作業場所はクローンにいるものとして判定するので、`scope.write` に worktree を並べなくてよい。
-      `scope.read` に当たらない作業場所からは、knowledge の文書を読めない。
+      `scope.read` にヒットしない作業場所からは、knowledge の文書を参照できない。
   - id: step-screen-01
-    group: 手順 > 画面で読む
+    group: 手順 > 画面で参照する
     name: 画面を開く
     body: |-
       ブラウザで `http://127.0.0.1:8781/knowledge` を開き、種類のタブとサイドバーから文書を選ぶ。
@@ -105,9 +105,9 @@ items:
       画面の操作は dev-docs の [画面で読む](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E7%94%BB%E9%9D%A2%E3%81%A7%E8%AA%AD%E3%82%80.md) にある。
   - id: step-mcp-01
     group: 手順 > MCP で検索・取得する
-    name: source に knowledge を渡す
+    name: source に knowledge を指定する
     body: |-
-      Claude Code から文書の MCP の `search_docs` に `source: knowledge` と語・タグを渡して検索し、当たった文書の ID を渡して本文を取得する。
+      Claude Code から文書の MCP の `search_docs` に `source: knowledge` と単語・タグを指定して検索し、ヒットした文書の ID を指定して本文を取得する。
       `source` を省くと作業中の配信元を指すので、knowledge のクローンの外では knowledge の文書が返らない。
       ツールの引数は dev-docs の [文書のMCP](https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/%E6%96%87%E6%9B%B8%E3%81%AEMCP.md) にある。
   - id: step-mcp-02
@@ -132,10 +132,10 @@ items:
 
       knowledge の行の状態が `配信中` と出る。
   - id: check-search-01
-    group: 確認 > クローンの外から knowledge の文書を引ける
+    group: 確認 > クローンの外から knowledge の文書を検索できる
     name: クローンの外からの検索の確認
     body: |-
-      knowledge のクローンの外の作業場所で Claude Code を起動し、`search_docs` に `source: knowledge` を渡す。
+      knowledge のクローンの外の作業場所で Claude Code を起動し、`search_docs` に `source: knowledge` を指定する。
 
       knowledge の規約が、名前・説明・タグつきで返る。
   - id: rollback-01
@@ -143,10 +143,10 @@ items:
     name: 元に戻す
     body: |-
       設定画面（`/_settings`）で、knowledge の行のごみ箱のボタンを押す。
-      端末の設定から knowledge の行が削除され、配信から外れる。
-      行を残したまま配信を止めるときは、鉛筆のボタンで `配信` のスイッチを外す。
+      端末の設定から knowledge の行が削除され、配信から除外される。
+      行を残したまま配信を止めるときは、鉛筆のボタンで `配信` のスイッチをオフにする。
 
       | 残るもの | 扱い |
       | --- | --- |
       | knowledge のクローン | 要らなければ削除する |
-      | dev-docs のプラグインと端末の設定 | ほかの配信元が使うので残す |
+      | dev-docs のプラグインと端末の設定 | ほかの配信元が使用するので残す |
