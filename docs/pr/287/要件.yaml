@@ -71,11 +71,14 @@ docs:
     updated_at: '2026-11-12T09:23:27.514864+00:00'
 scope_out:
   - item: シナリオの `test_file` と、notes の「E2E テストの動かし方」
-    reason: D-311 A で、シナリオは残し `test_file` は作り直すときの対応のマーカーとして残すと決まっている。点検のスクリプト・dev-docs は `test_file` の実在を検査しない
+    reason: D-311 A で、シナリオは残し `test_file` は作り直すときの対応のマーカーとして残すと決まっている。knowledge の検査のスクリプト・dev-docs は `test_file` の実在を検査しない
     plan: none
   - item: 規約・スキーマ・テンプレートの E2E の決まり（testing-core-e2e・dev-v-model・`schemas/scenario.schema.yaml`・`schemas/test-procedure.schema.yaml`・`schemas/design/` など）
     reason: 他のプロジェクト向けの決まりで、このリポジトリの E2E のテストではない
     plan: none
   - item: 過去の PR ドキュメント（`docs/pr/*/`）の E2E のログ・記述
     reason: 過去の作業の記録で、今の仕組みを指さない
+    plan: none
+  - item: 'AI Monitor の設計書の検証（`ai_monitor.design_docs validate` の `check_tests`）が、シナリオ 9 件で `対応テストファイルがありません: tests/e2e/...` を出す'
+    reason: 検証は AI Monitor の `src/` にあり、E2E の `test_file` を許す修正は shuhei1101/ai-monitor#3329 が持つ（voice-paste#276 の同じ事象を統合済み）
     plan: none
