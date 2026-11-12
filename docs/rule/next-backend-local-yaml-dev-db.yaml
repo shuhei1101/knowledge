@@ -80,7 +80,7 @@ items:
       ```
   - id: local-yaml-datastore-05
     group: ローカル開発用 YAML データストア
-    name: 実装ファイルは env を確認しない
+    name: 実装ファイルは env を参照しない
     body: |-
-      実装ファイル（`*.drizzle.ts` / `*.yaml.ts`）は env を確認しない。
+      実装ファイル（`*.drizzle.ts` / `*.yaml.ts`）は env を参照しない。
       本番ビルドに YAML 実装を混入させない（`USE_YAML_DB` のガードを守る）。
