@@ -27,8 +27,8 @@ tags:
   - name: action:配信
 status: current
 visibility: internal
-rev: 4
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-11-12'
 items:
   - id: overview
     name: 概要
@@ -54,4 +54,17 @@ items:
     group: ブラウザのスクリプトの拡張子
     name: js で記載してよい場合
     body: |-
-      - `.js` で書いてよいのは、ビルドせずにそのまま配るもの（GitHub Pages・モックのプレビューなど）だけ。
+      - `.js` で書いてよいのは、`tsc` を挟めないもの（使い捨てのモックなど）だけ。
+  - id: script-extension-03
+    group: ブラウザのスクリプトの拡張子
+    name: 生成 js を commit して配るものも ts で記載
+    body: |-
+      - GitHub Pages・プラグインの同梱物・配布物など、ビルドせずにそのまま配るものも `.ts` で記載し、生成した `.js` を commit して配る。
+        - commit する生成 `.js` の扱いは [html/tooling/tsc運用](id:html-tooling-tsc#generated-js-gitignore-01) に従う。
+  - id: script-extension-04
+    group: ブラウザのスクリプトの拡張子
+    name: HTML に直接記載する script
+    body: |-
+      - HTML に直接記載する `<script>` の処理は `.ts` へ分け、生成した `.js` を `<script src>` で読み込む。
+        1 枚の HTML で配る雛形も同じ。
+        - 値だけを持つ `<script>`（`type="importmap"`・`type="application/json"`）は対象外。
