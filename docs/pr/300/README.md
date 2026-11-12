@@ -1,0 +1,1 @@
+# dev-docs の文書の MCP のツールの完全名を、project-index のプラグインの名前に書き換える
