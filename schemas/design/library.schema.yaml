@@ -59,7 +59,7 @@ properties:
     title: 識別子
     description: パッケージの識別子（purl）。
     x-used-by:
-      - 保守で、脆弱性の情報とライセンスを引く識別子にする。
+      - 保守で、脆弱性の情報とライセンスを参照する識別子にする。
     examples:
       - pkg:pypi/ruamel.yaml
   supplier:
@@ -168,7 +168,7 @@ properties:
         title: バージョンの出所
         description: 突き合わせる依存の定義（`uv.lock` / `pyproject.toml` / CDN の URL）。
         x-used-by:
-          - 保守で、採用しているバージョンを突き合わせる依存の定義を引く。
+          - 保守で、採用しているバージョンを突き合わせる依存の定義を参照する。
       pinning:
         type: string
         title: バージョンの固定方法
@@ -240,7 +240,7 @@ properties:
     type: array
     title: 一覧
     x-used-by:
-      - 実装で、使う API・コマンド・設定を引く。
+      - 実装で、使う API・コマンド・設定を参照する。
       - 生成で、一覧の表と節にする。
     x-shape: sections
     x-key: name

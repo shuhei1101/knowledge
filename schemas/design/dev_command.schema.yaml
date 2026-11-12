@@ -55,7 +55,7 @@ properties:
     title: 分類
     description: 分類ごとのセクション。
     x-used-by:
-      - 実行で、コマンドを探すときに分類ごとの節を引く。
+      - 実行で、コマンドを探すときに分類ごとの節を参照する。
       - 生成で、分類ごとの節にする。
     x-rules:
       - 初期構築では全ての分類を作る。
@@ -162,7 +162,7 @@ properties:
           title: 参照
           description: 他のページが持つコマンドの原本。テストのセクションはテスト実行方法（`TP-1#`）を、静的検査のセクションはその `lint` 層（`TP-1#layers[lint]`）を指す。
           x-used-by:
-            - 実行で、テスト・静的検査のコマンドを原本のテスト実行方法から引く。
+            - 実行で、テスト・静的検査のコマンドを原本のテスト実行方法から参照する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         decisions:

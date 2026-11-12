@@ -184,7 +184,7 @@ properties:
           title: 配置場所
           description: HTTP のパラメータの配置場所。MCP ツール・関数の引数は `argument`。
           x-used-by:
-            - 実装で、値を引く場所（パス・クエリ・ヘッダ・本文・引数）にする。
+            - 実装で、値を取り出す場所（パス・クエリ・ヘッダ・本文・引数）にする。
           enum:
           - path
           - query
@@ -410,7 +410,7 @@ properties:
           title: 決定値
           description: 値の出所になる非機能要件の項目。
           x-used-by:
-            - 実装で、値の出所の非機能要件を引く。
+            - 実装で、値の出所の非機能要件を参照する。
             - レビューで、値が非機能要件の決定値と一致するかを確認する。
         notes:
           type: string
