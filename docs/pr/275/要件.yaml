@@ -2,7 +2,7 @@ use_cases:
   - kind: single
     scenario: docs/scenario/SC-201-1.yaml
     impact: run_only
-    detail: 生成するテンプレートに 8 種類が加わる。シナリオの流れは変わらないが、E2E の生成の対象のテンプレートの並びに 8 種類を追加する
+    detail: 生成するテンプレートに 8 種類が加わる。シナリオの流れは変わらない
     depends_on: []
   - kind: single
     scenario: docs/scenario/SC-72-6.yaml
@@ -114,15 +114,15 @@ docs:
   - page: docs/interface/IF-201-1.py.yaml
     new: false
     change: x-kind → テンプレートの ID の対応に 8 種類を追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:31:30.336306+00:00'
   - page: docs/module/MOD-201-1.py.yaml
     new: false
     change: TEMPLATE_IDS の値に 8 種類を追加する
-    status: todo
-  - page: tests/e2e/単一ユースケース/test_開発者がスキーマから設計書のテンプレートを生成する.py
-    new: false
-    change: 生成の対象のテンプレートの並び _TEMPLATES に 8 種類を追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T11:31:30.336306+00:00'
 scope_out:
   - item: 'agent_flow の type: skill から SKILL.md を作る変換と、skills/text-review/SKILL.md の生成物への置き換え'
     reason: 計画の行で別の Issue に切り出すと決まっている。この作業 PR の agent_flow のスキーマを前提にする
