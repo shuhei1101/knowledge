@@ -23,11 +23,15 @@ docs:
   - page: schemas/meta.schema.yaml
     new: false
     change: ルートの `x-rules` にキーを設ける条件（要件.md の `### キーを設ける条件`）を追加し、`properties` に `x-used-by`（使用先の文の配列）を定義する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T00:41:03.660795+00:00'
   - page: schemas/design/
     new: false
-    change: 設計書の種類のスキーマと `common.schema.yaml` のキーを追加した決まりで見直し、各キーに使用先を記載する。使用先の無いキー・ほかの設計書と二重のキーを削除し、2 つの事柄を持つキーをオブジェクトに分け、`examples` を合わせる
-    status: todo
+    change: 設計書の種類のスキーマと `common.schema.yaml` のキーを追加した決まりで見直し、各キーに使用先を記載する。使用先の無いキー・ほかの設計書と二重のキーを削除し、`examples` を合わせる（計画書『文書』の `## 見直しの結果`）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T00:41:03.660795+00:00'
   - page: docs/template/
     new: false
     change: 設計書の種類のテンプレート（`template-*.yaml`）を `scripts/build_templates.py` で生成し直す
