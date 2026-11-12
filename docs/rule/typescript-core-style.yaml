@@ -38,41 +38,41 @@ items:
       機械で判定できる規則は ESLint（typescript-eslint）で止める。
   - id: function-01
     group: 関数とクラス
-    name: 関数ベースで書く
+    name: 関数ベースで記載する
     body: |-
-      - 関数ベースで書き、クラスは必要なときだけ使う。
-        クラスを使ってよい場面は、ライブラリが要求するものと、Error の派生クラスだけ。
+      - 関数ベースで記載し、クラスは必要なときだけ使用する。
+        クラスを使用してよい場面は、ライブラリが要求するものと、Error の派生クラスだけ。
   - id: function-02
     group: 関数とクラス
-    name: const とアロー関数で書く
+    name: const とアロー関数で記載する
     body: |-
-      - 関数は、`function` 宣言ではなく `const` とアロー関数で書く。
+      - 関数は、`function` 宣言ではなく `const` とアロー関数で記載する。
   - id: type-01
     group: 型
-    name: type を使い interface を使わない
+    name: type を使用し interface を使用しない
     body: |-
-      - 型は `type` で書く。
-        `interface` は、ライブラリの拡張と declaration merging のときだけ使う。
+      - 型は `type` で記載する。
+        `interface` は、ライブラリの拡張と declaration merging のときだけ使用する。
   - id: type-02
     group: 型
-    name: enum を使わない
+    name: enum を使用しない
     body: |-
-      - `enum` を使わず、union のリテラルか `as const` のオブジェクトで書く。
+      - `enum` を使用せず、union のリテラルか `as const` のオブジェクトで記載する。
   - id: type-03
     group: 型
-    name: 対応表は satisfies で確かめる
+    name: 対応表は satisfies で確認する
     body: |-
-      - 設定や対応表のオブジェクトは、`satisfies` で型を確かめる。
+      - 設定や対応表のオブジェクトは、`satisfies` で型を確認する。
   - id: type-04
     group: 型
     name: 状態の種類は判別できる union にする
     body: |-
-      - 状態の種類は判別できる union にし、`switch` の最後は `never` で網羅を確かめる。
+      - 状態の種類は判別できる union にし、`switch` の最後は `never` で網羅を確認する。
   - id: type-05
     group: 型
     name: 型の断定は外から来る値だけ
     body: |-
-      - 非 null の断定（`!`）と `as` の型の断定は、DOM の取得など外から来る値で必要なときだけ使う。
+      - 非 null の断定（`!`）と `as` の型の断定は、DOM の取得など外から来る値で必要なときだけ使用する。
   - id: type-06
     group: 型
     name: any を避け unknown で受けて絞る
@@ -84,13 +84,13 @@ items:
     group: 型
     name: generics は汎用ユーティリティだけ
     body: |-
-      - generics は、汎用ユーティリティだけに使う。
-        制約（`extends`）を付けて、緩すぎる型を避ける。
+      - generics は、汎用ユーティリティだけに使用する。
+        制約（`extends`）を付けて、緩すぎる型を使用しない。
   - id: type-08
     group: 型
     name: 戻り値は導出する
     body: |-
-      - 内部関数の戻り値を別の場所で使うときは、手書きせず導出する。
+      - 内部関数の戻り値を別の場所で使用するときは、手書きせず導出する。
         シグネチャの変更に、型が追従する。
   - id: type-09
     group: 型
@@ -111,10 +111,10 @@ items:
     group: 関数の引数
     name: 関数型エイリアスで契約を定義する
     body: |-
-      - コールバックと依存の契約は、関数型エイリアスに名前を付けて定義し、引数で渡す。
+      - コールバックと依存の契約は、関数型エイリアスに名前を付けて定義し、引数で指定する。
   - id: export-01
     group: export
     name: 名前付き export だけ
     body: |-
       - export は、名前付きだけにする。
-        `export default` は、ツールが求めるもの（`*.stories.tsx`・`vite.config.ts` など）だけに使う。
+        `export default` は、ツールが求めるもの（`*.stories.tsx`・`vite.config.ts` など）だけに使用する。

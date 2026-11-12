@@ -38,7 +38,7 @@ last_reviewed: '2026-10-30'
 related:
   - to: react-data-api-client
     type: requires
-    when: API を呼ぶ hook の出どころを決めるとき
+    when: API を呼ぶ hook の出典を決めるとき
 sources:
   - title: "TanStack Query: Query Options"
     url: https://tanstack.com/query/latest/docs/framework/react/guides/query-options
@@ -47,13 +47,13 @@ items:
     name: 概要
     body: |-
       対象は React。
-      サーバーのデータは、TanStack Query で読む。
+      サーバーのデータは、TanStack Query で参照する。
   - id: use-query-01
     group: クエリ
     name: queries.ts に queryOptions をまとめる
     body: |-
       - 画面の `queries.ts` に、queryOptions の合成と invalidate をまとめる。
-        orval が生成した hook を、そのまま使ってよい。
+        orval が生成した hook を、そのまま使用してよい。
   - id: use-query-02
     group: クエリ
     name: queryKey に全パラメータを含める
@@ -68,7 +68,7 @@ items:
     group: クエリ
     name: View と Edit で hook を共有する
     body: |-
-      - View と Edit で同じ API を使うときは、`features/{domain}/shared/` の hook に共通化する。
+      - View と Edit で同じ API を使用するときは、`features/{domain}/shared/` の hook に共通化する。
   - id: naming-01
     group: 命名
     name: 命名の表

@@ -43,14 +43,14 @@ items:
     name: cookieCache の有効化
     body: |-
       - `cookieCache` を有効化（DB クエリ削減）。
-        失効が他端末に反映されるまで最大 `maxAge` かかるため、機微な操作は `disableCookieCache: true` で DB を引く
+        失効が他端末に反映されるまで最大 `maxAge` かかるため、機微な操作は `disableCookieCache: true` で DB を参照する
   - id: auth-setup-04
     group: lib/auth.ts — Better Auth セットアップ
     name: cookie を設定する呼び出しの扱い
     body: |-
-      - Server Action で cookie を設定する認証呼び出し（`signInEmail` 等）のため、`nextCookies()` プラグインを `plugins` の最後に置く
+      - Server Action で cookie を設定する認証呼び出し（`signInEmail` 等）のため、`nextCookies()` プラグインを `plugins` の最後に配置する
   - id: auth-setup-05
     group: lib/auth.ts — Better Auth セットアップ
-    name: シークレットの置き場所
+    name: シークレットの配置先
     body: |-
-      - シークレットの置き場所は [設定値の置き場所](id:flowchart-config-location) と [shared/環境変数](id:next-shared-env-var) に従う
+      - シークレットの配置先は [設定値の置き場所](id:flowchart-config-location) と [shared/環境変数](id:next-shared-env-var) に従う

@@ -24,7 +24,7 @@ items:
     group: withRouteErrorHandling — route.ts のエラー変換
     name: 全 handler をラップする
     body: |-
-      - 全 `route.ts` handler を `withRouteErrorHandling(async () => { ... })` で wrap（handler 内に try/catch を書かない）
+      - 全 `route.ts` handler を `withRouteErrorHandling(async () => { ... })` で wrap（handler 内に try/catch を記載しない）
   - id: route-error-handling-02
     group: withRouteErrorHandling — route.ts のエラー変換
     name: 構造化 JSON に変換
@@ -34,7 +34,7 @@ items:
     group: withRouteErrorHandling — route.ts のエラー変換
     name: 予期しないエラーは 500
     body: |-
-      - 予期しないエラーはログに stack を記録して 500 を返す（raw message / stack をレスポンスに出さない）
+      - 予期しないエラーはログに stack を記録して 500 を返却する（raw message / stack をレスポンスに出さない）
   - id: route-error-handling-04
     group: withRouteErrorHandling — route.ts のエラー変換
     name: Next.js 内部のエラーは再 throw

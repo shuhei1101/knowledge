@@ -38,9 +38,9 @@ items:
       - 常にこのファイルの関数経由で認証を取る（`getSession()` を route / Server Action から直接呼ばない）
   - id: auth-context-02
     group: app/(shared)/auth/index.ts — getAuthContext()
-    name: DB クライアントも返す
+    name: DB クライアントも返却する
     body: |-
-      - DB クライアントもここで返す（呼び出し側で個別 import 不要）
+      - DB クライアントもここで返却する（呼び出し側で個別 import 不要）
   - id: auth-context-03
     group: app/(shared)/auth/index.ts — getAuthContext()
     name: 認証失敗は ClientAuthError
@@ -52,8 +52,8 @@ items:
     body: |-
       - プロバイダ差し替え時は `provider.ts` だけ書き換える（呼び出し側に影響なし）
   - id: usage-example-01
-    group: 使い方の例
-    name: 使い方の例
+    group: 使用方法の例
+    name: 使用方法の例
     body: |-
       ```ts
       // route.ts / Server Action / Server Component とも同じ

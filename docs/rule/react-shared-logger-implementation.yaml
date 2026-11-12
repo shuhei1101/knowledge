@@ -31,7 +31,7 @@ last_reviewed: '2026-10-30'
 related:
   - to: react-shared-logger-tag
     type: requires
-    when: logger.create に渡す tag を決めるとき
+    when: logger.create に指定する tag を決めるとき
   - to: dev-logging
     type: references
     when: ログのレベル・出すログ・出してはいけないデータを決めるとき
@@ -45,7 +45,7 @@ items:
     name: JSON Lines の出力
     body: |-
       - 出力は JSON Lines にする（1 行 = 1 つの JSON、装飾なし）。
-        置き場所は `shared/lib/logger.ts` にする。
+        配置先は `shared/lib/logger.ts` にする。
   - id: logger-ts-jsonl-02
     group: JSON Lines ロガー
     name: レコードの構造
@@ -55,8 +55,8 @@ items:
     group: JSON Lines ロガー
     name: logger と logger.create
     body: |-
-      - `logger`（既定）と `logger.create("tag")`（component 付き）を使う。
-        `console.log` を使わない。
+      - `logger`（既定）と `logger.create("tag")`（component 付き）を使用する。
+        `console.log` を使用しない。
   - id: logger-ts-jsonl-04
     group: JSON Lines ロガー
     name: ログレベル
@@ -66,17 +66,17 @@ items:
         - `VITE_LOG_LEVEL` で設定し、開発中は `localStorage.setItem("log.level", ...)` で動的に変えられる。
         - production は、warn 以上に強制的に絞る。
   - id: ctx-writing-01
-    group: ctx の書き方
+    group: ctx の記載方法
     name: ctx で構造化する
     body: |-
       - 文字列を補間せず、`ctx` で構造化する（`log.info("registered", { id })`）。
   - id: ctx-writing-02
-    group: ctx の書き方
+    group: ctx の記載方法
     name: Error を直接入れない
     body: |-
       - Error オブジェクトを直接入れず、`e.message` を取り出して入れる。
   - id: ctx-writing-03
-    group: ctx の書き方
+    group: ctx の記載方法
     name: ctx に含めてはいけないもの
     body: |-
       - パスワード・トークン・API key・セッション ID・メールアドレスの全体・カード番号・個人情報を含めない。

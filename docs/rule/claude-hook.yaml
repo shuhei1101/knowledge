@@ -37,8 +37,8 @@ items:
     group: ルール
     name: settings.json に直接記載しない
     body: |-
-      - settings.json内にインラインで書かないでください。
-        - フックの定義とスクリプトの置き方は、[フックフォルダの構成](id:claude-plugin#hook-folder-01) に従う
+      - settings.json内にインラインで記載しないでください。
+        - フックの定義とスクリプトの配置方法は、[フックフォルダの構成](id:claude-plugin#hook-folder-01) に従う
         - プロンプトファイルはプラグインのルートの `content/prompts/` の YAML（[プロンプトファイル](id:prompt-file)）
   - id: rules-02
     group: ルール
@@ -54,7 +54,7 @@ items:
     group: ルール
     name: MCP に届かないときは何も追加しない
     body: |-
-      - 文脈を追加するために MCP を呼んで届かないときは、何も追加せず、入力をそのまま渡す。
+      - 文脈を追加するために MCP を呼んで届かないときは、何も追加せず、入力をそのまま指定する。
   - id: one-time-token-block-01
     group: ワンタイムトークン付き条件ブロック
     name: ワンタイムトークンの用途
@@ -64,7 +64,7 @@ items:
     group: ワンタイムトークン付き条件ブロック
     name: ワンタイムトークンの使いどころ
     body: |-
-      - 例えば、Push時に一度だけ確認させたい場合等に使う
+      - 例えば、Push時に一度だけ確認させたい場合等に使用する
         - 「確認 → 通過 → 確認 → 通過」を交互に繰り返す。
         - トークンなし時 → トークン作成 → ブロック（確認表示）
         - トークンあり時 → トークン削除（消費）→ 通過
@@ -73,13 +73,14 @@ items:
     name: トークン命名規約
     body: |-
       - トークン命名規約:
-        - フックごとに一意のトークンファイル名を使う。
+        - フックごとに一意のトークンファイル名を使用する。
         - トークン名に `session_id` を含める。
   - id: pretooluse-output-01
     group: PreToolUse の出力
     name: permissionDecision の記載
     body: |-
-      PreToolUse のフックが JSON を出力するときは、`hookSpecificOutput` に `hookEventName` と `permissionDecision`（`allow`・`deny`・`ask`・`defer`）を記載する。
+      PreToolUse のフックが JSON を出力するときは、`hookSpecificOutput` に `hookEventName` と `permissionDecision` を記載する。
+      `permissionDecision` の値は `allow`・`deny`・`ask`・`defer` のどれか。
       `updatedInput` を返却するときは `permissionDecision` を省略しない。
 
       ```json

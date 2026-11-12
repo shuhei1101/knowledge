@@ -36,9 +36,9 @@ items:
       - 複雑な JOIN は alias + groupBy + Promise.all を駆使
   - id: drizzle-sql-builder-04
     group: Drizzle — SQL Builder vs Relational Queries
-    name: sql.raw を使わない
+    name: sql.raw を使用しない
     body: |-
-      - `db.execute(sql.raw(...))` は使わない（SQL Injection の温床）
+      - `db.execute(sql.raw(...))` は使用しない（SQL Injection の温床）
   - id: drizzle-sql-builder-05
     group: Drizzle — SQL Builder vs Relational Queries
     name: 動的 SQL はテンプレートタグ
@@ -58,6 +58,6 @@ items:
       | エイリアス必要（同じテーブルを 2 回 JOIN） | SQL Builder                 |
       | 重複排除（`groupBy`）                      | SQL Builder                 |
       | 件数 + 行を並列で取る                      | SQL Builder + `Promise.all` |
-      | `relations()` を使った自然な書き味が欲しい | Relational Query            |
+      | `relations()` を使用した自然な書き味が欲しい | Relational Query            |
 
       <!-- /table -->

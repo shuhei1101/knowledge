@@ -52,7 +52,7 @@ items:
     group: app/api/v{N}/{resource}/db.ts
     name: db 引数は Db 型
     body: |-
-      - `db` 引数は `Db` 型（`tx` も同じ型なのでトランザクション内でも使える）
+      - `db` 引数は `Db` 型（`tx` も同じ型なのでトランザクション内でも使用できる）
   - id: db-ts-05
     group: app/api/v{N}/{resource}/db.ts
     name: 失敗は DatabaseError で包む
@@ -68,8 +68,8 @@ items:
     name: 戻り値
     body: |-
       - 戻り値:
-        - `insertXxx` → `returning()` で row を返す
-        - `updateXxx` → `returning()` で row を返す（呼び出し側が利用）
+        - `insertXxx` → `returning()` で row を返却する
+        - `updateXxx` → `returning()` で row を返却する（呼び出し側が利用）
         - `deleteXxx` → void
   - id: required-template-01
     group: 必須テンプレ

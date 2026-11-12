@@ -55,22 +55,22 @@ items:
     group: 構造
     name: register を直接使わない
     body: |-
-      - `register` を直接使わず、`<Controller render={({ field, fieldState }) => ...}>` を使う。
+      - `register` を直接使わず、`<Controller render={({ field, fieldState }) => ...}>` を使用する。
   - id: structure-03
     group: 構造
     name: エラー状態は fieldState.invalid
     body: |-
-      - エラーの状態は、`fieldState.invalid` を `<Field>` の `data-invalid` と入力部品の `aria-invalid` へ渡して出す。
+      - エラーの状態は、`fieldState.invalid` を `<Field>` の `data-invalid` と入力部品の `aria-invalid` へ指定して出す。
   - id: structure-04
     group: 構造
-    name: htmlFor と id を揃える
+    name: htmlFor と id を一致させる
     body: |-
-      - `<FieldLabel>` の `htmlFor` と入力部品の `id` を揃える。
+      - `<FieldLabel>` の `htmlFor` と入力部品の `id` を一致させる。
   - id: structure-05
     group: 構造
-    name: watch の代わりに useWatch を使う
+    name: watch の代わりに useWatch を使用する
     body: |-
-      - `watch` を使わず、`useWatch` を使う（`watch` は React Compiler と非互換）。
+      - `watch` を使用せず、`useWatch` を使用する（`watch` は React Compiler と非互換）。
   - id: input-type-points-01
     group: 入力タイプ別ポイント
     name: 入力タイプ別ポイントの表
@@ -79,7 +79,7 @@ items:
 
       | 型 | ポイント |
       | --- | --- |
-      | Text / Textarea | `{...field}` でそのまま渡す |
+      | Text / Textarea | `{...field}` でそのまま指定する |
       | Number | `onChange` で `Number()` に変換し、空文字は `null` にする |
       | Select | `value` を `toString()` にし、`onValueChange` で `Number()` に変換する |
       | Switch | `checked={field.value} onCheckedChange={field.onChange}` |
@@ -91,4 +91,4 @@ items:
     group: ルール
     name: 必須フィールドの RequiredMark
     body: |-
-      - 必須のフィールドには、`<FieldLabel>` の中に `<RequiredMark />` を置く（[RequiredMark](id:react-component-required-mark)）。
+      - 必須のフィールドには、`<FieldLabel>` の中に `<RequiredMark />` を配置する（[RequiredMark](id:react-component-required-mark)）。

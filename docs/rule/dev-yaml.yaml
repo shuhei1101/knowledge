@@ -9,7 +9,7 @@ inject_when:
   values:
     - スキーマ
     - schema
-    - 正本
+    - 原本
     - 設定ファイル
     - yaml-language-server
 tags:
@@ -76,7 +76,7 @@ last_reviewed: '2026-11-06'
 related:
   - to: claude-plugin
     type: references
-    when: プラグインが読む設定ファイルの置き場所を決めるとき
+    when: プラグインが参照する設定ファイルの配置先を決めるとき
 sources:
   - title: "Anthropic: Writing effective tools for agents"
     url: https://www.anthropic.com/engineering/writing-tools-for-agents
@@ -96,25 +96,25 @@ items:
     name: 概要
     body: |-
       YAML を扱う決まり。
-      データの正本の持ち方、スキーマの書き方、検査、書き込み、MCP からの書き込みと読み取り、設定ファイルを定める。
+      データの原本の持ち方、スキーマの記載方法、検査、書き込み、MCP からの書き込みと読み取り、設定ファイルを定める。
   - id: data-source-01
-    group: データの正本
-    name: データの正本の適用範囲
+    group: データの原本
+    name: データの原本の適用範囲
     body: |-
       データの原本を DB で持たないプロジェクトに適用する。
   - id: data-source-overview-01
-    group: データの正本 > 概要
+    group: データの原本 > 概要
     name: YAML を SoT にする
     body: |-
-      - 新規ドメインのデータ管理は YAML を SoT として持ち、`index.yaml` + `settings.yaml` の 2 レイヤー構成を使う ことを必須化する。
+      - 新規ドメインのデータ管理は YAML を SoT として持ち、`index.yaml` + `settings.yaml` の 2 レイヤー構成を使用する ことを必須化する。
   - id: data-source-overview-02
-    group: データの正本 > 概要
+    group: データの原本 > 概要
     name: 目的は一元把握
     body: |-
-      - frontend / backend が同じ YAML を見て同じ識別子で実装できることと、Claude Code がデータの全貌を 1 箇所で把握できる
+      - frontend / backend が同じ YAML を確認して同じ識別子で実装できることと、Claude Code がデータの全貌を 1 箇所で把握できる
         - 散らばらない ことが目的。
   - id: two-layer-01
-    group: データの正本 > 必須化する 2 レイヤー構成
+    group: データの原本 > 必須化する 2 レイヤー構成
     name: 必須の 2 レイヤー構成
     body: |-
       | ファイル                  | 役割                                                | git        | 編集経路              |
@@ -123,51 +123,51 @@ items:
       | `**/settings.yaml`        | 付随メタデータ — 画面から更新する / 環境別 / 個人差 | gitignored | UI または手編集       |
       | `**/settings.sample.yaml` | `settings.yaml` の committed template               | committed  | 手編集 (新キー追加時) |
   - id: two-layer-choice-01
-    group: データの正本 > 必須化する 2 レイヤー構成 > どちらに書くかの判断
+    group: データの原本 > 必須化する 2 レイヤー構成 > どちらに記載するかの判断
     name: 画面から変えるなら settings.yaml
     body: |-
       - 利用者が画面から変える → `settings.yaml`
   - id: two-layer-choice-02
-    group: データの正本 > 必須化する 2 レイヤー構成 > どちらに書くかの判断
+    group: データの原本 > 必須化する 2 レイヤー構成 > どちらに記載するかの判断
     name: 本質的なキーは index.yaml
     body: |-
       - ファイル追加と同時に増える本質的なキー → `index.yaml`
   - id: two-layer-choice-03
-    group: データの正本 > 必須化する 2 レイヤー構成 > どちらに書くかの判断
-    name: 全員で揃える値の置き場所
+    group: データの原本 > 必須化する 2 レイヤー構成 > どちらに記載するかの判断
+    name: 全員で統一する値の配置先
     body: |-
       - git で全員揃ってほしい値 → `index.yaml` または `settings.sample.yaml`
   - id: two-layer-choice-04
-    group: データの正本 > 必須化する 2 レイヤー構成 > どちらに書くかの判断
+    group: データの原本 > 必須化する 2 レイヤー構成 > どちらに記載するかの判断
     name: 単独 YAML でよい場合
     body: |-
       画面から更新せず環境に依存しない単独 YAML（例: `content/banned_words.yaml`）は、2 レイヤーにせず単独 YAML のままでよい。
       2 レイヤーが必須になるのは「画面から更新」or「環境別」が発生するとき。
 
-      アプリの設定値（接続先・環境ごとの値・ブランチで試す値）の置き場所は [設定値の置き場所](id:flowchart-config-location) が決め、既定値 → 環境の値 → checkout の上書き の 3 レイヤーに重ねる。
+      アプリの設定値（接続先・環境ごとの値・ブランチで試す値）の配置先は [設定値の置き場所](id:flowchart-config-location) が決め、既定値 → 環境の値 → checkout の上書き の 3 レイヤーに重ねる。
       このセクションの `settings.yaml` は、画面から更新するデータのファイルを指す。
       3 レイヤーの環境の値（`${XDG_CONFIG_HOME:-~/.config}/{project}/settings.yaml`）とは別のファイル。
-      `content/` に置く、形式を問わない正本の置き場所は [コンテンツの置き場所](id:dev-content-location) が決める。
+      `content/` に配置する、形式を問わない原本の配置先は [コンテンツの置き場所](id:dev-content-location) が決める。
   - id: shared-yaml-01
-    group: データの正本 > frontend / backend は同じ YAML を読む
+    group: データの原本 > frontend / backend は同じ YAML を参照する
     name: frontend と backend で同じ YAML
     body: |-
-      - 物理 ID と論理名 を YAML 1 箇所で定義し、Python / JS の両方が YAML を返す API 経由で同じ値を取る
+      - 物理 ID と論理名 を YAML 1 箇所で定義し、Python / JS の両方が YAML を返却する API 経由で同じ値を取る
   - id: shared-yaml-02
-    group: データの正本 > frontend / backend は同じ YAML を読む
+    group: データの原本 > frontend / backend は同じ YAML を参照する
     name: ハードコードの禁止
     body: |-
       - コード内ハードコード禁止 — YAML に未登録のキーが必要になったら YAML を先に更新する
   - id: shared-yaml-03
-    group: データの正本 > frontend / backend は同じ YAML を読む
+    group: データの原本 > frontend / backend は同じ YAML を参照する
     name: 表記の乖離を防ぐ
     body: |-
       - 表記が乖離する事故を構造的に潰すのが目的
   - id: worktree-safe-01
-    group: データの正本 > worktree-safe な runtime YAML
+    group: データの原本 > worktree-safe な runtime YAML
     name: worktree-safe な runtime YAML
     body: |-
-      `settings.yaml` 等、実行時に UI / API から書き込まれる YAML は、どの worktree から書いても main repo の同一ファイルに着地させる。
+      `settings.yaml` 等、実行時に UI / API から書き込まれる YAML は、どの worktree から記載しても main repo の同一ファイルに着地させる。
 
       次の例では `main_repo_root()` ヘルパを採用する。
 
@@ -180,34 +180,34 @@ items:
     name: スキーマの定義方法
     body: |-
       YAML の構造は、種類ごとにスキーマの YAML で定義する。
-      プロジェクトが構造を決めてアプリが読み込む YAML（データの正本・`content/` の YAML・プロンプト）に当てる。
-      外部のツールが構造を決める YAML（CI・compose など）と、`pydantic-settings` で読む設定（[設定](id:python-shared-settings)）には当てない。
+      プロジェクトが構造を決めてアプリが読み込む YAML（データの原本・`content/` の YAML・プロンプト）に適用する。
+      外部のツールが構造を決める YAML（CI・compose など）と、`pydantic-settings` で参照する設定（[設定](id:python-shared-settings)）には適用しない。
   - id: schema-04
     group: スキーマ
-    name: スキーマのファイルの書き方
+    name: スキーマのファイルの記載方法
     body: |-
-      - スキーマのファイルの書き方は knowledge の `schemas/meta.schema.yaml` に従う
+      - スキーマのファイルの記載方法は knowledge の `schemas/meta.schema.yaml` に従う
   - id: schema-07
     group: スキーマ
-    name: 共有するスキーマの正本
+    name: 共有するスキーマの原本
     body: |-
-      - 複数のリポジトリが読む YAML のスキーマは、1 つのリポジトリが `schemas/{種類}.schema.yaml` を正本として持つ。
+      - 複数のリポジトリが参照する YAML のスキーマは、1 つのリポジトリが `schemas/{種類}.schema.yaml` を原本として持つ。
   - id: schema-08
     group: スキーマ
-    name: 正本のスキーマの取り込み
+    name: 原本のスキーマの取り込み
     body: |-
-      - 正本以外のリポジトリは、そのスキーマだけに依存し（コードに依存しない）、正本のリポジトリのタグを指定して取り込み、取り込んだバージョンを記録する。
+      - 原本以外のリポジトリは、そのスキーマだけに依存し（コードに依存しない）、原本のリポジトリのタグを指定して取り込み、取り込んだバージョンを記録する。
   - id: schema-09
     group: スキーマ
     name: スキーマを変えるときの手順
     body: |-
-      - スキーマを変えるときは、正本のリポジトリに Issue を立てる。
-        正本以外のリポジトリは、取り込むバージョンを上げる。
+      - スキーマを変えるときは、原本のリポジトリに Issue を起票する。
+        原本以外のリポジトリは、取り込むバージョンを上げる。
   - id: inspection-01
     group: 検査
     name: 検査の対象と時点
     body: |-
-      読み込むとき（起動の事前確認など）に、`## スキーマ` を当てる全ての YAML をスキーマに通す。
+      読み込むとき（起動の事前確認など）に、`## スキーマ` を適用する全ての YAML をスキーマで検証する。
   - id: inspection-02
     group: 検査
     name: 違反の出力形式
@@ -217,38 +217,38 @@ items:
     group: 検査
     name: 書き換えない検査のツール
     body: |-
-      - ファイルを書き換えずに違反を並べるだけの検査のツールを置く
+      - ファイルを書き換えずに違反を並べるだけの検査のツールを配置する
   - id: inspection-04
     group: 検査
     name: 独自の検査
     body: |-
-      - スキーマで見られない決まり（ID の重複・参照の実在・mermaid の文法など）は独自の検査に記載し、スキーマの検査と 1 つの検査のツールにまとめる
+      - スキーマで確認されない決まり（ID の重複・参照の実在・mermaid の文法など）は独自の検査に記載し、スキーマの検査と 1 つの検査のツールにまとめる
   - id: inspection-05
     group: 検査
     name: mermaid の検査
     body: |-
       - mermaid は `@probelabs/maid` で検査する
-        自動修正（`--fix`）は意味を変えることがあるので使わない
+        自動修正（`--fix`）は意味を変えることがあるので使用しない
   - id: writing-01
     group: 書き込み
     name: 書き込みの原則
     body: |-
-      プログラム（MCP・アプリの UI / API・ローカルの開発 DB など）が YAML を書くときは、次を守る。
+      プログラム（MCP・アプリの UI / API・ローカルの開発 DB など）が YAML を記載するときは、次を守る。
   - id: writing-02
     group: 書き込み
     name: 書き込み前の検査
     body: |-
-      - 書き込む前に、変更を当てた後の中身を `## 検査` に通し、1 件でも違反があれば何も書き換えずにエラーを返す
+      - 書き込む前に、変更を適用した後の中身を `## 検査` で検査し、1 件でも違反があれば何も書き換えずにエラーを返却する
   - id: writing-03
     group: 書き込み
     name: 一時ファイルから置き換え
     body: |-
-      - 一時ファイルに書いてから置き換える
+      - 一時ファイルに記載してから置き換える
   - id: writing-04
     group: 書き込み
     name: 失敗時の巻き戻し
     body: |-
-      - 複数のファイルを書く途中で失敗したら、置き換えた分を元に戻す
+      - 複数のファイルを記載する途中で失敗したら、置き換えた分を元に戻す
   - id: writing-05
     group: 書き込み
     name: 排他ロック
@@ -268,25 +268,25 @@ items:
     group: MCP からの書き込み
     name: ツール説明の組み立て
     body: |-
-      - 書き込むツールの説明（入力の名前・型・必須・書くべき中身）は、スキーマの `title`・`description`・必須から組み立てる
+      - 書き込むツールの説明（入力の名前・型・必須・記載するべき中身）は、スキーマの `title`・`description`・必須から組み立てる
   - id: mcp-write-04
     group: MCP からの書き込み
     name: expected_version の必須化
     body: |-
-      - 書き込みに、読んだときの文書のバージョン（中身から作る値）を `expected_version` として必須にし、合わなければ書かずに、再読み込みして再度呼び出すよう返す。
+      - 書き込みに、参照したときの文書のバージョン（中身から作る値）を `expected_version` として必須にし、合わなければ記載せずに、再読み込みして再度呼び出すよう返却する。
         バージョンはファイルではなく文書ごとに持つ。
-        この決まりは YAML の正本の項目を書き換えるときに当て、DB への追記には当てない
+        この決まりは YAML の原本の項目を書き換えるときに適用し、DB への追記には適用しない
   - id: mcp-write-05
     group: MCP からの書き込み
-    name: 違反は isError で返す
+    name: 違反は isError で返却する
     body: |-
-      - 違反のエラーは `isError` で返す
-        `dry_run` で書かずに検査と差分だけを返せるようにする
+      - 違反のエラーは `isError` で返却する
+        `dry_run` で記載せずに検査と差分だけを返却できるようにする
   - id: mcp-write-06
     group: MCP からの書き込み
     name: 返り値は差分と結果のみ
     body: |-
-      - 返り値は新しいバージョン・短い差分・検査の結果にし、全文を返さない
+      - 返り値は新しいバージョン・短い差分・検査の結果にし、全文を返却しない
   - id: mcp-write-07
     group: MCP からの書き込み
     name: 作業ツリーを書き換えるだけで commit しない
@@ -296,18 +296,18 @@ items:
     group: MCP からの書き込み
     name: 他のリポジトリへの書き込みは権限で決める
     body: |-
-      - 他のリポジトリへ書き込めるかは、端末の設定の作業場所ごとの権限（読める・書ける作業場所の glob）で決める。
+      - 他のリポジトリへ書き込めるかは、端末の設定の作業場所ごとの権限（参照できる・記載できる作業場所の glob）で決める。
   - id: mcp-write-09
     group: MCP からの書き込み
     name: Git のリポジトリはクローンか worktree で作業中のときだけ
     body: |-
-      - Git のリポジトリへは、そのクローンか worktree で作業中のときだけ書き、書く先はその作業ツリーにする。
-        作業中でないときは、書かずに断る。
+      - Git のリポジトリへは、そのクローンか worktree で作業中のときだけ記載し、記載する先はその作業ツリーにする。
+        作業中でないときは、記載せずに断る。
   - id: mcp-write-10
     group: MCP からの書き込み
     name: Git 管理外の書き込み先
     body: |-
-      - Git 管理外の書き込み先は、権限に当たれば、どの作業場所からも書ける。
+      - Git 管理外の書き込み先は、権限に該当すれば、どの作業場所からも記載できる。
   - id: mcp-read-01
     group: MCP からの読み取り
     name: 読み取りのツールの作り方
@@ -321,21 +321,21 @@ items:
       - タグは自由な文字列で、一致の前に正規化（NFKC・大文字小文字）する（[タグと用語の登録](id:dev-tag-term-registration)）
   - id: mcp-read-03
     group: MCP からの読み取り
-    name: 使われているタグの集計
+    name: 使用されているタグの集計
     body: |-
-      - 使われているタグは、検索の集計（`group_by: tags`）でタグごとの件数を返す
+      - 使用されているタグは、検索の集計（`group_by: tags`）でタグごとの件数を返却する
   - id: mcp-read-04
     group: MCP からの読み取り
     name: AND と OR の絞り込み
     body: |-
-      - 検索のタグは複数を渡せ、既定は全てを持つ項目（AND）に絞る。
-        どれかを持つ項目（OR）は別の引数（`any_tags`）で渡す
+      - 検索のタグは複数を指定でき、既定は全てを持つ項目（AND）に絞る。
+        どれかを持つ項目（OR）は別の引数（`any_tags`）で指定する
   - id: mcp-read-06
     group: MCP からの読み取り
     name: ツール説明をスキーマから作る
     body: |-
       - 読み取りのツールの説明も、スキーマから組み立てる。
-        使える絞り込みと、タグで絞る前に `group_by: tags` で使われているタグを引くこと（引数なしの `search` がタグごとの件数を返す）を記載する
+        使用できる絞り込みと、タグで絞る前に `group_by: tags` で使用されているタグを検索すること（引数なしの `search` がタグごとの件数を返却する）を記載する
   - id: config-file-01
     group: 設定ファイル
     name: 設定の YAML はテーブルの構造にする
@@ -350,12 +350,12 @@ items:
     group: 設定ファイル
     name: リポジトリの設定ファイル
     body: |-
-      - リポジトリと一緒に変わる設定は、リポジトリの設定ファイル（Git の中）に置く。
+      - リポジトリと一緒に変わる設定は、リポジトリの設定ファイル（Git の中）に配置する。
   - id: config-file-04
     group: 設定ファイル
     name: 端末の設定ファイル
     body: |-
-      - 端末ごとの選択は、`${XDG_CONFIG_HOME:-~/.config}/{名前}/settings.yaml`（Git の外）に置く。
+      - 端末ごとの選択は、`${XDG_CONFIG_HOME:-~/.config}/{名前}/settings.yaml`（Git の外）に配置する。
         端末の設定は、リポジトリの設定ファイルのパスを指す。
   - id: config-file-05
     group: 設定ファイル
@@ -367,7 +367,7 @@ items:
     name: 設定の移し替え
     body: |-
       - ツールは、バージョンごとの移し替えの手順（`migrations/{バージョン}/`）を持つ。
-        古い設定は、手順を示して移し替えてから使う。
+        古い設定は、手順を示して移し替えてから使用する。
   - id: config-file-07
     group: 設定ファイル
     name: 設定のほうが新しいとき
@@ -381,8 +381,8 @@ items:
 
       | 既存の決まり | 既存の対象 | この規約の対象 |
       | --- | --- | --- |
-      | `worktree-safe-01` | アプリが実行時に UI / API から書き込む YAML。どの worktree から書いても main repo の同じファイルに着地させる | MCP のツールで文書の正本を書き換えるとき。呼んだセッションの作業ツリーに書く（`mcp-write-07`） |
-      | claude-plugin の `settings-file-01`〜`05`・`two-layer-choice-04`・[設定値の置き場所](id:flowchart-config-location) | プラグイン・アプリの環境の値。`${XDG_CONFIG_HOME:-~/.config}/{名前}/settings.yaml` に置く | 端末の設定が、リポジトリの設定ファイルのパスを指す（`config-file-03`・`config-file-04`） |
-      | claude-plugin の `no-version-01` | プラグインの manifest に version を置かない | `config-file-05` の `version` は設定ファイルのもの。プラグインの manifest には当てない |
+      | `worktree-safe-01` | アプリが実行時に UI / API から書き込む YAML。どの worktree から記載しても main repo の同じファイルに着地させる | MCP のツールで文書の原本を書き換えるとき。呼んだセッションの作業ツリーに記載する（`mcp-write-07`） |
+      | claude-plugin の `settings-file-01`〜`05`・`two-layer-choice-04`・[設定値の置き場所](id:flowchart-config-location) | プラグイン・アプリの環境の値。`${XDG_CONFIG_HOME:-~/.config}/{名前}/settings.yaml` に配置する | 端末の設定が、リポジトリの設定ファイルのパスを指す（`config-file-03`・`config-file-04`） |
+      | claude-plugin の `no-version-01` | プラグインの manifest に version を配置しない | `config-file-05` の `version` は設定ファイルのもの。プラグインの manifest には適用しない |
 
       <!-- /table -->

@@ -28,7 +28,7 @@ items:
     name: 概要
     body: |-
       対象は React。
-      機械で判定できる規則は ESLint で止め、規約には規則だけを書く。
+      機械で判定できる規則は ESLint で止め、規約には規則だけを記載する。
       lint の設定は、各リポジトリの React 移行で入れる。
   - id: tsconfig-01
     group: tsconfig.json
@@ -48,9 +48,9 @@ items:
       - `paths` で `@/*` を `frontend/src/*` に向ける。
   - id: eslint-01
     group: ESLint
-    name: Flat Config で読む
+    name: Flat Config で参照する
     body: |-
-      - ESLint は Flat Config（`eslint.config.js`）で書き、typescript-eslint を使う。
+      - ESLint は Flat Config（`eslint.config.js`）で記載し、typescript-eslint を使用する。
   - id: eslint-02
     group: ESLint
     name: Prettier との競合の回避

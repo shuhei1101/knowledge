@@ -2,7 +2,7 @@
 id: html-core-buildless
 kind: rule
 name: ビルドレス原則（バンドルしない）
-description: バンドラを使わないビルドレス原則と、ブラウザのスクリプトの拡張子の決まりを定め、単体 HTML のビルドやスクリプトの拡張子を決めるときに参照する。
+description: バンドラを使用しないビルドレス原則と、ブラウザのスクリプトの拡張子の決まりを定め、単体 HTML のビルドやスクリプトの拡張子を決めるときに参照する。
 aliases:
   - html/core/ビルドレス原則
 inject_when:
@@ -36,25 +36,25 @@ items:
       対象は単体 HTML。
   - id: buildless-01
     group: ビルドレス原則（バンドルしない）
-    name: バンドラを使わない
+    name: バンドラを使用しない
     body: |-
-      - バンドラを使わない。
+      - バンドラを使用しない。
         - webpack / vite / esbuild などでブラウザ用にバンドル・最適化しない。
         - ネイティブ ES Modules と素の CSS をそのまま配信する。
           起動を軽く保つのが目的。
-        - ただし TypeScript の型システムを使うため、`tsc` による `.ts` → `.js` のトランスパイル 1 工程だけは許可する。
-        - 開発時のツールは使ってよい（[html/tooling/tsc運用](id:html-tooling-tsc)）。
+        - ただし TypeScript の型システムを使用するため、`tsc` による `.ts` → `.js` のトランスパイル 1 工程だけは許可する。
+        - 開発時のツールは使用してよい（[html/tooling/tsc運用](id:html-tooling-tsc)）。
   - id: script-extension-01
     group: ブラウザのスクリプトの拡張子
     name: tsc を挟む配信では ts で記載
     body: |-
-      - `tsc` を挟める配信（サーバーが配る画面など）では、ブラウザのスクリプトを `.ts` で書き、`.js` を手で書かない。
-        - スクリプトを置くフォルダの名前（`frontend/`・`static/`・`assets/` など）によらない。
+      - `tsc` を挟める配信（サーバーが配る画面など）では、ブラウザのスクリプトを `.ts` で記載し、`.js` を手で記載しない。
+        - スクリプトを配置するフォルダの名前（`frontend/`・`static/`・`assets/` など）によらない。
   - id: script-extension-02
     group: ブラウザのスクリプトの拡張子
     name: js で記載してよい場合
     body: |-
-      - `.js` で書いてよいのは、`tsc` を挟めないもの（使い捨てのモックなど）だけ。
+      - `.js` で記載してよいのは、`tsc` を挟めないもの（使い捨てのモックなど）だけ。
   - id: script-extension-03
     group: ブラウザのスクリプトの拡張子
     name: 生成 js を commit して配るものも ts で記載

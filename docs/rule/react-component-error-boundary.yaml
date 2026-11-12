@@ -42,15 +42,15 @@ items:
       レンダリング中のエラーは、`react-error-boundary` の `ErrorBoundary` で受ける。
   - id: error-boundary-01
     group: Error Boundary
-    name: アプリの最上位と画面ごとに置く
+    name: アプリの最上位と画面ごとに配置する
     body: |-
-      - `ErrorBoundary` は、アプリの最上位と、画面ごとのルートに置く。
+      - `ErrorBoundary` は、アプリの最上位と、画面ごとのルートに配置する。
         画面ごとのルートは、TanStack Router の `errorComponent` で指定する。
   - id: error-boundary-02
     group: Error Boundary
     name: error は unknown で受ける
     body: |-
-      - fallback の `error` は `unknown` で受け、`instanceof Error` で絞ってから読む。
+      - fallback の `error` は `unknown` で受け、`instanceof Error` で絞ってから参照する。
   - id: error-boundary-03
     group: Error Boundary
     name: 利用者には汎用の文言を出す
@@ -59,7 +59,7 @@ items:
         ログは、`ErrorBoundary` の `onError` で出す。
   - id: error-boundary-04
     group: Error Boundary
-    name: 再試行のボタンを置く
+    name: 再試行のボタンを配置する
     body: |-
-      - 再試行のボタンを必ず置き、`resetErrorBoundary` で再描画する。
+      - 再試行のボタンを必ず配置し、`resetErrorBoundary` で再描画する。
         TanStack Query のエラーは、`QueryErrorResetBoundary` と組み合わせて再取得する。

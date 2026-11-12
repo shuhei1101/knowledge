@@ -44,9 +44,9 @@ items:
       - `db.transaction(async (tx) => { ... })` でラップ（トランザクション境界）
   - id: rules-02
     group: ルール
-    name: 中の関数に tx を渡す
+    name: 中の関数に tx を指定する
     body: |-
-      - 中の関数（`insertXxx` 等）には `tx` を渡す（呼び出し元がトランザクションを決める）
+      - 中の関数（`insertXxx` 等）には `tx` を指定する（呼び出し元がトランザクションを決める）
   - id: rules-03
     group: ルール
     name: AppError 派生はそのまま投げる
@@ -66,15 +66,15 @@ items:
     group: ルール
     name: updatedAt は呼び出し側から受け取る
     body: |-
-      - 楽観的ロックの `updatedAt` は呼び出し側から受け取り `updateXxx` に渡す（[DB楽観的ロック](id:next-backend-db-optimistic-lock)）
+      - 楽観的ロックの `updatedAt` は呼び出し側から受け取り `updateXxx` に指定する（[DB楽観的ロック](id:next-backend-db-optimistic-lock)）
   - id: rules-07
     group: ルール
     name: 監査対象の createdBy・updatedBy
     body: |-
       - 監査が必要なテーブルでは `createdBy` / `updatedBy` を record に含める
   - id: transaction-writing-01
-    group: トランザクションの書き方
-    name: トランザクションの書き方の例
+    group: トランザクションの記載方法
+    name: トランザクションの記載方法の例
     body: |-
       ```ts
       export const registerResource = async ({ db, userId, form }) => {

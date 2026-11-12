@@ -51,7 +51,7 @@ items:
     group: 権限ガード
     name: Edit の page で canEdit を確認
     body: |-
-      - 推奨: Edit の page.tsx で `fetchResource` の `canEdit` を見て `redirect(RESOURCE_URL.view(id))`
+      - 推奨: Edit の page.tsx で `fetchResource` の `canEdit` を確認して `redirect(RESOURCE_URL.view(id))`
   - id: permission-guard-03
     group: 権限ガード
     name: 軽量チェックは proxy.ts

@@ -42,8 +42,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      `prompts/{id}.yaml` を読み、`when` に当たる部品のトップレベルの `lang` の本文を Jinja2 でレンダリングして 1 つのプロンプトに組み立てる。
-      書き方は [プロンプトファイル](id:prompt-file)。
+      `prompts/{id}.yaml` を参照し、`when` に該当する部品のトップレベルの `lang` の本文を Jinja2 でレンダリングして 1 つのプロンプトに組み立てる。
+      記載方法は [プロンプトファイル](id:prompt-file)。
   - id: structure-01
     group: 構成
     name: ローダーのファイル構成
@@ -56,15 +56,15 @@ items:
       ```
   - id: structure-02
     group: 構成
-    name: プロンプト本体の置き場所
+    name: プロンプト本体の配置先
     body: |-
       プロンプト本体はリポジトリ直下の `content/prompts/`、ローダーは `src/` 配下。
       場所は `shared/constants.py` の `PROJECT_ROOT` から解決。
   - id: node-loader-01
     group: node_loader.py
-    name: id ごとに 1 回だけ読む
+    name: id ごとに 1 回だけ参照する
     body: |-
-      - `@cache` で id ごとに 1 プロセス 1 回だけ読む（ホットリロードは `cache_clear()`）
+      - `@cache` で id ごとに 1 プロセス 1 回だけ参照する（ホットリロードは `cache_clear()`）
   - id: node-loader-02
     group: node_loader.py
     name: 戻り値は TypedDict
@@ -86,7 +86,7 @@ items:
     group: builder.py
     name: role 別の build_bundle
     body: |-
-      - role 別に分けたいときは `build_bundle` で `PromptBundle(system, user)` を返す
+      - role 別に分けたいときは `build_bundle` で `PromptBundle(system, user)` を返却する
         - Anthropic の `system=` 引数と分離でき、system 全体を 1 つの `cache_control` ブロックに包める
   - id: rules-01
     group: ルール

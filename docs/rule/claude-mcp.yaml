@@ -97,7 +97,7 @@ items:
     group: SDK とトランスポート
     name: 公式 SDK の使用
     body: |-
-      - 公式 MCP Python SDK（pip の `mcp` パッケージ）の `MCPServer` を使う
+      - 公式 MCP Python SDK（pip の `mcp` パッケージ）の `MCPServer` を使用する
         - `from mcp.server.mcpserver import MCPServer`
         - 旧名の `FastMCP`（`mcp.server.fastmcp`）は v2 で削除された。
           サードパーティの「FastMCP」（pip の `fastmcp`）とも別物
@@ -109,7 +109,7 @@ items:
         stdio（`mcp.run()`）は禁止する
   - id: sdk-transport-03
     group: SDK とトランスポート
-    name: stdio を避ける理由
+    name: stdio を使用しない理由
     body: |-
       - stdio はセッションごとに 1 プロセスが立つ。
         5 セッション並べれば同じサーバが 5 個起動し、依存解決も 5 回走る。
@@ -124,7 +124,7 @@ items:
     group: SDK とトランスポート
     name: alwaysLoad の付け方
     body: |-
-      - 毎ターン使うツールを持つサーバーだけ `.mcp.json` に `"alwaysLoad": true` を付ける。
+      - 毎ターン使用するツールを持つサーバーだけ `.mcp.json` に `"alwaysLoad": true` を付ける。
         ツール検索を介さず最初のプロンプトから載り、起動がツールの確定まで待つ（上限は `MCP_CONNECT_TIMEOUT_MS`）
   - id: sdk-transport-06
     group: SDK とトランスポート
@@ -132,8 +132,8 @@ items:
     body: |-
       - 常駐サーバをどう起動するかを決める。
         既に常駐しているプロセス（アプリ本体・compose のサービス）に相乗りさせると、起動するものが増えない
-      - 起動する場所が決まらないセッションで使う MCP は、プラグインで配る。
-        渡し方は判定フローチャート [MCP・フックの渡し方](id:flowchart-mcp-hook-delivery) で決める。
+      - 起動する場所が決まらないセッションで使用する MCP は、プラグインで配る。
+        指定方法は判定フローチャート [MCP・フックの渡し方](id:flowchart-mcp-hook-delivery) で決める。
       - 起動と管理は systemd --user を主にする。
         立て方は [ローカルサーバーの立て方](id:dev-local-server) に従う。
       - SessionStart のフックは、落ちていたときの起動の補助にする。
@@ -145,9 +145,9 @@ items:
       - HTTP は 1 プロセスを複数セッションが共有するため、ツール関数はモジュール変数に状態を持たせない
   - id: structure-01
     group: 構成
-    name: ロジックの置き場所
+    name: ロジックの配置先
     body: |-
-      - ロジックの置き場所はツールの重さで決める
+      - ロジックの配置先はツールの重さで決める
         - 外部 API を 1 回叩く程度の薄い操作は、サーバーファイルに直接書いてよい。
           subprocess を挟むと起動コストと引数の受け渡しが増えるだけで得るものがない
         - 分岐・状態管理を伴う処理は `scripts/` や `tools/` の単体実行可能な CLI に切り出し、サーバーはそれを呼ぶだけにする。
@@ -166,13 +166,13 @@ items:
     body: |-
       <!-- table: data -->
 
-      | 要素 | 書き方 |
+      | 要素 | 記載方法 |
       | --- | --- |
-      | description | `content/prompts/` の YAML（`kind: tool`。[プロンプトファイル](id:prompt-file)）を、登録のときに読む。書く内容は [注入文の書き分けと書き方](id:claude-context-placement) に従う |
+      | description | `content/prompts/` の YAML（`kind: tool`。[プロンプトファイル](id:prompt-file)）を、登録のときに参照する。記載する内容は [注入文の書き分けと書き方](id:claude-context-placement) に従う |
       | title | `@mcp.tool(title="日本語タイトル")` |
       | 引数の説明 | `Annotated[型, Field(description=...)]` |
       | 引数の選択肢制限 | `Literal[...]` → enum としてスキーマに反映 |
-      | 出力スキーマ | 型付きで返すツールだけ、戻り値を Pydantic モデルにする → outputSchema 自動生成。各フィールドに `Field(description=...)` |
+      | 出力スキーマ | 型付きで返却するツールだけ、戻り値を Pydantic モデルにする → outputSchema 自動生成。各フィールドに `Field(description=...)` |
       | ツールの性質 | `ToolAnnotations(readOnlyHint=..., destructiveHint=...)` |
 
       <!-- /table -->
@@ -180,25 +180,26 @@ items:
     group: ツール定義のスキーマ
     name: 共通の戻り値モデル
     body: |-
-      - 型付きで返すツールの戻り値は `{success: bool, output: str}` 形式の共通モデルを基本とする
+      - 型付きで返却するツールの戻り値は `{success: bool, output: str}` 形式の共通モデルを基本とする
   - id: tool-schema-03
     group: ツール定義のスキーマ
-    name: Markdown・YAML は str で返す
+    name: Markdown・YAML は str で返却する
     body: |-
-      - Markdown・YAML を見せるツールは `str` を返し、outputSchema を出さない
-        Claude Code は structuredContent があると text を読まない
+      - Markdown・YAML を見せるツールは `str` を返却する。
+        outputSchema を出さない
+        Claude Code は structuredContent があると text を参照しない
   - id: tool-schema-04
     group: ツール定義のスキーマ
     name: structuredContent と text
     body: |-
-      - 型付きで返すツールは、structuredContent と text に同じ内容を入れる
+      - 型付きで返却するツールは、structuredContent と text に同じ内容を入れる
   - id: read-tool-02
     group: 読み取りのツール
     name: limit・total・next_cursor
     body: |-
-      - 既定の `limit` を持ち、絞り込みに当たった総数 `total` を返す。
-        続きがあるときは `next_cursor` を返す。
-        型付きで返すツールは、どちらも共通モデルに項目を追加して返す
+      - 既定の `limit` を持ち、絞り込みに該当した総数 `total` を返却する。
+        続きがあるときは `next_cursor` を返却する。
+        型付きで返却するツールは、どちらも共通モデルに項目を追加して返却する
   - id: read-tool-14
     group: 読み取りのツール
     name: readOnlyHint
@@ -209,7 +210,7 @@ items:
     name: format 引数
     body: |-
       - 読み取りのツールに共通の `format`（`markdown` / `json`、既定 `markdown`）を持たせる
-        `json` のときは structuredContent と text に同じ JSON を入れ、`markdown` のときは structuredContent を返さない
+        `json` のときは structuredContent と text に同じ JSON を入れ、`markdown` のときは structuredContent を返却しない
   - id: read-tool-16
     group: 読み取りのツール
     name: 会話キー
@@ -218,20 +219,20 @@ items:
         エージェントには記載させない
   - id: read-tool-17
     group: 読み取りのツール
-    name: 同じ内容は 1 回だけ渡す
+    name: 同じ内容は 1 回だけ指定する
     body: |-
-      - 1 つのセッションで同じ内容は 1 回だけ渡す。
+      - 1 つのセッションで同じ内容は 1 回だけ指定する。
         対象は、関連に結合した相手の名前・概要文、1 件を取るツールの末尾の用語の一覧、同じバージョンの文書の本文。
-        サーバーは会話キーごとに返した内容のハッシュを記録し、2 回目は返し済みのマーカーだけを返す（用語の一覧は、返した語を省く）。
+        サーバーは会話キーごとに返却した内容のハッシュを記録し、2 回目は返却済みのマーカーだけを返却する（用語の一覧は、返却した単語を省く）。
         `repeat_seen` で再取得できるようにし、`/clear`・圧縮の後はフックで記録を捨てる。
         会話キーが無いときは省かない。
-        検索結果の各行の概要文は、選ぶために使うので省かない
+        検索結果の各行の概要文は、選ぶために使用するので省かない
   - id: read-tool-18
     group: 読み取りのツール
     name: 1 回の決まりの適用範囲
     body: |-
-      - 1 セッション 1 回の決まりは、MCP のツールに限らず、フック・mod で文脈を追加するときにも当てる。
-        入力に用語の文脈を追加するときは、そのセッションで初めて出た語だけ、語・ID・説明・関連する文書（ID と名前）を 1 回だけ追加する
+      - 1 セッション 1 回の決まりは、MCP のツールに限らず、フック・mod で文脈を追加するときにも適用する。
+        入力に用語の文脈を追加するときは、そのセッションで初めて出た単語だけ、単語・ID・説明・関連する文書（ID と名前）を 1 回だけ追加する
   - id: registration-01
     group: 登録
     name: プロジェクト用の登録
@@ -247,7 +248,7 @@ items:
     group: 登録
     name: 接続先の記載
     body: |-
-      接続先を書く。
+      接続先を記載する。
 
       ```json
       {
@@ -264,31 +265,31 @@ items:
     group: 登録
     name: type の添付
     body: |-
-      - `url` を書くときは `type` を添える。
-        `type` の無いエントリは stdio として読まれ、サーバーごとスキップされる
+      - `url` を記載するときは `type` を添える。
+        `type` の無いエントリは stdio として参照され、サーバーごとスキップされる
   - id: registration-08
     group: 登録
     name: url の形式
     body: |-
-      - `url` は `http://127.0.0.1:${{ツール名}_PORT:-{既定のポート}}/mcp` の形式で書く。
+      - `url` は `http://127.0.0.1:${{ツール名}_PORT:-{既定のポート}}/mcp` の形式で記載する。
         `{ツール名}_PORT` と `{既定のポート}` は台帳（`${XDG_CONFIG_HOME:-~/.config}/mcp-ports.yaml`）の `env` と `port`
         - 環境変数の名前の付け方は [設定値の置き場所](id:flowchart-config-location) に従う
   - id: registration-09
     group: 登録
     name: ポートの上書き
     body: |-
-      - ポートがぶつかるときだけ、`~/.claude/settings.json` の `env` に `{ツール名}_PORT` を書いて上書きする
+      - ポートがぶつかるときだけ、`~/.claude/settings.json` の `env` に `{ツール名}_PORT` を記載して上書きする
   - id: registration-10
     group: 登録
     name: サーバー側のポート
     body: |-
-      - サーバーは起動時に同じ `{ツール名}_PORT` を読み、無ければ台帳（`${XDG_CONFIG_HOME:-~/.config}/mcp-ports.yaml`）の `port` で待ち受ける。
-        上書きするときは、サーバーを起動する環境にも同じ値を渡す
+      - サーバーは起動時に同じ `{ツール名}_PORT` を参照し、無ければ台帳（`${XDG_CONFIG_HOME:-~/.config}/mcp-ports.yaml`）の `port` で待ち受ける。
+        上書きするときは、サーバーを起動する環境にも同じ値を指定する
   - id: registration-11
     group: 登録
     name: ポート台帳の案内
     body: |-
-      既定のポートの台帳は、端末のローカルの `${XDG_CONFIG_HOME:-~/.config}/mcp-ports.yaml` に置く。
+      既定のポートの台帳は、端末のローカルの `${XDG_CONFIG_HOME:-~/.config}/mcp-ports.yaml` に配置する。
       `ports[]` の各行が `repo`・`env`・`port` を持つ。
       新しいサーバーは、空いている番号で行を追加する。
   - id: verification-01
