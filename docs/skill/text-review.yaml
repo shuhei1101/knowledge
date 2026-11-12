@@ -48,7 +48,8 @@ steps:
       | ドキュメントの部品 | `doc-parts` |
       | ユーザ配下ルール記載時の規約 | `claude-rule-writing` |
 
-      - project-index の `search_docs`（`mcp__plugin_project-index_project-index__search_docs`）が使えるなら、`source` を `knowledge`、`filter` を `id` の `eq` で上の ID、`view` を `full` にして参照する
+      - project-index の `search_docs` が使えるなら、`source` を `knowledge`、`filter` を `id` の `eq` で上の ID、`view` を `full` にして参照する
+        - ツールの完全名は `mcp__plugin_project-index_project-index__search_docs`
       - ツールが無いか、規約が見つからないなら、`${CLAUDE_PLUGIN_ROOT}/docs/rule/{ID}.yaml` を参照する
     calls:
       - type: tool
