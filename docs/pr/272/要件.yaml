@@ -28,19 +28,27 @@ docs:
   - page: schemas/design/scenario.schema.yaml
     new: false
     change: '`scenarios[].flow` を map で記載する型の参照にし、`description`・`x-rules`・`x-used-by` と記載例の図を map に合わせる'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:05:19.562194+00:00'
   - page: schemas/design/common.schema.yaml
     new: false
     change: map で記載する本文の型を追加する（置き場所は要件.md の `未確定` の推奨 A。B に決まったらこの行を削除する）。`$defs/mermaid` は残す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:05:19.562194+00:00'
   - page: docs/scenario/
     new: false
     change: 全ての設計書の `scenarios[].flow` を map で記載し直す。図の中身は変えない
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:05:19.562194+00:00'
   - page: docs/template/template-scenario.yaml
     new: false
     change: '`scripts/build_templates.py` で生成し直す'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T08:05:19.562194+00:00'
 scope_out:
   - item: '`common.schema.yaml` の `$defs/mermaid` の削除'
     reason: 'インターフェース定義の `flow` とモジュール構成の `diagrams[].diagram` が参照したままで、使われなくなるのは #251 の後'
