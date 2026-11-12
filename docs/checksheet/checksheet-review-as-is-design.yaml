@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-as-is-design
+kind: checksheet
+name: "現状設計書（リバースエンジニアリング）のレビュー観点 チェックシート"
+description: 実装から作成した現状の設計書をレビューするときの観点を並べ、リバースエンジニアリングで作成した設計書をレビューするときに参照する。
+aliases:
+  - リバースエンジニアリングのレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:リバースエンジニアリング
+    main: true
+  - name: topic:設計書
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      実装から作成した現状の設計書をレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | 記述が実装コードの該当箇所を根拠に記載されていること | 指した箇所を開いて確認する |
+      | 実装に無い振る舞いを、あるべき姿として記載していないこと | 現状の記載と改善提案を混ぜない |
+      | 実装にあるのに記載されていない分岐・異常系が無いこと | - |
+      | 設計書にした範囲としなかった範囲が区別して記載されていること | - |
+
+      <!-- /table -->

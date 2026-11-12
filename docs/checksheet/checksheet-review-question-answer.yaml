@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-question-answer
+kind: checksheet
+name: "質問への回答のレビュー観点 チェックシート"
+description: 質問への回答をレビューするときの観点を並べ、仕様や挙動の質問への回答をレビューするときに参照する。
+aliases:
+  - 回答のレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:回答
+    main: true
+  - name: topic:根拠
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      質問への回答をレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | 回答の根拠が、実在するドキュメントのページ・コード・Issue / PR を指していること | 指した箇所を開いて確認する |
+      | 指した箇所に、回答のとおりのことが記載されていること | ハルシネーションの検査 |
+      | 回答できなかった部分が明示されていること | 分からないことを断定していないか |
+      | 推測で補った箇所が、推測と分かるように記載されていること | - |
+
+      <!-- /table -->

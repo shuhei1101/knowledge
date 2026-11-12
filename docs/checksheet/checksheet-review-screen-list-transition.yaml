@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-screen-list-transition
+kind: checksheet
+name: "画面一覧・画面遷移のレビュー観点 チェックシート"
+description: 画面一覧と画面遷移をレビューするときの観点を並べ、画面一覧と画面遷移をレビューするときに参照する。
+aliases:
+  - 画面一覧のレビュー観点
+  - 画面遷移のレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:画面
+    main: true
+  - name: topic:ナビゲーション
+  - name: scope:ui
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+  - to: ui-screen-division
+    type: references
+    when: 画面の分け方と遷移の判定を確認するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      画面一覧と画面遷移をレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | 画面一覧が単一ユースケースの操作を全て収容していること | どの操作がどの画面で行われるかを対応づける |
+      | 画面遷移に行き止まりが無いこと | 戻れない・進めない経路を探す |
+      | 既存画面で足りるものを新規画面として作っていないこと | - |
+      | 同じ役割の要素を画面ごとに作り分けていないこと | 規約 [共通コンポーネント規約](id:convention-common-components) |
+      | 画面の分け方と遷移が規約 [画面の分け方](id:ui-screen-division) の判定のとおりであること | 判定が分かれた箇所は、未確定の論点として残っているか、画面一覧の補足に根拠があるかを確認する |
+
+      <!-- /table -->

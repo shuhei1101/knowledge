@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=../../schemas/checksheet.schema.yaml
+id: checksheet-review-mock-html
+kind: checksheet
+name: "モック HTML のレビュー観点 チェックシート"
+description: モック HTML の画面をレビューするときの観点を並べ、モックの画面をレビューするときに参照する。
+aliases:
+  - モックのレビュー観点
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:観点
+  - name: action:レビュー
+  - name: topic:モック
+    main: true
+  - name: topic:画面
+  - name: scope:ui
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: checksheet-review-common
+    type: references
+    when: 成果物の種類によらない共通の観点も確認するとき
+  - to: ui-information-hierarchy
+    type: references
+    when: 情報の階層と見た目の決まりを確認するとき
+  - to: ui-business-screen-elements
+    type: references
+    when: 業務系・管理画面の UI 要素を確認するとき
+items:
+  - id: overview
+    name: "概要"
+    body: |-
+      モック HTML の画面をレビューするときの観点。
+  - id: check-items-01
+    group: チェック項目
+    name: "チェック項目"
+    body: |-
+      <!-- table: data -->
+
+      | 項目 | 補足 |
+      | --- | --- |
+      | モックが確定した画面一覧・画面遷移と一致し、未確定の論点は推奨の案で作っていること | - |
+      | 配色とレイアウトが規約 [デザインスタイル規約](id:convention-design-style) の方針どおりになっていること | - |
+      | 同じ役割の要素の見た目が画面をまたいで統一されていること | - |
+      | 空状態・エラー状態・読み込み中が画面に現れていること | 正常時だけのモックは指摘する |
+      | タブ・モーダル・パネルの使用方法が規約 [画面の分け方](id:ui-screen-division) のとおりであること | - |
+      | 配置した UI 要素が規約 [業務画面のUI要素](id:ui-business-screen-elements) のとおりで、PC 幅とスマホ幅のスクリーンショットで確認してあること | 業務系・管理画面のモックに適用する |
+      | PC・タブレット・スマホ幅とブレークポイントの前後で、動きのある要素の全ての場面を撮ってあること | - |
+      | 要素が重なっていない・ボタンの中の文字が不自然に改行していない・余白と左右上下の位置が崩れていないこと | - |
+      | スマホ幅が PC の配置を縦に並べただけになっていない・情報量が多すぎず不必要に縦長になっていない・固定ヘッダー / フッター / フローティングボタンが中身を隠していないこと | - |
+      | スマホ幅で表の列が細くなりすぎて 1 行が縦に長くなっていない・操作列が見えること | 崩れる場合は横スクロールかカード形式への切り替えを検討してあること |
+      | 見出し・本文・補足の重要度と Primary Action が一目で分かり、補助のボタンが Primary Action より目立っていないこと | - |
+      | 長い名前・URL・ID・桁の多い数値・空・1 件・大量のデータを表示した場面でも崩れないこと | - |
+      | 画面にある Disabled・Selected / Active・Hover・Focus・入力エラー・Modal・Dropdown・Tooltip の場面を撮ってあり、Modal / Dropdown が画面の外へはみ出さず閉じられること | - |
+      | タップ対象が小さすぎず間が近すぎない・削除など誤操作が困るボタンが密集していない・押せる要素と Disabled と選択中が見分けられること | - |
+      | 文字が小さすぎない・境界線や文字色が薄すぎない・Focus が見える・色だけで状態を表していないこと | - |
+      | 本文の区画に操作の説明文が無く、絵文字をアイコンに使用せず、移った先・選択中・フォーカスを片側だけの枠線で示していないこと | 規約 [情報の階層と見た目](id:ui-information-hierarchy) |
+      | 既存の画面と見た目が統一され、対象外の画面・部品に変更が入っていないこと | - |
+      | 実際の利用者が使用したときに違和感や操作の迷いが無いこと | - |
+
+      <!-- /table -->
