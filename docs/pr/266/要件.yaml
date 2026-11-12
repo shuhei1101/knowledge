@@ -35,7 +35,9 @@ docs:
   - page: docs/template/
     new: false
     change: 設計書の種類のテンプレート（`template-*.yaml`）を `scripts/build_templates.py` で生成し直す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-12T01:07:30.496461+00:00'
 scope_out:
   - item: knowledge 自身の設計書（`docs/architecture/`・`docs/scenario/`・`docs/interface/`・`docs/module/` など）を、見直したキーに合わせること
     reason: 判断が分かれる。#253 の後、これらの設計書は `dev-docs.yaml` で `schemas/` 直下の AI Monitor の配布物のスキーマ（`schemas/architecture.schema.yaml` など）で検査され、`schemas/design/` では検査されない。今合わせると配布物のスキーマの検査を通らなくなるため、AI Monitor が新しい `design-schemas` のタグへ追従して配布物が変わった後に合わせるのが今の判断。レビューで確定する
