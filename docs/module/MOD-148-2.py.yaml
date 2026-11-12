@@ -57,7 +57,7 @@ constants:
     usecase: 書き込んだ中身の照合
     summary: MCP サーバーを見分ける単語 → 対象のツール名の集合
     entries:
-      - key: dev-docs
+      - key: project-index
         value: frozenset({"write_docs"})
       - key: ai-monitor
         value: frozenset({"comment", "reply_comment", "reply_review_thread", "create_review_comment", "create_file_comment", "create_issue", "create_draft_pr", "update_body", "update_title", "add_notice_row", "notify", "create_defect_issue", "create_monitor_rule_issue", "create_plugin_rule_issue"})
@@ -92,7 +92,7 @@ constants:
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
     usecase: 書き込んだ中身の照合
     summary: 表の後の、規約を search_docs で読む案内（要件の要望 3 の文のとおり。`…` はその文の引数をそのまま書く）
-    value: '"\nまだ読んでいなければ、用途に合う規約を読んでください。\n- 文書・コメント: 規約『文章の書き方』\n  mcp__plugin_dev-docs_dev-docs__search_docs（…\"convention-writing-style\"…）\n- 画面の文言: 規約『入力と文言』\n  mcp__plugin_dev-docs_dev-docs__search_docs（…\"ui-input-wording\"…）"'
+    value: '"\nまだ読んでいなければ、用途に合う規約を読んでください。\n- 文書・コメント: 規約『文章の書き方』\n  mcp__plugin_project-index_project-index__search_docs（…\"convention-writing-style\"…）\n- 画面の文言: 規約『入力と文言』\n  mcp__plugin_project-index_project-index__search_docs（…\"ui-input-wording\"…）"'
 functions:
   - name: main
     title: 書き込んだ中身の照合の入口
@@ -194,13 +194,13 @@ functions:
       - name: test_is_target
         case: 正常
         summary: 対象のツール
-        condition: '`Write`・`mcp__plugin_dev-docs_dev-docs__write_docs`・`mcp__plugin_ai-monitor_ai-monitor-tools__comment`・`mcp__plugin_mindstella_mindstella__reply`'
+        condition: '`Write`・`mcp__plugin_project-index_project-index__write_docs`・`mcp__plugin_ai-monitor_ai-monitor-tools__comment`・`mcp__plugin_mindstella_mindstella__reply`'
         mock: なし
         expected: 全て `True`
       - name: test_is_target_when_not_target
         case: 正常
         summary: 対象外のツール
-        condition: '`Read`・`mcp__plugin_dev-docs_dev-docs__search_docs`・`mcp__other__comment`'
+        condition: '`Read`・`mcp__plugin_project-index_project-index__search_docs`・`mcp__other__comment`'
         mock: なし
         expected: 全て `False`
   - name: is_word_list_write

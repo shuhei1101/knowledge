@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-config-extensibility
+kind: rule
+name: 設定の構造の拡張性
+description: 設定ファイル・スキーマ・マーカーの引数の値を、後から引数を追加できる構造にする決まりを定め、設定ファイル・スキーマ・マーカーの引数を設計するときに参照する。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - スキーマ
+    - schema
+    - 設定ファイル
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-12'
+items:
+  - id: overview
+    name: 概要
+    body: 設定ファイル・スキーマ・マーカーの引数の構造の決まり。
+  - id: extensibility-01
+    group: 拡張性
+    name: 後から引数が付きうる値はオブジェクトにする
+    body: |-
+      - 設定ファイル・スキーマ・マーカーの引数は、拡張性を最優先に設計する
+      - 後から引数が付きうる値は、今は値が 1 つでも文字列にせず、キーを追加できるオブジェクトにする
+tags:
+  - name: scope:dev
+  - name: topic:設定
+    main: true
+  - name: topic:スキーマ
+  - name: topic:マーカー
+  - name: topic:引数
+  - name: topic:オブジェクト
+  - name: topic:構造
+  - name: action:設計
+  - name: action:拡張

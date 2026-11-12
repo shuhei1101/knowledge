@@ -33,7 +33,7 @@ BUILTIN_TOOLS: dict[str, str] = {
 
 # MCP サーバーを見分ける単語 → 対象のツール名の集合
 MCP_TOOLS: dict[str, frozenset[str]] = {
-    "dev-docs": frozenset({"write_docs"}),
+    "project-index": frozenset({"write_docs"}),
     "ai-monitor": frozenset(
         {
             "comment",
@@ -97,16 +97,16 @@ NOTICE_TAIL = (
     "\n"
     "まだ読んでいなければ、用途に合う規約を読んでください。\n"
     "- 文書・コメント: 規約『文章の書き方』\n"
-    '  mcp__plugin_dev-docs_dev-docs__search_docs（source: "knowledge", filter: {"field": "id", "op": "eq", "values": ["convention-writing-style"]}, view: "full"）\n'
+    '  mcp__plugin_project-index_project-index__search_docs（source: "knowledge", filter: {"field": "id", "op": "eq", "values": ["convention-writing-style"]}, view: "full"）\n'
     "- 画面の文言: 規約『入力と文言』\n"
-    '  mcp__plugin_dev-docs_dev-docs__search_docs（source: "knowledge", filter: {"field": "id", "op": "eq", "values": ["ui-input-wording"]}, view: "full"）'
+    '  mcp__plugin_project-index_project-index__search_docs（source: "knowledge", filter: {"field": "id", "op": "eq", "values": ["ui-input-wording"]}, view: "full"）'
 )
 
 # MCP ツールの名前の接頭辞と、サーバーの部分とツール名の区切り
 _MCP_PREFIX = "mcp__"
 _MCP_SEPARATOR = "__"
 
-# dev-docs の書き込むツールの名前
+# project-index の書き込むツールの名前
 _WRITE_DOCS = "write_docs"
 
 # 対応表の文書の ID の接頭辞と種類

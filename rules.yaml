@@ -55,6 +55,9 @@ rules:
       - "mcp__*__update_body"
       - "mcp__*__update_body_if_unchanged"
       - "mcp__*__create_draft_pr"
+  - rule: docs/rule/dev-config-extensibility.yaml
+    paths:
+      - "**/mdmark/**/src/{render,parts,diagram}/**"
   - rule: docs/rule/convention-doc-presentation.yaml
     paths:
       - "**/*.md"

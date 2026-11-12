@@ -2,7 +2,7 @@
 id: convention-doc-presentation
 kind: rule
 name: 表し方の優先順位
-description: 人が参照する文書・設計書の中身を図・表・箇条書き・文のどれで表すかの優先順位と、図・表・キーの表・箇条書きと文・ページの分け方・本文に出さないものの決まりを定め、文書・設計書を記載するときと文書を描くビュワーの変換を作るときに参照する。
+description: 人が参照する文書・設計書の中身を図・表・箇条書き・文のどれで表すかの優先順位と、図・表・キーの表・箇条書きと文・ページの分け方・テンプレート・本文に出さないもの・参照した資料の決まりを定め、文書・設計書を記載するときと文書を描くビュワーの変換を作るときに参照する。
 tags:
   - name: scope:規約
   - name: topic:表し方
@@ -35,6 +35,8 @@ tags:
   - name: topic:pr
   - name: topic:キー
   - name: topic:スキーマ
+  - name: topic:テンプレート
+  - name: topic:資料
   - name: tool:mdmark
   - name: tool:mermaid
   - name: action:選択
@@ -43,8 +45,8 @@ tags:
   - name: action:分割
 status: current
 visibility: internal
-rev: 4
-last_reviewed: '2026-11-07'
+rev: 5
+last_reviewed: '2026-11-12'
 items:
   - id: overview
     name: 概要
@@ -98,6 +100,11 @@ items:
     body: |-
       - 図の中のラベルは参照する人の言葉にする。
         内部の ID（`SRV`・`D-313` など）を出さない
+  - id: diagram-04
+    group: 図
+    name: 図の要素はメタデータに持たせる
+    body: |-
+      - 図のテンプレートは、図の要素をメタデータ（表・YAML）に持たせ、図はそこから描く
   - id: table-01
     group: 表
     name: 2 件以上は表にする
@@ -169,6 +176,16 @@ items:
       | フォルダで分かれたファイル | サイドバーをフォルダでまとめる。タイトルにフォルダ名を付けない |
 
       <!-- /table -->
+  - id: page-split-02
+    group: ページの分け方
+    name: テンプレートの 1 単位を 1 ファイルにする
+    body: |-
+      - テンプレートから作る資料は、テンプレートの 1 単位（1 ユースケース・1 エージェントフロー）を 1 ファイルにする
+  - id: template-01
+    group: テンプレート
+    name: テンプレートを先に作る
+    body: |-
+      - 資料を作るときにテンプレートが無ければ、先にテンプレートを作る
   - id: hidden-content-01
     group: 本文に出さないもの
     name: 内部向けのメタデータ
@@ -186,6 +203,12 @@ items:
     body: |-
       - Issue 番号・文書のパスは生の文字で出さず、タイトル付きのリンクにする
       - リンクの記載方法と新規のファイルの例外は [リンクの書き方](id:convention-doc-presentation#link-01) に従う
+  - id: hidden-content-04
+    group: 本文に出さないもの
+    name: 経緯・履歴・旧構成からの変化
+    body: |-
+      - 資料（設計書・規約・ガイドなどの原本）の本文には原本だけを記載し、経緯・履歴・旧構成からの変化を記載しない
+      - PR ドキュメントと変更履歴には適用しない
   - id: link-01
     group: リンクの記載方法
     name: Issue・PR の本文とコメントのリンク
@@ -218,3 +241,9 @@ items:
     name: バッククォートとの使い分け
     body: |-
       - バッククォートは値そのものを見せるときに使用し、新規のファイルを除くファイル・Issue・PR・commit を指す参照と、開いてもらう URL には使用しない
+  - id: reference-01
+    group: 参照した資料
+    name: 末尾の表
+    body: |-
+      - 参照した資料は、出典のメタデータ（`sources` など）を持つ文書ではそこに記載し、持たない資料では本文の末尾の「参照した資料」の表に記載する
+      - 表の参照は、リンク先を絶対パスか URL にしたタイトル付きのリンクにする（[Issue 番号と文書のパス](id:convention-doc-presentation#hidden-content-03)）
