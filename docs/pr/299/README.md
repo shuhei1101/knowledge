@@ -1,0 +1,1 @@
+# ai-monitor の reviewer のチェックシート・規約・判定フローチャートのうち、AI Monitor を前提にしない観点を knowledge へ移行する
