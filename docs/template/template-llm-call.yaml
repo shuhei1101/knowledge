@@ -50,7 +50,7 @@ items:
       | choices.max | 上限 | integer | - | - | minimum: `1` | 一度に指定する選択肢の上限。 | 実装で、選択肢を絞る処理の上限にする。 | `10` |
       | timeout | 待つ上限 | object | 必須 | - | - | 呼び出しを待つ上限。 | 実装で、呼び出しの上限にする。 | - |
       | timeout.seconds | 秒数 | integer | 必須 | - | minimum: `1` | 待つ秒数。 | 実装で、待つ上限にする。 | `8` |
-      | timeout.basis | 導き方 | string | 必須 | `measured_p999` / `published_spec` / `no_output` / `measured_x10` | - | 『タイムアウトの決め方』の結果。`measured_p999`（実測の p99.9 + 50%）/ `published_spec`（公開仕様の値。計測の作業を残す）/ `no_output`（無出力の時間）/ `measured_x10`（実測の 10 倍か外側の作業の上限）。 | レビューで、値の導き方を確認する。 | - |
+      | timeout.basis | 導き方 | string | 必須 | `measured_p999` / `published_spec` / `no_output` / `measured_x10` | - | 『タイムアウトの決め方』の結果。`measured_p999`（実測の p99.9 + 50%）/ `published_spec`（公開仕様の値で、計測の作業を残す）/ `no_output`（無出力の時間）/ `measured_x10`（実測の 10 倍か外側の作業の上限）。 | レビューで、値の導き方を確認する。 | - |
       | timeout.measured | 導出の元の値 | string | - | - | - | 導出の元にした値。`basis` が `published_spec` でないときは必須。 | レビューで、値の根拠を確認する。 | `p99.9 が 5.2 秒（1,200 回）` |
       | retry | 再試行 | object | - | - | - | 失敗したときの再試行（規約『資源の値の決め方』）。記載しなければ再試行しない。 | 実装で、失敗したときの処理にする。 | - |
       | retry.max | 回数の上限 | integer | 必須 | - | minimum: `1` | 再試行の回数の上限。 | 実装で、再試行の回数の上限にする。 | `2` |

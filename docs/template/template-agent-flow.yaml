@@ -19,8 +19,7 @@ items:
     name: 概要
     body: |-
       エージェントが順に進める工程と、工程で呼ぶもの（MCP のツール・組み込みのツール・コマンド・サブエージェント・スキル・別のエージェントフロー）を記載する設計書。
-      設計書であり、エージェントがそのまま参照する原本でもある。
-      `type` が `skill` の文書は、SKILL.md の生成元にする。
+      エージェントがそのまま参照する原本で、`type` が `skill` の文書は SKILL.md の生成元にもなる。
   - id: rules-01
     name: 決まり
     body: |-
@@ -43,7 +42,7 @@ items:
       | summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 手順の概要（1 文）。 | dev-docs の検索で、文書の概要文にする。<br>生成で、`type` が `skill` なら SKILL.md の `description` にする。 | `コメントと状態を取得し、次の一手を決めて演出指示書を書き込む` |
       | condition | 実行条件 | string | - | - | pattern: `^[^\n]+$`, minLength: `1` | 手順を実行する条件。`type` が `flow` のときだけ記載する。 | 生成で、エージェントフローの索引の実行条件の列にする。<br>実行で、エージェントが参照する手順を決める。 | `「次へ」を受けたとき` |
       | agents | 使用するエージェント | array | - | - | - | この手順を使用する『エージェントの定義』への参照。複数のエージェントが使用する共通の手順で記載する。 | 生成で、エージェントフローの索引をエージェントごとに作る。 | `[AG-1#, AG-2#]` |
-      | triggers | きっかけ | array | - | - | - | この手順を実行するきっかけ。『エージェントの定義』の `triggers[]` への参照。記載しなければ、パスの段階の `stages[].trigger`。 | レビューで、きっかけごとにエージェントフローがあるかを確認する。 | `['AG-1#triggers[external-event]']` |
+      | triggers | きっかけ | array | - | - | - | この手順を実行するきっかけで、『エージェントの定義』の `triggers[]` への参照。記載しなければ、パスの段階の `stages[].trigger`。 | レビューで、きっかけごとにエージェントフローがあるかを確認する。 | `['AG-1#triggers[external-event]']` |
       | embed_only | 埋め込み専用 | boolean | - | - | - | `true` なら、ほかの手順の `steps[].ref` で埋め込むだけの部品にする。記載しなければ `false`。 | 生成で、`true` の手順をエージェントフローの索引に出さない。 | - |
       | tags | タグ | array | - | - | - | 検索で絞り込むタグ。 | dev-docs の検索で、文書の絞り込みにする。 | `[topic:コメント]` |
       | skill | スキル | object | - | - | - | スキルに固有の項目。`type` が `skill` のときだけ記載する。 | 生成で、SKILL.md の配置先と frontmatter にする。 | - |
@@ -74,7 +73,7 @@ items:
       | steps[].calls[].tools | ツールの制限 | object | - | - | - | `type` が `agent` のときに使用させるツールの制限（`allow`・`deny`）。 | 生成で、サブエージェントの許可と拒否にする。 | - |
       | steps[].calls[].tools.allow | 許可 | array | - | - | - | 使用させるツール。 | 生成で、サブエージェントに許可するツールにする。 | - |
       | steps[].calls[].tools.deny | 拒否 | array | - | - | - | 使用させないツール。 | 生成で、サブエージェントに拒否するツールにする。 | `[Agent, Edit, Write]` |
-      | steps[].calls[].wait | 完了を待つ | boolean | - | - | - | `type` が `agent` のとき、完了を待ってから次の工程へ進むか。`false` ならバックグラウンドで起動し、完了の通知を受けてから結果を使用する。記載しなければ `true`。 | 生成で、Markdown に完了の待ち方を出す。 | - |
+      | steps[].calls[].wait | 完了を待つ | boolean | - | - | - | `type` が `agent` のとき、完了を待ってから次の工程へ進むか（記載しなければ `true`）。`false` ならバックグラウンドで起動し、完了の通知を受けてから結果を使用する。 | 生成で、Markdown に完了の待ち方を出す。 | - |
       | steps[].calls[].session | 起動の仕方 | string | - | `new` / `reuse` | - | `type` が `agent` のとき、`new`（新しいサブエージェントを起動する）か `reuse`（前回起動した同じサブエージェントに続けて依頼する）。記載しなければ `new`。 | 生成で、Markdown に起動の仕方を出す。<br>設計で、`reuse` なら呼ぶ側の起動の構成でメッセージを送信するツールを読み込む。 | - |
       | steps[].calls[].renew_when | 新しく起動する条件 | string | - | - | - | `session` が `reuse` のとき、前回のサブエージェントを使用せずに新しく起動する条件。 | 生成で、Markdown に新しく起動する条件を出す。 | `成果物が別のものに変わったとき` |
       | steps[].calls[].skill | スキル | string | - | - | pattern: `^[^\s#]+#.*$` | `type` が `skill` のときに呼ぶ、`type` が `skill` のエージェントフローへの参照。 | 生成で、Markdown に呼ぶスキルを出す。 | `mindstella/setup#` |

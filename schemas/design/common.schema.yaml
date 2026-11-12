@@ -655,7 +655,7 @@ $defs:
   timeout:
     type: object
     title: 待つ上限
-    description: 待つ上限と、値の導き方。判定フローチャート『タイムアウトの決め方』で決める。『起動の構成』と『LLM の呼び出し』の `timeout` が使用する。
+    description: 待つ上限と値の導き方で、判定フローチャート『タイムアウトの決め方』で決める。『起動の構成』と『LLM の呼び出し』の `timeout` が使用する。
     x-shape: attributes
     additionalProperties: false
     required:
@@ -674,7 +674,7 @@ $defs:
       basis:
         type: string
         title: 導き方
-        description: '『タイムアウトの決め方』の結果。`measured_p999`（実測の p99.9 + 50%）/ `published_spec`（公開仕様の値。計測の作業を残す）/ `no_output`（無出力の時間）/ `measured_x10`（実測の 10 倍か外側の作業の上限）。'
+        description: '『タイムアウトの決め方』の結果。`measured_p999`（実測の p99.9 + 50%）/ `published_spec`（公開仕様の値で、計測の作業を残す）/ `no_output`（無出力の時間）/ `measured_x10`（実測の 10 倍か外側の作業の上限）。'
         x-used-by:
           - レビューで、値の導き方を確認する。
         enum:

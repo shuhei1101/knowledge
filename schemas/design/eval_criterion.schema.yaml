@@ -61,7 +61,7 @@ properties:
   question:
     type: string
     title: 質問
-    description: 採点の LLM と人への質問。ケースの値は `{名前}` で入れる。`method` が `llm`・`human` のときは必須。
+    description: 採点の LLM と人への質問で、ケースの値は `{名前}` で入れる。`method` が `llm`・`human` のときは必須。
     x-used-by:
       - 実行で、採点のプロンプトと人の採点の画面の質問にする。
     examples:
@@ -98,7 +98,7 @@ properties:
       function:
         type: string
         title: 関数
-        description: 判定の関数。コードの配置の `{モジュール}:{関数}`。関数は出力・ケース・`args` を受け、`{pass, reason}` を返却する。
+        description: 判定の関数で、コードの配置の `{モジュール}:{関数}`。関数は出力・ケース・`args` を受け、`{pass, reason}` を返却する。
         x-used-by:
           - 実行で、判定の関数を呼ぶ。
         pattern: ^[A-Za-z_][\w.]*:[A-Za-z_]\w*$

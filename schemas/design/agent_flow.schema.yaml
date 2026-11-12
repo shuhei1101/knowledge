@@ -2,8 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 title: エージェントフロー
 description: |-
   エージェントが順に進める工程と、工程で呼ぶもの（MCP のツール・組み込みのツール・コマンド・サブエージェント・スキル・別のエージェントフロー）を記載する設計書。
-  設計書であり、エージェントがそのまま参照する原本でもある。
-  `type` が `skill` の文書は、SKILL.md の生成元にする。
+  エージェントがそのまま参照する原本で、`type` が `skill` の文書は SKILL.md の生成元にもなる。
 x-rules:
   - 1 ファイル = 1 つの手順にする。
   - ファイルの配置はフォルダ構成の設計書の `entries[]` と `naming` で決め、段階（stage）はフォルダ構成の `placeholders` を適用してパスから導く。
@@ -82,7 +81,7 @@ properties:
   triggers:
     type: array
     title: きっかけ
-    description: この手順を実行するきっかけ。『エージェントの定義』の `triggers[]` への参照。記載しなければ、パスの段階の `stages[].trigger`。
+    description: この手順を実行するきっかけで、『エージェントの定義』の `triggers[]` への参照。記載しなければ、パスの段階の `stages[].trigger`。
     x-used-by:
       - レビューで、きっかけごとにエージェントフローがあるかを確認する。
     items:
@@ -461,7 +460,7 @@ $defs:
       wait:
         type: boolean
         title: 完了を待つ
-        description: '`type` が `agent` のとき、完了を待ってから次の工程へ進むか。`false` ならバックグラウンドで起動し、完了の通知を受けてから結果を使用する。記載しなければ `true`。'
+        description: '`type` が `agent` のとき、完了を待ってから次の工程へ進むか（記載しなければ `true`）。`false` ならバックグラウンドで起動し、完了の通知を受けてから結果を使用する。'
         x-used-by:
           - 生成で、Markdown に完了の待ち方を出す。
       session:

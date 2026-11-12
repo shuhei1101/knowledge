@@ -46,13 +46,13 @@ items:
       | criteria[].custom.title | 表示名 | string | 必須 | - | - | 観点の表示名。 | 実行で、結果の一覧の見出しにする。 | `状態に合う` |
       | criteria[].custom.method | 確認の方法 | string | 必須 | `rule` / `llm` / `human` | - | `rule`（判定の関数が合否と理由を返却する）/ `llm`（採点の LLM が採点の基準で点を付ける）/ `human`（採点の LLM の点を人が確定する）。 | 検査で、確認の方法ごとのキーの要否を確認する。<br>実行で、採点の流れを決める。 | - |
       | criteria[].custom.tags | タグ | array | 必須 | - | minItems: `1` | 何を確認するかの `aspect:{語彙}` を 1 つ以上と、難しい観点の `difficulty:high`。 | 実行で、タグごとに点を集計する。<br>レビューで、対象に要る `aspect:` が全て付いた観点と、`difficulty:high` の観点が 1 つ以上あるかを確認する。 | `[aspect:状況の判断, difficulty:high]` |
-      | criteria[].custom.question | 質問 | string | - | - | - | 採点の LLM と人への質問。ケースの値は `{名前}` で入れる。`method` が `llm`・`human` のときは必須。 | 実行で、採点のプロンプトと人の採点の画面の質問にする。 | `{need} が閾値を越えているとき、それを満たす行動を選んでいるか` |
+      | criteria[].custom.question | 質問 | string | - | - | - | 採点の LLM と人への質問で、ケースの値は `{名前}` で入れる。`method` が `llm`・`human` のときは必須。 | 実行で、採点のプロンプトと人の採点の画面の質問にする。 | `{need} が閾値を越えているとき、それを満たす行動を選んでいるか` |
       | criteria[].custom.rubric | 採点の基準 | array | - | - | minItems: `5`, maxItems: `5` | 点ごとの採点の基準。`method` が `llm`・`human` のときは必須。 | 実行で、採点のプロンプトの基準にする。 | - |
       | criteria[].custom.rubric[].score | 点 | number | 必須 | `0` / `0.25` / `0.5` / `0.75` / `1` | - | この行の点。 | 実行で、採点の結果の値にする。 | - |
       | criteria[].custom.rubric[].description | 様子 | string | 必須 | - | - | その点になる出力の様子。ケースの値は `{名前}` で入れる。 | 実行で、採点のプロンプトの基準の文にする。 | `{need} を満たす行動の中で、最も合うものを選んでいる` |
       | criteria[].custom.pass | 合格の点 | number | - | `0` / `0.25` / `0.5` / `0.75` / `1` | - | 合格の点。`method` が `llm`・`human` のときは必須。 | 実行で、実行の回数 × 採点の回数の平均と比べて、観点 × ケースの合否を出す。 | - |
       | criteria[].custom.check | 判定の関数 | object | - | - | - | `method` が `rule` のときの判定の関数。`method` が `rule` のときは必須。 | 実行で、出力を判定する。 | - |
-      | criteria[].custom.check.function | 関数 | string | 必須 | - | pattern: `^[A-Za-z_][\w.]*:[A-Za-z_]\w*$` | 判定の関数。コードの配置の `{モジュール}:{関数}`。関数は出力・ケース・`args` を受け、`{pass, reason}` を返却する。 | 実行で、判定の関数を呼ぶ。 | `aituber.evals.checks.mermaid:is_valid` |
+      | criteria[].custom.check.function | 関数 | string | 必須 | - | pattern: `^[A-Za-z_][\w.]*:[A-Za-z_]\w*$` | 判定の関数で、コードの配置の `{モジュール}:{関数}`。関数は出力・ケース・`args` を受け、`{pass, reason}` を返却する。 | 実行で、判定の関数を呼ぶ。 | `aituber.evals.checks.mermaid:is_valid` |
       | criteria[].custom.check.args | 引数 | object | - | - | - | 関数に指定する引数。 | 実行で、判定の関数に引数を指定する。 | `{field: body}` |
       | criteria[].custom.check.gate | 足切り | boolean | - | - | - | `true` なら、不合格の出力はほかの観点で採点しない。記載しなければ `false`。 | 実行で、`rule` の観点を採点の LLM より先に実行し、不合格の出力のほかの観点の採点を止める。 | - |
 

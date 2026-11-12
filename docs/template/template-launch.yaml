@@ -57,7 +57,7 @@ items:
       | env[].secret_from | 秘匿値の配置先 | string | - | - | - | 秘匿値の配置先。`value` と一方だけを記載する。 | 実装で、起動の環境に秘匿値を読み込む。 | `.env の AITUBER_TOKEN` |
       | timeout | 待つ上限 | object | 必須 | - | - | 起動を待つ上限。 | 実装で、起動の処理を待つ上限にする。 | - |
       | timeout.seconds | 秒数 | integer | 必須 | - | minimum: `1` | 待つ秒数。 | 実装で、待つ上限にする。 | `8` |
-      | timeout.basis | 導き方 | string | 必須 | `measured_p999` / `published_spec` / `no_output` / `measured_x10` | - | 『タイムアウトの決め方』の結果。`measured_p999`（実測の p99.9 + 50%）/ `published_spec`（公開仕様の値。計測の作業を残す）/ `no_output`（無出力の時間）/ `measured_x10`（実測の 10 倍か外側の作業の上限）。 | レビューで、値の導き方を確認する。 | - |
+      | timeout.basis | 導き方 | string | 必須 | `measured_p999` / `published_spec` / `no_output` / `measured_x10` | - | 『タイムアウトの決め方』の結果。`measured_p999`（実測の p99.9 + 50%）/ `published_spec`（公開仕様の値で、計測の作業を残す）/ `no_output`（無出力の時間）/ `measured_x10`（実測の 10 倍か外側の作業の上限）。 | レビューで、値の導き方を確認する。 | - |
       | timeout.measured | 導出の元の値 | string | - | - | - | 導出の元にした値。`basis` が `published_spec` でないときは必須。 | レビューで、値の根拠を確認する。 | `p99.9 が 5.2 秒（1,200 回）` |
       | restart | 終了したときの扱い | array | - | - | - | 終了したときの、理由ごとの扱い。『エージェントの定義』の `session.lifetime` が `resident` のときは必須。 | 実装で、終了を受けた処理の分岐にする。 | - |
       | restart[].reason | 理由 | string | 必須 | - | - | 終了の理由。 | 実装で、終了を受けた処理の分岐の条件にする。 | `rate_limit` |
