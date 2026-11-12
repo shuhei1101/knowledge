@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../schemas/terms.schema.yaml
+id: terms
+kind: terms
+name: 用語集
+description: 複数のリポジトリで同じ意味で使用する用語と別名・使用しない言い方を定め、文書やコードのコメントに用語を記載するときと用語を登録するときに参照する。
+tags:
+  - name: scope:dev
+  - name: topic:用語
+    main: true
+  - name: topic:単語
+  - name: topic:エイリアス
+  - name: action:登録
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      複数のリポジトリで同じ意味で使用する用語の一覧。
+      登録するかは判定フローチャート [用語の登録](id:flowchart-term-registration) で決める。
+terms:
+  - id: ai-slop
+    name: AI slop
+    description: AI がよく使用し、一般の文書では置き換えたほうがよい単語で、プラグイン slop-check が対応表で照合して通知する。
+  - id: decision-flowchart
+    name: 判定フローチャート
+    description: 決めたい内容が複数の判定軸で決まるときに、質問のノードを YES / NO でたどって結果を決める図の文書。
+  - id: source
+    name: 配信元
+    description: dev-docs が文書を配信するまとまりで、`dev-docs.yaml` を持つフォルダ 1 つ。
+  - id: presentation
+    name: 表し方
+    description: 文書・設計書の中身を図・表・箇条書き・文のどれで表すか。
+  - id: ai-voice-2
+    name: A.I.VOICE 2
+    description: テキストから音声を合成するソフトウェア。
+    aliases:
+      - A.I.VOICE2
