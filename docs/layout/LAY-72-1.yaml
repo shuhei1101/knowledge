@@ -63,7 +63,7 @@ content_types:
 entries:
   - type: folder
     name: .claude-plugin
-    contents: プラグイン knowledge と、knowledge のマーケットプレイスの定義
+    contents: プラグイン knowledge と、knowledge のマーケットプレイスの定義（knowledge だけが直下をプラグインにする理由は補足の「プラグインの配置」）
     content_types: [plugin_manifest, knowledge_plugin]
     children:
       - type: file
@@ -438,7 +438,7 @@ entries:
         content_types: [file_list]
   - type: folder
     name: plugins
-    contents: knowledge のマーケットプレイスに掲載する、knowledge 以外のプラグイン
+    contents: knowledge のマーケットプレイスに掲載する、knowledge 以外のプラグイン。プラグインごとに `{plugin}/` を配置する
     children:
       - type: folder
         name: slop-check
@@ -574,3 +574,8 @@ refs:
   - CMD-72-1#
   - MOD-72-1#
   - MOD-148-1#
+notes:
+  プラグインの配置: |-
+    プラグイン knowledge だけは、リポジトリの直下をプラグインにする（`marketplace.json` の `source` が `./`）。
+    マーケットプレイスから入れたプラグインは `source` のフォルダだけがキャッシュへコピーされる。スキル text-review は文書の MCP の無い端末で `${CLAUDE_PLUGIN_ROOT}/docs/rule/` の規約を参照するため、キャッシュに `docs/rule/` を含める。
+    他のプラグインは `plugins/{plugin}/` に配置する。

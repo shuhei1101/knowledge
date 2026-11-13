@@ -1,0 +1,15 @@
+use_cases: []
+docs:
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: プラグイン knowledge だけを直下に配置する理由（マーケットプレイスから入れたときのキャッシュに docs/rule/ を含め、スキル text-review が規約を参照できるようにするため）を補足の「プラグインの配置」に記載し、.claude-plugin/ と plugins/ のエントリの contents から参照する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T22:59:05.470822+00:00'
+scope_out:
+  - item: プラグイン slop-check の配置の変更
+    reason: slop-check は今の plugins/slop-check/ のままで、knowledge だけを直下に配置する理由を LAY-72-1 に記載する（案 C）。#248・#312・#313 が触るファイルは移らない
+    plan: none
+  - item: SKILL.md を docs/skill/ の設計書から生成する変換
+    reason: 要望に含まれない
+    plan: '#312'
