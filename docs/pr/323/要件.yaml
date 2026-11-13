@@ -7,7 +7,7 @@ use_cases:
   - kind: single
     scenario: docs/scenario/SC-72-6.yaml
     impact: changed
-    detail: CI で全ての文書を検査する流れを、Git フックと CI で検査を動かさない決まりに合わせて見直す（廃止するか残すかは単一ユースケース設計で決める）
+    detail: 文書の検査を PR ごとの CI から、開発者がクローンで全ての文書の検査のコマンドを実行する流れにする
     depends_on: []
 docs:
   - page: docs/rule/dev-hook-ci-scope.yaml
