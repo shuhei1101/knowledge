@@ -1,0 +1,62 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: run_only
+    detail: mdmark の図で記載するスキーマからテンプレート『インターフェース定義』『モジュール構成』を生成し直す。生成の手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 変えたスキーマがスキーマ自身の検査と例の検査を通り、テンプレートがスキーマと一致することを確かめる。検査の手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: run_only
+    detail: 図を書き直したインターフェース定義・モジュール構成を画面で開いて読めることを確かめる。読む手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: none
+    detail: knowledge の文書のスキーマと書き込みの検査の結果を変えない
+    depends_on: []
+  - kind: composite
+    scenario: docs/scenario/SC-72-1.yaml
+    impact: none
+    detail: 規約の引き方を変えない
+    depends_on: []
+docs:
+  - page: schemas/design/interface.schema.yaml
+    new: false
+    change: '`flows[].flow` を `common.schema.yaml#/$defs/map` の参照にし、`description`・`x-rules`・`x-used-by` と記載例（`examples`）の図を map に合わせる'
+    status: todo
+  - page: schemas/design/module.schema.yaml
+    new: false
+    change: '`diagrams[].diagram` を mdmark の図で記載する型の参照にし、`description`・`x-rules`・`x-used-by` を合わせる（図の種類は要件.md の `未確定`）'
+    status: todo
+  - page: schemas/design/common.schema.yaml
+    new: false
+    change: 参照が無くなる `$defs/mermaid` を削除する
+    status: todo
+  - page: docs/interface/
+    new: false
+    change: 全ての設計書の `flows[].flow` を map で記載し直す。図の中身（登場するもの・やり取りの順番）は変えない
+    status: todo
+  - page: docs/module/
+    new: false
+    change: '`diagrams[].diagram` を持つ設計書（`MOD-148-1`・`MOD-72-1`）の図を mdmark の図で記載し直す。図の中身（要素と依存の向き）は変えない'
+    status: todo
+  - page: docs/template/template-interface.yaml
+    new: false
+    change: '`scripts/build_templates.py` で生成し直す'
+    status: todo
+  - page: docs/template/template-module.yaml
+    new: false
+    change: '`scripts/build_templates.py` で生成し直す'
+    status: todo
+scope_out:
+  - item: maid の検査（`scripts/_maid.py`・`knowledge_checks.py` の mermaid の検査）と規約 `dev-yaml` の mermaid の検査の削除
+    reason: この PR で設計書のテンプレートから map の外の Mermaid が無くなった後に進める後続
+    plan: '#146'
+  - item: インターフェース定義の `flow` への利用者の画面への表示の手順の追加
+    reason: '#248 の要望で、#248 はこの PR の後に mdmark の図で記載する'
+    plan: '#248'
