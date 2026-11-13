@@ -22,7 +22,7 @@ scenarios:
         participant M as mdmark
         participant P as GitHub Pages
         actor U as 利用者
-        D->>G: master へマージする
+        D->>G: develop へマージする
         G->>W: ワークフローを起動する
         W->>B: 成果物を作る
         loop visibility が public の文書
@@ -44,7 +44,7 @@ scenarios:
       - ジョブが成功で終わる
       - '成果物に `visibility: public` の全ての文書の本文が入り、`visibility: internal` の文書の本文は入らない'
       - 成果物に `.yaml` のファイルが無い
-      - 公開の文書どうしの参照は成果物の中のリンクになり、internal の文書への参照は GitHub の master の YAML の URL になる
+      - 公開の文書どうしの参照は成果物の中のリンクになり、internal の文書への参照は GitHub の develop の YAML の URL になる
     test: test_normal
   - name: 異常シナリオ（変換のスクリプトが失敗する）
     setup:
@@ -100,12 +100,13 @@ scenarios:
       - ジョブが配信のステップに進まずに失敗で終わる
       - ログに混じった `.yaml` のパスが出る
     test: test_error_when_output_contains_yaml
-lead: 'master へのマージで動くワークフローが `visibility: public` の文書だけを HTML にして GitHub Pages へ配信し、利用者がブラウザで読む。'
+lead: 'develop へのマージで動くワークフローが `visibility: public` の文書だけを HTML にして GitHub Pages へ配信し、利用者がブラウザで読む。'
 primary_actor: 利用者
-trigger: 開発者が knowledge の master へマージする（または配信のワークフローを手動で起動する）
+trigger: 開発者が knowledge の develop へマージする（または配信のワークフローを手動で起動する）
 preconditions:
   - Pages の配信元が GitHub Actions になっている
   - '`.github/workflows/` に公開文書の配信のワークフローがある'
+  - 環境 `github-pages` の配信を許すブランチに develop がある
 success_guarantee: 'Pages に `visibility: public` の文書だけが mdmark の共通スタイルの HTML で載り、YAML の原本と `visibility: internal` の文書は載らない。'
 minimal_guarantee: 成果物を作れなかったとき・成果物に YAML が混じったときは配信せずにジョブを失敗させ、前に配信したサイトをそのまま残す。
 notes:

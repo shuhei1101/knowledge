@@ -80,14 +80,11 @@ entries:
         name: workflows
         contents: CI のワークフロー
         content_types: [ci]
-        used_by: [IF-72-4#, IF-137-2#]
+        used_by: [IF-137-2#]
         children:
           - type: file
-            name: docs-check.yml
-            contents: PR ごとに全ての文書の検査を実行するワークフロー
-          - type: file
             name: pages.yml
-            contents: master への push で公開の文書を GitHub Pages へ配信するワークフロー
+            contents: develop への push で公開の文書を GitHub Pages へ配信するワークフロー
             content_types: [ci, pages]
   - type: folder
     name: docs
@@ -272,7 +269,7 @@ entries:
           command: CMD-72-1#categories[依存の追加・更新・削除]
       - type: file
         name: check_all.py
-        contents: 全ての文書の検査（CI と手元の CLI）
+        contents: 全ての文書の検査（手元の CLI）
       - type: file
         name: check_all.py.lock
         contents: check_all.py の依存のロック

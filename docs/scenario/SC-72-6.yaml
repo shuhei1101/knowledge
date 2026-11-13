@@ -6,21 +6,18 @@ scenarios:
     setup:
       - name: Mock
         description: 差し替えない
-      - name: PR
-        description: 違反の無い文書と、誤りの無い設計書のスキーマ（knowledge の正本）だけを持つ PR
+      - name: knowledge のクローン
+        description: 違反の無い文書と、誤りの無い設計書のスキーマ（knowledge の正本）だけを持つ
     flow: |-
       <!-- map -->
 
       ```mermaid
       sequenceDiagram
         actor D as 開発者
-        participant G as GitHub Actions
-        participant C as 検査のワークフロー
+        participant C as 全ての文書の検査
         participant V as 検査のスクリプト
-        D->>G: PR を出す
-        G->>C: ワークフローを起動する
-        C->>C: Python と maid が入ったかを確かめる
-        C->>C: markdownlint・textlint・yamllint が入ったかを確かめる
+        D->>C: クローンの直下で起動する
+        C->>C: maid・markdownlint・textlint が入ったかを確かめる
         loop 全ての文書
           C->>C: スキーマの検査
           C->>V: 標準入力に文書の YAML
@@ -36,172 +33,172 @@ scenarios:
           C->>C: スキーマから組み立てた items と、テンプレートの items を比べる
         end
         C->>C: YAML と schemas/ のスキーマに yamllint、Markdown と文書の Markdown の項目に markdownlint と textlint
-        C-->>G: 成功
+        C-->>D: 終了コード 0
       ```
 
       <!-- /map -->
     expected:
-      - CI のジョブが成功で終わる
+      - 終了コード 0 で終わる
     test: test_normal
   - name: 異常シナリオ（Markdown・YAML の書式の違反を含む）
     setup:
       - name: Mock
         description: 差し替えない
-      - name: PR
-        description: '本文に段落全体が太字の段落（`**太字だけの段落**`）を含む文書と、既存のキーの引用符の無い値の後ろに空白 1 つで ` #` を続けた行（`description: {値} #bar`）を含む YAML を 1 つずつ含む PR'
+      - name: knowledge のクローン
+        description: '本文に段落全体が太字の段落（`**太字だけの段落**`）を含む文書と、既存のキーの引用符の無い値の後ろに空白 1 つで ` #` を続けた行（`description: {値} #bar`）を含む YAML を 1 つずつ含む'
     flow: |-
       <!-- map -->
 
       ```mermaid
       sequenceDiagram
-        participant G as GitHub Actions
-        participant C as 検査のワークフロー
-        G->>C: ワークフローを起動する
+        actor D as 開発者
+        participant C as 全ての文書の検査
+        D->>C: クローンの直下で起動する
         C->>C: YAML に yamllint、Markdown と文書の Markdown の項目に markdownlint と textlint
-        C-->>G: 全ての書式の違反を出して失敗
+        C-->>D: 全ての書式の違反を出して終了コード 1
       ```
 
       <!-- /map -->
     expected:
-      - CI のジョブが失敗で終わる
-      - ログに 2 つの文書の違反が、文書のパス・行・検査のツールのルール名（`MD036`・`comments`）・内容つきで出る
+      - 終了コード 1 で終わる
+      - 標準出力に 2 つの文書の違反が、文書のパス・行・検査のツールのルール名（`MD036`・`comments`）・内容つきで出る
       - 文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る
     test: test_error_when_documents_have_lint_violations
   - name: 異常シナリオ（フロー形式のスキーマを含む）
     setup:
       - name: Mock
         description: 差し替えない
-      - name: PR
-        description: '`schemas/` に `required: [id, title]` のフロー形式の行を含むスキーマと、`docs/` に同じフロー形式の値を含む違反の無い文書を 1 つずつ含む PR'
+      - name: knowledge のクローン
+        description: '`schemas/` に `required: [id, title]` のフロー形式の行を含むスキーマと、`docs/` に同じフロー形式の値を含む違反の無い文書を 1 つずつ含む'
     flow: |-
       <!-- map -->
 
       ```mermaid
       sequenceDiagram
-        participant G as GitHub Actions
-        participant C as 検査のワークフロー
-        G->>C: ワークフローを起動する
+        actor D as 開発者
+        participant C as 全ての文書の検査
+        D->>C: クローンの直下で起動する
         C->>C: YAML と schemas/ のスキーマに yamllint
-        C-->>G: スキーマのフロー形式の違反を出して失敗
+        C-->>D: スキーマのフロー形式の違反を出して終了コード 1
       ```
 
       <!-- /map -->
     expected:
-      - CI のジョブが失敗で終わる
-      - ログに、スキーマのパス・行・検査のツールのルール名（`brackets`）・内容つきでフロー形式の違反が出る
+      - 終了コード 1 で終わる
+      - 標準出力に、スキーマのパス・行・検査のツールのルール名（`brackets`）・内容つきでフロー形式の違反が出る
       - '`docs/` の文書のフロー形式は違反として出ない'
     test: test_error_when_schemas_use_flow_style
   - name: 異常シナリオ（違反のある文書を含む）
     setup:
       - name: Mock
         description: 差し替えない
-      - name: PR
-        description: ID が重複した文書と、スキーマに合わない文書を 1 つずつ含む PR
+      - name: knowledge のクローン
+        description: ID が重複した文書と、スキーマに合わない文書を 1 つずつ含む
     flow: |-
       <!-- map -->
 
       ```mermaid
       sequenceDiagram
-        participant G as GitHub Actions
-        participant C as 検査のワークフロー
+        actor D as 開発者
+        participant C as 全ての文書の検査
         participant V as 検査のスクリプト
-        G->>C: ワークフローを起動する
+        D->>C: クローンの直下で起動する
         loop 全ての文書
           C->>C: スキーマの検査
           C->>V: 標準入力に文書の YAML
           V-->>C: 終了コード 0 と違反の配列
         end
-        C-->>G: 違反の配列が空でない文書の全ての違反を出して失敗
+        C-->>D: 違反の配列が空でない文書の全ての違反を出して終了コード 1
       ```
 
       <!-- /map -->
     expected:
-      - CI のジョブが失敗で終わる
-      - ログに 2 つの違反の両方が、文書のパス・項目・行・内容つきで出る
+      - 終了コード 1 で終わる
+      - 標準出力に 2 つの違反の両方が、文書のパス・項目・行・内容つきで出る
     test: test_error_when_documents_have_violations
   - name: 異常シナリオ（誤りのある設計書のスキーマを含む）
     setup:
       - name: Mock
         description: 差し替えない
-      - name: PR
-        description: 自分の `examples` に合わない設計書のスキーマと、無い `$defs` を `$ref` で指す設計書のスキーマと、`x-rules` が配列でない設計書のスキーマを 1 つずつ含む PR
+      - name: knowledge のクローン
+        description: 自分の `examples` に合わない設計書のスキーマと、無い `$defs` を `$ref` で指す設計書のスキーマと、`x-rules` が配列でない設計書のスキーマを 1 つずつ含む
     flow: |-
       <!-- map -->
 
       ```mermaid
       sequenceDiagram
-        participant G as GitHub Actions
-        participant C as 検査のワークフロー
-        G->>C: ワークフローを起動する
+        actor D as 開発者
+        participant C as 全ての文書の検査
+        D->>C: クローンの直下で起動する
         loop 全ての設計書のスキーマ（knowledge の正本）
           C->>C: メタスキーマ・$ref・examples・x-rules・x-bad-examples の検査
         end
         loop schemas/ の直下のスキーマ
           C->>C: メタスキーマ・x-rules・x-bad-examples の検査
         end
-        C-->>G: 全てのスキーマの誤りを出して失敗
+        C-->>D: 全てのスキーマの誤りを出して終了コード 1
       ```
 
       <!-- /map -->
     expected:
-      - CI のジョブが失敗で終わる
-      - ログに 3 つの誤りの全てが、スキーマのパス・行・項目・内容つきで出る
+      - 終了コード 1 で終わる
+      - 標準出力に 3 つの誤りの全てが、スキーマのパス・行・項目・内容つきで出る
     test: test_error_when_design_schemas_are_invalid
   - name: 異常シナリオ（テンプレートがスキーマとずれている）
     setup:
       - name: Mock
         description: 差し替えない
-      - name: PR
-        description: '`schemas/design/er.schema.yaml` のキーの `x-rules` に 1 件追加し、生成のコマンドを実行していない PR'
+      - name: knowledge のクローン
+        description: '`schemas/design/er.schema.yaml` のキーの `x-rules` に 1 件追加し、生成のコマンドを実行していない'
     flow: |-
       <!-- map -->
 
       ```mermaid
       sequenceDiagram
-        participant G as GitHub Actions
-        participant C as 検査のワークフロー
-        G->>C: ワークフローを起動する
+        actor D as 開発者
+        participant C as 全ての文書の検査
+        D->>C: クローンの直下で起動する
         loop 設計書の種類のテンプレート
           C->>C: スキーマから組み立てた items と、テンプレートの items を比べる
         end
-        C-->>G: ずれたテンプレートと生成のコマンドを出して失敗
+        C-->>D: ずれたテンプレートと生成のコマンドを出して終了コード 1
       ```
 
       <!-- /map -->
     expected:
-      - CI のジョブが失敗で終わる
-      - ログに、ずれたテンプレートのパス（`docs/template/template-er.yaml`）・生成元のスキーマのパス・生成のコマンドが出る
+      - 終了コード 1 で終わる
+      - 標準出力に、ずれたテンプレートのパス（`docs/template/template-er.yaml`）・生成元のスキーマのパス・生成のコマンドが出る
     test: test_error_when_templates_out_of_date
   - name: 異常シナリオ（検査の CLI が入っていない）
     setup:
       - name: Mock
-        description: ランナーの PATH から maid を外す
+        description: PATH から maid を外す
     flow: |-
       <!-- map -->
 
       ```mermaid
       sequenceDiagram
-        participant G as GitHub Actions
-        participant C as 検査のワークフロー
-        G->>C: ワークフローを起動する
-        C->>C: Python と maid・markdownlint・textlint・yamllint が入ったかを確かめる
-        C-->>G: PATH に無い CLI の名前を出して失敗
+        actor D as 開発者
+        participant C as 全ての文書の検査
+        D->>C: クローンの直下で起動する
+        C->>C: maid・markdownlint・textlint が入ったかを確かめる
+        C-->>D: PATH に無い CLI の名前を標準エラーに出して終了コード 2
       ```
 
       <!-- /map -->
     expected:
-      - CI のジョブが、文書の検査を始めずに失敗で終わる
-      - ログに、PATH から引けない CLI の名前（maid）が出る
+      - 文書の検査を始めずに終了コード 2 で終わる
+      - 標準エラーに、PATH から引けない CLI の名前（maid）が出る
     test: test_error_when_check_cli_missing
-lead: PR ごとに CI が knowledge の全ての文書へスキーマの検査と検査のスクリプトを当て、違反があれば失敗させる。
+lead: 開発者が knowledge のクローンで全ての文書の検査を実行し、全ての文書へスキーマの検査と検査のスクリプトを適用して、違反があれば終了コードで失敗を返却する。
 primary_actor: 開発者
-trigger: 開発者が knowledge に PR を出すか push する
+trigger: 開発者が knowledge のクローンで全ての文書の検査のコマンド（`uv run --frozen --script scripts/check_all.py`）を実行する
 preconditions:
-  - '`.github/workflows/` に検査のワークフローがある'
   - '`scripts/lint/.yamllint.yaml` が `comments` を `level: error` にしている'
   - '`scripts/lint/.yamllint-schemas.yaml` が `brackets`・`braces` を `forbid: non-empty` にしている'
-success_guarantee: 違反が無ければ CI が成功する。
-minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反・スキーマのフロー形式・設計書のスキーマの誤り・スキーマとずれたテンプレート）が 1 つでもあれば CI が失敗し、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名。スキーマとずれたテンプレートは、行が `items` のキーの行で、内容が生成元のスキーマのパスと生成のコマンド）がログに出る。文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに失敗する。
+  - 開発コマンドの環境構築（クローン直後）を実行してある
+success_guarantee: 違反が無ければ終了コード 0 で終わる。
+minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反・スキーマのフロー形式・設計書のスキーマの誤り・スキーマとずれたテンプレート）が 1 つでもあれば終了コード 1 で終わり、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名。スキーマとずれたテンプレートは、行が `items` のキーの行で、内容が生成元のスキーマのパスと生成のコマンド）が標準出力に出る。文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに終了コード 2 で終わる。
 notes:
-  E2E テストの動かし方: CI のジョブが走らせるコマンド（`uv run --frozen --script scripts/check_all.py`）を、knowledge のクローンで子プロセスとして起動し、ジョブの成否はその終了コード、ログはその標準出力で確かめる。maid が入っていない場合は PATH から maid を外して起動する。ワークフローの YAML そのものは、IF-72-4 のとおり作業 PR の Actions の実行結果で確かめる
+  E2E テストの動かし方: 全ての文書の検査のコマンド（`uv run --frozen --script scripts/check_all.py`）を、knowledge のクローンで子プロセスとして起動し、終了コードと標準出力で確かめる。maid が入っていない場合は PATH から maid を外して起動する
 test_file: tests/e2e/単一ユースケース/test_開発者が文書の違反を検査する.py

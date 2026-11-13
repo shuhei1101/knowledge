@@ -12,10 +12,10 @@
 | [検査と変換のスクリプト / scripts / _common.py](./MOD-72-2.py.yaml) | 文書の読み込み・項目のパスと行の対応・違反の型・並列の読み込み |
 | [検査と変換のスクリプト / scripts / _lint.py](./MOD-176-1.py.yaml) | markdownlint-cli2・textlint・yamllint の在りかの確認と呼び出しと違反の行の対応 |
 | [検査と変換のスクリプト / scripts / _maid.py](./MOD-72-3.py.yaml) | maid の在りかの確認と打ち切りつきの呼び出し |
-| [検査と変換のスクリプト / scripts / build_pages.py](./MOD-137-1.py.yaml) | CI と手元から呼ぶ Pages の成果物の作成 |
+| [検査と変換のスクリプト / scripts / build_pages.py](./MOD-137-1.py.yaml) | 公開文書の配信のワークフローと手元から呼ぶ Pages の成果物の作成 |
 | [検査と変換のスクリプト / scripts / build_templates.py](./MOD-201-1.py.yaml) | 手元から呼ぶ設計書のテンプレートの生成 |
 | [検査と変換のスクリプト / scripts / build_word_list.py](./MOD-148-3.py.yaml) | 手元から呼ぶ対応表のコピーの作成 |
-| [検査と変換のスクリプト / scripts / check_all.py](./MOD-72-6.py.yaml) | CI と手元から呼ぶ全ての文書の検査 |
+| [検査と変換のスクリプト / scripts / check_all.py](./MOD-72-6.py.yaml) | 手元から呼ぶ全ての文書の検査 |
 | [検査と変換のスクリプト / scripts / knowledge_checks.py](./MOD-72-4.py.yaml) | validators の knowledge-checks |
 | [検査と変換のスクリプト / scripts / knowledge_markdown.py](./MOD-72-5.py.yaml) | converters の knowledge-markdown |
 | [検査と変換のスクリプト / scripts](./MOD-72-1.yaml) | 検査と変換のスクリプトの構成・起動の方式・テストの置き場所 |

@@ -3,7 +3,7 @@ visibility: internal
 title: "全ての文書の検査"
 entry:
   kind: operation
-  value: リポジトリの直下で起動するコマンド（CLI）。CI のワークフローと開発者の手元から呼ぶ
+  value: リポジトリの直下で起動するコマンド（CLI）。開発者の手元から呼ぶ
 flows:
   - name: 正常系
     summary: 違反の無い文書だけなら終了コード 0 で終わる
@@ -405,7 +405,4 @@ constraints:
   - item: 1 文書あたりの処理時間
     constraint: 「文書の違反の検査」と同じ 20 秒。超えたブロックは時間切れの違反にする
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
-  - item: 全体の処理時間
-    constraint: CI のジョブの 5 分に収める（スクリプト自身は打ち切らない）。PoC（#177）では `docs/` の 263 件で、既存の検査と lint の合計が 51 秒
-    decided_by: NFR-72-1#requirements[CI の 1 回の所要時間]
 test_file: tests/integration/scripts/test_check_all.py
