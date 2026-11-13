@@ -12,7 +12,7 @@ use_cases:
 docs:
   - page: docs/template/template-container.yaml
     new: false
-    change: 外部ライブラリ・外部 API の置き場所の記述（`dev/設計書/外部ライブラリ/`・`dev/設計書/外部API/`）を ai-monitor#3307 の置き場所へ書き換える（#254）
+    change: 外部ライブラリ・外部 API の置き場所の記述（`dev/設計書/外部ライブラリ/`・`dev/設計書/外部API/`と、上流ドキュメントリンクの例の `../../外部ライブラリ/`）を ai-monitor#3307 の置き場所へ書き換える（#254）
     status: done
     updated_by: planner
     updated_at: '2026-11-13T17:39:47.779234+00:00'
@@ -100,6 +100,12 @@ docs:
     status: done
     updated_by: planner
     updated_at: '2026-11-13T17:39:47.779234+00:00'
+  - page: schemas/design/architecture.schema.yaml
+    new: false
+    change: '`external_systems[].detail` の説明の `設計書/外部API/`・`設計書/外部ライブラリ/` を `docs/external-api/`・`docs/library/` へ書き換え、`docs/template/template-architecture.yaml` を生成し直す（#254 と同じ型）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:51:53.376010+00:00'
 scope_out:
   - item: テンプレート『コンテナ構成』『テストフィクスチャ』の置き場所の記述（`dev/設計書/コンテナ構成/`・`dev/設計書/テストフィクスチャ.md`）
     reason: '置き場所を決める作業は #255 が持つ（#254 の受付でスコープを移した）'
