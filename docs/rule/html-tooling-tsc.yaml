@@ -83,7 +83,7 @@ items:
       | ----------- | ------------------------------------ | -------------------------------------------------------- |
       | `dev`       | `tsc -p tsconfig.build.json --watch` | 開発中。保存ごとに変更分だけ再生成            |
       | `build`     | `tsc -p tsconfig.build.json`         | 全 `.ts` を一括生成                                      |
-      | `typecheck` | `tsc -p tsconfig.json --noEmit`      | CI / pre-commit。型崩れ検知                              |
+      | `typecheck` | `tsc -p tsconfig.json --noEmit`      | 作業の手順の型検査。型崩れ検知                           |
       | `lint`      | `eslint frontend`                    | flat config                                              |
       | `test`      | `vitest run` / `playwright test`     | テスト                                                   |
       | `gen-types` | `openapi-typescript`                 | API 型を `shared/api/schema.d.ts` に生成（コミットする） |

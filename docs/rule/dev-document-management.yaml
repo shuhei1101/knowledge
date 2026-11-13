@@ -186,9 +186,9 @@ items:
       - 張るかは [関連の張り方](id:flowchart-related-link) の先頭で適用する
   - id: related-05
     group: 関連
-    name: 参照切れは CI で止める
+    name: 参照切れは検査で止める
     body: |-
-      - 規約・手順のように従う必要がある文書への参照が切れたら、CI で止める
+      - 規約・手順のように従う必要がある文書への参照が切れたら、書き込みのときの検査と全ての文書の検査で止める
   - id: delivery-01
     group: 配信
     name: 開発ドキュメントサーバーの配信
@@ -198,7 +198,7 @@ items:
     group: 配信
     name: GitHub Pages の配信
     body: |-
-      - GitHub Pages は、master へのマージで動く GitHub Actions のワークフローで、`visibility: public` の文書だけを HTML にして配信する。
+      - GitHub Pages は、develop へのマージで動く GitHub Actions のワークフローで、`visibility: public` の文書だけを HTML にして配信する。
         YAML の原本は成果物に入れない
   - id: delivery-03
     group: 配信

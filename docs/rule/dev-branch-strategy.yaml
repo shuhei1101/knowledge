@@ -19,13 +19,12 @@ tags:
   - name: action:削除
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-11-07'
+rev: 2
+last_reviewed: '2026-11-14'
 items:
   - id: overview
     name: 概要
-    body: |-
-      ブランチの種類・base・命名・ライフサイクルの決まり。
+    body: ブランチの種類・base・命名・ライフサイクルの決まり。
   - id: branch-01
     group: ブランチ
     name: ブランチの種類
@@ -34,9 +33,9 @@ items:
 
       | ブランチ | 役割 | base |
       | --- | --- | --- |
-      | `master` | E2E を通った状態だけを持つ。タグ（`v{バージョン}`）の打ち先 | - |
-      | `develop` | 作業 PR の squash マージ先。E2E を通っていない変更が集まる | `master` |
-      | `release/v{バージョン}` | スプリント単位で E2E を回す短命のブランチ | `develop` |
+      | `master` | E2E を通った状態だけを持つ。メジャーのリリースのタグ（`v{X}.0.0`）の打ち先 | - |
+      | `develop` | 作業 PR の squash マージ先。E2E を通っていない変更が集まる。メジャーでないスプリントのタグの打ち先 | `master` |
+      | `release/v{バージョン}` | メジャーのスプリントで E2E を回す短命のブランチ | `develop` |
       | `hotfix/{ドメイン}/{変更内容}` | master に出たバグを release を待たずに修正する短命のブランチ | `master` |
       | 作業ブランチ（`{type}/{ドメイン}/{変更内容}`） | 1 Issue の作業 | `develop` |
 
@@ -47,6 +46,15 @@ items:
     body: |-
       - release は commit が入るたびに develop へバックマージする（E2E を再実行する前と、master へマージした後）
       - E2E が全て通った release は、master と develop の両方へ merge commit で入れる
+      - master へマージした後のバックマージは、タグを打った master の merge commit を develop へ入れ、全てのバージョンのタグを develop から辿れるようにする
+  - id: branch-03
+    group: ブランチ
+    name: release と hotfix を使用する時期
+    body: |-
+      - release と hotfix を使用するのは、今のスプリントのバージョンがメジャー（`{X}.0.0`。X は 1 以上）のときと、master にメジャーのリリースのタグがあるときだけにする
+      - 0.x の間と、メジャーの間のマイナー・パッチのスプリントは develop だけで開発し、master に出たバグも develop への作業 PR で修正する
+      - 0.x の間は GitHub の既定のブランチと GitHub Pages の出し元を develop にし、master は v1.0.0 まで変えない
+      - v1.0.0 では master を release の head へ置き換え、既定のブランチと GitHub Pages の出し元を master へ戻す
   - id: issue-pr-01
     group: Issue と PR
     name: 1 Issue = 1 作業 PR

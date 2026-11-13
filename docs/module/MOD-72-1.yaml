@@ -1,7 +1,7 @@
 id: "MOD-72-1"
 visibility: internal
 title: "検査と変換のスクリプト / scripts"
-lead: dev-docs の validators・converters の約束で動く文書の検査・変換と、CI と手元から全ての文書を検査する CLI・Pages の成果物を作る CLI の、`scripts/` の単一ファイルのスクリプト。
+lead: project-index の validators・converters の約束で動く文書の検査・変換と、手元から全ての文書を検査する CLI・Pages の成果物を作る CLI の、`scripts/` の単一ファイルのスクリプト。
 diagrams:
   - name: 全体
     diagram: |-
@@ -52,8 +52,8 @@ diagrams:
           checkall ..> templates
 notes:
   起動の方式: |-
-    各入口のスクリプトは PEP 723 のインラインのメタデータ（`requires-python = ">=3.14"` と依存）を持ち、`uv lock --script` のロック（`{スクリプト}.py.lock`）で版を固定する。
-    dev-docs.yaml の `run` と CI は `uv run --frozen --script scripts/{スクリプト}.py` で起動する。仮想環境は uv のキャッシュ（Linux 側のファイルシステム）に置かれる。
+    各入口のスクリプトは PEP 723 のインラインのメタデータ（`requires-python = ">=3.14"` と依存）を持ち、`uv lock --script` のロック（`{スクリプト}.py.lock`）でバージョンを固定する。
+    dev-docs.yaml の `run` と公開文書の配信のワークフローは `uv run --frozen --script scripts/{スクリプト}.py` で起動する。仮想環境は uv のキャッシュ（Linux 側のファイルシステム）に配置される。
     `pyproject.toml` は作らない（規約『単一ファイルスクリプト』）。`_common.py`・`_maid.py` は入口のスクリプトと同じフォルダから import する。
 
     | 方式 | 起動から依存の import まで（WSL2・`/mnt/c` の作業ツリー・2026-10-31 に測った値） |
@@ -61,9 +61,9 @@ notes:
     | `scripts/` を uv のプロジェクトにし、`/mnt/c` の `.venv` から起動 | 5.9〜11.9 秒 |
     | PEP 723 のスクリプトを `uv run --frozen --script` で起動 | 0.3〜0.6 秒 |
 
-    プロジェクトの方式は `/mnt/c` の `.venv` からの import だけで約 6 秒かかり、1 文書あたりの 20 秒（NFR-72-1）の 3 割を使うため採らない。
-  初回の起動: uv のキャッシュに仮想環境が無い初回は依存の取得で 20 秒を超えうる。開発コマンドの環境構築で、入口のスクリプトごとに `uv sync --script scripts/{スクリプト}.py` を先に流す。
-  全ての文書の読み込み: '`docs/**/*.yaml`（2026-10-31 時点で 259 件）を `/mnt/c` から 1 件ずつ読むと 3.4 秒かかる。`read_texts` が 16 のスレッドで並列に読み（0.2 秒）、`YAML(typ="rt")` で全件を読み込む（0.8 秒）。'
+    プロジェクトの方式は `/mnt/c` の `.venv` からの import だけで約 6 秒かかり、1 文書あたりの 20 秒（NFR-72-1）の 3 割を使用するため採らない。
+  初回の起動: uv のキャッシュに仮想環境が無い初回は依存の取得で 20 秒を超えうる。開発コマンドの環境構築で、入口のスクリプトごとに `uv sync --script scripts/{スクリプト}.py` を先に実行する。
+  全ての文書の読み込み: '`docs/**/*.yaml`（2026-10-31 時点で 259 件）を `/mnt/c` から 1 件ずつ読み込むと 3.4 秒かかる。`read_texts` が 16 のスレッドで並列に読み込み（0.2 秒）、`YAML(typ="rt")` で全件を読み込む（0.8 秒）。'
   テストと静的検査: |-
-    単体テストは `tests/unit/scripts/test_{物理ファイルの名前から先頭の _ を除いたもの}.py`、結合テストは `tests/integration/scripts/` に置く。
-    pytest の `pythonpath` に `scripts` を入れる設定と、ruff（`T20` を `scripts/*.py` で外す）・pyright strict の設定はリポジトリの直下の設定ファイルに置く。コマンドはテストを作る担当がテスト実行方法に確定させる。
+    単体テストは `tests/unit/scripts/test_{物理ファイルの名前から先頭の _ を除いたもの}.py`、結合テストは `tests/integration/scripts/` に配置する。
+    pytest の `pythonpath` に `scripts` を入れる設定と、ruff（`T20` を `scripts/*.py` で除外する）・pyright strict の設定はリポジトリの直下の設定ファイルに配置する。コマンドはテストを作る担当がテスト実行方法に確定させる。

@@ -37,7 +37,7 @@ scenarios:
       - 標準出力に `docs/template/template-er.yaml` だけが出る
       - 続けて全ての文書の検査を実行すると成功で終わる
     test: test_normal
-  - name: 異常シナリオ（スキーマが読めない）
+  - name: 異常シナリオ（スキーマが読み込めない）
     setup:
       - name: Mock
         description: 差し替えない
@@ -93,7 +93,7 @@ trigger: 開発者が `schemas/design/` のスキーマを変えて、生成の�
 preconditions:
   - '`schemas/design/` の設計書の種類のスキーマごとに、`docs/template/` に対応するテンプレートの文書がある'
 success_guarantee: 全ての設計書の種類のテンプレートの `items` が、スキーマから組み立てたものと一致する。`items` 以外のキーは変わらない。
-minimal_guarantee: スキーマが読めないか、対応するテンプレートが無ければ、どのファイルも書き換えずに終了コード 2 で終わり、原因のパスが標準エラーに出る。
+minimal_guarantee: スキーマが読み込めないか、対応するテンプレートが無ければ、どのファイルも書き換えずに終了コード 2 で終わり、原因のパスが標準エラーに出る。
 notes:
   E2E テストの動かし方: 生成のコマンドを、一時フォルダへコピーした knowledge のクローンで子プロセスとして起動し、終了コード・標準出力・標準エラーと、実行の前後のファイルの中身で確認する
 test_file: tests/e2e/単一ユースケース/test_開発者がスキーマから設計書のテンプレートを生成する.py

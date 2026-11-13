@@ -52,7 +52,7 @@ catalogs:
     entries:
       - name: textlint-rule-preset-ja-technical-writing
         kind: プリセット
-        purpose: 日本語の技術文書の決まり（文の長さ・句読点・助詞の重複など）をまとめて当てる
+        purpose: 日本語の技術文書の決まり（文の長さ・句読点・助詞の重複など）をまとめて適用する
         description: 12.0.2。MIT。upstream は textlint-ja/textlint-rule-preset-ja-technical-writing
       - name: textlint-rule-one-sentence-per-line
         kind: ルール
@@ -66,8 +66,8 @@ catalogs:
         purpose: ルールの違反を warning として出す
         description: |-
           `"severity": "warning"` を付けたルールの違反は、JSON の `severity` が 1 で出て、終了コードに数えない。
-          プリセットのルールは `rules.{プリセット}.{ルール}.severity` でルールごとに指定する。`rules.{プリセット}.severity` はプリセットの中のルールに効かない
-lead: 自然言語の文章をルールのプラグインで検査する lint の CLI。Markdown を読み、違反を行つきで出す。
+          プリセットのルールは `rules.{プリセット}.{ルール}.severity` でルールごとに指定する。`rules.{プリセット}.severity` はプリセットの中のルールに適用されない
+lead: 自然言語の文章をルールのプラグインで検査する lint の CLI。Markdown を読み込み、違反を行つきで出す。
 purl: pkg:npm/textlint@15.8.0
 dependency_scope: 開発のみ
 adoption: 採用
@@ -78,13 +78,13 @@ upstream: textlint/textlint
 verification:
   state: 済
   date: '2026-11-05'
-  detail: 'PoC（#177）で 15.8.0 と 2 つのルールの JSON の出力と、`one-sentence-per-line` の判定を確かめた。レビュー（PR #176）で、ルールの `severity` の `warning` は JSON の `severity` 1・終了コード 0、プリセットへの指定は中のルールに効かず、プリセットの中のルールごとの指定は効くことを確かめた'
+  detail: 'PoC（#177）で 15.8.0 と 2 つのルールの JSON の出力と、`one-sentence-per-line` の判定を確認した。レビュー（PR #176）で、ルールの `severity` の `warning` は JSON の `severity` 1・終了コード 0、プリセットへの指定は中のルールに適用されず、プリセットの中のルールごとの指定は適用されることを確認した'
 license: MIT（商用利用可）
 official_url: https://www.npmjs.com/package/textlint
 docs_url: https://textlint.org/docs/
 selection:
   candidates: textlint、RedPen
-  decision: 規約『文章の書き方』が出典にする preset-ja-technical-writing を、そのまま当てられる
+  decision: 規約『文章の書き方』が出典にする preset-ja-technical-writing を、そのまま適用できる
 install: |-
   ```bash
   npm ci --prefix scripts/lint

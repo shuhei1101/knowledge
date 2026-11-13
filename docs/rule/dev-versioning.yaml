@@ -18,8 +18,8 @@ tags:
   - name: action:計算
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-11-07'
+rev: 2
+last_reviewed: '2026-11-14'
 items:
   - id: overview
     name: 概要
@@ -30,7 +30,7 @@ items:
     name: バージョンの正はタグ
     body: |-
       - バージョンの正はタグ。
-        リポジトリの中のファイルにバージョンを記載するときは、タグの値の複製にし、リリースのたびにタグの値に統一する
+        リポジトリの中のファイルにバージョンを記載するときは、タグの値の複製にし、リリースとスプリントの区切りのたびにタグの値に統一する
       - スプリントで出すときは、スプリントのバージョンの正はスプリントの計画で、release ブランチ名とタグはその複製
   - id: digit-01
     group: 桁の算出
@@ -64,7 +64,9 @@ items:
     group: タグの打ち方
     name: 打つ commit と値
     body: |-
-      - master へ `--no-ff` でマージした commit に `v{バージョン}` のタグを打つ
+      - メジャーのスプリント（`{X}.0.0`。X は 1 以上）は、master へ `--no-ff` でマージした commit に `v{バージョン}` のタグを打つ
+      - メジャーでないスプリントは、スプリントの区切りで develop の commit に `v{バージョン}` のタグを打つ。
+        打つ前に develop で結合テストを全件実行する
       - release はそのスプリントのバージョンをそのまま打つ。
         間に hotfix が入っても動かさない
       - hotfix は master に付いている直前のタグを基準に、対象 Issue の `type:*` で決めた桁を上げる
@@ -74,8 +76,9 @@ items:
     name: 直前のタグの求め方
     body: |-
       `git fetch origin --prune --prune-tags --tags` を実行する。
-      続けて `git tag --list "v*" --merged origin/master --sort=-v:refname` で並べる。
-      release では打った `v{バージョン}` より後ろにある最初のもの、hotfix の桁の決定では先頭のものを直前のタグにする。
+      続けて `git tag --list "v*" --merged {ブランチ} --sort=-v:refname` で並べる。
+      release とスプリントの区切りでは、`{ブランチ}` を `origin/develop` にした並びのうち、打った `v{バージョン}` より後ろにある最初のものを直前のタグにする。
+      hotfix の桁の決定では、`{ブランチ}` を `origin/master` にした並びの先頭のものを直前のタグにする。
       該当が無ければ直前のタグは無いものとして扱う。
   - id: breaking-01
     group: 破壊的変更の判定基準
@@ -91,3 +94,9 @@ items:
       - 1.0.0 にするかはユーザーが判断する。
         判断材料は「壊すと自分以外が困る状態になったか」
       - 上げるときは Issue を起票する
+  - id: major-02
+    group: 0.x から 1.0.0 へ
+    name: メジャーのリリースの前のテストの精査
+    body: |-
+      - メジャーのスプリントでは、スプリントの作業が全て develop へ入った後、release を切る前に、単体・結合・E2E のテストを精査する作業 PR を実行する
+      - 精査の観点はチェックシート [メジャーリリース前のテスト精査](id:checksheet-major-release-test-review) に従う
