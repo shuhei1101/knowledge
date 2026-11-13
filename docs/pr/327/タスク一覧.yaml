@@ -1,0 +1,80 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存リポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: 既存の設計書があるため対象外
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めを依頼する Issue でないため対象外
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: marketplace.json の source の書き換えだけで、未検証の技術機構に依存しないため
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: 利用者の流れの組み合わせは変わらないため
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 画面に関わる変更でないため（判定フローチャート『モック要否』）
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面に関わる変更でないため（判定フローチャート『モック要否』）
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: 単一ユースケース設計
+    status: todo
+    note: プラグインの定義を変えるため、利用者がマーケットプレイスからプラグインを入れてスキルを呼ぶ単一 UC を新設する。SC-72-3・SC-72-4 の SKILL.md のパスを追随させる
+  - process: モック作成
+    status: skipped
+    reason: 画面に関わる変更でないため（判定フローチャート『モック要否』）
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: インターフェース定義設計
+    status: skipped
+    reason: スクリプト・フックの入出力は変わらないため
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: 部品設計
+    status: skipped
+    reason: 画面の部品を持たないため
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: 画面に関わる変更でないため（判定フローチャート『画面設計要否』）
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: モジュール構成設計
+    status: skipped
+    reason: slop-check は今の置き場所のままで、モジュールの構成は変わらないため
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: ドキュメント修正
+    status: todo
+    note: LAY-72-1・docs/skill/text-review.yaml の skill.path
+  - process: 単体テスト作成
+    status: skipped
+    reason: テストが参照するパスは変わらないため（tests/ に skills/ と .claude-plugin/ の参照が無い）
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'
+  - process: 実装
+    status: todo
+    note: plugin.json と skills/ の plugins/knowledge/ への移動、marketplace.json の source、dev-docs.yaml の skills の行
+  - process: 結合テスト作成
+    status: skipped
+    reason: テストが参照するパスは変わらないため（tests/ に skills/ と .claude-plugin/ の参照が無い）
+    updated_by: planner
+    updated_at: '2026-11-13T16:40:11.881263+00:00'

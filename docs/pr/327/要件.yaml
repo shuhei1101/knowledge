@@ -1,0 +1,36 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: changed
+    detail: files.yaml の行の Markdown として開くスキルの本体のパスが変わる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: changed
+    detail: 検索に当たるスキルの本体のパスが変わる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-148-1.yaml
+    impact: run_only
+    detail: マーケットプレイスの定義を書き換えるため、slop-check を入れた端末で通知が出続けるかを確かめる
+    depends_on: []
+docs:
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: 直下の .claude-plugin/ をマーケットプレイスの定義だけにし、plugins/knowledge/（.claude-plugin/plugin.json・skills/）のエントリを追加する。lead のプラグインの配置の文を書き換える
+    status: todo
+  - page: docs/skill/text-review.yaml
+    new: false
+    change: skill.path を plugins/knowledge/skills/text-review/SKILL.md に書き換える
+    status: todo
+  - page: docs/guide/guide-setup-install-plugin.yaml
+    new: false
+    change: 導入済みの端末で、配置が変わった後にプラグインを更新する手順（claude plugin marketplace update → claude plugin update）が要るかを確かめ、要るなら追加する
+    status: todo
+scope_out:
+  - item: プラグイン slop-check の配置の変更
+    reason: 'plugins/{plugin}/ に統一する案では slop-check は今の plugins/slop-check/ のままになるため。#248 が触るファイルは移らない（移る skills/text-review/SKILL.md を触る未着手の行は #312・#313）'
+    plan: none
+  - item: SKILL.md を docs/skill/ の設計書から生成する変換
+    reason: 要望に含まれない。先に入った場合は、移した後のパスで SKILL.md を生成し直す
+    plan: '#312'
