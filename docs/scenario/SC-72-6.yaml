@@ -193,7 +193,7 @@ scenarios:
       - CI のジョブが、文書の検査を始めずに失敗で終わる
       - ログに、PATH で見つからない CLI の名前（maid）が出る
     test: test_error_when_check_cli_missing
-lead: PR ごとに CI が knowledge の全ての文書へスキーマの検査と検査のスクリプトを当て、違反があれば失敗させる。
+lead: PR ごとに CI が knowledge の全ての文書へスキーマの検査と検査のスクリプトを適用し、違反があれば失敗させる。
 primary_actor: 開発者
 trigger: 開発者が knowledge に PR を出すか push する
 preconditions:
