@@ -7,7 +7,7 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: PR
-        description: 違反の無い文書と、誤りの無い設計書のスキーマ（knowledge の正本）だけを持つ PR
+        description: 違反の無い文書と、誤りの無い設計書のスキーマ（knowledge の原本）だけを持つ PR
     flow: |-
       <!-- map -->
 
@@ -19,14 +19,14 @@ scenarios:
         participant V as 検査のスクリプト
         D->>G: PR を出す
         G->>C: ワークフローを起動する
-        C->>C: Python と maid が入ったかを確かめる
-        C->>C: markdownlint・textlint・yamllint が入ったかを確かめる
+        C->>C: Python と maid が入ったかを確認する
+        C->>C: markdownlint・textlint・yamllint が入ったかを確認する
         loop 全ての文書
           C->>C: スキーマの検査
           C->>V: 標準入力に文書の YAML
           V-->>C: 終了コード 0 と空の違反の配列
         end
-        loop 全ての設計書のスキーマ（knowledge の正本）
+        loop 全ての設計書のスキーマ（knowledge の原本）
           C->>C: メタスキーマ・$ref・examples・x-rules・x-bad-examples の検査
         end
         loop schemas/ の直下のスキーマ
@@ -133,7 +133,7 @@ scenarios:
         participant G as GitHub Actions
         participant C as 検査のワークフロー
         G->>C: ワークフローを起動する
-        loop 全ての設計書のスキーマ（knowledge の正本）
+        loop 全ての設計書のスキーマ（knowledge の原本）
           C->>C: メタスキーマ・$ref・examples・x-rules・x-bad-examples の検査
         end
         loop schemas/ の直下のスキーマ
@@ -175,7 +175,7 @@ scenarios:
   - name: 異常シナリオ（検査の CLI が入っていない）
     setup:
       - name: Mock
-        description: ランナーの PATH から maid を外す
+        description: ランナーの PATH から maid を除外する
     flow: |-
       <!-- map -->
 
@@ -184,14 +184,14 @@ scenarios:
         participant G as GitHub Actions
         participant C as 検査のワークフロー
         G->>C: ワークフローを起動する
-        C->>C: Python と maid・markdownlint・textlint・yamllint が入ったかを確かめる
+        C->>C: Python と maid・markdownlint・textlint・yamllint が入ったかを確認する
         C-->>G: PATH に無い CLI の名前を出して失敗
       ```
 
       <!-- /map -->
     expected:
       - CI のジョブが、文書の検査を始めずに失敗で終わる
-      - ログに、PATH から引けない CLI の名前（maid）が出る
+      - ログに、PATH で見つからない CLI の名前（maid）が出る
     test: test_error_when_check_cli_missing
 lead: PR ごとに CI が knowledge の全ての文書へスキーマの検査と検査のスクリプトを当て、違反があれば失敗させる。
 primary_actor: 開発者
@@ -203,5 +203,5 @@ preconditions:
 success_guarantee: 違反が無ければ CI が成功する。
 minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反・スキーマのフロー形式・設計書のスキーマの誤り・スキーマとずれたテンプレート）が 1 つでもあれば CI が失敗し、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名。スキーマとずれたテンプレートは、行が `items` のキーの行で、内容が生成元のスキーマのパスと生成のコマンド）がログに出る。文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに失敗する。
 notes:
-  E2E テストの動かし方: CI のジョブが走らせるコマンド（`uv run --frozen --script scripts/check_all.py`）を、knowledge のクローンで子プロセスとして起動し、ジョブの成否はその終了コード、ログはその標準出力で確かめる。maid が入っていない場合は PATH から maid を外して起動する。ワークフローの YAML そのものは、IF-72-4 のとおり作業 PR の Actions の実行結果で確かめる
+  E2E テストの動かし方: CI のジョブが走らせるコマンド（`uv run --frozen --script scripts/check_all.py`）を、knowledge のクローンで子プロセスとして起動し、ジョブの成否はその終了コード、ログはその標準出力で確認する。maid が入っていない場合は PATH から maid を除外して起動する。ワークフローの YAML そのものは、IF-72-4 のとおり作業 PR の Actions の実行結果で確認する
 test_file: tests/e2e/単一ユースケース/test_開発者が文書の違反を検査する.py

@@ -10,18 +10,18 @@ scenarios:
         description: knowledge の worktree
       - name: 書き込む内容
         description: スキーマに合い、ID の重複・参照切れ・mermaid の誤りが無い規約の YAML
-        notes: '`tags` はタグの名前の配列（`["scope:dev"]`）、`main_tags` は主題のタグの名前（`["scope:dev"]`）で渡す'
+        notes: '`tags` はタグの名前の配列（`["scope:dev"]`）、`main_tags` は主題のタグの名前（`["scope:dev"]`）で指定する'
     flow: |-
       <!-- map -->
 
       ```mermaid
       sequenceDiagram
         participant E as エージェント
-        participant M as dev-docs の文書の MCP
+        participant M as project-index の文書の MCP
         participant V as knowledge の検査のスクリプト
         participant W as knowledge の作業ツリー
         E->>M: write_docs に source knowledge と文書
-        M->>M: scope.write とスキーマを確かめる
+        M->>M: scope.write とスキーマを確認する
         M->>V: 標準入力に文書の YAML
         V-->>M: 終了コード 0 と空の違反の配列
         M->>W: 文書を書き込む
@@ -30,11 +30,11 @@ scenarios:
 
       <!-- /map -->
     expected:
-      - 作業ツリーの文書の `tags`・`main_tags` 以外の項目が渡した内容になる
-      - '作業ツリーの文書の `tags` が `- name:` の要素で書かれ、`main_tags` で渡したタグの要素に `main: true` が付く（`[{name: scope:dev, main: true}]`）'
+      - 作業ツリーの文書の `tags`・`main_tags` 以外の項目が指定した内容になる
+      - '作業ツリーの文書の `tags` が `- name:` の要素で記載され、`main_tags` で指定したタグの要素に `main: true` が付く（`[{name: scope:dev, main: true}]`）'
       - 応答が `isError` でない
     test: test_normal
-  - name: 異常シナリオ（検査のスクリプトが違反を返す）
+  - name: 異常シナリオ（検査のスクリプトが違反を返却する）
     setup:
       - name: Mock
         description: 差し替えない
@@ -46,7 +46,7 @@ scenarios:
       ```mermaid
       sequenceDiagram
         participant E as エージェント
-        participant M as dev-docs の文書の MCP
+        participant M as project-index の文書の MCP
         participant V as knowledge の検査のスクリプト
         E->>M: write_docs に source knowledge と文書
         M->>V: 標準入力に文書の YAML
@@ -71,7 +71,7 @@ scenarios:
       ```mermaid
       sequenceDiagram
         participant E as エージェント
-        participant M as dev-docs の文書の MCP
+        participant M as project-index の文書の MCP
         participant V as knowledge の検査のスクリプト
         participant C as mdmark の CLI
         E->>M: write_docs に source knowledge と文書
@@ -85,7 +85,7 @@ scenarios:
       <!-- /map -->
     expected:
       - 作業ツリーの文書が変わらない
-      - 応答が `isError` で、違反の `path` が項目の `body` のパス、決まりに mdmark の `diagram_invalid` と行、直し方に mdmark の内容が入る
+      - 応答が `isError` で、違反の `path` が項目の `body` のパス、決まりに mdmark の `diagram_invalid` と行、修正方法に mdmark の内容が入る
   - name: 異常シナリオ（作業場所が scope.write の外）
     setup:
       - name: Mock
@@ -98,7 +98,7 @@ scenarios:
       ```mermaid
       sequenceDiagram
         participant E as エージェント
-        participant M as dev-docs の文書の MCP
+        participant M as project-index の文書の MCP
         E->>M: write_docs に source knowledge と文書
         M-->>E: isError と scope.write の外であること
       ```
@@ -108,13 +108,13 @@ scenarios:
       - knowledge の作業ツリーの文書が変わらない
       - 応答が `isError` で、`scope.write` の外であることが分かる
     test: test_error_when_out_of_write_scope
-lead: エージェントが knowledge のクローンか worktree で `write_docs` を呼び、dev-docs がスキーマと knowledge の検査のスクリプトを通してから文書を書き込む。
+lead: エージェントが knowledge のクローンか worktree で `write_docs` を呼び、project-index がスキーマと knowledge の検査のスクリプトで検査してから文書を書き込む。
 primary_actor: エージェント
 trigger: エージェントが規約を追加・修正する
 preconditions:
-  - knowledge が dev-docs に登録され、配信中
-  - 検査のスクリプトが使う maid が Linux 側に入り、PATH から引ける
-  - '`check --text` を持つ mdmark の CLI が Linux 側に入り、PATH から引ける'
+  - knowledge が project-index に登録され、配信中
+  - 検査のスクリプトが使用する maid が Linux 側に入り、PATH で見つかる
+  - '`check --text` を持つ mdmark の CLI が Linux 側に入り、PATH で見つかる'
 success_guarantee: 違反の無い内容だけが knowledge の作業ツリーに書き込まれる。
-minimal_guarantee: 違反のある内容・`scope.write` の外からの書き込みは、ファイルを変えずに `isError` で返す。
+minimal_guarantee: 違反のある内容・`scope.write` の外からの書き込みは、ファイルを変えずに `isError` で返却する。
 test_file: tests/e2e/単一ユースケース/test_エージェントがknowledgeの文書を書き込む.py
