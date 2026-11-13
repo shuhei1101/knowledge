@@ -59,6 +59,10 @@ def test_normal_when_design_schemas_invalid(
                 "$defs:\n"
                 "  id:\n"
                 "    type: string\n"
+                "    x-used-by:\n"
+                "      - 実装で、ID にする。\n"
+                "  plain:\n"
+                "    type: string\n"
             ),
             # 3 行目の type が無い型の名前
             "schemas/design/bad-type.schema.yaml": (
@@ -91,6 +95,28 @@ def test_normal_when_design_schemas_invalid(
                 "title: 決まり\n"
                 "x-rules: 文字列\n"
             ),
+            # 5 行目の a に x-used-by が無く、7 行目の b が x-used-by の無い型を指す。
+            # x-used-by を持つ型を指す c と、if の条件の中の d は違反にしない
+            "schemas/design/bad-used-by.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: 使用先\n"
+                "type: object\n"
+                "properties:\n"
+                "  a:\n"
+                "    type: string\n"
+                "  b:\n"
+                "    $ref: common.schema.yaml#/$defs/plain\n"
+                "  c:\n"
+                "    $ref: common.schema.yaml#/$defs/id\n"
+                "allOf:\n"
+                "  - if:\n"
+                "      properties:\n"
+                "        d:\n"
+                "          const: x\n"
+                "    then:\n"
+                "      required:\n"
+                "        - a\n"
+            ),
             # 2 行目の x-rules が配列でない
             "schemas/template.schema.yaml": "title: テンプレート\nx-rules: 文字列\n",
         }
@@ -100,7 +126,7 @@ def test_normal_when_design_schemas_invalid(
     # 検証
     lines = result.stdout.splitlines()
     assert result.exit_code == 1
-    assert len(lines) == 6
+    assert len(lines) == 8
     assert lines[0].startswith("schemas/design/bad-example.schema.yaml:10: examples[0]: examples: ")
     assert lines[1].startswith(
         "schemas/design/bad-ref.schema.yaml:5: properties.id.$ref: "
@@ -108,8 +134,16 @@ def test_normal_when_design_schemas_invalid(
     )
     assert lines[2].startswith("schemas/design/bad-rules.schema.yaml:3: x-rules: metaschema: ")
     assert lines[3].startswith("schemas/design/bad-type.schema.yaml:3: type: metaschema: ")
-    assert lines[4].startswith("schemas/template.schema.yaml:2: x-rules: metaschema: ")
-    assert lines[5] == "0 件の文書を検査し、違反は 5 件、警告は 0 件でした"
+    assert lines[4] == (
+        "schemas/design/bad-used-by.schema.yaml:5: properties.a: "
+        "x-used-by: 使用先（x-used-by）が記載されていません"
+    )
+    assert lines[5] == (
+        "schemas/design/bad-used-by.schema.yaml:7: properties.b: "
+        "x-used-by: 使用先（x-used-by）が記載されていません"
+    )
+    assert lines[6].startswith("schemas/template.schema.yaml:2: x-rules: metaschema: ")
+    assert lines[7] == "0 件の文書を検査し、違反は 7 件、警告は 0 件でした"
 
 
 def test_normal_when_repository_schemas(run_script: RunScript, tmp_path: Path) -> None:
@@ -457,6 +491,8 @@ def test_normal_when_design_documents(run_script: RunScript, repo_factory: RepoF
                 "    $ref: common.schema.yaml#/$defs/id\n"
                 "  title:\n"
                 "    type: string\n"
+                "    x-used-by:\n"
+                "      - 生成で、見出しにする。\n"
             ),
             "schemas/design/common.schema.yaml": (
                 "$schema: https://json-schema.org/draft/2020-12/schema\n"
@@ -465,6 +501,8 @@ def test_normal_when_design_documents(run_script: RunScript, repo_factory: RepoF
                 "  id:\n"
                 "    type: string\n"
                 "    pattern: ^SC-\\d+-\\d+$\n"
+                "    x-used-by:\n"
+                "      - 実装で、ID にする。\n"
             ),
             "docs/rule/a.yaml": (
                 "id: a\nkind: rule\nname: A\ndescription: A の文書\n"
