@@ -1,0 +1,67 @@
+id: SC-327-1
+visibility: internal
+title: 利用者がマーケットプレイスからプラグイン knowledge を入れてスキルを呼ぶ
+lead: 利用者が knowledge のマーケットプレイスを登録してプラグイン knowledge を入れ、Claude Code のセッションでスキル `/knowledge:text-review` を呼ぶ。
+primary_actor: 利用者
+trigger: 利用者が端末で `claude plugin marketplace add shuhei1101/knowledge` を実行する
+preconditions:
+  - Claude Code を入れてある
+success_guarantee: '`knowledge@knowledge` が有効になり、セッションで `/knowledge:text-review` が候補に出る。'
+minimal_guarantee: プラグインを入れられなくても、端末の他のプラグインとマーケットプレイスの登録は変わらない。
+scenarios:
+  - name: 正常シナリオ
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: マーケットプレイス
+        description: knowledge の `.claude-plugin/marketplace.json` が、プラグイン knowledge の `source` に `./plugins/knowledge` を持つ
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor U as 利用者
+        participant C as Claude Code
+        participant M as knowledge のマーケットプレイス
+        U->>C: claude plugin marketplace add shuhei1101/knowledge
+        C->>M: marketplace.json を参照する
+        M-->>C: プラグインの一覧と source
+        U->>C: claude plugin install knowledge@knowledge
+        C->>M: source の plugins/knowledge を取得する
+        M-->>C: plugin.json と skills/
+        U->>C: セッションで /knowledge:text-review と入力する
+        C-->>U: スキルの候補
+      ```
+
+      <!-- /map -->
+    expected:
+      - '`claude plugin list` に `knowledge@knowledge` が `enabled` で出る'
+      - セッションで `/knowledge:text-review` と入力すると、スキルが候補に出る
+  - name: 正常シナリオ（導入済みの端末で更新する）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 導入済みの端末
+        description: '`source` が `./` だったときの `knowledge@knowledge` を入れてある'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor U as 利用者
+        participant C as Claude Code
+        participant M as knowledge のマーケットプレイス
+        U->>C: claude plugin marketplace update knowledge
+        C->>M: marketplace.json を参照する
+        M-->>C: source が ./plugins/knowledge
+        U->>C: claude plugin update knowledge@knowledge
+        C->>M: source の plugins/knowledge を取得する
+        M-->>C: plugin.json と skills/
+        U->>C: セッションで /knowledge:text-review と入力する
+        C-->>U: スキルの候補
+      ```
+
+      <!-- /map -->
+    expected:
+      - '`claude plugin list` に `knowledge@knowledge` が `enabled` で出る'
+      - セッションで `/knowledge:text-review` と入力すると、スキルが候補に出る
