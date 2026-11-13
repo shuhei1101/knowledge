@@ -116,7 +116,7 @@ properties:
           title: 部品
           description: 使用する部品の部品設計（部品設計の `{ID}#`）。
           x-used-by:
-            - 実装で、要素に使う部品を参照する。
+            - 実装で、要素に使用する部品を決める。
           examples:
           - "CMP-5#"
           - "CMP-6#"
@@ -198,8 +198,9 @@ properties:
         description:
           type: string
           title: 説明
+          description: 要素の役割（何を表示し、何を受け付けるか）。
           x-used-by:
-            - 実装で、要素の役割を参照する。
+            - 実装で、要素に表示する値と受け付ける入力を決める。
         label:
           type: string
           title: 表示文言
@@ -209,11 +210,13 @@ properties:
         placeholder:
           type: string
           title: プレースホルダ
+          description: 入力欄が空のときに出す文言。
           x-used-by:
             - 実装で、入力欄のプレースホルダにする。
         io:
           type: string
           title: 入出力区分
+          description: 表示だけか、入力を受けるかの区分。
           x-used-by:
             - 実装で、表示だけか、入力を受けるかを決める。
           enum:
@@ -243,6 +246,7 @@ properties:
         required:
           type: boolean
           title: 必須
+          description: 入力が必須なら `true`。
           x-used-by:
             - 実装で、入力を必須にするかを決める。
         required_label:
@@ -260,18 +264,21 @@ properties:
         min_length:
           type: integer
           title: 最小長
+          description: 入力の最小の文字数。
           x-used-by:
             - 実装で、入力の最小の長さの検証にする。
             - テストで、境界の長さのケースにする。
         max_length:
           type: integer
           title: 最大長
+          description: 入力の最大の文字数。
           x-used-by:
             - 実装で、入力の最大の長さの検証と `maxlength` にする。
             - テストで、境界の長さのケースにする。
         range:
           type: object
           title: 値の範囲・刻み
+          description: 数値の入力の最小・最大・刻み。
           x-used-by:
             - 実装で、数値の入力の `min`・`max`・`step` にする。
           additionalProperties: false
@@ -279,16 +286,19 @@ properties:
             min:
               type: string
               title: 最小
+              description: 入力の最小値。
               x-used-by:
                 - 実装で、入力の最小値にする。
             max:
               type: string
               title: 最大
+              description: 入力の最大値。
               x-used-by:
                 - 実装で、入力の最大値にする。
             step:
               type: string
               title: 刻み
+              description: 入力の刻み。
               x-used-by:
                 - 実装で、入力の刻みにする。
         pattern:
@@ -306,6 +316,7 @@ properties:
         width:
           type: string
           title: 表示幅
+          description: 要素の表示幅（CSS の長さか、全体に対する割合）。
           x-used-by:
             - 実装で、要素の表示幅にする。
         display_format:
@@ -317,6 +328,7 @@ properties:
         align:
           type: string
           title: 文字揃え
+          description: 文字揃え（左・中央・右）。
           x-used-by:
             - 実装で、文字揃えにする。
           enum:
@@ -326,16 +338,19 @@ properties:
         tab_order:
           type: integer
           title: タブ順
+          description: Tab キーで移る順番。
           x-used-by:
             - 実装で、キー操作の順にする。
         autofocus:
           type: boolean
           title: 初期フォーカス
+          description: 画面を開いたときにフォーカスを配置する要素なら `true`。
           x-used-by:
             - 実装で、画面を開いたときにフォーカスを置く要素にする。
         initial_state:
           type: string
           title: 初期状態
+          description: 画面を開いたときの要素の状態（無効・非表示 等）。
           x-used-by:
             - 実装で、画面を開いたときの要素の状態にする。
           enum:
@@ -363,16 +378,19 @@ properties:
         inputmode:
           type: string
           title: 入力モード
+          description: 入力欄の `inputmode`（`numeric`・`email` 等）。
           x-used-by:
             - 実装で、入力欄の `inputmode` にする。
         prefix:
           type: string
           title: 接頭辞
+          description: 入力欄の前に出す文字列（通貨記号 等）。
           x-used-by:
             - 実装で、入力欄の前に出す文字列にする。
         suffix:
           type: string
           title: 接尾辞
+          description: 入力欄の後に出す文字列（単位 等）。
           x-used-by:
             - 実装で、入力欄の後に出す文字列にする。
         options:
@@ -390,6 +408,7 @@ properties:
         input_example:
           type: string
           title: 入力例
+          description: テストで入力する値の具体例。
           x-used-by:
             - テストで、入力する値にする。
         source:
@@ -415,10 +434,11 @@ properties:
           title: アクションの参照
           description: 送信を伴う動きはインターフェース定義、画面遷移は遷移先の画面設計。
           x-used-by:
-            - 実装で、送信先のインターフェース定義か遷移先の画面設計を参照する。
+            - 実装で、送信先のインターフェースか遷移先の画面を決める。
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -487,11 +507,13 @@ properties:
         position:
           type: string
           title: 表示位置
+          description: エラーを出す場所（入力欄の下・フォームの上 等）。
           x-used-by:
             - 実装で、エラーを出す場所にする。
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -514,7 +536,7 @@ examples:
 - id: SCR-1
   title: タスク作成画面
   screen: app/(authenticated)/tasks/new/page.tsx
-  mock: dev/mock/pages/タスク作成/12/a-plan/
+  mock: docs/mock/pages/タスク作成/12/a-plan/
   lead: タスクの新規作成フォーム画面。タスク名・優先度を入力して登録する。
   test_file: tests/integration/task/test_タスク作成画面.py
   elements:

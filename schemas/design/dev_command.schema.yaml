@@ -58,7 +58,7 @@ properties:
     title: 分類
     description: 分類ごとのセクション。
     x-used-by:
-      - 実行で、コマンドを探すときに分類ごとの節を参照する。
+      - 実行で、目的に合うコマンドを分類から探す。
       - 生成で、分類ごとの節にする。
     x-rules:
       - 初期構築では全ての分類を作る。
@@ -77,6 +77,7 @@ properties:
         name:
           type: string
           title: 分類
+          description: 分類の名前（`環境構築`・`ビルド・生成` 等）。
           x-used-by:
             - 生成で、節の見出しにする。
             - 設計で、ほかの設計書の参照から分類を指す。
@@ -131,6 +132,7 @@ properties:
             state:
               type: string
               title: 状態
+              description: コマンドを動かして確認したか（`済`・`未確認`）。
               x-used-by:
                 - 実行で、実行の前に確認済みのコマンドかを判断する。
               enum:
@@ -196,6 +198,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。

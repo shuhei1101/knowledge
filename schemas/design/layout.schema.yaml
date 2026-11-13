@@ -157,6 +157,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -256,7 +257,7 @@ $defs:
             title: 生成するコマンド
             description: 生成するコマンドを持つ『開発コマンド』の分類への参照。
             x-used-by:
-              - 実装で、生成物を作り直すコマンドを参照する。
+              - 実装で、生成物を作り直すコマンドを実行する。
             examples:
             - CMD-1#categories[ビルド・生成]
       placeholders:
@@ -264,7 +265,7 @@ $defs:
         title: 可変の部分
         description: '`name`・`naming` の `{名前}` ごとの、値の語彙への参照。'
         x-used-by:
-          - 実装で、`{名前}` に入れる値の候補を参照する。
+          - 実装で、`{名前}` に入れる値を候補から選ぶ。
         items:
           type: object
           additionalProperties: false
@@ -285,7 +286,7 @@ $defs:
               title: 語彙
               description: 値の語彙を持つ設計書の項目への参照。
               x-used-by:
-                - 実装で、`{名前}` の値の語彙を持つ設計書を参照する。
+                - 実装で、`{名前}` に入れる値を、語彙を持つ設計書の値から選ぶ。
               examples:
               - AG-1#stages
       children:
@@ -335,7 +336,7 @@ $defs:
         title: 配下の規約
         description: '`type` が `folder` のときだけ記載する、配下の配置を定める knowledge の規約の ID。'
         x-used-by:
-          - 実装で、配下の配置を定める規約を参照する。
+          - 実装で、配下のファイルの配置を規約に合わせる。
         examples:
         - python-architecture-layout
     allOf:

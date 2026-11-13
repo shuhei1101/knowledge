@@ -52,7 +52,7 @@ properties:
     description: アクター・サブシステム・外部システムの関係を 1 枚で示す。
     x-used-by:
       - 生成で、システム全体図にする。
-      - 設計で、機能をどのサブシステムに置くかを決めるときに、サブシステムと外部システムのつながりを参照する。
+      - 設計で、機能を配置するサブシステムを、サブシステムと外部システムのつながりから決める。
     x-rules:
       - 向きは `LR` にする。
       - 自プロジェクトのサブシステムは枠で囲み、外部システムは枠の外に配置する（ノードの `kind` を `external`）。
@@ -64,6 +64,7 @@ properties:
   repository:
     type: object
     title: リポジトリ構成
+    description: サブシステムの変更を入れるリポジトリの構成。
     x-used-by:
       - 実装で、変更を入れるリポジトリとフォルダを決める。
     x-heading: リポジトリ構成
@@ -75,6 +76,7 @@ properties:
       style:
         type: string
         title: 方式
+        description: リポジトリの方式（モノレポ・ポリレポ）。
         x-used-by:
           - 実装で、変更を 1 つのリポジトリに入れるか、リポジトリごとに分けるかを決める。
         enum:
@@ -83,6 +85,7 @@ properties:
       repositories:
         type: array
         title: リポジトリ
+        description: サブシステムの変更を入れるリポジトリ。1 要素 = 1 リポジトリ。
         x-used-by:
           - 実装で、サブシステムの変更を入れるリポジトリを決める。
         x-shape: table
@@ -109,8 +112,9 @@ properties:
       notes:
         type: string
         title: 補足
+        description: 方式とリポジトリの表に収まらない前提（共有するリポジトリ・サブモジュール 等）。
         x-used-by:
-          - 実装で、リポジトリ構成の前提を参照する。
+          - 実装で、変更を入れるリポジトリとフォルダを決める前提にする。
   subsystems:
     type: array
     title: サブシステム一覧
@@ -160,15 +164,17 @@ properties:
           title: 言語・ランタイム
           description: 言語とメジャーバージョンまで。
           x-used-by:
-            - 実装で、言語とバージョンを決め、言語の規約を参照する。
+            - 実装で、言語とバージョンを決め、適用する言語の規約を選ぶ。
         runs_on:
           type: string
           title: どこで動くか
+          description: サブシステムが動く場所（プロセス・端末・クラウドのサービス）。
           x-used-by:
-            - 実装で、動く場所の制約（プロセス・端末・クラウド）を参照する。
+            - 実装で、動く場所の制約（プロセス・端末・クラウド）に合う方式を選ぶ。
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -223,11 +229,13 @@ properties:
         purpose:
           type: string
           title: 用途
+          description: 外部システムを使用する目的。
           x-used-by:
             - レビューで、外部システムに頼る範囲が用途に収まっているかを確認する。
         direction:
           type: string
           title: 方向
+          description: データの向き（送信のみ・受信のみ・双方向）。
           x-used-by:
             - 実装で、送信と受信のどちらの処理を作るかを決める。
           enum:
@@ -244,10 +252,10 @@ properties:
           $ref: common.schema.yaml#/$defs/ref
           title: 詳細
           description: |-
-            API なら `設計書/外部API/`、それ以外（SDK・CLI 等）なら `設計書/外部ライブラリ/` の設計書。
+            API なら `docs/external-api/`、それ以外（SDK・CLI 等）なら `docs/library/` の設計書。
             持たないのは銘柄未定の行と初期構築の工程の行だけ（設計書はその外部システムを使用し始める設計の工程で作る）。
           x-used-by:
-            - 実装で、外部 API・外部ライブラリの設計書を参照する。
+            - 実装で、呼び出しの仕様を決める外部 API・外部ライブラリの設計書を選ぶ。
         test_file:
           type: string
           title: 対応する非機能要件のテスト
@@ -259,11 +267,13 @@ properties:
         cost:
           type: string
           title: 料金・副作用
+          description: 呼ぶと発生する料金と、外へ出る副作用（送信・書き込み）。
           x-used-by:
             - 実行で、テスト・動作確認の前に、料金と副作用からユーザーの確認が要るかを判断する。
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -290,24 +300,25 @@ properties:
     $ref: common.schema.yaml#/$defs/markdown
     title: 品質目標
     x-used-by:
-      - 設計で、方式を選ぶときに優先する品質の目標を参照する。
+      - 設計で、方式を選ぶときに優先する品質を決める。
       - レビューで、方式が品質目標と食い違わないかを確認する。
     x-heading: 品質目標
   constraints:
     $ref: common.schema.yaml#/$defs/markdown
     title: 制約
     x-used-by:
-      - 設計で、方式を選ぶときに守る制約を参照する。
+      - 設計で、方式の候補から制約に合わないものを除く。
     x-heading: 制約
   crosscutting:
     $ref: common.schema.yaml#/$defs/markdown
     title: 横断の方針
     x-used-by:
-      - 実装で、サブシステムをまたぐ方針（ログ・エラー・認証 等）を参照する。
+      - 実装で、サブシステムをまたぐ処理（ログ・エラー・認証 等）の方式を統一する。
     x-heading: 横断の方針
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。

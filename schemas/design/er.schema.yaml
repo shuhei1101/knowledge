@@ -52,7 +52,7 @@ properties:
     title: 概要
     description: 索引の設計書だけが持つ。データストアの種別とバージョン・物理名の命名規則・全テーブルの共通カラム。
     x-used-by:
-      - 実装で、データストアの種別・物理名の命名規則・共通カラムを参照する。
+      - 実装で、データストアの種別・物理名の命名規則・共通カラムに合わせてテーブルを定義する。
     x-heading: 概要
   er:
     $ref: common.schema.yaml#/$defs/er
@@ -99,6 +99,7 @@ properties:
         title:
           type: string
           title: 論理名
+          description: テーブルの論理名。
           x-used-by:
             - 生成で、節の見出しにする。
         source:
@@ -137,11 +138,13 @@ properties:
         growth:
           type: string
           title: 増え方
+          description: 行が増える速さ（1 日あたりの行数 等）。
           x-used-by:
             - 実装で、保持期間とアーカイブの要否を決める。
         retention:
           type: string
           title: 保持期間
+          description: 行を残す期間。
           x-used-by:
             - 実装で、古い行を消す処理にする。
         deletion:
@@ -168,10 +171,11 @@ properties:
           $ref: common.schema.yaml#/$defs/markdown
           title: 説明
           x-used-by:
-            - 実装で、テーブルの役割と前提を参照する。
+            - 実装で、テーブルに入れるデータと入れないデータを決める。
         columns:
           type: array
           title: カラム
+          description: テーブルのカラム。1 要素 = 1 カラム。
           x-used-by:
             - 実装で、カラムの定義にする。
             - 生成で、カラムの表にする。
@@ -191,11 +195,13 @@ properties:
               name:
                 type: string
                 title: 物理名
+                description: カラムの物理名。
                 x-used-by:
                   - 実装で、カラム名・キー名にする。
               title:
                 type: string
                 title: 論理名
+                description: 日本語で表した名前。
                 x-used-by:
                   - 生成で、表の論理名にする。
               source:
@@ -223,21 +229,25 @@ properties:
               not_null:
                 type: boolean
                 title: NOT NULL
+                description: NULL を許さないカラムなら `true`。
                 x-used-by:
                   - 実装で、NOT NULL の制約にする。
               primary_key:
                 type: boolean
                 title: 主キー
+                description: 主キーのカラムなら `true`。
                 x-used-by:
                   - 実装で、主キーの制約にする。
               unique:
                 type: boolean
                 title: 一意
+                description: 値が一意のカラムなら `true`。
                 x-used-by:
                   - 実装で、一意の制約にする。
               foreign_key:
                 type: object
                 title: 外部キー
+                description: 参照先のテーブルとカラム。外部キーでないときは記載しない。
                 x-used-by:
                   - 実装で、外部キーの制約にする。
                 additionalProperties: false
@@ -253,21 +263,25 @@ properties:
                   on_delete:
                     type: string
                     title: 削除時の動き
+                    description: 参照先を削除したときの動き（`CASCADE`・`SET NULL`・`RESTRICT` 等）。
                     x-used-by:
                       - 実装で、参照先を削除したときの動き（`CASCADE` 等）にする。
               check:
                 type: string
                 title: 検査制約
+                description: 検査制約の式。
                 x-used-by:
                   - 実装で、検査制約にする。
               default:
                 type: string
                 title: 既定
+                description: カラムの既定値。
                 x-used-by:
                   - 実装で、カラムの既定値にする。
               auto:
                 type: string
                 title: 自動で入る値
+                description: データベースが自動で入れる値（作成日時・連番 等）。
                 x-used-by:
                   - 実装で、自動で入れる値（作成日時・連番 等）にする。
                 enum:
@@ -278,11 +292,13 @@ properties:
               description:
                 type: string
                 title: 説明
+                description: カラムの値が何を表すか（意味・単位）。
                 x-used-by:
-                  - 実装で、カラムの意味を参照する。
+                  - 実装で、カラムに入れる値を決める。
               example:
                 type: string
                 title: 例
+                description: 値の具体例。
                 x-used-by:
                   - テストで、Factory の値にする。
               enum_values:
@@ -303,8 +319,9 @@ properties:
               notes:
                 type: string
                 title: 補足
+                description: カラムの前提（値が入る時期・ほかのカラムとの関係 等）。
                 x-used-by:
-                  - 実装で、カラムの前提を参照する。
+                  - 実装で、カラムに値を入れる時期とほかのカラムとの整合を、処理か制約にする。
         indexes:
           type: array
           title: インデックス
@@ -331,11 +348,13 @@ properties:
               columns:
                 type: string
                 title: カラム
+                description: インデックスを張るカラム。複数は `,` で区切って順に並べる。
                 x-used-by:
                   - 実装で、インデックスのカラムにする。
               kind:
                 type: string
                 title: 種別
+                description: インデックスの種別（通常・一意・部分 等）。
                 x-used-by:
                   - 実装で、インデックスの種別にする。
               where:
@@ -349,11 +368,13 @@ properties:
               notes:
                 type: string
                 title: 補足
+                description: インデックスを使用する検索の条件。
                 x-used-by:
-                  - 実装で、インデックスを使う検索を参照する。
+                  - レビューで、インデックスが検索の条件に合っているかを確認する。
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -379,6 +400,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。

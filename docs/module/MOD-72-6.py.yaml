@@ -348,7 +348,7 @@ functions:
     usecase: 全ての文書の検査
     role: サービス
     scope: public
-    summary: '`schemas/design/` の設計書のスキーマに、拡張したメタスキーマ・`$ref`・`examples` の検査を適用する'
+    summary: '`schemas/design/` の設計書のスキーマに、拡張したメタスキーマ・`$ref`・`examples`・`x-used-by` の検査を適用する'
     args:
       - name: root
         title: リポジトリの直下
@@ -371,18 +371,21 @@ functions:
       3. 読み込めたファイルを、ファイル名を URI にした `referencing.Registry` に入れる（`build_validators` の `schemas/*.schema.yaml` の登録とは別の登録）
       4. ファイルごとに次を適用し、誤りごとに `(パス, 行, 項目のパス, 内容)` を加える。行は項目の行の引き当て、項目のパスは項目のパスの組み立てで求める
          1. メタスキーマ: `meta` の `iter_errors` の誤りを `metaschema: {message}` にする
-            - メタスキーマの誤りがあるファイルの場合、そのファイルの 2・3 は適用しない
+            - メタスキーマの誤りがあるファイルの場合、そのファイルの 2〜4 は適用しない
          2. `$ref`: スキーマを辿り、文字列の `$ref` ごとに、ファイル名を基準の URI にして登録から取得する。取得できなければ `$ref` のキーの位置で `$ref: {値} を解決できません` にする
             - スキーマのキーワードとしての `examples`・`enum`・`const`・`default`・`x-bad-examples` の値の中は辿らない
             - `properties`・`patternProperties`・`$defs`・`dependentSchemas` の値（名前 → スキーマの対応）のキーは名前として扱い、キーワードと見なさずに値のスキーマを辿る（`default`・`examples` という名前のプロパティも辿る）
          3. `examples`: 2 と同じ辿り方で、キーワードとしての配列の `examples` を持つスキーマごとに、`{"$ref": "{ファイル名}#{JSON Pointer}"}` を登録つきの `Draft202012Validator` にし、要素ごとの `iter_errors` の誤りを、要素の位置に誤りの位置を続けた位置で `examples: {message}` にする
             - 検査の途中で `$ref` を解決できない場合、その要素の誤りは出さない（2 が出す）
+         4. `x-used-by`: 2 と同じ辿り方で、キーワードとしての `properties` の値のスキーマ（キー）ごとに、`x-used-by` を持つかを確認する。無ければキーの位置で `x-used-by: 使用先（x-used-by）が記載されていません` にする
+            - キーが文字列の `$ref` を持つ場合、ファイル名を基準の URI にして登録から解決した型が `x-used-by` を持てば違反にしない。解決できない `$ref` は違反にしない（2 が出す）
+            - キーワードとしての `if` の値の中は確認しない（`if` という名前のプロパティは確認する）。`$defs` の直下の型はキーと見なさない
       5. ファイルのパス・行の順に並べて返却する
     unit_tests:
       - name: test_check_design_schemas
         case: 正常
         summary: 誤りの無いスキーマ
-        condition: '`common.schema.yaml` と、それを `$ref` で指し、合う `examples` を持つ `scenario.schema.yaml`'
+        condition: '`common.schema.yaml` と、それを `$ref` で指し、合う `examples` を持つ `scenario.schema.yaml`。この関数の他のテストも含め、`x-used-by` の検査を確認するテストでなければ `properties` の下のキーは `x-used-by` を持つ'
         mock: なし（一時ディレクトリ）
         expected: 空
       - name: test_check_design_schemas_when_invalid
@@ -427,6 +430,30 @@ functions:
         condition: 括弧の閉じていない `common.schema.yaml`
         mock: なし（一時ディレクトリ）
         expected: '`$` の 1 件で、内容が `YAML として読めません: ` で始まる'
+      - name: test_check_design_schemas_when_used_by_missing
+        case: 正常
+        summary: x-used-by が無いキー
+        condition: '`x-used-by` を持たない `properties.a`、`x-used-by` を持つ `properties.b`、`x-used-by` を持たない `allOf[0].if.properties.c` を持つスキーマ'
+        mock: なし（一時ディレクトリ）
+        expected: '1 件で、項目のパスが `properties.a`、行が `a` のキーの行、内容が `x-used-by: ` で始まる'
+      - name: test_check_design_schemas_when_ref_type_used_by
+        case: 正常
+        summary: $ref の先の型の x-used-by
+        condition: '`x-used-by` を持つ `$defs.t` を指す `properties.a` と、`x-used-by` を持たない `$defs.u` を指す `properties.b` と、解決できない `#/$defs/missing` を指す `properties.c` を持ち、どのキーも `x-used-by` を持たないスキーマ'
+        mock: なし（一時ディレクトリ）
+        expected: '2 件で、`properties.b` の内容が `x-used-by: ` で始まり、`properties.c` は内容が `$ref: ` で始まる 1 件だけ（`properties.c` の `x-used-by: ` と `$defs.u` の行は出ない）'
+      - name: test_check_design_schemas_when_property_named_if
+        case: 正常
+        summary: if という名前のプロパティ
+        condition: '`x-used-by` を持たない `properties.if` を持つスキーマ'
+        mock: なし（一時ディレクトリ）
+        expected: '1 件で、項目のパスが `properties.if`、内容が `x-used-by: ` で始まる'
+      - name: test_check_design_schemas_when_meta_invalid_and_used_by_missing
+        case: 正常
+        summary: メタスキーマの誤りがあるファイルの x-used-by
+        condition: '`type: strin` と `x-used-by` を持たない `properties.a` を持つスキーマ'
+        mock: なし（一時ディレクトリ）
+        expected: '内容が `metaschema: ` で始まる行だけで、`x-used-by: ` で始まる行が無い'
     callees:
       - MOD-72-2#functions[load_document]
       - MOD-72-2#functions[line_of]

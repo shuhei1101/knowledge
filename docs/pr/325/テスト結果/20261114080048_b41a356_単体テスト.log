@@ -1,0 +1,41 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit
+            ("properties.c.$ref", "$ref"),
+        ]
+E       AssertionError: assert [('properties...ref', '$ref')] == [('properties...ref', '$ref')]
+E         
+E         At index 0 diff: ('properties.c.$ref', '$ref') != ('properties.b', 'x-used-by')
+E         Right contains one more item: ('properties.c.$ref', '$ref')
+E         Use -v to get more diff
+
+tests/unit/scripts/test_check_all.py:1078: AssertionError
+_______________ test_check_design_schemas_when_property_named_if _______________
+
+repo_factory = <function repo_factory.<locals>._create at 0x77e52cf549e0>
+
+    def test_check_design_schemas_when_property_named_if(repo_factory: RepoFactory) -> None:
+        """if という名前のプロパティ（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {
+                "schemas/design/named-if.schema.yaml": (
+                    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                    "title: 名前が if\n"
+                    "properties:\n"
+                    "  if:\n"
+                    "    type: string\n"
+                ),
+            }
+        )
+        # 実行
+        result = check_all.check_design_schemas(root, _meta())
+        # 検証
+>       assert len(result) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/unit/scripts/test_check_all.py:1101: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/scripts/test_check_all.py::test_check_design_schemas_when_used_by_missing
+FAILED tests/unit/scripts/test_check_all.py::test_check_design_schemas_when_ref_type_used_by
+FAILED tests/unit/scripts/test_check_all.py::test_check_design_schemas_when_property_named_if
+======================== 3 failed, 227 passed in 7.63s =========================

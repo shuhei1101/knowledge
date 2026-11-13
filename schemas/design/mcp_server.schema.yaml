@@ -281,6 +281,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -317,6 +318,8 @@ $defs:
     type: object
     title: 値の参照先
     description: 引数・ヘッダーに入れる値を取得する場所と名前。
+    x-used-by:
+      - 変換で、引数・ヘッダーに入れる値を取得する方法にする。
     x-shape: attributes
     additionalProperties: false
     required:

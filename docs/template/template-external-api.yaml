@@ -34,103 +34,107 @@ items:
       | lead | 冒頭リード | string | - | - | - | API が何をするものかを 1〜3 行で要約する。 | 生成で、ページの冒頭の説明にする。<br>dev-docs の検索で、文書の概要文にする。 | - |
       | used_in | 使用箇所 | array | - | - | - | 呼び出す境界層のパス（リポジトリの直下から）。 | 保守で、API の仕様が変わったときに、修正する境界層のファイルを探す。 | - |
       | verification | 動作確認 | object | - | - | - | 動かして確認したか。 | 実装で、実装の前に API を動かして確認済みかを判断する。<br>レビューで、確認していない API に理由があるかを確認する。 | - |
-      | verification.state | 状態 | string | 必須 | `済` / `未確認` | - | - | 実装で、実装の前に動作確認が要るかを判断する。 | - |
+      | verification.state | 状態 | string | 必須 | `済` / `未確認` | - | API を動かして確認したか（`済`・`未確認`）。 | 実装で、実装の前に動作確認が要るかを判断する。 | - |
       | verification.date | 確認日 | string | - | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | `YYYY-MM-DD`。 | 保守で、確認の記録が古くなっていないかを判断する。 | - |
       | verification.detail | 確認内容 | string | - | - | - | 確認した内容か、確認できない理由。 | 実装で、確認していない API を使用してよいかを判断する。 | - |
-      | version | 現在のバージョン情報 | object | 必須 | - | - | - | 実装で、指定する API のバージョンにする。 | - |
+      | version | 現在のバージョン情報 | object | 必須 | - | - | 採用している API のバージョンと、確認した日。 | 実装で、指定する API のバージョンにする。 | - |
       | version.api_version | API バージョン | string | 必須 | - | - | header 指定型か URL 埋め込み型かを添える。 | 実装で、ヘッダか URL に入れる API のバージョンにする。 | - |
-      | version.checked_on | 確認日 | string | 必須 | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | - | 保守で、バージョンの情報が古くなっていないかを判断する。 | - |
-      | version.sunset | 廃止予定日 | string | - | - | - | - | 計画で、廃止の前に移行する作業を計画する。 | - |
-      | base_urls | ベース URL | array | - | - | minItems: `1` | - | 実装で、環境ごとの接続先の設定にする。 | - |
-      | base_urls[].env | 環境 | string | 必須 | - | - | - | 実装で、接続先を切り替える環境にする。 | - |
-      | base_urls[].url | URL | string | 必須 | - | - | - | 実装で、接続先の URL にする。 | - |
-      | official_url | 公式 URL | string | - | - | - | - | 実装で、仕様を確認するときに公式のページを開く。 | - |
-      | docs_url | 公式ドキュメント | string | - | - | - | - | 実装で、仕様を確認するときに公式のドキュメントを開く。 | - |
-      | terms_url | 利用規約 | string | - | - | - | - | レビューで、使い方が利用規約に反しないかを確認する。 | - |
-      | contact | 連絡先 | string | - | - | - | - | 保守で、障害・不具合を問い合わせる先にする。 | - |
-      | status_page | 障害情報の確認先 | string | - | - | - | - | 保守で、呼び出しが失敗したときに提供元の障害かを確認する。 | - |
-      | auth | 認証セットアップ | object | 必須 | - | - | - | 実装で、認証の処理にする。 | - |
+      | version.checked_on | 確認日 | string | 必須 | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | バージョンの情報を確認した日（`YYYY-MM-DD`）。 | 保守で、バージョンの情報が古くなっていないかを判断する。 | - |
+      | version.sunset | 廃止予定日 | string | - | - | - | そのバージョンが廃止される予定の日（`YYYY-MM-DD`）。 | 計画で、廃止の前に移行する作業を計画する。 | - |
+      | base_urls | ベース URL | array | - | - | minItems: `1` | 環境ごとの接続先。1 要素 = 1 環境。 | 実装で、環境ごとの接続先の設定にする。 | - |
+      | base_urls[].env | 環境 | string | 必須 | - | - | 環境の名前（`本番`・`検証` 等）。 | 実装で、接続先を切り替える環境にする。 | - |
+      | base_urls[].url | URL | string | 必須 | - | - | その環境のベース URL。 | 実装で、接続先の URL にする。 | - |
+      | official_url | 公式 URL | string | - | - | - | API の公式ページの URL。 | 実装で、仕様を確認するときに公式のページを開く。 | - |
+      | docs_url | 公式ドキュメント | string | - | - | - | API の公式ドキュメントの URL。 | 実装で、仕様を確認するときに公式のドキュメントを開く。 | - |
+      | terms_url | 利用規約 | string | - | - | - | 利用規約の URL。 | レビューで、使い方が利用規約に反しないかを確認する。 | - |
+      | contact | 連絡先 | string | - | - | - | 障害・不具合を問い合わせる先（URL・メールアドレス）。 | 保守で、障害・不具合を問い合わせる先にする。 | - |
+      | status_page | 障害情報の確認先 | string | - | - | - | 提供元の障害情報のページの URL。 | 保守で、呼び出しが失敗したときに提供元の障害かを確認する。 | - |
+      | auth | 認証セットアップ | object | 必須 | - | - | 認証の方式と、認証情報の取得から設定までの手順。 | 実装で、認証の処理にする。 | - |
       | auth.method | 認証方式 | string | 必須 | - | - | Bearer / API Key Header / OAuth2 / JWT 等。 | 実装で、認証の方式にする。 | - |
-      | auth.scopes | スコープ | array | - | - | - | - | 実装で、要求するスコープにする。<br>レビューで、スコープが必要な範囲に収まっているかを確認する。 | - |
+      | auth.scopes | スコープ | array | - | - | - | 要求するスコープ。1 要素 = 1 スコープ。 | 実装で、要求するスコープにする。<br>レビューで、スコープが必要な範囲に収まっているかを確認する。 | - |
       | auth.steps | 取得手順 | string | - | - | - | キー取得の公式ページの URL と番号付きの手順。 | 反映作業で、認証の値を発行する作業の手順にする。 | - |
       | auth.env_vars | 環境変数 | array | - | - | - | `.env.example` と一致させる。 | 実装で、認証の値を読む環境変数にする。 | - |
       | auth.usage | リクエスト時の利用 | string | - | - | - | コードブロック。 | 実装で、要求に認証の値を付ける方法にする。 | - |
-      | rate_limits | レートリミット | array | - | - | - | - | 設計で、非機能要件のレート制限の値の出所にする。<br>実装で、呼び出しの間隔と同時実行数を決める。 | - |
-      | rate_limits[].target | 対象 | string | 必須 | - | - | - | 実装で、上限が掛かる単位（API キー・エンドポイント）にする。 | - |
+      | rate_limits | レートリミット | array | - | - | - | 提供元が定める呼び出しの上限。1 要素 = 1 つの上限。 | 設計で、非機能要件のレート制限の値の出所にする。<br>実装で、呼び出しの間隔と同時実行数を決める。 | - |
+      | rate_limits[].target | 対象 | string | 必須 | - | - | 上限が掛かる単位（API キー・エンドポイント・IP 等）。 | 実装で、上限が掛かる単位（API キー・エンドポイント）にする。 | - |
       | rate_limits[].limit | 上限 | string | 必須 | - | - | 単位（RPM / TPM 等）を付ける。 | 実装で、呼び出しの上限にする。 | - |
-      | rate_limits[].notes | 補足 | string | - | - | - | - | 実装で、上限の前提を参照する。 | - |
+      | rate_limits[].notes | 補足 | string | - | - | - | 上限の前提（数え方・リセットの時刻・プラン 等）。 | 実装で、上限を数える単位とリセットの時刻を、呼び出しの間隔の制御にする。 | - |
       | retry | 再試行 | string | - | - | - | 超過時のステータスと再試行の方針（Retry-After・Exponential Backoff 等）。 | 実装で、上限を超えたときの再試行の処理にする。 | - |
-      | pricing | 課金単価 | array | - | - | - | - | 実行で、実行の前に料金を見積もってユーザーの確認が要るかを判断する。 | - |
-      | pricing[].target | 対象 | string | 必須 | - | - | - | 実行で、料金を見積もる単位にする。 | - |
-      | pricing[].price | 単価 | string | 必須 | - | - | - | 実行で、料金の見積もりにする。 | - |
-      | pricing[].notes | 補足 | string | - | - | - | - | 実行で、料金の見積もりの前提を参照する。 | - |
+      | pricing | 課金単価 | array | - | - | - | 料金の単価。1 要素 = 1 つの課金の単位。 | 実行で、実行の前に料金を見積もってユーザーの確認が要るかを判断する。 | - |
+      | pricing[].target | 対象 | string | 必須 | - | - | 課金の単位（要求・トークン・秒 等）。 | 実行で、料金を見積もる単位にする。 | - |
+      | pricing[].price | 単価 | string | 必須 | - | - | 単位あたりの料金（通貨を添える）。 | 実行で、料金の見積もりにする。 | - |
+      | pricing[].notes | 補足 | string | - | - | - | 単価の前提（プラン・無料枠・為替 等）。 | 実行で、料金の見積もりに無料枠・プランを含める。 | - |
       | pricing_url | 課金の公式ページ | string | - | - | - | 課金の公式ページの URL。 | 保守で、単価が変わっていないかを公式のページで確認する。 | - |
       | error_format | エラー応答の形式 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | 実装で、エラー応答を読む処理にする。 | - |
       | pagination | ページングの方式 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | 実装で、全件を取る繰り返しの処理にする。 | - |
-      | timeout | タイムアウト | string | - | - | - | - | 実装で、呼び出しのタイムアウトにする。 | - |
+      | timeout | タイムアウト | string | - | - | - | 呼び出しのタイムアウトの値と、その出所。 | 実装で、呼び出しのタイムアウトにする。 | - |
       | endpoints | エンドポイント | array | 必須 | - | minItems: `1` | このプロジェクトで使用するエンドポイント。一覧の表は各エンドポイントのメソッド・パス・用途から生成する。 | 実装で、呼ぶエンドポイントの要求と応答にする。<br>生成で、エンドポイントの一覧の表と節にする。 | - |
       | endpoints[].name | 名前 | string | 必須 | - | - | `{METHOD} {パス}`。パスはベース URL からの相対。 | 設計で、ほかの設計書の参照（`endpoints[GET /tasks]`）からエンドポイントを指す。<br>生成で、節の見出しにする。 | - |
-      | endpoints[].method | メソッド | string | 必須 | `GET` / `POST` / `PUT` / `PATCH` / `DELETE` / `HEAD` / `OPTIONS` | - | - | 実装で、要求のメソッドにする。 | - |
-      | endpoints[].path | パス | string | 必須 | - | - | - | 実装で、要求のパスにする。 | - |
+      | endpoints[].method | メソッド | string | 必須 | `GET` / `POST` / `PUT` / `PATCH` / `DELETE` / `HEAD` / `OPTIONS` | - | HTTP のメソッド（`GET`・`POST` 等）。 | 実装で、要求のメソッドにする。 | - |
+      | endpoints[].path | パス | string | 必須 | - | - | ベース URL からのパス。可変の部分は `{名前}` で記載する。 | 実装で、要求のパスにする。 | - |
       | endpoints[].summary | 用途 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行の用途。 | 生成で、エンドポイントの一覧の用途にする。 | - |
-      | endpoints[].operation_id | 操作の識別子 | string | - | - | - | - | 実装で、SDK の関数の名前を参照する。 | - |
-      | endpoints[].tags | 分類タグ | array | - | - | - | - | 実装で、公式のドキュメントからエンドポイントの分類を参照する。 | - |
-      | endpoints[].permissions | 必要な権限 | string | - | - | - | - | 実装で、要求する権限・スコープにする。 | - |
-      | endpoints[].idempotent | 冪等 | boolean | - | - | - | - | 実装で、失敗したときに再試行してよいかを決める。 | - |
-      | endpoints[].description | 説明 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | 実装で、エンドポイントの挙動を参照する。 | - |
-      | endpoints[].request | リクエスト | array | - | - | - | - | 実装で、要求の組み立てにする。 | - |
+      | endpoints[].operation_id | 操作の識別子 | string | - | - | - | 公式のドキュメント・SDK での操作の識別子。 | 実装で、呼ぶ SDK の関数を決める。 | - |
+      | endpoints[].tags | 分類タグ | array | - | - | - | 公式のドキュメントでのエンドポイントの分類。 | 実装で、公式のドキュメントから仕様を確認するエンドポイントの分類を決める。 | - |
+      | endpoints[].permissions | 必要な権限 | string | - | - | - | エンドポイントの呼び出しに要る権限・スコープ。 | 実装で、要求する権限・スコープにする。 | - |
+      | endpoints[].idempotent | 冪等 | boolean | - | - | - | 同じ要求を繰り返しても結果が変わらないなら `true`。 | 実装で、失敗したときに再試行してよいかを決める。 | - |
+      | endpoints[].description | 説明 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | 実装で、エンドポイントの挙動に合わせて、呼び出しの前後の処理を決める。 | - |
+      | endpoints[].request | リクエスト | array | - | - | - | 要求のパラメータ。1 要素 = 1 パラメータ。 | 実装で、要求の組み立てにする。 | - |
       | endpoints[].request[].name | パラメータ | string | 必須 | - | - | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child`。 | 実装で、要求のパラメータの名前にする。 | - |
       | endpoints[].request[].type | 型 | string | 必須 | - | - | 取りうる値が限られるときは列挙し、各値の意味は補足に記載する。 | 実装で、パラメータの型にする。 | - |
-      | endpoints[].request[].required | 必須 | boolean | - | - | - | - | 実装で、省けないパラメータにする。 | - |
-      | endpoints[].request[].default | 既定 | string | - | - | - | 任意のパラメータの省略時の値。 | 実装で、省いたときに使われる値を参照する。 | - |
-      | endpoints[].request[].description | 説明 | string | 必須 | - | - | - | 実装で、パラメータに入れる値を決める。 | - |
-      | endpoints[].request[].constraints | 制限 | string | - | - | - | - | 実装で、送る前の検証にする。 | - |
-      | endpoints[].request[].notes | 補足 | string | - | - | - | - | 実装で、パラメータの前提を参照する。 | - |
-      | endpoints[].request[].location | 配置場所 | string | - | `path` / `query` / `header` / `cookie` / `body` | - | - | 実装で、パラメータを入れる場所（パス・クエリ・ヘッダ・本文）にする。 | - |
-      | endpoints[].request[].format | 形式 | string | - | - | - | - | 実装で、文字列の形式にする。 | - |
-      | endpoints[].request[].example | 例 | string | - | - | - | - | テストで、Mock の要求の値にする。 | - |
-      | endpoints[].request[].nullable | 空を許す | boolean | - | - | - | - | 実装で、`null` を送ってよいかを決める。 | - |
+      | endpoints[].request[].required | 必須 | boolean | - | - | - | 省けないパラメータなら `true`。 | 実装で、省けないパラメータにする。 | - |
+      | endpoints[].request[].default | 既定 | string | - | - | - | 任意のパラメータの省略時の値。 | 実装で、パラメータを省くか、明示するかを決める。 | - |
+      | endpoints[].request[].description | 説明 | string | 必須 | - | - | パラメータが何を表すか。 | 実装で、パラメータに入れる値を決める。 | - |
+      | endpoints[].request[].constraints | 制限 | string | - | - | - | 値の上限・下限・長さ・形式などの制限。 | 実装で、送る前の検証にする。 | - |
+      | endpoints[].request[].notes | 補足 | string | - | - | - | パラメータの前提（ほかのパラメータとの組み合わせ・既定の挙動 等）。 | 実装で、パラメータの組み合わせと前提を、要求の組み立てか送信する前の検証にする。 | - |
+      | endpoints[].request[].location | 配置場所 | string | - | `path` / `query` / `header` / `cookie` / `body` | - | パラメータを入れる場所。 | 実装で、パラメータを入れる場所（パス・クエリ・ヘッダ・本文）にする。 | - |
+      | endpoints[].request[].format | 形式 | string | - | - | - | 文字列の形式（`date-time`・`uuid` 等）。 | 実装で、文字列の形式にする。 | - |
+      | endpoints[].request[].example | 例 | string | - | - | - | 値の具体例。 | テストで、Mock の要求の値にする。 | - |
+      | endpoints[].request[].nullable | 空を許す | boolean | - | - | - | `null` を送信してよいなら `true`。 | 実装で、`null` を送ってよいかを決める。 | - |
       | endpoints[].request[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | endpoints[].request[].verification_state | 確認の状態 | string | - | `verified` / `docs_only` / `unverified` | - | 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確かめた方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。 | 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。<br>レビューで、`verified` でない値を確認せずに実装していないかを確認する。<br>生成で、表の確認の状態の列にする。 | - |
+      | endpoints[].request[].verified_at | 確認日時 | string | - | - | format: `date-time` | `verification_state` を `verified` にした日時（ISO 8601、タイムゾーン付き）。 | 保守で、外部 API・外部ライブラリの版が上がったときに、その後に確認し直したかを判断する。<br>生成で、表の確認日時の列にする。 | `2026-11-14T10:00:00+09:00` |
       | endpoints[].request_example | リクエスト例 | string | - | - | - | JSON のコードブロック。body を持たないときはリクエストライン。 | テストで、Mock の要求の見本にする。 | - |
       | endpoints[].response | レスポンス | array | - | - | - | 別のエンドポイントと同形のときは持たず、`same_as` に記載する。 | 実装で、応答を読む型にする。 | - |
       | endpoints[].response[].name | フィールド | string | 必須 | - | - | 返らないことがあるフィールドは `field?` と記載し、条件を補足に記載する。 | 実装で、応答のフィールドの名前にする。 | - |
-      | endpoints[].response[].type | 型 | string | 必須 | - | - | - | 実装で、フィールドの型にする。 | - |
-      | endpoints[].response[].description | 説明 | string | 必須 | - | - | - | 実装で、値の意味を参照する。 | - |
-      | endpoints[].response[].constraints | 制限 | string | - | - | - | - | 実装で、応答の値の上限・形式を参照する。 | - |
-      | endpoints[].response[].notes | 補足 | string | - | - | - | - | 実装で、返らないことがあるフィールドの条件を参照する。 | - |
+      | endpoints[].response[].type | 型 | string | 必須 | - | - | フィールドの型。 | 実装で、フィールドの型にする。 | - |
+      | endpoints[].response[].description | 説明 | string | 必須 | - | - | フィールドの値が何を表すか。 | 実装で、フィールドの値で分岐する条件を決める。 | - |
+      | endpoints[].response[].constraints | 制限 | string | - | - | - | 値の上限・形式などの制限。 | 実装で、応答の値を受け取る型と検証の範囲にする。 | - |
+      | endpoints[].response[].notes | 補足 | string | - | - | - | フィールドの前提（返らない条件・ほかのフィールドとの関係 等）。 | 実装で、フィールドが返らないときの扱いを決める。 | - |
+      | endpoints[].response[].verification_state | 確認の状態 | string | - | `verified` / `docs_only` / `unverified` | - | 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確かめた方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。 | 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。<br>レビューで、`verified` でない値を確認せずに実装していないかを確認する。<br>生成で、表の確認の状態の列にする。 | - |
+      | endpoints[].response[].verified_at | 確認日時 | string | - | - | format: `date-time` | `verification_state` を `verified` にした日時（ISO 8601、タイムゾーン付き）。 | 保守で、外部 API・外部ライブラリの版が上がったときに、その後に確認し直したかを判断する。<br>生成で、表の確認日時の列にする。 | `2026-11-14T10:00:00+09:00` |
       | endpoints[].same_as | 同形のレスポンス | string | - | - | - | レスポンスが同形のエンドポイントの名前。 | 実装で、同じ形の応答の型を使い回す。 | - |
-      | endpoints[].response_headers | 応答のヘッダー | array | - | - | - | - | 実装で、応答のヘッダを読む処理にする。 | - |
-      | endpoints[].response_headers[].name | ヘッダー | string | 必須 | - | - | - | 実装で、読むヘッダの名前にする。 | - |
-      | endpoints[].response_headers[].description | 説明 | string | 必須 | - | - | - | 実装で、ヘッダの値の意味を参照する。 | - |
-      | endpoints[].response_headers[].notes | 補足 | string | - | - | - | - | 実装で、ヘッダの前提を参照する。 | - |
+      | endpoints[].response_headers | 応答のヘッダー | array | - | - | - | 処理で読み取る応答のヘッダー。1 要素 = 1 ヘッダー。 | 実装で、応答のヘッダを読む処理にする。 | - |
+      | endpoints[].response_headers[].name | ヘッダー | string | 必須 | - | - | ヘッダーの名前。 | 実装で、読むヘッダの名前にする。 | - |
+      | endpoints[].response_headers[].description | 説明 | string | 必須 | - | - | ヘッダーの値が何を表すか。 | 実装で、ヘッダの値で分岐する条件にする。 | - |
+      | endpoints[].response_headers[].notes | 補足 | string | - | - | - | ヘッダーの前提（返らない条件 等）。 | 実装で、ヘッダが返らないときの扱いを決める。 | - |
       | endpoints[].response_example | レスポンス例 | string | - | - | - | JSON のコードブロック。 | テストで、Mock の応答にする。 | - |
       | endpoints[].status_codes | ステータスコード | array | 必須 | - | minItems: `1` | 正常・異常とも網羅する。 | 実装で、ステータスコードごとの処理にする。<br>テストで、Mock が返すステータスコードのケースにする。 | - |
-      | endpoints[].status_codes[].code | ステータスコード | string | 必須 | - | - | - | 実装で、分岐するステータスコードにする。 | - |
-      | endpoints[].status_codes[].condition | 発生条件 | string | 必須 | - | - | - | 実装で、そのコードが返る条件を参照する。 | - |
+      | endpoints[].status_codes[].code | ステータスコード | string | 必須 | - | - | HTTP のステータスコード。 | 実装で、分岐するステータスコードにする。 | - |
+      | endpoints[].status_codes[].condition | 発生条件 | string | 必須 | - | - | そのコードが返る条件。 | 実装で、コードごとの分岐の条件と、再試行するかを決める。 | - |
       | endpoints[].status_codes[].notes | 補足 | string | - | - | - | 再試行の方針など。 | 実装で、再試行の方針にする。 | - |
-      | endpoints[].refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | endpoints[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | endpoints[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | endpoints[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
       | endpoints[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
       | endpoints[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | endpoints[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
       | issues | 不具合一覧 | array | - | - | - | 仕様どおりに使用しても期待どおり動かない事象。 | 実装で、仕様どおりに動かない事象を避ける。<br>生成で、不具合一覧の節にする。 | - |
-      | issues[].title | タイトル | string | 必須 | - | - | - | 生成で、節の見出しにする。 | - |
+      | issues[].title | タイトル | string | 必須 | - | - | 事象を 1 行で表したタイトル。 | 生成で、節の見出しにする。 | - |
       | issues[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で事象を要約する。 | 生成で、不具合の一覧の説明にする。 | - |
       | issues[].occurred_on | 発生日 | string | 必須 | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | 事象を確認した日（`YYYY-MM-DD`）。再確認して続いていたら更新する。 | 保守で、事象が今も続いているかを確認し直す時期を判断する。 | - |
-      | issues[].state | 状態 | string | - | `未解決` / `回避策あり` / `解消済み` | - | - | 保守で、回避策を入れたままにするかを判断する。 | - |
-      | issues[].description | 概要 | string | 必須 | - | - | 何が起きるかを事実だけで記載する。 | 実装で、起きる事象を参照する。 | - |
+      | issues[].state | 状態 | string | - | `未解決` / `回避策あり` / `解消済み` | - | 提供元での対応の状態。 | 保守で、回避策を入れたままにするかを判断する。 | - |
+      | issues[].description | 概要 | string | 必須 | - | - | 何が起きるかを事実だけで記載する。 | 実装で、事象を回避する処理を入れるかを決める。 | - |
       | issues[].conditions | 条件 | array | - | - | - | 再現する状況。 | 実装で、事象を避ける条件にする。<br>テストで、事象を再現するケースにする。 | - |
-      | issues[].workarounds | 対処法 | array | 必須 | - | minItems: `1` | - | 実装で、回避策を入れる。 | - |
+      | issues[].workarounds | 対処法 | array | 必須 | - | minItems: `1` | 回避策。1 要素 = 1 つの回避策。 | 実装で、回避策を入れる。 | - |
       | issues[].workarounds[].method | 方法 | string | 必須 | - | - | 回避策が無いときは `回避策なし`。 | 実装で、回避策の方法にする。 | - |
       | issues[].workarounds[].result | 結果 | string | 必須 | - | - | 得られるものと、本来やりたかったことからのずれ。 | 実装で、回避策を選ぶときに得られるものとずれを比べる。 | - |
       | issues[].workarounds[].recommended | 推奨 | boolean | - | - | - | 最初に試す 1 案だけ。 | 実装で、最初に試す回避策にする。 | - |
       | issues[].upstream_issue | 上流の Issue | string | - | - | - | 上流の Issue の URL。 | 保守で、上流で解消したかを確認する先にする。 | - |
       | issues[].fixed_in | 解消版 | string | - | - | - | 解消したバージョン。達したら回避策を削除する候補になる。 | 保守で、解消した版へ上げた後に回避策を外す。 | - |
-      | issues[].refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | issues[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | issues[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | issues[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
-      | refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
 

@@ -65,6 +65,7 @@ properties:
       state:
         type: string
         title: 状態
+        description: API を動かして確認したか（`済`・`未確認`）。
         x-used-by:
           - 実装で、実装の前に動作確認が要るかを判断する。
         enum:
@@ -86,6 +87,7 @@ properties:
   version:
     type: object
     title: 現在のバージョン情報
+    description: 採用している API のバージョンと、確認した日。
     x-used-by:
       - 実装で、指定する API のバージョンにする。
     x-heading: 現在のバージョン情報
@@ -104,17 +106,20 @@ properties:
       checked_on:
         type: string
         title: 確認日
+        description: バージョンの情報を確認した日（`YYYY-MM-DD`）。
         x-used-by:
           - 保守で、バージョンの情報が古くなっていないかを判断する。
         pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
       sunset:
         type: string
         title: 廃止予定日
+        description: そのバージョンが廃止される予定の日（`YYYY-MM-DD`）。
         x-used-by:
           - 計画で、廃止の前に移行する作業を計画する。
   base_urls:
     type: array
     title: ベース URL
+    description: 環境ごとの接続先。1 要素 = 1 環境。
     x-used-by:
       - 実装で、環境ごとの接続先の設定にする。
     x-shape: table
@@ -130,41 +135,49 @@ properties:
         env:
           type: string
           title: 環境
+          description: 環境の名前（`本番`・`検証` 等）。
           x-used-by:
             - 実装で、接続先を切り替える環境にする。
         url:
           type: string
           title: URL
+          description: その環境のベース URL。
           x-used-by:
             - 実装で、接続先の URL にする。
   official_url:
     type: string
     title: 公式 URL
+    description: API の公式ページの URL。
     x-used-by:
       - 実装で、仕様を確認するときに公式のページを開く。
   docs_url:
     type: string
     title: 公式ドキュメント
+    description: API の公式ドキュメントの URL。
     x-used-by:
       - 実装で、仕様を確認するときに公式のドキュメントを開く。
   terms_url:
     type: string
     title: 利用規約
+    description: 利用規約の URL。
     x-used-by:
       - レビューで、使い方が利用規約に反しないかを確認する。
   contact:
     type: string
     title: 連絡先
+    description: 障害・不具合を問い合わせる先（URL・メールアドレス）。
     x-used-by:
       - 保守で、障害・不具合を問い合わせる先にする。
   status_page:
     type: string
     title: 障害情報の確認先
+    description: 提供元の障害情報のページの URL。
     x-used-by:
       - 保守で、呼び出しが失敗したときに提供元の障害かを確認する。
   auth:
     type: object
     title: 認証セットアップ
+    description: 認証の方式と、認証情報の取得から設定までの手順。
     x-used-by:
       - 実装で、認証の処理にする。
     x-heading: 認証セットアップ
@@ -181,6 +194,7 @@ properties:
       scopes:
         type: array
         title: スコープ
+        description: 要求するスコープ。1 要素 = 1 スコープ。
         x-used-by:
           - 実装で、要求するスコープにする。
           - レビューで、スコープが必要な範囲に収まっているかを確認する。
@@ -209,6 +223,7 @@ properties:
   rate_limits:
     type: array
     title: レートリミット
+    description: 提供元が定める呼び出しの上限。1 要素 = 1 つの上限。
     x-used-by:
       - 設計で、非機能要件のレート制限の値の出所にする。
       - 実装で、呼び出しの間隔と同時実行数を決める。
@@ -224,6 +239,7 @@ properties:
         target:
           type: string
           title: 対象
+          description: 上限が掛かる単位（API キー・エンドポイント・IP 等）。
           x-used-by:
             - 実装で、上限が掛かる単位（API キー・エンドポイント）にする。
         limit:
@@ -235,8 +251,9 @@ properties:
         notes:
           type: string
           title: 補足
+          description: 上限の前提（数え方・リセットの時刻・プラン 等）。
           x-used-by:
-            - 実装で、上限の前提を参照する。
+            - 実装で、上限を数える単位とリセットの時刻を、呼び出しの間隔の制御にする。
   retry:
     $ref: common.schema.yaml#/$defs/markdown
     title: 再試行
@@ -246,6 +263,7 @@ properties:
   pricing:
     type: array
     title: 課金単価
+    description: 料金の単価。1 要素 = 1 つの課金の単位。
     x-used-by:
       - 実行で、実行の前に料金を見積もってユーザーの確認が要るかを判断する。
     x-heading: 課金単価
@@ -260,18 +278,21 @@ properties:
         target:
           type: string
           title: 対象
+          description: 課金の単位（要求・トークン・秒 等）。
           x-used-by:
             - 実行で、料金を見積もる単位にする。
         price:
           type: string
           title: 単価
+          description: 単位あたりの料金（通貨を添える）。
           x-used-by:
             - 実行で、料金の見積もりにする。
         notes:
           type: string
           title: 補足
+          description: 単価の前提（プラン・無料枠・為替 等）。
           x-used-by:
-            - 実行で、料金の見積もりの前提を参照する。
+            - 実行で、料金の見積もりに無料枠・プランを含める。
   pricing_url:
     type: string
     title: 課金の公式ページ
@@ -293,6 +314,7 @@ properties:
   timeout:
     type: string
     title: タイムアウト
+    description: 呼び出しのタイムアウトの値と、その出所。
     x-used-by:
       - 実装で、呼び出しのタイムアウトにする。
   endpoints:
@@ -327,6 +349,7 @@ properties:
         method:
           type: string
           title: メソッド
+          description: HTTP のメソッド（`GET`・`POST` 等）。
           x-used-by:
             - 実装で、要求のメソッドにする。
           enum:
@@ -340,6 +363,7 @@ properties:
         path:
           type: string
           title: パス
+          description: ベース URL からのパス。可変の部分は `{名前}` で記載する。
           x-used-by:
             - 実装で、要求のパスにする。
         summary:
@@ -351,33 +375,38 @@ properties:
         operation_id:
           type: string
           title: 操作の識別子
+          description: 公式のドキュメント・SDK での操作の識別子。
           x-used-by:
-            - 実装で、SDK の関数の名前を参照する。
+            - 実装で、呼ぶ SDK の関数を決める。
         tags:
           type: array
           title: 分類タグ
+          description: 公式のドキュメントでのエンドポイントの分類。
           x-used-by:
-            - 実装で、公式のドキュメントからエンドポイントの分類を参照する。
+            - 実装で、公式のドキュメントから仕様を確認するエンドポイントの分類を決める。
           items:
             type: string
         permissions:
           type: string
           title: 必要な権限
+          description: エンドポイントの呼び出しに要る権限・スコープ。
           x-used-by:
             - 実装で、要求する権限・スコープにする。
         idempotent:
           type: boolean
           title: 冪等
+          description: 同じ要求を繰り返しても結果が変わらないなら `true`。
           x-used-by:
             - 実装で、失敗したときに再試行してよいかを決める。
         description:
           $ref: common.schema.yaml#/$defs/markdown
           title: 説明
           x-used-by:
-            - 実装で、エンドポイントの挙動を参照する。
+            - 実装で、エンドポイントの挙動に合わせて、呼び出しの前後の処理を決める。
         request:
           type: array
           title: リクエスト
+          description: 要求のパラメータ。1 要素 = 1 パラメータ。
           x-used-by:
             - 実装で、要求の組み立てにする。
           x-heading: リクエスト
@@ -406,6 +435,7 @@ properties:
               required:
                 type: boolean
                 title: 必須
+                description: 省けないパラメータなら `true`。
                 x-used-by:
                   - 実装で、省けないパラメータにする。
               default:
@@ -413,25 +443,29 @@ properties:
                 title: 既定
                 description: 任意のパラメータの省略時の値。
                 x-used-by:
-                  - 実装で、省いたときに使われる値を参照する。
+                  - 実装で、パラメータを省くか、明示するかを決める。
               description:
                 type: string
                 title: 説明
+                description: パラメータが何を表すか。
                 x-used-by:
                   - 実装で、パラメータに入れる値を決める。
               constraints:
                 type: string
                 title: 制限
+                description: 値の上限・下限・長さ・形式などの制限。
                 x-used-by:
                   - 実装で、送る前の検証にする。
               notes:
                 type: string
                 title: 補足
+                description: パラメータの前提（ほかのパラメータとの組み合わせ・既定の挙動 等）。
                 x-used-by:
-                  - 実装で、パラメータの前提を参照する。
+                  - 実装で、パラメータの組み合わせと前提を、要求の組み立てか送信する前の検証にする。
               location:
                 type: string
                 title: 配置場所
+                description: パラメータを入れる場所。
                 x-used-by:
                   - 実装で、パラメータを入れる場所（パス・クエリ・ヘッダ・本文）にする。
                 enum:
@@ -443,20 +477,27 @@ properties:
               format:
                 type: string
                 title: 形式
+                description: 文字列の形式（`date-time`・`uuid` 等）。
                 x-used-by:
                   - 実装で、文字列の形式にする。
               example:
                 type: string
                 title: 例
+                description: 値の具体例。
                 x-used-by:
                   - テストで、Mock の要求の値にする。
               nullable:
                 type: boolean
                 title: 空を許す
+                description: '`null` を送信してよいなら `true`。'
                 x-used-by:
                   - 実装で、`null` を送ってよいかを決める。
               status:
                 $ref: common.schema.yaml#/$defs/status
+              verification_state:
+                $ref: common.schema.yaml#/$defs/verification_state
+              verified_at:
+                $ref: common.schema.yaml#/$defs/verified_at
         request_example:
           $ref: common.schema.yaml#/$defs/markdown
           title: リクエスト例
@@ -489,23 +530,31 @@ properties:
               type:
                 type: string
                 title: 型
+                description: フィールドの型。
                 x-used-by:
                   - 実装で、フィールドの型にする。
               description:
                 type: string
                 title: 説明
+                description: フィールドの値が何を表すか。
                 x-used-by:
-                  - 実装で、値の意味を参照する。
+                  - 実装で、フィールドの値で分岐する条件を決める。
               constraints:
                 type: string
                 title: 制限
+                description: 値の上限・形式などの制限。
                 x-used-by:
-                  - 実装で、応答の値の上限・形式を参照する。
+                  - 実装で、応答の値を受け取る型と検証の範囲にする。
               notes:
                 type: string
                 title: 補足
+                description: フィールドの前提（返らない条件・ほかのフィールドとの関係 等）。
                 x-used-by:
-                  - 実装で、返らないことがあるフィールドの条件を参照する。
+                  - 実装で、フィールドが返らないときの扱いを決める。
+              verification_state:
+                $ref: common.schema.yaml#/$defs/verification_state
+              verified_at:
+                $ref: common.schema.yaml#/$defs/verified_at
         same_as:
           type: string
           title: 同形のレスポンス
@@ -515,6 +564,7 @@ properties:
         response_headers:
           type: array
           title: 応答のヘッダー
+          description: 処理で読み取る応答のヘッダー。1 要素 = 1 ヘッダー。
           x-used-by:
             - 実装で、応答のヘッダを読む処理にする。
           x-shape: table
@@ -529,18 +579,21 @@ properties:
               name:
                 type: string
                 title: ヘッダー
+                description: ヘッダーの名前。
                 x-used-by:
                   - 実装で、読むヘッダの名前にする。
               description:
                 type: string
                 title: 説明
+                description: ヘッダーの値が何を表すか。
                 x-used-by:
-                  - 実装で、ヘッダの値の意味を参照する。
+                  - 実装で、ヘッダの値で分岐する条件にする。
               notes:
                 type: string
                 title: 補足
+                description: ヘッダーの前提（返らない条件 等）。
                 x-used-by:
-                  - 実装で、ヘッダの前提を参照する。
+                  - 実装で、ヘッダが返らないときの扱いを決める。
         response_example:
           $ref: common.schema.yaml#/$defs/markdown
           title: レスポンス例
@@ -568,13 +621,15 @@ properties:
               code:
                 type: string
                 title: ステータスコード
+                description: HTTP のステータスコード。
                 x-used-by:
                   - 実装で、分岐するステータスコードにする。
               condition:
                 type: string
                 title: 発生条件
+                description: そのコードが返る条件。
                 x-used-by:
-                  - 実装で、そのコードが返る条件を参照する。
+                  - 実装で、コードごとの分岐の条件と、再試行するかを決める。
               notes:
                 type: string
                 title: 補足
@@ -584,6 +639,7 @@ properties:
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -632,6 +688,7 @@ properties:
         title:
           type: string
           title: タイトル
+          description: 事象を 1 行で表したタイトル。
           x-used-by:
             - 生成で、節の見出しにする。
         summary:
@@ -650,6 +707,7 @@ properties:
         state:
           type: string
           title: 状態
+          description: 提供元での対応の状態。
           x-used-by:
             - 保守で、回避策を入れたままにするかを判断する。
           enum:
@@ -661,7 +719,7 @@ properties:
           title: 概要
           description: 何が起きるかを事実だけで記載する。
           x-used-by:
-            - 実装で、起きる事象を参照する。
+            - 実装で、事象を回避する処理を入れるかを決める。
         conditions:
           type: array
           title: 条件
@@ -675,6 +733,7 @@ properties:
         workarounds:
           type: array
           title: 対処法
+          description: 回避策。1 要素 = 1 つの回避策。
           x-used-by:
             - 実装で、回避策を入れる。
           x-heading: 対処法
@@ -721,6 +780,7 @@ properties:
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -740,6 +800,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。

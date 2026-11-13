@@ -77,6 +77,28 @@ $defs:
     - implemented
     - deprecated
     - removed
+  verification_state:
+    type: string
+    title: 確認の状態
+    description: 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確かめた方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。
+    x-used-by:
+      - 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。
+      - レビューで、`verified` でない値を確認せずに実装していないかを確認する。
+      - 生成で、表の確認の状態の列にする。
+    enum:
+    - verified
+    - docs_only
+    - unverified
+  verified_at:
+    type: string
+    title: 確認日時
+    description: '`verification_state` を `verified` にした日時（ISO 8601、タイムゾーン付き）。'
+    x-used-by:
+      - 保守で、外部 API・外部ライブラリの版が上がったときに、その後に確認し直したかを判断する。
+      - 生成で、表の確認日時の列にする。
+    format: date-time
+    examples:
+    - '2026-11-14T10:00:00+09:00'
   visibility:
     type: string
     title: 公開
@@ -125,11 +147,16 @@ $defs:
         name:
           type: string
           title: タグの名前
+          description: タグの名前。`action:`・`topic:`・`tool:` などで始める。
+          x-used-by:
+            - 検索で、文書をタグで絞り込む値にする。
           minLength: 1
         main:
           type: boolean
           title: 主題
           description: 最も分量の多い主題のタグだけ `true` にする。
+          x-used-by:
+            - 検索で、文書の主題のタグとして扱う。
     examples:
       - - name: topic:タグ
           main: true
@@ -197,6 +224,7 @@ $defs:
       nodes:
         type: array
         title: ノード
+        description: 図のノード。1 要素 = 1 ノード。
         x-used-by:
           - 生成で、図のノードにする。
         x-key: id
@@ -267,6 +295,7 @@ $defs:
           label:
             type: string
             title: 表示
+            description: ノードを囲む枠の見出し。
             x-used-by:
               - 生成で、枠の見出しにする。
           nodes:
@@ -280,6 +309,7 @@ $defs:
       clicks:
         type: array
         title: リンク
+        description: ノードを押したときに開くリンク。1 要素 = 1 ノード。
         x-used-by:
           - 生成で、ノードを押したときに開くリンクにする。
         x-key: id
@@ -364,6 +394,7 @@ $defs:
       states:
         type: array
         title: 状態
+        description: 取りうる状態。1 要素 = 1 状態。
         x-used-by:
           - 実装で、状態の値の一覧にする。
         x-key: name
@@ -415,18 +446,20 @@ $defs:
             on_enter:
               type: string
               title: 入る時の処理
+              description: 状態に入ったときに実行する処理。
               x-used-by:
                 - 実装で、状態に入ったときに実行する処理にする。
             on_exit:
               type: string
               title: 出る時の処理
+              description: 状態を出るときに実行する処理。
               x-used-by:
                 - 実装で、状態を出るときに実行する処理にする。
             notes:
               $ref: "#/$defs/markdown"
               title: 補足
               x-used-by:
-                - 実装で、状態の前提・制約を参照する。
+                - 実装で、状態に入る・出る前に満たす前提を、検証の処理にする。
       initial:
         type: string
         title: 初期状態
@@ -488,6 +521,7 @@ $defs:
             action:
               type: string
               title: そのときの処理
+              description: 遷移のときに実行する処理。
               x-used-by:
                 - 実装で、遷移のときに実行する処理にする。
             self:
@@ -542,6 +576,7 @@ $defs:
       entities:
         type: array
         title: 実体
+        description: ER 図のテーブル。1 要素 = 1 テーブル。
         x-used-by:
           - 生成で、ER 図のテーブルにする。
         x-key: name
@@ -574,11 +609,13 @@ $defs:
                   type:
                     type: string
                     title: 型
+                    description: カラムの型。
                     x-used-by:
                       - 生成で、カラムの型にする。
                   name:
                     type: string
                     title: 名前
+                    description: カラムの物理名。
                     x-used-by:
                       - 生成で、カラムの名前にする。
                       - 設計で、関連の元の列・先の列から指す名前にする。
@@ -586,6 +623,7 @@ $defs:
                   key:
                     type: string
                     title: キー
+                    description: カラムのキーの種類（`PK`・`FK`・`UK`）。キーでないときは記載しない。
                     x-used-by:
                       - 生成で、主キー・外部キー・一意キーの印にする。
                     enum:
@@ -595,6 +633,7 @@ $defs:
       relations:
         type: array
         title: 関連
+        description: テーブルどうしの関連。1 要素 = 1 本の線。
         x-used-by:
           - 生成で、ER 図の関連の線にする。
         items:
@@ -611,11 +650,13 @@ $defs:
             from:
               type: string
               title: 元
+              description: 線の元のテーブルの名前。
               x-used-by:
                 - 生成で、線の元のテーブルにする。
             to:
               type: string
               title: 先
+              description: 線の先のテーブルの名前。
               x-used-by:
                 - 生成で、線の先のテーブルにする。
             from_column:
@@ -641,6 +682,7 @@ $defs:
             label:
               type: string
               title: ラベル
+              description: 関連の意味を表す短い動詞句（`持つ`・`属する` 等）。
               x-used-by:
                 - 生成で、線のラベルにする。
   er_cardinality:
@@ -671,6 +713,9 @@ $defs:
     type: object
     title: モデル
     description: 使用するモデルと、モデルに指定する引数。『エージェントの定義』と『LLM の呼び出し』の `model` が使用する。
+    x-used-by:
+      - 実装で、起動コマンド・呼び出しに指定するモデルと引数にする。
+      - レビューで、ノードの役割に対して費用と質が釣り合うモデルかを確認する。
     x-shape: attributes
     additionalProperties: false
     required:

@@ -32,8 +32,8 @@ items:
       | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 検査で、ほかの設計書の参照（`{ID}#{項目のパス}`）の解決先にする。<br>生成で、ページの名前と、ほかの設計書からのリンク先にする。 | `LAY-1` |
       | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>dev-docs の配信で、文書の公開範囲のメタデータにする。 | - |
       | tags | タグ | array | - | - | - | 設計書を検索で絞り込むタグで、`name` にタグの名前（`action:`・`topic:`・`tool:` などで始める）、最も分量の多い主題 1 つに `main: true` を記載する。<br>付け方は knowledge の規約『文書のタグと description の記載』に従う。 | dev-docs の検索で、文書をタグで絞り込む。 | `[{main: true, name: topic:タグ}, name: action:記載]` |
-      | tags[].name | タグの名前 | string | 必須 | - | minLength: `1` | - | - | - |
-      | tags[].main | 主題 | boolean | - | - | - | 最も分量の多い主題のタグだけ `true` にする。 | - | - |
+      | tags[].name | タグの名前 | string | 必須 | - | minLength: `1` | タグの名前。`action:`・`topic:`・`tool:` などで始める。 | 検索で、文書をタグで絞り込む値にする。 | - |
+      | tags[].main | 主題 | boolean | - | - | - | 最も分量の多い主題のタグだけ `true` にする。 | 検索で、文書の主題のタグとして扱う。 | - |
       | aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | dev-docs の検索で、文書を名前と同じように引く言い換えにする。 | `[フォルダ構成の設計書]` |
       | title | タイトル | string | 必須 | - | - | 設計書の表示名。 | 生成で、ページの見出しにする。<br>dev-docs の検索で、文書の名前にする。 | `aituber` |
       | repository | リポジトリ | string | 必須 | - | pattern: `^[^/\s]+/[^/\s]+$` | 対象のリポジトリ（`owner/name`）。 | 実装で、フォルダ構成を当てるリポジトリにする。 | `shuhei1101/aituber` |
@@ -49,19 +49,19 @@ items:
       | entries[].content_types | 中身の種類 | array | - | - | - | 中身の種類。最上位の `content_types[].name` の単語を選ぶ。 | レビューで、役割と機能の切り方がフォルダの中で混ざっていないかを確認する。 | `[agent_flow, brain]` |
       | entries[].generated_from | 生成元 | object | - | - | - | 生成物・複製のエントリの生成元と、生成するコマンド。 | 実装で、生成物を手で書き換えず、生成元を直してコマンドで作り直す。 | - |
       | entries[].generated_from.path | 生成元のパス | string | 必須 | - | - | 生成元のリポジトリの直下からのパス。 | 実装で、生成物を直すときに書き換える生成元にする。 | `frontend/` |
-      | entries[].generated_from.command | 生成するコマンド | string | 必須 | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 生成するコマンドを持つ『開発コマンド』の分類への参照。 | 実装で、生成物を作り直すコマンドを参照する。 | `CMD-1#categories[ビルド・生成]` |
-      | entries[].placeholders | 可変の部分 | array | - | - | - | `name`・`naming` の `{名前}` ごとの、値の語彙への参照。 | 実装で、`{名前}` に入れる値の候補を参照する。 | - |
+      | entries[].generated_from.command | 生成するコマンド | string | 必須 | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 生成するコマンドを持つ『開発コマンド』の分類への参照。 | 実装で、生成物を作り直すコマンドを実行する。 | `CMD-1#categories[ビルド・生成]` |
+      | entries[].placeholders | 可変の部分 | array | - | - | - | `name`・`naming` の `{名前}` ごとの、値の語彙への参照。 | 実装で、`{名前}` に入れる値を候補から選ぶ。 | - |
       | entries[].placeholders[].name | 名前 | string | 必須 | - | - | `{名前}` の名前。 | 実装で、置き換える `{名前}` を決める。 | `stage` |
-      | entries[].placeholders[].from | 語彙 | string | 必須 | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 値の語彙を持つ設計書の項目への参照。 | 実装で、`{名前}` の値の語彙を持つ設計書を参照する。 | `AG-1#stages` |
+      | entries[].placeholders[].from | 語彙 | string | 必須 | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 値の語彙を持つ設計書の項目への参照。 | 実装で、`{名前}` に入れる値を、語彙を持つ設計書の値から選ぶ。 | `AG-1#stages` |
       | entries[].children | 配下のエントリ | array | - | - | - | `type` が `folder` のときだけ記載する、配下のフォルダとファイル。 | 実装で、フォルダの配下に置くフォルダとファイルにする。 | - |
       | entries[].naming | ファイル名の決まり | array | - | - | - | `type` が `folder` のときだけ記載する、配下のファイル名のパターン（英語）。 | 実装で、配下のファイル名にする。<br>レビューで、ファイル名がパターンに合うかを確認する。 | `['{stage}.yaml']` |
       | entries[].used_by | 参照する構成要素 | array | - | - | - | `type` が `folder` のときだけ記載する、配下を参照する構成要素の設計書への参照。 | レビューで、フォルダを参照する構成要素と依存の向きを確認する。 | `[AG-1#, AG-2#]` |
       | entries[].id_root | ID の起点 | boolean | - | - | - | `type` が `folder` のときだけ記載する。配下のファイルの文書の ID を、このフォルダからのパスにするか。 | 検索で、dev-docs が配下の文書の ID をフォルダからのパスにする。 | - |
-      | entries[].convention | 配下の規約 | string | - | - | - | `type` が `folder` のときだけ記載する、配下の配置を定める knowledge の規約の ID。 | 実装で、配下の配置を定める規約を参照する。 | `python-architecture-layout` |
+      | entries[].convention | 配下の規約 | string | - | - | - | `type` が `folder` のときだけ記載する、配下の配置を定める knowledge の規約の ID。 | 実装で、配下のファイルの配置を規約に合わせる。 | `python-architecture-layout` |
       | gitignore | Git で管理しないもの | array | - | - | - | `.gitignore` に記載するパターンと、管理しない理由。 | 実装で、`.gitignore` の行にする。 | - |
       | gitignore[].pattern | パターン | string | 必須 | - | - | `.gitignore` の 1 行のパターン。 | 実装で、`.gitignore` の 1 行にする。 | `tmp/` |
       | gitignore[].reason | 理由 | string | 必須 | - | - | Git で管理しない理由。 | レビューで、Git で管理しない理由が成り立つかを確認する。 | `一時ファイル` |
-      | refs | 関連 | array | - | - | - | - | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
 
