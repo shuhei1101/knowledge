@@ -60,12 +60,14 @@ properties:
   primary_actor:
     type: string
     title: 主アクター
+    description: シナリオで目的を達成する主体。
     x-used-by:
       - E2E テストで、操作する主体にする。
       - レビューで、主アクターの目的が満たされるかを確認する。
   stakeholders:
     type: array
     title: 関係者と関心
+    description: シナリオの結果に関心を持つ関係者と、その関心。1 要素 = 1 関係者。
     x-used-by:
       - レビューで、関係者ごとの関心が成功時の保証で守られるかを確認する。
     x-shape: table
@@ -80,22 +82,26 @@ properties:
         name:
           type: string
           title: 関係者
+          description: 関係者の名前。
           x-used-by:
             - レビューで、関心を守る相手にする。
         interest:
           type: string
           title: 関心
+          description: 関係者がシナリオの結果に求めること。
           x-used-by:
             - レビューで、成功時の保証と失敗しても守ることに関心が入っているかを確認する。
   trigger:
     type: string
     title: きっかけ
+    description: シナリオを始めるきっかけ（利用者の操作・時刻・イベント）。
     x-used-by:
       - E2E テストで、シナリオを始める操作にする。
       - 設計で、インターフェース定義の入口の種類を決める。
   preconditions:
     type: array
     title: 事前条件
+    description: シナリオを始める前に成り立っている状態。1 要素 = 1 つの状態。
     x-used-by:
       - E2E テストで、事前に用意する状態にする。
     x-shape: list
@@ -114,11 +120,13 @@ properties:
   frequency:
     type: string
     title: 頻度
+    description: シナリオが起きる頻度（1 日あたりの回数 等）。
     x-used-by:
       - 設計で、非機能要件の性能の値を決める前提にする。
   priority:
     type: string
     title: 優先度
+    description: シナリオを実現する優先度。
     x-used-by:
       - 計画で、着手の順を決める。
   reading:
@@ -227,13 +235,14 @@ properties:
           title: 使用する単一ユースケース
           description: 複合ユースケースのノードが指す単一ユースケースのシナリオ。
           x-used-by:
-            - テストで、複合ユースケースの E2E がつなぐ単一ユースケースのシナリオを参照する。
+            - テストで、複合ユースケースの E2E がつなぐ単一ユースケースのシナリオを決める。
             - 検査で、指すシナリオが実在するかを確認する。
           items:
             $ref: common.schema.yaml#/$defs/ref
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -253,6 +262,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。

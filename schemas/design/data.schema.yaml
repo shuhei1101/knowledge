@@ -115,6 +115,7 @@ properties:
         required:
           type: boolean
           title: 必須
+          description: 必ず値を持つ項目なら `true`。
           x-used-by:
             - 設計で、ER 図の設計書のカラムの NOT NULL を決める。
         description:
@@ -123,12 +124,13 @@ properties:
           description: '`enum` は値と意味を並べる。'
           x-used-by:
             - レビューで、利用者が項目の意味を確認する。
-            - 実装で、値の意味を参照する。
+            - 実装で、項目に入れる値を決める。
           examples:
             - '`current`（最新）/ `stale`（要更新）'
         example:
           type: string
           title: 例
+          description: 値の具体例。
           x-used-by:
             - テストで、Factory の値にする。
           examples:
@@ -221,6 +223,7 @@ properties:
         transitions:
           type: array
           title: 遷移
+          description: 状態の値の遷移。1 要素 = 1 つの遷移。
           x-used-by:
             - 実装で、状態を変える処理の条件にする。
             - 生成で、遷移の表にする。
@@ -245,6 +248,7 @@ properties:
               to:
                 type: string
                 title: 先の値
+                description: 遷移した後の値。
                 x-used-by:
                   - 実装で、遷移の後に書き込む値にする。
                 examples:
@@ -252,6 +256,7 @@ properties:
               trigger:
                 type: string
                 title: きっかけ
+                description: 遷移のきっかけになる操作・イベント。
                 x-used-by:
                   - 実装で、状態を変える処理を決める。
                 examples:
@@ -291,6 +296,7 @@ properties:
         retention:
           type: string
           title: 保持期間
+          description: データを残す期間。
           x-used-by:
             - 実装で、古いデータを削除する処理にする。
           examples:
@@ -298,6 +304,7 @@ properties:
         deletion:
           type: string
           title: 削除の方針
+          description: データを削除する方針（物理削除・論理削除・削除しない）。
           x-used-by:
             - 実装で、削除の処理にする。
           examples:
@@ -323,6 +330,7 @@ properties:
         interface:
           type: string
           title: インターフェース
+          description: データを読み書きするインターフェース定義の ID。
           x-used-by:
             - インターフェース定義で、そのインターフェースの設計書を決める。
           examples:
@@ -330,6 +338,7 @@ properties:
         access:
           type: string
           title: 読み書き
+          description: そのインターフェースが読み取るか、書き込むか。
           x-used-by:
             - インターフェース定義で、読み取りか書き込みかを決める。
           enum:
@@ -349,6 +358,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。

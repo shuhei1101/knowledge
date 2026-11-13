@@ -57,7 +57,7 @@ properties:
     title: テスト種別
     description: テスト種別ごとの実行コマンド。
     x-used-by:
-      - テストで、種別ごとの実行のコマンドを参照する。
+      - テストで、種別ごとに実行するコマンドを決める。
       - 生成で、種別ごとの節にする。
     x-rules:
       - 初期構築では種別だけを作り、コマンドはテストを作る担当が確定させる。
@@ -95,6 +95,7 @@ properties:
         name:
           type: string
           title: 種別
+          description: テスト種別の名前（`単体`・`結合`・`E2E`・`lint`）。
           x-used-by:
             - テストで、テストのレベル（単体・結合・E2E・lint）とテストの置き場所を対応させる。
             - 生成で、節の見出しにする。
@@ -112,7 +113,7 @@ properties:
           title: 説明
           description: 使用するツールと実行の方式。
           x-used-by:
-            - テストで、使用するツールと実行の方式を参照する。
+            - テストで、使用するツールと実行の方式を決める。
         prerequisites:
           type: array
           title: 前提
@@ -134,6 +135,7 @@ properties:
         run_one:
           type: object
           title: 個別実行
+          description: 1 つのテストだけを実行するコマンドと、その指定方法。
           x-used-by:
             - 実行で、失敗したテストだけを実行し直すコマンドにする。
           additionalProperties: false
@@ -174,21 +176,25 @@ properties:
         duration:
           type: string
           title: 所要時間の目安
+          description: 全件実行の所要時間の目安。
           x-used-by:
             - 実行で、実行を待つ時間と、ほかの全件実行と重ねないかを判断する。
         parallel:
           type: boolean
           title: 並列にできる
+          description: ほかの作業の全件実行と同時に実行してよいなら `true`。
           x-used-by:
             - 実行で、ほかの作業の全件実行と同時に流してよいかを判断する。
         external_cost:
           type: string
           title: 外部への依存と費用
+          description: テストが呼ぶ外部のサービスと、発生する費用。
           x-used-by:
             - 実行で、実行の前に外部への依存と費用の確認が要るかを判断する。
         results:
           type: string
           title: 結果の配置場所
+          description: 実行した結果のログを配置する場所。
           x-used-by:
             - 実行で、実行した後に結果のログを探す場所にする。
         notes:
@@ -196,6 +202,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。

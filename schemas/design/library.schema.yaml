@@ -47,6 +47,7 @@ properties:
   kind:
     type: string
     title: 種類
+    description: ライブラリの種類（言語のパッケージ・CLI・CDN 等）。
     x-used-by:
       - 実装で、依存の定義（言語のパッケージ・CLI・CDN）のどこに入れるかを決める。
     enum:
@@ -68,11 +69,13 @@ properties:
   supplier:
     type: string
     title: 提供元
+    description: ライブラリを提供する組織・個人。
     x-used-by:
       - レビューで、提供元の保守の状況を確認する。
   dependency_scope:
     type: string
     title: 依存の範囲
+    description: 依存の範囲（実行時・開発時）。
     x-used-by:
       - 実装で、依存を実行時・開発時のどちらに入れるかを決める。
     enum:
@@ -82,6 +85,7 @@ properties:
   adoption:
     type: string
     title: 採用状態
+    description: 採用の状態（採用・検討中・廃止）。
     x-used-by:
       - 実装で、採用したライブラリだけを使い、検討中・廃止のものを新しく使わない。
     enum:
@@ -117,6 +121,7 @@ properties:
       state:
         type: string
         title: 状態
+        description: ライブラリを動かして確認したか（`済`・`未確認`）。
         x-used-by:
           - 実装で、実装の前に動作確認が要るかを判断する。
         enum:
@@ -138,6 +143,7 @@ properties:
   version:
     type: object
     title: 現在のバージョン情報
+    description: 採用しているバージョンと、上げる判断に要る情報。
     x-used-by:
       - 保守で、ライブラリを上げるかを判断する。
     x-heading: 現在のバージョン情報
@@ -157,6 +163,7 @@ properties:
       latest:
         type: string
         title: 最新版
+        description: 確認した時点の最新版。
         x-used-by:
           - 保守で、採用しているバージョンと比べて上げるかを判断する。
       checked_on:
@@ -171,25 +178,29 @@ properties:
         title: バージョンの出所
         description: 突き合わせる依存の定義（`uv.lock` / `pyproject.toml` / CDN の URL）。
         x-used-by:
-          - 保守で、採用しているバージョンを突き合わせる依存の定義を参照する。
+          - 保守で、採用しているバージョンを突き合わせる依存の定義のファイルを決める。
       pinning:
         type: string
         title: バージョンの固定方法
+        description: バージョンの固定方法（完全一致・範囲 等）。
         x-used-by:
           - 保守で、依存を上げるときのバージョンの指定の書き方にする。
       support_until:
         type: string
         title: サポート期限
+        description: サポートが切れる日（`YYYY-MM-DD`）。
         x-used-by:
           - 計画で、サポートが切れる前に上げる作業を計画する。
       security_until:
         type: string
         title: セキュリティ対応の期限
+        description: セキュリティ対応が切れる日（`YYYY-MM-DD`）。
         x-used-by:
           - 計画で、セキュリティ対応が切れる前に上げる作業を計画する。
       lts:
         type: boolean
         title: LTS
+        description: 採用しているバージョンが LTS なら `true`。
         x-used-by:
           - 保守で、上げる先のバージョンを LTS から選ぶ。
   license:
@@ -201,6 +212,7 @@ properties:
   official_url:
     type: string
     title: 公式 URL
+    description: ライブラリの公式ページの URL。
     x-used-by:
       - 実装で、仕様を確認するときに公式のページを開く。
   docs_url:
@@ -212,8 +224,9 @@ properties:
   selection:
     type: object
     title: 選定の記録
+    description: 採用のときに比べた候補・決め手・受け入れた制約。
     x-used-by:
-      - 設計で、置き換えを検討するときに前に比べた候補と理由を参照する。
+      - 設計で、置き換えを検討するときに、前に比べた候補を比較の対象に含める。
     x-heading: 選定の記録
     additionalProperties: false
     properties:
@@ -221,7 +234,7 @@ properties:
         $ref: common.schema.yaml#/$defs/markdown
         title: 比べた候補
         x-used-by:
-          - 設計で、置き換えを検討するときに前に比べた候補を参照する。
+          - 設計で、置き換えを検討するときに、前に比べた候補を比較の対象に含める。
       decision:
         $ref: common.schema.yaml#/$defs/markdown
         title: 決めた理由
@@ -231,7 +244,7 @@ properties:
         $ref: common.schema.yaml#/$defs/markdown
         title: 結果
         x-used-by:
-          - 実装で、採用で受け入れた制約を参照する。
+          - 実装で、採用で受け入れた制約を満たす使い方にする。
   install:
     $ref: common.schema.yaml#/$defs/markdown
     title: インストール手順
@@ -242,8 +255,9 @@ properties:
   catalogs:
     type: array
     title: 一覧
+    description: 使用する API・コマンド・設定を単位ごとに並べた一覧。1 要素 = 1 つの単位。
     x-used-by:
-      - 実装で、使う API・コマンド・設定を参照する。
+      - 実装で、呼ぶ API・コマンドと指定する設定を決める。
       - 生成で、一覧の表と節にする。
     x-shape: sections
     x-key: name
@@ -309,7 +323,7 @@ properties:
                 $ref: common.schema.yaml#/$defs/markdown
                 title: 説明
                 x-used-by:
-                  - 実装で、対象の挙動を参照する。
+                  - 実装で、対象の挙動に合わせて、呼び出しの前後の処理を決める。
               params:
                 type: array
                 title: パラメータ
@@ -342,6 +356,7 @@ properties:
                     required:
                       type: boolean
                       title: 必須
+                      description: 省けない引数なら `true`。
                       x-used-by:
                         - 実装で、省けない引数にする。
                     default:
@@ -349,22 +364,25 @@ properties:
                       title: 既定
                       description: 任意のパラメータの省略時の値。
                       x-used-by:
-                        - 実装で、省いたときに使われる値を参照する。
+                        - 実装で、パラメータを省くか、明示するかを決める。
                     description:
                       type: string
                       title: 説明
+                      description: 引数が何を表すか。
                       x-used-by:
                         - 実装で、引数に入れる値を決める。
                     constraints:
                       type: string
                       title: 制限
+                      description: 値の上限・下限・形式などの制限。
                       x-used-by:
                         - 実装で、渡す前の検証にする。
                     notes:
                       type: string
                       title: 補足
+                      description: 引数の前提（ほかの引数との組み合わせ・既定の挙動 等）。
                       x-used-by:
-                        - 実装で、引数の前提を参照する。
+                        - 実装で、引数の組み合わせと前提を、指定する前の検証にする。
                     verification:
                       $ref: common.schema.yaml#/$defs/verification_state
                     verified_at:
@@ -401,23 +419,27 @@ properties:
                     type:
                       type: string
                       title: 型
+                      description: フィールドの型。
                       x-used-by:
                         - 実装で、フィールドの型にする。
                     description:
                       type: string
                       title: 説明
+                      description: フィールドの値が何を表すか。
                       x-used-by:
-                        - 実装で、値の意味を参照する。
+                        - 実装で、フィールドの値で分岐する条件を決める。
                     constraints:
                       type: string
                       title: 制限
+                      description: 値の上限・形式などの制限。
                       x-used-by:
-                        - 実装で、戻り値の上限・形式を参照する。
+                        - 実装で、戻り値を受け取る型と検証の範囲にする。
                     notes:
                       type: string
                       title: 補足
+                      description: フィールドの前提（返らない条件 等）。
                       x-used-by:
-                        - 実装で、返らないことがあるフィールドの条件を参照する。
+                        - 実装で、フィールドが返らないときの扱いを決める。
               returns_example:
                 $ref: common.schema.yaml#/$defs/markdown
                 title: 戻り値例
@@ -426,6 +448,7 @@ properties:
               refs:
                 type: array
                 title: 関連
+                description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
                 x-used-by:
                   - 生成で、関連する設計書へのリンクにする。
                   - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -473,21 +496,25 @@ properties:
         item:
           type: string
           title: 事項
+          description: 制限の対象を表す短い名前。
           x-used-by:
             - 生成で、表の行の名前にする。
         content:
           type: string
           title: 内容
+          description: 制限の内容（できないこと・満たすべき条件）。
           x-used-by:
             - 実装で、守る制約にする。
         notes:
           type: string
           title: 補足
+          description: 制限の前提（効くバージョン・設定 等）。
           x-used-by:
-            - 実装で、制約の前提を参照する。
+            - 実装で、制限が有効になるバージョン・設定のときの回避の処理を決める。
   usage_limits:
     type: array
     title: 利用上限
+    description: 提供元が定める利用の上限。1 要素 = 1 つの上限。
     x-used-by:
       - 設計で、非機能要件の利用上限の値の出所にする。
       - 実装で、上限に達したときの処理にする。
@@ -510,13 +537,15 @@ properties:
         content:
           type: string
           title: 内容
+          description: 上限の値と、達したときの挙動。
           x-used-by:
             - 実装で、上限の値と到達時の挙動にする。
         notes:
           type: string
           title: 補足
+          description: 上限の前提（数え方・プラン 等）。
           x-used-by:
-            - 実装で、上限の前提を参照する。
+            - 実装で、上限を数える単位を、上限に達する前の制御にする。
   issues:
     type: array
     title: 不具合一覧
@@ -543,6 +572,7 @@ properties:
         title:
           type: string
           title: タイトル
+          description: 事象を 1 行で表したタイトル。
           x-used-by:
             - 生成で、節の見出しにする。
         summary:
@@ -561,6 +591,7 @@ properties:
         state:
           type: string
           title: 状態
+          description: 提供元での対応の状態。
           x-used-by:
             - 保守で、回避策を入れたままにするかを判断する。
           enum:
@@ -572,7 +603,7 @@ properties:
           title: 概要
           description: 何が起きるかを事実だけで記載する。
           x-used-by:
-            - 実装で、起きる事象を参照する。
+            - 実装で、事象を回避する処理を入れるかを決める。
         conditions:
           type: array
           title: 条件
@@ -586,6 +617,7 @@ properties:
         workarounds:
           type: array
           title: 対処法
+          description: 回避策。1 要素 = 1 つの回避策。
           x-used-by:
             - 実装で、回避策を入れる。
           x-heading: 対処法
@@ -632,6 +664,7 @@ properties:
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -651,6 +684,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -671,7 +705,7 @@ properties:
     x-shape: sections
     description: 対象固有の解説セクション（セクションの名前 → 本文）。一覧・制限事項・不具合に属さないもの。
     x-used-by:
-      - 実装で、一覧・制限事項・不具合に属さない対象固有の解説を参照する。
+      - 実装で、一覧・制限事項・不具合に属さない対象固有の挙動に合わせて使い方を決める。
 examples:
 - id: LIB-1
   title: react-image-crop

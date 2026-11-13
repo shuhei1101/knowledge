@@ -50,7 +50,7 @@ properties:
     title: 実装
     description: 部品の実装の場所。リポジトリの直下からのファイルのパスに、`#` と部品の名前（マクロ・コンポーネント）を続ける。
     x-used-by:
-      - 実装で、部品の実装ファイルとシンボルを参照する。
+      - 実装で、部品を修正するファイルとシンボルを決める。
       - レビューで、部品設計と実装の差分を突き合わせる。
     pattern: "^[^#\\s]+(#\\S+)?$"
     examples:
@@ -123,6 +123,7 @@ properties:
         required:
           type: boolean
           title: 必須
+          description: 省けない項目なら `true`。
           x-used-by:
             - 実装で、引数を省けるかを決める。
         default:
@@ -163,6 +164,7 @@ properties:
         description:
           type: string
           title: 説明
+          description: 引数に指定する値が何を表すか。
           x-used-by:
             - 画面設計で、引数に何を渡すかを決める。
           examples:
@@ -200,6 +202,7 @@ properties:
         description:
           type: string
           title: 説明
+          description: スロットに差し込む中身。
           x-used-by:
             - 画面設計で、スロットに何を差し込むかを決める。
           examples:
@@ -242,6 +245,7 @@ properties:
         name:
           type: string
           title: イベント
+          description: イベントの名前（`on{名前}` の props・`CustomEvent` の型名）。
           x-used-by:
             - 実装で、イベントの名前にする。
           examples:
@@ -250,6 +254,7 @@ properties:
         when:
           type: string
           title: 発火の条件
+          description: イベントを発火させる利用者の操作・状態の変化。
           x-used-by:
             - 実装で、イベントを発火させる条件にする。
             - テストで、発火を確認する操作にする。
@@ -291,6 +296,7 @@ properties:
         name:
           type: string
           title: 名前
+          description: CSS カスタムプロパティの名前（`--` で始める）。
           x-used-by:
             - 実装で、CSS カスタムプロパティの名前にする。
           pattern: ^--[a-z0-9-]+$
@@ -299,6 +305,7 @@ properties:
         syntax:
           type: string
           title: 値の書式
+          description: 値の書式（`@property` の `syntax`。`<color>`・`<length>` 等）。
           x-used-by:
             - 実装で、値の書式（`@property` の `syntax`）にする。
           examples:
@@ -306,6 +313,7 @@ properties:
         default:
           type: string
           title: 既定値
+          description: 値を指定しないときの既定値。
           x-used-by:
             - 実装で、値の既定にする。
           examples:
@@ -313,6 +321,7 @@ properties:
         description:
           type: string
           title: 説明
+          description: カスタムプロパティで変わる外観。
           x-used-by:
             - 画面設計で、外観を変えるときに参照する。
           examples:
@@ -419,12 +428,13 @@ properties:
           $ref: common.schema.yaml#/$defs/ref
           title: 部品
           x-used-by:
-            - 実装で、中で使う部品の設計書を参照する。
+            - 実装で、中で使用する部品と、その部品に指定する引数を決める。
           examples:
           - "CMP-4#"
         how:
           type: string
           title: 使用方法
+          description: 中の部品へ指定する値とスロットへの差し込み方。
           x-used-by:
             - 実装で、中の部品へ渡す値と差し込み方にする。
           examples:
@@ -445,6 +455,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。

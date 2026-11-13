@@ -65,13 +65,15 @@ properties:
         manages:
           type: string
           title: 管理する値
+          description: そのファイルで管理する値の範囲。
           x-used-by:
             - 実装で、ファイルごとに持たせる値を決める。
         notes:
           type: string
           title: 補足
+          description: ファイルの前提（読み込む順番・git 管理の対象外 等）。
           x-used-by:
-            - 実装で、ファイルの前提を参照する。
+            - 実装で、ファイルを読み込む順番と、無いときの扱いを決める。
   settings:
     type: array
     title: キー一覧
@@ -122,6 +124,7 @@ properties:
         required:
           type: boolean
           title: 必須
+          description: 省けない項目なら `true`。
           x-used-by:
             - 実装で、無いときにエラーにするかを決める。
         default:
@@ -133,8 +136,9 @@ properties:
         description:
           type: string
           title: 説明
+          description: 設定の値が何を決めるか。
           x-used-by:
-            - 実装で、値の意味を参照する。
+            - 実装で、設定の値を読み込む処理と、値で変わる挙動を決める。
             - 生成で、表の説明にする。
         missing:
           type: string
@@ -170,12 +174,14 @@ properties:
         allowed:
           type: string
           title: 許す値や範囲
+          description: 許す値の候補や数値の範囲。
           x-used-by:
             - 実装で、値の検証の範囲にする。
             - テストで、範囲の外の値のケースにする。
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -224,26 +230,31 @@ properties:
         key:
           type: string
           title: キー
+          description: 上書きする設定のキー。
           x-used-by:
             - 実装で、上書きするキーにする。
         value:
           type: string
           title: 値
+          description: その環境での値。
           x-used-by:
             - 実装で、その環境での値にする。
         description:
           type: string
           title: 説明
+          description: その環境で上書きする理由。
           x-used-by:
-            - 実装で、上書きする理由と意味を参照する。
+            - レビューで、上書きする理由が環境の違いに対応しているかを確認する。
         notes:
           type: string
           title: 補足
+          description: 上書きの前提（有効になる条件・ほかの上書きとの順番 等）。
           x-used-by:
-            - 実装で、上書きの前提を参照する。
+            - 実装で、上書きを有効にする条件を決める。
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。

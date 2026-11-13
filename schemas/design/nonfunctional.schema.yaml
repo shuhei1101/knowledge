@@ -49,7 +49,7 @@ properties:
     title: 一覧
     description: 外部の制約から逆算したアプリの値。一覧の表は各要素から生成する。
     x-used-by:
-      - 実装で、守る値を参照する。
+      - 実装で、守る値を処理の上限・目標にする。
       - 生成で、非機能要件の一覧の表と要素ごとのページにする。
     x-rules:
       - 決まっていない項目も同じ一覧に配置し、決定値を `未確定` にする。
@@ -145,6 +145,7 @@ properties:
         unit:
           type: string
           title: 単位
+          description: 値の単位（`ms`・`件/秒` 等）。
           x-used-by:
             - 実装で、値の単位にする。
         rationale:
@@ -157,6 +158,7 @@ properties:
         measurement:
           type: string
           title: 測り方
+          description: 値を測る方法（測る場所・条件・回数）。
           x-used-by:
             - テストで、値を測る方法にする。
         test_file:
@@ -204,6 +206,7 @@ properties:
             result:
               type: string
               title: 合否
+              description: 確認した結果の合否。
               x-used-by:
                 - 実装で、不合格の要件を修正する対象にする。
               enum:
@@ -214,7 +217,7 @@ properties:
               title: 確認内容
               description: 不合格のとき、起きた事象。
               x-used-by:
-                - 実装で、不合格の要件を修正するときに起きた事象を参照する。
+                - 実装で、不合格の要件を修正するときに、起きた事象から原因を決める。
           examples:
           - device: Windows 11 の PC の Edge
             version: Edge 140
@@ -249,11 +252,13 @@ properties:
               part:
                 type: string
                 title: 区分
+                description: 決定値を分けた区分の名前。
                 x-used-by:
                   - レビューで、内訳の区分に漏れが無いかを確認する。
               value:
                 type: string
                 title: 値
+                description: その区分に割り当てる値。
                 x-used-by:
                   - レビューで、内訳の値の合計・差し引きが決定値と一致するかを確認する。
               notes:
@@ -293,6 +298,7 @@ properties:
               summary:
                 type: string
                 title: 概要
+                description: テストで確認することの 1 行の要約。
                 x-used-by:
                   - テストで、関数の docstring の要約にする。
               condition:
@@ -304,6 +310,7 @@ properties:
               measurement:
                 type: string
                 title: 測定方法
+                description: テストで値を測る方法。
                 x-used-by:
                   - テストで、測定の方法にする。
               expected:
@@ -315,11 +322,13 @@ properties:
               notes:
                 type: string
                 title: 補足
+                description: テストの前提（環境・データの量 等）。
                 x-used-by:
-                  - テストで、ケースの前提を参照する。
+                  - テストで、ケースの準備（環境・データの量）にする。
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -343,6 +352,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。

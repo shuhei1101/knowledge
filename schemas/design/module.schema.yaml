@@ -177,15 +177,17 @@ properties:
           $ref: common.schema.yaml#/$defs/markdown
           title: 説明
           x-used-by:
-            - 実装で、要素の前提と挙動を参照する。
+            - 実装で、要素の処理と docstring に、満たす前提と挙動を反映する。
         inherits:
           type: string
           title: 継承元
+          description: 継承する型・実装する Protocol の名前。
           x-used-by:
             - 実装で、継承・実装する型にする。
         properties:
           type: array
           title: プロパティ
+          description: 型が持つフィールド。1 要素 = 1 フィールド。
           x-used-by:
             - 実装で、型のフィールドにする。
           x-heading: プロパティ
@@ -202,11 +204,13 @@ properties:
               name:
                 type: string
                 title: プロパティ名
+                description: コード上の名前（物理名）。
                 x-used-by:
                   - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                description: 日本語で表した名前。
                 x-used-by:
                   - 生成で、表の論理名にする。
               type:
@@ -230,21 +234,25 @@ properties:
               description:
                 type: string
                 title: 説明
+                description: 値が何を表すか（意味・単位・取りうる範囲）。
                 x-used-by:
-                  - 実装で、意味を参照する。
+                  - 実装で、入れる値を決め、docstring・コメントの説明にする。
               example:
                 type: string
                 title: 例
+                description: 値の具体例。
                 x-used-by:
                   - テストで、Factory の値にする。
               notes:
                 type: string
                 title: 補足
+                description: 説明に収まらない前提・制約。
                 x-used-by:
-                  - 実装で、前提を参照する。
+                  - 実装で、満たす前提を検証の処理か docstring にする。
         methods:
           type: array
           title: メソッド
+          description: 型が持つメソッド。書式は関数と同じ。
           x-used-by:
             - 実装で、型のメソッドにする。
           x-heading: メソッド
@@ -255,6 +263,7 @@ properties:
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -306,6 +315,7 @@ properties:
         values:
           type: array
           title: 値一覧
+          description: Enum のメンバー。1 要素 = 1 メンバー。
           x-used-by:
             - 実装で、Enum のメンバーにする。
           x-heading: 値一覧
@@ -335,21 +345,25 @@ properties:
               title:
                 type: string
                 title: 論理名
+                description: 日本語で表した名前。
                 x-used-by:
                   - 生成で、表の論理名にする。
               description:
                 type: string
                 title: 説明
+                description: 値が何を表すか（意味・単位・取りうる範囲）。
                 x-used-by:
-                  - 実装で、値の意味を参照する。
+                  - 実装で、メンバーを使い分ける条件を決める。
               notes:
                 type: string
                 title: 補足
+                description: 説明に収まらない前提・制約。
                 x-used-by:
-                  - 実装で、値の前提を参照する。
+                  - 実装で、メンバーを使用する前に満たす前提を、検証の処理か docstring にする。
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -401,6 +415,7 @@ properties:
         kind:
           type: string
           title: 種別
+          description: 要素の種別（クラス・抽象クラス・インタフェース・フック 等）。
           x-used-by:
             - 実装で、要素の種別（クラス・抽象クラス・インタフェース・フック 等）を決める。
           enum:
@@ -410,11 +425,13 @@ properties:
         inherits:
           type: string
           title: 継承元
+          description: 継承する型・実装する Protocol の名前。
           x-used-by:
             - 実装で、継承・実装する型にする。
         properties:
           type: array
           title: プロパティ
+          description: クラスが持つフィールド。1 要素 = 1 フィールド。
           x-used-by:
             - 実装で、クラスのフィールドにする。
           x-heading: プロパティ
@@ -452,7 +469,7 @@ properties:
                 title: 実装
                 description: この契約を満たす実装の論理名（別の設計書なら参照）。
                 x-used-by:
-                  - 実装で、契約を満たすクラスを参照する。
+                  - 実装で、契約を満たすクラス・関数を作る対象にする。
               notes:
                 type: string
                 title: 補足
@@ -462,6 +479,7 @@ properties:
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -522,6 +540,7 @@ properties:
         entries:
           type: array
           title: 値
+          description: 辞書・配列の定数の要素。1 要素 = 1 つの要素。
           x-used-by:
             - 実装で、辞書・配列の定数の要素にする。
           x-heading: 値
@@ -543,21 +562,25 @@ properties:
               value:
                 type: string
                 title: 値
+                description: 要素の値。辞書の定数ではキーに対応する値。
                 x-used-by:
                   - 実装で、要素の値にする。
               description:
                 type: string
                 title: 説明
+                description: 値が何を表すか（意味・単位・取りうる範囲）。
                 x-used-by:
-                  - 実装で、要素の意味を参照する。
+                  - 実装で、要素を使い分ける条件を決める。
               notes:
                 type: string
                 title: 補足
+                description: 説明に収まらない前提・制約。
                 x-used-by:
-                  - 実装で、要素の前提を参照する。
+                  - 実装で、要素を使用する前に満たす前提を、検証の処理か docstring にする。
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -621,6 +644,7 @@ properties:
         args:
           type: array
           title: 引数
+          description: シグネチャの引数。1 要素 = 1 引数。
           x-used-by:
             - 実装で、シグネチャの引数にする。
           x-heading: 引数
@@ -643,6 +667,7 @@ properties:
               title:
                 type: string
                 title: 論理名
+                description: 日本語で表した名前。
                 x-used-by:
                   - 生成で、表の論理名にする。
               type:
@@ -654,6 +679,7 @@ properties:
               required:
                 type: boolean
                 title: 必須
+                description: 省けない項目なら `true`。
                 x-used-by:
                   - 実装で、省けるかを決める。
               default:
@@ -675,16 +701,19 @@ properties:
               description:
                 type: string
                 title: 説明
+                description: 値が何を表すか（意味・単位・取りうる範囲）。
                 x-used-by:
-                  - 実装で、意味を参照する。
+                  - 実装で、入れる値を決め、docstring・コメントの説明にする。
               notes:
                 type: string
                 title: 補足
+                description: 説明に収まらない前提・制約。
                 x-used-by:
-                  - 実装で、前提を参照する。
+                  - 実装で、満たす前提を検証の処理か docstring にする。
         returns:
           type: object
           title: 戻り値
+          description: シグネチャの戻り値。
           x-used-by:
             - 実装で、シグネチャの戻り値にする。
           x-heading: 戻り値
@@ -697,21 +726,25 @@ properties:
             type:
               type: string
               title: 型
+              description: 言語の型の表記。
               x-used-by:
                 - 実装で、戻り値の型にする。
             description:
               type: string
               title: 説明
+              description: 値が何を表すか（意味・単位・取りうる範囲）。
               x-used-by:
-                - 実装で、戻り値の意味を参照する。
+                - 実装で、返却する値を決め、戻り値の docstring にする。
             notes:
               type: string
               title: 補足
+              description: 説明に収まらない前提・制約。
               x-used-by:
-                - 実装で、戻り値の前提を参照する。
+                - 実装で、戻り値を返す前に満たす条件を、検証の処理か docstring にする。
         implementations:
           type: array
           title: 実装
+          description: シグネチャを満たす関数と、それを使用する条件。1 要素 = 1 関数。
           x-used-by:
             - 実装で、シグネチャを満たす関数と、それを使う条件にする。
           x-heading: 実装
@@ -721,6 +754,7 @@ properties:
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -772,6 +806,7 @@ properties:
         kind:
           type: string
           title: 種別
+          description: 要素の種別（コンポーネント・Custom Element・フック 等）。
           x-used-by:
             - 実装で、要素の種別（クラス・抽象クラス・インタフェース・フック 等）を決める。
           enum:
@@ -780,6 +815,7 @@ properties:
         props:
           type: array
           title: props
+          description: コンポーネントが受け取る props。1 要素 = 1 つの prop。
           x-used-by:
             - 実装で、コンポーネントの props にする。
           x-heading: props
@@ -796,41 +832,49 @@ properties:
               name:
                 type: string
                 title: プロパティ名
+                description: コード上の名前（物理名）。
                 x-used-by:
                   - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                description: 日本語で表した名前。
                 x-used-by:
                   - 生成で、表の論理名にする。
               type:
                 type: string
                 title: 型
+                description: 言語の型の表記。
                 x-used-by:
                   - 実装で、型にする。
               required:
                 type: boolean
                 title: 必須
+                description: 省けない項目なら `true`。
                 x-used-by:
                   - 実装で、省けるかを決める。
               default:
                 type: string
                 title: デフォルト
+                description: 省いたときの値。
                 x-used-by:
                   - 実装で、省いたときの値にする。
               description:
                 type: string
                 title: 説明
+                description: 値が何を表すか（意味・単位・取りうる範囲）。
                 x-used-by:
-                  - 実装で、意味を参照する。
+                  - 実装で、入れる値を決め、docstring・コメントの説明にする。
               notes:
                 type: string
                 title: 補足
+                description: 説明に収まらない前提・制約。
                 x-used-by:
-                  - 実装で、前提を参照する。
+                  - 実装で、満たす前提を検証の処理か docstring にする。
         attributes:
           type: array
           title: attributes
+          description: Custom Element の HTML 属性。1 要素 = 1 属性。
           x-used-by:
             - 実装で、Custom Element の属性にする。
           x-heading: attributes
@@ -846,31 +890,37 @@ properties:
               name:
                 type: string
                 title: 属性名
+                description: HTML の属性名（物理名）。
                 x-used-by:
                   - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                description: 日本語で表した名前。
                 x-used-by:
                   - 生成で、表の論理名にする。
               type:
                 type: string
                 title: 型
+                description: 言語の型の表記。
                 x-used-by:
                   - 実装で、型にする。
               description:
                 type: string
                 title: 説明
+                description: 値が何を表すか（意味・単位・取りうる範囲）。
                 x-used-by:
-                  - 実装で、意味を参照する。
+                  - 実装で、入れる値を決め、docstring・コメントの説明にする。
               notes:
                 type: string
                 title: 補足
+                description: 説明に収まらない前提・制約。
                 x-used-by:
-                  - 実装で、前提を参照する。
+                  - 実装で、満たす前提を検証の処理か docstring にする。
         properties:
           type: array
           title: properties
+          description: Custom Element の JavaScript のプロパティ。1 要素 = 1 プロパティ。
           x-used-by:
             - 実装で、Custom Element のプロパティにする。
           x-heading: properties
@@ -886,31 +936,37 @@ properties:
               name:
                 type: string
                 title: プロパティ名
+                description: コード上の名前（物理名）。
                 x-used-by:
                   - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                description: 日本語で表した名前。
                 x-used-by:
                   - 生成で、表の論理名にする。
               type:
                 type: string
                 title: 型
+                description: 言語の型の表記。
                 x-used-by:
                   - 実装で、型にする。
               description:
                 type: string
                 title: 説明
+                description: 値が何を表すか（意味・単位・取りうる範囲）。
                 x-used-by:
-                  - 実装で、意味を参照する。
+                  - 実装で、入れる値を決め、docstring・コメントの説明にする。
               notes:
                 type: string
                 title: 補足
+                description: 説明に収まらない前提・制約。
                 x-used-by:
-                  - 実装で、前提を参照する。
+                  - 実装で、満たす前提を検証の処理か docstring にする。
         events:
           type: array
           title: events
+          description: コンポーネントが発火するイベント。1 要素 = 1 イベント。
           x-used-by:
             - 実装で、コンポーネントが発火するイベントにする。
           x-heading: events
@@ -926,28 +982,33 @@ properties:
               name:
                 type: string
                 title: イベント名
+                description: イベントの名前（物理名）。
                 x-used-by:
                   - 実装で、イベントの名前にする。
               title:
                 type: string
                 title: 論理名
+                description: 日本語で表した名前。
                 x-used-by:
                   - 生成で、表の論理名にする。
               detail:
                 type: string
                 title: detail の型
+                description: イベントの `detail` の型。`detail` を持たないときは記載しない。
                 x-used-by:
                   - 実装で、イベントの `detail` の型にする。
               description:
                 type: string
                 title: 説明
+                description: 値が何を表すか（意味・単位・取りうる範囲）。
                 x-used-by:
-                  - 実装で、イベントを発火する条件と意味を参照する。
+                  - 実装で、イベントを発火する条件にする。
               notes:
                 type: string
                 title: 補足
+                description: 説明に収まらない前提・制約。
                 x-used-by:
-                  - 実装で、イベントの前提を参照する。
+                  - 実装で、イベントを発火する前に満たす前提を、処理か docstring にする。
         state:
           type: array
           title: state
@@ -968,37 +1029,43 @@ properties:
               name:
                 type: string
                 title: 状態名
+                description: コード上の名前（物理名）。
                 x-used-by:
                   - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                description: 日本語で表した名前。
                 x-used-by:
                   - 生成で、表の論理名にする。
               type:
                 type: string
                 title: 型
+                description: 言語の型の表記。
                 x-used-by:
                   - 実装で、型にする。
               initial:
                 type: string
                 title: 初期値
+                description: 作ったときの値。
                 x-used-by:
                   - 実装で、初期値にする。
               description:
                 type: string
                 title: 説明
+                description: 値が何を表すか（意味・単位・取りうる範囲）。
                 x-used-by:
-                  - 実装で、意味を参照する。
+                  - 実装で、入れる値を決め、docstring・コメントの説明にする。
               notes:
                 type: string
                 title: 補足
                 description: 表現手段（`useState` / `useForm` 等）。
                 x-used-by:
-                  - 実装で、前提を参照する。
+                  - 実装で、満たす前提を検証の処理か docstring にする。
         unit_tests:
           type: array
           title: 単体テスト
+          description: 単体テストのケース。1 要素 = 1 テスト関数。
           x-used-by:
             - 単体テストで、ケースごとのテスト関数にする。
             - 検査で、テストのファイルに関数があるかを確認する。
@@ -1034,6 +1101,7 @@ properties:
               case:
                 type: string
                 title: 正常/異常
+                description: 正常系のケースか、異常系のケースか。
                 x-used-by:
                   - 単体テストで、正常と異常のケースを分ける。
                 enum:
@@ -1042,6 +1110,7 @@ properties:
               summary:
                 type: string
                 title: 概要
+                description: テストで確認することの 1 行の要約。
                 x-used-by:
                   - 単体テストで、関数の docstring の要約にする。
               condition:
@@ -1071,11 +1140,13 @@ properties:
               notes:
                 type: string
                 title: 補足
+                description: 説明に収まらない前提・制約。
                 x-used-by:
-                  - 単体テストで、ケースの前提を参照する。
+                  - 単体テストで、ケースの準備（fixture・Mock）にする。
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -1127,6 +1198,7 @@ properties:
         state:
           type: array
           title: state
+          description: ストアが持つ状態のフィールド。1 要素 = 1 フィールド。
           x-used-by:
             - 実装で、ストアの状態のフィールドにする。
           x-heading: state
@@ -1143,36 +1215,43 @@ properties:
               name:
                 type: string
                 title: フィールド名
+                description: コード上の名前（物理名）。
                 x-used-by:
                   - 実装で、コード上の名前にする。
               title:
                 type: string
                 title: 論理名
+                description: 日本語で表した名前。
                 x-used-by:
                   - 生成で、表の論理名にする。
               type:
                 type: string
                 title: 型
+                description: 言語の型の表記。
                 x-used-by:
                   - 実装で、型にする。
               initial:
                 type: string
                 title: 初期値
+                description: 作ったときの値。
                 x-used-by:
                   - 実装で、初期値にする。
               description:
                 type: string
                 title: 説明
+                description: 値が何を表すか（意味・単位・取りうる範囲）。
                 x-used-by:
-                  - 実装で、意味を参照する。
+                  - 実装で、入れる値を決め、docstring・コメントの説明にする。
               notes:
                 type: string
                 title: 補足
+                description: 説明に収まらない前提・制約。
                 x-used-by:
-                  - 実装で、前提を参照する。
+                  - 実装で、満たす前提を検証の処理か docstring にする。
         actions:
           type: array
           title: action
+          description: ストアの状態を変える action。書式は関数と同じ。
           x-used-by:
             - 実装で、ストアの action にする。
           x-heading: action
@@ -1183,6 +1262,7 @@ properties:
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -1234,6 +1314,7 @@ properties:
         values:
           type: array
           title: 値
+          description: クラスごとの CSS の宣言。1 要素 = 1 クラス。
           x-used-by:
             - 実装で、クラスごとの宣言にする。
           x-heading: 値
@@ -1250,26 +1331,31 @@ properties:
               class_name:
                 type: string
                 title: クラス名
+                description: CSS のクラス名（先頭の `.` を付けない）。
                 x-used-by:
                   - 実装で、CSS のクラス名にする。
               target:
                 type: string
                 title: 適用対象
+                description: クラスを付ける要素（画面設計の要素・部品の名前）。
                 x-used-by:
                   - 実装で、クラスを付ける要素にする。
               value:
                 type: string
                 title: 値
+                description: 'クラスの CSS の宣言（`property: value;` を並べる）。'
                 x-used-by:
                   - 実装で、CSS の宣言にする。
               notes:
                 type: string
                 title: 補足
+                description: 説明に収まらない前提・制約。
                 x-used-by:
-                  - 実装で、宣言の前提を参照する。
+                  - 実装で、宣言が有効になる条件（親のクラス・メディアクエリ 等）にする。
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -1295,6 +1381,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -1339,6 +1426,7 @@ $defs:
       kind:
         type: string
         title: 種別
+        description: 要素の種別（関数・メソッド・フック 等）。
         x-used-by:
           - 実装で、要素の種別（クラス・抽象クラス・インタフェース・フック 等）を決める。
         enum:
@@ -1401,6 +1489,7 @@ $defs:
       returns:
         type: object
         title: 戻り値
+        description: 関数の戻り値。戻り値を持たないときは型を `None` にする。
         x-used-by:
           - 実装で、戻り値にする。
         x-heading: 戻り値
@@ -1419,13 +1508,15 @@ $defs:
           description:
             type: string
             title: 説明
+            description: 値が何を表すか（意味・単位・取りうる範囲）。
             x-used-by:
-              - 呼び出し元の実装で、戻り値の意味を参照する。
+              - 呼び出し元の実装で、戻り値で分岐する条件を決める。
           notes:
             type: string
             title: 補足
+            description: 説明に収まらない前提・制約。
             x-used-by:
-              - 実装で、戻り値の前提を参照する。
+              - 実装で、戻り値を返す前に満たす条件を、検証の処理か docstring にする。
       returns_example:
         $ref: common.schema.yaml#/$defs/markdown
         title: 戻り値例
@@ -1478,13 +1569,15 @@ $defs:
             message:
               type: string
               title: メッセージ
+              description: 例外のメッセージの文言。可変の部分は `{名前}` で記載する。
               x-used-by:
                 - 実装で、例外のメッセージにする。
             notes:
               type: string
               title: 補足
+              description: 説明に収まらない前提・制約。
               x-used-by:
-                - 実装で、例外の前提を参照する。
+                - 実装で、例外を送出する前に満たす前提を、処理か docstring にする。
       test_setup:
         type: array
         title: セットアップ
@@ -1503,11 +1596,13 @@ $defs:
             name:
               type: string
               title: セットアップ
+              description: fixture の名前（論理名）。
               x-used-by:
                 - 単体テストで、fixture の名前にする。
             description:
               type: string
               title: 説明
+              description: fixture が準備する内容（作るデータ・差し替える依存）。
               x-used-by:
                 - 単体テストで、準備する内容にする。
             notes:
@@ -1515,7 +1610,7 @@ $defs:
               title: 補足
               description: fixture の物理名など。
               x-used-by:
-                - 単体テストで、fixture の物理名を参照する。
+                - 単体テストで、fixture の物理名にする。
       unit_tests:
         type: array
         title: 単体テスト
@@ -1562,11 +1657,13 @@ $defs:
             api:
               type: string
               title: 対象 API
+              description: 外部疎通のテストで呼ぶ外部 API・外部ライブラリの名前。
               x-used-by:
                 - 外部疎通のテストで、呼ぶ API にする。
             summary:
               type: string
               title: 概要
+              description: テストで確認することの 1 行の要約。
               x-used-by:
                 - 外部疎通のテストで、関数の docstring の要約にする。
             checks:
@@ -1584,13 +1681,15 @@ $defs:
             notes:
               type: string
               title: 補足
+              description: 説明に収まらない前提・制約。
               x-used-by:
-                - 外部疎通のテストで、ケースの前提を参照する。
+                - 外部疎通のテストで、ケースの準備（認証・環境変数）にする。
       callees:
         type: array
         title: 呼び出し先
+        description: 処理から呼ぶ関数・メソッドを `{ID}#{項目のパス}` で記載する。
         x-used-by:
-          - 実装で、処理から呼ぶ関数・メソッドを参照する。
+          - 実装で、処理から呼ぶ関数・メソッドにする。
           - レビューで、呼び出しの依存の向きを確認する。
           - 設計で、変更の影響を調べるときに呼び出し元を逆にたどる。
         items:
@@ -1598,6 +1697,7 @@ $defs:
       refs:
         type: array
         title: 関連
+        description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
         x-used-by:
           - 生成で、関連する設計書へのリンクにする。
           - レビューで、関連する設計書をたどって食い違いを確認する。

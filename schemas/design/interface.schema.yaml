@@ -119,6 +119,7 @@ properties:
   permissions:
     type: string
     title: 必要な権限
+    description: 操作に要る権限・ロール。
     x-used-by:
       - 実装で、操作の前に確認する権限にする。
       - テストで、権限が無いときのケースにする。
@@ -151,6 +152,7 @@ properties:
   callers:
     type: array
     title: 呼び出し元
+    description: 操作を呼ぶシナリオ・設計書の項目。
     x-used-by:
       - レビューで、呼び出し元のシナリオと入出力が一致するかを確認する。
     items:
@@ -195,6 +197,7 @@ properties:
         required:
           type: boolean
           title: 必須
+          description: 省けない引数なら `true`。
           x-used-by:
             - 実装で、無いときにエラーにするかを決める。
             - テストで、引数を省いたときのケースにする。
@@ -220,6 +223,7 @@ properties:
         description:
           type: string
           title: 説明
+          description: 引数が何を表すか。
           x-used-by:
             - 呼び出し元の実装で、渡す値を決める。
         constraints:
@@ -238,18 +242,21 @@ properties:
         example:
           type: string
           title: 例
+          description: 値の具体例。
           x-used-by:
             - テストで、要求の値にする。
         nullable:
           type: boolean
           title: 空を許す
+          description: '`null` を受け付けるなら `true`。'
           x-used-by:
             - 実装で、`null` を受け付けるかを決める。
         notes:
           type: string
           title: 補足
+          description: 引数の前提（ほかの引数との組み合わせ 等）。
           x-used-by:
-            - 実装で、引数の前提を参照する。
+            - 実装で、引数の組み合わせと前提を、受け取ったときの検証にする。
         status:
           $ref: common.schema.yaml#/$defs/status
   request_example:
@@ -261,6 +268,7 @@ properties:
   response:
     type: array
     title: レスポンス
+    description: 返却する値のフィールド。1 要素 = 1 フィールド。
     x-used-by:
       - 実装で、戻り値の型にする。
       - 呼び出し元の実装で、受け取る値を決める。
@@ -291,8 +299,9 @@ properties:
         description:
           type: string
           title: 説明
+          description: フィールドの値が何を表すか。
           x-used-by:
-            - 呼び出し元の実装で、値の意味を参照する。
+            - 呼び出し元の実装で、値で分岐する条件を決める。
         constraints:
           type: string
           title: 制限
@@ -308,13 +317,15 @@ properties:
         example:
           type: string
           title: 例
+          description: 値の具体例。
           x-used-by:
             - テストで、期待する戻り値の見本にする。
         notes:
           type: string
           title: 補足
+          description: フィールドの前提（返らない条件 等）。
           x-used-by:
-            - 実装で、戻り値の前提を参照する。
+            - 実装で、フィールドを返却しない条件を決める。
   response_example:
     $ref: common.schema.yaml#/$defs/markdown
     title: レスポンス例
@@ -326,7 +337,7 @@ properties:
     title: レスポンスの注記
     description: 冪等性など表に載らない挙動（`> [!NOTE]` のコールアウトで出す）。
     x-used-by:
-      - 呼び出し元の実装で、表に載らない挙動を参照する。
+      - 呼び出し元の実装で、表に載らない挙動（並び順・空のときの値 等）に合わせて受け取る処理を決める。
   status_codes:
     type: array
     title: ステータスコード
@@ -349,18 +360,21 @@ properties:
         code:
           type: string
           title: ステータスコード
+          description: ステータスコード・終了コード。
           x-used-by:
             - 実装で、返すステータスコードにする。
         condition:
           type: string
           title: 発生条件
+          description: そのコードを返却する条件。
           x-used-by:
             - 実装で、そのコードを返す条件にする。
         notes:
           type: string
           title: 補足
+          description: コードの前提（応答の本文 等）。
           x-used-by:
-            - 実装で、コードの前提を参照する。
+            - 実装で、そのコードを返却するときの応答の本文を決める。
   exceptions:
     type: array
     title: 例外
@@ -387,13 +401,15 @@ properties:
         condition:
           type: string
           title: 発生条件
+          description: 例外を送出する条件。
           x-used-by:
             - 実装で、例外を送出する条件にする。
         notes:
           type: string
           title: 補足
+          description: 例外の前提（呼び出し元での扱い 等）。
           x-used-by:
-            - 実装で、例外の前提を参照する。
+            - 実装で、例外を送出する前に済ませる処理（ロールバック・ログ）を決める。
   error_format:
     $ref: common.schema.yaml#/$defs/markdown
     title: エラーの形式
@@ -435,13 +451,14 @@ properties:
           title: 決定値
           description: 値の出所になる非機能要件の項目。
           x-used-by:
-            - 実装で、値の出所の非機能要件を参照する。
+            - 実装で、値を非機能要件の決定値と同じにする。
             - レビューで、値が非機能要件の決定値と一致するかを確認する。
         notes:
           type: string
           title: 補足
+          description: 制約の前提（守れないときの扱い 等）。
           x-used-by:
-            - 実装で、制約の前提を参照する。
+            - 実装で、制約を守れないときの扱いを決める。
   flows:
     type: array
     title: フロー
@@ -548,6 +565,7 @@ properties:
         refs:
           type: array
           title: 関連
+          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
           x-used-by:
             - 生成で、関連する設計書へのリンクにする。
             - レビューで、関連する設計書をたどって食い違いを確認する。
@@ -567,6 +585,7 @@ properties:
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。

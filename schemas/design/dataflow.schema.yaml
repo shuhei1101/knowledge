@@ -66,7 +66,7 @@ properties:
     description: Level 0（外部の境界）と Level 1（主要な処理とデータストア）は必須。Level 2 は複雑な処理だけ。
     x-used-by:
       - 生成で、レベルごとのデータフロー図にする。
-      - 実装で、処理とデータストアの間で受け渡すデータを参照する。
+      - 実装で、処理とデータストアの間で受け渡すデータの型を決める。
     x-shape: sections
     x-key: name
     minItems: 1
@@ -124,16 +124,19 @@ properties:
         name:
           type: string
           title: データフロー名
+          description: 図の矢印のラベルと同じ、データフローの名前。
           x-used-by:
             - 設計で、図の矢印のラベルと流れを対応させる。
         from:
           type: string
           title: 発生元
+          description: データが出る処理・データストア・外部実体の名前。
           x-used-by:
             - レビューで、図の矢印の元と一致するかを確認する。
         to:
           type: string
           title: 到達先
+          description: データが届く処理・データストア・外部実体の名前。
           x-used-by:
             - レビューで、図の矢印の先と一致するかを確認する。
         structure:
@@ -145,11 +148,13 @@ properties:
         crosses_boundary:
           type: boolean
           title: 信頼境界を越える
+          description: 信頼境界を越える流れなら `true`。
           x-used-by:
             - レビューで、脅威の検討が要る流れかを判断する。
         sensitivity:
           type: string
           title: 機密の区分
+          description: 流れるデータの機密の区分（公開・社内・機密 等）。
           x-used-by:
             - 実装で、暗号化・マスク・ログへの出力の可否を決める。
           enum:
@@ -174,16 +179,19 @@ properties:
         volume:
           type: string
           title: 頻度と量
+          description: データが流れる頻度と 1 回の量。
           x-used-by:
             - 実装で、処理の方式（一括・逐次）と上限の値を決める。
         notes:
           type: string
           title: 補足
+          description: 流れの前提・制約（順番・欠けたときの扱い 等）。
           x-used-by:
-            - 実装で、流れの前提・制約を参照する。
+            - 実装で、流れの前提・制約を満たす処理（順番の保証・欠けたときの扱い）にする。
   refs:
     type: array
     title: 関連
+    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
     x-used-by:
       - 生成で、関連する設計書へのリンクにする。
       - レビューで、関連する設計書をたどって食い違いを確認する。
