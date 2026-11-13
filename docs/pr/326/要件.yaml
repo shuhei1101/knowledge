@@ -130,7 +130,7 @@ docs:
 scope_out:
   - item: 直下の dev-docs.yaml の project-index.yaml への改名と、設計書・規約・テンプレート・CLAUDE.md のファイル名 dev-docs.yaml の記述
     reason: 'project-index の develop は project-index.yaml が無ければ dev-docs.yaml を読む（src/project_index/features/admin/service.py の LEGACY_CONFIG_FILE）ため、改名しなくても #309 の終わりの条件は満たせる。改名すると端末の設定の sources[] の config（dev-docs.yaml を直接指す）の書き換えの反映作業が要り、#311（直下の dev-docs.yaml の AI slop）と重なるため、別の Issue に分ける（複合ユースケース設計のレビューで確定）'
-    plan: to_file
+    plan: '#329'
   - item: slop-check のフックとスキル text-review の MCP の名前の対応
     reason: '#309 の書き直しの判断で別の Issue に分けた'
     plan: '#313'
