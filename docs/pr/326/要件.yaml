@@ -1,0 +1,122 @@
+use_cases:
+  - kind: composite
+    scenario: docs/scenario/SC-72-1.yaml
+    impact: changed
+    detail: 文書の MCP・管理の MCP・配信元の登録を担う道具を project-index に合わせ、画面だけを dev-docs に残す。文に残る AI slop の単語を修正する
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-2.yaml
+    impact: changed
+    detail: 配信元の登録の点検と端末の設定を project-index の setup と管理の MCP に合わせ、配信の設定ファイル名の扱いを project-index の決着に合わせる
+    depends_on:
+      - docs/scenario/SC-72-1.yaml
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: changed
+    detail: 画面は dev-docs のまま、文書の読み込みと変換を project-index が担う流れに合わせる
+    depends_on:
+      - docs/scenario/SC-72-1.yaml
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: changed
+    detail: 文書の検索・取得の MCP を project-index に合わせる
+    depends_on:
+      - docs/scenario/SC-72-1.yaml
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: changed
+    detail: 文書の書き込みの MCP と、検査のスクリプトを呼ぶ側を project-index に合わせる
+    depends_on:
+      - docs/scenario/SC-72-1.yaml
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: changed
+    detail: 文に残る AI slop の単語を修正する（流れは変えない）
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: changed
+    detail: 文に残る AI slop の単語を修正する（流れは変えない）
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-148-1.yaml
+    impact: changed
+    detail: 文に残る AI slop の単語を修正する（流れは変えない）
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: changed
+    detail: 文に残る AI slop の単語を修正する（流れは変えない）
+    depends_on: []
+docs:
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: lead・subsystems の role・runs_on・external_systems・overview の edges の、文書の MCP・配信元の読み込み・検査と変換のスクリプトを呼ぶ側を project-index、画面を dev-docs に分けて書き換える（#309）。残りの文の AI slop の単語を修正する（#263）
+    status: todo
+  - page: docs/guide/guide-setup-docs-mcp.yaml
+    new: false
+    change: /dev-docs:global-setup・/dev-docs:setup・管理の MCP の reload・再接続・config のファイル名を project-index に合わせ、画面の URL を dev-docs の画面として残す。書き換えた文の AI slop の単語を修正する（#309）
+    status: todo
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: docs/ と各フォルダの README.md のエントリに generated_from（index.yaml と CMD-72-1 のビルド・生成）を記載する（#280）。docs/template/ のエントリに items の生成元 schemas/design/ と生成するコマンドを記載する（#281）。dev-docs を文書の MCP・スクリプトを呼ぶ側とする記述を project-index に合わせる（ARCH-72-1 との整合）
+    status: todo
+  - page: docs/dev-command/CMD-72-1.yaml
+    new: false
+    change: ビルド・生成に、index.yaml から各フォルダの README.md を作り直す AI Monitor の python -m ai_monitor.design_docs publish のコマンドを追加する（#280）。文の AI slop の単語を修正する（#263）
+    status: todo
+  - page: docs/nonfunctional/NFR-72-1.yaml
+    new: false
+    change: 検査と変換のスクリプトを呼ぶ側を dev-docs とする記述を project-index に合わせる（ARCH-72-1 との整合）。文の AI slop の単語を修正する（#263）
+    status: todo
+  - page: docs/test-procedure/TP-72-1.yaml
+    new: false
+    change: dev-docs を文書の MCP・スクリプトを呼ぶ側とする記述を project-index に合わせる（ARCH-72-1 との整合）。文の AI slop の単語を修正する（#263）
+    status: todo
+  - page: docs/library/LIB-72-1.yaml
+    new: false
+    change: 検査と変換のスクリプトを呼ぶ側を dev-docs とする記述を project-index に合わせる（ARCH-72-1 との整合）。文の AI slop の単語を修正する（#263）
+    status: todo
+  - page: docs/library/LIB-72-2.yaml
+    new: false
+    change: 検査と変換のスクリプトを呼ぶ側を dev-docs とする記述を project-index に合わせる（ARCH-72-1 との整合）。文の AI slop の単語を修正する（#263）
+    status: todo
+  - page: docs/library/LIB-72-3.yaml
+    new: false
+    change: 文の AI slop の単語を修正する（#263）
+    status: todo
+  - page: docs/library/LIB-137-1.yaml
+    new: false
+    change: 文の AI slop の単語を修正する（#263）
+    status: todo
+  - page: docs/library/LIB-176-1.yaml
+    new: false
+    change: 文の AI slop の単語を修正する（#263）
+    status: todo
+  - page: docs/library/LIB-176-2.yaml
+    new: false
+    change: 文の AI slop の単語を修正する（#263）
+    status: todo
+  - page: docs/library/LIB-176-3.yaml
+    new: false
+    change: 文の AI slop の単語を修正する（#263）
+    status: todo
+scope_out:
+  - item: 直下の dev-docs.yaml の project-index.yaml への改名と、設計書・規約・テンプレート・CLAUDE.md のファイル名 dev-docs.yaml の記述
+    reason: '今の判断は含めない。project-index の develop は project-index.yaml が無ければ dev-docs.yaml を読む（src/project_index/features/admin/service.py の LEGACY_CONFIG_FILE）ため、改名しなくても #309 の終わりの条件は満たせる。改名すると端末の設定の sources[] の config（dev-docs.yaml を直接指す）の書き換えの反映作業が要り、#311（直下の dev-docs.yaml の AI slop）と重なる。含めるかはレビューで確定する'
+    plan: to_file
+  - item: slop-check のフックとスキル text-review の MCP の名前の対応
+    reason: '#309 の書き直しの判断で別の Issue に分けた'
+    plan: '#313'
+  - item: docs/template/ のテンプレートと schemas/design に残る AI slop の単語
+    reason: '#263 と同じ切り出しの別のフォルダで、#263 の対象に含まれない'
+    plan: '#261'
+  - item: フォルダを分けて items を生成するテンプレートを見分けること（#281 の「フォルダかファイル名で見分けられる」）
+    reason: 手で直した items は scripts/check_all.py の check_design_templates が検出し、#281 の「または生成した部分を手で直したときに検査で分かる」を develop で満たしている（#281 の受付の判断）
+    plan: none
+  - item: schemas/ 直下の AI Monitor の配布物のスキーマのコピーの generated_from
+    reason: '#283（close 済み）でコピーを削除し、origin/develop の schemas/ 直下に配布物のコピーは無い'
+    plan: none
+  - item: 規約・判定フローチャート・guide-setup-apply-rule-index.yaml・README.md・CLAUDE.md の、文書の MCP・管理の MCP・配信元の登録を dev-docs が持つ記述
+    reason: '#309 の対象（ARCH-72-1・SC-72-1〜SC-72-5・guide-setup-docs-mcp.yaml）の外で、この作業 PR がマージされなくても同じ内容で成り立つ'
+    plan: '#328'
