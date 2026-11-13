@@ -759,6 +759,8 @@ _DESIGN_COMMON = (
     "  id:\n"
     "    type: string\n"
     "    pattern: ^[A-Z]+-\\d+$\n"
+    "    x-used-by:\n"
+    "      - 実装で、ID にする。\n"
 )
 
 # 共通の型を $ref で指し、合う examples を持つ設計書のスキーマ
@@ -882,6 +884,8 @@ def test_check_design_schemas_when_property_named_default(repo_factory: RepoFact
                 "    type: string\n"
                 "    examples:\n"
                 "      - 1\n"
+                "    x-used-by:\n"
+                "      - 実装で、既定値にする。\n"
             ),
         }
     )
@@ -991,6 +995,8 @@ def test_check_design_schemas_when_x_keys_in_data(repo_factory: RepoFactory) -> 
                 "properties:\n"
                 "  x-rules:\n"
                 "    type: string\n"
+                "    x-used-by:\n"
+                "      - 実装で、決まりにする。\n"
                 "x-bad-examples:\n"
                 "  - value:\n"
                 "      $ref: missing.schema.yaml\n"
@@ -1003,6 +1009,122 @@ def test_check_design_schemas_when_x_keys_in_data(repo_factory: RepoFactory) -> 
     result = check_all.check_design_schemas(root, _meta())
     # 検証
     assert result == []
+
+
+# properties.a に x-used-by が無く、if の条件の中のキーにも x-used-by が無いスキーマ（5 行目が a）
+_DESIGN_USED_BY_MISSING = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: 使用先\n"
+    "type: object\n"
+    "properties:\n"
+    "  a:\n"
+    "    type: string\n"
+    "  b:\n"
+    "    type: string\n"
+    "    x-used-by:\n"
+    "      - 実装で、値にする。\n"
+    "allOf:\n"
+    "  - if:\n"
+    "      properties:\n"
+    "        c:\n"
+    "          const: x\n"
+    "    then:\n"
+    "      required:\n"
+    "        - b\n"
+)
+
+
+def test_check_design_schemas_when_used_by_missing(repo_factory: RepoFactory) -> None:
+    """x-used-by が無いキー（正常系）。"""
+    # 準備
+    root = repo_factory({"schemas/design/used-by.schema.yaml": _DESIGN_USED_BY_MISSING})
+    # 実行
+    result = check_all.check_design_schemas(root, _meta())
+    # 検証
+    assert len(result) == 1
+    assert result[0][:3] == ("schemas/design/used-by.schema.yaml", 5, "properties.a")
+    assert result[0][3].startswith("x-used-by: ")
+
+
+# $defs.t（x-used-by あり）を指す a、$defs.u（x-used-by なし）を指す b、解決できない $ref を指す c を持つスキーマ
+_DESIGN_REF_TYPE_USED_BY = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: 型の使用先\n"
+    "type: object\n"
+    "properties:\n"
+    "  a:\n"
+    "    $ref: '#/$defs/t'\n"
+    "  b:\n"
+    "    $ref: '#/$defs/u'\n"
+    "  c:\n"
+    "    $ref: '#/$defs/missing'\n"
+    "$defs:\n"
+    "  t:\n"
+    "    type: string\n"
+    "    x-used-by:\n"
+    "      - 実装で、値にする。\n"
+    "  u:\n"
+    "    type: string\n"
+)
+
+
+def test_check_design_schemas_when_ref_type_used_by(repo_factory: RepoFactory) -> None:
+    """$ref の先の型の x-used-by（正常系）。"""
+    # 準備
+    root = repo_factory({"schemas/design/ref-type.schema.yaml": _DESIGN_REF_TYPE_USED_BY})
+    # 実行
+    result = check_all.check_design_schemas(root, _meta())
+    # 検証
+    assert sorted((item[2], item[3].split(":", 1)[0]) for item in result) == [
+        ("properties.b", "x-used-by"),
+        ("properties.c.$ref", "$ref"),
+    ]
+
+
+def test_check_design_schemas_when_property_named_if(repo_factory: RepoFactory) -> None:
+    """if という名前のプロパティ（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/named-if.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: 名前が if\n"
+                "properties:\n"
+                "  if:\n"
+                "    type: string\n"
+            ),
+        }
+    )
+    # 実行
+    result = check_all.check_design_schemas(root, _meta())
+    # 検証
+    assert len(result) == 1
+    assert result[0][2] == "properties.if"
+    assert result[0][3].startswith("x-used-by: ")
+
+
+def test_check_design_schemas_when_meta_invalid_and_used_by_missing(
+    repo_factory: RepoFactory,
+) -> None:
+    """メタスキーマの誤りがあるファイルの x-used-by（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/bad-type.schema.yaml": (
+                "$schema: https://json-schema.org/draft/2020-12/schema\n"
+                "title: 型\n"
+                "type: strin\n"
+                "properties:\n"
+                "  a:\n"
+                "    type: string\n"
+            ),
+        }
+    )
+    # 実行
+    result = check_all.check_design_schemas(root, _meta())
+    # 検証
+    assert result
+    assert all(item[3].startswith("metaschema: ") for item in result)
 
 
 def test_load_meta_validator() -> None:
@@ -1160,6 +1282,8 @@ _DESIGN_SCENARIO_SCHEMA = (
     "    $ref: common.schema.yaml#/$defs/id\n"
     "  title:\n"
     "    type: string\n"
+    "    x-used-by:\n"
+    "      - 生成で、見出しにする。\n"
 )
 _DESIGN_COMMON_SCHEMA = (
     "$schema: https://json-schema.org/draft/2020-12/schema\n"
@@ -1168,6 +1292,8 @@ _DESIGN_COMMON_SCHEMA = (
     "  id:\n"
     "    type: string\n"
     "    pattern: ^SC-\\d+-\\d+$\n"
+    "    x-used-by:\n"
+    "      - 実装で、ID にする。\n"
 )
 
 # schemas/ の直下に置く、$defs/id の pattern が違う同じ名前の共通の型
