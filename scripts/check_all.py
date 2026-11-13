@@ -442,7 +442,7 @@ def _check_meta(doc: CommentedMap, meta: Draft202012Validator) -> list[tuple[int
 
 
 def check_design_schemas(root: Path, meta: Draft202012Validator) -> list[tuple[str, int, str, str]]:
-    """schemas/design/ の設計書のスキーマに、拡張したメタスキーマ・$ref・examples の検査を当てる。"""
+    """schemas/design/ の設計書のスキーマに、拡張したメタスキーマ・$ref・examples・x-used-by の検査を当てる。"""
     # フォルダが無いリポジトリは検査しない
     if not (root / DESIGN_SCHEMAS_DIR).is_dir():
         return []
@@ -458,10 +458,12 @@ def check_design_schemas(root: Path, meta: Draft202012Validator) -> list[tuple[s
         relative = str(DESIGN_SCHEMAS_DIR / name)
         meta_results = _check_meta(doc, meta)
         results.extend((relative, line, path, message) for line, path, message in meta_results)
-        # メタスキーマに合わないスキーマは、$ref・examples を辿れないので後の検査を当てない
+        # メタスキーマに合わないスキーマは、$ref・examples・x-used-by を辿れないので後の検査を当てない
         if meta_results:
             continue
         for line, path, message in _check_schema_refs(name, doc, registry):
+            results.append((relative, line, path, message))
+        for line, path, message in _check_used_by(name, doc, registry):
             results.append((relative, line, path, message))
     return sorted(results, key=lambda result: (result[0], result[1]))
 
@@ -535,6 +537,46 @@ def _check_schema_refs(
                     format_path(error_parts),
                     f"examples: {error.message}",
                 )
+
+
+def _inside_if(parts: Sequence[PathPart]) -> bool:
+    """項目のパスがキーワードとしての if の値の中を通るか（if という名前のプロパティは含めない）。"""
+    return any(
+        part == "if" and (index == 0 or parts[index - 1] not in _NAMED_SCHEMA_KEYWORDS)
+        for index, part in enumerate(parts)
+    )
+
+
+def _check_used_by(
+    name: str, doc: CommentedMap, registry: Registry[Any]
+) -> Iterator[tuple[int, str, str]]:
+    """スキーマ 1 件の properties の下のキーのうち、使用先（x-used-by）が無いものを（行、項目のパス、内容）で返す。"""
+    resolver = registry.resolver(base_uri=name)
+    for parts, schema in _iter_schemas(doc):
+        properties = as_mapping(schema.get("properties"))
+        # if の条件の中のキーは値の条件で、使用先を持たない
+        if properties is None or _inside_if(parts):
+            continue
+        for key, value in properties.items():
+            child = as_mapping(value)
+            if child is None or "x-used-by" in child:
+                continue
+            ref = child.get("$ref")
+            # $ref で型を指すキーは、型が使用先を持てばよい
+            if isinstance(ref, str):
+                try:
+                    target = as_mapping(resolver.lookup(ref).contents)
+                except Unresolvable:
+                    # 解決できない $ref は $ref の検査が出す
+                    continue
+                if target is not None and "x-used-by" in target:
+                    continue
+            key_parts = [*parts, "properties", key]
+            yield (
+                line_of(doc, key_parts),
+                format_path(key_parts),
+                "x-used-by: 使用先（x-used-by）が記載されていません",
+            )
 
 
 def check_word_list_copy(root: Path) -> list[tuple[str, int, str, str]]:
