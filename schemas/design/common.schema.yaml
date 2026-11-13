@@ -77,6 +77,28 @@ $defs:
     - implemented
     - deprecated
     - removed
+  verification_state:
+    type: string
+    title: 確認の状態
+    description: 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確かめた方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。
+    x-used-by:
+      - 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。
+      - レビューで、`verified` でない値を確認せずに実装していないかを確認する。
+      - 生成で、表の確認の状態の列にする。
+    enum:
+    - verified
+    - docs_only
+    - unverified
+  verified_at:
+    type: string
+    title: 確認日時
+    description: '`verification` を `verified` にした日時（ISO 8601、タイムゾーン付き）。'
+    x-used-by:
+      - 保守で、外部 API・外部ライブラリの版が上がったときに、その後に確認し直したかを判断する。
+      - 生成で、表の確認日時の列にする。
+    format: date-time
+    examples:
+    - '2026-11-14T10:00:00+09:00'
   visibility:
     type: string
     title: 公開
@@ -125,11 +147,15 @@ $defs:
         name:
           type: string
           title: タグの名前
+          x-used-by:
+            - 検索で、文書をタグで絞り込む値にする。
           minLength: 1
         main:
           type: boolean
           title: 主題
           description: 最も分量の多い主題のタグだけ `true` にする。
+          x-used-by:
+            - 検索で、文書の主題のタグとして扱う。
     examples:
       - - name: topic:タグ
           main: true
@@ -671,6 +697,9 @@ $defs:
     type: object
     title: モデル
     description: 使用するモデルと、モデルに指定する引数。『エージェントの定義』と『LLM の呼び出し』の `model` が使用する。
+    x-used-by:
+      - 実装で、起動コマンド・呼び出しに指定するモデルと引数にする。
+      - レビューで、ノードの役割に対して費用と質が釣り合うモデルかを確認する。
     x-shape: attributes
     additionalProperties: false
     required:

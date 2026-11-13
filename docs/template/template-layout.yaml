@@ -32,8 +32,8 @@ items:
       | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 検査で、ほかの設計書の参照（`{ID}#{項目のパス}`）の解決先にする。<br>生成で、ページの名前と、ほかの設計書からのリンク先にする。 | `LAY-1` |
       | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>dev-docs の配信で、文書の公開範囲のメタデータにする。 | - |
       | tags | タグ | array | - | - | - | 設計書を検索で絞り込むタグで、`name` にタグの名前（`action:`・`topic:`・`tool:` などで始める）、最も分量の多い主題 1 つに `main: true` を記載する。<br>付け方は knowledge の規約『文書のタグと description の記載』に従う。 | dev-docs の検索で、文書をタグで絞り込む。 | `[{main: true, name: topic:タグ}, name: action:記載]` |
-      | tags[].name | タグの名前 | string | 必須 | - | minLength: `1` | - | - | - |
-      | tags[].main | 主題 | boolean | - | - | - | 最も分量の多い主題のタグだけ `true` にする。 | - | - |
+      | tags[].name | タグの名前 | string | 必須 | - | minLength: `1` | - | 検索で、文書をタグで絞り込む値にする。 | - |
+      | tags[].main | 主題 | boolean | - | - | - | 最も分量の多い主題のタグだけ `true` にする。 | 検索で、文書の主題のタグとして扱う。 | - |
       | aliases | 別名 | array | - | - | - | 検索で当てたい言い換え。 | dev-docs の検索で、文書を名前と同じように引く言い換えにする。 | `[フォルダ構成の設計書]` |
       | title | タイトル | string | 必須 | - | - | 設計書の表示名。 | 生成で、ページの見出しにする。<br>dev-docs の検索で、文書の名前にする。 | `aituber` |
       | repository | リポジトリ | string | 必須 | - | pattern: `^[^/\s]+/[^/\s]+$` | 対象のリポジトリ（`owner/name`）。 | 実装で、フォルダ構成を当てるリポジトリにする。 | `shuhei1101/aituber` |

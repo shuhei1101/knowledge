@@ -81,6 +81,8 @@ items:
       | catalogs[].entries[].params[].description | 説明 | string | 必須 | - | - | - | 実装で、引数に入れる値を決める。 | - |
       | catalogs[].entries[].params[].constraints | 制限 | string | - | - | - | - | 実装で、渡す前の検証にする。 | - |
       | catalogs[].entries[].params[].notes | 補足 | string | - | - | - | - | 実装で、引数の前提を参照する。 | - |
+      | catalogs[].entries[].params[].verification | 確認の状態 | string | - | `verified` / `docs_only` / `unverified` | - | 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確かめた方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。 | 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。<br>レビューで、`verified` でない値を確認せずに実装していないかを確認する。<br>生成で、表の確認の状態の列にする。 | - |
+      | catalogs[].entries[].params[].verified_at | 確認日時 | string | - | - | format: `date-time` | `verification` を `verified` にした日時（ISO 8601、タイムゾーン付き）。 | 保守で、外部 API・外部ライブラリの版が上がったときに、その後に確認し直したかを判断する。<br>生成で、表の確認日時の列にする。 | `2026-11-14T10:00:00+09:00` |
       | catalogs[].entries[].params_example | パラメータ例 | string | - | - | - | import 込みの最小の動く例（コードブロック）。 | 実装で、呼び出しの見本にする。 | - |
       | catalogs[].entries[].returns | 戻り値 | array | - | - | - | 単純な値は `name` を `-` にした 1 要素。 | 実装で、戻り値を読む型にする。 | - |
       | catalogs[].entries[].returns[].name | フィールド | string | 必須 | - | - | 返らないことがあるフィールドは `field?` と記載し、条件を補足に記載する。 | 実装で、戻り値のフィールドの名前にする。 | - |
@@ -95,6 +97,8 @@ items:
       | catalogs[].entries[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
       | catalogs[].entries[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | catalogs[].entries[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+      | catalogs[].entries[].verification | 確認の状態 | string | - | `verified` / `docs_only` / `unverified` | - | 対象（関数・コマンド・設定のキー 等）の振る舞いを確かめた方法。引数ごとの状態は `params[].verification` に記載する。 | 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。<br>レビューで、`verified` でない値を確認せずに実装していないかを確認する。<br>生成で、表の確認の状態の列にする。 | - |
+      | catalogs[].entries[].verified_at | 確認日時 | string | - | - | format: `date-time` | `verification` を `verified` にした日時（ISO 8601、タイムゾーン付き）。 | 保守で、外部 API・外部ライブラリの版が上がったときに、その後に確認し直したかを判断する。<br>生成で、表の確認日時の列にする。 | `2026-11-14T10:00:00+09:00` |
       | limitations | 制限事項 | array | - | - | - | 仕様として常に成り立つ制約。 | 実装で、ライブラリでできないことを避ける。<br>レビューで、制限事項に当たる使い方が無いかを確認する。 | - |
       | limitations[].item | 事項 | string | 必須 | - | - | - | 生成で、表の行の名前にする。 | - |
       | limitations[].content | 内容 | string | 必須 | - | - | - | 実装で、守る制約にする。 | - |

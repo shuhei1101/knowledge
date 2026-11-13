@@ -457,6 +457,10 @@ properties:
                   - 実装で、`null` を送ってよいかを決める。
               status:
                 $ref: common.schema.yaml#/$defs/status
+              verification:
+                $ref: common.schema.yaml#/$defs/verification_state
+              verified_at:
+                $ref: common.schema.yaml#/$defs/verified_at
         request_example:
           $ref: common.schema.yaml#/$defs/markdown
           title: リクエスト例
@@ -506,6 +510,10 @@ properties:
                 title: 補足
                 x-used-by:
                   - 実装で、返らないことがあるフィールドの条件を参照する。
+              verification:
+                $ref: common.schema.yaml#/$defs/verification_state
+              verified_at:
+                $ref: common.schema.yaml#/$defs/verified_at
         same_as:
           type: string
           title: 同形のレスポンス

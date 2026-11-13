@@ -365,6 +365,10 @@ properties:
                       title: 補足
                       x-used-by:
                         - 実装で、引数の前提を参照する。
+                    verification:
+                      $ref: common.schema.yaml#/$defs/verification_state
+                    verified_at:
+                      $ref: common.schema.yaml#/$defs/verified_at
               params_example:
                 $ref: common.schema.yaml#/$defs/markdown
                 title: パラメータ例
@@ -444,6 +448,11 @@ properties:
                 $ref: common.schema.yaml#/$defs/visibility
               notes:
                 $ref: common.schema.yaml#/$defs/notes
+              verification:
+                $ref: common.schema.yaml#/$defs/verification_state
+                description: 対象（関数・コマンド・設定のキー 等）の振る舞いを確かめた方法。引数ごとの状態は `params[].verification` に記載する。
+              verified_at:
+                $ref: common.schema.yaml#/$defs/verified_at
   limitations:
     type: array
     title: 制限事項
