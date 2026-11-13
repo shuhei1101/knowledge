@@ -6,7 +6,7 @@ entry:
   value: リポジトリの直下で起動するコマンド（CLI）。開発者の手元から呼ぶ
 flows:
   - name: 正常系
-    summary: 正本の対応表の YAML から、フックが読む JSON のコピーを書き出す
+    summary: 原本の対応表の YAML から、フックが読み込む JSON のコピーを書き出す
     setup:
       - name: Mock
         description: 差し替えない
@@ -18,17 +18,17 @@ flows:
         participant S as 対応表のコピーの作成
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>F: 正本の対応表の YAML を読む
+        S->>F: 原本の対応表の YAML を読み込む
         F-->>S: 対応表
         S->>F: JSON のコピーを書き出す
         S-->>C: 終了コード 0
     expected:
       - 終了コードが 0
-      - '`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` の `entries` が正本の 2 行と同じ並びで、各行が `id`・`ng`・`ok`・`pattern`・`allow`・`note` だけを持つ'
+      - '`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` の `entries` が原本の 2 行と同じ並びで、各行が `id`・`ng`・`ok`・`pattern`・`allow`・`note` だけを持つ'
       - 2 回続けて起動しても、コピーのバイト列が変わらない
     test: test_normal
-  - name: 異常系（正本が読めない・終了コード 2）
-    summary: 正本の対応表が無いか YAML として読めなければ、コピーを書き換えずに終わる
+  - name: 異常系（原本が読み込めない・終了コード 2）
+    summary: 原本の対応表が無いか YAML として読み込めなければ、コピーを書き換えずに終わる
     setup:
       - name: Mock
         description: 差し替えない
@@ -40,21 +40,21 @@ flows:
         participant S as 対応表のコピーの作成
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>F: 正本の対応表の YAML を読む
+        S->>F: 原本の対応表の YAML を読み込む
         F-->>S: ファイルが無い
         S-->>C: 終了コード 2 と標準エラーの理由
     expected:
       - 終了コードが 2
-      - 標準エラーに、読めなかった正本のパスが出る
+      - 標準エラーに、読み込めなかった原本のパスが出る
       - 前回のコピーのバイト列が変わらない
     test: test_error_when_source_missing
-lead: 正本の対応表 `docs/word-list/word-list-ai-slop.yaml` から、プラグイン slop-check のフックが読む JSON のコピーを書き出す。
+lead: 原本の対応表 `docs/word-list/word-list-ai-slop.yaml` から、プラグイン slop-check のフックが読み込む JSON のコピーを書き出す。
 identifier: build-word-list
 idempotent: true
 side_effects: '`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を書き換える'
 callers:
   - IF-72-3#constraints[対応表のコピー]
-exclusivity: 制限なし（同じ正本からは同じバイト列を書き出す）
+exclusivity: 制限なし（同じ原本からは同じバイト列を書き出す）
 request:
   - name: cwd
     type: Path
@@ -68,16 +68,16 @@ response:
     description: 終了コード 2 のときの理由
   - name: exit_code
     type: Literal[0, 2]
-    description: 0 = コピーを書き出した。2 = 正本が読めず、コピーを書き換えなかった
+    description: 0 = コピーを書き出した。2 = 原本が読み込めず、コピーを書き換えなかった
 exceptions:
   - name: なし（正常終了）
     condition: コピーを書き出した
   - name: 終了コード 2
-    condition: 正本の対応表が無いか、YAML として読めない
+    condition: 原本の対応表が無いか、YAML として読み込めない
 constraints:
   - item: コピーの書式
-    constraint: 'UTF-8 の JSON。`ensure_ascii` を使わず、キーを固定の順にし、末尾に改行を 1 つ置く。`examples` と文書のメタデータは持たない'
-    notes: 「全ての文書の検査」が正本と同じ書式で作り直して一致を確かめる
-  - item: 正本の検査
+    constraint: 'UTF-8 の JSON。`ensure_ascii` を使用せず、キーを固定の順にし、末尾に改行を 1 つ配置する。`examples` と文書のメタデータは持たない'
+    notes: 「全ての文書の検査」が原本と同じ書式で再作成して一致を確認する
+  - item: 原本の検査
     constraint: しない（スキーマと `examples` の検査は「全ての文書の検査」と `write_docs` が担う）
 test_file: tests/integration/scripts/test_build_word_list.py

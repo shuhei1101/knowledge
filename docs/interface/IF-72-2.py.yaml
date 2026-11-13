@@ -3,7 +3,7 @@ visibility: internal
 title: "文書の Markdown への変換"
 entry:
   kind: operation
-  value: '`dev-docs.yaml` の `converters[]` の `knowledge-markdown`（`documents[]` の `docs/` の種類（`rule`・`template`・`flowchart`・`guide`・`changelog`・`skill`・`word-list`）の行が `converter` で指す。files.yaml の行は `converter` を持たない。dev-docs が配信元の直下で子プロセスとして起動する。`cache: false` で、dev-docs は変換の結果を控えずに文書を開くたびに起動する）'
+  value: '`dev-docs.yaml` の `converters[]` の `knowledge-markdown`（`documents[]` の `docs/` の種類（`rule`・`template`・`flowchart`・`guide`・`changelog`・`skill`・`word-list`）の行が `converter` で指す。files.yaml の行は `converter` を持たない。project-index が配信元の直下で子プロセスとして起動する。`cache: false` で、project-index は変換の結果を記録せずに文書を開くたびに起動する）'
 flows:
   - name: 正常系
     summary: 規約を、group の階層を見出しにした Markdown にする
@@ -15,11 +15,11 @@ flows:
         notes: develop の `convention-writing-style.yaml` と同じ構造
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の Markdown への変換
         participant F as 配信元の schemas
         D->>S: 標準入力に文書の YAML
-        S->>F: kind のスキーマを読む
+        S->>F: kind のスキーマを読み込む
         S->>S: group の階層で見出しを組む
         S-->>D: 終了コード 0 と Markdown
     expected:
@@ -29,7 +29,7 @@ flows:
       - '`## 関連` に `related` の行数だけ箇条書きがある'
     test: test_normal
   - name: 正常系（種類に固有のキーがある）
-    summary: 種類に固有のキーを、スキーマの title を見出しにした節で出す
+    summary: 種類に固有のキーを、スキーマの title を見出しにしたセクションで出す
     setup:
       - name: Mock
         description: 差し替えない
@@ -37,12 +37,12 @@ flows:
         description: '`arguments`（オブジェクトの配列）と `preconditions`（文字列の配列）を持つ文書。配信元の `schemas/` に、その `kind` のスキーマ（`arguments`・`preconditions` の `title` を持つ）を配置する'
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の Markdown への変換
         participant F as 配信元の schemas
         D->>S: 標準入力に固有のキーを持つ文書の YAML
-        S->>F: kind のスキーマを読む
-        S->>S: 固有のキーをスキーマの title の節にする
+        S->>F: kind のスキーマを読み込む
+        S->>S: 固有のキーをスキーマの title のセクションにする
         S-->>D: 終了コード 0 と Markdown
     expected:
       - 終了コードが 0
@@ -56,17 +56,17 @@ flows:
         description: 差し替えない
       - name: 標準入力
         description: '項目の本文に `<!-- embed: word-list-ai-slop -->` の行と、コードブロックの中の同じマーカーを持つ rule の文書'
-        notes: develop の `convention-writing-style.yaml` の `word-choice-table-02` と同じ書き方
+        notes: develop の `convention-writing-style.yaml` の `word-choice-table-02` と同じ記載方法
       - name: 配信元の対応表
-        description: '`dev-docs.yaml` の `documents[]` の `word-list` の行の `paths` に当たる、`id: word-list-ai-slop` の対応表'
+        description: '`dev-docs.yaml` の `documents[]` の `word-list` の行の `paths` に該当する、`id: word-list-ai-slop` の対応表'
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の Markdown への変換
         participant F as 配信元のファイル
         D->>S: 標準入力に文書の YAML
-        S->>F: kind のスキーマを読む
-        S->>F: dev-docs.yaml の word-list の行の対応表を読む
+        S->>F: kind のスキーマを読み込む
+        S->>F: dev-docs.yaml の word-list の行の対応表を読み込む
         S->>S: マーカーの行を ID の対応表の NG・OK の表に置き換える
         S-->>D: 終了コード 0 と Markdown
     expected:
@@ -84,11 +84,11 @@ flows:
         description: '項目の本文に `<!-- embed: missing -->` の行を持つ rule の文書'
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の Markdown への変換
         participant F as 配信元のファイル
         D->>S: 標準入力に文書の YAML
-        S->>F: dev-docs.yaml の word-list の行の対応表を読む
+        S->>F: dev-docs.yaml の word-list の行の対応表を読み込む
         F-->>S: ID が missing の対応表が無い
         S-->>D: 終了コード 0 と、マーカーの位置に注意書きを持つ Markdown
     expected:
@@ -104,11 +104,11 @@ flows:
         description: '`kind: missing` の文書'
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の Markdown への変換
         participant F as 配信元の schemas
         D->>S: 標準入力に文書の YAML
-        S->>F: kind のスキーマを読む
+        S->>F: kind のスキーマを読み込む
         F-->>S: ファイルが無い
         S-->>D: 終了コード 1 と標準エラーの理由
     expected:
@@ -116,8 +116,8 @@ flows:
       - 標準出力が空
       - 標準エラーに `schemas/missing.schema.yaml` が無いことが出る
     test: test_error_when_schema_missing
-  - name: 異常系（YAML として読めない・終了コード 1）
-    summary: 読めない入力は変換せずに終わる
+  - name: 異常系（YAML として読み込めない・終了コード 1）
+    summary: 読み込めない入力は変換せずに終わる
     setup:
       - name: Mock
         description: 差し替えない
@@ -125,38 +125,38 @@ flows:
         description: 括弧が閉じていない YAML
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の Markdown への変換
         D->>S: 標準入力に壊れた YAML
         S-->>D: 終了コード 1 と標準エラーの理由
     expected:
       - 終了コードが 1
-      - 標準エラーに読めない行が出る
+      - 標準エラーに読み込めない行が出る
     test: test_error_when_invalid_yaml
-  - name: 異常系（対応表が読めない・終了コード 1）
-    summary: 埋め込みのマーカーがあり、対応表を引く dev-docs.yaml か対応表のファイルが読めなければ変換せずに終わる
+  - name: 異常系（対応表が読み込めない・終了コード 1）
+    summary: 埋め込みのマーカーがあり、対応表を指す dev-docs.yaml か対応表のファイルが読み込めなければ変換せずに終わる
     setup:
       - name: Mock
         description: 差し替えない
       - name: 標準入力
         description: '項目の本文に `<!-- embed: word-list-ai-slop -->` の行を持つ rule の文書'
       - name: 配信元の対応表
-        description: '`dev-docs.yaml` の `word-list` の行の `paths` に当たるファイルの 1 つが、括弧の閉じていない YAML'
+        description: '`dev-docs.yaml` の `word-list` の行の `paths` に該当するファイルの 1 つが、括弧の閉じていない YAML'
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の Markdown への変換
         participant F as 配信元のファイル
         D->>S: 標準入力に文書の YAML
-        S->>F: dev-docs.yaml の word-list の行の対応表を読む
-        F-->>S: 読めないファイル
+        S->>F: dev-docs.yaml の word-list の行の対応表を読み込む
+        F-->>S: 読み込めないファイル
         S-->>D: 終了コード 1 と標準エラーの理由
     expected:
       - 終了コードが 1
       - 標準出力が空
-      - 標準エラーに読めないファイルのパスと行が出る
+      - 標準エラーに読み込めないファイルのパスと行が出る
     test: test_error_when_word_list_unreadable
-lead: 標準入力の文書 1 件を、項目の `group` の階層を見出しにした mdmark の記法の Markdown にして標準出力へ返す。
+lead: 標準入力の文書 1 件を、項目の `group` の階層を見出しにした mdmark の記法の Markdown にして標準出力へ返却する。
 identifier: knowledge-markdown
 idempotent: true
 side_effects: なし（ファイルを書き換えない）
@@ -175,35 +175,35 @@ request:
     type: Path
     required: true
     location: argument
-    description: knowledge の配信元の直下。`schemas/{kind}.schema.yaml` を読み、種類に固有のキーの見出しにスキーマの `title` を使う。埋め込みのマーカーがあるときは `dev-docs.yaml` の `documents[]` の `word-list` の行の `paths` に当たる対応表を読む
+    description: knowledge の配信元の直下。`schemas/{kind}.schema.yaml` を読み込み、種類に固有のキーの見出しにスキーマの `title` を使用する。埋め込みのマーカーがあるときは `dev-docs.yaml` の `documents[]` の `word-list` の行の `paths` に該当する対応表を読み込む
     notes: 子プロセスの作業ディレクトリとして受け取る
 response:
   - name: stdout
     type: str
-    description: mdmark の記法の Markdown。並びは「`# {name}`・`description`・`overview` の項目の本文・項目の節・種類に固有のキーの節・`## 関連`・`## 出典`」
+    description: mdmark の記法の Markdown。並びは「`# {name}`・`description`・`overview` の項目の本文・項目のセクション・種類に固有のキーのセクション・`## 関連`・`## 出典`」
   - name: exit_code
     type: Literal[0, 1]
-    description: 0 = 変換できた。1 = YAML として読めないか、`kind` のスキーマが `schemas/` に無いか、埋め込みのマーカーがある文書で対応表を読めない
+    description: 0 = 変換できた。1 = YAML として読み込めないか、`kind` のスキーマが `schemas/` に無いか、埋め込みのマーカーがある文書で対応表を読み込めない
   - name: stderr
     type: str
-    description: 終了コード 1 のときの理由（1 行）。dev-docs が画面の変換の失敗（`exit`）の理由に載せる
+    description: 終了コード 1 のときの理由（1 行）。project-index が変換の失敗（`exit`）の理由に記載し、dev-docs の画面に出る
 response_example: |-
   ```markdown
   # 文章の書き方
 
-  エージェントが記載する文章の確認表と、語の選び方を定め…
+  エージェントが記載する文章の確認表と、用語の選び方を定め…
 
-  エージェントが書く文章の確認と、語の選び方の決まり。
+  エージェントが記載する文章の確認と、用語の選び方の決まり。
 
-  ## 語の選び方
+  ## 用語の選び方
 
-  ### 文章でない所の語の選び方
+  ### 文章でない所の用語の選び方
 
   文章でない所（UI のラベル…）は…
 
   ### 原則
 
-  #### 対応表に無い語の判断
+  #### 対応表に無い単語の判断
 
   …
 
@@ -211,22 +211,22 @@ response_example: |-
 
   - [flowchart-word-choice](id:flowchart-word-choice)（references）: 迷ったとき
   ```
-response_notes: '項目の本文は書かれた Markdown のまま出し、`<!-- table: data -->` などの mdmark のマーカーと `id:` のリンクを書き換えない。書き換えるのは埋め込みのマーカーの行だけ'
+response_notes: '項目の本文は記載された Markdown のまま出し、`<!-- table: data -->` などの mdmark のマーカーと `id:` のリンクを書き換えない。書き換えるのは埋め込みのマーカーの行だけ'
 exceptions:
   - name: なし（正常終了）
     condition: 変換できた
   - name: 終了コード 1
-    condition: 標準入力が YAML として読めないか、`kind` に当たる `schemas/{kind}.schema.yaml` が無い。埋め込みのマーカーがある文書で、`dev-docs.yaml` か `word-list` の行の `paths` に当たるファイルが読めない
+    condition: 標準入力が YAML として読み込めないか、`kind` に該当する `schemas/{kind}.schema.yaml` が無い。埋め込みのマーカーがある文書で、`dev-docs.yaml` か `word-list` の行の `paths` に該当するファイルが読み込めない
 constraints:
   - item: 処理時間
     constraint: 起動から 20 秒
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
   - item: 項目の見出し
-    constraint: 項目はファイルの並びどおりに出す。`group` を ` > ` で分けた各段を `##` から 1 つずつ深い見出しにし、直前の項目と同じ段は繰り返さない。項目の `name` はその 1 つ下の見出しにする。`overview` は見出しを付けず、`description` の直後に本文だけを置く
+    constraint: 項目はファイルの並びどおりに出す。`group` を ` > ` で分けた各階層を `##` から 1 つずつ深い見出しにし、直前の項目と同じ階層は繰り返さない。項目の `name` はその 1 つ下の見出しにする。`overview` は見出しを付けず、`description` の直後に本文だけを配置する
   - item: 埋め込みのマーカー
-    constraint: '項目の本文のうちコードブロックの外で、前後の空白を除いて `<!-- embed: {文書の ID} -->` だけの行を、`kind: word-list` で `id` が一致する文書の `entries` の NG・OK の表（対応表の文書の `entries` の節と同じ書式）に置き換える。`{文書の ID}` に `/`・`#` を含むマーカーは dev-docs のパスの書き方として書き換えずに残す。ID の対応表が無い場合は `> [!WARNING]` の注意書きに置き換え、終了コードは 0 のまま'
+    constraint: '項目の本文のうちコードブロックの外で、前後の空白を除いて `<!-- embed: {文書の ID} -->` だけの行を、`kind: word-list` で `id` が一致する文書の `entries` の NG・OK の表（対応表の文書の `entries` のセクションと同じ書式）に置き換える。`{文書の ID}` に `/`・`#` を含むマーカーは dev-docs のパスの記載方法として書き換えずに残す。ID の対応表が無い場合は `> [!WARNING]` の注意書きに置き換え、終了コードは 0 のまま'
   - item: 出さないキー
     constraint: '`id`・`kind`・`tags`・`status`・`visibility`・`rev`・`last_reviewed`・`aliases` は本文に出さない（dev-docs の画面がメタデータとして出す）。alias-inject の照合条件の `inject_when` も本文に出さない'
   - item: 種類に固有のキー
-    constraint: '共通のメタデータ以外のキー（スキルの `arguments` など）は `## {スキーマの title}` の節にし、文字列は段落、文字列の配列は箇条書き、オブジェクトの配列は `<!-- table: data -->` の表で出す'
+    constraint: '共通のメタデータ以外のキー（スキルの `arguments` など）は `## {スキーマの title}` のセクションにし、文字列は段落、文字列の配列は箇条書き、オブジェクトの配列は `<!-- table: data -->` の表で出す'
 test_file: tests/integration/scripts/test_knowledge_markdown.py

@@ -59,13 +59,13 @@ flows:
         W-->>G: 失敗
     expected:
       - ジョブが失敗で終わる
-      - ジョブのログに、引けない CLI の名前が出る
+      - ジョブのログに、見つからない CLI の名前が出る
 lead: PR ごとに Python 3.14 と maid を入れ、「全ての文書の検査」を走らせて、その終了コードをジョブの合否にする。
 idempotent: true
 side_effects: 'なし（リポジトリに書き込まない。`permissions` は `contents: read` だけ）'
 callers:
   - SC-72-6#scenarios[正常シナリオ]
-exclusivity: 同じ PR の前の実行は、新しい push で取り消す（`concurrency` の `cancel-in-progress`）
+exclusivity: 同じ PR の前の実行は、新しい push でキャンセルする（`concurrency` の `cancel-in-progress`）
 constraints:
   - item: ランナー
     constraint: '`ubuntu-latest`'
@@ -80,4 +80,4 @@ constraints:
   - item: yamllint の入れ方
     constraint: '`scripts/check_all.py` のスクリプトの依存（uv のロック）として入る'
 notes:
-  確かめ方: '結合テストのファイルは持たない（GitHub Actions の上でしかジョブの成否を確かめられない）。ジョブが起動する「全ての文書の検査」の合否は IF-72-3 の結合テストが確かめ、ジョブの成否は作業 PR の Actions の実行結果で確かめる。PR #72 では、正常系を run 41183934226（599084c、success）、異常系（違反がある・ジョブの失敗）を run 41181644561（3b3ba6c、違反 13 件で終了コード 1、failure）で確かめた。異常系（maid を入れられない）は、`npm install -g` のステップが失敗すればジョブが止まる Actions の既定の動きにより、実行しては確かめていない'
+  確認方法: '結合テストのファイルは持たない（GitHub Actions の上でしかジョブの成否を確認できない）。ジョブが起動する「全ての文書の検査」の合否は IF-72-3 の結合テストが確認し、ジョブの成否は作業 PR の Actions の実行結果で確認する。PR #72 では、正常系を run 41183934226（599084c、success）、異常系（違反がある・ジョブの失敗）を run 41181644561（3b3ba6c、違反 13 件で終了コード 1、failure）で確認した。異常系（maid を入れられない）は、`npm install -g` のステップが失敗すればジョブが止まる Actions の既定の動きにより、実行しては確認していない'
