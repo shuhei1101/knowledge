@@ -50,7 +50,7 @@ tags:
   - name: action:配布
 status: current
 visibility: internal
-rev: 6
+rev: 7
 last_reviewed: '2026-10-30'
 sources:
   - title: Python のリリース状況
@@ -205,7 +205,7 @@ items:
     group: Git フックとタスクの入口
     name: Git フックは lefthook
     body: |-
-      - Git フックは lefthook（言語を問わない）で動かす
+      - Git フックは lefthook（言語を問わない）で動かし、動かすものは [Git フックと CI で動かすもの](id:dev-hook-ci-scope) に従う
   - id: git-hook-02
     group: Git フックとタスクの入口
     name: タスクの入口は npm scripts
@@ -284,9 +284,9 @@ items:
       | `.venv/` | gitignore |
   - id: git-management-02
     group: Git 管理
-    name: CI では locked で検証
+    name: 依存を変えた作業では locked で検証
     body: |-
-      CI では `uv sync --locked` でロックとの乖離を検証（`--frozen` は検証せずロックをそのまま使用する）。
+      依存を変えた作業では `uv sync --locked` でロックとの乖離を検証（`--frozen` は検証せずロックをそのまま使用する）。
   - id: dependency-group-01
     group: 依存グループ
     name: optional-dependencies の用途

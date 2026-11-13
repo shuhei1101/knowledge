@@ -1,0 +1,49 @@
+kind: rule
+id: dev-hook-ci-scope
+name: Git フックと CI で動かすもの
+description: Git フックと CI で動かすもの（生成・配布）と動かさないもの（lint・型検査・テスト・依存の監査）を定め、Git フックや CI のワークフローを作る・修正するときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-14'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      Git フックと CI で動かすものの決まり。
+      lint・型検査・テストはエージェントの作業の手順で実行し、ログを PR に残す。
+  - id: scope-01
+    group: 動かすもの
+    name: 動かすものと動かさないもの
+    body: |-
+      <!-- table: data -->
+
+      | 種類 | Git フック・CI | 例 |
+      | --- | --- | --- |
+      | 生成・配布 | 動かす | ビルドの成果物を commit に入れる・入れた成果物がソースと合っているかの確認・GitHub Pages への配信・拡張機能の公開 |
+      | lint・formatter の check | 動かさない | ruff・ESLint・markdownlint・全ての文書の検査 |
+      | 型検査 | 動かさない | pyright・`tsc --noEmit` |
+      | テスト | 動かさない | 単体・結合・E2E |
+      | 依存の検証・監査 | 動かさない | `uv sync --locked`・`pnpm audit` |
+
+      <!-- /table -->
+
+      動かさないものは、テスト実行方法の各層のコマンドに入れ、作業の手順で実行する。
+  - id: hook-01
+    group: Git フック
+    name: Git フックのツール
+    body: |-
+      - Git フックは lefthook（言語を問わない）で動かす
+      - 動かすものが無いリポジトリは lefthook を入れない
+tags:
+  - name: scope:dev
+  - name: topic:ci
+    main: true
+  - name: topic:フック
+  - name: topic:lint
+  - name: topic:testing
+  - name: tool:git
+  - name: tool:lefthook
+  - name: action:ビルド
+  - name: action:配布
+  - name: action:検査
