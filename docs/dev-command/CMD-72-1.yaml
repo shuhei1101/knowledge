@@ -76,7 +76,7 @@ categories:
       uv remove --script scripts/{スクリプト}.py {パッケージ}
       ```
 
-      4. maid のバージョンを上げるときは、環境構築と CI のワークフロー（`.github/workflows/docs-check.yml`）の `@probelabs/maid@{バージョン}` を揃えて書き換える
+      4. maid のバージョンを上げるときは、環境構築の `@probelabs/maid@{バージョン}` を書き換える
 
       5. markdownlint-cli2・textlint とルールのバージョンを上げるときは、完全なバージョンで `scripts/lint/package.json` とロックを書き換える
 
@@ -137,7 +137,7 @@ categories:
     prerequisites:
       - 環境構築（クローン直後）を流してある
     commands: |-
-      1. CI と同じ、全ての文書の検査を流す（違反があれば終了コード 1 で、違反を 1 件 1 行で出す）
+      1. 全ての文書の検査を実行する（違反があれば終了コード 1 で、違反を 1 件 1 行で出す）
 
       ```bash
       uv run --frozen --script scripts/check_all.py

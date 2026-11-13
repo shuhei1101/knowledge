@@ -1,7 +1,7 @@
 id: "MOD-72-6"
 visibility: internal
 title: "検査と変換のスクリプト / scripts / check_all.py"
-lead: CI と手元から呼ぶ「全ての文書の検査」。`dev-docs.yaml` の `documents[]` が指す全ての文書に、スキーマの検査と文書の違反の検査を当て、`schemas/design/` の設計書のスキーマと `schemas/` の直下のスキーマにスキーマ自身の検査を当て、終了コードで合否を返す（IF-72-3）。
+lead: 手元から呼ぶ「全ての文書の検査」。`dev-docs.yaml` の `documents[]` が指す全ての文書に、スキーマの検査と文書の違反の検査を当て、`schemas/design/` の設計書のスキーマと `schemas/` の直下のスキーマにスキーマ自身の検査を当て、終了コードで合否を返す（IF-72-3）。
 data_models:
   - name: Target
     title: 検査する文書
