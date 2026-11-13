@@ -43,7 +43,7 @@ items:
       | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
       | --- | --- | --- | --- | --- | --- | --- | --- | --- |
       | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 検査で、ほかの設計書の参照（`{ID}#{項目のパス}`）の解決先にする。<br>生成で、ページの名前と、ほかの設計書からのリンク先にする。 | `IF-12` / `IF-3038-1` |
-      | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出すか。`public`（出す）/ `internal`（出さない）。記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>dev-docs の配信で、文書の公開範囲のメタデータにする。 | - |
+      | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>dev-docs の配信で、文書の公開範囲のメタデータにする。 | - |
       | title | タイトル | string | 必須 | - | - | 日本語の論理名。ファイル名に合わせる。 | 生成で、ページの見出しにする。<br>dev-docs の検索で、文書の名前にする。 | - |
       | entry | 入口 | object | 必須 | - | - | 操作の入口。冒頭のメタ情報の行に出す。 | 実装で、操作の入口（エンドポイント・MCP ツール・画面操作・周期の処理）を作る。<br>生成で、冒頭のメタ情報の行にする。 | - |
       | entry.kind | 種類 | string | 必須 | `endpoint` / `mcp_tool` / `operation` / `trigger` / `screen` | - | `endpoint`（HTTP を返却する。値はメソッド + パス）/ `mcp_tool`（MCP ツール名）/ `operation`（呼び出す識別子 + 境界の種別）/ `trigger`（起動契機 + 周期）/ `screen`（画面の実装ファイル）。 | 実装で、入口の種類（HTTP・MCP・画面・周期・イベント）を決める。 | - |
