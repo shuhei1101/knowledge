@@ -1,0 +1,139 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: changed
+    detail: 公開文書の配信の契機を master へのマージから develop へのマージに変え、公開しない文書への参照の行き先を develop の YAML にする
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: changed
+    detail: 文書の検査を PR ごとの CI から、開発者がクローンで全ての文書の検査のコマンドを実行する流れにする
+    depends_on: []
+docs:
+  - page: docs/rule/dev-hook-ci-scope.yaml
+    new: true
+    change: Git フックと CI で lint・型検査・テストを動かさず、ビルドの成果物を commit に入れるなど生成・配布に当たるものだけを動かす決まりを、言語を問わない規約として新設する（#227）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/rule/python-packaging-pyproject.yaml
+    new: false
+    change: '`git-hook-01` を新設の規約への参照に合わせ、`git-management-02` の CI での `uv sync --locked` の検証を新しい決まりに合わせる（#227）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/rule/html-tooling-tsc.yaml
+    new: false
+    change: '`typecheck` の用途の「CI / pre-commit」を新しい決まりに合わせる（#227）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/rule/python-core-style.yaml
+    new: false
+    change: pyright の用途の「型チェック（CI / strict が正）」を新しい決まりに合わせる（#227）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/rule/python-testing-layers.yaml
+    new: false
+    change: 単体・結合テストの実行の「CI / 開発時に自動」を新しい決まりに合わせる（#227）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/rule/react-shared-security.yaml
+    new: false
+    change: 「CI で依存を監査する」が検査に当たるかを判断し、当たれば新しい決まりに合わせる（#227）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/rule/dev-document-management.yaml
+    new: false
+    change: 「参照切れは CI で止める」を新しい決まりに合わせ、GitHub Pages を master へのマージで配信する記述を develop にする（#227・#230）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: schemas/design/test_procedure.schema.yaml
+    new: false
+    change: '`lint` 層の `x-rules` の「CI・pre-commit・…で使用すると決めたツール」を新しい決まりに合わせる（#227）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/template/template-test-procedure.yaml
+    new: false
+    change: スキーマの変更から `scripts/build_templates.py` で生成し直す（#227）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/rule/dev-branch-strategy.yaml
+    new: false
+    change: 0.x の間は release・hotfix を切らず develop だけで開発し、master へ初めて入れるときを v1.0.0 にする運用と、メジャーのリリースで release を切る前にテストを精査する工程を追加する（ai-monitor の規約『ブランチ戦略』に追随。#230）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/rule/dev-versioning.yaml
+    new: false
+    change: '`tag-01`・`tag-02` に、0.x の間はスプリントの区切りに develop の commit へタグを打ち、`--merged origin/develop` で並べる決まりを追加する（ai-monitor の規約『バージョニング』に追随。#230）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/checksheet/checksheet-major-release-test-review.yaml
+    new: true
+    change: メジャーのリリースで release を切る前のテストの精査の観点（共通にできる前準備・ヘルパー・無駄なテストデータ・新しい範囲を確認しないテスト・重い処理・skip したままのテスト）を新設する（ai-monitor の `docs/checksheet/メジャーリリース前のテスト精査.md` に追随。#230）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/rule/claude-mcp-docs-server.yaml
+    new: false
+    change: '`rule-inject/blob/master/...` のリンクを、develop で移った先の `docs/guide/` のページへの develop のリンクにする（#230）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/rule/dev-rule-index-registration.yaml
+    new: false
+    change: '`rule-inject/blob/master/...` のリンクを、develop で移った先の `docs/guide/` のページへの develop のリンクにする（#230）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/guide/guide-setup-apply-rule-index.yaml
+    new: false
+    change: '`rule-inject/blob/master/...` のリンクを、develop で移った先の `docs/guide/` のページへの develop のリンクにする（#230）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: docs/guide/guide-setup-import-rule-changes.yaml
+    new: false
+    change: master の最新を取り込む手順と確認を develop にする（#230）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: CLAUDE.md
+    new: false
+    change: スキーマを変える PR のタグを上げる反映作業の時期を develop へのマージの後にし、スクリプトを呼ぶ元から CI を除いて手元のコマンドと GitHub Pages の配信のワークフローにする（#230・#227）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: rules.yaml
+    new: false
+    change: 新設の規約『Git フックと CI で動かすもの』を lefthook の設定と `.github/workflows/` の glob で登録する（チェックシートは glob が決まらないため登録しない）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:44:45.665357+00:00'
+  - page: scripts/files.yaml
+    new: false
+    change: '`scripts/check_all.py` の説明から CI を除いて手元のコマンドにする（実装で `docs-check.yml` を削除するときに合わせる）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:06:04.790711+00:00'
+scope_out:
+  - item: GitHub の既定のブランチを develop にする操作（D-296 A）
+    reason: knowledge の既定のブランチは既に develop（2026-11-14 に gh api で確認）
+    plan: none
+  - item: 規約『作業ディレクトリ』（`dev-working-directory.yaml`）の「メインのクローンを常に master のままにする」
+    reason: 追随先の ai-monitor でも、規約『作業ディレクトリ』はメインのクローンを常に master に置くままで、規約『ブランチ戦略』の 0.x の運用が develop にするのは GitHub の既定のブランチと GitHub Pages の出し元だけ（`docs/rule/ブランチ戦略.md` 18 行目）
+    plan: none
+  - item: シナリオの `test_file` が指す `tests/e2e/` の削除済みのテスト
+    reason: 0.x の間は E2E を回さず修正もしない（D-297 A）。v1.0.0 の前に作り直す
+    plan: none
+  - item: 他のリポジトリ（mdmark・dev-docs 等）の Git フック・ワークフローの見直し
+    reason: 各リポジトリの Issue で扱う。lefthook の削除は 2026-11-08 にユーザーが行った（#227）
+    plan: none

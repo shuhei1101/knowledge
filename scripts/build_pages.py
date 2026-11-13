@@ -6,8 +6,8 @@
 # ///
 """dev-docs.yaml の documents[] の visibility: public の文書を、mdmark の build で 1 枚の HTML にまとめる。
 
-CI と手元から、リポジトリの直下で起動する。変換は converters[].run を子プロセスで呼び、
-文書の ID への参照を、公開の文書なら 1 枚の中のリンク、それ以外なら master の YAML の URL に書き換える。
+公開文書の配信のワークフローと手元から、リポジトリの直下で起動する。変換は converters[].run を子プロセスで呼び、
+文書の ID への参照を、公開の文書なら 1 枚の中のリンク、それ以外なら develop の YAML の URL に書き換える。
 
 Usage:
 # 公開の文書を _site/index.html にまとめる（_site は中身を消してから書く）
@@ -49,7 +49,7 @@ if TYPE_CHECKING:
 MDMARK_TAG = "v0.8.0"
 
 # 公開しない文書への参照のリンクの頭
-MASTER_BLOB_URL = "https://github.com/shuhei1101/knowledge/blob/master/"
+DEVELOP_BLOB_URL = "https://github.com/shuhei1101/knowledge/blob/develop/"
 
 # Pages のトップになる HTML
 OUTPUT_HTML = "index.html"
@@ -323,7 +323,7 @@ def rewrite_references(
     sources: Mapping[str, Source],
     anchors: Mapping[str, Mapping[str, str]],
 ) -> str:
-    """Markdown の文書の ID への参照を、1 枚の中のリンクか master の YAML の URL に書き換える。"""
+    """Markdown の文書の ID への参照を、1 枚の中のリンクか develop の YAML の URL に書き換える。"""
 
     def _replace(matched: re.Match[str]) -> str:
         target_id, item = matched.group(1), matched.group(2)
@@ -331,9 +331,9 @@ def rewrite_references(
         if target is None:
             message = f"{source.path}: 参照先の文書がありません: {target_id}"
             raise BuildError(message)
-        # 公開しない文書: master の YAML へのリンク（項目は落とす）
+        # 公開しない文書: develop の YAML へのリンク（項目は落とす）
         if not target.public:
-            return f"]({MASTER_BLOB_URL}{target.path})"
+            return f"]({DEVELOP_BLOB_URL}{target.path})"
         # 公開の文書: 項目の見出しがあればその見出しへ、無ければ文書へ（overview は見出しを持たない）
         anchor = anchors.get(target_id, {}).get(item) if item is not None else None
         if anchor is not None:

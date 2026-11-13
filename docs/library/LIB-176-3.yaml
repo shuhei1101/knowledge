@@ -14,7 +14,7 @@ catalogs:
     entries:
       - name: yamllint.config.YamlLintConfig
         kind: クラス
-        purpose: 設定ファイルを読み、検査のルールを組み立てる
+        purpose: 設定ファイルを読み込み、検査のルールを組み立てる
         params:
           - name: file
             type: str
@@ -22,7 +22,7 @@ catalogs:
             description: 設定ファイル（`.yamllint.yaml`）のパス
       - name: yamllint.linter.run
         kind: 関数
-        purpose: YAML の文字列 1 つを検査し、違反を順に返す
+        purpose: YAML の文字列 1 つを検査し、違反を順に返却する
         params:
           - name: input
             type: str
@@ -35,14 +35,14 @@ catalogs:
           - name: filepath
             type: str
             required: false
-            description: '設定の `ignore` に当てるパス'
+            description: '設定の `ignore` に適用するパス'
         returns:
           - name: '[].line'
             type: int
             description: 行（1 始まり）
           - name: '[].rule'
             type: str
-            description: ルールの名前（`comments` など）。YAML として読めない誤りは None
+            description: ルールの名前（`comments` など）。YAML として読み込めない誤りは None
           - name: '[].level'
             type: Literal['error', 'warning']
             description: 設定の `level`
@@ -55,7 +55,7 @@ catalogs:
       - name: extends・rules.{ルール}.level
         kind: 設定
         purpose: 既定の設定を引き継ぎ、ルールごとに無効・`error`・`warning` を決める
-lead: YAML の構文と書き方（インデント・コメント・真偽値の書き方など）を検査する linter。
+lead: YAML の構文と記載方法（インデント・コメント・真偽値の記載方法など）を検査する linter。
 purl: pkg:pypi/yamllint@1.38.0
 dependency_scope: 開発のみ
 adoption: 採用
@@ -64,7 +64,7 @@ used_in:
 upstream: adrienverge/yamllint
 verification:
   state: 未確認
-  detail: PoC（#177）で CLI として既存の違反 6 件を確かめた。`yamllint.linter.run` を同じプロセスで呼ぶことは未確認
+  detail: PoC（#177）で CLI として既存の違反 6 件を確認した。`yamllint.linter.run` を同じプロセスで呼ぶことは未確認
 license: GPL-3.0（CI の検査で動かすだけで配布しないため、商用利用に影響しない）
 official_url: https://pypi.org/project/yamllint/
 docs_url: https://yamllint.readthedocs.io

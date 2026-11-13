@@ -126,7 +126,7 @@ def test_normal(run_script: RunScript, repo_factory: RepoFactory) -> None:
     assert "公開 B の本文" in html
     assert "非公開 C の本文" not in html
     assert "(./b.md#手順)" in html
-    assert "(https://github.com/shuhei1101/knowledge/blob/master/docs/rule/c.yaml)" in html
+    assert "(https://github.com/shuhei1101/knowledge/blob/develop/docs/rule/c.yaml)" in html
 
 
 def test_error_when_converter_fails(run_script: RunScript, repo_factory: RepoFactory) -> None:

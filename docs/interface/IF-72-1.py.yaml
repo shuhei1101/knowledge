@@ -3,27 +3,27 @@ visibility: internal
 title: "文書の違反の検査"
 entry:
   kind: operation
-  value: '`dev-docs.yaml` の `validators[]` の `knowledge-checks`（dev-docs が配信元の直下で子プロセスとして起動する。境界は標準入出力と終了コード）'
+  value: '`dev-docs.yaml` の `validators[]` の `knowledge-checks`（project-index が配信元の直下で子プロセスとして起動する。境界は標準入出力と終了コード）'
 flows:
   - name: 正常系
-    summary: 違反の無い文書に空の配列を返す
+    summary: 違反の無い文書に空の配列を返却する
     setup:
       - name: Mock
-        description: 差し替えない。PATH の maid を使う
+        description: 差し替えない。PATH の maid を使用する
       - name: 配信元
         description: '`dev-docs.yaml`（`docs/rule/*.yaml` の行だけ）と `docs/rule/a.yaml`（項目 `x` を持つ）を持つ一時フォルダ'
       - name: 標準入力
         description: '`[A](id:a#x)` と正しい mermaid を持ち、`related` の `to` が `a` の文書'
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の違反の検査
         participant F as 配信元の docs
         participant M as maid
         D->>S: 標準入力に文書の YAML
-        S->>S: maid が PATH にあるかを確かめる
+        S->>S: maid が PATH にあるかを確認する
         S->>F: 文書と項目の ID、alias_type を持つ行の文書の name・aliases を集める
-        S->>S: 項目の ID の重複・参照の実在・aliases の衝突・文書の中の aliases の重複を確かめる
+        S->>S: 項目の ID の重複・参照の実在・aliases の衝突・文書の中の aliases の重複を確認する
         S->>M: mermaid のブロック（残り時間で打ち切る）
         M-->>S: 誤りなし
         S-->>D: 終了コード 0 と空の配列
@@ -33,7 +33,7 @@ flows:
       - 配信元のファイルのハッシュが変わらない
     test: test_normal
   - name: 正常系（違反がある）
-    summary: 項目の ID の重複・参照切れ・mermaid の誤りを全て配列で返す
+    summary: 項目の ID の重複・参照切れ・mermaid の誤りを全て配列で返却する
     setup:
       - name: Mock
         description: 差し替えない
@@ -44,13 +44,13 @@ flows:
         notes: 違反は 4 件
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の違反の検査
         participant F as 配信元の docs
         participant M as maid
         D->>S: 標準入力に文書の YAML
         S->>F: 文書と項目の ID を集める
-        S->>S: 項目の ID の重複と参照切れを控える
+        S->>S: 項目の ID の重複と参照切れを記録する
         S->>M: mermaid のブロック
         M-->>S: 誤りの行と内容
         S-->>D: 終了コード 0 と違反の配列
@@ -60,7 +60,7 @@ flows:
       - mermaid の違反の `rule` の行が、文書の中の誤った行と一致する
     test: test_normal_when_violations
   - name: 正常系（対応表の examples の違反）
-    summary: 対応表の行の examples が照合と合わなければ、1 件 1 違反で返す
+    summary: 対応表の行の examples が照合と合わなければ、1 件 1 違反で返却する
     setup:
       - name: Mock
         description: 差し替えない
@@ -71,10 +71,10 @@ flows:
         notes: 違反は 3 件
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の違反の検査
         D->>S: 標準入力に対応表の YAML
-        S->>S: 各行の pattern を読み、examples の hit と pass に当てる
+        S->>S: 各行の pattern を読み込み、examples の hit と pass に適用する
         S-->>D: 終了コード 0 と違反の配列
     expected:
       - 終了コードが 0
@@ -82,7 +82,7 @@ flows:
       - 各違反の `rule` の行が、文書の中の該当する行と一致する
     test: test_normal_when_word_list_examples_fail
   - name: 正常系（aliases の衝突）
-    summary: ほかの文書の name・aliases と正規化して一致する aliases を、1 件 1 違反で返す
+    summary: ほかの文書の name・aliases と正規化して一致する aliases を、1 件 1 違反で返却する
     setup:
       - name: Mock
         description: 差し替えない
@@ -93,7 +93,7 @@ flows:
         notes: 違反は 2 件。`ベータ` は自分の書き込む前の値、`単語表` は alias_type を持たない行の文書の値で、照合の相手にならない
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の違反の検査
         participant F as 配信元の docs
         D->>S: 標準入力に文書の YAML
@@ -106,7 +106,7 @@ flows:
       - '`aliases[0]` の `rule` に `a` と `name`、`aliases[1]` の `rule` に `a` と `aliases` があり、各違反の `rule` の行が文書の中の該当する行と一致する'
     test: test_normal_when_aliases_collide
   - name: 正常系（文書の中の aliases の重複）
-    summary: 自分の name か前の aliases と正規化して一致する aliases を、1 件 1 違反で返す
+    summary: 自分の name か前の aliases と正規化して一致する aliases を、1 件 1 違反で返却する
     setup:
       - name: Mock
         description: 差し替えない
@@ -117,7 +117,7 @@ flows:
         notes: 違反は 2 件。`べーた` は正規化しても `ベータ` と同じにならない
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の違反の検査
         D->>S: 標準入力に文書の YAML
         S->>S: 正規化した aliases を、自分の name と前の aliases に照合する
@@ -128,7 +128,7 @@ flows:
       - '`aliases[1]` の `rule` に `name`、`aliases[3]` の `rule` に `aliases[0]` があり、各違反の `rule` の行が文書の中の該当する行と一致する'
     test: test_normal_when_aliases_duplicate
   - name: 正常系（dev-docs.yaml が無い）
-    summary: '`dev-docs.yaml` が無ければ `aliases` を照合せず、`path: $` の違反 1 件とほかの検査の違反を返す'
+    summary: '`dev-docs.yaml` が無ければ `aliases` を照合せず、`path: $` の違反 1 件とほかの検査の違反を返却する'
     setup:
       - name: Mock
         description: 差し替えない
@@ -139,12 +139,12 @@ flows:
         notes: 違反は 2 件
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の違反の検査
         participant F as 配信元の docs
         D->>S: 標準入力に文書の YAML
         S->>F: 文書と項目の ID を集める
-        S->>F: dev-docs.yaml を読む
+        S->>F: dev-docs.yaml を読み込む
         F-->>S: ファイルが無い
         S->>S: aliases を照合せず、ほかの検査を続ける
         S-->>D: 終了コード 0 と違反の配列
@@ -153,7 +153,7 @@ flows:
       - '標準出力の配列が 2 件で、`path` が `$`（`rule` に `dev-docs.yaml`）と `items[0].body`（参照切れ）'
     test: test_normal_when_config_missing
   - name: 正常系（時間切れ）
-    summary: 残り時間が足りない mermaid のブロックを時間切れの違反として返す
+    summary: 残り時間が足りない mermaid のブロックを時間切れの違反として返却する
     setup:
       - name: Mock
         description: maid を、打ち切りまで返らないスクリプトに差し替える
@@ -162,7 +162,7 @@ flows:
         notes: 上限は関数の引数で差し替える
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の違反の検査
         participant M as maid
         D->>S: 標準入力に文書の YAML
@@ -174,8 +174,8 @@ flows:
       - 標準出力に、打ち切ったブロックの項目の `path` で時間切れを示す違反がある
       - 起動から終了までが、上限に 1 秒を加えた時間を超えない
     test: test_normal_when_timed_out
-  - name: 正常系（YAML として読めない）
-    summary: '読めない入力を `path: $` の違反 1 件で返す'
+  - name: 正常系（YAML として読み込めない）
+    summary: '読み込めない入力を `path: $` の違反 1 件で返却する'
     setup:
       - name: Mock
         description: 差し替えない
@@ -184,23 +184,23 @@ flows:
         notes: '`items:\n  - id: a\n    name: [`'
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の違反の検査
         D->>S: 標準入力に壊れた YAML
-        S->>S: YAML として読めない
+        S->>S: YAML として読み込めない
         S-->>D: 終了コード 0 と path $ の違反
     expected:
       - 終了コードが 0
-      - 標準出力が 1 件で、`path` が `$`、`rule` に読めない行がある
+      - 標準出力が 1 件で、`path` が `$`、`rule` に読み込めない行がある
     test: test_normal_when_invalid_yaml
   - name: 異常系（maid が無い・終了コード 2）
-    summary: maid が PATH から引けなければ検査を始めずに終わる
+    summary: maid が PATH で見つからなければ検査を始めずに終わる
     setup:
       - name: Mock
-        description: PATH から maid を外す
+        description: PATH から maid を除外する
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の違反の検査
         D->>S: 標準入力に文書の YAML
         S->>S: maid が PATH に無い
@@ -208,7 +208,7 @@ flows:
     expected:
       - 終了コードが 2
       - 標準出力が空
-      - 標準エラーに maid が PATH から引けないことと、開発コマンドの環境構築への案内が出る
+      - 標準エラーに maid が PATH で見つからないことと、開発コマンドの環境構築への案内が出る
     test: test_error_when_maid_missing
   - name: 正常系（用語集の用語との aliases の衝突）
     summary: '`records` を持つ行の文書は、要素ごとの `name`・`aliases` を照合の相手にする'
@@ -221,7 +221,7 @@ flows:
         description: '`id: b` で、`aliases` が `[AI らしい単語]` の文書'
     flow: |-
       sequenceDiagram
-        participant D as dev-docs
+        participant D as project-index
         participant S as 文書の違反の検査
         participant F as 配信元のファイル
         D->>S: 標準入力に文書の YAML
@@ -233,27 +233,27 @@ flows:
       - 標準出力の配列が 1 件で、`path` が `aliases[0]`
       - '`rule` に相手の ID `ai-slop` と `aliases` がある'
     test: test_normal_when_aliases_collide_with_terms
-lead: 標準入力の文書 1 件に、スキーマで見られない決まり（項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複・mermaid の文法）を当て、違反を dev-docs の validators の約束で標準出力へ返す。
+lead: 標準入力の文書 1 件に、スキーマで見られない決まり（項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複・mermaid の文法）を適用し、違反を project-index の validators の約束で標準出力へ返却する。
 identifier: knowledge-checks
 idempotent: true
 side_effects: なし（ファイルを書き換えない。maid は `--fix` を付けずに呼ぶ）
 callers:
   - SC-72-5#scenarios[正常シナリオ]
   - SC-72-6#scenarios[正常シナリオ]
-exclusivity: 制限なし（読むだけで、同時に起動されても結果は変わらない）
+exclusivity: 制限なし（読み込むだけで、同時に起動されても結果は変わらない）
 request:
   - name: stdin
     type: str
     required: true
     location: body
     description: 検査する文書 1 件の YAML（UTF-8）。書き込みでは書き込もうとする内容
-    constraints: '`schemas/{kind}.schema.yaml` の検査は dev-docs が先に通す'
+    constraints: '`schemas/{kind}.schema.yaml` の検査は project-index が先に実行する'
     notes: 標準入力で受け取る
   - name: cwd
     type: Path
     required: true
     location: argument
-    description: knowledge の配信元の直下。`docs/**/*.yaml` を読み、`id:` の参照先と `related` の `to` が実在するかを確かめる。`dev-docs.yaml` の `documents[]` を読み、`aliases` の照合の相手を決める
+    description: knowledge の配信元の直下。`docs/**/*.yaml` を読み込み、`id:` の参照先と `related` の `to` が実在するかを確認する。`dev-docs.yaml` の `documents[]` を読み込み、`aliases` の照合の相手を決める
     notes: 引数ではなく、子プロセスの作業ディレクトリとして受け取る
 response:
   - name: stdout
@@ -261,22 +261,22 @@ response:
     description: 違反の配列の JSON。違反が無ければ `[]`
   - name: stdout[].path
     type: str
-    description: 違反した項目のパス（dev-docs の項目のパスと同じ書き方）。文書全体にかかるものは `$`
+    description: 違反した項目のパス（project-index の項目のパスと同じ記載方法）。文書全体にかかるものは `$`
     example: items[3].body
   - name: stdout[].rule
     type: str
-    description: '違反の内容。先頭に文書の行（1 始まり）を `{行} 行目: ` で置く'
+    description: '違反の内容。先頭に文書の行（1 始まり）を `{行} 行目: ` で配置する'
     example: "42 行目: mermaid: Expected 'end' to close subgraph"
   - name: stdout[].fix
     type: str
-    description: 修正の仕方。1 文で書く
+    description: 修正の仕方。1 文で記載する
     example: subgraph を end で閉じる
   - name: stderr
     type: str
-    description: 終了コードが 0 以外のときの理由（1 行）。dev-docs が「検査を実行できませんでした」の理由に載せる
+    description: 終了コードが 0 以外のときの理由（1 行）。project-index が「検査を実行できませんでした」の理由に記載する
   - name: exit_code
     type: Literal[0, 1, 2]
-    description: 0 = 検査を終えた（違反の有無に依らない）。1 = 想定していない例外で落ちた。2 = maid が PATH から引けず、検査を始めなかった
+    description: 0 = 検査を終えた（違反の有無に依らない）。1 = 想定していない例外で落ちた。2 = maid が PATH で見つからず、検査を始めなかった
 response_example: |-
   ```json
   [
@@ -284,36 +284,36 @@ response_example: |-
     {"path": "items[3].body", "rule": "42 行目: mermaid: Expected 'end' to close subgraph", "fix": "mermaid の文法の誤りを修正する"}
   ]
   ```
-response_notes: '違反があっても終了コードは 0 にする。dev-docs は 0 以外の終了コードで標準出力を読まず、違反 1 件（`path: $`）に置き換える'
+response_notes: '違反があっても終了コードは 0 にする。project-index は 0 以外の終了コードで標準出力を読み込まず、違反 1 件（`path: $`）に置き換える'
 exceptions:
   - name: なし（正常終了）
-    condition: 検査を終えた。違反・時間切れ・読めない YAML も違反として配列で返し、終了コード 0
+    condition: 検査を終えた。違反・時間切れ・読み込めない YAML も違反として配列で返却し、終了コード 0
   - name: 終了コード 2
-    condition: '`maid` が PATH から引けない（`shutil.which` で検査の前に見分ける）'
+    condition: '`maid` が PATH で見つからない（`shutil.which` で検査の前に見分ける）'
   - name: 終了コード 1
-    condition: '想定していない例外。標準エラーに traceback を出し、dev-docs が「検査を実行できませんでした」の違反 1 件（`path: $`）に置き換える'
+    condition: '想定していない例外。標準エラーに traceback を出し、project-index が「検査を実行できませんでした」の違反 1 件（`path: $`）に置き換える'
 constraints:
   - item: 処理時間
-    constraint: 起動から 20 秒。maid を呼ぶ前に残り時間を確かめ、足りなければ呼ばずに時間切れを違反として返す。maid には残り時間を打ち切りとして渡す
+    constraint: 起動から 20 秒。maid を呼ぶ前に残り時間を確認し、足りなければ呼ばずに時間切れを違反として返却する。maid には残り時間を打ち切りとして指定する
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
   - item: mermaid の検査の範囲
     constraint: 文字列の項目の中の mermaid のコードブロック。バッククォート 4 つ以上で囲んだ記述例の中のブロックは検査しない
   - item: 対応表の `examples`
-    constraint: '`kind` が `word-list` の文書だけに当てる。各行の照合（「書き込んだ中身の照合」と同じ照合）を `examples.hit` の全件と `examples.pass` の全件に当て、ヒットしない `hit` とヒットした `pass` を 1 件 1 違反で返す。`pattern` が正規表現として読めない行は、`examples` を当てずに `entries[{n}].pattern` の違反 1 件で返す'
+    constraint: '`kind` が `word-list` の文書だけに適用する。各行の照合（「書き込んだ中身の照合」と同じ照合）を `examples.hit` の全件と `examples.pass` の全件に適用し、ヒットしない `hit` とヒットした `pass` を 1 件 1 違反で返却する。`pattern` が正規表現として読み込めない行は、`examples` を適用せずに `entries[{n}].pattern` の違反 1 件で返却する'
     decided_by: IF-148-1#constraints[照合]
   - item: '`aliases` の衝突'
     constraint: |-
-      検査する文書の `aliases[n]` を、`dev-docs.yaml` の `documents[]` のうち `alias_type` を持つ行の `paths` に当たる文書（ID が検査する文書と同じ文書を除く）の `name`・`aliases` と照合し、一致したら `aliases[{n}]` の違反 1 件にする。
+      検査する文書の `aliases[n]` を、`dev-docs.yaml` の `documents[]` のうち `alias_type` を持つ行の `paths` に該当する文書（ID が検査する文書と同じ文書を除く）の `name`・`aliases` と照合し、一致したら `aliases[{n}]` の違反 1 件にする。
       `records` を持つ行（用語集）は、文書の `records` のキーの配列の要素を 1 件ずつ照合の相手にし、要素の `id` を相手の ID、要素の `name`・`aliases` を相手の名前にする。
       照合の前に両方の値へ、NFKC・前後の空白の除去・英字の大文字小文字の統一（`casefold`）を適用する。
       `rule` には一致した相手の文書の ID と、相手の `name`・`aliases` の別を全て並べる。`fix` は「指す文書を 1 件に決め、片方だけに登録する」。
-      `dev-docs.yaml` が無い・読めない場合は、`aliases` を照合せず `path: $` の違反 1 件にする
+      `dev-docs.yaml` が無い・読み込めない場合は、`aliases` を照合せず `path: $` の違反 1 件にする
   - item: 文書の中の `aliases` の重複
     constraint: |-
       検査する文書の `aliases[n]` を、同じ文書の `name` と前の要素 `aliases[m]`（m < n）と照合し、一致したら `aliases[{n}]` の違反 1 件にする。
       照合の前の正規化は `aliases` の衝突と同じ。
       `rule` には一致した相手（`name` か `aliases[{m}]`）を 1 つ記載する。`name` と前の要素の両方に一致したら `name` を記載する。`fix` は「片方だけ登録する」。
-      `dev-docs.yaml` を読まず、`dev-docs.yaml` が無い・読めない場合も照合する
+      `dev-docs.yaml` を読み込まず、`dev-docs.yaml` が無い・読み込めない場合も照合する
   - item: '`id:` の参照'
-    constraint: '`[{名前}](id:{文書の ID})` は文書が、`[{名前}](id:{文書の ID}#{項目の ID})` はその文書の項目が実在する。自分を指す参照は標準入力の内容で確かめる。コードブロックの中の参照は検査しない'
+    constraint: '`[{名前}](id:{文書の ID})` は文書が、`[{名前}](id:{文書の ID}#{項目の ID})` はその文書の項目が実在する。自分を指す参照は標準入力の内容で確認する。コードブロックの中の参照は検査しない'
 test_file: tests/integration/scripts/test_knowledge_checks.py

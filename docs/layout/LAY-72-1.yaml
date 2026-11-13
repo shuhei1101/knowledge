@@ -80,14 +80,11 @@ entries:
         name: workflows
         contents: CI のワークフロー
         content_types: [ci]
-        used_by: [IF-72-4#, IF-137-2#]
+        used_by: [IF-137-2#]
         children:
           - type: file
-            name: docs-check.yml
-            contents: PR ごとに全ての文書の検査を実行するワークフロー
-          - type: file
             name: pages.yml
-            contents: master への push で公開の文書を GitHub Pages へ配信するワークフロー
+            contents: develop への push で公開の文書を GitHub Pages へ配信するワークフロー
             content_types: [ci, pages]
   - type: folder
     name: docs
@@ -101,6 +98,9 @@ entries:
         name: README.md
         contents: '`index.yaml` から生成した `docs/` の目次'
         content_types: [index]
+        generated_from:
+          path: docs/index.yaml
+          command: CMD-72-1#categories[ビルド・生成]
       - type: file
         name: changelog.yaml
         contents: knowledge のバージョンごとの変更履歴
@@ -116,10 +116,13 @@ entries:
         naming: ['{scope}-{topic}.yaml']
       - type: folder
         name: template
-        contents: テンプレート。設計書の種類のテンプレートの `items` は `schemas/design/` から生成する
+        contents: テンプレート。設計書の種類のテンプレートの `items` だけを `schemas/design/` から生成し、ほかのキーとほかのテンプレートは手で記載する
         content_types: [knowledge_doc]
         naming: ['template-{name}.yaml']
         used_by: [IF-201-1#]
+        generated_from:
+          path: schemas/design/
+          command: CMD-72-1#categories[ビルド・生成]
       - type: folder
         name: flowchart
         contents: 判定フローチャート
@@ -155,47 +158,119 @@ entries:
         name: architecture
         contents: アーキテクチャ図
         content_types: [design_doc, index]
-        naming: ['ARCH-{issue}-{n}.yaml', index.yaml, README.md]
+        naming: ['ARCH-{issue}-{n}.yaml', index.yaml]
+        children:
+          - type: file
+            name: README.md
+            contents: '`index.yaml` から生成した `docs/architecture/` の目次'
+            content_types: [index]
+            generated_from:
+              path: docs/architecture/index.yaml
+              command: CMD-72-1#categories[ビルド・生成]
       - type: folder
         name: nonfunctional
         contents: 非機能要件
         content_types: [design_doc, index]
-        naming: ['NFR-{issue}-{n}.yaml', index.yaml, README.md]
+        naming: ['NFR-{issue}-{n}.yaml', index.yaml]
+        children:
+          - type: file
+            name: README.md
+            contents: '`index.yaml` から生成した `docs/nonfunctional/` の目次'
+            content_types: [index]
+            generated_from:
+              path: docs/nonfunctional/index.yaml
+              command: CMD-72-1#categories[ビルド・生成]
       - type: folder
         name: scenario
         contents: 複合・単一ユースケースのシナリオ
         content_types: [design_doc, index]
-        naming: ['SC-{issue}-{n}.yaml', index.yaml, README.md]
+        naming: ['SC-{issue}-{n}.yaml', index.yaml]
+        children:
+          - type: file
+            name: README.md
+            contents: '`index.yaml` から生成した `docs/scenario/` の目次'
+            content_types: [index]
+            generated_from:
+              path: docs/scenario/index.yaml
+              command: CMD-72-1#categories[ビルド・生成]
       - type: folder
         name: interface
         contents: インターフェース定義
         content_types: [design_doc, index]
-        naming: ['IF-{issue}-{n}.{lang}.yaml', index.yaml, README.md]
+        naming: ['IF-{issue}-{n}.{lang}.yaml', index.yaml]
+        children:
+          - type: file
+            name: README.md
+            contents: '`index.yaml` から生成した `docs/interface/` の目次'
+            content_types: [index]
+            generated_from:
+              path: docs/interface/index.yaml
+              command: CMD-72-1#categories[ビルド・生成]
       - type: folder
         name: module
         contents: モジュール構成と、分類ごとのまとめの設計書
         content_types: [design_doc, index]
-        naming: ['MOD-{issue}-{n}.yaml', 'MOD-{issue}-{n}.{lang}.yaml', index.yaml, README.md]
+        naming: ['MOD-{issue}-{n}.yaml', 'MOD-{issue}-{n}.{lang}.yaml', index.yaml]
+        children:
+          - type: file
+            name: README.md
+            contents: '`index.yaml` から生成した `docs/module/` の目次'
+            content_types: [index]
+            generated_from:
+              path: docs/module/index.yaml
+              command: CMD-72-1#categories[ビルド・生成]
       - type: folder
         name: library
         contents: 外部ライブラリ・CLI
         content_types: [design_doc, index]
-        naming: ['LIB-{issue}-{n}.yaml', index.yaml, README.md]
+        naming: ['LIB-{issue}-{n}.yaml', index.yaml]
+        children:
+          - type: file
+            name: README.md
+            contents: '`index.yaml` から生成した `docs/library/` の目次'
+            content_types: [index]
+            generated_from:
+              path: docs/library/index.yaml
+              command: CMD-72-1#categories[ビルド・生成]
       - type: folder
         name: test-procedure
         contents: テスト実行方法
         content_types: [design_doc, index]
-        naming: ['TP-{issue}-{n}.yaml', index.yaml, README.md]
+        naming: ['TP-{issue}-{n}.yaml', index.yaml]
+        children:
+          - type: file
+            name: README.md
+            contents: '`index.yaml` から生成した `docs/test-procedure/` の目次'
+            content_types: [index]
+            generated_from:
+              path: docs/test-procedure/index.yaml
+              command: CMD-72-1#categories[ビルド・生成]
       - type: folder
         name: dev-command
         contents: 開発コマンド
         content_types: [design_doc, index]
-        naming: ['CMD-{issue}-{n}.yaml', index.yaml, README.md]
+        naming: ['CMD-{issue}-{n}.yaml', index.yaml]
+        children:
+          - type: file
+            name: README.md
+            contents: '`index.yaml` から生成した `docs/dev-command/` の目次'
+            content_types: [index]
+            generated_from:
+              path: docs/dev-command/index.yaml
+              command: CMD-72-1#categories[ビルド・生成]
       - type: folder
         name: layout
         contents: フォルダ構成
         content_types: [design_doc, index]
-        naming: ['LAY-{issue}-{n}.yaml', index.yaml, README.md]
+        naming: ['LAY-{issue}-{n}.yaml', index.yaml]
+        children:
+          - type: file
+            name: README.md
+            contents: '`index.yaml` から生成した `docs/layout/` の目次'
+            content_types: [index]
+            generated_from:
+              path: docs/layout/index.yaml
+              command: CMD-72-1#categories[ビルド・生成]
       - type: folder
         name: pr
         contents: 作業 PR ごとの計画書と記録
@@ -240,7 +315,7 @@ entries:
         used_by: [IF-72-3#, IF-201-1#]
   - type: folder
     name: scripts
-    contents: dev-docs の validators・converters と、CI と手元の CLI の単一ファイルのスクリプト
+    contents: project-index の validators・converters と、CI と手元の CLI の単一ファイルのスクリプト
     content_types: [script]
     children:
       - type: file
@@ -272,7 +347,7 @@ entries:
           command: CMD-72-1#categories[依存の追加・更新・削除]
       - type: file
         name: check_all.py
-        contents: 全ての文書の検査（CI と手元の CLI）
+        contents: 全ての文書の検査（手元の CLI）
       - type: file
         name: check_all.py.lock
         contents: check_all.py の依存のロック
@@ -310,7 +385,7 @@ entries:
           command: CMD-72-1#categories[依存の追加・更新・削除]
       - type: file
         name: files.yaml
-        contents: '`scripts/` のファイルの一覧（dev-docs の files の行）'
+        contents: '`scripts/` のファイルの一覧（project-index の files の行）'
         content_types: [file_list]
       - type: folder
         name: lint
@@ -359,7 +434,7 @@ entries:
         naming: [SKILL.md]
       - type: file
         name: files.yaml
-        contents: '`skills/` のファイルの一覧（dev-docs の files の行）'
+        contents: '`skills/` のファイルの一覧（project-index の files の行）'
         content_types: [file_list]
   - type: folder
     name: plugins
@@ -449,7 +524,7 @@ entries:
       command: CMD-72-1#categories[ビルド・生成]
   - type: file
     name: dev-docs.yaml
-    contents: dev-docs の配信元の設定（文書の種類ごとのパス・スキーマ・検査と変換のスクリプト・画面のタブ）
+    contents: project-index の配信元の設定（文書の種類ごとのパス・スキーマ・検査と変換のスクリプト・dev-docs の画面のタブ）
     content_types: [tool_config]
   - type: file
     name: ai-monitor-version.ini
@@ -493,7 +568,7 @@ gitignore:
   - pattern: _site/
     reason: Pages の成果物（生成物）
   - pattern: scripts/lint/node_modules/
-    reason: npm の依存（ロックから入れ直せる）
+    reason: npm の依存（ロックから再インストールできる）
 refs:
   - ARCH-72-1#
   - CMD-72-1#

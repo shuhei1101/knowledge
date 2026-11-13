@@ -1,7 +1,7 @@
 id: "MOD-72-5"
 visibility: internal
 title: "検査と変換のスクリプト / scripts / knowledge_markdown.py"
-lead: dev-docs の converters の `knowledge-markdown`。標準入力の文書 1 件を、項目の `group` の階層を見出しにした mdmark の記法の Markdown にして標準出力へ返す（IF-72-2）。
+lead: project-index の converters の `knowledge-markdown`。標準入力の文書 1 件を、項目の `group` の階層を見出しにした mdmark の記法の Markdown にして標準出力へ返却する（IF-72-2）。
 constants:
   - name: HIDDEN_KEYS
     title: 本文に出さないキー
@@ -11,12 +11,12 @@ constants:
     value: frozenset({"id", "kind", "tags", "status", "visibility", "rev", "last_reviewed", "aliases", "inject_when"})
     refs:
       - IF-72-2#constraints[出さないキー]
-    reason: '`aliases` は dev-docs の検索の別名、`inject_when` は alias-inject の照合条件で、本文の読み手に役立たない'
+    reason: '`aliases` は project-index の検索の別名、`inject_when` は alias-inject の照合条件で、本文の読者に役立たない'
   - name: LAYOUT_KEYS
     title: 構成が決まっているキー
     container: scripts/knowledge_markdown.py
     usecase: 文書の Markdown への変換
-    summary: 出す場所が決まっていて、種類に固有のキーの節にしないキー
+    summary: 出す場所が決まっていて、種類に固有のキーのセクションにしないキー
     value: frozenset({"name", "description", "items", "related", "sources"})
   - name: WORD_LIST_KIND
     title: 対応表の種類
@@ -28,13 +28,13 @@ constants:
     title: 対応表の文書の行
     container: scripts/knowledge_markdown.py
     usecase: 文書の Markdown への変換
-    summary: 埋め込む対応表のファイルを引く `dev-docs.yaml` の `documents[]` の行の `id`
+    summary: 埋め込む対応表のファイルを指す `dev-docs.yaml` の `documents[]` の行の `id`
     value: '"word-list"'
   - name: EMBED_MARKER
     title: 埋め込みのマーカー
     container: scripts/knowledge_markdown.py
     usecase: 文書の Markdown への変換
-    summary: 前後の空白を除いた 1 行に `fullmatch` で当て、`id` に文書の ID を取る。`/`・`#` を含む dev-docs のパスの書き方には当たらない
+    summary: 前後の空白を除いた 1 行に `fullmatch` で適用し、`id` に文書の ID を取る。`/`・`#` を含む dev-docs のパスの記載方法には該当しない
     value: 're.compile(r"<!--\s*embed:\s*(?P<id>[^\s/#]+)\s*-->")'
     refs:
       - IF-72-2#constraints[埋め込みのマーカー]
@@ -42,7 +42,7 @@ constants:
     title: コードブロックの囲み
     container: scripts/knowledge_markdown.py
     usecase: 文書の Markdown への変換
-    summary: 行の先頭に当て、コードブロックの開きと閉じ（3 つ以上の `` ` `` か `~`）を見分ける
+    summary: 行の先頭に適用し、コードブロックの開きと閉じ（3 つ以上の `` ` `` か `~`）を見分ける
     value: 're.compile(r"^\s{0,3}(?P<mark>`{3,}|~{3,})")'
 functions:
   - name: main
@@ -62,54 +62,54 @@ functions:
         description: コマンドの引数。`None` は `sys.argv[1:]`。引数は取らない（`--help` だけ）
     returns:
       type: int
-      description: 終了コード。`0` = 変換できた、`1` = 読めない文書・`kind` のスキーマが無い・想定していない例外
+      description: 終了コード。`0` = 変換できた、`1` = 読み込めない文書・`kind` のスキーマが無い・想定していない例外
     process: |-
-      1. argparse で引数を読み、標準入出力を UTF-8 にする
-      2. 標準入力を文書として読む（文書の読み込み）
-         - 読めない文書の場合、標準エラーへ `{行} 行目: YAML として読めません: {理由}` を出し `1` を返す
-      3. `kind` のスキーマを読む（スキーマの読み込み）
-         - `FileNotFoundError` の場合、標準エラーへ例外のメッセージを出し、標準出力へ何も出さず `1` を返す
-      4. 項目の本文に埋め込みのマーカーがあれば（埋め込みの有無）、作業ディレクトリから対応表を読む（対応表の読み込み）。無ければ空の対応表にする
-         - `ConfigError` の場合、標準エラーへ例外のメッセージを出し、標準出力へ何も出さず `1` を返す
-      5. Markdown にして（文書の変換）標準出力へ出し、`0` を返す
-         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返す
+      1. argparse で引数を読み込み、標準入出力を UTF-8 にする
+      2. 標準入力を文書として読み込む（文書の読み込み）
+         - 読み込めない文書の場合、標準エラーへ `{行} 行目: YAML として読めません: {理由}` を出し `1` を返却する
+      3. `kind` のスキーマを読み込む（スキーマの読み込み）
+         - `FileNotFoundError` の場合、標準エラーへ例外のメッセージを出し、標準出力へ何も出さず `1` を返却する
+      4. 項目の本文に埋め込みのマーカーがあれば（埋め込みの有無）、作業ディレクトリから対応表を読み込む（対応表の読み込み）。無ければ空の対応表にする
+         - `ConfigError` の場合、標準エラーへ例外のメッセージを出し、標準出力へ何も出さず `1` を返却する
+      5. Markdown にして（文書の変換）標準出力へ出し、`0` を返却する
+         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返却する
     unit_tests:
       - name: test_main
         case: 正常
         summary: 変換して出す
         condition: 標準入力に rule の文書。作業ディレクトリは `schemas/rule.schema.yaml` を持つ一時フォルダ
         mock: なし（一時ディレクトリ・`monkeypatch` の標準入力）
-        expected: '`0` を返し、標準出力が `# {name}` で始まる'
+        expected: '`0` を返却し、標準出力が `# {name}` で始まる'
       - name: test_main_when_schema_missing
         case: 正常
         summary: スキーマが無い
         condition: '標準入力に `kind: missing` の文書'
         mock: なし（一時ディレクトリ）
-        expected: '`1` を返し、標準出力が空で、標準エラーに `schemas/missing.schema.yaml` が出る'
+        expected: '`1` を返却し、標準出力が空で、標準エラーに `schemas/missing.schema.yaml` が出る'
       - name: test_main_when_broken
         case: 正常
-        summary: 読めない YAML
+        summary: 読み込めない YAML
         condition: 標準入力に括弧の閉じていない YAML
         mock: なし
-        expected: '`1` を返し、標準エラーに `行目: YAML として読めません` が出る'
+        expected: '`1` を返却し、標準エラーに `行目: YAML として読めません` が出る'
       - name: test_main_when_embed_marker
         case: 正常
         summary: マーカーを展開する
         condition: '標準入力に `<!-- embed: x -->` の本文を持つ rule の文書。作業ディレクトリは `schemas/rule.schema.yaml`・`word-list` の行を持つ `dev-docs.yaml`・`id: x` の対応表を持つ一時フォルダ'
         mock: なし（一時ディレクトリ・`monkeypatch` の標準入力）
-        expected: '`0` を返し、標準出力に `| NG | OK |` の表がある'
+        expected: '`0` を返却し、標準出力に `| NG | OK |` の表がある'
       - name: test_main_when_word_list_broken
         case: 正常
-        summary: 読めない対応表
-        condition: '標準入力に `<!-- embed: x -->` の本文を持つ rule の文書。`word-list` の行の `paths` に当たるファイルが括弧の閉じていない YAML'
+        summary: 読み込めない対応表
+        condition: '標準入力に `<!-- embed: x -->` の本文を持つ rule の文書。`word-list` の行の `paths` に該当するファイルが括弧の閉じていない YAML'
         mock: なし（一時ディレクトリ）
-        expected: '`1` を返し、標準出力が空で、標準エラーに読めないファイルのパスが出る'
+        expected: '`1` を返却し、標準出力が空で、標準エラーに読み込めないファイルのパスが出る'
       - name: test_main_when_no_marker_without_config
         case: 正常
-        summary: マーカーの無い文書は dev-docs.yaml を読まない
+        summary: マーカーの無い文書は dev-docs.yaml を読み込まない
         condition: マーカーを持たない rule の文書。作業ディレクトリに `dev-docs.yaml` が無い
         mock: なし（一時ディレクトリ）
-        expected: '`0` を返す'
+        expected: '`0` を返却する'
     callees:
       - MOD-72-2#functions[load_document]
     refs:
@@ -121,7 +121,7 @@ functions:
     usecase: 文書の Markdown への変換
     role: 読み込み
     scope: public
-    summary: 文書の `kind` に当たる `schemas/{kind}.schema.yaml` を読む
+    summary: 文書の `kind` に該当する `schemas/{kind}.schema.yaml` を読み込む
     args:
       - name: root
         title: 配信元の直下
@@ -139,7 +139,7 @@ functions:
     process: |-
       1. `kind` が空でない文字列でない場合、スキーマが無い例外を送出する
       2. `{root}/schemas/{kind}.schema.yaml` がファイルでない場合、スキーマが無い例外を送出する
-      3. `YAML(typ="safe")` で読んで返す
+      3. `YAML(typ="safe")` で読み込んで返却する
     exceptions:
       - name: FileNotFoundError
         condition: '`kind` が空でない文字列でない'
@@ -150,10 +150,10 @@ functions:
     unit_tests:
       - name: test_load_schema
         case: 正常
-        summary: スキーマを読む
+        summary: スキーマを読み込む
         condition: '`schemas/rule.schema.yaml` を持つ一時フォルダと `kind="rule"`'
         mock: なし（一時ディレクトリ）
-        expected: スキーマの `title` が読める
+        expected: スキーマの `title` が読み込める
       - name: test_load_schema_when_missing
         case: 異常
         summary: スキーマが無い
@@ -181,12 +181,12 @@ functions:
         title: 文書
         type: Mapping[str, Any]
         required: true
-        description: 読んだ文書
+        description: 読み込んだ文書
       - name: schema
         title: スキーマ
         type: Mapping[str, Any]
         required: true
-        description: 文書の `kind` のスキーマ。種類に固有のキーの見出しに `properties.{キー}.title` を使う
+        description: 文書の `kind` のスキーマ。種類に固有のキーの見出しに `properties.{キー}.title` を使用する
       - name: word_lists
         title: 対応表
         type: Mapping[str, Sequence[Mapping[str, Any]]]
@@ -196,11 +196,11 @@ functions:
       type: str
       description: 末尾に改行 1 つを持つ Markdown
     process: |-
-      1. `# {name}` と、`description` の段落を置く
-      2. `id` が `overview` の項目があれば、その本文の埋め込みのマーカーを展開して（埋め込みの展開）、見出しを付けずに置く
+      1. `# {name}` と、`description` の段落を配置する
+      2. `id` が `overview` の項目があれば、その本文の埋め込みのマーカーを展開して（埋め込みの展開）、見出しを付けずに配置する
       3. 残りの項目を見出しつきで並べる（項目の見出しの組み立て）
-      4. `HIDDEN_KEYS`・`LAYOUT_KEYS` に無いキーを文書の並びで `## {スキーマの title（無ければキー）}` の節にする（値の組み立て）
-         - `kind` が `WORD_LIST_KIND` の文書の `entries` の場合、対応表の組み立てを使う
+      4. `HIDDEN_KEYS`・`LAYOUT_KEYS` に無いキーを文書の並びで `## {スキーマの title（無ければキー）}` のセクションにする（値の組み立て）
+         - `kind` が `WORD_LIST_KIND` の文書の `entries` の場合、対応表の組み立てを使用する
       5. `related` があれば `## 関連` に、各行を `- [{to}](id:{to})（{type}）: {when}` で並べる
       6. `sources` があれば `## 出典` に、各行を `- {id}: [{title}]({url})（{note}）` で並べる（`id`・`url`・`note` が無い行はその部分を省く）
       7. ブロックごとに空行を 1 つ挟んでつなぐ。項目の本文は埋め込みのマーカーの行のほかは文字を書き換えない（mdmark のマーカーと `id:` のリンクを含む）
@@ -216,7 +216,7 @@ functions:
         summary: 本文に出さないキー
         condition: '`aliases`（文字列の配列）と `inject_when`（`or` の束）を持つ rule の文書'
         mock: なし
-        expected: '`aliases`・`inject_when` の値と、それらの節の見出しが出ない'
+        expected: '`aliases`・`inject_when` の値と、それらのセクションの見出しが出ない'
       - name: test_convert_when_body_has_markers
         case: 正常
         summary: 本文を書き換えない
@@ -225,7 +225,7 @@ functions:
         expected: 本文が 1 字も違わずに含まれる
       - name: test_convert_when_extra_keys
         case: 正常
-        summary: 種類に固有のキーを節にする
+        summary: 種類に固有のキーをセクションにする
         condition: '`arguments`（オブジェクトの配列）を持ち、スキーマの `properties.arguments.title` が `引数`'
         mock: なし
         expected: '`## 引数` の下に `<!-- table: data -->` の表'
@@ -234,7 +234,7 @@ functions:
         summary: title の無いキー
         condition: スキーマに `properties.extra` が無い文書のキー `extra`
         mock: なし
-        expected: '`## extra` の節'
+        expected: '`## extra` のセクション'
       - name: test_convert_when_word_list
         case: 正常
         summary: 対応表の entries
@@ -269,14 +269,14 @@ functions:
       type: list[str]
       description: 見出しと本文のブロック
     process: |-
-      1. 直前の項目の `group` の段の並びを控える（初めは空）
-      2. 項目ごとに `group` を ` > ` で分け、直前と先頭から一致する段を飛ばして、残りの段を `#` を `2 + 段の深さ` 個付けた見出しにする
-      3. 項目の `name` を `group` の段の数の 1 つ下の見出し（`group` が無い項目は `##`）にし、本文の埋め込みのマーカーを展開して（埋め込みの展開）置く
-         - 見出しが `######` を超える場合、`######` に揃える
+      1. 直前の項目の `group` の階層の並びを記録する（初めは空）
+      2. 項目ごとに `group` を ` > ` で分け、直前と先頭から一致する階層を飛ばして、残りの階層を `#` を `2 + 階層の深さ` 個付けた見出しにする
+      3. 項目の `name` を `group` の階層の数の 1 つ下の見出し（`group` が無い項目は `##`）にし、本文の埋め込みのマーカーを展開して（埋め込みの展開）配置する
+         - 見出しが `######` を超える場合、`######` に統一する
     unit_tests:
       - name: test_render_items
         case: 正常
-        summary: 同じ段を繰り返さない
+        summary: 同じ階層を繰り返さない
         condition: '`group` が `A`・`A > B`・`A > B`・`C` の 4 項目'
         mock: なし
         expected: '`## A`・`### {1 つ目の name}`・`### B`・`#### {2 つ目}`・`#### {3 つ目}`・`## C`・`### {4 つ目}` の順で、`### B` は 1 回だけ'
@@ -289,7 +289,7 @@ functions:
       - name: test_render_items_when_too_deep
         case: 正常
         summary: 深すぎる階層
-        condition: '`group` が 5 段の項目'
+        condition: '`group` が 5 階層の項目'
         mock: なし
         expected: '`name` の見出しが `######`'
       - name: test_render_items_when_embed
@@ -364,7 +364,7 @@ functions:
       description: '`<!-- table: data -->` と `<!-- /table -->` で囲んだ表'
     process: |-
       1. 列を `NG`・`OK` の 2 つにする（`pattern`・`allow`・`examples` は出さない）
-      2. 行ごとに `ng` を NG の列に、`ok` を「・」でつないだ文字列を OK の列に置く（slop-check の通知の表と同じ書式）
+      2. 行ごとに `ng` を NG の列に、`ok` を「・」でつないだ文字列を OK の列に配置する（slop-check の通知の表と同じ書式）
          - `note` がある場合、OK の列の末尾に `（{note}）` を付ける
       3. セルの `|` は `\|`、改行は `<br>` にする
     unit_tests:
@@ -380,18 +380,18 @@ functions:
     container: scripts/knowledge_markdown.py
     usecase: 文書の Markdown への変換
     scope: public
-    summary: 文書の項目の本文のどれかが、コードブロックの外に埋め込みのマーカーの行を持つかを返す
+    summary: 文書の項目の本文のどれかが、コードブロックの外に埋め込みのマーカーの行を持つかを返却する
     args:
       - name: doc
         title: 文書
         type: Mapping[str, Any]
         required: true
-        description: 読んだ文書
+        description: 読み込んだ文書
     returns:
       type: bool
       description: マーカーの行があれば `True`
     process: |-
-      1. 項目の本文ごとに、コードブロックの外の行（本文の行の走査）に `EMBED_MARKER` が当たるかを調べ、1 つでも当たれば `True` を返す
+      1. 項目の本文ごとに、コードブロックの外の行（本文の行の走査）に `EMBED_MARKER` が該当するかを調べ、1 つでも該当すれば `True` を返却する
     unit_tests:
       - name: test_has_embed
         case: 正常
@@ -412,7 +412,7 @@ functions:
     usecase: 文書の Markdown への変換
     role: 読み込み
     scope: public
-    summary: '`dev-docs.yaml` の `WORD_LIST_ROW` の行の `paths` に当たる対応表を読み、文書の ID から `entries` への対応にする'
+    summary: '`dev-docs.yaml` の `WORD_LIST_ROW` の行の `paths` に該当する対応表を読み込み、文書の ID から `entries` への対応にする'
     args:
       - name: root
         title: 配信元の直下
@@ -423,22 +423,22 @@ functions:
       type: dict[str, list[Mapping[str, Any]]]
       description: '`kind` が `WORD_LIST_KIND` の文書の `id` から `entries` への対応'
     process: |-
-      1. `dev-docs.yaml` の `documents[]` の行を読む（dev-docs.yaml の読み込み）
-      2. `id` が `WORD_LIST_ROW` の行が無ければ空の対応を返す
-      3. 行のファイルを並べ（documents の行のファイルの列挙）、1 つずつ文書として読む（文書の読み込み）
+      1. `dev-docs.yaml` の `documents[]` の行を読み込む（dev-docs.yaml の読み込み）
+      2. `id` が `WORD_LIST_ROW` の行が無ければ空の対応を返却する
+      3. 行のファイルを並べ（documents の行のファイルの列挙）、1 つずつ文書として読み込む（文書の読み込み）
          - `DocumentError` の場合、`ConfigError` を送出する
-      4. `kind` が `WORD_LIST_KIND` の文書だけを、`id` から `entries` のマッピングの要素への対応にして返す
+      4. `kind` が `WORD_LIST_KIND` の文書だけを、`id` から `entries` のマッピングの要素への対応にして返却する
     exceptions:
       - name: ConfigError
-        condition: '`dev-docs.yaml` が無い・読めない'
+        condition: '`dev-docs.yaml` が無い・読み込めない'
         message: dev-docs.yaml の読み込みの例外のメッセージ
       - name: ConfigError
-        condition: 行のファイルが YAML として読めない
+        condition: 行のファイルが YAML として読み込めない
         message: '{リポジトリの直下からのパス} の {行} 行目が読めません: {理由}'
     unit_tests:
       - name: test_load_word_lists
         case: 正常
-        summary: 対応表を読む
+        summary: 対応表を読み込む
         condition: '`word-list` の行（`paths: [docs/word-list/*.yaml]`）を持つ `dev-docs.yaml` と、`id: x`・`kind: word-list` の対応表 1 つ、`kind: rule` の文書 1 つを持つ一時フォルダ'
         mock: なし（一時ディレクトリ）
         expected: '`{"x": [...]}` で、`kind: rule` の文書は入らない'
@@ -450,17 +450,17 @@ functions:
         expected: 空の対応
       - name: test_load_word_lists_when_broken
         case: 異常
-        summary: 読めない対応表
-        condition: 行の `paths` に当たるファイルが括弧の閉じていない YAML
+        summary: 読み込めない対応表
+        condition: 行の `paths` に該当するファイルが括弧の閉じていない YAML
         mock: なし（一時ディレクトリ）
         expected: '`ConfigError` で、メッセージにファイルのパスと行'
-        exception: 行のファイルが YAML として読めない
+        exception: 行のファイルが YAML として読み込めない
     callees:
       - MOD-72-2#functions[load_config]
       - MOD-72-2#functions[list_row_files]
       - MOD-72-2#functions[load_document]
     refs:
-      - IF-72-2#flows[異常系（対応表が読めない・終了コード 1）]
+      - IF-72-2#flows[異常系（対応表が読み込めない・終了コード 1）]
   - name: expand_embeds
     title: 埋め込みの展開
     kind: 関数
@@ -483,7 +483,7 @@ functions:
       type: str
       description: マーカーの行を置き換えた本文。他の行は書き換えない
     process: |-
-      1. 本文を行ごとに見て、`FENCE` でコードブロックの中かを追う（開きと同じ文字で、開き以上の長さの行で閉じる）
+      1. 本文を行ごとに確認して、`FENCE` でコードブロックの中かを追う（開きと同じ文字で、開き以上の長さの行で閉じる）
       2. コードブロックの外で、前後の空白を除いた行が `EMBED_MARKER` に `fullmatch` する場合、その行を置き換える
          - ID が対応表にある場合、対応表の組み立てで作った表にする
          - ID が対応表に無い場合、`> [!WARNING]` と `> 埋め込めません: {ID} の対応表がありません` の 2 行にする
@@ -502,7 +502,7 @@ functions:
         expected: 本文が変わらない
       - name: test_expand_embeds_when_path_marker
         case: 正常
-        summary: dev-docs のパスの書き方は残す
+        summary: dev-docs のパスの記載方法は残す
         condition: '`<!-- embed: docs/a.yaml#entries -->` の行'
         mock: なし
         expected: 本文が変わらない
@@ -517,6 +517,6 @@ functions:
     refs:
       - IF-72-2#constraints[埋め込みのマーカー]
 notes:
-  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を書き、`_common.py` を同じフォルダから import する。
+  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を記載し、`_common.py` を同じフォルダから import する。
 test_files:
   - tests/unit/scripts/test_knowledge_markdown.py
