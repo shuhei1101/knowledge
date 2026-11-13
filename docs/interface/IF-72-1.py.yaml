@@ -210,6 +210,29 @@ flows:
       - 標準出力が空
       - 標準エラーに maid が PATH から引けないことと、開発コマンドの環境構築への案内が出る
     test: test_error_when_maid_missing
+  - name: 正常系（用語集の用語との aliases の衝突）
+    summary: '`records` を持つ行の文書は、要素ごとの `name`・`aliases` を照合の相手にする'
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`dev-docs.yaml`（`docs/rule/*.yaml` の行が `alias_type: doc`、`docs/terms.yaml` の行が `alias_type: term`・`records: terms` を持つ）と、`terms` に用語 `ai-slop`（`name: AI slop`・`aliases: [AI らしい単語]`）を持つ `docs/terms.yaml` を持つ一時フォルダ'
+      - name: 標準入力
+        description: '`id: b` で、`aliases` が `[AI らしい単語]` の文書'
+    flow: |-
+      sequenceDiagram
+        participant D as dev-docs
+        participant S as 文書の違反の検査
+        participant F as 配信元のファイル
+        D->>S: 標準入力に文書の YAML
+        S->>F: dev-docs.yaml の alias_type を持つ行の文書を集める
+        S->>S: records を持つ行の文書は要素ごとに name・aliases を集める
+        S->>S: 正規化した aliases を照合する
+        S-->>D: 終了コード 0 と違反の配列
+    expected:
+      - 標準出力の配列が 1 件で、`path` が `aliases[0]`
+      - '`rule` に相手の ID `ai-slop` と `aliases` がある'
+    test: test_normal_when_aliases_collide_with_terms
 lead: 標準入力の文書 1 件に、スキーマで見られない決まり（項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複・mermaid の文法）を当て、違反を dev-docs の validators の約束で標準出力へ返す。
 identifier: knowledge-checks
 idempotent: true
@@ -281,6 +304,7 @@ constraints:
   - item: '`aliases` の衝突'
     constraint: |-
       検査する文書の `aliases[n]` を、`dev-docs.yaml` の `documents[]` のうち `alias_type` を持つ行の `paths` に当たる文書（ID が検査する文書と同じ文書を除く）の `name`・`aliases` と照合し、一致したら `aliases[{n}]` の違反 1 件にする。
+      `records` を持つ行（用語集）は、文書の `records` のキーの配列の要素を 1 件ずつ照合の相手にし、要素の `id` を相手の ID、要素の `name`・`aliases` を相手の名前にする。
       照合の前に両方の値へ、NFKC・前後の空白の除去・英字の大文字小文字の統一（`casefold`）を適用する。
       `rule` には一致した相手の文書の ID と、相手の `name`・`aliases` の別を全て並べる。`fix` は「指す文書を 1 件に決め、片方だけに登録する」。
       `dev-docs.yaml` が無い・読めない場合は、`aliases` を照合せず `path: $` の違反 1 件にする

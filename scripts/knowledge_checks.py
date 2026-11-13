@@ -202,17 +202,17 @@ def normalize_name(value: str) -> str:
 def build_name_index(
     root: Path, rows: Sequence[Mapping[str, Any]]
 ) -> dict[str, list[tuple[str, str]]]:
-    """alias_type を持つ行の文書から、正規化した名前 → （文書の ID、name か aliases）の索引を作る。"""
-    paths = sorted(
-        {
-            root / file
-            for row in rows
-            if row.get("alias_type") is not None
-            for file in list_row_files(root, row)
-        }
-    )
+    """alias_type を持つ行の文書（records の行は要素）から、正規化した名前 → （ID、name か aliases）の索引を作る。"""
+    # ファイルごとに、行の records（要素を並べたキー）を控える
+    records: dict[Path, str | None] = {}
+    for row in rows:
+        if row.get("alias_type") is None:
+            continue
+        key = row.get("records")
+        for file in list_row_files(root, row):
+            records.setdefault(root / file, key if isinstance(key, str) else None)
     names: dict[str, list[tuple[str, str]]] = {}
-    for text in read_texts(paths).values():
+    for path, text in read_texts(sorted(records)).items():
         # 読めないファイル・文書は飛ばす（その文書の誤りはその文書の検査で出る）
         if text is None:
             continue
@@ -220,15 +220,32 @@ def build_name_index(
             doc = load_document(text)
         except DocumentError:
             continue
-        doc_id = _field(doc, "id")
-        if not isinstance(doc_id, str):
-            continue
-        name = _field(doc, "name")
-        if isinstance(name, str):
-            names.setdefault(normalize_name(name), []).append((doc_id, "name"))
-        for alias in _aliases(doc):
-            names.setdefault(normalize_name(alias), []).append((doc_id, "aliases"))
+        for entry in _match_entries(doc, records[path]):
+            _add_names(names, entry)
     return names
+
+
+def _add_names(names: dict[str, list[tuple[str, str]]], entry: CommentedMap) -> None:
+    """照合の相手 1 件の name と aliases を、正規化したキーで索引に加える。id の無い相手は飛ばす。"""
+    entry_id = _field(entry, "id")
+    if not isinstance(entry_id, str):
+        return
+    name = _field(entry, "name")
+    if isinstance(name, str):
+        names.setdefault(normalize_name(name), []).append((entry_id, "name"))
+    for alias in _aliases(entry):
+        names.setdefault(normalize_name(alias), []).append((entry_id, "aliases"))
+
+
+def _match_entries(doc: CommentedMap, key: str | None) -> list[CommentedMap]:
+    """照合の相手を返す。records の無い行は文書そのもの、ある行は records のキーの配列の要素。"""
+    if key is None:
+        return [doc]
+    value = _field(doc, key)
+    # records のキーの値が配列でなければ、そのファイルを飛ばす
+    if not isinstance(value, CommentedSeq):
+        return []
+    return [entry for entry in cast("list[object]", value) if isinstance(entry, CommentedMap)]
 
 
 def _aliases(doc: CommentedMap) -> list[str]:

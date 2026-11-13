@@ -38,6 +38,9 @@ properties:
     description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
     x-rules:
       - 設計書を作るときに振り、改名・移動でも変えない。
+  visibility:
+    $ref: common.schema.yaml#/$defs/doc_visibility
+    title: 公開範囲
   title:
     type: string
     title: タイトル

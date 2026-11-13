@@ -344,6 +344,43 @@ def test_build_name_index_when_broken(tmp_path: Path) -> None:
     assert result == {"alpha": [("a", "name")]}
 
 
+# 用語集の行（records: terms・alias_type: term）を持つ dev-docs.yaml
+_TERMS_CONFIG = (
+    'version: "3"\n'
+    "name: knowledge\n"
+    "documents:\n"
+    "  - id: terms\n"
+    "    paths:\n"
+    "      - docs/terms.yaml\n"
+    "    schema: schemas/terms.schema.yaml\n"
+    "    records: terms\n"
+    "    alias_type: term\n"
+)
+
+
+def test_build_name_index_when_records(tmp_path: Path) -> None:
+    """records を持つ行の要素を集める（正常系）。"""
+    # 準備
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "dev-docs.yaml").write_text(_TERMS_CONFIG, encoding="utf-8")
+    (tmp_path / "docs" / "terms.yaml").write_text(
+        "id: terms\n"
+        "name: 用語集\n"
+        "terms:\n"
+        "  - id: ai-slop\n"
+        "    name: AI slop\n"
+        "    aliases:\n"
+        "      - AI らしい単語\n"
+        "  - name: 名前だけ\n",
+        encoding="utf-8",
+    )
+    rows = load_config(tmp_path)
+    # 実行
+    result = build_name_index(tmp_path, rows)
+    # 検証
+    assert result == {"ai slop": [("ai-slop", "name")], "ai らしい単語": [("ai-slop", "aliases")]}
+
+
 def test_check_aliases() -> None:
     """name・aliases との衝突と、自分の除外（正常系）。"""
     # 準備

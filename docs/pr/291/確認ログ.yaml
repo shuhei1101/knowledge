@@ -1,0 +1,19 @@
+confirmations:
+  - topic: '#256 をこの PR の範囲に残すか（ai-monitor#3188 が入るまで #283 のコピーの削除と両立しない）'
+    decision: '#256 をこの PR から外してスコープ外へ回し、ai-monitor#3188 の後に着手する。この PR は #259・#282・#283 を行う（推奨案 A）'
+    decided_by: thumbs_up
+    approver: shuhei1101
+    commit:
+    thread: https://github.com/shuhei1101/knowledge/pull/291#discussion_r4549033831
+  - topic: 部品設計（component）の最上位の `visibility` を文書の公開範囲に変えてよいか
+    decision: 文書の公開範囲（`public` / `internal`）に変え、マージの後に `design-schemas/v6.0.0` のタグを作る（推奨案 A）
+    decided_by: thumbs_up
+    approver: shuhei1101
+    commit: 3d000694a35958a16ace28aac19cd7bc9df5c769
+    thread: https://github.com/shuhei1101/knowledge/pull/291#discussion_r4549626353
+  - topic: プラグイン knowledge の空の `hooks/` を残すか
+    decision: '`hooks/` と、それを指す配信の行・画面のグループ・説明文・LAY-72-1 のエントリを削除する（推奨案 A）'
+    decided_by: thumbs_up
+    approver: shuhei1101
+    commit:
+    thread: https://github.com/shuhei1101/knowledge/pull/291#discussion_r4549627143

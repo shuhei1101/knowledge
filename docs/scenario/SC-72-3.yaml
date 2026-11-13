@@ -7,7 +7,7 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: 配信中の knowledge
-        description: develop の全ての種類の文書（rule・template・flowchart・guide・changelog・skill）と files.yaml の行がある
+        description: develop の全ての種類の文書（rule・template・flowchart・guide・changelog・skill・用語集）と files.yaml の行がある
     flow: |-
       <!-- map -->
 
@@ -85,7 +85,6 @@ scenarios:
       - files.yaml の行の Markdown（`skills/text-review/SKILL.md`）は開ける
     test: test_error_when_converter_fails
 lead: 利用者が dev-docs の画面で、`nav` のタブとサイドバーから knowledge の文書を開き、変換した本文を読む。
-issue: 51
 primary_actor: 利用者
 trigger: 利用者がブラウザで dev-docs の画面の knowledge を開く
 preconditions:

@@ -1,0 +1,14 @@
+設計書のスキーマのタグの作成:
+  説明: 作業 PR を develop へマージした後に、実行の時点の `design-schemas/v*` の最新のタグのメジャーを上げたタグ（ほかの作業 PR（#272 など）のタグと先後するため、版は固定しない）を、メッセージに `(#291)` を入れて develop の squash commit へ作成して push する（`schemas/design/` の component の最上位の `visibility` の値を `user` / `developer` から `public` / `internal` に変え、最上位に `user` / `developer` を記載した部品設計の設計書が検査を通らなくなるため、メジャーを上げる）。切り戻しは、メッセージに `(#291)` を持つタグだけを削除する
+  タグ: [タグ, スキーマ]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: 設計書のスキーマのタグの作成/疎通確認.sh
+  実行: 設計書のスキーマのタグの作成/実行.sh
+  確認: 設計書のスキーマのタグの作成/確認.sh
+  切り戻し: 設計書のスキーマのタグの作成/切り戻し.sh
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグがメッセージに `(#291)` を持つタグで、その commit の `schemas/design/common.schema.yaml` の `$defs` に `doc_visibility` がある"
+  状態: "-"

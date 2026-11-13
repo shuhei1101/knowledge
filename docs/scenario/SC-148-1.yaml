@@ -157,7 +157,6 @@ scenarios:
       - フックの標準エラーに、読めなかった対応表のパスが出る
     test: test_error_when_word_list_missing
 lead: エージェントが書き込むツールで対応表の単語を書き込むと、プラグイン slop-check の PostToolUse のフックが書き込んだ中身を対応表で照合し、書き込みを止めずに NG と OK の単語を通知する。
-issue: 135
 primary_actor: エージェント
 trigger: エージェントが Write・Edit・NotebookEdit・書き込む MCP ツールで中身を書き込む
 preconditions:

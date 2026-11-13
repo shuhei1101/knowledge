@@ -1,0 +1,71 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: 用語集
+description: '複数のリポジトリで同じ意味で使用する用語と、使用しない言い方の一覧。dev-docs の行が `records: terms`・`alias_type: term` で参照し、`terms` の要素を 1 件の用語にする。'
+x-rules:
+  - 登録するかは判定フローチャート『用語の登録』で決め、knowledge に登録すると判定した用語だけを記載する。
+allOf:
+  - $ref: knowledge-common.schema.yaml#/$defs/metadata
+properties:
+  kind:
+    title: 種類
+    description: 文書の種類。この種類では `terms` に固定する。
+    const: terms
+  terms:
+    title: 用語
+    description: 用語の並び。1 要素が 1 件の用語。
+    type: array
+    minItems: 1
+    items:
+      $ref: '#/$defs/term'
+required:
+  - terms
+unevaluatedProperties: false
+$defs:
+  term:
+    title: 用語
+    description: 1 件の用語と、言い換え・使用しない言い方。
+    type: object
+    additionalProperties: false
+    required:
+      - id
+      - name
+      - description
+    properties:
+      id:
+        title: 用語の ID
+        description: 用語集の中で一意な、ローマ字の小文字とハイフンの識別子。`aliases` の衝突の検査が照合の相手の ID にする。
+        $ref: knowledge-common.schema.yaml#/$defs/id
+        examples:
+          - ai-slop
+      name:
+        title: 用語
+        description: 文書・コードのコメントで使用する正式な単語。
+        type: string
+        minLength: 1
+        examples:
+          - AI slop
+      description:
+        title: 意味
+        description: 用語が指すものを 1 文で記載する。
+        type: string
+        minLength: 1
+        examples:
+          - AI がよく使い、一般の文書では置き換えたほうがよい単語。
+      aliases:
+        title: 別名
+        description: 正式な単語と並べて使用してよい言い方。
+        type: array
+        items:
+          type: string
+          minLength: 1
+        examples:
+          - - A.I.VOICE2
+      avoid:
+        title: 使用しない言い方
+        description: やめた言い方。文書・コードのコメントに記載せず、正式な単語に置き換える。
+        type: array
+        items:
+          type: string
+          minLength: 1
+        examples:
+          - - 置き場

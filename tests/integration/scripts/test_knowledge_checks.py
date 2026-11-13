@@ -185,6 +185,50 @@ def test_normal_when_aliases_collide(run_script: RunScript, repo_factory: RepoFa
         assert text in lines[number - 1]
 
 
+# 規約の行（alias_type: doc）と用語集の行（records: terms・alias_type: term）を持つ dev-docs.yaml
+_TERMS_CONFIG = (
+    'version: "3"\n'
+    "name: knowledge\n"
+    "documents:\n"
+    "  - id: rule\n"
+    "    paths: [docs/rule/*.yaml]\n"
+    "    alias_type: doc\n"
+    "  - id: terms\n"
+    "    paths: [docs/terms.yaml]\n"
+    "    records: terms\n"
+    "    alias_type: term\n"
+)
+
+
+def test_normal_when_aliases_collide_with_terms(
+    run_script: RunScript, repo_factory: RepoFactory
+) -> None:
+    """records を持つ行の文書は、要素ごとの name・aliases を照合の相手にする（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "dev-docs.yaml": _TERMS_CONFIG,
+            "docs/terms.yaml": (
+                "id: terms\n"
+                "name: 用語集\n"
+                "terms:\n"
+                "  - id: ai-slop\n"
+                "    name: AI slop\n"
+                "    aliases:\n"
+                "      - AI らしい単語\n"
+            ),
+        }
+    )
+    stdin = "id: b\nname: B\naliases:\n  - AI らしい単語\n"
+    # 実行
+    result = run_script("knowledge_checks", root, stdin)
+    # 検証
+    assert result.exit_code == 0
+    violations = json.loads(result.stdout)
+    assert [violation["path"] for violation in violations] == ["aliases[0]"]
+    assert "`ai-slop` の aliases" in violations[0]["rule"]
+
+
 def test_normal_when_aliases_duplicate(run_script: RunScript, repo_factory: RepoFactory) -> None:
     """自分の name か前の aliases と正規化して一致する aliases を、1 件 1 違反で返す（正常系）。"""
     # 準備

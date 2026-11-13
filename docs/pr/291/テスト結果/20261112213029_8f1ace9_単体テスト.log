@@ -1,0 +1,41 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit
+tests/unit/scripts/test_build_pages.py ...................               [  8%]
+tests/unit/scripts/test_build_templates.py ........................      [ 19%]
+tests/unit/scripts/test_build_word_list.py ...                           [ 20%]
+tests/unit/scripts/test_check_all.py ......FF..FFFF......FFF............ [ 35%]
+tests/unit/scripts/test_common.py ....................                   [ 48%]
+tests/unit/scripts/test_knowledge_checks.py ..............F............. [ 60%]
+tests/unit/scripts/test_knowledge_markdown.py .......................... [ 74%]
+tests/unit/scripts/test_lint.py ............                             [ 83%]
+tests/unit/scripts/test_maid.py ......                                   [ 86%]
+tests/unit/slop-check/test_slop_check.py ............................... [100%]
+tests/unit/scripts/test_check_all.py:310: TypeError
+tests/unit/scripts/test_check_all.py:354: TypeError
+tests/unit/scripts/test_check_all.py:394: TypeError
+tests/unit/scripts/test_check_all.py:415: TypeError
+tests/unit/scripts/test_check_all.py:430: TypeError
+tests/unit/scripts/test_check_all.py:446: TypeError
+tests/unit/scripts/test_check_all.py:670: TypeError
+tests/unit/scripts/test_check_all.py:723: TypeError
+tests/unit/scripts/test_check_all.py:747: TypeError
+tests/unit/scripts/test_check_all.py:1069: TypeError
+tests/unit/scripts/test_check_all.py:1079: TypeError
+tests/unit/scripts/test_check_all.py:1091: TypeError
+tests/unit/scripts/test_check_all.py:1208: 
+tests/unit/scripts/test_knowledge_checks.py:381: AssertionError
+FAILED tests/unit/scripts/test_check_all.py::test_list_targets - TypeError: l...
+FAILED tests/unit/scripts/test_check_all.py::test_list_targets_when_excluded
+FAILED tests/unit/scripts/test_check_all.py::test_check_target - TypeError: T...
+FAILED tests/unit/scripts/test_check_all.py::test_check_target_when_no_checks
+FAILED tests/unit/scripts/test_check_all.py::test_check_target_when_unreadable
+FAILED tests/unit/scripts/test_check_all.py::test_check_target_when_broken - ...
+FAILED tests/unit/scripts/test_check_all.py::test_check_lints - TypeError: Ta...
+FAILED tests/unit/scripts/test_check_all.py::test_check_lints_when_schemas_use_flow_style
+FAILED tests/unit/scripts/test_check_all.py::test_check_lints_when_schema_unreadable
+FAILED tests/unit/scripts/test_check_all.py::test_check_document_schemas - Ty...
+FAILED tests/unit/scripts/test_check_all.py::test_check_document_schemas_when_invalid
+FAILED tests/unit/scripts/test_check_all.py::test_check_document_schemas_when_broken
+FAILED tests/unit/scripts/test_check_all.py::test_build_validators_when_design_schema
+FAILED tests/unit/scripts/test_check_all.py::test_main_when_design_documents
+FAILED tests/unit/scripts/test_knowledge_checks.py::test_build_name_index_when_records
+======================== 15 failed, 211 passed in 6.31s ========================
