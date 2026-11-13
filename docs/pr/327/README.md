@@ -1,0 +1,1 @@
+# プラグイン knowledge とプラグイン slop-check の置き場所を揃える
