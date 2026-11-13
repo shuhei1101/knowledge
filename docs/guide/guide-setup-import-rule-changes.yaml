@@ -30,7 +30,7 @@ items:
     group: 手順 > develop の最新を取り込む
     name: master にいる clone を develop へ切り替えるコマンド
     body: |-
-      既定のブランチを develop にする前に clone して master にいる場合だけ、取り込む前に実行する。
+      master にいる clone だけ、pull の前段として実行する。
 
       ```bash
       git -C {clone した先} switch develop
