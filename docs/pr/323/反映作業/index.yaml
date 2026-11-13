@@ -1,0 +1,14 @@
+Pages の配信を許すブランチへの develop の追加:
+  説明: GitHub の環境 `github-pages` の配信を許すブランチ（今は `gh-pages`・`master`）に `develop` を足し、develop への push で動く `pages.yml` が配信できるようにする
+  タグ: [GitHub の設定]
+  実行者: planner
+  時期: マージの前
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`gh api repos/shuhei1101/knowledge/environments/github-pages/deployment-branch-policies` の `branch_policies[].name` に `develop` がある"
+  状態: 未
