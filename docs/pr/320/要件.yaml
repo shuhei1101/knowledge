@@ -13,11 +13,15 @@ docs:
   - page: docs/word-list/word-list-ai-slop.yaml
     new: false
     change: 行 kaesu（返す）の allow に「折り返」を、examples.pass に「折り返す」を追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T11:08:06.863677+00:00'
   - page: plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json
     new: false
     change: scripts/build_word_list.py で再生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T11:08:06.863677+00:00'
 scope_out:
   - item: 行 kaesu の pattern にヒットする「折り返」以外の複合語（引き返す・裏返す など）の除外
     reason: 誤検出の報告が無く、起点 Issue の要望は「折り返」だけ。誤検出が見つかった時点で同じ形で allow へ追加する
