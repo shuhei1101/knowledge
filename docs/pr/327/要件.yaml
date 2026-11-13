@@ -14,6 +14,11 @@ use_cases:
     impact: run_only
     detail: マーケットプレイスの定義を書き換えるため、slop-check を入れた端末で通知が出続けるかを確かめる
     depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-327-1.yaml
+    impact: new
+    detail: 利用者がマーケットプレイスからプラグイン knowledge を入れてスキル text-review を呼ぶ。導入済みの端末は更新して呼べる
+    depends_on: []
 docs:
   - page: docs/layout/LAY-72-1.yaml
     new: false
