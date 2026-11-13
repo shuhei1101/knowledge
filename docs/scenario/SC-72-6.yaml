@@ -17,8 +17,7 @@ scenarios:
         participant C as 全ての文書の検査
         participant V as 検査のスクリプト
         D->>C: クローンの直下で起動する
-        C->>C: maid が入ったかを確かめる
-        C->>C: markdownlint・textlint・yamllint が入ったかを確かめる
+        C->>C: maid・markdownlint・textlint が入ったかを確かめる
         loop 全ての文書
           C->>C: スキーマの検査
           C->>V: 標準入力に文書の YAML
@@ -183,13 +182,13 @@ scenarios:
         participant C as 全ての文書の検査
         D->>C: クローンの直下で起動する
         C->>C: maid・markdownlint・textlint が入ったかを確かめる
-        C-->>D: PATH に無い CLI の名前を出して終了コード 2
+        C-->>D: PATH に無い CLI の名前を標準エラーに出して終了コード 2
       ```
 
       <!-- /map -->
     expected:
       - 文書の検査を始めずに終了コード 2 で終わる
-      - 標準出力に、PATH から引けない CLI の名前（maid）が出る
+      - 標準エラーに、PATH から引けない CLI の名前（maid）が出る
     test: test_error_when_check_cli_missing
 lead: 開発者が knowledge のクローンで全ての文書の検査を実行し、全ての文書へスキーマの検査と検査のスクリプトを適用して、違反があれば終了コードで失敗を返却する。
 primary_actor: 開発者

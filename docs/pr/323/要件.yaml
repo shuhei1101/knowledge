@@ -87,7 +87,7 @@ scope_out:
     reason: knowledge の既定のブランチは既に develop（2026-11-14 に gh api で確認）
     plan: none
   - item: 規約『作業ディレクトリ』（`dev-working-directory.yaml`）の「メインのクローンを常に master のままにする」
-    reason: 0.x の間もメインのクローンを master のままにするか develop にするかは本文になく、判断が分かれる。今の判断は、作業は worktree で行いメインのクローンのブランチは配布物の参照に影響しないため対象外（レビューで確定する）
+    reason: 追随先の ai-monitor でも、規約『作業ディレクトリ』はメインのクローンを常に master に置くままで、規約『ブランチ戦略』の 0.x の運用が develop にするのは GitHub の既定のブランチと GitHub Pages の出し元だけ（`docs/rule/ブランチ戦略.md` 18 行目）
     plan: none
   - item: シナリオの `test_file` が指す `tests/e2e/` の削除済みのテスト
     reason: 0.x の間は E2E を回さず修正もしない（D-297 A）。v1.0.0 の前に作り直す
