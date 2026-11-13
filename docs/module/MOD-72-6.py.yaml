@@ -439,15 +439,21 @@ functions:
       - name: test_check_design_schemas_when_ref_type_used_by
         case: 正常
         summary: $ref の先の型の x-used-by
-        condition: '`x-used-by` を持つ `$defs.t` を指す `properties.a` と、`x-used-by` を持たない `$defs.u` を指す `properties.b` を持ち、どちらのキーも `x-used-by` を持たないスキーマ'
+        condition: '`x-used-by` を持つ `$defs.t` を指す `properties.a` と、`x-used-by` を持たない `$defs.u` を指す `properties.b` と、解決できない `#/$defs/missing` を指す `properties.c` を持ち、どのキーも `x-used-by` を持たないスキーマ'
         mock: なし（一時ディレクトリ）
-        expected: '1 件で、項目のパスが `properties.b`、内容が `x-used-by: ` で始まる（`$defs.u` の行は出ない）'
+        expected: '2 件で、`properties.b` の内容が `x-used-by: ` で始まり、`properties.c` は内容が `$ref: ` で始まる 1 件だけ（`properties.c` の `x-used-by: ` と `$defs.u` の行は出ない）'
       - name: test_check_design_schemas_when_property_named_if
         case: 正常
         summary: if という名前のプロパティ
         condition: '`x-used-by` を持たない `properties.if` を持つスキーマ'
         mock: なし（一時ディレクトリ）
         expected: '1 件で、項目のパスが `properties.if`、内容が `x-used-by: ` で始まる'
+      - name: test_check_design_schemas_when_meta_invalid_and_used_by_missing
+        case: 正常
+        summary: メタスキーマの誤りがあるファイルの x-used-by
+        condition: '`type: strin` と `x-used-by` を持たない `properties.a` を持つスキーマ'
+        mock: なし（一時ディレクトリ）
+        expected: '内容が `metaschema: ` で始まる行だけで、`x-used-by: ` で始まる行が無い'
     callees:
       - MOD-72-2#functions[load_document]
       - MOD-72-2#functions[line_of]
