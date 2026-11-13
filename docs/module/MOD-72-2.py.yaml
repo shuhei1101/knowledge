@@ -481,7 +481,7 @@ functions:
       description: パスの順のファイル。`enabled` が `false` の行は空
     process: |-
       1. `enabled` が `false` の行は空を返却する
-      2. 行の `paths` の各パターンで `root.glob(パターン)` のファイルを引き、ファイル名が `exclude` のどれかに `PurePosixPath.full_match` で該当するものを除く（project-index の `DocumentTable.matches` と同じ判定）
+      2. 行の `paths` の各パターンで `root.glob(パターン)` のファイルを列挙し、ファイル名が `exclude` のどれかに `PurePosixPath.full_match` で該当するものを除く（project-index の `DocumentTable.matches` と同じ判定）
       3. 重なりを除き、パスの順に並べて返却する
     unit_tests:
       - name: test_list_row_files

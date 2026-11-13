@@ -179,7 +179,7 @@ functions:
       description: '`documents[]` の行の順、行の中はパスの順の文書。公開しない文書も含む（参照先のパスを取得するため）'
     process: |-
       1. `records` を持つ行と、`converter` が `converters` に無い行を飛ばす
-      2. 行のファイルを引き（documents の行のファイルの列挙）、`YAML(typ="safe")` で読み込む（YAML の安全な読み込み）
+      2. 行のファイルを列挙し（documents の行のファイルの列挙）、`YAML(typ="safe")` で読み込む（YAML の安全な読み込み）
          - 読み込めない、`id` が文字列でない場合、`{パス}: 文書の id を読めません` の作れない成果物を送出する
       3. `visibility` が `public` か、`overview` を除いた `items[]` の `id`・`name`・見出しの深さと、行の `run` を並べる
       4. 同じパスは最初に該当した行で 1 件にして返却する
