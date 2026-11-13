@@ -8,21 +8,21 @@ data_models:
     container: scripts/_maid.py
     usecase: 文書の違反の検査
     role: DTO
-    summary: maid が返した誤り 1 件
+    summary: maid が返却した誤り 1 件
     description: '`dataclass(frozen=True)`。'
     properties:
       - name: line
         type: int
-        description: 渡した図の中の行（1 始まり。maid の `errors[].line`）
+        description: 指定した図の中の行（1 始まり。maid の `errors[].line`）
       - name: message
         type: str
         description: maid の `errors[].message`
   - name: MaidOutputError
-    title: 読めない maid の出力
+    title: 読み込めない maid の出力
     container: scripts/_maid.py
     usecase: 文書の違反の検査
     role: 例外
-    summary: maid の標準出力が JSON として読めないか、終了コードが 0・1 でない
+    summary: maid の標準出力が JSON として読み込めないか、終了コードが 0・1 でない
     inherits: Exception
     properties:
       - name: message
@@ -33,7 +33,7 @@ constants:
     title: maid のコマンド名
     container: scripts/_maid.py
     usecase: 文書の違反の検査
-    summary: PATH から引く maid のコマンド名
+    summary: PATH で探す maid のコマンド名
     value: '"maid"'
   - name: MIN_REMAINING_SEC
     title: maid を呼ぶのに要る残り時間
@@ -49,18 +49,18 @@ functions:
     container: scripts/_maid.py
     usecase: 文書の違反の検査
     scope: public
-    summary: PATH から maid の実行ファイルを引く
+    summary: PATH から maid の実行ファイルを探す
     returns:
       type: str | None
-      description: 実行ファイルの絶対パス。引けなければ `None`
-    process: 1. `shutil.which(MAID)` を返す
+      description: 実行ファイルの絶対パス。見つからなければ `None`
+    process: 1. `shutil.which(MAID)` を返却する
     unit_tests:
       - name: test_find_maid
         case: 正常
-        summary: PATH にある maid を引く
-        condition: 一時フォルダに実行できる `maid` を置き、PATH をそのフォルダだけにする
+        summary: PATH にある maid を探す
+        condition: 一時フォルダに実行できる `maid` を配置し、PATH をそのフォルダだけにする
         mock: なし（`monkeypatch.setenv("PATH", ...)`）
-        expected: 置いた `maid` のパス
+        expected: 配置した `maid` のパス
       - name: test_find_maid_when_missing
         case: 正常
         summary: PATH に無い
@@ -74,14 +74,14 @@ functions:
     usecase: 文書の違反の検査
     role: 外部の境界
     scope: public
-    summary: mermaid の図 1 つを maid に標準入力で渡し、誤りを返す
+    summary: mermaid の図 1 つを maid に標準入力で指定し、誤りを返却する
     side_effects: maid を子プロセスとして起動する（`--fix` を付けず、ファイルを書き換えない）
     args:
       - name: executable
         title: maid の実行ファイル
         type: str
         required: true
-        description: '`find_maid` が返したパス'
+        description: '`find_maid` が返却したパス'
       - name: diagram
         title: 図
         type: str
@@ -97,22 +97,22 @@ functions:
       description: 誤りの一覧。正しい図は空
     process: |-
       1. `subprocess.run([executable, "-", "--format", "json"], input=diagram, capture_output=True, text=True, timeout=timeout_sec)` で呼ぶ（LIB-72-3）
-      2. 終了コードが 0・1 でない場合、読めない maid の出力を送出する
-      3. 標準出力を JSON で読み、`errors[]` の `line`・`message` を maid の誤りにして返す
-         - JSON として読めないか `errors` が配列でない場合、読めない maid の出力を送出する
+      2. 終了コードが 0・1 でない場合、読み込めない maid の出力を送出する
+      3. 標準出力を JSON で読み込み、`errors[]` の `line`・`message` を maid の誤りにして返却する
+         - JSON として読み込めないか `errors` が配列でない場合、読み込めない maid の出力を送出する
     exceptions:
       - name: MaidOutputError
         condition: 終了コードが 0・1 でない
         message: 'maid が終了コード {コード} で終わりました: {標準エラーの最後の 1 行}'
       - name: MaidOutputError
-        condition: 標準出力が JSON として読めないか、`errors` が配列でない
+        condition: 標準出力が JSON として読み込めないか、`errors` が配列でない
         message: maid の出力を読めません
     unit_tests:
       - name: test_run_maid
         case: 正常
         summary: 正しい図
         condition: '`flowchart TD\n  A --> B`'
-        mock: 'maid を、標準入力を読んで `{"valid": true, "errors": []}` を出し終了コード 0 で終わるスクリプトに差し替える'
+        mock: 'maid を、標準入力を読み込んで `{"valid": true, "errors": []}` を出し終了コード 0 で終わるスクリプトに差し替える'
         expected: 空の一覧。スクリプトに `-`・`--format`・`json` が渡る
       - name: test_run_maid_when_invalid
         case: 正常
@@ -133,6 +133,6 @@ functions:
         condition: maid が `ok` を出し終了コード 0
         mock: maid をスクリプトに差し替える
         expected: '`MaidOutputError`'
-        exception: 標準出力が JSON として読めない
+        exception: 標準出力が JSON として読み込めない
 test_files:
   - tests/unit/scripts/test_maid.py

@@ -20,11 +20,11 @@ flows:
         participant V as 変換のスクリプト
         participant M as mdmark
         C->>S: リポジトリの直下で --out を付けて起動する
-        S->>S: dev-docs.yaml の documents を読み、公開の文書を選ぶ
+        S->>S: dev-docs.yaml の documents を読み込み、公開の文書を選ぶ
         loop 公開の文書
           S->>V: 標準入力に文書の YAML
           V-->>S: Markdown
-          S->>S: 参照をリンクに書き換えて一時フォルダに置く
+          S->>S: 参照をリンクに書き換えて一時フォルダに配置する
         end
         S->>M: build
         M-->>S: 終了コード 0
@@ -117,8 +117,8 @@ flows:
       - 終了コードが 2
       - 標準エラーに公開の文書が無いことが出る
     test: test_error_when_no_public
-  - name: 異常系（dev-docs.yaml が読めない・終了コード 2）
-    summary: dev-docs.yaml が無いか読めなければ成果物を作り始めずに終わる
+  - name: 異常系（dev-docs.yaml が読み込めない・終了コード 2）
+    summary: dev-docs.yaml が無いか読み込めなければ成果物を作り始めずに終わる
     setup:
       - name: Mock
         description: 差し替えない
@@ -138,7 +138,7 @@ flows:
 lead: '`dev-docs.yaml` の `documents[]` が指す文書のうち `visibility: public` のものを変換のスクリプトで Markdown にし、文書の ID への参照をリンクに書き換えて、mdmark の `build` で 1 枚の HTML にまとめた出力のフォルダを作る。'
 identifier: build-pages
 idempotent: true
-side_effects: 出力のフォルダを作り直す（中身を消してから `index.html` を書く）。途中の Markdown と mdmark の設定は一時フォルダに置き、終了時に消す。リポジトリのファイルは書き換えない
+side_effects: 出力のフォルダを再作成する（中身を削除してから `index.html` を書き込む）。途中の Markdown と mdmark の設定は一時フォルダに配置し、終了時に削除する。リポジトリのファイルは書き換えない
 callers:
   - SC-137-1#scenarios[正常シナリオ]
   - SC-137-1#scenarios[異常シナリオ（変換のスクリプトが失敗する）]
@@ -148,13 +148,13 @@ request:
     type: Path
     required: true
     location: argument
-    description: knowledge のリポジトリの直下。`dev-docs.yaml` と文書の YAML を読む
+    description: knowledge のリポジトリの直下。`dev-docs.yaml` と文書の YAML を読み込む
     notes: 作業ディレクトリとして受け取る
   - name: --out
     type: Path
     required: true
     location: argument
-    description: 出力のフォルダ。無ければ作り、あれば中身を消してから書く
+    description: 出力のフォルダ。無ければ作り、あれば中身を削除してから書き込む
     example: _site
 response:
   - name: '{--out}/index.html'
@@ -168,19 +168,19 @@ response:
     description: 終了コード 1・2 のときの理由。変換の失敗は失敗した文書のパスと変換のスクリプトの標準エラー
   - name: exit_code
     type: Literal[0, 1, 2]
-    description: 0 = 出力を作った。1 = 変換か mdmark の `build` が失敗した。2 = `dev-docs.yaml` が読めないか、公開の文書が 0 件で、成果物を作り始めなかった
+    description: 0 = 出力を作った。1 = 変換か mdmark の `build` が失敗した。2 = `dev-docs.yaml` が読み込めないか、公開の文書が 0 件で、成果物を作り始めなかった
 exceptions:
   - name: なし（正常終了）
-    condition: 全ての公開の文書を変換し、`index.html` を書いた（終了コード 0）
+    condition: 全ての公開の文書を変換し、`index.html` を書き込んだ（終了コード 0）
   - name: 終了コード 1
     condition: 変換のスクリプトが 0 以外で終わった文書がある、参照先の ID が `documents[]` の文書に無い、または mdmark の `build` が 0 以外で終わった。最初の失敗で止め、出力のフォルダに `index.html` を残さない
   - name: 終了コード 2
-    condition: '`dev-docs.yaml` が無い・YAML として読めない、または `visibility: public` の文書が 0 件'
+    condition: '`dev-docs.yaml` が無い・YAML として読み込めない、または `visibility: public` の文書が 0 件'
 constraints:
   - item: 対象の文書
-    constraint: '`documents[]` のうち `converter` を持つ行の `paths` に当たる YAML で、`visibility` が `public` のもの。`records` の行（files.yaml）は対象にしない'
+    constraint: '`documents[]` のうち `converter` を持つ行の `paths` に該当する YAML で、`visibility` が `public` のもの。`records` の行（files.yaml）は対象にしない'
   - item: 変換の呼び方
-    constraint: '`documents[].converter` が指す `converters[]` の `run` を、リポジトリの直下を作業ディレクトリにして子プロセスで起動し、標準入力に文書の YAML を渡す'
+    constraint: '`documents[].converter` が指す `converters[]` の `run` を、リポジトリの直下を作業ディレクトリにして子プロセスで起動し、標準入力に文書の YAML を指定する'
   - item: 参照の書き換え
     constraint: '`(id:{ID})`・`(id:{ID}#{項目})` を、参照先が公開の文書なら `./{ID}.md`（項目があれば `#{見出しの ID}`）、それ以外なら `https://github.com/shuhei1101/knowledge/blob/develop/{参照先の YAML のパス}` に書き換える'
     notes: 見出しの ID は、変換のスクリプトがその項目に出す見出しの文字から、mdmark と同じ GitHub の規則で作る

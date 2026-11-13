@@ -1,7 +1,7 @@
 id: "MOD-148-2"
 visibility: internal
 title: "slop-check / hooks / slop_check.py"
-lead: プラグイン slop-check の PostToolUse のフック。書き込んだ中身を対応表のコピーで照合し、ヒットした行の通知の文を `additionalContext` で返す（IF-148-1）。
+lead: プラグイン slop-check の PostToolUse のフック。書き込んだ中身を対応表のコピーで照合し、ヒットした行の通知の文を `additionalContext` で返却する（IF-148-1）。
 test_files:
   - tests/unit/slop-check/test_slop_check.py
 data_models:
@@ -10,7 +10,7 @@ data_models:
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
     usecase: 書き込んだ中身の照合
     role: DTO
-    summary: 対応表のコピーの 1 行を、照合に使う形にしたもの
+    summary: 対応表のコピーの 1 行を、照合に使用する形式にしたもの
     description: '`dataclass(frozen=True)`。'
     properties:
       - name: id
@@ -18,10 +18,10 @@ data_models:
         description: 行の ID
       - name: ng
         type: str
-        description: 避ける単語
+        description: 使用しない単語
       - name: ok
         type: tuple[str, ...]
-        description: 使う単語（1 件以上）
+        description: 使用する単語（1 件以上）
       - name: matcher
         type: re.Pattern[str]
         description: '`pattern` をコンパイルしたもの。`pattern` が無い行は `re.escape(ng)` をコンパイルしたもの'
@@ -48,7 +48,7 @@ constants:
         value: content
       - key: Edit
         value: new_string
-        description: ファイル全体を読めないときだけ使う
+        description: ファイル全体を読み込めないときだけ使用する
       - key: NotebookEdit
         value: new_source
   - name: MCP_TOOLS
@@ -77,7 +77,7 @@ constants:
     title: 対応表のパス
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
     usecase: 書き込んだ中身の照合
-    summary: 照合しない書き込む先（対応表の正本とコピー）に当たる正規表現
+    summary: 照合しない書き込む先（対応表の原本とコピー）に該当する正規表現
     value: re.compile(r"(?:^|/)docs/word-list/[^/]+\.ya?ml$|(?:^|/)hooks/post-tool-use/word-list-[^/]+\.json$")
     refs:
       - IF-148-1#constraints[照合しない書き込む先]
@@ -91,7 +91,7 @@ constants:
     title: 通知の文の後半
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
     usecase: 書き込んだ中身の照合
-    summary: 表の後の、規約を search_docs で読む案内（要件の要望 3 の文のとおり。`…` はその文の引数をそのまま書く）
+    summary: 表の後の、規約を search_docs で読み込む案内（要件の要望 3 の文のとおり。`…` はその文の引数をそのまま記載する）
     value: '"\nまだ読んでいなければ、用途に合う規約を読んでください。\n- 文書・コメント: 規約『文章の書き方』\n  mcp__plugin_project-index_project-index__search_docs（…\"convention-writing-style\"…）\n- 画面の文言: 規約『入力と文言』\n  mcp__plugin_project-index_project-index__search_docs（…\"ui-input-wording\"…）"'
 functions:
   - name: main
@@ -120,54 +120,54 @@ functions:
       type: int
       description: 終了コード。常に `0`
     process: |-
-      1. argparse で引数を読み、標準入出力を UTF-8 にする
-      2. 標準入力を `json.loads` で読む
-         - 読めない場合、`tool_name`・`tool_input` が無い場合、標準エラーへ `PostToolUse の入力を JSON として読めません: {理由}` を出し `0` を返す
-      3. 対象のツールでなければ `0` を返す（対象のツールの判定）
-      4. 書き込む先が対応表なら `0` を返す（対応表への書き込みの判定）
-      5. 中身を取り出す（中身の取り出し）。空なら `0` を返す
-      6. 対応表を読む（対応表の読み込み）
-         - `OSError`・`ValueError` の場合、標準エラーへ `対応表を読めません: {パス}: {理由}` を出し `0` を返す
+      1. argparse で引数を読み込み、標準入出力を UTF-8 にする
+      2. 標準入力を `json.loads` で読み込む
+         - 読み込めない場合、`tool_name`・`tool_input` が無い場合、標準エラーへ `PostToolUse の入力を JSON として読めません: {理由}` を出し `0` を返却する
+      3. 対象のツールでなければ `0` を返却する（対象のツールの判定）
+      4. 書き込む先が対応表なら `0` を返却する（対応表への書き込みの判定）
+      5. 中身を取り出す（中身の取り出し）。空なら `0` を返却する
+      6. 対応表を読み込む（対応表の読み込み）
+         - `OSError`・`ValueError` の場合、標準エラーへ `対応表を読めません: {パス}: {理由}` を出し `0` を返却する
       7. ヒットした行を求め（ヒットした行の照合）、1 行以上なら `{"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": 通知の文}}` を `ensure_ascii=False` で標準出力へ出す（通知の文の組み立て）
-      8. `0` を返す
-         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `0` を返す
+      8. `0` を返却する
+         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `0` を返却する
     unit_tests:
       - name: test_main
         case: 正常
         summary: ヒットを通知する
         condition: '標準入力に `tool_name: Write`・`content: 設定を直す。`。`word_list` に `直す` の 1 行のコピー'
         mock: 標準入出力を `io.StringIO` に差し替える
-        expected: '`0` を返し、標準出力の JSON の `additionalContext` に `| 直す | 修正 |` がある'
+        expected: '`0` を返却し、標準出力の JSON の `additionalContext` に `| 直す | 修正 |` がある'
       - name: test_main_when_no_hit
         case: 正常
         summary: ヒットしない
         condition: '`content: 設定を修正する。`'
         mock: 標準入出力を差し替える
-        expected: '`0` を返し、標準出力が空'
+        expected: '`0` を返却し、標準出力が空'
       - name: test_main_when_input_invalid
         case: 正常
-        summary: 入力が読めない
+        summary: 入力が読み込めない
         condition: '標準入力に `{"tool_name": "Write"`'
         mock: 標準入出力を差し替える
-        expected: '`0` を返し、標準出力が空で、標準エラーに `JSON` が出る'
+        expected: '`0` を返却し、標準出力が空で、標準エラーに `JSON` が出る'
       - name: test_main_when_word_list_missing
         case: 正常
         summary: 対応表が無い
         condition: '`word_list` に存在しないパス'
         mock: 標準入出力を差し替える
-        expected: '`0` を返し、標準出力が空で、標準エラーにパスが出る'
+        expected: '`0` を返却し、標準出力が空で、標準エラーにパスが出る'
       - name: test_main_when_writing_word_list
         case: 正常
         summary: 対応表への書き込み
         condition: '`file_path` が `/repo/docs/word-list/word-list-ai-slop.yaml`、`content: ng: 直す`'
         mock: 標準入出力を差し替える
-        expected: '`0` を返し、標準出力が空で、対応表を読まない'
+        expected: '`0` を返却し、標準出力が空で、対応表を読み込まない'
       - name: test_main_when_unexpected_error
         case: 正常
         summary: 想定していない例外
         condition: ヒットした行の照合が `RuntimeError` を送出する
         mock: ヒットした行の照合を `RuntimeError` を送出する関数に差し替える
-        expected: '`0` を返し、標準エラーに `Traceback` が出る'
+        expected: '`0` を返却し、標準エラーに `Traceback` が出る'
     refs:
       - IF-148-1#
   - name: is_target
@@ -176,7 +176,7 @@ functions:
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
     usecase: 書き込んだ中身の照合
     scope: public
-    summary: ツール名が組み込みの書き込むツールか、対象の MCP ツールかを返す
+    summary: ツール名が組み込みの書き込むツールか、対象の MCP ツールかを返却する
     args:
       - name: tool_name
         title: ツール名
@@ -209,7 +209,7 @@ functions:
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
     usecase: 書き込んだ中身の照合
     scope: public
-    summary: 書き込む先が対応表の正本かコピーかを返す
+    summary: 書き込む先が対応表の原本かコピーかを返却する
     args:
       - name: tool_name
         title: ツール名
@@ -225,13 +225,13 @@ functions:
       type: bool
       description: 対応表への書き込みなら `True`
     process: |-
-      1. 組み込みのツールの場合、`file_path`（NotebookEdit は `notebook_path`）を `/` 区切りにして `WORD_LIST_PATH` に当たるかを返す
+      1. 組み込みのツールの場合、`file_path`（NotebookEdit は `notebook_path`）を `/` 区切りにして `WORD_LIST_PATH` に該当するかを返却する
       2. `write_docs` の場合、`operations[]` が 1 件以上で、全ての要素の `id` が `word-list-` で始まるか `kind` が `word-list` なら `True`
       3. それ以外は `False`
     unit_tests:
       - name: test_is_word_list_write
         case: 正常
-        summary: 対応表の正本・コピー・write_docs
+        summary: 対応表の原本・コピー・write_docs
         condition: '`Edit` の `C:\repo\docs\word-list\word-list-ai-slop.yaml`、`Write` の `/r/plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json`、`write_docs` の `operations: [{id: word-list-ai-slop}]`'
         mock: なし
         expected: 全て `True`
@@ -248,7 +248,7 @@ functions:
     usecase: 書き込んだ中身の照合
     scope: public
     summary: ツールごとに、照合する中身を取り出す
-    side_effects: Edit のときファイルを読む
+    side_effects: Edit のときファイルを読み込む
     args:
       - name: tool_name
         title: ツール名
@@ -264,9 +264,9 @@ functions:
       type: str
       description: 照合する中身。取り出せなければ空文字列
     process: |-
-      1. `Edit` の場合、`file_path` を UTF-8 で読んで返す
-         - `OSError`・`UnicodeDecodeError` の場合、`new_string` を返す
-      2. 他の組み込みのツールの場合、`BUILTIN_TOOLS` のキーの値を返す（文字列でなければ空）
+      1. `Edit` の場合、`file_path` を UTF-8 で読み込んで返却する
+         - `OSError`・`UnicodeDecodeError` の場合、`new_string` を返却する
+      2. 他の組み込みのツールの場合、`BUILTIN_TOOLS` のキーの値を返却する（文字列でなければ空）
       3. MCP ツールの場合、`tool_input` の文字列の値を集めて改行でつなぐ（文字列の値の収集）
     unit_tests:
       - name: test_extract_text_when_edit
@@ -277,7 +277,7 @@ functions:
         expected: ファイル全体の文字列
       - name: test_extract_text_when_edit_unreadable
         case: 正常
-        summary: Edit でファイルが読めない
+        summary: Edit でファイルが読み込めない
         condition: '存在しない `file_path` と `new_string: 設定を直す。`'
         mock: なし
         expected: '`設定を直す。`'
@@ -304,10 +304,10 @@ functions:
       type: list[str]
       description: 文字列の値
     process: |-
-      1. 文字列ならその 1 件を返す
+      1. 文字列ならその 1 件を返却する
       2. 辞書なら、キーが `EXCLUDED_KEYS` にあるか `_id` で終わる値を飛ばし、他の値を再帰でたどる
       3. 配列なら、各要素を再帰でたどる
-      4. それ以外は空を返す
+      4. それ以外は空を返却する
     unit_tests:
       - name: test_collect_strings
         case: 正常
@@ -321,20 +321,20 @@ functions:
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
     usecase: 共通
     scope: public
-    summary: 対応表の 1 行の辞書から、照合に使う行を作る
+    summary: 対応表の 1 行の辞書から、照合に使用する行を作る
     args:
       - name: row
         title: 行
         type: Mapping[str, object]
         required: true
-        description: 対応表の `entries[]` の 1 行（コピーの JSON でも、正本の YAML でも）
+        description: 対応表の `entries[]` の 1 行（コピーの JSON でも、原本の YAML でも）
     returns:
       type: Entry
       description: 対応表の行
     process: |-
       1. `pattern` があれば `re.compile(pattern)`、無ければ `re.compile(re.escape(ng))` を `matcher` にする
       2. `ok`・`allow` を tuple にし、`note` が無ければ `None` にする
-         - `pattern` が正規表現として読めない場合、`re.error` をそのまま送出する
+         - `pattern` が正規表現として読み込めない場合、`re.error` をそのまま送出する
     unit_tests:
       - name: test_compile_entry
         case: 正常
@@ -344,11 +344,11 @@ functions:
         expected: 前者は `ng` のエスケープ、後者は `pattern` を `matcher` に持つ
       - name: test_compile_entry_when_invalid_pattern
         case: 異常
-        summary: 読めない正規表現
+        summary: 読み込めない正規表現
         condition: '`pattern: "形("`'
         mock: なし
         expected: '`re.error` を送出する'
-        exception: '`pattern` が正規表現として読めない'
+        exception: '`pattern` が正規表現として読み込めない'
   - name: load_entries
     title: 対応表の読み込み
     kind: 関数
@@ -356,7 +356,7 @@ functions:
     usecase: 書き込んだ中身の照合
     role: 読み込み
     scope: public
-    summary: 対応表のコピーを読み、行の並びを返す
+    summary: 対応表のコピーを読み込み、行の並びを返却する
     args:
       - name: path
         title: パス
@@ -365,33 +365,33 @@ functions:
         description: 対応表のコピー
     returns:
       type: list[Entry]
-      description: コピーの並びの順の行。正規表現として読めない行は除く
+      description: コピーの並びの順の行。正規表現として読み込めない行は除く
     process: |-
-      1. UTF-8 で読み、`json.loads` する。`entries` が配列でなければ `ValueError` を送出する
+      1. UTF-8 で読み込み、`json.loads` する。`entries` が配列でなければ `ValueError` を送出する
       2. 各行を対応表の行にする（対応表の行の作成）
          - `re.error` の場合、その行を除き、標準エラーへ `対応表の行 {id} の pattern を読めません: {理由}` を出す
-         - ファイルが無い・読めない場合、`OSError`・`ValueError`（`json.JSONDecodeError` を含む）をそのまま送出する
+         - ファイルが無い・読み込めない場合、`OSError`・`ValueError`（`json.JSONDecodeError` を含む）をそのまま送出する
     unit_tests:
       - name: test_load_entries
         case: 正常
-        summary: 並びを保ち、読めない行を除く
+        summary: 並びを保ち、読み込めない行を除く
         condition: 3 行のうち 2 行目の `pattern` が `形(` のコピー
         mock: なし（一時ディレクトリ）
         expected: 1 行目と 3 行目の 2 件で、標準エラーに 2 行目の `id` が出る
       - name: test_load_entries_when_broken
         case: 異常
-        summary: JSON として読めない
+        summary: JSON として読み込めない
         condition: '`{` だけのファイル'
         mock: なし（一時ディレクトリ）
         expected: '`ValueError` を送出する'
-        exception: JSON として読めないか `entries` が配列でない
+        exception: JSON として読み込めないか `entries` が配列でない
   - name: entry_hits
     title: 行の照合
     kind: 関数
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
     usecase: 共通
     scope: public
-    summary: 文字列に、allow に当たらないヒットが 1 つ以上あるかを返す
+    summary: 文字列に、allow に該当しないヒットが 1 つ以上あるかを返却する
     args:
       - name: text
         title: 文字列
@@ -402,7 +402,7 @@ functions:
         title: 対応表の行
         type: Entry
         required: true
-        description: 照合に使う行
+        description: 照合に使用する行
     returns:
       type: bool
       description: ヒットがあれば `True`
@@ -418,7 +418,7 @@ functions:
         expected: '`True`'
       - name: test_entry_hits_when_allowed
         case: 正常
-        summary: allow に当たるヒットを除く
+        summary: allow に該当するヒットを除く
         condition: '`allow: [割り当て]` の `当てる` の行と「設定を割り当てる。」'
         mock: なし
         expected: '`False`'
@@ -435,7 +435,7 @@ functions:
     usecase: 書き込んだ中身の照合
     role: サービス
     scope: public
-    summary: 対応表の行のうち、中身にヒットした行を対応表の並びで返す
+    summary: 対応表の行のうち、中身にヒットした行を対応表の並びで返却する
     args:
       - name: text
         title: 中身
@@ -446,12 +446,12 @@ functions:
         title: 対応表の行
         type: Sequence[Entry]
         required: true
-        description: '`load_entries` が返した行'
+        description: '`load_entries` が返却した行'
     returns:
       type: list[Entry]
       description: ヒットした行（1 行は 1 回だけ）
     process: |-
-      1. 各行に行の照合を当て、ヒットした行を並びの順に返す
+      1. 各行に行の照合を適用し、ヒットした行を並びの順に返却する
     unit_tests:
       - name: test_find_hits
         case: 正常
@@ -486,4 +486,4 @@ functions:
         mock: なし
         expected: '`| 形 | スキーマ・構造（形状の意味なら「形状」） |` の行を持ち、`NOTICE_HEAD` で始まり `NOTICE_TAIL` で終わる'
 notes:
-  依存: Python の標準ライブラリだけ（`argparse`・`json`・`os`・`re`・`sys`・`traceback`・`dataclasses`・`pathlib`）。PEP 723 のメタデータは持たない。端末の `python3`（2026-11-03 に WSL2 で測った値は 3.12.3）を下限にし、3.13 以降の構文・API を使わない
+  依存: Python の標準ライブラリだけ（`argparse`・`json`・`os`・`re`・`sys`・`traceback`・`dataclasses`・`pathlib`）。PEP 723 のメタデータは持たない。端末の `python3`（2026-11-03 に WSL2 で測った値は 3.12.3）を下限にし、3.13 以降の構文・API を使用しない

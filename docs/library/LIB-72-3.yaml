@@ -7,7 +7,7 @@ version:
   latest: 0.0.29
   checked_on: '2026-10-31'
   source: 開発コマンドの環境構築と CI のワークフローの `npm install -g @probelabs/maid@0.0.29`
-  pinning: 完全なバージョンで固定する（0.0.x で、出力の形が変わりうる）
+  pinning: 完全なバージョンで固定する（0.0.x で、出力の形式が変わりうる）
 catalogs:
   - name: コマンド
     version: 0.0.29
@@ -19,7 +19,7 @@ catalogs:
           - name: '-'
             type: str
             required: true
-            description: 入力を標準入力から読む
+            description: 入力を標準入力から読み込む
           - name: --format
             type: Literal['json']
             required: true
@@ -58,7 +58,7 @@ official_url: https://www.npmjs.com/package/@probelabs/maid
 docs_url: https://github.com/probelabs/maid
 selection:
   candidates: '@probelabs/maid、@mermaid-js/mermaid-cli（描画にブラウザが要る）'
-  decision: PoC で、ブラウザを要らず 1 回 1 秒未満で検査でき、誤りの行を機械で取り出せると確かめた
+  decision: PoC で、ブラウザを要らず 1 回 1 秒未満で検査でき、誤りの行を機械で取り出せると確認した
 install: |-
   ```bash
   npm install -g @probelabs/maid@0.0.29

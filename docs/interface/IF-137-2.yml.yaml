@@ -22,7 +22,7 @@ flows:
         W->>W: Node 24 と uv を入れる
         W->>S: リポジトリの直下で --out _site を付けて起動する
         S-->>W: 終了コード 0
-        W->>W: _site に .yaml と .yml が無いことを確かめる
+        W->>W: _site に .yaml と .yml が無いことを確認する
         W->>W: _site を Pages の成果物として上げる
         W->>P: 成果物を配信する
         P-->>W: サイトの URL
@@ -53,7 +53,7 @@ flows:
     summary: 出力のフォルダに YAML があれば、配信せずに失敗する
     setup:
       - name: Mock
-        description: Pages の成果物の作成の後に、出力のフォルダへ YAML のファイルを 1 つ置く
+        description: Pages の成果物の作成の後に、出力のフォルダへ YAML のファイルを 1 つ配置する
     flow: |-
       sequenceDiagram
         participant G as GitHub Actions
@@ -69,7 +69,7 @@ flows:
     expected:
       - '`build` のジョブが失敗で終わり、`deploy` のジョブは動かない'
       - ジョブのログに混じった YAML のパスが出る
-lead: 「Pages の成果物の作成」で公開の文書だけを 1 枚の HTML にし、出力に YAML が無いことを確かめてから GitHub Pages へ配信する。
+lead: 「Pages の成果物の作成」で公開の文書だけを 1 枚の HTML にし、出力に YAML が無いことを確認してから GitHub Pages へ配信する。
 idempotent: true
 permissions: '`contents: read`・`pages: write`・`id-token: write`'
 side_effects: GitHub Pages のサイトを成果物で置き換える（リポジトリには書き込まない）
@@ -77,7 +77,7 @@ callers:
   - SC-137-1#scenarios[正常シナリオ]
   - SC-137-1#scenarios[異常シナリオ（変換のスクリプトが失敗する）]
   - SC-137-1#scenarios[異常シナリオ（成果物に YAML が混じる）]
-exclusivity: '配信は 1 つずつ流す。実行中の配信は取り消さず、後から来た実行を待たせる（`concurrency` の group が `pages`、`cancel-in-progress: false`）'
+exclusivity: '配信は 1 つずつ実行する。実行中の配信はキャンセルせず、後から来た実行を待たせる（`concurrency` の group が `pages`、`cancel-in-progress: false`）'
 constraints:
   - item: ランナー
     constraint: '`ubuntu-latest`'
@@ -88,8 +88,8 @@ constraints:
   - item: ジョブの構成
     constraint: '成果物を作る `build` と、配信する `deploy`（`needs: build`、environment は `github-pages`。配信を許すブランチに `develop` を含める）の 2 つ。`build` が失敗したら `deploy` は動かない'
   - item: YAML の検査
-    constraint: 成果物を上げる前に、リポジトリの直下で `! find _site -type f \( -name '*.yaml' -o -name '*.yml' \) | grep .` を bash で実行する。当たったパスを 1 行ずつ標準出力へ出して終了コード 1、無ければ 0
-  - item: 使う Action
+    constraint: 成果物を上げる前に、リポジトリの直下で `! find _site -type f \( -name '*.yaml' -o -name '*.yml' \) | grep .` を bash で実行する。該当したパスを 1 行ずつ標準出力へ出して終了コード 1、無ければ 0
+  - item: 使用する Action
     constraint: '`actions/checkout`・`actions/setup-node`（Node 24）・`astral-sh/setup-uv`・`actions/configure-pages`・`actions/upload-pages-artifact`・`actions/deploy-pages`'
 notes:
-  確かめ方: 結合テストのファイルは持たない（GitHub Actions の上でしかジョブの成否と配信を確かめられない）。ジョブが起動する「Pages の成果物の作成」の合否はその結合テストが確かめる。Pages への配信そのものは、develop へのマージの後の配信のジョブの結果で確認する
+  確認方法: 結合テストのファイルは持たない（GitHub Actions の上でしかジョブの成否と配信を確認できない）。ジョブが起動する「Pages の成果物の作成」の合否はその結合テストが確認する。Pages への配信そのものは、develop へのマージの後の配信のジョブの結果で確認する

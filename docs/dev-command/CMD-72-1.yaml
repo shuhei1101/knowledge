@@ -4,9 +4,9 @@ title: "開発コマンド"
 categories:
   - name: 環境構築（クローン直後）
     prerequisites:
-      - WSL では、npm のグローバルの置き場所が Linux 側のファイルシステムにある（`/mnt/c` の `node_modules` の maid は 1 回の起動に 9〜14 秒かかる）
+      - WSL では、npm のグローバルの配置先が Linux 側のファイルシステムにある（`/mnt/c` の `node_modules` の maid は 1 回の起動に 9〜14 秒かかる）
     commands: |-
-      1. mermaid の検査に使う maid を PATH から引ける場所に入れる
+      1. mermaid の検査に使用する maid を PATH で見つかる場所に入れる
 
       ```bash
       npm install -g @probelabs/maid@0.0.29
@@ -31,10 +31,10 @@ categories:
     verification:
       state: 済
       date: '2026-11-06'
-      detail: WSL2 で maid 0.0.29 を入れ、`maid - --format json` が 0.35 秒で終了コード 0 を返した。3 つのスクリプトの `uv sync --script` がロックの依存を入れた（2026-10-31）。worktree で `npm ci --prefix scripts/lint` を実行し、`scripts/lint/node_modules/.bin/` に `markdownlint-cli2`・`textlint` が入った（2026-11-05）。worktree で `uv sync --script scripts/build_templates.py` がロックの依存を入れた（2026-11-06）
+      detail: WSL2 で maid 0.0.29 を入れ、`maid - --format json` が 0.35 秒で終了コード 0 を返却した。3 つのスクリプトの `uv sync --script` がロックの依存を入れた（2026-10-31）。worktree で `npm ci --prefix scripts/lint` を実行し、`scripts/lint/node_modules/.bin/` に `markdownlint-cli2`・`textlint` が入った（2026-11-05）。worktree で `uv sync --script scripts/build_templates.py` がロックの依存を入れた（2026-11-06）
   - name: 取り込み後の追従（pull 後）
     commands: |-
-      1. ロック（`scripts/*.py.lock`）が変わったときは、入口のスクリプトごとに依存を入れ直す
+      1. ロック（`scripts/*.py.lock`）が変わったときは、入口のスクリプトごとに依存を再インストールする
 
       ```bash
       uv sync --script scripts/knowledge_checks.py
@@ -45,7 +45,7 @@ categories:
       uv sync --script scripts/build_templates.py
       ```
 
-      2. `scripts/lint/package-lock.json` が変わったときは、lint の CLI とルールを入れ直す
+      2. `scripts/lint/package-lock.json` が変わったときは、lint の CLI とルールを再インストールする
 
       ```bash
       npm ci --prefix scripts/lint
@@ -53,7 +53,7 @@ categories:
     verification:
       state: 済
       date: '2026-11-05'
-      detail: 3 つのスクリプトで実行し、ロックの依存が入っていることを確かめた（2026-10-31）。2 は環境構築の 3 と同じコマンドで確かめた（2026-11-05）。`build_templates.py` の 1 は環境構築の 2 と同じコマンドで確かめた（2026-11-06）
+      detail: 3 つのスクリプトで実行し、ロックの依存が入っていることを確認した（2026-10-31）。2 は環境構築の 3 と同じコマンドで確認した（2026-11-05）。`build_templates.py` の 1 は環境構築の 2 と同じコマンドで確認した（2026-11-06）
   - name: 依存の追加・更新・削除
     commands: |-
       依存はスクリプトの PEP 723 のメタデータとロック（`{スクリプト}.py.lock`）が持つ。`pyproject.toml` は作らない。
@@ -70,7 +70,7 @@ categories:
       uv lock --script scripts/{スクリプト}.py --upgrade-package {パッケージ}
       ```
 
-      3. 依存を外す
+      3. 依存を削除する
 
       ```bash
       uv remove --script scripts/{スクリプト}.py {パッケージ}
@@ -86,7 +86,7 @@ categories:
     verification:
       state: 済
       date: '2026-10-31'
-      detail: 一時フォルダへコピーした `check_all.py` とロックで `uv add --script`・`uv lock --script --upgrade-package`・`uv remove --script` を実行し、メタデータとロックが書き換わることを確かめた
+      detail: 一時フォルダへコピーした `check_all.py` とロックで `uv add --script`・`uv lock --script --upgrade-package`・`uv remove --script` を実行し、メタデータとロックが書き換わることを確認した
   - name: 起動・停止
     commands: 未確定
   - name: テスト
@@ -98,6 +98,7 @@ categories:
   - name: ビルド・生成
     prerequisites:
       - Node.js 24 以降（`npx -y` が mdmark のタグの中身と依存を呼ぶたびに取る。外部ライブラリ『mdmark』）
+      - 5 は AI Monitor のクローンがある（`uv` で AI Monitor の依存を入れてある）
     commands: |-
       1. 公開の文書だけを 1 枚の HTML にまとめた Pages の成果物を `_site` に作る（IF『Pages の成果物の作成』）
 
@@ -105,22 +106,28 @@ categories:
       uv run --frozen --script scripts/build_pages.py --out _site
       ```
 
-      2. 成果物に YAML が入っていないことを確かめる（CI のワークフローと同じ行。当たったパスを出して終了コード 1、無ければ 0）
+      2. 成果物に YAML が入っていないことを確認する（CI のワークフローと同じ行。該当したパスを出して終了コード 1、無ければ 0）
 
       ```bash
       ! find _site -type f \( -name '*.yaml' -o -name '*.yml' \) | grep .
       ```
 
-      3. 対応表の正本（`docs/word-list/word-list-ai-slop.yaml`）を変えたら、slop-check のフックが読むコピーを作り直し、正本と一緒に commit する（IF『対応表のコピーの作成』）
+      3. 対応表の原本（`docs/word-list/word-list-ai-slop.yaml`）を変えたら、slop-check のフックが読み込むコピーを再作成し、原本と一緒に commit する（IF『対応表のコピーの作成』）
 
       ```bash
       uv run --frozen --script scripts/build_word_list.py
       ```
 
-      4. 設計書のスキーマ（`schemas/design/`）を変えたら、`docs/template/` の設計書の種類のテンプレートを作り直し、スキーマと一緒に commit する（IF『設計書のテンプレートの生成』）
+      4. 設計書のスキーマ（`schemas/design/`）を変えたら、`docs/template/` の設計書の種類のテンプレートを再作成し、スキーマと一緒に commit する（IF『設計書のテンプレートの生成』）
 
       ```bash
       uv run --frozen --script scripts/build_templates.py
+      ```
+
+      5. `docs/` のフォルダの目次の原本（`index.yaml`）を変えたら、そのフォルダの `README.md` を AI Monitor の README の生成で再生成し、`index.yaml` と一緒に commit する。`--only` には `index.yaml` の拡張子を除いたパスを指定する
+
+      ```bash
+      cd {AI Monitor のクローン} && PYTHONPATH=src uv run python -m ai_monitor.design_docs publish --only docs/{フォルダ}/index --root {knowledge の作業ツリー}
       ```
     refs:
       - IF-137-1#
@@ -130,12 +137,12 @@ categories:
       - IF-201-1#
     verification:
       state: 済
-      date: '2026-11-03'
-      detail: WSL2 の Ubuntu（Node 24.14.0）で 1・2 のコマンドを実行した。公開の 5 文書が `_site/index.html` にまとまり（約 11 秒、終了コード 0）、YAML の検査は何も出さず終了コード 0 を返した（2026-10-31）。3 のコマンドは worktree で実行し、終了コード 0 で、正本から作り直したコピーが commit 済みのコピーと一致した（2026-11-03）。4 のコマンドは worktree で実行し、終了コード 0 で 15 件のテンプレートを書き出し、続けて全ての文書の検査が違反 0 件で終わった（2026-11-06）
-    effects: 1 は約 11 秒（初回は `npx` が mdmark と依存を取る）。`_site` は中身を消してから書く。3 は `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を上書きする。4 は `docs/template/` の設計書の種類のテンプレートのうち、スキーマから組み立てた `items` と違うものの `items` だけを上書きする
+      date: '2026-11-14'
+      detail: WSL2 の Ubuntu（Node 24.14.0）で 1・2 のコマンドを実行した。公開の 5 文書が `_site/index.html` にまとまり（約 11 秒、終了コード 0）、YAML の検査は何も出さず終了コード 0 を返却した（2026-10-31）。3 のコマンドは worktree で実行し、終了コード 0 で、原本から再作成したコピーが commit 済みのコピーと一致した（2026-11-03）。4 のコマンドは worktree で実行し、終了コード 0 で 15 件のテンプレートを書き出し、続けて全ての文書の検査が違反 0 件で終わった（2026-11-06）。5 のコマンドは worktree で `--only docs/scenario/index` を指定して実行し、終了コード 0 で `docs/scenario/README.md` だけを書き換えた（約 47 秒）。ただし、行のリンクの表示名が文書のタイトルではなくファイル名（`SC-72-1` など）になる。AI Monitor の README の生成が knowledge の `schemas/design/` の種類を読み込まないためで、shuhei1101/ai-monitor#3424 で修正する（2026-11-14）
+    effects: 1 は約 11 秒（初回は `npx` が mdmark と依存を取る）。`_site` は中身を削除してから書き込む。3 は `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を上書きする。4 は `docs/template/` の設計書の種類のテンプレートのうち、スキーマから組み立てた `items` と違うものの `items` だけを上書きする。5 は `--only` に指定したフォルダの `README.md` を上書きする。shuhei1101/ai-monitor#3424 が修正されるまでは行の表示名がファイル名になるため、書き換えた行のうち `index.yaml` で変えた行以外は元に戻す
   - name: 取り込み前の検査
     prerequisites:
-      - 環境構築（クローン直後）を流してある
+      - 環境構築（クローン直後）を実行してある
     commands: |-
       1. 全ての文書の検査を実行する（違反があれば終了コード 1 で、違反を 1 件 1 行で出す）
 
@@ -143,7 +150,7 @@ categories:
       uv run --frozen --script scripts/check_all.py
       ```
 
-      2. 単体テストと静的検査は、テスト実行方法の各層の全件実行を流す
+      2. 単体テストと静的検査は、テスト実行方法の各層の全件実行のコマンドを実行する
     effects: 文書 267 件で約 60 秒（WSL の `/mnt/c` の worktree。mermaid の図ごとに maid を起動し、markdownlint-cli2・textlint を 1 回ずつ起動する）。既定の lint の設定は全てのルールを error にし、違反を違反の行で出す
     refs:
       - TP-72-1#layers[単体テスト（バック）]
@@ -151,9 +158,9 @@ categories:
     verification:
       state: 済
       date: '2026-11-11'
-      detail: worktree で実行し、257 件の文書を約 10 秒で検査した。テンプレートの記述例の参照切れ 13 件で終了コード 1 を返した（2026-10-31）。lint を加えた後、267 件の文書を約 64 秒で検査し、違反 0 件・警告 837 件で終了コード 0 を返した（2026-11-05）。全てのルールを error にした後、336 件の文書を約 43 秒で検査し、違反 0 件・警告 0 件で終了コード 0 を返却した（2026-11-11）
+      detail: worktree で実行し、257 件の文書を約 10 秒で検査した。テンプレートの記述例の参照切れ 13 件で終了コード 1 を返却した（2026-10-31）。lint を加えた後、267 件の文書を約 64 秒で検査し、違反 0 件・警告 837 件で終了コード 0 を返却した（2026-11-05）。全てのルールを error にした後、336 件の文書を約 43 秒で検査し、違反 0 件・警告 0 件で終了コード 0 を返却した（2026-11-11）
   - name: 管理作業
     commands: 未確定
 prerequisites:
-  - uv（`uv run --script` と `uv lock --script` が使えるバージョン。Python 3.14 は uv が入れる）
+  - uv（`uv run --script` と `uv lock --script` が使用できるバージョン。Python 3.14 は uv が入れる）
   - Node.js と npm（maid と、`scripts/lint/` の markdownlint-cli2・textlint を入れる）
