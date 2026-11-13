@@ -33,7 +33,7 @@ flows:
       - 終了コードが 0
       - 出力のフォルダにあるファイルは `index.html` だけ
       - '`index.html` に公開の文書 2 件の本文が入り、internal の文書の本文は入らない'
-      - 公開の文書の項目への参照は `index.html` の中のリンクになり、internal の文書への参照は GitHub の master の YAML の URL になる
+      - 公開の文書の項目への参照は `index.html` の中のリンクになり、internal の文書への参照は GitHub の develop の YAML の URL になる
     test: test_normal
   - name: 異常系（変換が失敗する・終了コード 1）
     summary: 変換のスクリプトが失敗した文書で止め、出力を残さずに終わる
@@ -182,7 +182,7 @@ constraints:
   - item: 変換の呼び方
     constraint: '`documents[].converter` が指す `converters[]` の `run` を、リポジトリの直下を作業ディレクトリにして子プロセスで起動し、標準入力に文書の YAML を指定する'
   - item: 参照の書き換え
-    constraint: '`(id:{ID})`・`(id:{ID}#{項目})` を、参照先が公開の文書なら `./{ID}.md`（項目があれば `#{見出しの ID}`）、それ以外なら `https://github.com/shuhei1101/knowledge/blob/master/{参照先の YAML のパス}` に書き換える'
+    constraint: '`(id:{ID})`・`(id:{ID}#{項目})` を、参照先が公開の文書なら `./{ID}.md`（項目があれば `#{見出しの ID}`）、それ以外なら `https://github.com/shuhei1101/knowledge/blob/develop/{参照先の YAML のパス}` に書き換える'
     notes: 見出しの ID は、変換のスクリプトがその項目に出す見出しの文字から、mdmark と同じ GitHub の規則で作る
   - item: mdmark の呼び方
     constraint: '`npx -y github:shuhei1101/mdmark#{タグ} build --config {一時フォルダの設定}`。タグは外部ライブラリ『mdmark』の採用バージョンに固定する'

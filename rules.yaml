@@ -334,6 +334,10 @@ rules:
   - rule: docs/rule/python-llm-exception-retry.yaml
     paths:
       - "**/integrations/llm/**/*.py"
+  - rule: docs/rule/dev-hook-ci-scope.yaml
+    paths:
+      - "**/{lefthook,.lefthook}.{yml,yaml}"
+      - "**/.github/workflows/*.{yml,yaml}"
   - rule: docs/rule/python-packaging-pyproject.yaml
     paths:
       - "**/pyproject.toml"

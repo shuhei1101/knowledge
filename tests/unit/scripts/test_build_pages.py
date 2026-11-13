@@ -389,7 +389,7 @@ def test_rewrite_references() -> None:
     # 検証
     assert result == (
         "[a](./pub.md) [b](./pub.md#手順) [c](./pub.md) "
-        "[d](https://github.com/shuhei1101/knowledge/blob/master/docs/rule/int.yaml)"
+        "[d](https://github.com/shuhei1101/knowledge/blob/develop/docs/rule/int.yaml)"
     )
 
 

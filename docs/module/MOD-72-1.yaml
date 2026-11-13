@@ -1,7 +1,7 @@
 id: "MOD-72-1"
 visibility: internal
 title: "検査と変換のスクリプト / scripts"
-lead: project-index の validators・converters の約束で動く文書の検査・変換と、CI と手元から全ての文書を検査する CLI・Pages の成果物を作る CLI の、`scripts/` の単一ファイルのスクリプト。
+lead: project-index の validators・converters の約束で動く文書の検査・変換と、手元から全ての文書を検査する CLI・Pages の成果物を作る CLI の、`scripts/` の単一ファイルのスクリプト。
 diagrams:
   - name: 全体
     diagram: |-
@@ -53,7 +53,7 @@ diagrams:
 notes:
   起動の方式: |-
     各入口のスクリプトは PEP 723 のインラインのメタデータ（`requires-python = ">=3.14"` と依存）を持ち、`uv lock --script` のロック（`{スクリプト}.py.lock`）でバージョンを固定する。
-    dev-docs.yaml の `run` と CI は `uv run --frozen --script scripts/{スクリプト}.py` で起動する。仮想環境は uv のキャッシュ（Linux 側のファイルシステム）に配置される。
+    dev-docs.yaml の `run` と公開文書の配信のワークフローは `uv run --frozen --script scripts/{スクリプト}.py` で起動する。仮想環境は uv のキャッシュ（Linux 側のファイルシステム）に配置される。
     `pyproject.toml` は作らない（規約『単一ファイルスクリプト』）。`_common.py`・`_maid.py` は入口のスクリプトと同じフォルダから import する。
 
     | 方式 | 起動から依存の import まで（WSL2・`/mnt/c` の作業ツリー・2026-10-31 に測った値） |

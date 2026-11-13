@@ -1,0 +1,63 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-dev-develop-only-ops-and-hook-ci-policy
+configfile: pytest.ini
+collected 226 items
+
+tests/unit/scripts/test_build_pages.py ..............F....               [  8%]
+tests/unit/scripts/test_build_templates.py ........................      [ 19%]
+tests/unit/scripts/test_build_word_list.py ...                           [ 20%]
+tests/unit/scripts/test_check_all.py ................................... [ 35%]
+........                                                                 [ 39%]
+tests/unit/scripts/test_common.py ....................                   [ 48%]
+tests/unit/scripts/test_knowledge_checks.py ............................ [ 60%]
+......                                                                   [ 63%]
+tests/unit/scripts/test_knowledge_markdown.py .......................... [ 74%]
+........                                                                 [ 78%]
+tests/unit/scripts/test_lint.py ............                             [ 83%]
+tests/unit/scripts/test_maid.py ......                                   [ 86%]
+tests/unit/slop-check/test_slop_check.py ............................... [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_rewrite_references ____________________________
+
+    def test_rewrite_references() -> None:
+        """公開の文書と公開しない文書への参照（正常系）。"""
+        # 準備
+        public = Source(
+            id="pub",
+            path=PurePosixPath("docs/guide/pub.yaml"),
+            public=True,
+            items=(("step", "手順", 2),),
+            run=(),
+        )
+        internal = Source(
+            id="int",
+            path=PurePosixPath("docs/rule/int.yaml"),
+            public=False,
+            items=(("step", "手順", 2),),
+            run=(),
+        )
+        markdown = "[a](id:pub) [b](id:pub#step) [c](id:pub#overview) [d](id:int#step)"
+        # 実行
+        result = rewrite_references(
+            markdown, public, {"pub": public, "int": internal}, {"pub": {"step": "手順"}}
+        )
+        # 検証
+>       assert result == (
+            "[a](./pub.md) [b](./pub.md#手順) [c](./pub.md) "
+            "[d](https://github.com/shuhei1101/knowledge/blob/develop/docs/rule/int.yaml)"
+        )
+E       AssertionError: assert '[a](./pub.md...ule/int.yaml)' == '[a](./pub.md...ule/int.yaml)'
+E         
+E         Skipping 84 identical leading characters in diff, use -v to show
+E         - edge/blob/develop/docs/rule/int.yaml)
+E         ?           ^ ^^^^^
+E         + edge/blob/master/docs/rule/int.yaml)
+E         ?           ^^^^ ^
+
+tests/unit/scripts/test_build_pages.py:390: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/scripts/test_build_pages.py::test_rewrite_references - Asse...
+======================== 1 failed, 225 passed in 9.06s =========================

@@ -1,7 +1,7 @@
 id: "MOD-137-1"
 visibility: internal
 title: "検査と変換のスクリプト / scripts / build_pages.py"
-lead: CI と手元から呼ぶ「Pages の成果物の作成」。公開の文書を変換のスクリプトで Markdown にし、参照をリンクに書き換えて mdmark の `build` で 1 枚の HTML にまとめる（IF-137-1）。
+lead: 公開文書の配信のワークフローと手元から呼ぶ「Pages の成果物の作成」。公開の文書を変換のスクリプトで Markdown にし、参照をリンクに書き換えて mdmark の `build` で 1 枚の HTML にまとめる（IF-137-1）。
 data_models:
   - name: Source
     title: 公開の候補の文書
@@ -44,12 +44,12 @@ constants:
     usecase: Pages の成果物の作成
     summary: '`npx` で呼ぶ mdmark のバージョン。外部ライブラリ『mdmark』の採用バージョン（LIB-137-1）と統一する'
     value: '"v0.8.0"'
-  - name: MASTER_BLOB_URL
-    title: master のファイルの URL
+  - name: DEVELOP_BLOB_URL
+    title: develop のファイルの URL
     container: scripts/build_pages.py
     usecase: Pages の成果物の作成
     summary: 公開しない文書への参照のリンクの頭
-    value: '"https://github.com/shuhei1101/knowledge/blob/master/"'
+    value: '"https://github.com/shuhei1101/knowledge/blob/develop/"'
   - name: OUTPUT_HTML
     title: 出力の HTML の名前
     container: scripts/build_pages.py
@@ -334,7 +334,7 @@ functions:
     usecase: Pages の成果物の作成
     role: 変換
     scope: public
-    summary: Markdown の `(id:{ID})`・`(id:{ID}#{項目})` を、公開の文書なら 1 枚の中のリンク、それ以外なら master の YAML の URL に書き換える
+    summary: Markdown の `(id:{ID})`・`(id:{ID}#{項目})` を、公開の文書なら 1 枚の中のリンク、それ以外なら develop の YAML の URL に書き換える
     args:
       - name: markdown
         title: 変換した Markdown
@@ -363,7 +363,7 @@ functions:
       1. `\]\(id:([^)#\s]+)(?:#([^)\s]+))?\)` に該当する箇所を順に置き換える
       2. `{ID}` が `sources` に無い場合、`{パス}: 参照先の文書がありません: {ID}` の作れない成果物を送出する
       3. 参照先が公開の文書なら `](./{ID}.md)` にする。項目があり `anchors` に見出しの ID があれば `](./{ID}.md#{見出しの ID})` にする（`overview` は見出しを持たないので文書へのリンク）
-      4. 参照先が公開しない文書なら `]({MASTER_BLOB_URL}{参照先のパス})` にする（項目は落とす）
+      4. 参照先が公開しない文書なら `]({DEVELOP_BLOB_URL}{参照先のパス})` にする（項目は落とす）
     exceptions:
       - name: BuildError
         condition: 参照先の ID が `sources` に無い
@@ -374,7 +374,7 @@ functions:
         summary: 公開の文書と公開しない文書への参照
         condition: '`(id:pub)`・`(id:pub#step)`・`(id:pub#overview)`・`(id:int#step)` を持つ Markdown。`pub` は公開で `step` の見出しの ID が `手順`、`int` は `docs/rule/int.yaml` の公開しない文書'
         mock: なし
-        expected: '`(./pub.md)`・`(./pub.md#手順)`・`(./pub.md)`・`(https://github.com/shuhei1101/knowledge/blob/master/docs/rule/int.yaml)`'
+        expected: '`(./pub.md)`・`(./pub.md#手順)`・`(./pub.md)`・`(https://github.com/shuhei1101/knowledge/blob/develop/docs/rule/int.yaml)`'
       - name: test_rewrite_references_when_unknown
         case: 異常
         summary: 参照先が無い

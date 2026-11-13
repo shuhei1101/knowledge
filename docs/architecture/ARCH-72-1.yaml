@@ -59,18 +59,15 @@ overview:
     - from: pindex
       to: scripts
       label: 子プロセス
+    - from: agent
+      to: scripts
+      label: 全ての文書の検査
     - from: scripts
       to: maid
       label: 子プロセス
     - from: actions
       to: ci
-      label: PR
-    - from: ci
-      to: scripts
-      label: 検査
-    - from: actions
-      to: ci
-      label: master への push
+      label: develop への push
     - from: ci
       to: scripts
       label: 成果物の作成
@@ -113,10 +110,10 @@ subsystems:
     scope: scripts
     role: スキーマで見られない決まりの検査と、全ての種類の YAML から mdmark の記法の Markdown への変換を、project-index の validators・converters の約束で返却する
     runtime: Python 3.14
-    runs_on: project-index が起動する子プロセスと CI
+    runs_on: project-index が起動する子プロセス・手元のコマンド・CI
   - name: CI
     scope: ci
-    role: PR ごとに全ての文書へスキーマの検査と検査のスクリプトを適用し、違反があれば失敗させる。master への push で公開の文書だけを HTML にして GitHub Pages へ配信する
+    role: develop への push で公開の文書だけを HTML にして GitHub Pages へ配信する
     runtime: GitHub Actions のワークフロー
     runs_on: GitHub Actions
   - name: slop-check
@@ -148,11 +145,11 @@ external_systems:
       事前確認: 要。検査のスクリプトの起動時に `maid` が PATH で見つかるかを確認し、無ければ検査を始めずに足りないものを返却する。maid を呼ぶ前に残り時間を確認する（非機能要件のスクリプトの処理時間）
     detail: LIB-72-3#
   - name: GitHub Actions
-    purpose: PR で文書の検査のワークフローを、master への push で公開文書の配信のワークフローを動かす
+    purpose: develop への push で公開文書の配信のワークフローを動かす
     direction: 受信のみ
     protocol: ワークフローの YAML
     notes:
-      事前確認: 要。ワークフローの最初のステップで、検査に要るランタイム（Python・maid）が入ったかを確認し、欠けていれば検査を始めずに失敗させる
+      事前確認: 要。ワークフローの最初のステップで、成果物の作成に要るランタイム（Node 24・uv）を入れ、入らなければ配信せずに失敗させる
   - name: mdmark
     purpose: 公開の文書の Markdown を 1 枚の HTML にまとめる（`build`）
     direction: 双方向
