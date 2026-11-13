@@ -16,6 +16,9 @@ flows:
         description: '`tool_name` が `Write`、`tool_input.content` が対応表の単語を 2 つと同じ単語の 2 回目を含む文'
         notes: '`tool_input.content` に「この形で直す。もう一度直す。」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
@@ -25,6 +28,9 @@ flows:
         L-->>H: 対応表の行
         H->>H: tool_input.content を各行で照合する
         H-->>C: 終了コード 0 と additionalContext に通知の文
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - '標準出力の JSON の `hookSpecificOutput.hookEventName` が `PostToolUse`'
@@ -42,6 +48,9 @@ flows:
         description: '`tool_name` が `Write` で、`allow` に該当する複合語と前後に漢字が続く漢字 1 文字だけを含む文'
         notes: '`tool_input.content` に「設定を割り当てる。形式と円形を確認する。」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
@@ -51,6 +60,9 @@ flows:
         L-->>H: 対応表の行
         H->>H: 照合し、allow に該当するヒットを除く
         H-->>C: 終了コード 0 と出力なし
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 標準出力が空
@@ -65,6 +77,9 @@ flows:
       - name: 標準入力
         description: '`tool_name` が `Edit`、`tool_input.file_path` が書き込んだファイル、`tool_input.new_string` が「設定を修正する。」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
@@ -74,6 +89,9 @@ flows:
         F-->>H: 修正後の内容
         H->>H: ファイル全体を各行で照合する
         H-->>C: 終了コード 0 と additionalContext に通知の文
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - '`hookSpecificOutput.additionalContext` の表が `| 版 | バージョン |` の 1 行'
@@ -86,6 +104,9 @@ flows:
       - name: 標準入力
         description: '`tool_name` が `Edit`、`tool_input.file_path` が存在しないパス、`tool_input.new_string` が「設定を直す。」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
@@ -95,6 +116,9 @@ flows:
         F-->>H: ファイルが無い
         H->>H: tool_input.new_string を各行で照合する
         H-->>C: 終了コード 0 と additionalContext に通知の文
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - '`hookSpecificOutput.additionalContext` の表が `| 直す | 修正 |` の 1 行'
@@ -107,12 +131,18 @@ flows:
       - name: 標準入力
         description: '`tool_name` が `NotebookEdit`、`tool_input.new_source` が「# 版を出す」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
         C->>H: 標準入力に PostToolUse の入力
         H->>H: tool_input.new_source を各行で照合する
         H-->>C: 終了コード 0 と additionalContext に通知の文
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - '`hookSpecificOutput.additionalContext` の表が `| 版 | バージョン |` の 1 行'
@@ -126,12 +156,18 @@ flows:
         description: '`tool_name` が `mcp__plugin_project-index_project-index__write_docs`。`tool_input.operations[0].set.body` が「設定を足す。」、`tool_input.operations[0].id` が「直す」'
         notes: 除くキーの値に対応表の単語を入れ、通知に出ないことを確認する
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
         C->>H: 標準入力に PostToolUse の入力
         H->>H: 識別子のキーを除いた文字列の値を集めて照合する
         H-->>C: 終了コード 0 と additionalContext に通知の文
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - '`hookSpecificOutput.additionalContext` の表が `| 足す | 追加 |` の 1 行'
@@ -144,12 +180,18 @@ flows:
       - name: 標準入力
         description: '`tool_name` が `mcp__plugin_project-index_project-index__search_docs`、`tool_input.term` が「直す」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
         C->>H: 標準入力に PostToolUse の入力
         H->>H: tool_name が対象の一覧に無い
         H-->>C: 終了コード 0 と出力なし
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 標準出力が空
@@ -162,12 +204,18 @@ flows:
       - name: 標準入力
         description: '`tool_name` が `Write`、`tool_input.file_path` が `docs/word-list/word-list-ai-slop.yaml` で終わるパス、`tool_input.content` が「ng: 直す」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
         C->>H: 標準入力に PostToolUse の入力
         H->>H: 書き込む先が対応表
         H-->>C: 終了コード 0 と出力なし
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 標準出力が空
@@ -180,6 +228,9 @@ flows:
       - name: 標準入力
         description: '`tool_name` が `Write`、`tool_input.content` が「設定を直す。」'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
@@ -188,6 +239,9 @@ flows:
         H->>L: 対応表を読み込む
         L-->>H: ファイルが無い
         H-->>C: 終了コード 0 と標準エラーの理由
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 標準出力が空
@@ -202,12 +256,18 @@ flows:
         description: JSON として読み込めない文字列
         notes: '`{"tool_name": "Write"'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
         C->>H: 標準入力に壊れた JSON
         H->>H: JSON として読み込めない
         H-->>C: 終了コード 0 と標準エラーの理由
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 標準出力が空

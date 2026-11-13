@@ -537,13 +537,14 @@ properties:
                 x-used-by:
                   - 結合テストで、分岐を決定的に起こす値にする。
         flow:
-          $ref: common.schema.yaml#/$defs/mermaid
+          $ref: common.schema.yaml#/$defs/map
           title: フロー
-          description: Mermaid の `sequenceDiagram`。1 図 = 結末 1 本の一本道。
+          description: mdmark の map の図。Mermaid の `sequenceDiagram`。1 図 = 結末 1 本の一本道。
           x-used-by:
             - 設計で、モジュール構成の処理の順と呼ぶ相手を決める。
             - 生成で、シーケンス図にする。
           x-rules:
+            - '`<!-- map -->` から `<!-- /map -->` の範囲に、```mermaid のコードブロックを 1 つ記載する。'
             - 登場人物は呼び出し元（バックエンドは `participant クライアント`、フロントエンドは `actor ユーザー`）・インターフェース・外部システムの境界だけにする。
             - 読み取りと応答は点線 `-->>`、書き込み・操作は実線 `->>` にする。
           x-heading: フロー
@@ -634,6 +635,8 @@ examples:
     - name: Mock
       description: DB を stub に差し替え
     flow: |-
+      <!-- map -->
+
       ```mermaid
       sequenceDiagram
         participant C as クライアント
@@ -644,6 +647,8 @@ examples:
         IF->>DB: タスクを保存
         IF-->>C: 採番済みのタスク
       ```
+
+      <!-- /map -->
     expected:
     - 採番済みのタスクが返る
     - DB にタスクが 1 件ある

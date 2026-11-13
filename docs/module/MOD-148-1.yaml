@@ -5,26 +5,21 @@ lead: プラグイン slop-check の PostToolUse のフック。Python の標準
 diagrams:
   - name: 全体
     diagram: |-
-      classDiagram
-          direction LR
-          class hook["書き込んだ中身の照合"]
-          hook : main()
-          hook : extract_text()
-          hook : find_hits()
-          hook : build_notice()
-          class entry["対応表の行"]
-          entry : id
-          entry : pattern
-          entry : allow
-          class checks["文書の違反の検査"]
-          checks : check_word_list()
-          class build["対応表のコピーの作成"]
-          build : render_copy()
-          class checkall["全ての文書の検査"]
-          checkall : check_word_list_copy()
-          hook ..> entry
-          checks ..> hook
-          checkall ..> build
+      <!-- map -->
+
+      ```mermaid
+      flowchart LR
+        hook["書き込んだ中身の照合<br>main()<br>extract_text()<br>find_hits()<br>build_notice()"]
+        entry["対応表の行<br>id<br>pattern<br>allow"]
+        checks["文書の違反の検査<br>check_word_list()"]
+        build["対応表のコピーの作成<br>render_copy()"]
+        checkall["全ての文書の検査<br>check_word_list_copy()"]
+        hook -.-> entry
+        checks -.-> hook
+        checkall -.-> build
+      ```
+
+      <!-- /map -->
 notes:
   起動の方式: |-
     `hooks.json` の `PostToolUse` に、`matcher` を `Write|Edit|NotebookEdit|mcp__.*` にして `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-use/slop_check.py` を登録する。対象の MCP ツールの判定は `slop_check.py` の `is_target` だけが持ち、対象外のツールは対応表を読み込む前に終わる。

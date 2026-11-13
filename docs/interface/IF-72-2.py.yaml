@@ -14,6 +14,9 @@ flows:
         description: '`overview` と、`group` が `語の選び方`・`語の選び方 > 原則` の項目と `related` を持つ rule の文書'
         notes: develop の `convention-writing-style.yaml` と同じ構造
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant D as project-index
         participant S as 文書の Markdown への変換
@@ -22,6 +25,9 @@ flows:
         S->>F: kind のスキーマを読み込む
         S->>S: group の階層で見出しを組む
         S-->>D: 終了コード 0 と Markdown
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 標準出力が `# {name}` で始まり、`## 語の選び方` の下に `### 原則` が 1 回だけ出る
@@ -36,6 +42,9 @@ flows:
       - name: 標準入力
         description: '`arguments`（オブジェクトの配列）と `preconditions`（文字列の配列）を持つ文書。配信元の `schemas/` に、その `kind` のスキーマ（`arguments`・`preconditions` の `title` を持つ）を配置する'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant D as project-index
         participant S as 文書の Markdown への変換
@@ -44,6 +53,9 @@ flows:
         S->>F: kind のスキーマを読み込む
         S->>S: 固有のキーをスキーマの title のセクションにする
         S-->>D: 終了コード 0 と Markdown
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - '`arguments` が `## {arguments の title}` の下の `<!-- table: data -->` の表になる'
@@ -60,6 +72,9 @@ flows:
       - name: 配信元の対応表
         description: '`dev-docs.yaml` の `documents[]` の `word-list` の行の `paths` に該当する、`id: word-list-ai-slop` の対応表'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant D as project-index
         participant S as 文書の Markdown への変換
@@ -69,6 +84,9 @@ flows:
         S->>F: dev-docs.yaml の word-list の行の対応表を読み込む
         S->>S: マーカーの行を ID の対応表の NG・OK の表に置き換える
         S-->>D: 終了コード 0 と Markdown
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 'マーカーの行の位置に `| NG | OK |` の表があり、各行が対応表の `entries` の行の `ng`・`ok`・`note` から作る行と同じ順に一致する'
@@ -83,6 +101,9 @@ flows:
       - name: 標準入力
         description: '項目の本文に `<!-- embed: missing -->` の行を持つ rule の文書'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant D as project-index
         participant S as 文書の Markdown への変換
@@ -91,6 +112,9 @@ flows:
         S->>F: dev-docs.yaml の word-list の行の対応表を読み込む
         F-->>S: ID が missing の対応表が無い
         S-->>D: 終了コード 0 と、マーカーの位置に注意書きを持つ Markdown
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 'マーカーの行の位置に `> [!WARNING]` の注意書きがあり、`missing` の対応表が無いことが出る'
@@ -103,6 +127,9 @@ flows:
       - name: 標準入力
         description: '`kind: missing` の文書'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant D as project-index
         participant S as 文書の Markdown への変換
@@ -111,6 +138,9 @@ flows:
         S->>F: kind のスキーマを読み込む
         F-->>S: ファイルが無い
         S-->>D: 終了コード 1 と標準エラーの理由
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - 標準出力が空
@@ -124,11 +154,17 @@ flows:
       - name: 標準入力
         description: 括弧が閉じていない YAML
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant D as project-index
         participant S as 文書の Markdown への変換
         D->>S: 標準入力に壊れた YAML
         S-->>D: 終了コード 1 と標準エラーの理由
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - 標準エラーに読み込めない行が出る
@@ -143,6 +179,9 @@ flows:
       - name: 配信元の対応表
         description: '`dev-docs.yaml` の `word-list` の行の `paths` に該当するファイルの 1 つが、括弧の閉じていない YAML'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant D as project-index
         participant S as 文書の Markdown への変換
@@ -151,6 +190,9 @@ flows:
         S->>F: dev-docs.yaml の word-list の行の対応表を読み込む
         F-->>S: 読み込めないファイル
         S-->>D: 終了コード 1 と標準エラーの理由
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - 標準出力が空
