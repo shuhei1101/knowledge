@@ -1,10 +1,10 @@
 id: "MOD-176-1"
 visibility: internal
 title: "検査と変換のスクリプト / scripts / _lint.py"
-lead: 全ての文書の検査で当てる markdownlint-cli2（LIB-176-1）・textlint（LIB-176-2）・yamllint（LIB-176-3）の、在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応。
+lead: 全ての文書の検査で適用する markdownlint-cli2（LIB-176-1）・textlint（LIB-176-2）・yamllint（LIB-176-3）の、在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応。
 data_models:
   - name: LintSource
-    title: lint を当てる Markdown
+    title: lint を適用する Markdown
     container: scripts/_lint.py
     usecase: 全ての文書の検査
     role: DTO
@@ -28,7 +28,7 @@ data_models:
     container: scripts/_lint.py
     usecase: 全ての文書の検査
     role: DTO
-    summary: 3 つの CLI のどれかが返した違反 1 件を、元の文書の行にしたもの
+    summary: 3 つの CLI のどれかが返却した違反 1 件を、元の文書の行にしたもの
     description: '`dataclass(frozen=True)`。'
     properties:
       - name: path
@@ -39,10 +39,10 @@ data_models:
         description: 元の文書の行（1 始まり）
       - name: item_path
         type: str
-        description: 項目のパス。ファイル全体に当てた lint は `-`
+        description: 項目のパス。ファイル全体に適用した lint は `-`
       - name: tool
         type: Literal['markdownlint', 'textlint', 'yamllint']
-        description: 違反を返した CLI
+        description: 違反を返却した CLI
       - name: rule
         type: str
         description: ルールの名前（`MD036`・`one-sentence-per-line`・`ja-technical-writing/ja-no-mixed-period`・`comments`）
@@ -51,13 +51,13 @@ data_models:
         description: 違反の内容
       - name: warning
         type: bool
-        description: CLI が warning で返したか
+        description: CLI が warning で返却したか
   - name: LintOutputError
-    title: 読めない lint の出力
+    title: 読み込めない lint の出力
     container: scripts/_lint.py
     usecase: 全ての文書の検査
     role: 例外
-    summary: markdownlint-cli2・textlint の終了コードが 0・1 でないか、出力が読めない
+    summary: markdownlint-cli2・textlint の終了コードが 0・1 でないか、出力が読み込めない
     inherits: Exception
     properties:
       - name: message
@@ -68,19 +68,19 @@ constants:
     title: markdownlint-cli2 のコマンド名
     container: scripts/_lint.py
     usecase: 全ての文書の検査
-    summary: '`{lint のフォルダ}/node_modules/.bin/` から引くコマンド名'
+    summary: '`{lint のフォルダ}/node_modules/.bin/` で探すコマンド名'
     value: '"markdownlint-cli2"'
   - name: TEXTLINT
     title: textlint のコマンド名
     container: scripts/_lint.py
     usecase: 全ての文書の検査
-    summary: '`{lint のフォルダ}/node_modules/.bin/` から引くコマンド名'
+    summary: '`{lint のフォルダ}/node_modules/.bin/` で探すコマンド名'
     value: '"textlint"'
   - name: MARKDOWN_KEY
     title: Markdown の項目のキー
     container: scripts/_lint.py
     usecase: 全ての文書の検査
-    summary: パスの末尾がこのキーの文字列を Markdown の項目として lint を当てる
+    summary: パスの末尾がこのキーの文字列を Markdown の項目として lint を適用する
     value: '"body"'
   - name: DEFAULT_LINT_DIR
     title: lint のフォルダの既定
@@ -92,13 +92,13 @@ constants:
     title: 文書の yamllint の設定のファイル名
     container: scripts/_lint.py
     usecase: 全ての文書の検査
-    summary: '`documents[]` の YAML の文書と `dev-docs.yaml`・`rules.yaml` に当てる、lint のフォルダの yamllint の設定'
+    summary: '`documents[]` の YAML の文書と `dev-docs.yaml`・`rules.yaml` に適用する、lint のフォルダの yamllint の設定'
     value: '".yamllint.yaml"'
   - name: YAMLLINT_SCHEMAS_CONFIG
     title: スキーマの yamllint の設定のファイル名
     container: scripts/_lint.py
     usecase: 全ての文書の検査
-    summary: '`schemas/` のスキーマに当てる、lint のフォルダの yamllint の設定。`brackets`・`braces` の `forbid: non-empty` だけを持つ'
+    summary: '`schemas/` のスキーマに適用する、lint のフォルダの yamllint の設定。`brackets`・`braces` の `forbid: non-empty` だけを持つ'
     value: '".yamllint-schemas.yaml"'
 functions:
   - name: find_lint_clis
@@ -107,7 +107,7 @@ functions:
     container: scripts/_lint.py
     usecase: 全ての文書の検査
     scope: public
-    summary: lint のフォルダの `node_modules/.bin/` から markdownlint-cli2・textlint の実行ファイルを引く
+    summary: lint のフォルダの `node_modules/.bin/` から markdownlint-cli2・textlint の実行ファイルを探す
     args:
       - name: lint_dir
         title: lint のフォルダ
@@ -116,14 +116,14 @@ functions:
         description: '`--lint-dir` の値'
     returns:
       type: dict[str, str | None]
-      description: コマンド名 → 実行ファイルの絶対パス。引けなければ `None`
+      description: コマンド名 → 実行ファイルの絶対パス。見つからなければ `None`
     process: |-
-      1. `MARKDOWNLINT`・`TEXTLINT` ごとに `shutil.which(名前, path=lint_dir / "node_modules" / ".bin")` を引く
+      1. `MARKDOWNLINT`・`TEXTLINT` ごとに `shutil.which(名前, path=lint_dir / "node_modules" / ".bin")` で探す
     unit_tests:
       - name: test_find_lint_clis
         case: 正常
-        summary: 2 つとも引ける
-        condition: '`node_modules/.bin/` に実行権限のある `markdownlint-cli2`・`textlint` を置いた一時フォルダ'
+        summary: 2 つとも見つかる
+        condition: '`node_modules/.bin/` に実行権限のある `markdownlint-cli2`・`textlint` を配置した一時フォルダ'
         mock: なし（一時ディレクトリ）
         expected: 2 つとも絶対パス
       - name: test_find_lint_clis_when_missing
@@ -133,7 +133,7 @@ functions:
         mock: なし
         expected: 2 つとも `None`
   - name: collect_sources
-    title: lint を当てる Markdown の取り出し
+    title: lint を適用する Markdown の取り出し
     kind: 関数
     container: scripts/_lint.py
     usecase: 全ての文書の検査
@@ -149,15 +149,15 @@ functions:
         title: 中身
         type: str
         required: true
-        description: '`read_texts` が返した中身'
+        description: '`read_texts` が返却した中身'
     returns:
       type: list[LintSource]
       description: 文書の並びどおりの Markdown
     process: |-
-      1. `path` の拡張子が `.md` の場合、`LintSource(path, "-", 1, text)` の 1 件を返す
-      2. 文書として読む（文書の読み込み）
-         - 読めない文書の場合、空を返す（違反は文書 1 件の検査が出す）
-      3. 文字列の項目を列挙し（文字列の項目の列挙）、パスの末尾が `MARKDOWN_KEY` の項目ごとに `LintSource(path, 項目のパス, 行, 値)` を返す（項目のパスの組み立て）
+      1. `path` の拡張子が `.md` の場合、`LintSource(path, "-", 1, text)` の 1 件を返却する
+      2. 文書として読み込む（文書の読み込み）
+         - 読み込めない文書の場合、空を返却する（違反は文書 1 件の検査が出す）
+      3. 文字列の項目を列挙し（文字列の項目の列挙）、パスの末尾が `MARKDOWN_KEY` の項目ごとに `LintSource(path, 項目のパス, 行, 値)` を返却する（項目のパスの組み立て）
     unit_tests:
       - name: test_collect_sources
         case: 正常
@@ -173,7 +173,7 @@ functions:
         expected: '`item_path` が `-`・`start_line` が 1 の 1 件'
       - name: test_collect_sources_when_broken
         case: 正常
-        summary: 読めない YAML
+        summary: 読み込めない YAML
         condition: 括弧の閉じていない YAML
         mock: なし
         expected: 空
@@ -188,13 +188,13 @@ functions:
     usecase: 全ての文書の検査
     role: 外部呼び出し
     scope: public
-    summary: 全ての Markdown を一時の `.md` に書き出し、markdownlint-cli2・textlint を 1 回ずつ呼んで、違反を元の文書の行で返す
+    summary: 全ての Markdown を一時の `.md` に書き出し、markdownlint-cli2・textlint を 1 回ずつ呼んで、違反を元の文書の行で返却する
     args:
       - name: sources
-        title: lint を当てる Markdown
+        title: lint を適用する Markdown
         type: Sequence[LintSource]
         required: true
-        description: '`collect_sources` が返した全ての文書の分'
+        description: '`collect_sources` が返却した全ての文書の分'
       - name: lint_dir
         title: lint のフォルダ
         type: Path
@@ -204,33 +204,33 @@ functions:
         title: CLI の実行ファイル
         type: Mapping[str, str]
         required: true
-        description: '`find_lint_clis` が返した絶対パス'
+        description: '`find_lint_clis` が返却した絶対パス'
     returns:
       type: list[LintFinding]
       description: markdownlint の違反の後に textlint の違反。行は `start_line` + CLI の行 - 1
     process: |-
-      1. `sources` が空の場合、空を返す
+      1. `sources` が空の場合、空を返却する
       2. 一時フォルダに、`sources` の順の添字で `{添字:05d}.md` を書き出す
       3. markdownlint-cli2 を、作業ディレクトリを `lint_dir`、引数を `--config {lint_dir}/.markdownlint-cli2.jsonc` と全ての `.md` の絶対パスにして呼ぶ
          - 終了コードが 0・1 でない場合、`LintOutputError` を送出する
          - 標準エラーの `{ファイル}:{行}[:{列}] {error|warning} {ルール名}/{別名} {内容}` の行ごとに、ファイル名の添字の `LintSource` で `LintFinding` を作る。`rule` はルール名、`warning` は `warning` の行
       4. textlint を、作業ディレクトリを `lint_dir`、引数を `--config {lint_dir}/.textlintrc.json --format json` と全ての `.md` の絶対パスにして呼ぶ
-         - 終了コードが 0・1 でないか、標準出力が JSON として読めない場合、`LintOutputError` を送出する
+         - 終了コードが 0・1 でないか、標準出力が JSON として読み込めない場合、`LintOutputError` を送出する
          - `[].messages[]` ごとに、`[].filePath` のファイル名の添字の `LintSource` で `LintFinding` を作る。`rule` は `ruleId`、`warning` は `severity` が 1
-      5. 一時フォルダを消して返す
+      5. 一時フォルダを削除して返却する
     unit_tests:
       - name: test_run_markdown_lints
         case: 正常
-        summary: 違反を元の文書の行で返す
+        summary: 違反を元の文書の行で返却する
         condition: '`start_line` が 26 の 1 件'
-        mock: 'markdownlint-cli2 を、渡された 1 つ目の `.md` の 3 行目の `error MD036/no-emphasis-as-heading` を標準エラーへ出し終了コード 1 で終わるスクリプトに、textlint を、`severity` 1 の `one-sentence-per-line` の 1 行目を JSON で出し終了コード 0 で終わるスクリプトに差し替える'
+        mock: 'markdownlint-cli2 を、指定された 1 つ目の `.md` の 3 行目の `error MD036/no-emphasis-as-heading` を標準エラーへ出し終了コード 1 で終わるスクリプトに、textlint を、`severity` 1 の `one-sentence-per-line` の 1 行目を JSON で出し終了コード 0 で終わるスクリプトに差し替える'
         expected: '`line` が 28・`rule` が `MD036`・`warning` が `False` の 1 件の後に、`line` が 26・`rule` が `one-sentence-per-line`・`warning` が `True` の 1 件'
       - name: test_run_markdown_lints_when_empty
         case: 正常
-        summary: 当てる Markdown が無い
+        summary: 適用する Markdown が無い
         condition: 空の `sources`
-        mock: CLI を、呼ばれたら印のファイルを作るスクリプトに差し替える
-        expected: 空で、印のファイルが無い
+        mock: CLI を、呼ばれたらマーカーのファイルを作るスクリプトに差し替える
+        expected: 空で、マーカーのファイルが無い
       - name: test_run_markdown_lints_when_crashed
         case: 異常
         summary: CLI が落ちた
@@ -248,7 +248,7 @@ functions:
     container: scripts/_lint.py
     usecase: 全ての文書の検査
     scope: public
-    summary: lint のフォルダの yamllint の設定（既定は `_YAMLLINT_CONFIG`）を読む
+    summary: lint のフォルダの yamllint の設定（既定は `_YAMLLINT_CONFIG`）を読み込む
     args:
       - name: lint_dir
         title: lint のフォルダ
@@ -260,22 +260,22 @@ functions:
         type: str
         required: false
         default: _YAMLLINT_CONFIG
-        description: '`schemas/` のスキーマに当てる設定は `YAMLLINT_SCHEMAS_CONFIG`'
+        description: '`schemas/` のスキーマに適用する設定は `YAMLLINT_SCHEMAS_CONFIG`'
     returns:
       type: YamlLintConfig
       description: yamllint の設定
-    process: 1. `YamlLintConfig(file=str(lint_dir / name))` を返す
+    process: 1. `YamlLintConfig(file=str(lint_dir / name))` を返却する
     unit_tests:
       - name: test_load_yamllint_config
         case: 正常
-        summary: 設定を読む
-        condition: '`extends: default`・`comments: {level: error}`・`document-start: disable`・`line-length: disable`・`truthy: {check-keys: false}`（`scripts/lint/.yamllint.yaml` と同じ内容） を書いた `.yamllint.yaml`'
+        summary: 設定を読み込む
+        condition: '`extends: default`・`comments: {level: error}`・`document-start: disable`・`line-length: disable`・`truthy: {check-keys: false}`（`scripts/lint/.yamllint.yaml` と同じ内容） を記載した `.yamllint.yaml`'
         mock: なし（一時ディレクトリ）
         expected: '`comments` のルールが有効で、`document-start`・`line-length` が無効'
       - name: test_load_yamllint_config_when_schemas
         case: 正常
-        summary: スキーマの設定を読む
-        condition: '`name` に `YAMLLINT_SCHEMAS_CONFIG` を渡し、`brackets: {forbid: non-empty}`・`braces: {forbid: non-empty}`（`scripts/lint/.yamllint-schemas.yaml` と同じ内容）を書いた `.yamllint-schemas.yaml`'
+        summary: スキーマの設定を読み込む
+        condition: '`name` に `YAMLLINT_SCHEMAS_CONFIG` を指定し、`brackets: {forbid: non-empty}`・`braces: {forbid: non-empty}`（`scripts/lint/.yamllint-schemas.yaml` と同じ内容）を記載した `.yamllint-schemas.yaml`'
         mock: なし（一時ディレクトリ）
         expected: '`brackets`・`braces` のルールが有効で、`indentation`・`comments` が無効'
     refs:
@@ -287,7 +287,7 @@ functions:
     usecase: 全ての文書の検査
     role: 外部呼び出し
     scope: public
-    summary: YAML のファイル 1 つに yamllint を当て、違反を返す
+    summary: YAML のファイル 1 つに yamllint を適用し、違反を返却する
     args:
       - name: path
         title: ファイルのパス
@@ -308,7 +308,7 @@ functions:
       type: list[LintFinding]
       description: 行の順の違反。`item_path` は `-`、`tool` は `yamllint`
     process: |-
-      1. `yamllint.linter.run(text, config, str(path))` の違反ごとに `LintFinding` を作る。`rule` は違反の `rule`（YAML として読めない誤りで `None` のときは `syntax`）、`warning` は `level` が `warning`
+      1. `yamllint.linter.run(text, config, str(path))` の違反ごとに `LintFinding` を作る。`rule` は違反の `rule`（YAML として読み込めない誤りで `None` のときは `syntax`）、`warning` は `level` が `warning`
     unit_tests:
       - name: test_run_yamllint
         case: 正常

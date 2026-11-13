@@ -1,47 +1,47 @@
 id: "MOD-72-2"
 visibility: internal
 title: "検査と変換のスクリプト / scripts / _common.py"
-lead: 文書の YAML の読み込みと、項目のパス・文書の行の対応、違反の型、ファイルの並列の読み込みを、入口の 3 つのスクリプトへ渡す。
+lead: 文書の YAML の読み込みと、項目のパス・文書の行の対応、違反の型、ファイルの並列の読み込みを、入口の 3 つのスクリプトへ提供する。
 data_models:
   - name: Violation
     title: 違反
     container: scripts/_common.py
     usecase: 共通
     role: DTO
-    summary: dev-docs の validators の約束の違反 1 件
+    summary: project-index の validators の約束の違反 1 件
     description: '`TypedDict`。標準出力へは `json.dumps(list[Violation], ensure_ascii=False)` で出す。'
     properties:
       - name: path
         type: str
-        description: 違反した項目のパス（`items[3].body` の書き方）。文書全体にかかるものは `$`
+        description: 違反した項目のパス（`items[3].body` の記載方法）。文書全体にかかるものは `$`
       - name: rule
         type: str
-        description: '違反の内容。先頭に文書の行（1 始まり）を `{行} 行目: ` で置く'
+        description: '違反の内容。先頭に文書の行（1 始まり）を `{行} 行目: ` で配置する'
       - name: fix
         type: str
         description: 修正の仕方の 1 文
     refs:
       - IF-72-1#response[stdout]
   - name: DocumentError
-    title: 読めない文書
+    title: 読み込めない文書
     container: scripts/_common.py
     usecase: 共通
     role: 例外
-    summary: YAML として読めないか、最上位がマッピングでない文書
+    summary: YAML として読み込めないか、最上位がマッピングでない文書
     inherits: Exception
     properties:
       - name: line
         type: int
-        description: 読めなかった行（1 始まり）。行が分からないときは 1
+        description: 読み込めなかった行（1 始まり）。行が分からないときは 1
       - name: message
         type: str
         description: 理由の 1 行（ruamel.yaml の `problem` か `最上位がマッピングではありません`）
   - name: ConfigError
-    title: 読めない dev-docs.yaml
+    title: 読み込めない dev-docs.yaml
     container: scripts/_common.py
     usecase: 共通
     role: 例外
-    summary: '`dev-docs.yaml` が無い・読めない・`documents` が配列でない'
+    summary: '`dev-docs.yaml` が無い・読み込めない・`documents` が配列でない'
     inherits: Exception
     properties:
       - name: message
@@ -60,14 +60,14 @@ constants:
     title: 読み込みのスレッドの数
     container: scripts/_common.py
     usecase: 共通
-    summary: '`read_texts` が並列に読むスレッドの数'
+    summary: '`read_texts` が並列に読み込むスレッドの数'
     value: '16'
-    reason: '`/mnt/c` の 259 件を 1 件ずつ読むと 3.4 秒、16 のスレッドで 0.2 秒（2026-10-31 に測った値）'
+    reason: '`/mnt/c` の 259 件を 1 件ずつ読み込むと 3.4 秒、16 のスレッドで 0.2 秒（2026-10-31 に測った値）'
   - name: CONFIG
     title: 配信の設定のファイル
     container: scripts/_common.py
     usecase: 共通
-    summary: リポジトリの直下の dev-docs の配信の設定
+    summary: リポジトリの直下の project-index の配信の設定
     value: '"dev-docs.yaml"'
 functions:
   - name: load_document
@@ -77,24 +77,24 @@ functions:
     usecase: 共通
     role: 読み込み
     scope: public
-    summary: 文書の YAML を行の情報つきのマッピングとして読む
+    summary: 文書の YAML を行の情報つきのマッピングとして読み込む
     args:
       - name: text
         title: 文書の YAML
         type: str
         required: true
-        description: 文書 1 件の YAML（UTF-8 で読んだ文字列）
+        description: 文書 1 件の YAML（UTF-8 で読み込んだ文字列）
     returns:
       type: CommentedMap
-      description: 文書の最上位のマッピング。`.lc` で各キー・要素の行を引ける
+      description: 文書の最上位のマッピング。`.lc` で各キー・要素の行を取得できる
     process: |-
-      1. `YAML(typ="rt")` で `text` を読む（LIB-72-1）
-         - `YAMLError` の場合、`problem_mark.line + 1` を行、`problem` を理由にした読めない文書を送出する
-      2. 最上位が `CommentedMap` でない場合、行 1・`最上位がマッピングではありません` の読めない文書を送出する
-      3. 読んだマッピングを返す
+      1. `YAML(typ="rt")` で `text` を読み込む（LIB-72-1）
+         - `YAMLError` の場合、`problem_mark.line + 1` を行、`problem` を理由にした読み込めない文書を送出する
+      2. 最上位が `CommentedMap` でない場合、行 1・`最上位がマッピングではありません` の読み込めない文書を送出する
+      3. 読み込んだマッピングを返却する
     exceptions:
       - name: DocumentError
-        condition: YAML として読めない
+        condition: YAML として読み込めない
         message: ruamel.yaml の `problem`
       - name: DocumentError
         condition: 最上位がマッピングでない（空の文書・配列）
@@ -102,17 +102,17 @@ functions:
     unit_tests:
       - name: test_load_document
         case: 正常
-        summary: マッピングの文書を読む
+        summary: マッピングの文書を読み込む
         condition: '`id: a` と `items` を持つ YAML'
         mock: なし
-        expected: '`CommentedMap` で、`lc.key("items")` が行を返す'
+        expected: '`CommentedMap` で、`lc.key("items")` が行を返却する'
       - name: test_load_document_when_broken
         case: 異常
-        summary: 読めない YAML
+        summary: 読み込めない YAML
         condition: '`items:\n  - id: a\n    name: [`'
         mock: なし
         expected: '`DocumentError` で、`line` が 3 以上（括弧の開いた行以降）'
-        exception: YAML として読めない
+        exception: YAML として読み込めない
       - name: test_load_document_when_not_mapping
         case: 異常
         summary: 最上位が配列
@@ -126,7 +126,7 @@ functions:
     container: scripts/_common.py
     usecase: 共通
     scope: public
-    summary: キーと添字の並びを dev-docs の項目のパスの書き方にする
+    summary: キーと添字の並びを project-index の項目のパスの記載方法にする
     args:
       - name: parts
         title: キーと添字
@@ -135,10 +135,10 @@ functions:
         description: 最上位から順のキー（str）と配列の添字（int）
     returns:
       type: str
-      description: '`items[3].body` の形のパス。`parts` が空なら `$`'
+      description: '`items[3].body` の形式のパス。`parts` が空なら `$`'
     process: |-
-      1. `parts` が空なら `$` を返す
-      2. 添字は `[{添字}]`、キーは先頭なら `{キー}`、それ以外は `.{キー}` でつないで返す
+      1. `parts` が空なら `$` を返却する
+      2. 添字は `[{添字}]`、キーは先頭なら `{キー}`、それ以外は `.{キー}` でつないで返却する
     unit_tests:
       - name: test_format_path
         case: 正常
@@ -159,13 +159,13 @@ functions:
     usecase: 共通
     role: 走査
     scope: public
-    summary: 文書の中の全ての文字列の値を、項目のパスと本文の 1 行目の行で返す
+    summary: 文書の中の全ての文字列の値を、項目のパスと本文の 1 行目の行で返却する
     args:
       - name: node
         title: 文書
         type: CommentedMap | CommentedSeq
         required: true
-        description: '`load_document` が返したマッピングか、その中のマッピング・配列'
+        description: '`load_document` が返却したマッピングか、その中のマッピング・配列'
       - name: parts
         title: 親のパス
         type: tuple[str | int, ...]
@@ -180,14 +180,14 @@ functions:
       (("items", 3, "body"), 42, "```mermaid\nflowchart TD\n...")
       ```
     process: |-
-      1. マッピングはキーごとに、配列は添字ごとに値を見る
+      1. マッピングはキーごとに、配列は添字ごとに値を確認する
          - 値がマッピング・配列の場合、子へ再帰する
-         - 値が文字列の場合、`node.lc.value(キー)`（配列は `node.lc.item(添字)`）の行に 1 を足して返す。値が `LiteralScalarString`・`FoldedScalarString`（`|`・`>` のブロック）のときは、本文が次の行から始まるのでさらに 1 を足す
+         - 値が文字列の場合、`node.lc.value(キー)`（配列は `node.lc.item(添字)`）の行に 1 を加算して返却する。値が `LiteralScalarString`・`FoldedScalarString`（`|`・`>` のブロック）のときは、本文が次の行から始まるのでさらに 1 を加算する
          - それ以外の型（数・真偽値・null）は飛ばす
     unit_tests:
       - name: test_iter_strings
         case: 正常
-        summary: 入れ子の文字列をパスと行で返す
+        summary: 入れ子の文字列をパスと行で返却する
         condition: '1 行目 `id: a`、3 行目から `items` の 1 要素（`id`・`body: |-` のブロック）、`rev: 1` を持つ文書'
         mock: なし
         expected: '`(("id",), 1, "a")`・`(("items", 0, "id"), 4, ...)`・`(("items", 0, "body"), {`body:` の行 + 1}, ...)` の順で、`rev` は返らない'
@@ -204,31 +204,31 @@ functions:
     usecase: 共通
     role: 読み込み
     scope: public
-    summary: ファイルを並列に UTF-8 で読み、パス → 中身で返す
+    summary: ファイルを並列に UTF-8 で読み込み、パス → 中身で返却する
     args:
       - name: paths
-        title: 読むファイル
+        title: 読み込むファイル
         type: Sequence[Path]
         required: true
-        description: 読むファイルの絶対パス
+        description: 読み込むファイルの絶対パス
     returns:
       type: dict[Path, str | None]
-      description: パス → 中身。読めなかったファイル（`OSError`・`UnicodeDecodeError`）は `None`
+      description: パス → 中身。読み込めなかったファイル（`OSError`・`UnicodeDecodeError`）は `None`
     process: |-
-      1. `ThreadPoolExecutor(max_workers=READ_WORKERS)` で各ファイルを `read_text(encoding="utf-8")` で読む
+      1. `ThreadPoolExecutor(max_workers=READ_WORKERS)` で各ファイルを `read_text(encoding="utf-8")` で読み込む
          - `OSError`・`UnicodeDecodeError` の場合、そのファイルを `None` にする
-      2. `paths` の並びの辞書で返す
+      2. `paths` の並びの辞書で返却する
     unit_tests:
       - name: test_read_texts
         case: 正常
-        summary: 全てのファイルを読む
+        summary: 全てのファイルを読み込む
         condition: 一時フォルダの UTF-8 のファイル 3 つ
         mock: なし（一時ディレクトリ）
         expected: 3 つの中身が `paths` の並びで返る
       - name: test_read_texts_when_unreadable
         case: 正常
-        summary: 読めないファイルは None
-        condition: 無いファイル 1 つと、Shift_JIS で書いたファイル 1 つ
+        summary: 読み込めないファイルは None
+        condition: 無いファイル 1 つと、Shift_JIS で記載したファイル 1 つ
         mock: なし（一時ディレクトリ）
         expected: どちらも `None`
   - name: line_of
@@ -237,13 +237,13 @@ functions:
     container: scripts/_common.py
     usecase: 共通
     scope: public
-    summary: キーと添字の並びが指す項目の、文書の行（1 始まり）を返す
+    summary: キーと添字の並びが指す項目の、文書の行（1 始まり）を返却する
     args:
       - name: doc
         title: 文書
         type: CommentedMap
         required: true
-        description: '`load_document` が返したマッピング'
+        description: '`load_document` が返却したマッピング'
       - name: parts
         title: キーと添字
         type: Sequence[str | int]
@@ -253,9 +253,9 @@ functions:
       type: int
       description: たどれた最も深いキー・要素の行。`parts` が空なら 1
     process: |-
-      1. `doc` から `parts` を順にたどり、マッピングは `lc.key(キー)`、配列は `lc.item(添字)` の行を控える
+      1. `doc` から `parts` を順にたどり、マッピングは `lc.key(キー)`、配列は `lc.item(添字)` の行を記録する
          - キー・添字が無いか、値がマッピング・配列でない場合、そこでやめる
-      2. 控えた最後の行に 1 を足して返す（控えが無ければ 1）
+      2. 記録した最後の行に 1 を加算して返却する（記録が無ければ 1）
     unit_tests:
       - name: test_line_of
         case: 正常
@@ -279,7 +279,7 @@ functions:
     title: キーの行
     container: scripts/_common.py
     usecase: 共通
-    summary: マッピングのキーの文書の行（1 始まり）を返す
+    summary: マッピングのキーの文書の行（1 始まり）を返却する
     kind: 関数
     scope: public
     args:
@@ -287,21 +287,21 @@ functions:
         title: マッピング
         type: CommentedMap
         required: true
-        description: 行の情報つきで読んだマッピング
+        description: 行の情報つきで読み込んだマッピング
       - name: key
         title: キー
         type: object
         required: true
-        description: 行を引くキー
+        description: 行を取得するキー
     returns:
       type: int
-      description: '`lc.key(key)` の行に 1 を足した行'
-    process: 1. `lc.key(key)` の行に 1 を足して返す
+      description: '`lc.key(key)` の行に 1 を加算した行'
+    process: 1. `lc.key(key)` の行に 1 を加算して返却する
   - name: value_line
     title: 値の行
     container: scripts/_common.py
     usecase: 共通
-    summary: マッピングの値の始まりの文書の行（1 始まり）を返す
+    summary: マッピングの値の始まりの文書の行（1 始まり）を返却する
     kind: 関数
     scope: public
     args:
@@ -309,21 +309,21 @@ functions:
         title: マッピング
         type: CommentedMap
         required: true
-        description: 行の情報つきで読んだマッピング
+        description: 行の情報つきで読み込んだマッピング
       - name: key
         title: キー
         type: object
         required: true
-        description: 値の行を引くキー
+        description: 値の行を取得するキー
     returns:
       type: int
-      description: '`lc.value(key)` の行に 1 を足した行'
-    process: 1. `lc.value(key)` の行に 1 を足して返す
+      description: '`lc.value(key)` の行に 1 を加算した行'
+    process: 1. `lc.value(key)` の行に 1 を加算して返却する
   - name: item_line
     title: 要素の行
     container: scripts/_common.py
     usecase: 共通
-    summary: 配列の要素の始まりの文書の行（1 始まり）を返す
+    summary: 配列の要素の始まりの文書の行（1 始まり）を返却する
     kind: 関数
     scope: public
     args:
@@ -331,21 +331,21 @@ functions:
         title: 配列
         type: CommentedSeq
         required: true
-        description: 行の情報つきで読んだ配列
+        description: 行の情報つきで読み込んだ配列
       - name: index
         title: 添字
         type: int
         required: true
-        description: 行を引く要素の添字
+        description: 行を取得する要素の添字
     returns:
       type: int
-      description: '`lc.item(index)` の行に 1 を足した行'
-    process: 1. `lc.item(index)` の行に 1 を足して返す
+      description: '`lc.item(index)` の行に 1 を加算した行'
+    process: 1. `lc.item(index)` の行に 1 を加算して返却する
   - name: as_mapping
     title: マッピングへの絞り込み
     container: scripts/_common.py
     usecase: 共通
-    summary: マッピングなら文字列のキーで引ける型で返す
+    summary: マッピングなら文字列のキーで取得できる型で返却する
     kind: 関数
     scope: public
     args:
@@ -353,16 +353,16 @@ functions:
         title: 値
         type: object
         required: true
-        description: 読んだ YAML の値
+        description: 読み込んだ YAML の値
     returns:
       type: Mapping[str, object] | None
       description: マッピングでなければ None
-    process: 1. `Mapping` なら `Mapping[str, object]` として返し、そうでなければ None を返す
+    process: 1. `Mapping` なら `Mapping[str, object]` として返却し、そうでなければ None を返却する
   - name: as_list
     title: 配列への絞り込み
     container: scripts/_common.py
     usecase: 共通
-    summary: 配列なら要素の型を object にして返す
+    summary: 配列なら要素の型を object にして返却する
     kind: 関数
     scope: public
     args:
@@ -370,16 +370,16 @@ functions:
         title: 値
         type: object
         required: true
-        description: 読んだ YAML の値
+        description: 読み込んだ YAML の値
     returns:
       type: list[object] | None
       description: 配列でなければ None
-    process: 1. `list` なら `list[object]` として返し、そうでなければ None を返す
+    process: 1. `list` なら `list[object]` として返却し、そうでなければ None を返却する
   - name: load_safe
     title: 行の情報なしの読み込み
     container: scripts/_common.py
     usecase: 共通
-    summary: 行の情報の要らない YAML（スキーマ・dev-docs.yaml）を安全な型だけで読む
+    summary: 行の情報の要らない YAML（スキーマ・dev-docs.yaml）を安全な型だけで読み込む
     kind: 関数
     scope: public
     args:
@@ -387,11 +387,11 @@ functions:
         title: YAML
         type: str
         required: true
-        description: 読む YAML の文字列
+        description: 読み込む YAML の文字列
     returns:
       type: object
-      description: '`YAML(typ="safe")` で読んだ値'
-    process: 1. `YAML(typ="safe")` で読んで返す（読めない場合、ruamel.yaml の `YAMLError` をそのまま送出する）
+      description: '`YAML(typ="safe")` で読み込んだ値'
+    process: 1. `YAML(typ="safe")` で読み込んで返却する（読み込めない場合、ruamel.yaml の `YAMLError` をそのまま送出する）
   - name: load_config
     title: dev-docs.yaml の読み込み
     kind: 関数
@@ -399,8 +399,8 @@ functions:
     usecase: 共通
     role: 読み込み
     scope: public
-    summary: '`dev-docs.yaml` の `documents[]` の行を読む'
-    description: check_all.py から移した。「全ての文書の検査」と「Pages の成果物の作成」が使う
+    summary: '`dev-docs.yaml` の `documents[]` の行を読み込む'
+    description: check_all.py から移した。「全ての文書の検査」と「Pages の成果物の作成」が使用する
     args:
       - name: root
         title: リポジトリの直下
@@ -411,17 +411,17 @@ functions:
       type: list[Mapping[str, Any]]
       description: '`documents[]` の行'
     process: |-
-      1. `{root}/dev-docs.yaml` が無い場合、`dev-docs.yaml がありません` の読めない dev-docs.yaml を送出する
-      2. 文書として読む（文書の読み込み）
-         - 読めない文書の場合、`dev-docs.yaml の {行} 行目が読めません: {理由}` の読めない dev-docs.yaml を送出する
-      3. `documents` がマッピングの配列でない場合、`dev-docs.yaml に documents の配列がありません` の読めない dev-docs.yaml を送出する
-      4. `documents` を返す
+      1. `{root}/dev-docs.yaml` が無い場合、`dev-docs.yaml がありません` の読み込めない dev-docs.yaml を送出する
+      2. 文書として読み込む（文書の読み込み）
+         - 読み込めない文書の場合、`dev-docs.yaml の {行} 行目が読めません: {理由}` の読み込めない dev-docs.yaml を送出する
+      3. `documents` がマッピングの配列でない場合、`dev-docs.yaml に documents の配列がありません` の読み込めない dev-docs.yaml を送出する
+      4. `documents` を返却する
     exceptions:
       - name: ConfigError
         condition: '`dev-docs.yaml` が無い'
         message: dev-docs.yaml がありません
       - name: ConfigError
-        condition: YAML として読めない
+        condition: YAML として読み込めない
         message: 'dev-docs.yaml の {行} 行目が読めません: {理由}'
       - name: ConfigError
         condition: '`documents` がマッピングの配列でない'
@@ -429,7 +429,7 @@ functions:
     unit_tests:
       - name: test_load_config
         case: 正常
-        summary: 行を読む
+        summary: 行を読み込む
         condition: '`documents` に 2 行を持つ `dev-docs.yaml`'
         mock: なし（一時ディレクトリ）
         expected: 2 行
@@ -442,11 +442,11 @@ functions:
         exception: '`dev-docs.yaml` が無い'
       - name: test_load_config_when_broken
         case: 異常
-        summary: YAML として読めない
+        summary: YAML として読み込めない
         condition: 括弧の閉じていない `dev-docs.yaml`
         mock: なし（一時ディレクトリ）
         expected: '`ConfigError` で、メッセージに行'
-        exception: YAML として読めない
+        exception: YAML として読み込めない
       - name: test_load_config_when_no_documents
         case: 異常
         summary: documents が無い
@@ -463,8 +463,8 @@ functions:
     usecase: 共通
     role: 読み込み
     scope: public
-    summary: '`documents[]` の 1 行の `paths`・`exclude` に当たるファイルを、リポジトリの直下からのパスで返す'
-    description: check_all.py の検査する文書の列挙から、行のパターンでファイルを引く処理を切り出した
+    summary: '`documents[]` の 1 行の `paths`・`exclude` に該当するファイルを、リポジトリの直下からのパスで返却する'
+    description: check_all.py の検査する文書の列挙から、行のパターンでファイルを列挙する処理を切り出した
     args:
       - name: root
         title: リポジトリの直下
@@ -475,25 +475,25 @@ functions:
         title: documents の行
         type: Mapping[str, Any]
         required: true
-        description: '`load_config` が返した行 1 つ'
+        description: '`load_config` が返却した行 1 つ'
     returns:
       type: list[PurePosixPath]
       description: パスの順のファイル。`enabled` が `false` の行は空
     process: |-
-      1. `enabled` が `false` の行は空を返す
-      2. 行の `paths` の各パターンで `root.glob(パターン)` のファイルを引き、ファイル名が `exclude` のどれかに `PurePosixPath.full_match` で当たるものを除く（dev-docs の `DocumentTable.matches` と同じ判定）
-      3. 重なりを除き、パスの順に並べて返す
+      1. `enabled` が `false` の行は空を返却する
+      2. 行の `paths` の各パターンで `root.glob(パターン)` のファイルを引き、ファイル名が `exclude` のどれかに `PurePosixPath.full_match` で該当するものを除く（project-index の `DocumentTable.matches` と同じ判定）
+      3. 重なりを除き、パスの順に並べて返却する
     unit_tests:
       - name: test_list_row_files
         case: 正常
-        summary: 行のパターンで引く
+        summary: 行のパターンで列挙する
         condition: '`paths: ["docs/rule/*.yaml"]`・`exclude: ["index.yaml"]` の行と、`docs/rule/` の文書 2 件と `index.yaml`'
         mock: なし（一時ディレクトリ）
         expected: 文書 2 件のパスがパスの順に並ぶ
       - name: test_list_row_files_when_disabled
         case: 正常
         summary: 無効な行
-        condition: '`enabled: false` の行と、当たる文書 1 件'
+        condition: '`enabled: false` の行と、該当する文書 1 件'
         mock: なし（一時ディレクトリ）
         expected: 空
   - name: strings
@@ -501,7 +501,7 @@ functions:
     container: scripts/_common.py
     usecase: 共通
     role: 変換
-    summary: YAML の値が配列なら、その中の文字列だけを返す
+    summary: YAML の値が配列なら、その中の文字列だけを返却する
     kind: 関数
     scope: public
     args:
@@ -516,7 +516,7 @@ functions:
     unit_tests:
       - name: test_strings
         case: 正常
-        summary: 文字列だけを返す
+        summary: 文字列だけを返却する
         condition: '`["a", 1, "b"]`'
         mock: なし
         expected: '`["a", "b"]`'
