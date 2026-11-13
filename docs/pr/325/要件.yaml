@@ -64,7 +64,11 @@ docs:
     status: todo
   - page: schemas/design/common.schema.yaml
     new: false
-    change: '`$defs.tags.items` の `name`・`main` に `x-used-by` を追加する（#269 の検査が `if` の条件の外で `x-used-by` を持たないキーとして出す 2 件）。キーの description・x-used-by の書き直し（#294）も行う'
+    change: '`$defs.tags.items` の `name`・`main` と、`$defs.model`（`agent`・`llm_call` の `model` が指す）に `x-used-by` を追加する（#269 の検査が違反にする箇所）。キーの description・x-used-by の書き直し（#294）も行う'
+    status: todo
+  - page: schemas/design/mcp_server.schema.yaml
+    new: false
+    change: '`$defs.value_source`（`clients[].inject[].from`・`clients[].headers[].from` が指す）に `x-used-by` を追加する（#269 の検査が違反にする箇所）。キーの description・x-used-by の書き直し（#294）も行う'
     status: todo
 scope_out:
   - item: テンプレート『コンテナ構成』『テストフィクスチャ』の置き場所の記述（`dev/設計書/コンテナ構成/`・`dev/設計書/テストフィクスチャ.md`）
