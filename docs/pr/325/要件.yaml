@@ -112,7 +112,7 @@ scope_out:
     plan: '#255'
   - item: '`schemas/design/index.schema.yaml` の description の「`dev/` と `docs/` の各フォルダ」'
     reason: '#254 の表に挙がっていない同じ型の箇所。目次のスキーマの置き場所の説明で、含めるかはレビューで確定する'
-    plan: to_file
+    plan: '#332'
   - item: AI Monitor が配布する `schemas/library.schema.yaml` など、knowledge 直下の配布物への確認の状態のキーの反映
-    reason: '#317 は `schemas/design/` と生成するテンプレートまでを対象にする。配布物は AI Monitor 側で更新する'
-    plan: to_file
+    reason: 解消済み。[901b107](https://github.com/shuhei1101/knowledge/commit/901b107)（#291）で `dev-docs.yaml` の設計書の行が `schemas/design/` の原本を指すようになり、直下のコピーは削除された。AI Monitor の配布物のコピーは ai-monitor#3188 で配布自体をやめる
+    plan: none
