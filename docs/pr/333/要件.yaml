@@ -28,31 +28,45 @@ docs:
   - page: schemas/design/interface.schema.yaml
     new: false
     change: '`flows[].flow` を `common.schema.yaml#/$defs/map` の参照にし、`description`・`x-rules`・`x-used-by` と記載例（`examples`）の図を map に合わせる'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T23:52:56.884095+00:00'
   - page: schemas/design/module.schema.yaml
     new: false
-    change: '`diagrams[].diagram` を mdmark の図で記載する型の参照にし、`description`・`x-rules`・`x-used-by` を合わせる（図の種類は要件.md の `未確定`）'
-    status: todo
+    change: '`diagrams[].diagram` を `$defs/map` の参照にし、`description`・`x-rules`・`x-used-by` を map の `flowchart` に合わせる（要素をノード、関数・属性をラベルの `<br>` 区切り、依存を点線 `-.->`）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T23:52:56.884095+00:00'
   - page: schemas/design/common.schema.yaml
     new: false
     change: 参照が無くなる `$defs/mermaid` を削除する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T23:52:56.884095+00:00'
   - page: docs/interface/
     new: false
     change: 全ての設計書の `flows[].flow` を map で記載し直す。図の中身（登場するもの・やり取りの順番）は変えない
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T23:52:56.884095+00:00'
   - page: docs/module/
     new: false
     change: '`diagrams[].diagram` を持つ設計書（`MOD-148-1`・`MOD-72-1`）の図を mdmark の図で記載し直す。図の中身（要素と依存の向き）は変えない'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T23:52:56.884095+00:00'
   - page: docs/template/template-interface.yaml
     new: false
     change: '`scripts/build_templates.py` で生成し直す'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T23:52:56.884095+00:00'
   - page: docs/template/template-module.yaml
     new: false
     change: '`scripts/build_templates.py` で生成し直す'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T23:52:56.884095+00:00'
 scope_out:
   - item: maid の検査（`scripts/_maid.py`・`knowledge_checks.py` の mermaid の検査）と規約 `dev-yaml` の mermaid の検査の削除
     reason: この PR で設計書のテンプレートから map の外の Mermaid が無くなった後に進める後続
