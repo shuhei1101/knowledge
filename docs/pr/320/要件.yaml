@@ -1,0 +1,28 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-148-1.yaml
+    impact: run_only
+    detail: 対応表の行の除外する単語が増えるだけで、シナリオの記述は変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 追加した examples と対応表のコピーの一致を検査する
+    depends_on: []
+docs:
+  - page: docs/word-list/word-list-ai-slop.yaml
+    new: false
+    change: 行 kaesu（返す）の allow に「折り返」を、examples.pass に「折り返す」を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T11:08:06.863677+00:00'
+  - page: plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json
+    new: false
+    change: scripts/build_word_list.py で再生成する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T11:08:06.863677+00:00'
+scope_out:
+  - item: 行 kaesu の pattern にヒットする「折り返」以外の複合語（引き返す・送り返す など、返の直前が仮名のもの）の除外
+    reason: 誤検出の報告が無く、起点 Issue の要望は「折り返」だけ。誤検出が見つかった時点で同じ形で allow へ追加する
+    plan: none

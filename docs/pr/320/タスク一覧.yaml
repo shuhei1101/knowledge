@@ -1,0 +1,86 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存リポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: 現状の設計書が揃っている
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めを依頼する Issue ではない
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: 既存の allow の照合の機構に値を追加するだけで、未検証の技術機構に依存しない
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: 端末に knowledge を導入して規約を引く流れは変わらない
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 画面の見た目を変えない
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面の追加・削除と画面遷移の変更を含まない
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: 単一ユースケース設計
+    status: skipped
+    reason: 対応表の行の allow の値が増えるだけで、既存のシナリオのまま要件を満たす
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: モック作成
+    status: skipped
+    reason: 画面の見た目を変えない
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: インターフェース定義設計
+    status: skipped
+    reason: 照合と対応表のコピーの作成の入出力は変わらない
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: 部品設計
+    status: skipped
+    reason: 変更が画面の部品に及ばない
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: knowledge は画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: モジュール構成設計
+    status: skipped
+    reason: slop_check.py・build_word_list.py・スキーマを変更しない
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: ドキュメント修正
+    status: done
+    note: 要件.yaml の更新ドキュメント（対応表の行 kaesu と対応表のコピー）
+    updated_by: planner
+    updated_at: '2026-11-13T11:08:11.067356+00:00'
+  - process: 単体テスト作成
+    status: skipped
+    reason: コードを変更せず、追加した値の照合は examples を check_all.py が検査する
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: 実装
+    status: skipped
+    reason: コードを変更しない。対応表のコピーの再生成はドキュメント修正で扱う
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
+  - process: 結合テスト作成
+    status: skipped
+    reason: 照合と対応表のコピーの作成の入出力が変わらず、既存の結合テストで足りる
+    updated_by: planner
+    updated_at: '2026-11-13T11:01:14.458584+00:00'
