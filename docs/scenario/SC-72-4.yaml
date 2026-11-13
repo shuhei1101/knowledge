@@ -35,7 +35,7 @@ scenarios:
       - 規約の `tags` がタグの名前（`topic:文章` など）の文字列の配列で返り、`tags` の `eq` でタグの名前に一致する規約が当たる
       - '規約の `main_tags` が `main: true` のタグの名前だけを返す'
       - "`group_by: tags` がタグの名前ごとに数え、`{'name': ...}` の値を返さない"
-      - files.yaml の行の Markdown（`plugins/knowledge/skills/text-review/SKILL.md`）も検索に当たる
+      - files.yaml の行の Markdown（`skills/text-review/SKILL.md`）も検索に当たる
       - ID で取得した本文が develop のファイルの中身と一致する
       - '`list_match_words` が用語集（`docs/terms.yaml`）の用語の `name`・`aliases` を、文書の名前・別名と並べて返却する'
       - '`search_docs` の `term` に `A.I.VOICE2` を指定すると、用語 `A.I.VOICE 2` がヒットする'
