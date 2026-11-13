@@ -13,63 +13,93 @@ docs:
   - page: docs/template/template-container.yaml
     new: false
     change: 外部ライブラリ・外部 API の置き場所の記述（`dev/設計書/外部ライブラリ/`・`dev/設計書/外部API/`）を ai-monitor#3307 の置き場所へ書き換える（#254）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: docs/template/template-project-claude.yaml
     new: false
     change: '`dev/` の置き場所の記述を書き換え（#254）、AI slop の単語を OK の単語へ修正する（#311）'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: docs/template/template-project-readme.yaml
     new: false
     change: '`dev/` と `docs/` 配下の `README.md` の記述を書き換える（#254）'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: schemas/design/screen.schema.yaml
     new: false
     change: '例の `mock: dev/mock/...` を `docs/mock/...` へ書き換え（#254）、キーの description・x-used-by を書き直す（#294）'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: docs/rule/dev-coding-general.yaml
     new: false
     change: NG 例の `dev/設計書/xxx.md` を書き換える（#254）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: schemas/design/agent_flow.schema.yaml
     new: false
     change: 判定フローチャート『機能を呼ぶインターフェースの選び方』を参照する（#286）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: schemas/design/evaluation.schema.yaml
     new: false
     change: 判定フローチャート『精度評価をするか』を参照する（#286）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: rules.yaml
     new: false
-    change: '`flowchart-accuracy-evaluation` を掲載するかを規約『ルール索引への登録』の強制注入の基準で判定し直し、掲載するなら行を追加する（#286）'
-    status: todo
+    change: '`flowchart-accuracy-evaluation` を掲載するかを規約『ルール索引への登録』の強制注入の基準で判定し直す（#286）。判定: 掲載しない。本文が 6.5KB で基準の 4KB を超え、精度評価の設計書は評価の仕組みが参照する場所に配置するため glob を狭められない。テンプレート『精度評価のスイート』の `x-rules` から参照する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: schemas/design/external_api.schema.yaml
     new: false
     change: '`endpoints[].request[]`・`endpoints[].response[]` に確認の状態と確認日時のキーを追加し（#317）、キーの description・x-used-by を書き直す（#294）'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: schemas/design/library.schema.yaml
     new: false
     change: '`params[]` などの引数・設定のキーに確認の状態と確認日時のキーを追加し（#317）、キーの description・x-used-by を書き直す（#294）'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: schemas/design/module.schema.yaml
     new: false
     change: description が無いキー・x-used-by が「〜を参照する」だけのキーを schema-key-01 に沿って書き直す（#294。他の種類のスキーマも同じ）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: dev-docs.yaml
     new: false
     change: '`description`・`instructions` の AI slop の単語を OK の単語へ修正する（#311）'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: docs/template/template-external-api.yaml
     new: false
     change: スキーマから生成し直す（#294・#317）。他の生成されるテンプレートも同じ
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: schemas/design/common.schema.yaml
     new: false
     change: '`$defs.tags.items` の `name`・`main` と、`$defs.model`（`agent`・`llm_call` の `model` が指す）に `x-used-by` を追加する（#269 の検査が違反にする箇所）。キーの description・x-used-by の書き直し（#294）も行う'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
   - page: schemas/design/mcp_server.schema.yaml
     new: false
     change: '`$defs.value_source`（`clients[].inject[].from`・`clients[].headers[].from` が指す）に `x-used-by` を追加する（#269 の検査が違反にする箇所）。キーの description・x-used-by の書き直し（#294）も行う'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T17:39:47.779234+00:00'
 scope_out:
   - item: テンプレート『コンテナ構成』『テストフィクスチャ』の置き場所の記述（`dev/設計書/コンテナ構成/`・`dev/設計書/テストフィクスチャ.md`）
     reason: '置き場所を決める作業は #255 が持つ（#254 の受付でスコープを移した）'
