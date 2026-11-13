@@ -5,7 +5,7 @@ kind: "ライブラリ"
 version:
   current: 4.26.0
   checked_on: '2026-10-31'
-  pinning: dev-docs 本体と同じ `>=4.26.0`
+  pinning: project-index 本体と同じ `>=4.26.0`
   source: '`scripts/check_all.py` の PEP 723 のメタデータと `scripts/check_all.py.lock`'
 catalogs:
   - name: API
@@ -26,10 +26,10 @@ used_in:
 verification:
   state: 済
   date: '2026-10-31'
-  detail: Python 3.14.3 と jsonschema 4.26.0 で、`Draft202012Validator.iter_errors` が `type`・`contains`・`unevaluatedProperties` の違反を全件、`absolute_path` つきで返すことを確かめた
+  detail: Python 3.14.3 と jsonschema 4.26.0 で、`Draft202012Validator.iter_errors` が `type`・`contains`・`unevaluatedProperties` の違反を全件、`absolute_path` つきで返却することを確認した
 license: MIT（商用利用可）
 official_url: https://pypi.org/project/jsonschema/
 docs_url: https://python-jsonschema.readthedocs.io/
 selection:
-  candidates: jsonschema のみ（dev-docs 本体の既存の依存）
-  decision: dev-docs の `check_schema` と同じ検査器になり、CI と書き込みのときの判定が揃う。dev-docs の CLI に検査のコマンドが無いため、CI はこのライブラリで同じ検査をする（[reviewer の合格](https://github.com/shuhei1101/knowledge/pull/72#discussion_r4430689450)）
+  candidates: jsonschema のみ（project-index 本体の既存の依存）
+  decision: project-index の `check_schema` と同じ検査器になり、CI と書き込みのときの判定が一致する。project-index の CLI に検査のコマンドが無いため、CI はこのライブラリで同じ検査をする（[reviewer の合格](https://github.com/shuhei1101/knowledge/pull/72#discussion_r4430689450)）

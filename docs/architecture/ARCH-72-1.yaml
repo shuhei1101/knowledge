@@ -25,6 +25,9 @@ overview:
     - id: claudecode
       label: Claude Code
       kind: external
+    - id: pindex
+      label: project-index
+      kind: external
     - id: devdocs
       label: dev-docs
       kind: external
@@ -45,12 +48,15 @@ overview:
       to: devdocs
       label: 画面
     - from: agent
-      to: devdocs
+      to: pindex
       label: MCP
     - from: devdocs
+      to: pindex
+      label: 読み取り API
+    - from: pindex
       to: content
-      label: 読み書き
-    - from: devdocs
+      label: 読み込み・書き込み
+    - from: pindex
       to: scripts
       label: 子プロセス
     - from: scripts
@@ -100,47 +106,53 @@ repository:
 subsystems:
   - name: 文書
     scope: docs
-    role: 規約・テンプレート・判定フローチャート・判定表・チェックシート・使い方・変更履歴・スキルの YAML とそのスキーマ、YAML でないファイルを載せる files.yaml、dev-docs への配信の設定 `dev-docs.yaml` を持つ。各プロジェクトが `design-schemas/v*` のタグで指す設計書のスキーマの正本（`schemas/design/`）も持つ
+    role: 規約・テンプレート・判定フローチャート・判定表・チェックシート・使い方・変更履歴・スキルの YAML とそのスキーマ、YAML でないファイルを記載する files.yaml、project-index への配信の設定 `dev-docs.yaml` を持つ。各プロジェクトが `design-schemas/v*` のタグで指す設計書のスキーマの原本（`schemas/design/`）も持つ
     runtime: YAML（JSON Schema 2020-12）
-    runs_on: dev-docs が読むリポジトリの作業ツリー
+    runs_on: project-index が読み込むリポジトリの作業ツリー
   - name: 検査と変換のスクリプト
     scope: scripts
-    role: スキーマで見られない決まりの検査と、全ての種類の YAML から mdmark の記法の Markdown への変換を、dev-docs の validators・converters の約束で返す
+    role: スキーマで見られない決まりの検査と、全ての種類の YAML から mdmark の記法の Markdown への変換を、project-index の validators・converters の約束で返却する
     runtime: Python 3.14
-    runs_on: dev-docs が起動する子プロセスと CI
+    runs_on: project-index が起動する子プロセスと CI
   - name: CI
     scope: ci
-    role: PR ごとに全ての文書へスキーマの検査と検査のスクリプトを当て、違反があれば失敗させる。master への push で公開の文書だけを HTML にして GitHub Pages へ配信する
+    role: PR ごとに全ての文書へスキーマの検査と検査のスクリプトを適用し、違反があれば失敗させる。master への push で公開の文書だけを HTML にして GitHub Pages へ配信する
     runtime: GitHub Actions のワークフロー
     runs_on: GitHub Actions
   - name: slop-check
     scope: slopcheck
-    role: 書き込むツールの実行の後に、書き込んだ中身を対応表のコピーで照合し、ヒットした単語と置き換え先の通知を返す（書き込みは止めない）。対応表の正本は文書の `docs/word-list/`、コピーは検査と変換のスクリプトが作る
+    role: 書き込むツールの実行の後に、書き込んだ中身を対応表のコピーで照合し、ヒットした単語と置き換え先の通知を返却する（書き込みは止めない）。対応表の原本は文書の `docs/word-list/`、コピーは検査と変換のスクリプトが作る
     runtime: Python 3.12 以上（標準ライブラリだけ）
     runs_on: Claude Code が PostToolUse で起動する子プロセス（端末の python3）
 lead: |-
-  knowledge は規約・テンプレートなどの文書を YAML で持ち、dev-docs の配信元として画面と文書の MCP から読まれる。
-  サーバーと MCP は dev-docs が持ち、knowledge は文書・スキーマ・検査と変換のスクリプト・CI と、書き込んだ中身を照合するプラグイン slop-check だけを持つ。
+  knowledge は規約・テンプレートなどの文書を YAML で持ち、project-index の配信元として dev-docs の画面と文書の MCP から参照される。
+  索引・検索・書き込みの MCP と検査・変換のスクリプトの起動は project-index、画面は dev-docs が持ち、knowledge は文書・スキーマ・検査と変換のスクリプト・CI と、書き込んだ中身を照合するプラグイン slop-check だけを持つ。
 external_systems:
-  - name: dev-docs
-    purpose: knowledge の文書を画面と文書の MCP で配信し、書き込みのときに検査のスクリプト、配信のときに変換のスクリプトを呼ぶ
+  - name: project-index
+    purpose: knowledge の文書を文書の MCP と読み取り API で配信し、書き込みのときに検査のスクリプト、配信のときに変換のスクリプトを呼ぶ
     direction: 双方向
     protocol: 子プロセス（標準入力に文書の YAML、標準出力に JSON / Markdown）
     notes:
-      事前確認: 不要。dev-docs が knowledge のスクリプトを呼ぶ側で、knowledge から dev-docs を呼ばない
+      事前確認: 不要。project-index が knowledge のスクリプトを呼ぶ側で、knowledge から project-index を呼ばない
+  - name: dev-docs
+    purpose: project-index の読み取り API で取得した knowledge の文書を画面に表示する
+    direction: 送信のみ
+    protocol: project-index の読み取り API（knowledge と直接はやり取りしない）
+    notes:
+      事前確認: 不要。knowledge から dev-docs を呼ばない
   - name: '@probelabs/maid'
     purpose: mermaid の文法の検査（`--fix` を付けない）
     direction: 双方向
     protocol: CLI（子プロセス）
     notes:
-      事前確認: 要。検査のスクリプトの起動時に `maid` が PATH から引けるかを確かめ、無ければ検査を始めずに足りないものを返す。maid を呼ぶ前に残り時間を確かめる（非機能要件のスクリプトの処理時間）
+      事前確認: 要。検査のスクリプトの起動時に `maid` が PATH で見つかるかを確認し、無ければ検査を始めずに足りないものを返却する。maid を呼ぶ前に残り時間を確認する（非機能要件のスクリプトの処理時間）
     detail: LIB-72-3#
   - name: GitHub Actions
     purpose: PR で文書の検査のワークフローを、master への push で公開文書の配信のワークフローを動かす
     direction: 受信のみ
     protocol: ワークフローの YAML
     notes:
-      事前確認: 要。ワークフローの最初のステップで、検査に要るランタイム（Python・maid）が入ったかを確かめ、欠けていれば検査を始めずに失敗させる
+      事前確認: 要。ワークフローの最初のステップで、検査に要るランタイム（Python・maid）が入ったかを確認し、欠けていれば検査を始めずに失敗させる
   - name: mdmark
     purpose: 公開の文書の Markdown を 1 枚の HTML にまとめる（`build`）
     direction: 双方向
@@ -153,7 +165,7 @@ external_systems:
     direction: 送信のみ
     protocol: Pages の成果物（`actions/upload-pages-artifact`・`actions/deploy-pages`）
     notes:
-      事前確認: 要。配信の前に `actions/configure-pages` で Pages の設定を読み、配信元が GitHub Actions でなければ配信せずに失敗させる
+      事前確認: 要。配信の前に `actions/configure-pages` で Pages の設定を参照し、配信元が GitHub Actions でなければ配信せずに失敗させる
   - name: Claude Code
     purpose: 書き込むツールの実行の後に、プラグイン slop-check の PostToolUse のフックを起動し、標準出力の `additionalContext` をエージェントのコンテキストへ入れる
     direction: 双方向
