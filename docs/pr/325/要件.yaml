@@ -62,6 +62,10 @@ docs:
     new: false
     change: スキーマから生成し直す（#294・#317）。他の生成されるテンプレートも同じ
     status: todo
+  - page: schemas/design/common.schema.yaml
+    new: false
+    change: '`$defs.tags.items` の `name`・`main` に `x-used-by` を追加する（#269 の検査が `if` の条件の外で `x-used-by` を持たないキーとして出す 2 件）。キーの description・x-used-by の書き直し（#294）も行う'
+    status: todo
 scope_out:
   - item: テンプレート『コンテナ構成』『テストフィクスチャ』の置き場所の記述（`dev/設計書/コンテナ構成/`・`dev/設計書/テストフィクスチャ.md`）
     reason: '置き場所を決める作業は #255 が持つ（#254 の受付でスコープを移した）'
