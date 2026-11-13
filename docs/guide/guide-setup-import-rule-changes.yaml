@@ -21,13 +21,20 @@ last_reviewed: '2026-10-24'
 items:
   - id: overview
     name: 概要
-    body: |-
-      手元の規約を最新へ更新したいときに実行する。
+    body: 手元の規約を最新へ更新したいときに実行する。
   - id: prerequisite-01
     group: 前提
-    name: "前提: 規約の索引を適用する"
+    name: '前提: 規約の索引を適用する'
+    body: '- [規約の索引を適用する](id:guide-setup-apply-rule-index)'
+  - id: step-switch-develop-01
+    group: 手順 > develop の最新を取り込む
+    name: master にいる clone を develop へ切り替えるコマンド
     body: |-
-      - [規約の索引を適用する](id:guide-setup-apply-rule-index)
+      既定のブランチを develop にする前に clone して master にいる場合だけ、取り込む前に実行する。
+
+      ```bash
+      git -C {clone した先} switch develop
+      ```
   - id: step-pull-master-01
     group: 手順 > develop の最新を取り込む
     name: develop の最新を取り込むコマンド
@@ -38,8 +45,7 @@ items:
   - id: step-pull-master-02
     group: 手順 > develop の最新を取り込む
     name: 変更を通知する仕組みは無い
-    body: |-
-      変更を通知する仕組みは無く、取り込まない限り古い規約が案内され続ける。
+    body: 変更を通知する仕組みは無く、取り込まない限り古い規約が案内され続ける。
   - id: reflection-01
     group: 反映
     name: 反映は即時
@@ -56,8 +62,7 @@ items:
   - id: check-up-to-date-02
     group: 確認 > 手元が develop の最新と一致している
     name: 確認の結果
-    body: |-
-      1 行目に `[behind` が出ない。
+    body: 1 行目が `## develop...origin/develop` で、`[behind` が出ない。
   - id: rollback-01
     group: 元に戻す
     name: 元に戻す

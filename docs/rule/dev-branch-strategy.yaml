@@ -46,6 +46,7 @@ items:
     body: |-
       - release は commit が入るたびに develop へバックマージする（E2E を再実行する前と、master へマージした後）
       - E2E が全て通った release は、master と develop の両方へ merge commit で入れる
+      - master へマージした後のバックマージは、タグを打った master の merge commit を develop へ入れ、全てのバージョンのタグを develop から辿れるようにする
   - id: branch-03
     group: ブランチ
     name: release と hotfix を使用する時期
