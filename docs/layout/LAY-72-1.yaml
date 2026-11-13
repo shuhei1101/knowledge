@@ -80,14 +80,11 @@ entries:
         name: workflows
         contents: CI のワークフロー
         content_types: [ci]
-        used_by: [IF-72-4#, IF-137-2#]
+        used_by: [IF-137-2#]
         children:
           - type: file
-            name: docs-check.yml
-            contents: PR ごとに全ての文書の検査を実行するワークフロー
-          - type: file
             name: pages.yml
-            contents: master への push で公開の文書を GitHub Pages へ配信するワークフロー
+            contents: develop への push で公開の文書を GitHub Pages へ配信するワークフロー
             content_types: [ci, pages]
   - type: folder
     name: docs
