@@ -1,0 +1,97 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: changed
+    detail: 公開文書の配信の契機を master へのマージから develop へのマージに変え、公開しない文書への参照の行き先を develop の YAML にする
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: changed
+    detail: CI で全ての文書を検査する流れを、Git フックと CI で検査を動かさない決まりに合わせて見直す（廃止するか残すかは単一ユースケース設計で決める）
+    depends_on: []
+docs:
+  - page: docs/rule/dev-hook-ci-scope.yaml
+    new: true
+    change: Git フックと CI で lint・型検査・テストを動かさず、ビルドの成果物を commit に入れるなど生成・配布に当たるものだけを動かす決まりを、言語を問わない規約として新設する（#227）
+    status: todo
+  - page: docs/rule/python-packaging-pyproject.yaml
+    new: false
+    change: '`git-hook-01` を新設の規約への参照に合わせ、`git-management-02` の CI での `uv sync --locked` の検証を新しい決まりに合わせる（#227）'
+    status: todo
+  - page: docs/rule/html-tooling-tsc.yaml
+    new: false
+    change: '`typecheck` の用途の「CI / pre-commit」を新しい決まりに合わせる（#227）'
+    status: todo
+  - page: docs/rule/python-core-style.yaml
+    new: false
+    change: pyright の用途の「型チェック（CI / strict が正）」を新しい決まりに合わせる（#227）
+    status: todo
+  - page: docs/rule/python-testing-layers.yaml
+    new: false
+    change: 単体・結合テストの実行の「CI / 開発時に自動」を新しい決まりに合わせる（#227）
+    status: todo
+  - page: docs/rule/react-shared-security.yaml
+    new: false
+    change: 「CI で依存を監査する」が検査に当たるかを判断し、当たれば新しい決まりに合わせる（#227）
+    status: todo
+  - page: docs/rule/dev-document-management.yaml
+    new: false
+    change: 「参照切れは CI で止める」を新しい決まりに合わせ、GitHub Pages を master へのマージで配信する記述を develop にする（#227・#230）
+    status: todo
+  - page: schemas/design/test_procedure.schema.yaml
+    new: false
+    change: '`lint` 層の `x-rules` の「CI・pre-commit・…で使用すると決めたツール」を新しい決まりに合わせる（#227）'
+    status: todo
+  - page: docs/template/template-test-procedure.yaml
+    new: false
+    change: スキーマの変更から `scripts/build_templates.py` で生成し直す（#227）
+    status: todo
+  - page: docs/rule/dev-branch-strategy.yaml
+    new: false
+    change: 0.x の間は release・hotfix を切らず develop だけで開発し、master へ初めて入れるときを v1.0.0 にする運用と、メジャーのリリースで release を切る前にテストを精査する工程を追加する（ai-monitor の規約『ブランチ戦略』に追随。#230）
+    status: todo
+  - page: docs/rule/dev-versioning.yaml
+    new: false
+    change: '`tag-01`・`tag-02` に、0.x の間はスプリントの区切りに develop の commit へタグを打ち、`--merged origin/develop` で並べる決まりを追加する（ai-monitor の規約『バージョニング』に追随。#230）'
+    status: todo
+  - page: docs/checksheet/checksheet-major-release-test-review.yaml
+    new: true
+    change: メジャーのリリースで release を切る前のテストの精査の観点（共通にできる前準備・ヘルパー・無駄なテストデータ・新しい範囲を確認しないテスト・重い処理・skip したままのテスト）を新設する（ai-monitor の `docs/checksheet/メジャーリリース前のテスト精査.md` に追随。#230）
+    status: todo
+  - page: docs/rule/claude-mcp-docs-server.yaml
+    new: false
+    change: '`rule-inject/blob/master/...` のリンクを develop にする（#230）'
+    status: todo
+  - page: docs/rule/dev-rule-index-registration.yaml
+    new: false
+    change: '`rule-inject/blob/master/...` のリンクを develop にする（#230）'
+    status: todo
+  - page: docs/guide/guide-setup-apply-rule-index.yaml
+    new: false
+    change: '`rule-inject/blob/master/...` のリンクを develop にする（#230）'
+    status: todo
+  - page: docs/guide/guide-setup-import-rule-changes.yaml
+    new: false
+    change: master の最新を取り込む手順と確認を develop にする（#230）
+    status: todo
+  - page: CLAUDE.md
+    new: false
+    change: スキーマを変える PR のタグを上げる反映作業の時期「release が master へ入った後」を、0.x の間の develop へのタグに合わせる（#230）
+    status: todo
+  - page: rules.yaml
+    new: false
+    change: 新設の規約とチェックシートを当たるパスで登録する
+    status: todo
+scope_out:
+  - item: GitHub の既定のブランチを develop にする操作（D-296 A）
+    reason: knowledge の既定のブランチは既に develop（2026-11-14 に gh api で確認）
+    plan: none
+  - item: 規約『作業ディレクトリ』（`dev-working-directory.yaml`）の「メインのクローンを常に master のままにする」
+    reason: 0.x の間もメインのクローンを master のままにするか develop にするかは本文になく、判断が分かれる。今の判断は、作業は worktree で行いメインのクローンのブランチは配布物の参照に影響しないため対象外（レビューで確定する）
+    plan: none
+  - item: シナリオの `test_file` が指す `tests/e2e/` の削除済みのテスト
+    reason: 0.x の間は E2E を回さず修正もしない（D-297 A）。v1.0.0 の前に作り直す
+    plan: none
+  - item: 他のリポジトリ（mdmark・dev-docs 等）の Git フック・ワークフローの見直し
+    reason: 各リポジトリの Issue で扱う。lefthook の削除は 2026-11-08 にユーザーが行った（#227）
+    plan: none
