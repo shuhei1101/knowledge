@@ -92,7 +92,7 @@ $defs:
   verified_at:
     type: string
     title: 確認日時
-    description: '`verification` を `verified` にした日時（ISO 8601、タイムゾーン付き）。'
+    description: '`verification_state` を `verified` にした日時（ISO 8601、タイムゾーン付き）。'
     x-used-by:
       - 保守で、外部 API・外部ライブラリの版が上がったときに、その後に確認し直したかを判断する。
       - 生成で、表の確認日時の列にする。

@@ -383,7 +383,7 @@ properties:
                       description: 引数の前提（ほかの引数との組み合わせ・既定の挙動 等）。
                       x-used-by:
                         - 実装で、引数の組み合わせと前提を、指定する前の検証にする。
-                    verification:
+                    verification_state:
                       $ref: common.schema.yaml#/$defs/verification_state
                     verified_at:
                       $ref: common.schema.yaml#/$defs/verified_at
@@ -471,9 +471,9 @@ properties:
                 $ref: common.schema.yaml#/$defs/visibility
               notes:
                 $ref: common.schema.yaml#/$defs/notes
-              verification:
+              verification_state:
                 $ref: common.schema.yaml#/$defs/verification_state
-                description: 対象（関数・コマンド・設定のキー 等）の振る舞いを確かめた方法。引数ごとの状態は `params[].verification` に記載する。
+                description: 対象（関数・コマンド・設定のキー 等）の振る舞いを確かめた方法。引数ごとの状態は `params[].verification_state` に記載する。
               verified_at:
                 $ref: common.schema.yaml#/$defs/verified_at
   limitations:

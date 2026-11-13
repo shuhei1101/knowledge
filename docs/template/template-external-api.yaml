@@ -91,8 +91,8 @@ items:
       | endpoints[].request[].example | 例 | string | - | - | - | 値の具体例。 | テストで、Mock の要求の値にする。 | - |
       | endpoints[].request[].nullable | 空を許す | boolean | - | - | - | `null` を送信してよいなら `true`。 | 実装で、`null` を送ってよいかを決める。 | - |
       | endpoints[].request[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
-      | endpoints[].request[].verification | 確認の状態 | string | - | `verified` / `docs_only` / `unverified` | - | 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確かめた方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。 | 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。<br>レビューで、`verified` でない値を確認せずに実装していないかを確認する。<br>生成で、表の確認の状態の列にする。 | - |
-      | endpoints[].request[].verified_at | 確認日時 | string | - | - | format: `date-time` | `verification` を `verified` にした日時（ISO 8601、タイムゾーン付き）。 | 保守で、外部 API・外部ライブラリの版が上がったときに、その後に確認し直したかを判断する。<br>生成で、表の確認日時の列にする。 | `2026-11-14T10:00:00+09:00` |
+      | endpoints[].request[].verification_state | 確認の状態 | string | - | `verified` / `docs_only` / `unverified` | - | 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確かめた方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。 | 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。<br>レビューで、`verified` でない値を確認せずに実装していないかを確認する。<br>生成で、表の確認の状態の列にする。 | - |
+      | endpoints[].request[].verified_at | 確認日時 | string | - | - | format: `date-time` | `verification_state` を `verified` にした日時（ISO 8601、タイムゾーン付き）。 | 保守で、外部 API・外部ライブラリの版が上がったときに、その後に確認し直したかを判断する。<br>生成で、表の確認日時の列にする。 | `2026-11-14T10:00:00+09:00` |
       | endpoints[].request_example | リクエスト例 | string | - | - | - | JSON のコードブロック。body を持たないときはリクエストライン。 | テストで、Mock の要求の見本にする。 | - |
       | endpoints[].response | レスポンス | array | - | - | - | 別のエンドポイントと同形のときは持たず、`same_as` に記載する。 | 実装で、応答を読む型にする。 | - |
       | endpoints[].response[].name | フィールド | string | 必須 | - | - | 返らないことがあるフィールドは `field?` と記載し、条件を補足に記載する。 | 実装で、応答のフィールドの名前にする。 | - |
@@ -100,8 +100,8 @@ items:
       | endpoints[].response[].description | 説明 | string | 必須 | - | - | フィールドの値が何を表すか。 | 実装で、フィールドの値で分岐する条件を決める。 | - |
       | endpoints[].response[].constraints | 制限 | string | - | - | - | 値の上限・形式などの制限。 | 実装で、応答の値を受け取る型と検証の範囲にする。 | - |
       | endpoints[].response[].notes | 補足 | string | - | - | - | フィールドの前提（返らない条件・ほかのフィールドとの関係 等）。 | 実装で、フィールドが返らないときの扱いを決める。 | - |
-      | endpoints[].response[].verification | 確認の状態 | string | - | `verified` / `docs_only` / `unverified` | - | 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確かめた方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。 | 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。<br>レビューで、`verified` でない値を確認せずに実装していないかを確認する。<br>生成で、表の確認の状態の列にする。 | - |
-      | endpoints[].response[].verified_at | 確認日時 | string | - | - | format: `date-time` | `verification` を `verified` にした日時（ISO 8601、タイムゾーン付き）。 | 保守で、外部 API・外部ライブラリの版が上がったときに、その後に確認し直したかを判断する。<br>生成で、表の確認日時の列にする。 | `2026-11-14T10:00:00+09:00` |
+      | endpoints[].response[].verification_state | 確認の状態 | string | - | `verified` / `docs_only` / `unverified` | - | 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確かめた方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。 | 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。<br>レビューで、`verified` でない値を確認せずに実装していないかを確認する。<br>生成で、表の確認の状態の列にする。 | - |
+      | endpoints[].response[].verified_at | 確認日時 | string | - | - | format: `date-time` | `verification_state` を `verified` にした日時（ISO 8601、タイムゾーン付き）。 | 保守で、外部 API・外部ライブラリの版が上がったときに、その後に確認し直したかを判断する。<br>生成で、表の確認日時の列にする。 | `2026-11-14T10:00:00+09:00` |
       | endpoints[].same_as | 同形のレスポンス | string | - | - | - | レスポンスが同形のエンドポイントの名前。 | 実装で、同じ形の応答の型を使い回す。 | - |
       | endpoints[].response_headers | 応答のヘッダー | array | - | - | - | 処理で読み取る応答のヘッダー。1 要素 = 1 ヘッダー。 | 実装で、応答のヘッダを読む処理にする。 | - |
       | endpoints[].response_headers[].name | ヘッダー | string | 必須 | - | - | ヘッダーの名前。 | 実装で、読むヘッダの名前にする。 | - |

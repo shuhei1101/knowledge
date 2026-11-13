@@ -494,7 +494,7 @@ properties:
                   - 実装で、`null` を送ってよいかを決める。
               status:
                 $ref: common.schema.yaml#/$defs/status
-              verification:
+              verification_state:
                 $ref: common.schema.yaml#/$defs/verification_state
               verified_at:
                 $ref: common.schema.yaml#/$defs/verified_at
@@ -551,7 +551,7 @@ properties:
                 description: フィールドの前提（返らない条件・ほかのフィールドとの関係 等）。
                 x-used-by:
                   - 実装で、フィールドが返らないときの扱いを決める。
-              verification:
+              verification_state:
                 $ref: common.schema.yaml#/$defs/verification_state
               verified_at:
                 $ref: common.schema.yaml#/$defs/verified_at
