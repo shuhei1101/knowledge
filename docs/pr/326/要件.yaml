@@ -52,55 +52,81 @@ docs:
   - page: docs/architecture/ARCH-72-1.yaml
     new: false
     change: lead・subsystems の role・runs_on・external_systems・overview の edges の、文書の MCP・配信元の読み込み・検査と変換のスクリプトを呼ぶ側を project-index、画面を dev-docs に分けて書き換える（#309）。残りの文の AI slop の単語を修正する（#263）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
   - page: docs/guide/guide-setup-docs-mcp.yaml
     new: false
     change: /dev-docs:global-setup・/dev-docs:setup・管理の MCP の reload・再接続・config のファイル名を project-index に合わせ、画面の URL を dev-docs の画面として残す。書き換えた文の AI slop の単語を修正する（#309）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
   - page: docs/layout/LAY-72-1.yaml
     new: false
     change: docs/ と各フォルダの README.md のエントリに generated_from（index.yaml と CMD-72-1 のビルド・生成）を記載する（#280）。docs/template/ のエントリに items の生成元 schemas/design/ と生成するコマンドを記載する（#281）。dev-docs を文書の MCP・スクリプトを呼ぶ側とする記述を project-index に合わせる（ARCH-72-1 との整合）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
   - page: docs/dev-command/CMD-72-1.yaml
     new: false
     change: ビルド・生成に、index.yaml から各フォルダの README.md を作り直す AI Monitor の python -m ai_monitor.design_docs publish のコマンドを追加する（#280）。文の AI slop の単語を修正する（#263）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
   - page: docs/nonfunctional/NFR-72-1.yaml
     new: false
     change: 検査と変換のスクリプトを呼ぶ側を dev-docs とする記述を project-index に合わせる（ARCH-72-1 との整合）。文の AI slop の単語を修正する（#263）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
   - page: docs/test-procedure/TP-72-1.yaml
     new: false
     change: dev-docs を文書の MCP・スクリプトを呼ぶ側とする記述を project-index に合わせる（ARCH-72-1 との整合）。文の AI slop の単語を修正する（#263）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
   - page: docs/library/LIB-72-1.yaml
     new: false
     change: 検査と変換のスクリプトを呼ぶ側を dev-docs とする記述を project-index に合わせる（ARCH-72-1 との整合）。文の AI slop の単語を修正する（#263）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
   - page: docs/library/LIB-72-2.yaml
     new: false
     change: 検査と変換のスクリプトを呼ぶ側を dev-docs とする記述を project-index に合わせる（ARCH-72-1 との整合）。文の AI slop の単語を修正する（#263）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
   - page: docs/library/LIB-72-3.yaml
     new: false
     change: 文の AI slop の単語を修正する（#263）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
   - page: docs/library/LIB-137-1.yaml
     new: false
     change: 文の AI slop の単語を修正する（#263）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
   - page: docs/library/LIB-176-1.yaml
     new: false
     change: 文の AI slop の単語を修正する（#263）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
   - page: docs/library/LIB-176-2.yaml
     new: false
     change: 文の AI slop の単語を修正する（#263）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
   - page: docs/library/LIB-176-3.yaml
     new: false
     change: 文の AI slop の単語を修正する（#263）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-13T18:42:16.526211+00:00'
 scope_out:
   - item: 直下の dev-docs.yaml の project-index.yaml への改名と、設計書・規約・テンプレート・CLAUDE.md のファイル名 dev-docs.yaml の記述
     reason: 'project-index の develop は project-index.yaml が無ければ dev-docs.yaml を読む（src/project_index/features/admin/service.py の LEGACY_CONFIG_FILE）ため、改名しなくても #309 の終わりの条件は満たせる。改名すると端末の設定の sources[] の config（dev-docs.yaml を直接指す）の書き換えの反映作業が要り、#311（直下の dev-docs.yaml の AI slop）と重なるため、別の Issue に分ける（複合ユースケース設計のレビューで確定）'
