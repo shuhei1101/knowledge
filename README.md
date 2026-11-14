@@ -14,6 +14,7 @@
 
 [project-index.yaml](./project-index.yaml) が指す全ての文書に、スキーマの検査と、スキーマで見られない決まり（ID の重複・参照の実在・対応表の `examples` が照合と合うか）の検査を適用する。
 対応表のコピー（`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json`）が原本と一致するかも確認する。
+`skills/` の SKILL.md が `docs/skill/` の設計書から生成した中身と、`.github/workflows/` の workflow のファイルがインターフェース定義と一致するかと、文書の map の図に誤りが無いかも確認する。
 検査のスクリプトは [scripts/](./scripts/) にある。
 
 ```bash
