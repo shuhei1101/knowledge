@@ -91,7 +91,7 @@ functions:
          設計書のテンプレートを検査し（設計書のテンプレートの検査）、違反を同じ形式の行で出す
          SKILL.md を検査し（SKILL.md の検査）、違反を同じ形式の行で出す
          5 で読み込んだ文書のうち、`schema` が `schemas/design/interface.schema.yaml` の文書を workflow のファイルと突き合わせ（workflow のファイルの突き合わせ）、違反を同じ形式の行で出す
-      10. lint を適用する（lint の検査）。違反を `{ファイルのパス}:{行}: {項目のパス}: {tool}/{rule}: {message}`、`warning` の違反は `{内容}` の前に `warning: ` を付けた行で、文書のパスと行の順に出す
+      10. lint を適用する（lint の検査）。違反を `{ファイルのパス}:{行}: {項目のパス}: {tool}/{rule}: {message}`、`warning` の違反は `{内容}` の前に `warning: ` を付けた行で、文書のパスと行の順に出す。続けて、中身の読み込めた文書ごとに map を含む項目を取り出し（map を含む項目の取り出し）、まとめて map の点検を呼び（map の点検の呼び出し）、違反を lint と同じ形式の行で出す
          - 読み込めない lint の出力の場合、標準エラーへ理由を出し `1` を返却する
          - 失敗した mdmark の点検の場合、それまでの違反の行を出した後、標準エラーへ `mdmark の点検が失敗しました: {理由}` を出し `2` を返却する
       11. 最後に `{文書の数} 件の文書を検査し、違反は {違反の数} 件、警告は {警告の数} 件でした` を出し、違反があれば `1`、無ければ `0` を返却する（警告は数えない）
@@ -167,8 +167,8 @@ functions:
         case: 正常
         summary: mdmark の点検が失敗する
         condition: '`description` の無い文書を持つリポジトリ'
-        mock: lint の CLI の在りかの確認を差し替える。lint の検査を `MdmarkCheckError` を送出する関数に差し替える
-        expected: '`2` を返却し、標準出力にスキーマの違反の行、標準エラーに `mdmark の点検が失敗しました` が出る'
+        mock: lint の CLI の在りかの確認を差し替える。lint の検査を markdownlint の違反 1 件を返却する関数に、map の点検の呼び出しを `MdmarkCheckError` を送出する関数に差し替える
+        expected: '`2` を返却し、標準出力にスキーマの違反の行と `markdownlint/` の行、標準エラーに `mdmark の点検が失敗しました` が出る'
     callees:
       - '#functions[load_meta_validator]'
       - MOD-176-1#functions[find_lint_clis]
@@ -178,6 +178,8 @@ functions:
       - MOD-72-4#functions[build_name_index]
       - '#functions[check_skills]'
       - MOD-376-1#functions[check_workflows]
+      - MOD-176-1#functions[collect_map_sources]
+      - MOD-176-1#functions[run_map_check]
     refs:
       - IF-72-3#
   - name: check_lints
@@ -187,7 +189,7 @@ functions:
     usecase: 全ての文書の検査
     role: サービス
     scope: public
-    summary: 設計書を含む全ての文書の Markdown に markdownlint-cli2・textlint、YAML のファイルと `schemas/` のスキーマに yamllint、文書の map に mdmark の点検を適用する
+    summary: 設計書を含む全ての文書の Markdown に markdownlint-cli2・textlint、YAML のファイルと `schemas/` のスキーマに yamllint を適用する
     args:
       - name: root
         title: リポジトリの直下
@@ -214,11 +216,6 @@ functions:
         type: Mapping[str, str]
         required: true
         description: '`find_lint_clis` が返却した絶対パス'
-      - name: npx
-        title: npx の実行ファイル
-        type: str
-        required: true
-        description: '`shutil.which("npx")` が返却した絶対パス'
     returns:
       type: list[LintFinding]
       description: 文書のパスと行の順の違反
@@ -226,8 +223,7 @@ functions:
       1. 中身の読み込めた文書ごとに Markdown を取り出し（lint を適用する Markdown の取り出し）、まとめて Markdown の lint を呼ぶ（Markdown の lint の呼び出し）
       2. yamllint の設定を読み込み（yamllint の設定の読み込み）、拡張子が `.yaml`・`.yml` の文書と、`YAMLLINT_EXTRA` のうち在るファイルに yamllint を適用する（yamllint の呼び出し）
       3. `YAMLLINT_SCHEMAS_CONFIG` の設定を読み込み（yamllint の設定の読み込み）、`schemas/*.schema.yaml` と `DESIGN_SCHEMAS_DIR` の `*.schema.yaml` をパスの順に UTF-8 で読み込んで yamllint を適用する（yamllint の呼び出し）。UTF-8 で読み込めないファイルは、違反を設計書のスキーマの検査と文書の種類のスキーマの検査が出すため、yamllint を適用せずに飛ばす
-      4. 中身の読み込めた文書ごとに map を含む項目を取り出し（map を含む項目の取り出し）、まとめて map の点検を呼ぶ（map の点検の呼び出し）。`MdmarkCheckError` はそのまま送出する
-      5. パスと行の順に並べて返却する
+      4. パスと行の順に並べて返却する
     unit_tests:
       - name: test_check_lints
         case: 正常
@@ -252,8 +248,6 @@ functions:
       - MOD-176-1#functions[run_markdown_lints]
       - MOD-176-1#functions[load_yamllint_config]
       - MOD-176-1#functions[run_yamllint]
-      - MOD-176-1#functions[collect_map_sources]
-      - MOD-176-1#functions[run_map_check]
     refs:
       - IF-72-3#constraints[lint の適用先]
       - IF-72-3#constraints[lint の設定]
@@ -804,6 +798,6 @@ functions:
     refs:
       - IF-72-3#constraints[SKILL.md]
 notes:
-  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と `jsonschema>=4.26.0`（LIB-72-2）と `yamllint==1.38.0`（LIB-176-3）を記載し、`knowledge_checks.py`・`build_word_list.py`・`_lint.py` を同じフォルダから import する。
+  依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と `jsonschema>=4.26.0`（LIB-72-2）と `yamllint==1.38.0`（LIB-176-3）を記載し、`knowledge_checks.py`・`build_word_list.py`・`build_skills.py`（`plan_skills`・`COMMAND`）・`_lint.py`・`_workflow.py`（`check_workflows`）を同じフォルダから import する。
 test_files:
   - tests/unit/scripts/test_check_all.py
