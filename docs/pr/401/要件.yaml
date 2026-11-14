@@ -21,3 +21,6 @@ scope_out:
   - item: 規約『フォルダ構成の切り方とレビュー』（dev-folder-layout）への convention と children の関係の記載
     reason: 規約には convention と children の関係の記載が無く、決まりはスキーマの x-rules の 1 か所に置くため
     plan: none
+  - item: docs/rule/dev-rule-index-registration.yaml の items[4].body の 2 文の textlint の sentence-length の違反
+    reason: 規約『文章の書き方』と全ての文書の検査の textlint（上限 100 文字）から外れている。今回の要望に含まれない
+    plan: '#402'
