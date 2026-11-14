@@ -1,0 +1,18 @@
+docs:
+  - page: rules.yaml
+    new: false
+    change: '設計書の種類のフォルダのファイル（`**/docs/{種類}/*.yaml`・`index.yaml`）へ `schemas/design/{種類}.schema.yaml` を `on: [write]` で案内する 16 行を加える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:39:31.309523+00:00'
+scope_out:
+  - item: '`schemas/design/layout.schema.yaml` を `**/docs/layout/*.yaml` へ案内する行'
+    reason: Issue の表に無く、AI Monitor の `rules.global.yaml` にも無い。`**/docs/layout/*.yaml` には規約『フォルダ構成』の行が既にある
+    plan: none
+  - item: Issue の表に無い設計書の Schema（agent・agent_flow・component・launch・llm_call・mcp_server・evaluation・eval_criterion・eval_case）を案内する行
+    reason: 要望に含まれない（AI Monitor の `rules.global.yaml` が案内していた行を移す範囲に限る）
+    plan: none
+  - item: '`write_docs` の `operations.kind` で `schemas/design` の Schema を案内する行'
+    reason: MCP のツールの呼び出しが契機で、別の事象
+    plan: '#194'
+use_cases: []
