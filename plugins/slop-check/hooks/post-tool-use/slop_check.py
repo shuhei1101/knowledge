@@ -1,7 +1,8 @@
 """書き込むツールの中身を AI slop の単語の対応表で照合し、ヒットした単語の通知を返す PostToolUse のフック。
 
 標準入力の PostToolUse の入力から書き込んだ中身を取り出し、ヒットした行があれば NG と OK の表を持つ通知の文を
-`hookSpecificOutput.additionalContext` で標準出力へ出す。書き込みは止めず、終了コードは常に 0。
+`hookSpecificOutput.additionalContext` で、検知した単語の 1 行を `systemMessage` で標準出力へ出す。
+書き込みは止めず、終了コードは常に 0。
 Python の標準ライブラリだけで書き、端末の python3（3.12 以上）で起動する。
 
 Usage:
@@ -34,6 +35,7 @@ BUILTIN_TOOLS: dict[str, str] = {
 # MCP サーバーを見分ける単語 → 対象のツール名の集合
 MCP_TOOLS: dict[str, frozenset[str]] = {
     "project-index": frozenset({"write_docs"}),
+    "dev-docs": frozenset({"write_docs"}),
     "ai-monitor": frozenset(
         {
             "comment",
@@ -92,21 +94,29 @@ NOTICE_HEAD = (
     "| --- | --- |"
 )
 
-# 通知の文の後半（規約を search_docs で参照する案内）
+# 通知の文の後半（規約を project-index か dev-docs の search_docs で参照する案内）
 NOTICE_TAIL = (
     "\n"
     "まだ読んでいなければ、用途に合う規約を読んでください。\n"
+    "search_docs は mcp__plugin_project-index_project-index__search_docs か"
+    " mcp__plugin_dev-docs_dev-docs__search_docs の使用できる方で呼んでください。\n"
     "- 文書・コメント: 規約『文章の書き方』\n"
-    '  mcp__plugin_project-index_project-index__search_docs（source: "knowledge", filter: {"field": "id", "op": "eq", "values": ["convention-writing-style"]}, view: "full"）\n'
+    '  search_docs（source: "knowledge", filter: {"field": "id", "op": "eq", "values": ["convention-writing-style"]}, view: "full"）\n'
     "- 画面の文言: 規約『入力と文言』\n"
-    '  mcp__plugin_project-index_project-index__search_docs（source: "knowledge", filter: {"field": "id", "op": "eq", "values": ["ui-input-wording"]}, view: "full"）'
+    '  search_docs（source: "knowledge", filter: {"field": "id", "op": "eq", "values": ["ui-input-wording"]}, view: "full"）'
 )
+
+# 利用者の画面に出す 1 行の先頭
+SYSTEM_MESSAGE_HEAD = "AI slop を検知: "
 
 # MCP ツールの名前の接頭辞と、サーバーの部分とツール名の区切り
 _MCP_PREFIX = "mcp__"
 _MCP_SEPARATOR = "__"
 
-# project-index の書き込むツールの名前
+# プラグインの MCP サーバーの部分の接頭辞（plugin_{プラグイン}_{サーバー}）
+_PLUGIN_PREFIX = "plugin_"
+
+# project-index・dev-docs の書き込むツールの名前
 _WRITE_DOCS = "write_docs"
 
 # 対応表の文書の ID の接頭辞と種類
@@ -145,7 +155,7 @@ def _default_word_list() -> Path:
 
 
 def main(argv: Sequence[str] | None = None, *, word_list: Path | None = None) -> int:
-    """標準入力の PostToolUse の入力を照合し、ヒットがあれば通知の JSON を標準出力へ出す。"""
+    """標準入力の PostToolUse の入力を照合し、ヒットがあれば通知の文と利用者向けの 1 行の JSON を出す。"""
     parser = argparse.ArgumentParser(
         description="書き込んだ中身を AI slop の単語の対応表で照合する"
     )
@@ -189,7 +199,8 @@ def main(argv: Sequence[str] | None = None, *, word_list: Path | None = None) ->
                 "hookSpecificOutput": {
                     "hookEventName": "PostToolUse",
                     "additionalContext": build_notice(hits),
-                }
+                },
+                "systemMessage": build_system_message(hits, tool_name),
             }
             print(json.dumps(output, ensure_ascii=False))
     except Exception:  # noqa: BLE001 - 想定していない例外も書き込みの結果を変えずに traceback だけ出す
@@ -366,6 +377,26 @@ def build_notice(hits: Sequence[Entry]) -> str:
         for entry in hits
     ]
     return "\n".join([NOTICE_HEAD, *rows, NOTICE_TAIL])
+
+
+
+def tool_label(tool_name: str) -> str:
+    """ツール名から、利用者向けの 1 行の括弧の中に出す書き込みの名前を作る。"""
+    parts = _split_mcp(tool_name)
+    # 組み込みのツール: ツール名のまま
+    if parts is None:
+        return tool_name
+    server, name = parts
+    # プラグインの MCP サーバー: plugin_ の後ろの最初の _ までをプラグインの名前にする
+    if server.startswith(_PLUGIN_PREFIX):
+        server = server[len(_PLUGIN_PREFIX) :].partition("_")[0]
+    return f"{server} の {name}"
+
+
+def build_system_message(hits: Sequence[Entry], tool_name: str) -> str:
+    """ヒットした行とツール名から、利用者の画面に出す 1 行を作る。"""
+    words = "・".join(entry.ng for entry in hits)
+    return f"{SYSTEM_MESSAGE_HEAD}{words}（{tool_label(tool_name)}）"
 
 
 if __name__ == "__main__":
