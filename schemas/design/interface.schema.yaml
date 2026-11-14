@@ -554,12 +554,13 @@ properties:
         flow:
           $ref: common.schema.yaml#/$defs/map
           title: フロー
-          description: mdmark の map の図。Mermaid の `sequenceDiagram`（入口が `trigger` の GitHub Actions の workflow は `flowchart`）。1 図 = 結末 1 本の一本道。
+          description: mdmark の map の図。1 図 = 結末 1 本の一本道。
           x-used-by:
             - 設計で、モジュール構成の処理の順と呼ぶ相手を決める。
             - 生成で、シーケンス図・フローチャートにする。
           x-rules:
             - '`<!-- map -->` から `<!-- /map -->` の範囲に、```mermaid のコードブロックを 1 つ記載する。'
+            - Mermaid は `sequenceDiagram` にする。入口が `trigger` の GitHub Actions の workflow は `flowchart` にする。
             - 登場人物は呼び出し元（バックエンドは `participant クライアント`、フロントエンドは `actor ユーザー`）・インターフェース・外部システムの境界だけにする。
             - 読み取りと応答は点線 `-->>`、書き込み・操作は実線 `->>` にする。
             - '`flowchart` は、そのフローで通る step だけを並べ、分岐でどちらへ進んだかを矢印のラベルに記載する。'
