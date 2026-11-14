@@ -148,7 +148,7 @@ categories:
       state: 済
       date: '2026-11-14'
       detail: WSL2 の Ubuntu（Node 24.14.0）で 1・2 のコマンドを実行した。公開の 5 文書が `_site/index.html` にまとまり（約 11 秒、終了コード 0）、YAML の検査は何も出さず終了コード 0 を返却した（2026-10-31）。3 のコマンドは worktree で実行し、終了コード 0 で、原本から再作成したコピーが commit 済みのコピーと一致した（2026-11-03）。4 のコマンドは worktree で実行し、終了コード 0 で 15 件のテンプレートを書き出し、続けて全ての文書の検査が違反 0 件で終わった（2026-11-06）。5 のコマンドは worktree で `--only docs/scenario/index` を指定して実行し、終了コード 0 で `docs/scenario/README.md` だけを書き換えた（約 47 秒）。ただし、行のリンクの表示名が文書のタイトルではなくファイル名（`SC-72-1` など）になる。AI Monitor の README の生成が knowledge の `schemas/design/` の種類を読み込まないためで、shuhei1101/ai-monitor#3424 で修正する（2026-11-14）。6 のコマンドは worktree で実行し、終了コード 0 で `skills/text-review/SKILL.md` を書き出し、続けてもう一度実行すると何も出さず終了コード 0 で終わった（2026-11-14）
-    effects: 1 は約 11 秒（初回は `npx` が mdmark と依存を取る）。`_site` は中身を削除してから書き込む。3 は `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を上書きする。4 は `docs/template/` の設計書の種類のテンプレートのうち、スキーマから組み立てた `items` と違うものの `items` だけを上書きする。5 は `--only` に指定したフォルダの `README.md` を上書きする。shuhei1101/ai-monitor#3424 が修正されるまでは行の表示名がファイル名になるため、書き換えた行のうち `index.yaml` で変えた行以外は元に戻す。6 は `docs/skill/` の `type: skill` の設計書の `skill.path` の SKILL.md のうち、組み立てた中身と違うものを上書きする
+    effects: 1 は約 11 秒（初回は `npx` が mdmark と依存を取る）。`_site` は中身を削除してから書き込む。3 は `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を上書きする。4 は `docs/template/` の設計書の種類のテンプレートのうち、スキーマから組み立てた `items` と違うものの `items` だけを上書きする。5 は `--only` に指定したフォルダの `README.md` を上書きする。shuhei1101/ai-monitor#3424 が修正されるまでは行の表示名がファイル名になるため、書き換えた行のうち `index.yaml` で変えた行以外は元に戻す。6 は `docs/skill/` のスキルの設計書の `skill.path` の SKILL.md のうち、組み立てた中身と違うものを上書きする
   - name: 取り込み前の検査
     prerequisites:
       - 環境構築（クローン直後）を実行してある
