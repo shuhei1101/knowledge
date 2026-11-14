@@ -1,0 +1,35 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: run_only
+    detail: エージェントが describe の一覧と文書の MCP の instructions で knowledge で検索する場面を読み取る。検索・取得の手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-2.yaml
+    impact: run_only
+    detail: when を記載した配信元の設定が登録の点検に合格することを確かめる。登録の手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 配信元の設定を読み込む全ての文書の検査が通ることを確かめる。検査の手順は変えない
+    depends_on: []
+  - kind: composite
+    scenario: docs/scenario/SC-72-1.yaml
+    impact: none
+    detail: 導入して規約を参照する流れを変えない
+    depends_on: []
+docs:
+  - page: dev-docs.yaml
+    new: false
+    change: '`instructions` の後に `when` を追加し、knowledge で検索する場面を 1 行ずつ記載する（1 行目は最もよく使用する場面）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T00:56:01.791917+00:00'
+scope_out:
+  - item: '`dev-docs.yaml` の `project-index.yaml` への改名と、先頭の `$schema` の参照先の更新'
+    reason: 要望に含まれない。改名は別の Issue が扱う
+    plan: '#329'
+  - item: '`dev-docs.yaml` の既存の記述の AI slop の単語の置き換え'
+    reason: 要望に含まれない。追加する `when` の行だけを OK の単語で記載する
+    plan: '#311'
