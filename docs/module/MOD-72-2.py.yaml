@@ -37,11 +37,11 @@ data_models:
         type: str
         description: 理由の 1 行（ruamel.yaml の `problem` か `最上位がマッピングではありません`）
   - name: ConfigError
-    title: 読み込めない dev-docs.yaml
+    title: 読み込めない project-index.yaml
     container: scripts/_common.py
     usecase: 共通
     role: 例外
-    summary: '`dev-docs.yaml` が無い・読み込めない・`documents` が配列でない'
+    summary: '`project-index.yaml` が無い・読み込めない・`documents` が配列でない'
     inherits: Exception
     properties:
       - name: message
@@ -68,7 +68,7 @@ constants:
     container: scripts/_common.py
     usecase: 共通
     summary: リポジトリの直下の project-index の配信の設定
-    value: '"dev-docs.yaml"'
+    value: '"project-index.yaml"'
 functions:
   - name: load_document
     title: 文書の読み込み
@@ -379,7 +379,7 @@ functions:
     title: 行の情報なしの読み込み
     container: scripts/_common.py
     usecase: 共通
-    summary: 行の情報の要らない YAML（スキーマ・dev-docs.yaml）を安全な型だけで読み込む
+    summary: 行の情報の要らない YAML（スキーマ・project-index.yaml）を安全な型だけで読み込む
     kind: 関数
     scope: public
     args:
@@ -393,44 +393,44 @@ functions:
       description: '`YAML(typ="safe")` で読み込んだ値'
     process: 1. `YAML(typ="safe")` で読み込んで返却する（読み込めない場合、ruamel.yaml の `YAMLError` をそのまま送出する）
   - name: load_config
-    title: dev-docs.yaml の読み込み
+    title: project-index.yaml の読み込み
     kind: 関数
     container: scripts/_common.py
     usecase: 共通
     role: 読み込み
     scope: public
-    summary: '`dev-docs.yaml` の `documents[]` の行を読み込む'
+    summary: '`project-index.yaml` の `documents[]` の行を読み込む'
     description: check_all.py から移した。「全ての文書の検査」と「Pages の成果物の作成」が使用する
     args:
       - name: root
         title: リポジトリの直下
         type: Path
         required: true
-        description: '`dev-docs.yaml` を持つフォルダ'
+        description: '`project-index.yaml` を持つフォルダ'
     returns:
       type: list[Mapping[str, Any]]
       description: '`documents[]` の行'
     process: |-
-      1. `{root}/dev-docs.yaml` が無い場合、`dev-docs.yaml がありません` の読み込めない dev-docs.yaml を送出する
+      1. `{root}/project-index.yaml` が無い場合、`project-index.yaml がありません` の読み込めない project-index.yaml を送出する
       2. 文書として読み込む（文書の読み込み）
-         - 読み込めない文書の場合、`dev-docs.yaml の {行} 行目が読めません: {理由}` の読み込めない dev-docs.yaml を送出する
-      3. `documents` がマッピングの配列でない場合、`dev-docs.yaml に documents の配列がありません` の読み込めない dev-docs.yaml を送出する
+         - 読み込めない文書の場合、`project-index.yaml の {行} 行目が読めません: {理由}` の読み込めない project-index.yaml を送出する
+      3. `documents` がマッピングの配列でない場合、`project-index.yaml に documents の配列がありません` の読み込めない project-index.yaml を送出する
       4. `documents` を返却する
     exceptions:
       - name: ConfigError
-        condition: '`dev-docs.yaml` が無い'
-        message: dev-docs.yaml がありません
+        condition: '`project-index.yaml` が無い'
+        message: project-index.yaml がありません
       - name: ConfigError
         condition: YAML として読み込めない
-        message: 'dev-docs.yaml の {行} 行目が読めません: {理由}'
+        message: 'project-index.yaml の {行} 行目が読めません: {理由}'
       - name: ConfigError
         condition: '`documents` がマッピングの配列でない'
-        message: dev-docs.yaml に documents の配列がありません
+        message: project-index.yaml に documents の配列がありません
     unit_tests:
       - name: test_load_config
         case: 正常
         summary: 行を読み込む
-        condition: '`documents` に 2 行を持つ `dev-docs.yaml`'
+        condition: '`documents` に 2 行を持つ `project-index.yaml`'
         mock: なし（一時ディレクトリ）
         expected: 2 行
       - name: test_load_config_when_missing
@@ -438,19 +438,19 @@ functions:
         summary: ファイルが無い
         condition: 空の一時フォルダ
         mock: なし（一時ディレクトリ）
-        expected: '`ConfigError` で、メッセージに `dev-docs.yaml がありません`'
-        exception: '`dev-docs.yaml` が無い'
+        expected: '`ConfigError` で、メッセージに `project-index.yaml がありません`'
+        exception: '`project-index.yaml` が無い'
       - name: test_load_config_when_broken
         case: 異常
         summary: YAML として読み込めない
-        condition: 括弧の閉じていない `dev-docs.yaml`
+        condition: 括弧の閉じていない `project-index.yaml`
         mock: なし（一時ディレクトリ）
         expected: '`ConfigError` で、メッセージに行'
         exception: YAML として読み込めない
       - name: test_load_config_when_no_documents
         case: 異常
         summary: documents が無い
-        condition: '`name: knowledge` だけの `dev-docs.yaml`'
+        condition: '`name: knowledge` だけの `project-index.yaml`'
         mock: なし（一時ディレクトリ）
         expected: '`ConfigError`'
         exception: '`documents` がマッピングの配列でない'

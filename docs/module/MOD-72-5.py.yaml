@@ -28,7 +28,7 @@ constants:
     title: 対応表の文書の行
     container: scripts/knowledge_markdown.py
     usecase: 文書の Markdown への変換
-    summary: 埋め込む対応表のファイルを指す `dev-docs.yaml` の `documents[]` の行の `id`
+    summary: 埋め込む対応表のファイルを指す `project-index.yaml` の `documents[]` の行の `id`
     value: '"word-list"'
   - name: EMBED_MARKER
     title: 埋め込みのマーカー
@@ -95,7 +95,7 @@ functions:
       - name: test_main_when_embed_marker
         case: 正常
         summary: マーカーを展開する
-        condition: '標準入力に `<!-- embed: x -->` の本文を持つ rule の文書。作業ディレクトリは `schemas/rule.schema.yaml`・`word-list` の行を持つ `dev-docs.yaml`・`id: x` の対応表を持つ一時フォルダ'
+        condition: '標準入力に `<!-- embed: x -->` の本文を持つ rule の文書。作業ディレクトリは `schemas/rule.schema.yaml`・`word-list` の行を持つ `project-index.yaml`・`id: x` の対応表を持つ一時フォルダ'
         mock: なし（一時ディレクトリ・`monkeypatch` の標準入力）
         expected: '`0` を返却し、標準出力に `| NG | OK |` の表がある'
       - name: test_main_when_word_list_broken
@@ -106,8 +106,8 @@ functions:
         expected: '`1` を返却し、標準出力が空で、標準エラーに読み込めないファイルのパスが出る'
       - name: test_main_when_no_marker_without_config
         case: 正常
-        summary: マーカーの無い文書は dev-docs.yaml を読み込まない
-        condition: マーカーを持たない rule の文書。作業ディレクトリに `dev-docs.yaml` が無い
+        summary: マーカーの無い文書は project-index.yaml を読み込まない
+        condition: マーカーを持たない rule の文書。作業ディレクトリに `project-index.yaml` が無い
         mock: なし（一時ディレクトリ）
         expected: '`0` を返却する'
     callees:
@@ -412,26 +412,26 @@ functions:
     usecase: 文書の Markdown への変換
     role: 読み込み
     scope: public
-    summary: '`dev-docs.yaml` の `WORD_LIST_ROW` の行の `paths` に該当する対応表を読み込み、文書の ID から `entries` への対応にする'
+    summary: '`project-index.yaml` の `WORD_LIST_ROW` の行の `paths` に該当する対応表を読み込み、文書の ID から `entries` への対応にする'
     args:
       - name: root
         title: 配信元の直下
         type: Path
         required: true
-        description: '`dev-docs.yaml` を持つリポジトリの直下'
+        description: '`project-index.yaml` を持つリポジトリの直下'
     returns:
       type: dict[str, list[Mapping[str, Any]]]
       description: '`kind` が `WORD_LIST_KIND` の文書の `id` から `entries` への対応'
     process: |-
-      1. `dev-docs.yaml` の `documents[]` の行を読み込む（dev-docs.yaml の読み込み）
+      1. `project-index.yaml` の `documents[]` の行を読み込む（project-index.yaml の読み込み）
       2. `id` が `WORD_LIST_ROW` の行が無ければ空の対応を返却する
       3. 行のファイルを並べ（documents の行のファイルの列挙）、1 つずつ文書として読み込む（文書の読み込み）
          - `DocumentError` の場合、`ConfigError` を送出する
       4. `kind` が `WORD_LIST_KIND` の文書だけを、`id` から `entries` のマッピングの要素への対応にして返却する
     exceptions:
       - name: ConfigError
-        condition: '`dev-docs.yaml` が無い・読み込めない'
-        message: dev-docs.yaml の読み込みの例外のメッセージ
+        condition: '`project-index.yaml` が無い・読み込めない'
+        message: project-index.yaml の読み込みの例外のメッセージ
       - name: ConfigError
         condition: 行のファイルが YAML として読み込めない
         message: '{リポジトリの直下からのパス} の {行} 行目が読めません: {理由}'
@@ -439,13 +439,13 @@ functions:
       - name: test_load_word_lists
         case: 正常
         summary: 対応表を読み込む
-        condition: '`word-list` の行（`paths: [docs/word-list/*.yaml]`）を持つ `dev-docs.yaml` と、`id: x`・`kind: word-list` の対応表 1 つ、`kind: rule` の文書 1 つを持つ一時フォルダ'
+        condition: '`word-list` の行（`paths: [docs/word-list/*.yaml]`）を持つ `project-index.yaml` と、`id: x`・`kind: word-list` の対応表 1 つ、`kind: rule` の文書 1 つを持つ一時フォルダ'
         mock: なし（一時ディレクトリ）
         expected: '`{"x": [...]}` で、`kind: rule` の文書は入らない'
       - name: test_load_word_lists_when_no_row
         case: 正常
         summary: word-list の行が無い
-        condition: '`documents[]` に `word-list` の行を持たない `dev-docs.yaml`'
+        condition: '`documents[]` に `word-list` の行を持たない `project-index.yaml`'
         mock: なし（一時ディレクトリ）
         expected: 空の対応
       - name: test_load_word_lists_when_broken

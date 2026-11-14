@@ -1,7 +1,7 @@
 id: "MOD-72-6"
 visibility: internal
 title: "検査と変換のスクリプト / scripts / check_all.py"
-lead: 手元から呼ぶ「全ての文書の検査」。`dev-docs.yaml` の `documents[]` が指す全ての文書に、スキーマの検査と文書の違反の検査を適用し、`schemas/design/` の設計書のスキーマと `schemas/` の直下のスキーマにスキーマ自身の検査を適用し、終了コードで合否を返却する（IF-72-3）。
+lead: 手元から呼ぶ「全ての文書の検査」。`project-index.yaml` の `documents[]` が指す全ての文書に、スキーマの検査と文書の違反の検査を適用し、`schemas/design/` の設計書のスキーマと `schemas/` の直下のスキーマにスキーマ自身の検査を適用し、終了コードで合否を返却する（IF-72-3）。
 data_models:
   - name: Target
     title: 検査する文書
@@ -43,7 +43,7 @@ constants:
     container: scripts/check_all.py
     usecase: 全ての文書の検査
     summary: '`documents[]` に無く、yamllint を適用するリポジトリの直下のファイル'
-    value: ("dev-docs.yaml", "rules.yaml")
+    value: ("project-index.yaml", "rules.yaml")
   - name: DESIGN_SCHEMAS_DIR
     title: 設計書のスキーマのフォルダ
     container: scripts/check_all.py
@@ -79,8 +79,8 @@ functions:
       1. argparse で引数を読み込み、標準出力を UTF-8 にする
       2. lint の CLI の在りかを確認する（lint の CLI の在りかの確認）
          - 見つからない CLI がある場合、見つからない CLI ごとに標準エラーへ `{CLI} がありません。開発コマンドの『環境構築（クローン直後）』で入れてください` を出し `2` を返却する
-      3. 作業ディレクトリの `dev-docs.yaml` の `documents[]` を読み込む（dev-docs.yaml の読み込み）
-         - 読み込めない dev-docs.yaml の場合、標準エラーへ理由を出し `2` を返却する
+      3. 作業ディレクトリの `project-index.yaml` の `documents[]` を読み込む（project-index.yaml の読み込み）
+         - 読み込めない project-index.yaml の場合、標準エラーへ理由を出し `2` を返却する
       4. 拡張したメタスキーマの検査器を作る（拡張したメタスキーマの読み込み）
          - 使用できない拡張したメタスキーマの場合、標準エラーへ理由を出し `2` を返却する
       5. 検査する文書を列挙し（検査する文書の列挙）、並列に読み込む（ファイルの並列の読み込み）
@@ -97,7 +97,7 @@ functions:
       - name: test_main
         case: 正常
         summary: 違反の無いリポジトリ
-        condition: '`dev-docs.yaml`・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・違反の無い `docs/rule/` の文書 2 件を持つ一時フォルダ'
+        condition: '`project-index.yaml`・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・違反の無い `docs/rule/` の文書 2 件を持つ一時フォルダ'
         mock: lint の CLI の在りかの確認を両方とも見つかったパスに、lint の検査を空を返却する関数に差し替える
         expected: '`0` を返却し、標準出力の最後の行が `2 件の文書を検査し、違反は 0 件、警告は 0 件でした`'
       - name: test_main_when_violations
@@ -144,10 +144,10 @@ functions:
         expected: '`2` を返却し、標準エラーに `schemas/meta.schema.yaml` が出る'
       - name: test_main_when_config_missing
         case: 正常
-        summary: dev-docs.yaml が無い
-        condition: '`dev-docs.yaml` を持たない一時フォルダ'
+        summary: project-index.yaml が無い
+        condition: '`project-index.yaml` を持たない一時フォルダ'
         mock: lint の CLI の在りかの確認を差し替える
-        expected: '`2` を返却し、標準エラーに `dev-docs.yaml` が出る'
+        expected: '`2` を返却し、標準エラーに `project-index.yaml` が出る'
       - name: test_main_when_design_documents
         case: 正常
         summary: 設計書の行
