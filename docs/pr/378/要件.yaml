@@ -1,0 +1,35 @@
+docs:
+  - page: docs/rule/python-testing-workflow.yaml
+    new: true
+    change: 規約『GitHub Actions の workflow のテスト』を新設する。入口が trigger の workflow のインターフェース定義のフロー 1 つを pytest から gh を呼ぶテストの関数 1 つにする書き方（検証用のブランチの push → gh workflow run → gh run watch --exit-status → gh run view --json conclusion,jobs で step ごとの結論と期待値の確認 → gh run download で成果物の確認 → ブランチの削除）と、手元で回す層であることを定める。gh の呼び方はテンプレート『テスト実行方法』の run_runner の例と統一する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T09:42:09.603187+00:00'
+  - page: docs/rule/python-testing-layers.yaml
+    new: false
+    change: E2E テストの workflow のテスト（tests/e2e/workflow/）から規約『GitHub Actions の workflow のテスト』への参照を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T09:42:09.603187+00:00'
+  - page: rules.yaml
+    new: false
+    change: 新しい規約を tests/e2e/workflow/ のテストのファイルに当てる行を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T09:42:09.603187+00:00'
+scope_out:
+  - item: テンプレート『インターフェース定義』と schemas/design/interface.schema.yaml の、入口が trigger の workflow の test_file・flows[].test から新しい規約への参照
+    reason: テストを記載するときは rules.yaml の行で tests/e2e/workflow/ のファイルに新しい規約が当たるため、設計書の書式側に参照は要らない
+    plan: none
+  - item: 規約『テストの種類と配置』のファイル配置への tests/nfr/ の追加
+    reason: 同じ規約を触るが別の要望で、#374 が扱う
+    plan: '#374'
+  - item: knowledge 自身の workflow のテストの作成
+    reason: '規約の記載までが要望で、workflow の作成は #352 が扱う'
+    plan: '#352'
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 規約を 1 つ追加し、既存の規約とルールの索引を修正するため、全ての文書の検査が通るかを確認する
+    depends_on: []

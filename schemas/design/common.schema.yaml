@@ -653,14 +653,14 @@ $defs:
               title: 元の列
               description: 関連が結ぶ元の実体の列の名前。
               x-used-by:
-                - 実装で、外部キーの列にする。
+                - 実装で、外部キーが参照する列にする。
                 - 生成で、線の元の列にする。
             to_column:
               type: string
               title: 先の列
               description: 関連が結ぶ先の実体の列の名前。
               x-used-by:
-                - 実装で、外部キーが参照する列にする。
+                - 実装で、外部キーの列にする。
                 - 生成で、線の先の列にする。
             from_cardinality:
               $ref: "#/$defs/er_cardinality"
