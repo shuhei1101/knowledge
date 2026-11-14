@@ -142,6 +142,7 @@ categories:
   - name: 取り込み前の検査
     prerequisites:
       - 環境構築（クローン直後）を実行してある
+      - Node.js 24 以降と、ネットワークへの接続（`npx -y` が mdmark のタグの中身と依存を呼ぶたびに取る。外部ライブラリ『mdmark』）
     commands: |-
       1. 全ての文書の検査を実行する（違反があれば終了コード 1 で、違反を 1 件 1 行で出す）
 
@@ -150,7 +151,7 @@ categories:
       ```
 
       2. 単体テストと静的検査は、テスト実行方法の各層の全件実行のコマンドを実行する
-    effects: 文書 267 件で約 60 秒（WSL の `/mnt/c` の worktree。markdownlint-cli2・textlint を 1 回ずつ起動する）。既定の lint の設定は全てのルールを error にし、違反を違反の行で出す
+    effects: 文書 267 件で約 60 秒（WSL の `/mnt/c` の worktree。markdownlint-cli2・textlint を 1 回ずつ起動する）。map を含む文書があれば、mdmark の `check --text` を 1 回起動する。既定の lint の設定は全てのルールを error にし、違反を違反の行で出す
     refs:
       - TP-72-1#layers[単体テスト（バック）]
       - TP-72-1#layers[lint]
