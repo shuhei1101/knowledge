@@ -1,0 +1,28 @@
+設計書のスキーマのタグの作成:
+  説明: 作業 PR を develop へマージした後に、`design-schemas/v*` の最新のタグのマイナーを上げたタグ（今の最新は `design-schemas/v8.0.0` で、作るタグは `design-schemas/v8.1.0`）を、メッセージに `(#348)` を入れて develop の squash commit へ作成して push する（省略できるキーの追加と説明文の修正で、既存の設計書は検査を通ったままのため、マイナーを上げる）。切り戻しは、メッセージに `(#348)` を持つタグだけを削除する
+  タグ: [タグ, スキーマ]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: 設計書のスキーマのタグの作成/疎通確認.sh
+  実行: 設計書のスキーマのタグの作成/実行.sh
+  確認: 設計書のスキーマのタグの作成/確認.sh
+  切り戻し: 設計書のスキーマのタグの作成/切り戻し.sh
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグが `design-schemas/v8.1.0` で、その commit の `schemas/design/architecture.schema.yaml` が `common.schema.yaml#/$defs/aliases` を参照し、`schemas/knowledge-files.schema.yaml` が `inject_when` を持つ"
+  状態: "-"
+AI Monitor へのタグの連絡:
+  説明: タグを作成した後に、shuhei1101/ai-monitor#3430 の会話欄へ作成したタグの名前を記載し、shuhei1101/ai-monitor#3430 に `確認:planner` を付ける（#336 の依頼）。切り戻しは置かない（記載したコメントは AI Monitor の planner が読み、付けた `確認:planner` はその planner が外すため、戻す対象が残らない）
+  タグ: [連絡]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: AI Monitor へのタグの連絡/疎通確認.sh
+  実行: AI Monitor へのタグの連絡/実行.sh
+  確認: AI Monitor へのタグの連絡/確認.sh
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: shuhei1101/ai-monitor#3430 の会話欄に `design-schemas/v8.1.0` と `(shuhei1101/knowledge#348)` を記載したコメントがあり、shuhei1101/ai-monitor#3430 のイベントに、記載したコメントより後の `確認:planner` の付与がある
+  状態: "-"

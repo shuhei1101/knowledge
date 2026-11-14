@@ -20,6 +20,11 @@ properties:
           title: ファイルのパス
           description: 管理用の YAML のフォルダからの相対パス。1 行 1 ファイルで記載し、glob は入れない。
           minLength: 1
+        id:
+          type: string
+          title: 文書の ID
+          description: 'ファイルの文書の変わらない ID。配信の設定の行に `alias_type` を付けて、この管理用の YAML の行をエイリアスとして照合させるときに入れる。'
+          minLength: 1
         name:
           type: string
           title: 名前
@@ -28,6 +33,15 @@ properties:
           type: string
           title: 概要文
           description: '1 文で「何を受け持つか」と「どんなときに参照するか」を入れる（例 `タスクの保存と取得を受け持つ。保存先や検索の条件を変えるときに参照する`）。関数の一覧・実装の手順は入れない。'
+        aliases:
+          type: array
+          title: 別名
+          description: 本文や会話でこのファイルの文書を呼ぶ別の名前。
+          items:
+            type: string
+            minLength: 1
+        inject_when:
+          $ref: knowledge-common.schema.yaml#/$defs/inject_when
         tags:
           type: array
           title: タグ

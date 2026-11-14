@@ -36,8 +36,8 @@ items:
       | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
       | --- | --- | --- | --- | --- | --- | --- | --- | --- |
       | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 検査で、ほかの設計書の参照（`{ID}#{項目のパス}`）の解決先にする。<br>生成で、ページの名前と、ほかの設計書からのリンク先にする。 | `IF-12` / `IF-3038-1` |
-      | title | タイトル | string | 必須 | - | - | 日本語の部品名。ファイル名に合わせる。 | 生成で、ページの見出しにする。<br>dev-docs の検索で、文書の名前にする。 | `状態のバッジ` / `列見出し` |
-      | lead | 冒頭リード | string | - | - | - | 部品が何を出すかを 1〜3 行で説明する。<br>初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。 | 生成で、ページの冒頭の説明にする。<br>dev-docs の検索で、文書の概要文にする。 | - |
+      | title | タイトル | string | 必須 | - | - | 日本語の部品名。ファイル名に合わせる。 | 生成で、ページの見出しにする。<br>project-index の検索で、文書の名前にする。 | `状態のバッジ` / `列見出し` |
+      | lead | 冒頭リード | string | - | - | - | 部品が何を出すかを 1〜3 行で説明する。<br>初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。 | 生成で、ページの冒頭の説明にする。<br>project-index の検索で、文書の概要文にする。 | - |
       | implementation | 実装 | string | 必須 | - | pattern: `^[^#\s]+(#\S+)?$` | 部品の実装の場所。リポジトリの直下からのファイルのパスに、`#` と部品の名前（マクロ・コンポーネント）を続ける。 | 実装で、部品を修正するファイルとシンボルを決める。<br>レビューで、部品設計と実装の差分を突き合わせる。 | `src/app/components/macros.html#header_controls` |
       | story | Storybook | string | 必須 | - | pattern: `^[A-Za-z][A-Za-z0-9]*(/[A-Za-z][A-Za-z0-9]*)+$` | Storybook のストーリーのタイトル。 | 実装で、Storybook のストーリーのタイトルにする。<br>結合テストで、開くストーリーを決める。 | `Plan/StatusBadge` / `Common/Topbar` |
       | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | ストーリーを開いて確認する結合テストのファイル（規約『V字モデル』）。 | テストで、ストーリーを開いて確認する結合テストを作るファイルにする。<br>検査で、テストのファイルがあるかを確認する。 | `tests/integration/storybook/test_計画画面の部品.py` |
@@ -82,7 +82,11 @@ items:
       | refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
-      | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>dev-docs の配信で、文書の公開範囲のメタデータにする。 | - |
+      | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>project-index の配信で、文書の公開範囲のメタデータにする。 | - |
+      | tags | タグ | array | - | - | - | 設計書を検索で絞り込むタグで、`name` にタグの名前（`action:`・`topic:`・`tool:` などで始める）、最も分量の多い主題 1 つに `main: true` を記載する。<br>付け方は knowledge の規約『文書のタグと description の記載』に従う。 | project-index の検索で、文書をタグで絞り込む。 | `[{main: true, name: topic:タグ}, name: action:記載]` |
+      | tags[].name | タグの名前 | string | 必須 | - | minLength: `1` | タグの名前。`action:`・`topic:`・`tool:` などで始める。 | 検索で、文書をタグで絞り込む値にする。 | - |
+      | tags[].main | 主題 | boolean | - | - | - | 最も分量の多い主題のタグだけ `true` にする。 | 検索で、文書の主題のタグとして扱う。 | - |
+      | aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | project-index の検索で、文書を名前と同じように検索できる言い換えにする。 | - |
       | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
 
       <!-- /table -->

@@ -1,0 +1,17 @@
+scope_out:
+  - item: 公開済みでアイコンの無い拡張機能（shuhei1101/mdmark の ShuheiNishikawa.mdmark-vscode）へのアイコンの登録
+    reason: knowledge の外のリポジトリの作業で、この PR で追加する規約に従って行う
+    plan: shuhei1101/mdmark#559
+docs:
+  - page: docs/rule/dev-vscode-extension-distribution.yaml
+    new: false
+    change: 新しい group「アイコン」に icon-01 を追加する（初めて公開する前に SVG の案をユーザーに確認して図案を決める・決まった SVG を原本として配置し .vscodeignore で .vsix から除く・package.json の icon に書き出した PNG のパスを記載する）。sources に Extension Manifest を追加し、description・タグを合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T02:42:00.740658+00:00'
+  - page: rules.yaml
+    new: false
+    change: 変更なし。icon-01 で編集する package.json の icon と .vscodeignore は、既存の paths（**/vscode/package.json・**/.vscodeignore）で注入される
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T02:42:00.740658+00:00'

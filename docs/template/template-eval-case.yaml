@@ -33,7 +33,11 @@ items:
 
       | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
       | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-      | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>dev-docs の配信で、文書の公開範囲のメタデータにする。 | - |
+      | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>project-index の配信で、文書の公開範囲のメタデータにする。 | - |
+      | tags | タグ | array | - | - | - | 設計書を検索で絞り込むタグで、`name` にタグの名前（`action:`・`topic:`・`tool:` などで始める）、最も分量の多い主題 1 つに `main: true` を記載する。<br>付け方は knowledge の規約『文書のタグと description の記載』に従う。 | project-index の検索で、文書をタグで絞り込む。 | `[{main: true, name: topic:タグ}, name: action:記載]` |
+      | tags[].name | タグの名前 | string | 必須 | - | minLength: `1` | タグの名前。`action:`・`topic:`・`tool:` などで始める。 | 検索で、文書をタグで絞り込む値にする。 | - |
+      | tags[].main | 主題 | boolean | - | - | - | 最も分量の多い主題のタグだけ `true` にする。 | 検索で、文書の主題のタグとして扱う。 | - |
+      | aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | project-index の検索で、文書を名前と同じように検索できる言い換えにする。 | - |
       | summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | どんな場面で、何を確認するか。 | 実行で、結果の一覧の説明にする。 | `朝に空腹が閾値を越えている` |
       | split | 用途 | string | 必須 | `tune` / `holdout` | - | `tune`（プロンプトを修正するときに参照する）か `holdout`（修正が有効かの確認だけに使用し、修正する側には点だけを示す）。 | 実行で、修正するときに指定する結果を分ける。 | - |
       | inputs | 入力 | object | 必須 | - | - | 入力のデータ。キーは、最初の対象が『LLM の呼び出し』なら `inputs[].from` の指すデータ、『エージェントの定義』ならきっかけのメッセージ。 | 実行で、評価の対象に指定する入力を組み立てる。 | - |
@@ -44,7 +48,8 @@ items:
       | criteria[].rubric[].score | 点 | number | 必須 | `0` / `0.25` / `0.5` / `0.75` / `1` | - | この行の点。 | 実行で、採点の結果の値にする。 | - |
       | criteria[].rubric[].description | 様子 | string | 必須 | - | - | その点になる出力の様子。ケースの値は `{名前}` で入れる。 | 実行で、採点のプロンプトの基準の文にする。 | `{need} を満たす行動の中で、最も合うものを選んでいる` |
       | criteria[].custom | このケースだけの観点 | object | - | - | - | このケースだけで採点する観点。『精度評価の観点』のファイルと同じキーで記載する。 | 実行で、採点する観点に加える。 | `{method: llm, pass: 0.75, question: '{need} が閾値を越えているとき、それを満たす行動を選んでいるか', rubric: [{description: '{need} を満たす行動の中で、最も合うものを選んでいる', score: 1}, {description: '{need} を満たす行動を選んでいるが、より合う選択肢がある', score: 0.75}, {description: '{need} をいくらか満たすが、ほかの状態を損ねる行動を選んでいる', score: 0.5}, {description: '{need} にほとんど関係しない行動を選んでいる', score: 0.25}, {description: '{need} を悪化させる行動を選んでいる', score: 0}], tags: [aspect:状況の判断], title: 状態に合う}` / `{check: {function: aituber.evals.checks.mermaid:is_valid, gate: true}, method: rule, tags: [aspect:形式], title: Mermaid の図が描画できる}` |
-      | criteria[].custom.visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>dev-docs の配信で、文書の公開範囲のメタデータにする。 | - |
+      | criteria[].custom.visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>project-index の配信で、文書の公開範囲のメタデータにする。 | - |
+      | criteria[].custom.aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | project-index の検索で、文書を名前と同じように検索できる言い換えにする。 | - |
       | criteria[].custom.title | 表示名 | string | 必須 | - | - | 観点の表示名。 | 実行で、結果の一覧の見出しにする。 | `状態に合う` |
       | criteria[].custom.method | 確認の方法 | string | 必須 | `rule` / `llm` / `human` | - | `rule`（判定の関数が合否と理由を返却する）/ `llm`（採点の LLM が採点の基準で点を付ける）/ `human`（採点の LLM の点を人が確定する）。 | 検査で、確認の方法ごとのキーの要否を確認する。<br>実行で、採点の流れを決める。 | - |
       | criteria[].custom.tags | タグ | array | 必須 | - | minItems: `1` | 何を確認するかの `aspect:{語彙}` を 1 つ以上と、難しい観点の `difficulty:high`。 | 実行で、タグごとに点を集計する。<br>レビューで、対象に要る `aspect:` が全て付いた観点と、`difficulty:high` の観点が 1 つ以上あるかを確認する。 | `[aspect:状況の判断, difficulty:high]` |
