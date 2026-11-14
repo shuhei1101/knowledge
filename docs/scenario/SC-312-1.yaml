@@ -38,7 +38,7 @@ scenarios:
       <!-- /map -->
     expected:
       - '`skills/text-review/SKILL.md` の本文に、変えた工程の `body` が出る'
-      - '`skills/text-review/SKILL.md` の frontmatter の `name` が `text-review`、`description` が設計書の `summary`、`argument-hint` と `allowed-tools` が設計書の `skill` の値'
+      - '`skills/text-review/SKILL.md` の frontmatter の `name` が `text-review`、`description` が設計書の `summary`、`argument-hint` が `skill.arguments[0].hint`、`arguments` が `[range]`、`allowed-tools` が `skill.allowed_tools`'
       - 標準出力に `skills/text-review/SKILL.md` だけが出る
       - 続けてもう一度実行すると、どのファイルも書き換えず、標準出力が空で終了コード 0
     test: test_normal
