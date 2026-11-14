@@ -1,0 +1,48 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-slop-check-system-message-skill-generation-mcp-names
+configfile: pytest.ini
+collected 199 items / 2 errors
+
+==================================== ERRORS ====================================
+___________ ERROR collecting tests/unit/scripts/test_build_skills.py ___________
+ImportError while importing test module '/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-slop-check-system-message-skill-generation-mcp-names/tests/unit/scripts/test_build_skills.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/scripts/test_build_skills.py:7: in <module>
+    from build_skills import (
+E   ModuleNotFoundError: No module named 'build_skills'
+__________ ERROR collecting tests/unit/slop-check/test_slop_check.py ___________
+ImportError while importing test module '/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-slop-check-system-message-skill-generation-mcp-names/tests/unit/slop-check/test_slop_check.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/slop-check/test_slop_check.py:14: in <module>
+    from slop_check import (
+E   ImportError: cannot import name 'build_system_message' from 'slop_check' (/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-slop-check-system-message-skill-generation-mcp-names/plugins/slop-check/hooks/post-tool-use/slop_check.py)
+=========================== short test summary info ============================
+ERROR tests/unit/scripts/test_build_skills.py
+ERROR tests/unit/slop-check/test_slop_check.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!!
+============================== 2 errors in 4.65s ===============================
+exit code: 2
+$ uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-slop-check-system-message-skill-generation-mcp-names
+configfile: pytest.ini
+collected 0 items / 1 error
+
+==================================== ERRORS ====================================
+__________ ERROR collecting tests/unit/slop-check/test_slop_check.py ___________
+ImportError while importing test module '/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-slop-check-system-message-skill-generation-mcp-names/tests/unit/slop-check/test_slop_check.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/slop-check/test_slop_check.py:14: in <module>
+    from slop_check import (
+E   ImportError: cannot import name 'build_system_message' from 'slop_check' (/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-slop-check-system-message-skill-generation-mcp-names/plugins/slop-check/hooks/post-tool-use/slop_check.py)
+=========================== short test summary info ============================
+ERROR tests/unit/slop-check/test_slop_check.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 1.30s ===============================
+exit code: 2
