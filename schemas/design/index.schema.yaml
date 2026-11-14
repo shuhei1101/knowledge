@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 title: 目次
-description: フォルダ 1 つの直下の目次。`dev/` と `docs/` の各フォルダに `index.yaml` として配置する。
+description: フォルダ 1 つの直下の目次。`docs/` の各フォルダに `index.yaml` として配置する。
 x-rules:
   - README は `index.yaml` から生成して commit する。
   - '`index.yaml` を配置しないフォルダは文書の索引から除外される。'
@@ -15,7 +15,7 @@ properties:
   title:
     type: string
     title: タイトル
-    description: '`dev/` と `docs/` の直下だけが持つ見出し。'
+    description: '`docs/` の直下だけが持つ見出し。'
     x-used-by:
       - 生成で、`README.md` の見出しにする。
     x-rules:
