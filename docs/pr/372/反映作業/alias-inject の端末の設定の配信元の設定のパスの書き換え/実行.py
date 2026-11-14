@@ -29,10 +29,12 @@ def main(args: list[str]) -> int:
     if not SETTINGS.is_file():
         return fail("前提確認", f"{SETTINGS} がありません")
     if not NEW_CONFIG.is_file():
-        return fail(
-            "前提確認",
-            f"{NEW_CONFIG} がありません（作業 PR が develop へ入っていないか、develop の worktree が古い）",
-        )
+        if not dry_run:
+            return fail(
+                "前提確認",
+                f"{NEW_CONFIG} がありません（作業 PR が develop へ入っていないか、develop の worktree が古い）",
+            )
+        print(f"{NEW_CONFIG} の有無: missing")
     before = SETTINGS.read_text(encoding="utf-8")
     lines = before.splitlines(keepends=True)
     done = lines.count(NEW_LINE) == 1 and lines.count(OLD_LINE) == 0
