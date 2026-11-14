@@ -22,6 +22,6 @@ scope_out:
   - item: '`schemas/design/layout.schema.yaml` を `write_docs` の `kind: layout` へ案内する行'
     reason: 'PR #359 で `paths` の行を作っておらず、`**/docs/layout/*.yaml` と `write_docs`（`operations.id` が `LAY-`）には規約『フォルダ構成の切り方とレビュー』の行が当たる'
     plan: none
-  - item: 'PR #359 の行に無い設計書のスキーマ（agent・agent_flow・component・launch・llm_call・mcp_server・evaluation・eval_criterion・eval_case）を `write_docs` へ案内する行'
-    reason: 'この種類を使用するプロジェクトが無い（PR #359 のスコープ外と同じ）'
+  - item: 設計書のスキーマ（agent・launch・llm_call・mcp_server・evaluation・eval_criterion・eval_case）を `write_docs` へ案内する行
+    reason: knowledge・ai-monitor・rule-inject・project-index・alias-inject・voice-paste の配信の設定の documents[] に、このスキーマを使用する種類が無い
     plan: none
