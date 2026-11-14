@@ -32,13 +32,17 @@ properties:
   visibility:
     $ref: common.schema.yaml#/$defs/doc_visibility
     title: 公開範囲
+  tags:
+    $ref: common.schema.yaml#/$defs/tags
+  aliases:
+    $ref: common.schema.yaml#/$defs/aliases
   title:
     type: string
     title: タイトル
     description: 起動の構成の表示名。
     x-used-by:
       - 生成で、ページの見出しにする。
-      - dev-docs の検索で、文書の名前にする。
+      - project-index の検索で、文書の名前にする。
     examples:
     - ブレインノードの起動
   lead:
@@ -47,7 +51,7 @@ properties:
     description: 起動の構成を 1〜3 行で説明する。
     x-used-by:
       - 生成で、ページの冒頭の説明にする。
-      - dev-docs の検索で、文書の概要文にする。
+      - project-index の検索で、文書の概要文にする。
     x-rules:
       - 初回に記載した内容のまま保ち、後から情報を追加しない。
     examples:

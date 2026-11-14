@@ -38,15 +38,16 @@ items:
       | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
       | --- | --- | --- | --- | --- | --- | --- | --- | --- |
       | id | ID | string | 必須 | - | pattern: `^[a-z0-9]+(-[a-z0-9]+)*(/[a-z0-9]+(-[a-z0-9]+)*)*$` | 文書の ID。フォルダ構成で `id_root` を付けたフォルダからのパスから `.yaml` を除いたもの。 | 設計で、`steps[].ref`・`steps[].calls[].flow`・`steps[].calls[].skill` から指す。<br>生成で、エージェントフローの索引の ID の列にする。<br>実行で、エージェントがエージェントフローを取得する ID にする。 | `brain/stream/on-event` |
-      | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>dev-docs の配信で、文書の公開範囲のメタデータにする。 | - |
+      | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>project-index の配信で、文書の公開範囲のメタデータにする。 | - |
+      | aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | project-index の検索で、文書を名前と同じように検索できる言い換えにする。 | - |
       | type | 種類 | string | - | `flow` / `skill` | - | `flow`（エージェントが MCP で参照するエージェントフロー）か `skill`（SKILL.md として配布するスキル）。記載しなければ `flow`。 | 検査で、種類ごとのキーの要否を確認する。<br>生成で、`skill` なら SKILL.md を作り、エージェントフローの索引に出さない。 | - |
       | title | 手順の名前 | string | - | - | - | 手順の名前。記載しなければ、パスの段階の `stages[].title`。 | 生成で、エージェントフローの索引の手順の列と、Markdown に変換したときの見出しにする。 | `イベントの手順` |
-      | summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 手順の概要（1 文）。 | dev-docs の検索で、文書の概要文にする。<br>生成で、`type` が `skill` なら SKILL.md の `description` にする。 | `コメントと状態を取得し、次の一手を決めて演出指示書を書き込む` |
+      | summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 手順の概要（1 文）。 | project-index の検索で、文書の概要文にする。<br>生成で、`type` が `skill` なら SKILL.md の `description` にする。 | `コメントと状態を取得し、次の一手を決めて演出指示書を書き込む` |
       | condition | 実行条件 | string | - | - | pattern: `^[^\n]+$`, minLength: `1` | 手順を実行する条件。`type` が `flow` のときだけ記載する。 | 生成で、エージェントフローの索引の実行条件の列にする。<br>実行で、エージェントが参照する手順を決める。 | `「次へ」を受けたとき` |
       | agents | 使用するエージェント | array | - | - | - | この手順を使用する『エージェントの定義』への参照。複数のエージェントが使用する共通の手順で記載する。 | 生成で、エージェントフローの索引をエージェントごとに作る。 | `[AG-1#, AG-2#]` |
       | triggers | きっかけ | array | - | - | - | この手順を実行するきっかけで、『エージェントの定義』の `triggers[]` への参照。記載しなければ、パスの段階の `stages[].trigger`。 | レビューで、きっかけごとにエージェントフローがあるかを確認する。 | `['AG-1#triggers[external-event]']` |
       | embed_only | 埋め込み専用 | boolean | - | - | - | `true` なら、ほかの手順の `steps[].ref` で埋め込むだけの部品にする。記載しなければ `false`。 | 生成で、`true` の手順をエージェントフローの索引に出さない。 | - |
-      | tags | タグ | array | - | - | - | 検索で絞り込むタグ。 | dev-docs の検索で、文書の絞り込みにする。 | `[topic:コメント]` |
+      | tags | タグ | array | - | - | - | 検索で絞り込むタグ。 | project-index の検索で、文書の絞り込みにする。 | `[topic:コメント]` |
       | skill | スキル | object | - | - | - | スキルに固有の項目。`type` が `skill` のときだけ記載する。 | 生成で、SKILL.md の配置先と frontmatter にする。 | - |
       | skill.path | 配置先 | string | 必須 | - | pattern: `^\S+/SKILL\.md$` | 生成する SKILL.md の、リポジトリの直下からのパス。 | 生成で、SKILL.md を書き出す先にする。 | `plugins/mindstella/skills/setup/SKILL.md` |
       | skill.name | 名前 | string | - | - | - | スキルの名前。記載しなければ `path` のフォルダ名。 | 生成で、SKILL.md の `name` にする。 | `setup` |

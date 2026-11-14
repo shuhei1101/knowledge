@@ -1,0 +1,86 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存リポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: スキーマのキーと説明文の変更で、起こす設計書が無い
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めを依頼する Issue ではない
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: '`common.schema.yaml#/$defs/tags`・`$defs/aliases` は layout のスキーマで使用していて、未検証の技術機構に依存しない'
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: ユースケースの流れを変えない（スキーマのキーと説明文だけを変える）
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 利用者に見える画面を変えない
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面の追加・削除と画面遷移の変更を含まない
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: 単一ユースケース設計
+    status: skipped
+    reason: シナリオの手順を変えない
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: モック作成
+    status: skipped
+    reason: 利用者に見える画面を変えない
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: インターフェース定義設計
+    status: skipped
+    reason: 生成・検査のスクリプトの入出力を変えない
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: 部品設計
+    status: skipped
+    reason: 変更が画面に及ばない
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: 変更が画面に及ばない
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: モジュール構成設計
+    status: skipped
+    reason: スクリプトの処理を変えない
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: ドキュメント修正
+    status: done
+    note: schemas/design の各種別のスキーマへの tags・aliases の追加と、検索・配信の持ち主の記述の修正、schemas/knowledge-files.schema.yaml への id・aliases・inject_when の追加、docs/template/ の生成し直し
+    updated_by: planner
+    updated_at: '2026-11-14T02:08:44.290510+00:00'
+  - process: 単体テスト作成
+    status: skipped
+    reason: スクリプトを変えず、対応する単体テストが無い
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
+  - process: 実装
+    status: done
+    note: 反映作業『設計書のスキーマのタグの作成』のスクリプト
+    updated_by: planner
+    updated_at: '2026-11-14T02:23:59.574557+00:00'
+  - process: 結合テスト作成
+    status: skipped
+    reason: スクリプトを変えず、対応する結合テストが無い
+    updated_by: planner
+    updated_at: '2026-11-14T01:48:44.103457+00:00'
