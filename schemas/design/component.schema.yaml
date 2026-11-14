@@ -32,7 +32,7 @@ properties:
     description: 日本語の部品名。ファイル名に合わせる。
     x-used-by:
       - 生成で、ページの見出しにする。
-      - dev-docs の検索で、文書の名前にする。
+      - project-index の検索で、文書の名前にする。
     examples:
     - "状態のバッジ"
     - "列見出し"
@@ -44,7 +44,7 @@ properties:
       初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。
     x-used-by:
       - 生成で、ページの冒頭の説明にする。
-      - dev-docs の検索で、文書の概要文にする。
+      - project-index の検索で、文書の概要文にする。
   implementation:
     type: string
     title: 実装
@@ -475,6 +475,10 @@ properties:
   visibility:
     $ref: common.schema.yaml#/$defs/doc_visibility
     title: 公開範囲
+  tags:
+    $ref: common.schema.yaml#/$defs/tags
+  aliases:
+    $ref: common.schema.yaml#/$defs/aliases
   notes:
     $ref: common.schema.yaml#/$defs/notes
 examples:

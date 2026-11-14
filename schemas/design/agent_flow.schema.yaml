@@ -32,6 +32,8 @@ properties:
   visibility:
     $ref: common.schema.yaml#/$defs/doc_visibility
     title: 公開範囲
+  aliases:
+    $ref: common.schema.yaml#/$defs/aliases
   type:
     type: string
     title: 種類
@@ -55,7 +57,7 @@ properties:
     title: 概要
     description: 手順の概要（1 文）。
     x-used-by:
-      - dev-docs の検索で、文書の概要文にする。
+      - project-index の検索で、文書の概要文にする。
       - 生成で、`type` が `skill` なら SKILL.md の `description` にする。
     examples:
     - コメントと状態を取得し、次の一手を決めて演出指示書を書き込む
@@ -103,7 +105,7 @@ properties:
     title: タグ
     description: 検索で絞り込むタグ。
     x-used-by:
-      - dev-docs の検索で、文書の絞り込みにする。
+      - project-index の検索で、文書の絞り込みにする。
     uniqueItems: true
     items:
       type: string

@@ -114,7 +114,7 @@ $defs:
     description: 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。
     x-used-by:
       - 生成で、文書を Pages に出すかを決める。
-      - dev-docs の配信で、文書の公開範囲のメタデータにする。
+      - project-index の配信で、文書の公開範囲のメタデータにする。
     enum:
     - public
     - internal
@@ -123,7 +123,7 @@ $defs:
     title: 別名
     description: 検索でヒットさせたい言い換え。
     x-used-by:
-      - dev-docs の検索で、文書を名前と同じように検索できる言い換えにする。
+      - project-index の検索で、文書を名前と同じように検索できる言い換えにする。
     items:
       type: string
       minLength: 1
@@ -136,7 +136,7 @@ $defs:
       設計書を検索で絞り込むタグで、`name` にタグの名前（`action:`・`topic:`・`tool:` などで始める）、最も分量の多い主題 1 つに `main: true` を記載する。
       付け方は knowledge の規約『文書のタグと description の記載』に従う。
     x-used-by:
-      - dev-docs の検索で、文書をタグで絞り込む。
+      - project-index の検索で、文書をタグで絞り込む。
     uniqueItems: true
     items:
       type: object

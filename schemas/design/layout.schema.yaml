@@ -40,7 +40,7 @@ properties:
     description: 設計書の表示名。
     x-used-by:
       - 生成で、ページの見出しにする。
-      - dev-docs の検索で、文書の名前にする。
+      - project-index の検索で、文書の名前にする。
     examples:
     - aituber
   repository:
@@ -60,7 +60,7 @@ properties:
     description: リポジトリのフォルダ構成を 1〜3 行で説明する。
     x-used-by:
       - 生成で、ページの冒頭の説明にする。
-      - dev-docs の検索で、文書の概要文にする。
+      - project-index の検索で、文書の概要文にする。
     x-rules:
       - 初回に記載した内容のまま保ち、後から情報を追加しない。
       - 対象そのものが変わったときだけ書き換える。
@@ -330,7 +330,7 @@ $defs:
         title: ID の起点
         description: '`type` が `folder` のときだけ記載する。配下のファイルの文書の ID を、このフォルダからのパスにするか。'
         x-used-by:
-          - 検索で、dev-docs が配下の文書の ID をフォルダからのパスにする。
+          - 検索で、project-index が配下の文書の ID をフォルダからのパスにする。
       convention:
         type: string
         title: 配下の規約

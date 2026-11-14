@@ -22,13 +22,17 @@ properties:
   visibility:
     $ref: common.schema.yaml#/$defs/doc_visibility
     title: 公開範囲
+  tags:
+    $ref: common.schema.yaml#/$defs/tags
+  aliases:
+    $ref: common.schema.yaml#/$defs/aliases
   title:
     type: string
     title: タイトル
     description: '`設定: {サブシステム名}`。'
     x-used-by:
       - 生成で、ページの見出しにする。
-      - dev-docs の検索で、文書の名前にする。
+      - project-index の検索で、文書の名前にする。
     pattern: '^設定: .+$'
   lead:
     $ref: common.schema.yaml#/$defs/markdown
@@ -38,7 +42,7 @@ properties:
       初回に記載した内容のまま保ち、後から情報を追加しない。
     x-used-by:
       - 生成で、ページの冒頭の説明にする。
-      - dev-docs の検索で、文書の概要文にする。
+      - project-index の検索で、文書の概要文にする。
   files:
     type: array
     title: ファイル一覧

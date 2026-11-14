@@ -35,7 +35,8 @@ items:
 
       | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
       | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-      | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>dev-docs の配信で、文書の公開範囲のメタデータにする。 | - |
+      | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>project-index の配信で、文書の公開範囲のメタデータにする。 | - |
+      | aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | project-index の検索で、文書を名前と同じように検索できる言い換えにする。 | `[フォルダ構成の設計書]` |
       | title | 表示名 | string | 必須 | - | - | 観点の表示名。 | 実行で、結果の一覧の見出しにする。 | `状態に合う` |
       | method | 確認の方法 | string | 必須 | `rule` / `llm` / `human` | - | `rule`（判定の関数が合否と理由を返却する）/ `llm`（採点の LLM が採点の基準で点を付ける）/ `human`（採点の LLM の点を人が確定する）。 | 検査で、確認の方法ごとのキーの要否を確認する。<br>実行で、採点の流れを決める。 | - |
       | tags | タグ | array | 必須 | - | minItems: `1` | 何を確認するかの `aspect:{語彙}` を 1 つ以上と、難しい観点の `difficulty:high`。 | 実行で、タグごとに点を集計する。<br>レビューで、対象に要る `aspect:` が全て付いた観点と、`difficulty:high` の観点が 1 つ以上あるかを確認する。 | `[aspect:状況の判断, difficulty:high]` |
