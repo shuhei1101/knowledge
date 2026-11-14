@@ -16,3 +16,5 @@ AI Monitor と各プロジェクトが、knowledge の `schemas/design/` と `sc
 | ファイル | 中身 |
 | --- | --- |
 | [要件](./要件.md) | 要望の整理 |
+| [文書](./文書.md) | 文書の計画書 |
+| [反映作業](./反映作業/index.yaml) | develop へマージした後の設計書のスキーマのタグの作成と AI Monitor への連絡 |
