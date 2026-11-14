@@ -22,7 +22,6 @@ import argparse
 import io
 import re
 import sys
-import time
 import traceback
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
@@ -46,7 +45,6 @@ from referencing.jsonschema import DRAFT202012
 from ruamel.yaml.error import YAMLError
 
 from _common import (
-    LIMIT_SEC,
     ConfigError,
     DocumentError,
     as_mapping,
@@ -72,7 +70,6 @@ from _lint import (
     run_markdown_lints,
     run_yamllint,
 )
-from _maid import find_maid
 from build_word_list import COPY, SOURCE, render_copy
 from knowledge_checks import build_id_index, build_name_index, check_document
 
@@ -160,12 +157,9 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     try:
         # 検査の CLI が 1 つでも無ければ検査を始めない
-        executable = find_maid()
         lint_clis = find_lint_clis(lint_dir)
-        missing = [
-            name for name, found in {"maid": executable, **lint_clis}.items() if found is None
-        ]
-        if executable is None or missing:
+        missing = [name for name, found in lint_clis.items() if found is None]
+        if missing:
             for name in missing:
                 print(_CLI_MISSING.format(name=name), file=sys.stderr)
             return _EXIT_NOT_STARTED
@@ -190,7 +184,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         for target in targets:
             text = texts[root / target.path]
             for line, path, message in check_target(
-                target, text, validators[target.schema], root, executable, index, names
+                target, text, validators[target.schema], root, index, names
             ):
                 print(f"{target.path}:{line}: {path}: {message}")
                 count += 1
@@ -304,7 +298,6 @@ def check_target(
     text: str | None,
     validator: Draft202012Validator | str,
     root: Path,
-    executable: str,
     index: Mapping[str, frozenset[str]],
     names: Mapping[str, Sequence[tuple[str, str]]],
 ) -> list[tuple[int, str, str]]:
@@ -328,8 +321,7 @@ def check_target(
 
     # 文書の違反の検査は、validators に knowledge-checks を持つ行の文書だけに当てる
     if target.checks:
-        deadline = time.monotonic() + LIMIT_SEC
-        for violation in check_document(text, root, executable, deadline, index=index, names=names):
+        for violation in check_document(text, root, index=index, names=names):
             line, rule = _split_line(violation["rule"])
             results.append((line, violation["path"], rule))
     return results
