@@ -1,0 +1,87 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: changed
+    detail: 全ての文書の検査の前に確かめる CLI から maid を外し、maid が見つからないときの異常シナリオを lint の CLI が見つからないときのシナリオへ置き換える
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: changed
+    detail: mermaid の文法の違反を前提にした書き込みの異常シナリオを、別の違反（ID の重複 等）へ置き換え、maid を入れる前提条件を外す
+    depends_on: []
+docs:
+  - page: docs/rule/dev-yaml.yaml
+    new: false
+    change: '`inspection-04` の「mermaid の文法など」の例と `inspection-05`（mermaid の検査）と `tool:mermaid` のタグを削除する'
+    status: todo
+  - page: docs/interface/IF-72-1.py.yaml
+    new: false
+    change: maid の確認・呼び出しのフロー、maid が無いときの異常系、終了コード 2、maid の打ち切りの時間の制約を削除する
+    status: todo
+  - page: docs/interface/IF-72-3.py.yaml
+    new: false
+    change: 検査の前に確かめる CLI と、見つからないときの異常系・終了条件から maid を外す
+    status: todo
+  - page: docs/module/MOD-72-3.py.yaml
+    new: false
+    change: '`_maid.py` のモジュール構成を削除する'
+    status: todo
+  - page: docs/module/MOD-72-1.yaml
+    new: false
+    change: 構成図と説明から `_maid.py` を外す
+    status: todo
+  - page: docs/module/MOD-72-4.py.yaml
+    new: false
+    change: maid の在りかの確認・mermaid のブロックの検査・終了コード 2 と、テストの maid の差し替えを削除する
+    status: todo
+  - page: docs/module/MOD-72-6.py.yaml
+    new: false
+    change: 検査の前の在りかの確認とテストの差し替えから maid を外す
+    status: todo
+  - page: docs/module/index.yaml
+    new: false
+    change: '`_maid.py` の行を削除する'
+    status: todo
+  - page: docs/library/LIB-72-3.yaml
+    new: false
+    change: 外部ライブラリ maid を削除する
+    status: todo
+  - page: docs/library/index.yaml
+    new: false
+    change: maid の行を削除する
+    status: todo
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: 構成図のノード・線と外部システムから maid を削除する
+    status: todo
+  - page: docs/dev-command/CMD-72-1.yaml
+    new: false
+    change: 環境構築の maid の導入・バージョンの更新・所要時間と前提の maid の記述を削除する
+    status: todo
+  - page: docs/nonfunctional/NFR-72-1.yaml
+    new: false
+    change: 処理時間の打ち切りと動作環境の根拠から maid の呼び出しを外す
+    status: todo
+  - page: docs/test-procedure/TP-72-1.yaml
+    new: false
+    change: maid の前提条件と差し替えのスクリプトの記述を削除する
+    status: todo
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: '`scripts/` の配置から `_maid.py` を削除する'
+    status: todo
+  - page: README.md
+    new: false
+    change: 検査の説明の mermaid の文法と、`@probelabs/maid` の配置の手順を削除する
+    status: todo
+  - page: dev-docs.yaml
+    new: false
+    change: knowledge-checks の説明から mermaid の文法の検査を外す
+    status: todo
+scope_out:
+  - item: map（`<!-- map -->`〜`<!-- /map -->`）の中の ```mermaid のブロックの文法の検査を、maid から mdmark の点検（`mdmark check`。map の Mermaid を `parseFlowchart`・`parseSequence` で読んで誤りを返す）へ置き換えること
+    reason: 判断が分かれている。#272・#333 で設計書とテンプレートの図は map の中の Mermaid になり、#333 の要件は「map の ```mermaid のブロックは maid の検査の対象になる」としていた。maid を削除すると、knowledge の全ての文書の検査と書き込みの検査で map の Mermaid の文法を確かめる手段が無くなる（`write_docs` の mdmark の点検は MCP からの書き込みだけに当たる）。planner の判断は、描く側の mdmark の点検が map の Mermaid を検査するため置き換えを今回の要望に含める。レビューで確定する
+    plan: to_file
+  - item: '`template-eval-criterion`・`schemas/design/eval_criterion.schema.yaml` の記載例の「Mermaid の図が描画できる」（`aituber.evals.checks.mermaid:is_valid`）'
+    reason: 精度評価の観点の記載例で、knowledge の検査の maid とは関係しない
+    plan: none
