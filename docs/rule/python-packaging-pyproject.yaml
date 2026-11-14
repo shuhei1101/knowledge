@@ -153,7 +153,7 @@ items:
       name = "依存の向き"
       type = "layers"
       layers = [
-          "mypkg.server",
+          "mypkg.server | mypkg.ui",
           "mypkg.features",
           "mypkg.integrations | mypkg.runtime",
           "mypkg.shared",
@@ -168,6 +168,12 @@ items:
       name = "integrations の独立"
       type = "independence"
       modules = ["mypkg.integrations.*"]
+
+      [[tool.importlinter.contracts]]
+      name = "ui から features へ"
+      type = "forbidden"
+      source_modules = ["mypkg.ui"]
+      forbidden_modules = ["mypkg.features", "mypkg.integrations"]
 
       [tool.pytest]
       testpaths = ["tests"]
