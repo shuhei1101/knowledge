@@ -9,7 +9,7 @@ scenarios:
       - name: 作業場所
         description: knowledge の worktree
       - name: 書き込む内容
-        description: スキーマに合い、ID の重複・参照切れ・mermaid の誤りが無い規約の YAML
+        description: スキーマに合い、ID の重複・参照切れが無く、mdmark の警告が無い規約の YAML
         notes: '`tags` はタグの名前の配列（`["scope:dev"]`）、`main_tags` は主題のタグの名前（`["scope:dev"]`）で指定する'
     flow: |-
       <!-- map -->
@@ -39,7 +39,7 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: 書き込む内容
-        description: スキーマには合うが、`subgraph` の `end` が抜けた mermaid を持つ規約の YAML
+        description: スキーマには合うが、項目の ID（`items[].id`）が重複した規約の YAML
     flow: |-
       <!-- map -->
 
@@ -57,7 +57,7 @@ scenarios:
       <!-- /map -->
     expected:
       - 作業ツリーの文書が変わらない
-      - 応答が `isError` で、違反の `path` が mermaid を持つ項目のパス、`rule` に文書の行と maid の内容が入る
+      - 応答が `isError` で、違反の `path` が後に出た項目の `id` のパス、`rule` に文書の行と重複した項目の ID が入る
     test: test_error_when_validator_reports_violation
   - name: 異常シナリオ（Markdown の本文に mdmark の警告がある）
     setup:
@@ -113,7 +113,6 @@ primary_actor: エージェント
 trigger: エージェントが規約を追加・修正する
 preconditions:
   - knowledge が project-index に登録され、配信中
-  - 検査のスクリプトが使用する maid が Linux 側に入り、PATH で見つかる
   - '`check --text` を持つ mdmark の CLI が Linux 側に入り、PATH で見つかる'
 success_guarantee: 違反の無い内容だけが knowledge の作業ツリーに書き込まれる。
 minimal_guarantee: 違反のある内容・`scope.write` の外からの書き込みは、ファイルを変えずに `isError` で返却する。
