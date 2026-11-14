@@ -26,7 +26,7 @@ from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, cast
 
 from build_templates import BuildError, load_schemas
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, ValidationError
 from ruamel.yaml import YAML
 from ruamel.yaml.error import YAMLError
 
@@ -115,7 +115,7 @@ def plan_skills(root: Path) -> list[SkillPlan]:
     # 全ての設計書をエージェントフローのスキーマで検査し、違反を全て集める
     validator = Draft202012Validator({"$ref": SCHEMA_NAME}, registry=schemas.registry)
     violations = [
-        f"{path}: {format_path(list(error.absolute_path)) or '(最上位)'}: {error.message}"
+        f"{path}: {_error_path(error)}: {error.message}"
         for path, doc in docs.items()
         for error in validator.iter_errors(cast("Any", doc))  # pyright: ignore[reportUnknownMemberType]
     ]
@@ -134,6 +134,20 @@ def plan_skills(root: Path) -> list[SkillPlan]:
             raise BuildError(str(path), f"skill.path がリポジトリの外を指します: {skill_path}")
         plans.append(SkillPlan(path=skill_path, text=text))
     return plans
+
+
+def _error_path(error: ValidationError) -> str:
+    """違反の項目のパスを返却する。必須のキーが無い違反は、無いキーを親のパスの後ろにつなぐ。"""
+    parts: list[str | int] = list(error.absolute_path)
+    # required の違反: absolute_path は親を指し、無いキーの名前はメッセージの先頭の repr にだけ入る
+    if error.validator == "required":
+        missing = [
+            key
+            for key in _list(error.validator_value)
+            if isinstance(key, str) and error.message.startswith(repr(key))
+        ]
+        parts.extend(missing[:1])
+    return format_path(parts) or "(最上位)"
 
 
 def load_skill_docs(root: Path) -> dict[PurePosixPath, Mapping[str, object]]:
