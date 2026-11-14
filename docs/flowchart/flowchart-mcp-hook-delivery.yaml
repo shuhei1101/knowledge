@@ -66,15 +66,16 @@ items:
       <!-- /map -->
 
       ※[mcp-hook-delivery-n1]: 起動する場所が決まらないセッション: 手元の任意のフォルダで開くセッションや、プロジェクトを問わず全エージェントが使用するもの。
-          例: project-index・rule-inject
+          例: project-index・rule-inject。
 
-      ※[mcp-hook-delivery-n2]: 起動する側のプログラム: AI Monitor のエージェント・aituber のノードの `claude -p` のように、プログラムが起動のコマンドと作業フォルダを決めるもの
+      ※[mcp-hook-delivery-n2]: 起動する側のプログラム: プログラムが起動のコマンドと作業フォルダを決めるもの。
+          例: AI Monitor のエージェント・aituber のノードの `claude -p`。
 
       ※[mcp-hook-delivery-n3]: 起動の引数: MCP は `--mcp-config`（ほかの MCP を参照させないときは `--strict-mcp-config` も）で指定する。
-          フック・許可・ツールの絞り込みは `--settings` のファイルで指定する
+          フック・許可・ツールの絞り込みは `--settings` のファイルで指定する。
 
       ※[mcp-hook-delivery-n4]: リポジトリのファイル: 人がリポジトリの中（作業ツリーを含む）で起動するときに使用する。
-          `.mcp.json` のサーバーは、`.claude/settings.json` の `enabledMcpjsonServers` で承認しておく
+          `.mcp.json` のサーバーは、`.claude/settings.json` の `enabledMcpjsonServers` で承認しておく。
   - id: delivery-target-01
     group: 渡すものごとの置き場所
     name: 指定するものごとの配置先の表

@@ -52,19 +52,19 @@ items:
       <!-- /map -->
 
       ※[test-location-n1]: 手元でしか用意できないもの: 手元の Claude Code と実 LLM・手元で常駐するサーバー。
-          Windows 側のファイル（`/mnt/c`）・端末の設定ファイルと秘密鍵も含む
+          Windows 側のファイル（`/mnt/c`）・端末の設定ファイルと秘密鍵も含む。
 
       ※[test-location-n5]: マーカーを付けたテスト: pytest の marker・Playwright の tag など、テストの実行器が選び分けられるマーカー。
           マーカーを付けたテストは skip にせず、ランナーの全件実行では実行器の選び分け（pytest の `-m "not {マーカー}"`・Playwright の `--grep-invert` 等）で除く。
-          マーカーを付けたテストは手元で回し、手元の全件実行はマーカーの有無によらず全件を回す
+          マーカーを付けたテストは手元で回し、手元の全件実行はマーカーの有無によらず全件を回す。
 
-      ※[test-location-n2]: 外部のサービスへ実際に接続する: 検証用のリポジトリへの書き込み・Webhook の送信・外部 API の疎通の確認
+      ※[test-location-n2]: 外部のサービスへ実際に接続する: 検証用のリポジトリへの書き込み・Webhook の送信・外部 API の疎通の確認。
 
-      ※[test-location-n3]: workflow の中で入れられる道具: apt・uv・npm・Playwright のブラウザ・公開されている配布元から取得するバイナリ
+      ※[test-location-n3]: workflow の中で入れられる道具: apt・uv・npm・Playwright のブラウザ・公開されている配布元から取得するバイナリ。
 
       ※[test-location-n4]: runner にした層: 手元の全件実行・個別実行のコマンドも残し、ランナーで回せないとき（無料枠の使い切り・GitHub の障害）は手元で回す。
           ランナーで回したときの skip の件数が手元と同じかを確認する。
-          リポジトリの公開・非公開は判定に入れない
+          リポジトリの公開・非公開は判定に入れない。
   - id: job-limit-01
     group: 1 ジョブの上限を超えそうな層
     name: タイムアウトと分割

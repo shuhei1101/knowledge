@@ -105,17 +105,17 @@ items:
       <!-- /map -->
 
       ※[react-state-placement-n1]: URL に配置する値: タブ・フィルタ・ソート・ページ・選択中の ID。
-          個人情報・フォームの入力中の値・読み込み中とエラーの表示・スクロール位置は、URL に出さない
+          個人情報・フォームの入力中の値・読み込み中とエラーの表示・スクロール位置は、URL に出さない。
 
       ※[react-state-placement-n2]: 戻したい値: 戻る・別の画面からリンクで再度入る・再読み込みの後に戻したい値（スクロール位置・最後のタブや絞り込み・端末ごとの好み）。
-          スクロール位置は TanStack Router の `scrollRestoration` で戻す（[URL の状態](id:react-state-url-state#scroll-restoration-01)）
+          スクロール位置は TanStack Router の `scrollRestoration` で戻す（[URL の状態](id:react-state-url-state#scroll-restoration-01)）。
 
       ※[react-state-placement-n3]: Zustand の使用方法: store は公開せず、カスタム hook だけを export する。
           selector で必要な値だけを購読し、actions は state と分ける。
           永続化は `persist` を使用し、保存先（sessionStorage・localStorage）は [画面の状態の保持先](id:flowchart-screen-state-retention) の結果に合わせる。
           サーバーのデータとフォームの値は入れない。
-          画面をまたぐ store は `shared/stores/` に配置する
+          画面をまたぐ store は `shared/stores/` に配置する。
 
       ※[react-state-placement-n4]: Context の使用方法: 1 つの Context は 1 つの責務にする。
           Provider と同じファイルに `use{Name}` を export し、Provider の外で呼んだら throw する。
-          SPA ではルートの上に配置した Provider がページを移っても消えないので、ページをまたぐだけなら Context で足りる
+          SPA ではルートの上に配置した Provider がページを移っても消えないので、ページをまたぐだけなら Context で足りる。
