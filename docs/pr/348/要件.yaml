@@ -1,0 +1,44 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: run_only
+    detail: tags・aliases を持たせ、検索・配信の持ち主の記述を直したスキーマから、設計書のテンプレートを生成し直す。生成の手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 変えたスキーマがスキーマ自身の検査を通り、テンプレートがスキーマと一致し、管理用の YAML（scripts/files.yaml・skills/files.yaml）が検査を通ることを確かめる。検査の手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: none
+    detail: knowledge の文書のスキーマと書き込みの検査の結果を変えない（管理用の YAML は省略できるキーの追加だけ）
+    depends_on: []
+  - kind: composite
+    scenario: docs/scenario/SC-72-1.yaml
+    impact: none
+    detail: 規約の引き方を変えない
+    depends_on: []
+docs:
+  - page: schemas/design/
+    new: false
+    change: 種別のスキーマ（`common.schema.yaml`・`index.schema.yaml` を除く）の最上位の `properties` に、`common.schema.yaml#/$defs/tags`・`$defs/aliases` を指す `tags`・`aliases` を追加する（既に持つ `layout` はそのまま。独自の `tags` を持つ `agent_flow`・`eval_criterion` は要件.md の未確定の推奨案で `aliases` だけを追加する）。文書の検索・配信の持ち主を dev-docs とする記述（`x-used-by` の「dev-docs の検索で」「dev-docs の配信で」、`layout` の「dev-docs が配下の文書の ID を…」）を project-index にする。画面の記述（「dev-docs の画面…」）は変えない
+    status: todo
+  - page: schemas/knowledge-files.schema.yaml
+    new: false
+    change: '`files.items.properties` に `id`（文書の ID。`alias_type` を付けた行で要る）・`aliases`・`inject_when`（alias-inject の照合条件）を追加する。型は `knowledge-common.schema.yaml` の `$defs` を参照する'
+    status: todo
+  - page: docs/template/
+    new: false
+    change: '`uv run --frozen --script scripts/build_templates.py` で設計書のテンプレートを生成し直す'
+    status: todo
+scope_out:
+  - item: AI Monitor のコピーにあるシナリオの `issue`・モジュール構成の `functions[].callers`・`introduced` などのキーの取り込み
+    reason: '#266 で設けないと決めたキーで、AI Monitor 側の設計書から変換で除く（#336 の本文）'
+    plan: none
+  - item: AI Monitor の `files.schema.yaml` にある `files.items` の `visibility`・`category` の取り込み
+    reason: '#336 の要望は `id`・`aliases`・`inject_when` だけ。`files.items` は `additionalProperties` を閉じておらず、記載しても検査は通る。取り込むかはレビューで確定する'
+    plan: none
+  - item: '`schemas/terms.schema.yaml` の `description` の「dev-docs の行」（配信の設定 `dev-docs.yaml` の行）'
+    reason: '`schemas/design/` の外で、設定のファイル名を指す記述。#329 が `dev-docs.yaml` を `project-index.yaml` へ改名してファイル名の記述を合わせる'
+    plan: '#329'
