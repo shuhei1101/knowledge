@@ -415,16 +415,15 @@ def test_normal_when_templates_out_of_date(
 def test_error_when_check_cli_missing(
     run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
 ) -> None:
-    """maid・markdownlint-cli2・textlint のどれかが引けなければ検査を始めずに終わる（異常系）。"""
+    """markdownlint-cli2・textlint のどちらかが見つからなければ検査を始めずに終わる（異常系）。"""
     # 準備
     root = repo_factory({})
     missing = tmp_path / "missing-lint"
     # 実行
-    result = run_script("check_all", root, without_maid=True, args=["--lint-dir", str(missing)])
+    result = run_script("check_all", root, args=["--lint-dir", str(missing)])
     # 検証
     assert result.exit_code == 2
     assert result.stderr.splitlines() == [
-        "maid がありません。開発コマンドの『環境構築（クローン直後）』で入れてください",
         "markdownlint-cli2 がありません。開発コマンドの『環境構築（クローン直後）』で入れてください",
         "textlint がありません。開発コマンドの『環境構築（クローン直後）』で入れてください",
     ]
