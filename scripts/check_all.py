@@ -28,6 +28,9 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, cast
 
+from _workflow import check_workflows
+from build_skills import COMMAND as SKILLS_COMMAND
+from build_skills import SKILLS_DIR, plan_skills
 from build_templates import (
     COMMAND,
     SCHEMAS_DIR,
@@ -74,9 +77,6 @@ from _lint import (
     run_markdown_lints,
     run_yamllint,
 )
-from _workflow import check_workflows
-from build_skills import COMMAND as SKILLS_COMMAND
-from build_skills import SKILLS_DIR, plan_skills
 from build_word_list import COPY, SOURCE, render_copy
 from knowledge_checks import build_id_index, build_name_index, check_document
 
@@ -170,14 +170,10 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     try:
         # 検査の CLI が 1 つでも無ければ検査を始めない
-        lint_clis = find_lint_clis(lint_dir)
-        npx = shutil.which(_NPX)
-        missing = [name for name, found in {**lint_clis, _NPX: npx}.items() if found is None]
-        if missing or npx is None:
-            for name in missing:
-                print(_CLI_MISSING.format(name=name), file=sys.stderr)
+        found = _find_check_clis(lint_dir)
+        if found is None:
             return _EXIT_NOT_STARTED
-        clis = {name: path for name, path in lint_clis.items() if path is not None}
+        clis, npx = found
         root = Path.cwd()
         # project-index.yaml か拡張したメタスキーマを使えなければ検査を始めない
         try:
@@ -222,14 +218,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         warnings = _print_lints(findings)
         count += len(findings) - warnings
         # map の点検は lint の違反を出し終えてから呼び、失敗しても lint の違反は失わない
-        map_sources = [
-            source
-            for target in targets
-            if (text := texts[root / target.path]) is not None
-            for source in collect_map_sources(target.path, text)
-        ]
         try:
-            map_findings = run_map_check(map_sources, npx)
+            map_findings = run_map_check(_map_sources(root, targets, texts), npx)
         except MdmarkCheckError as error:
             print(f"mdmark の点検が失敗しました: {error.message}", file=sys.stderr)
             return _EXIT_NOT_STARTED
@@ -666,6 +656,29 @@ def check_design_templates(root: Path) -> list[tuple[str, int, str, str]]:
     return sorted(results, key=lambda result: result[0])
 
 
+def _find_check_clis(lint_dir: Path) -> tuple[dict[str, str], str] | None:
+    """lint の CLI と npx の在りかを引く。1 つでも無ければ標準エラーへ出して None を返却する。"""
+    lint_clis = find_lint_clis(lint_dir)
+    npx = shutil.which(_NPX)
+    missing = [name for name, path in {**lint_clis, _NPX: npx}.items() if path is None]
+    for name in missing:
+        print(_CLI_MISSING.format(name=name), file=sys.stderr)
+    if npx is None or missing:
+        return None
+    return {name: path for name, path in lint_clis.items() if path is not None}, npx
+
+
+def _map_sources(
+    root: Path, targets: Sequence[Target], texts: Mapping[Path, str | None]
+) -> list[LintSource]:
+    """中身を読み込めた文書ごとに、map を含む項目を取り出す。"""
+    return [
+        source
+        for target in targets
+        if (text := texts[root / target.path]) is not None
+        for source in collect_map_sources(target.path, text)
+    ]
+
 
 def _interface_docs(
     targets: Sequence[Target], texts: Mapping[Path, str | None], root: Path
@@ -712,6 +725,7 @@ def check_skills(root: Path) -> list[tuple[str, int, str, str]]:
             )
         )
     return sorted(results, key=lambda result: result[0])
+
 
 if __name__ == "__main__":
     sys.exit(main())

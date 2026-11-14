@@ -4,15 +4,19 @@ check_all.py が同じフォルダから import する。
 """
 
 import re
-from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
+from typing import TYPE_CHECKING, cast
 
-from ruamel.yaml.comments import CommentedMap
 from ruamel.yaml.error import YAMLError
 
 from _common import as_list, as_mapping, key_line, line_of, load_safe
 from _lint import extract_map_mermaid
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Mapping, Sequence
+
+    from ruamel.yaml.comments import CommentedMap
 
 # 突き合わせる workflow のファイルを配置するフォルダ
 WORKFLOWS_DIR = PurePosixPath(".github/workflows")
@@ -69,6 +73,11 @@ class Flowchart:
     edges: tuple[tuple[str, str, str], ...]
 
 
+def _view(doc: CommentedMap) -> Mapping[str, object]:
+    """設計書の文書を、文字列のキーで引ける形で返却する。"""
+    return cast("Mapping[str, object]", doc)
+
+
 def check_workflows(
     root: Path, docs: Sequence[tuple[PurePosixPath, CommentedMap]]
 ) -> list[tuple[str, int, str, str]]:
@@ -81,7 +90,7 @@ def check_workflows(
         check_steps,
     )
     for path, doc in docs:
-        entry = as_mapping(doc.get("entry"))
+        entry = as_mapping(_view(doc).get("entry"))
         # 入口が trigger でない設計書は突き合わせない
         if entry is None or entry.get("kind") != _TRIGGER_KIND:
             continue
@@ -102,7 +111,12 @@ def check_workflows(
             continue
         for check in checks:
             results.extend(
-                (str(path), line, item, f"workflow のファイル {workflow_file} と食い違います: {value}")
+                (
+                    str(path),
+                    line,
+                    item,
+                    f"workflow のファイル {workflow_file} と食い違います: {value}",
+                )
                 for line, item, value in check(doc, workflow)
             )
     return sorted(results, key=lambda result: (result[0], result[1]))
@@ -112,7 +126,7 @@ def _load_workflow(path: Path) -> Mapping[str, object] | None:
     """workflow のファイルを読み込む。無い・解釈できない・マッピングでなければ None。"""
     try:
         data = load_safe(path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, YAMLError):
+    except OSError, UnicodeDecodeError, YAMLError:
         return None
     return as_mapping(data)
 
@@ -153,13 +167,15 @@ def _filter_values(event: object) -> list[str]:
     for key in TRIGGER_FILTERS:
         raw = settings.get(key)
         # 1 つの値は文字列、複数の値は配列になる
-        values.extend([str(raw)] if isinstance(raw, str) else [str(item) for item in as_list(raw) or []])
+        values.extend(
+            [str(raw)] if isinstance(raw, str) else [str(item) for item in as_list(raw) or []]
+        )
     return values
 
 
 def check_trigger(doc: CommentedMap, workflow: Mapping[str, object]) -> list[Mismatch]:
     """on のイベント名と起動を絞る条件の値を、entry.value が含むかを比べる。"""
-    entry = as_mapping(doc.get("entry")) or {}
+    entry = as_mapping(_view(doc).get("entry")) or {}
     value = str(entry.get("value", ""))
     line = line_of(doc, ("entry", "value"))
     on = workflow.get("on")
@@ -183,7 +199,7 @@ def check_request(doc: CommentedMap, workflow: Mapping[str, object]) -> list[Mis
     on = as_mapping(workflow.get("on")) or {}
     dispatch = as_mapping(on.get("workflow_dispatch")) or {}
     inputs = as_mapping(dispatch.get("inputs")) or {}
-    requests = [as_mapping(item) or {} for item in as_list(doc.get("request")) or []]
+    requests = [as_mapping(item) or {} for item in as_list(_view(doc).get("request")) or []]
     names = [str(request.get("name", "")) for request in requests]
     # 名前の並びが違えば、要素ごとには比べない
     if names != list(inputs):
@@ -208,7 +224,7 @@ def check_request(doc: CommentedMap, workflow: Mapping[str, object]) -> list[Mis
 
 def check_exclusivity(doc: CommentedMap, workflow: Mapping[str, object]) -> list[Mismatch]:
     """exclusivity が concurrency の group の値と cancel-in-progress: {値} を含むかを比べる。"""
-    exclusivity = str(doc.get("exclusivity", ""))
+    exclusivity = str(_view(doc).get("exclusivity", ""))
     line = key_line(doc, "exclusivity") if "exclusivity" in doc else key_line(doc, "entry")
     concurrency = workflow.get("concurrency")
     # concurrency が無い workflow: cancel-in-progress を記載していれば食い違い
@@ -242,8 +258,13 @@ def _flowchart_of(value: object) -> Flowchart | None:
 def check_steps(doc: CommentedMap, workflow: Mapping[str, object]) -> list[Mismatch]:
     """overall_flow・flows[].flow のノード・subgraph・線のラベルを、step の name・ジョブの ID・if と比べる。"""
     results: list[Mismatch] = []
-    overall_line = key_line(doc, "overall_flow") if "overall_flow" in doc else key_line(doc, "entry")
-    jobs = {str(job_id): as_mapping(job) or {} for job_id, job in (as_mapping(workflow.get("jobs")) or {}).items()}
+    overall_line = (
+        key_line(doc, "overall_flow") if "overall_flow" in doc else key_line(doc, "entry")
+    )
+    jobs = {
+        str(job_id): as_mapping(job) or {}
+        for job_id, job in (as_mapping(workflow.get("jobs")) or {}).items()
+    }
     # ジョブごとの step の name と、if を持つ step（ジョブの ID、name、式）
     names_by_job: dict[str, list[str]] = {}
     step_ifs: list[tuple[str, str, str]] = []
@@ -255,7 +276,11 @@ def check_steps(doc: CommentedMap, workflow: Mapping[str, object]) -> list[Misma
             # name の無い step は全体の流れに描けない
             if not isinstance(name, str) or not name:
                 results.append(
-                    (overall_line, "overall_flow", f"{job_id} の {number} 番目の step に name がありません")
+                    (
+                        overall_line,
+                        "overall_flow",
+                        f"{job_id} の {number} 番目の step に name がありません",
+                    )
                 )
                 continue
             names_by_job[job_id].append(name)
@@ -263,20 +288,24 @@ def check_steps(doc: CommentedMap, workflow: Mapping[str, object]) -> list[Misma
                 step_ifs.append((job_id, name, _expression(settings["if"])))
     all_names = {name for names in names_by_job.values() for name in names}
 
-    chart = _flowchart_of(doc.get("overall_flow"))
+    chart = _flowchart_of(_view(doc).get("overall_flow"))
     # 全体の流れを読み取れなければ、step と分岐は比べない
     if chart is None:
         results.append((key_line(doc, "entry"), "overall_flow", "全体の流れがありません"))
     else:
-        results.extend(_compare_overall(chart, overall_line, jobs, names_by_job, all_names, step_ifs))
+        results.extend(
+            _compare_overall(chart, overall_line, jobs, names_by_job, all_names, step_ifs)
+        )
 
     # flows[].flow の step は、全てのジョブの step の name のどれか
-    for index, flow in enumerate(as_list(doc.get("flows")) or []):
+    for index, flow in enumerate(as_list(_view(doc).get("flows")) or []):
         flow_chart = _flowchart_of((as_mapping(flow) or {}).get("flow"))
         if flow_chart is None:
             continue
         line = line_of(doc, ("flows", index, "flow"))
-        unknown = [label for label in dict.fromkeys(flow_chart.nodes.values()) if label not in all_names]
+        unknown = [
+            label for label in dict.fromkeys(flow_chart.nodes.values()) if label not in all_names
+        ]
         results.extend((line, f"flows[{index}].flow", label) for label in unknown)
     return results
 
@@ -311,9 +340,13 @@ def _compare_overall(
         for node_id in sorted(node_ids):
             label = chart.nodes.get(node_id)
             if label is not None and label not in names_by_job[graph_id]:
-                results.append((line, "overall_flow", f"{label} は {graph_id} の step ではありません"))
+                results.append(
+                    (line, "overall_flow", f"{label} は {graph_id} の step ではありません")
+                )
     # if を持つ step・ジョブは、そこへ入る線のラベルに式を持つ
-    targets = [(name, expression, _node_ids(chart, job_id, name)) for job_id, name, expression in step_ifs]
+    targets = [
+        (name, expression, _node_ids(chart, job_id, name)) for job_id, name, expression in step_ifs
+    ]
     targets.extend(
         (job_id, _expression(job["if"]), set(chart.subgraphs.get(job_id, frozenset())))
         for job_id, job in jobs.items()
@@ -322,7 +355,9 @@ def _compare_overall(
     for name, expression, node_ids in targets:
         incoming = [label for _, target, label in chart.edges if target in node_ids]
         if not any(expression in label for label in incoming):
-            results.append((line, "overall_flow", f"{name} の if（{expression}）が線のラベルにありません"))
+            results.append(
+                (line, "overall_flow", f"{name} の if（{expression}）が線のラベルにありません")
+            )
     return results
 
 
@@ -400,6 +435,36 @@ def _parse_nodes(
     return ids
 
 
+def _parse_line(
+    line: str, nodes: dict[str, str], terminals: set[str], members: set[str] | None
+) -> list[tuple[str, str, str]]:
+    """flowchart の 1 行のノードを読み取り、行の中の線を返却する。"""
+    masked = _mask(line)
+    # 線の位置は括弧と |...| の外だけで探す
+    groups: list[list[str]] = []
+    labels: list[str] = []
+    start = 0
+    for edge in _EDGE.finditer(masked):
+        groups.append(
+            _parse_nodes(
+                line[start : edge.start()], masked[start : edge.start()], nodes, terminals, members
+            )
+        )
+        # -- {ラベル} --> と -->|{ラベル}| のラベルは元の行から取る（線の外のラベルは中を伏せていない）
+        name = "text" if edge.group("text") is not None else "pipe"
+        label = line[edge.start(name) : edge.end(name)] if edge.group(name) is not None else ""
+        labels.append(label.strip().strip('"'))
+        start = edge.end()
+    groups.append(_parse_nodes(line[start:], masked[start:], nodes, terminals, members))
+    # 隣り合う区間のノードの組みごとに線を作る
+    return [
+        (source, target, label)
+        for left, right, label in zip(groups, groups[1:], labels, strict=False)
+        for source in left
+        for target in right
+    ]
+
+
 def parse_flowchart(mermaid: str) -> Flowchart | None:
     """Mermaid の flowchart から、ノードの ID とラベル・subgraph・線を取り出す。"""
     lines = mermaid.strip().splitlines()
@@ -424,26 +489,7 @@ def parse_flowchart(mermaid: str) -> Flowchart | None:
                 stack.pop()
             continue
         members = subgraphs[stack[-1]] if stack else None
-        masked = _mask(line)
-        # 線の位置は括弧と |...| の外だけで探す
-        groups: list[list[str]] = []
-        labels: list[str] = []
-        start = 0
-        for edge in _EDGE.finditer(masked):
-            groups.append(_parse_nodes(line[start : edge.start()], masked[start : edge.start()], nodes, terminals, members))
-            text = edge.group("text")
-            pipe = edge.group("pipe")
-            if text is not None:
-                labels.append(line[edge.start("text") : edge.end("text")].strip().strip('"'))
-            elif pipe is not None:
-                labels.append(line[edge.start("pipe") : edge.end("pipe")].strip().strip('"'))
-            else:
-                labels.append("")
-            start = edge.end()
-        groups.append(_parse_nodes(line[start:], masked[start:], nodes, terminals, members))
-        # 隣り合う区間のノードの組みごとに線を作る
-        for left, right, label in zip(groups, groups[1:], labels, strict=False):
-            edges.extend((source, target, label) for source in left for target in right)
+        edges.extend(_parse_line(line, nodes, terminals, members))
     return Flowchart(
         nodes=nodes,
         subgraphs={graph_id: frozenset(ids) for graph_id, ids in subgraphs.items()},
