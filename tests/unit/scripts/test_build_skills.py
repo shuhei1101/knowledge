@@ -94,7 +94,13 @@ _B_DOC_OUTSIDE = (
 
 # flow の設計書
 _C_DOC = (
-    "id: c\ntype: flow\nsummary: C の流れ\nsteps:\n  - name: 実行する\n    body: C を実行する。\n"
+    "id: c\n"
+    "type: flow\n"
+    "summary: C の流れ\n"
+    "condition: C を実行するとき\n"
+    "steps:\n"
+    "  - name: 実行する\n"
+    "    body: C を実行する。\n"
 )
 
 
