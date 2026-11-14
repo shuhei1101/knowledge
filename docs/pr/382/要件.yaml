@@ -2,11 +2,15 @@ docs:
   - page: docs/rule/python-architecture-layout.yaml
     new: false
     change: 'top-level-01 のツリーに server/ と並べてデスクトップの画面の入口 ui/（任意: GUI・トレイを持つとき）を加え、server/ の節と同じ粒度で ui/ の構成例（画面ごとのウィンドウのフォルダ・スレッドの橋渡し・スタイル）と、features/ を直に呼ばず main.py から渡された関数を呼ぶ依存の向きの節を新設する。description の配置対象に ui を加える'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T09:58:24.322793+00:00'
   - page: docs/rule/python-architecture-dependency-management.yaml
     new: false
-    change: overview の図の最上位の層に ui を加え、same-layer-patterns-01 の表の「server でオーケストレーション」に ui の扱いを合わせる
-    status: todo
+    change: overview の図の最上位の層に ui を加え、依存方向のルールに ui が features・integrations を import せず main.py が組んだ関数を呼ぶ項目（dependency-rules-04）を加える。same-layer-patterns-01 の表は同層参照のパターンで、ui から features への向きは同層でないため変えない
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T09:58:24.322793+00:00'
 scope_out:
   - item: 規約『pyproject.toml 標準テンプレート』（docs/rule/python-packaging-pyproject.yaml）の import-linter の layers 契約へ mypkg.ui を加えることと、ui から features への forbidden 契約の追加
     reason: 判断が分かれる。依存の向きを規約に定めるなら検査の設定例も揃うのが望ましい一方、テンプレートは server も任意の注記なしで並べる標準形で、使わない入口を載せるかは要望の『やりたいこと』に含まれない。現時点の判断は含めない（任意のフォルダは各プロジェクトが自分の pyproject.toml に足す）。レビューで確定する
