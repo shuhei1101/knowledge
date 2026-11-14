@@ -49,7 +49,7 @@ items:
       | 種類が混ざる | 役割も機能も一致しない中身が入り、再分割が要るフォルダが無いか（[フォルダの中身の種類の決め方](id:flowchart-folder-content-type) で再分割になるフォルダ） |
       | まとめすぎ | 1 つのフォルダに複数の機能の単語が付き、機能が増えたときに分けにくくならないか |
       | 共通のものが深い | `used_by` が複数なのに、1 つの機能のフォルダの下にないか |
-      | 管理しないもの | 生成物・一時ファイルが `gitignore` にあるか。`generated_from` のエントリを手で編集していないか |
+      | 管理しないもの | 生成物・一時ファイルが `gitignore` にあるか。`gitignore` に無い生成物・複製は `generated_from.tracked` に git で管理する理由があるか。`generated_from` のエントリを手で編集していないか |
 tags:
   - name: scope:dev
   - name: topic:フォルダ
