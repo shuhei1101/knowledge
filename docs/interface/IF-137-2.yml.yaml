@@ -70,8 +70,8 @@ flows:
     setup:
       - name: Mock
         description: 差し替えない
-      - name: environment
-        description: '`github-pages` の配信を許すブランチから `develop` を除外する'
+      - name: Pages の設定
+        description: 'リポジトリの Pages の配信元を GitHub Actions 以外にする（`actions/deploy-pages` が配信の作成で失敗する）'
     flow: |-
       <!-- map -->
 
