@@ -2,50 +2,70 @@ docs:
   - page: docs/rule/dev-document-management.yaml
     new: false
     change: delivery-04・delivery-05 の開発ドキュメントサーバー・セットアップのスキル・端末の設定と、trace_related・設定・文書のメタデータの参照先を、文書の MCP・配信元の登録は project-index、画面は dev-docs に合わせて書き換える
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:07:12.653440+00:00'
   - page: docs/rule/claude-mcp-docs-server.yaml
     new: false
     change: description・overview・server-tool-unit-01・mdmark-yaml-role-01・registration-03〜05 の文書の MCP の持ち主を project-index に書き換える
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:07:12.653440+00:00'
   - page: docs/rule/claude-mcp.yaml
     new: false
     change: タグと when の文書を配信する MCP の持ち主を project-index に書き換える
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:07:12.653440+00:00'
   - page: docs/rule/dev-filter-condition.yaml
     new: false
     change: 参照先と filter の比べ方の持ち主を project-index に書き換える
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:07:12.653440+00:00'
   - page: docs/rule/dev-doc-tag-description.yaml
     new: false
     change: 'group_by: tags の集計の持ち主を project-index に書き換える'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:07:12.653440+00:00'
   - page: docs/rule/claude-hook.yaml
     new: false
     change: pretooluse-output-02 の表に「許可・拒否を判断せずに文脈を加える」の行を追加し、pretooluse-output-01 にこの場面を除く旨を添える
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:07:12.653440+00:00'
   - page: docs/flowchart/flowchart-mcp-hook-delivery.yaml
     new: false
     change: MCP の例の dev-docs を project-index に合わせる
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:07:12.653440+00:00'
   - page: docs/guide/guide-setup-apply-rule-index.yaml
     new: false
     change: 規約を検索・取得する MCP を project-index、画面を dev-docs に書き換える
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:07:12.653440+00:00'
   - page: README.md
     new: false
     change: 配信元の登録と MCP を project-index、画面を dev-docs に書き換え、使い方へのリンクの文を guide-setup-docs-mcp.yaml の名前に合わせる
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:07:12.653440+00:00'
   - page: CLAUDE.md
     new: false
     change: 配信元の登録を project-index に書き換える（dev-docs.yaml のファイル名は残す）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:07:12.653440+00:00'
 scope_out:
   - item: 配信の設定ファイル名 dev-docs.yaml の project-index.yaml への改名と、ファイル名の記述（CLAUDE.md・README.md・dev-document-management.yaml 等）の修正
     reason: '#329 が扱う。この PR ではファイル名を残し、持ち主の記述だけを書き換える'
     plan: '#329'
   - item: docs/rule/dev-tag-term-registration.yaml の dev-docs.yaml の記述
     reason: タグにしない識別子の例としてファイル名を挙げているだけで、MCP の持ち主の記述ではない（#328 の task-reviewer の確認のとおり）
-    plan: 対応しない
+    plan: none
 use_cases:
   - kind: single
     scenario: docs/scenario/SC-72-6.yaml
