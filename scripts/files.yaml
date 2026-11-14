@@ -6,8 +6,8 @@ files:
     tags: [topic:検査, topic:行番号, tool:ruamel.yaml]
   - path: knowledge_checks.py
     name: 文書の違反の検査
-    description: dev-docs の validators の knowledge-checks として、文書 1 件の項目の ID の重複・参照先の実在・aliases の衝突・文書の中の aliases の重複・mermaid の文法を検査する。スキーマで見られない決まりを追加・変更するときに参照する。
-    tags: [topic:検査, topic:参照, topic:mermaid, tool:dev-docs]
+    description: dev-docs の validators の knowledge-checks として、文書 1 件の項目の ID の重複・参照先の実在・aliases の衝突・文書の中の aliases の重複を検査する。スキーマで見られない決まりを追加・変更するときに参照する。
+    tags: [topic:検査, topic:参照, tool:dev-docs]
   - path: knowledge_markdown.py
     name: 文書の Markdown への変換
     description: dev-docs の converters の knowledge-markdown として、文書 1 件を項目の group の階層を見出しにした Markdown にし、本文の埋め込みのマーカーを対応表の表に展開する。画面での文書の見え方を変えるときに参照する。
