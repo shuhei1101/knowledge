@@ -2,11 +2,15 @@ docs:
   - page: schemas/design/layout.schema.yaml
     new: false
     change: x-rules の convention の行を、convention のフォルダでも生成物・複製のエントリだけは children に記載すると読める記載に修正し、examples の src/aituber の children を生成物のエントリにして x-rules と揃える。entries[].convention の description には書き足さない
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T21:38:29.176308+00:00'
   - page: docs/template/template-layout.yaml
     new: false
     change: スキーマの修正に合わせて scripts/build_templates.py で生成し直す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T21:38:29.176308+00:00'
 scope_out:
   - item: design-schemas のタグの作成
     reason: x-rules の説明文と examples の修正で検査の挙動が変わらず、各プロジェクトの設計書の検査結果は今のタグのままで変わらないため。タグを要する依頼元も無い
