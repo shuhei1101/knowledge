@@ -70,6 +70,7 @@ def test_normal(run_hook: RunHook, plugin_factory: PluginFactory) -> None:
         "| 形 | スキーマ・構造（形状の意味なら「形状」） |",
     ]
     assert "decision" not in output
+    assert output["systemMessage"] == "AI slop を検知: 直す・形（Write）"
 
 
 def test_normal_when_no_word_hits(run_hook: RunHook, plugin_factory: PluginFactory) -> None:
@@ -101,6 +102,7 @@ def test_normal_when_edit(run_hook: RunHook, plugin_factory: PluginFactory, tmp_
     # 検証
     assert result.exit_code == 0
     assert _rows(result.stdout) == ["| 版 | バージョン |"]
+    assert json.loads(result.stdout)["systemMessage"] == "AI slop を検知: 版（Edit）"
 
 
 def test_normal_when_edited_file_unreadable(
@@ -122,6 +124,7 @@ def test_normal_when_edited_file_unreadable(
     # 検証
     assert result.exit_code == 0
     assert _rows(result.stdout) == ["| 直す | 修正 |"]
+    assert json.loads(result.stdout)["systemMessage"] == "AI slop を検知: 直す（Edit）"
 
 
 def test_normal_when_notebook_edit(run_hook: RunHook, plugin_factory: PluginFactory) -> None:
@@ -134,6 +137,7 @@ def test_normal_when_notebook_edit(run_hook: RunHook, plugin_factory: PluginFact
     # 検証
     assert result.exit_code == 0
     assert _rows(result.stdout) == ["| 版 | バージョン |"]
+    assert json.loads(result.stdout)["systemMessage"] == "AI slop を検知: 版（NotebookEdit）"
 
 
 def test_normal_when_mcp_tool(run_hook: RunHook, plugin_factory: PluginFactory) -> None:
@@ -149,6 +153,10 @@ def test_normal_when_mcp_tool(run_hook: RunHook, plugin_factory: PluginFactory) 
     # 検証
     assert result.exit_code == 0
     assert _rows(result.stdout) == ["| 足す | 追加 |"]
+    assert (
+        json.loads(result.stdout)["systemMessage"]
+        == "AI slop を検知: 足す（project-index の write_docs）"
+    )
 
 
 def test_normal_when_tool_not_target(run_hook: RunHook, plugin_factory: PluginFactory) -> None:
@@ -202,3 +210,22 @@ def test_error_when_input_invalid(run_hook: RunHook, plugin_factory: PluginFacto
     assert result.exit_code == 0
     assert result.stdout == ""
     assert "JSON" in result.stderr
+
+
+def test_normal_when_dev_docs_mcp_tool(run_hook: RunHook, plugin_factory: PluginFactory) -> None:
+    """dev-docs の write_docs も、project-index の write_docs と同じく照合する（正常系）。"""
+    # 準備
+    root = plugin_factory(_ALL)
+    stdin = _input(
+        "mcp__plugin_dev-docs_dev-docs__write_docs",
+        {"operations": [{"op": "update", "id": "a", "set": {"body": "設定を足す。"}}]},
+    )
+    # 実行
+    result = run_hook(stdin, root)
+    # 検証
+    assert result.exit_code == 0
+    assert _rows(result.stdout) == ["| 足す | 追加 |"]
+    assert (
+        json.loads(result.stdout)["systemMessage"]
+        == "AI slop を検知: 足す（dev-docs の write_docs）"
+    )
