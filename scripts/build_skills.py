@@ -74,6 +74,8 @@ class SkillPlan:
     path: PurePosixPath
     # 組み立てた SKILL.md の中身（末尾は改行 1 つ）
     text: str
+    # 生成元の設計書のリポジトリの直下からのパス
+    source: PurePosixPath
 
 
 def _use_utf8(stream: object) -> None:
@@ -132,7 +134,7 @@ def plan_skills(root: Path) -> list[SkillPlan]:
         # 解決したパスがリポジトリの外なら書き出さない
         if not (root / skill_path).resolve().is_relative_to(root.resolve()):
             raise BuildError(str(path), f"skill.path がリポジトリの外を指します: {skill_path}")
-        plans.append(SkillPlan(path=skill_path, text=text))
+        plans.append(SkillPlan(path=skill_path, text=text, source=path))
     return plans
 
 

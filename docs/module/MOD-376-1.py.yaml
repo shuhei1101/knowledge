@@ -1,0 +1,371 @@
+id: MOD-376-1
+visibility: internal
+title: 検査と変換のスクリプト / scripts / _workflow.py
+lead: 全ての文書の検査で、入口が `trigger` の GitHub Actions の workflow のインターフェース定義と workflow のファイルの、起動の条件・リクエスト・排他・step・分岐を突き合わせる（IF-72-3）。
+data_models:
+  - name: Flowchart
+    title: 読み取ったフローチャート
+    container: scripts/_workflow.py
+    usecase: 全ての文書の検査
+    role: DTO
+    summary: map の Mermaid の `flowchart` 1 つから取り出したノード・`subgraph`・線
+    description: '`dataclass(frozen=True, slots=True)`。'
+    properties:
+      - name: nodes
+        type: dict[str, str]
+        description: ノードの ID → ラベル。開始・終わり（`([...])`）のノードを除く
+      - name: subgraphs
+        type: dict[str, frozenset[str]]
+        description: '`subgraph` の ID → その中で定義したノードの ID'
+      - name: edges
+        type: tuple[tuple[str, str, str], ...]
+        description: （線の元の ID、線の先の ID、ラベル）。`a & b --> c` は元ごとに分け、ラベルが無ければ空文字列
+constants:
+  - name: WORKFLOWS_DIR
+    title: workflow のフォルダ
+    container: scripts/_workflow.py
+    usecase: 全ての文書の検査
+    summary: 突き合わせる workflow のファイルを配置するフォルダの、リポジトリの直下からのパス
+    value: PurePosixPath(".github/workflows")
+  - name: TRIGGER_FILTERS
+    title: 起動を絞る条件のキー
+    container: scripts/_workflow.py
+    usecase: 全ての文書の検査
+    summary: '`on` のイベントの下で、値を `entry.value` が含むかを比べるキー'
+    value: ("branches", "branches-ignore", "tags", "paths", "paths-ignore", "types")
+functions:
+  - name: check_workflows
+    title: workflow のファイルの突き合わせ
+    kind: 関数
+    container: scripts/_workflow.py
+    usecase: 全ての文書の検査
+    role: サービス
+    scope: public
+    summary: 入口が `trigger` のインターフェース定義ごとに、`entry.value` が指す workflow のファイルと突き合わせ、食い違いを違反として返却する
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: workflow のファイルの起点
+      - name: docs
+        title: インターフェース定義
+        type: Sequence[tuple[PurePosixPath, CommentedMap]]
+        required: true
+        description: 読み込めたインターフェース定義のパスと文書
+    returns:
+      type: list[tuple[str, int, str, str]]
+      description: （設計書のパス、行、項目のパス、内容）。設計書のパスと行の順
+    process: |-
+      1. 文書ごとに、`entry.kind` が `trigger` でなければ飛ばす
+      2. workflow のパスを取り出し（workflow のパスの取り出し）、`None` なら飛ばす
+      3. `root / パス` を UTF-8 で読み込み、YAML として解釈する（安全な読み込み。YAML 1.2 で解釈するため `on` のキーは文字列のまま）
+         - 無い・解釈できない・マッピングでない場合、`(設計書のパス, entry.value の行, "entry.value", "workflow のファイル {パス} を読み込めません")` を追加して次へ進む
+      4. 起動の条件・リクエスト・排他・step と分岐を突き合わせ（起動の条件の突き合わせ・リクエストの突き合わせ・排他の突き合わせ・step と分岐の突き合わせ）、返却された（行、項目のパス、workflow の側の値）ごとに `(設計書のパス, 行, 項目のパス, "workflow のファイル {パス} と食い違います: {値}")` を追加する
+      5. 追加した違反をパスと行の順に返却する
+    unit_tests:
+      - name: test_check_workflows
+        case: 正常
+        summary: 食い違いが無い
+        condition: knowledge の IF-137-2 と `.github/workflows/pages.yml` のコピーを持つ一時フォルダ
+        mock: なし（一時ディレクトリ）
+        expected: 空
+      - name: test_check_workflows_when_not_trigger
+        case: 正常
+        summary: 入口が trigger でない
+        condition: '`entry.kind` が `operation` のインターフェース定義'
+        mock: なし
+        expected: 空
+      - name: test_check_workflows_when_file_missing
+        case: 正常
+        summary: workflow のファイルが無い
+        condition: '`entry.value` が `.github/workflows/none.yml` を指すインターフェース定義'
+        mock: なし（一時ディレクトリ）
+        expected: 1 件で、項目のパスが `entry.value`、内容に `.github/workflows/none.yml`
+      - name: test_check_workflows_when_differ
+        case: 正常
+        summary: 複数の食い違い
+        condition: 'IF-137-2 のコピーと、`cancel-in-progress: true` で `overall_flow` に無い `name` の step を 1 つ追加した `pages.yml`'
+        mock: なし（一時ディレクトリ）
+        expected: '`exclusivity` と `overall_flow` の 2 件が行の順に並ぶ'
+    callees:
+      - '#functions[workflow_path]'
+      - '#functions[check_trigger]'
+      - '#functions[check_request]'
+      - '#functions[check_exclusivity]'
+      - '#functions[check_steps]'
+      - MOD-72-2#functions[load_safe]
+      - MOD-72-2#functions[line_of]
+    refs:
+      - IF-72-3#constraints[workflow の突き合わせの範囲]
+      - IF-72-3#constraints[workflow の突き合わせ]
+  - name: workflow_path
+    title: workflow のパスの取り出し
+    kind: 関数
+    container: scripts/_workflow.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: '`entry.value` の最初のコードスパンが `WORKFLOWS_DIR` の `.yml`・`.yaml` を指すとき、そのパスを返却する'
+    args:
+      - name: value
+        title: 入口の値
+        type: str
+        required: true
+        description: '`entry.value`'
+    returns:
+      type: PurePosixPath | None
+      description: workflow のファイルのリポジトリの直下からのパス。指さなければ `None`
+    process: |-
+      1. 最初の `` `...` `` の中身を取り出し、無ければ `None` を返却する
+      2. 親が `WORKFLOWS_DIR` で拡張子が `.yml`・`.yaml` なら `PurePosixPath` で返却し、そうでなければ `None` を返却する
+    unit_tests:
+      - name: test_workflow_path
+        case: 正常
+        summary: workflow のパスを取り出す
+        condition: IF-137-2 の `entry.value`
+        mock: なし
+        expected: '`.github/workflows/pages.yml`'
+      - name: test_workflow_path_when_not_workflow
+        case: 正常
+        summary: workflow を指さない
+        condition: 最初のコードスパンが `scripts/a.py` の値と、コードスパンの無い値
+        mock: なし
+        expected: どちらも `None`
+    refs:
+      - IF-72-3#constraints[workflow の突き合わせの範囲]
+  - name: check_trigger
+    title: 起動の条件の突き合わせ
+    kind: 関数
+    container: scripts/_workflow.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: '`on` のイベント名と起動を絞る条件の値を、`entry.value` が含むかを比べる'
+    args:
+      - name: doc
+        title: インターフェース定義
+        type: CommentedMap
+        required: true
+        description: 設計書の文書
+      - name: workflow
+        title: workflow
+        type: Mapping[str, object]
+        required: true
+        description: 解釈した workflow のファイル
+    returns:
+      type: list[tuple[int, str, str]]
+      description: （行、項目のパス、workflow の側の値）。`check_workflows` が設計書のパスと workflow のパスを付けて内容にする
+    process: |-
+      1. `on` が文字列ならその 1 つ、配列なら要素、マッピングならキーをイベント名にする
+      2. マッピングのイベントの値がマッピングなら `TRIGGER_FILTERS` のキーの値を、`schedule` なら要素の `cron` を集める
+      3. イベント名と集めた値のうち、`entry.value` に含まれないものごとに `(entry.value の行, "entry.value", 値)` を返却する
+    unit_tests:
+      - name: test_check_trigger
+        case: 正常
+        summary: 全て含む
+        condition: IF-137-2 の `entry` と `pages.yml` の `on`
+        mock: なし
+        expected: 空
+      - name: test_check_trigger_when_missing
+        case: 正常
+        summary: 含まない値がある
+        condition: "`on` に `pull_request`（`paths: [docs/**]`）と `schedule`（`cron: '0 0 * * *'`）を加えた workflow"
+        mock: なし
+        expected: '`pull_request`・`docs/**`・`schedule`・`0 0 * * *` の 4 件'
+    refs:
+      - IF-72-3#constraints[workflow の突き合わせ]
+  - name: check_request
+    title: リクエストの突き合わせ
+    kind: 関数
+    container: scripts/_workflow.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: '`request` を `on.workflow_dispatch.inputs` の名前の並び・型・必須・既定値と比べる'
+    args:
+      - name: doc
+        title: インターフェース定義
+        type: CommentedMap
+        required: true
+        description: 設計書の文書
+      - name: workflow
+        title: workflow
+        type: Mapping[str, object]
+        required: true
+        description: 解釈した workflow のファイル
+    returns:
+      type: list[tuple[int, str, str]]
+      description: （行、項目のパス、workflow の側の値）
+    process: |-
+      1. `on.workflow_dispatch.inputs` のキーの並び（無ければ空）と `request[].name` の並びを比べ、違えば `(request の行、"request"、inputs のキーの並び)` を返却して終わる（`request` が無ければ行は `entry` の行）
+      2. 名前ごとに、`type`（無ければ `string`）・`required`（無ければ `false`）・`default`（文字列にして比べる。無ければ比べない）を `request` の要素と比べ、違うものごとに `(要素のそのキーの行、request[{名前}].{キー}、workflow の値)` を返却する
+    unit_tests:
+      - name: test_check_request
+        case: 正常
+        summary: 一致する
+        condition: '`request` も `inputs` も無い IF-137-2 と `pages.yml`'
+        mock: なし
+        expected: 空
+      - name: test_check_request_when_differ
+        case: 正常
+        summary: 型と必須が違う
+        condition: '`request` に `name: target`・`type: string`・`required: false`、`inputs.target` が `type: boolean`・`required: true`'
+        mock: なし
+        expected: '`request[target].type` の `boolean` と `request[target].required` の `true` の 2 件'
+      - name: test_check_request_when_names_differ
+        case: 正常
+        summary: 名前の並びが違う
+        condition: '`request` が無く、`inputs` に `target` を持つ workflow'
+        mock: なし
+        expected: 項目のパスが `request` の 1 件
+    refs:
+      - IF-72-3#constraints[workflow の突き合わせ]
+  - name: check_exclusivity
+    title: 排他の突き合わせ
+    kind: 関数
+    container: scripts/_workflow.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: '`exclusivity` が `concurrency` の `group` の値と `cancel-in-progress: {値}` を含むかを比べる'
+    args:
+      - name: doc
+        title: インターフェース定義
+        type: CommentedMap
+        required: true
+        description: 設計書の文書
+      - name: workflow
+        title: workflow
+        type: Mapping[str, object]
+        required: true
+        description: 解釈した workflow のファイル
+    returns:
+      type: list[tuple[int, str, str]]
+      description: （行、項目のパス、workflow の側の値）
+    process: |-
+      1. `concurrency` が文字列なら `group` にし、`cancel-in-progress` は無いものとして扱う
+      2. `concurrency` があれば、`group` の値と `cancel-in-progress: {true|false}`（無ければ `false`）のうち `exclusivity` に含まれないものごとに `(exclusivity の行, "exclusivity", 値)` を返却する
+      3. `concurrency` が無く、`exclusivity` が `cancel-in-progress` を含む場合、`(exclusivity の行, "exclusivity", "concurrency がありません")` を返却する
+    unit_tests:
+      - name: test_check_exclusivity
+        case: 正常
+        summary: 含む
+        condition: IF-137-2 の `exclusivity` と `pages.yml` の `concurrency`
+        mock: なし
+        expected: 空
+      - name: test_check_exclusivity_when_differ
+        case: 正常
+        summary: cancel-in-progress が違う
+        condition: '`concurrency` の `cancel-in-progress` を `true` にした workflow'
+        mock: なし
+        expected: '`cancel-in-progress: true` の 1 件'
+      - name: test_check_exclusivity_when_no_concurrency
+        case: 正常
+        summary: concurrency が無い
+        condition: '`concurrency` を持たない workflow と IF-137-2 の `exclusivity`'
+        mock: なし
+        expected: 内容が `concurrency がありません` の 1 件
+    refs:
+      - IF-72-3#constraints[workflow の突き合わせ]
+  - name: check_steps
+    title: step と分岐の突き合わせ
+    kind: 関数
+    container: scripts/_workflow.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: '`overall_flow`・`flows[].flow` のノード・`subgraph`・線のラベルを、ジョブの step の `name`・ジョブの ID・`if` と比べる'
+    args:
+      - name: doc
+        title: インターフェース定義
+        type: CommentedMap
+        required: true
+        description: 設計書の文書
+      - name: workflow
+        title: workflow
+        type: Mapping[str, object]
+        required: true
+        description: 解釈した workflow のファイル
+    returns:
+      type: list[tuple[int, str, str]]
+      description: （行、項目のパス、workflow の側の値）
+    process: |-
+      1. `jobs` のジョブごとに `steps` を参照し、`name` の無い step ごとに `(overall_flow の行, "overall_flow", "{ジョブの ID} の {番号} 番目の step に name がありません")` を追加する
+      2. `overall_flow` の map の Mermaid を取り出し（map の中の Mermaid の取り出し）、フローチャートを読み取る（フローチャートの読み取り）
+         - `overall_flow` が無いか Mermaid を取り出せない場合、`(entry の行, "overall_flow", "全体の流れがありません")` を追加して 4 へ進む
+      3. ノードのラベルの集まりと step の `name` の集まりの差、`subgraph` の ID とジョブの ID の差、そのジョブの step でない `subgraph` の中のノード、`if` の式（`${{`・`}}` を除外して前後の空白を除外した文字列）を含むラベルの線が入っていない step（ジョブは `subgraph` の中のノードのどれか）ごとに `(overall_flow の行, "overall_flow", 値)` を追加する
+      4. `flows[]` の `flow` ごとにフローチャートを読み取り、step の `name` に無いラベルごとに `(その flow の行, "flows[{添字}].flow", ラベル)` を追加する（`flowchart` でない flow は飛ばす）
+      5. 追加した違反を返却する
+    unit_tests:
+      - name: test_check_steps
+        case: 正常
+        summary: 一致する
+        condition: IF-137-2 と `pages.yml`
+        mock: なし
+        expected: 空
+      - name: test_check_steps_when_step_added
+        case: 正常
+        summary: overall_flow に無い step
+        condition: '`build` のジョブに `name: lint` の step を加えた workflow'
+        mock: なし
+        expected: 値が `lint` の `overall_flow` の 1 件
+      - name: test_check_steps_when_if_missing
+        case: 正常
+        summary: if が線のラベルに無い
+        condition: '`成果物をアップロードする` に `if: ${{ success() }}` を加えた workflow'
+        mock: なし
+        expected: 値に `success()` を含む `overall_flow` の 1 件
+      - name: test_check_steps_when_unnamed
+        case: 正常
+        summary: name の無い step
+        condition: '`deploy` のジョブに `uses` だけの step を加えた workflow'
+        mock: なし
+        expected: 値に `deploy` と番号を含む 1 件
+      - name: test_check_steps_when_flow_label_unknown
+        case: 正常
+        summary: flows のラベルが step に無い
+        condition: '`flows[0].flow` のノード 1 つを `別の step` に変えた IF-137-2'
+        mock: なし
+        expected: 項目のパスが `flows[0].flow`、値が `別の step` の 1 件
+    callees:
+      - '#functions[parse_flowchart]'
+      - MOD-176-1#functions[extract_map_mermaid]
+      - MOD-72-2#functions[line_of]
+    refs:
+      - IF-72-3#constraints[workflow の突き合わせ]
+  - name: parse_flowchart
+    title: フローチャートの読み取り
+    kind: 関数
+    container: scripts/_workflow.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: Mermaid の `flowchart` から、ノードの ID とラベル・`subgraph`・線を取り出す
+    args:
+      - name: mermaid
+        title: Mermaid
+        type: str
+        required: true
+        description: '`extract_map_mermaid` が返却した Mermaid'
+    returns:
+      type: Flowchart | None
+      description: 1 行目が `flowchart` でなければ `None`
+    process: |-
+      1. 1 行目が `flowchart` で始まらなければ `None` を返却する
+      2. 2 行目から行ごとに解釈する。`subgraph {ID}` でその ID に入り、`end` で出る
+      3. 行を、線（`-->`・`---`・`-- {ラベル} -->`・`-->|{ラベル}|`・`-.->`・`==>`）で区切ったノードの並びと、区切りごとのラベルに分ける。ラベルの前後の `"` は除外する
+      4. ノードごとに `{ID}` と、あれば形状の括弧（`([...])`・`[...]`・`{...}`・`(...)`）の中のラベルを取る。`([...])` のノードは開始・終わりとして `nodes` に入れない。ラベルを初めて取ったノードを、今いる `subgraph` に入れる
+      5. `a & b` のように `&` で並んだノードは分け、隣り合うノードの組みごとに線を作る
+      6. `Flowchart` を返却する
+    unit_tests:
+      - name: test_parse_flowchart
+        case: 正常
+        summary: IF-137-2 の全体の流れを読み取る
+        condition: IF-137-2 の `overall_flow` の Mermaid
+        mock: なし
+        expected: '`nodes` が 8 つの step のラベル、`subgraphs` が `build`（7 つ）と `deploy`（1 つ）、`g` から `h` への線のラベルが `成功（needs: build）`、`a & b & c & d & g -- 失敗 --> ng` が 5 本の線'
+      - name: test_parse_flowchart_when_sequence
+        case: 正常
+        summary: flowchart でない
+        condition: '`sequenceDiagram` で始まる Mermaid'
+        mock: なし
+        expected: '`None`'
+    refs:
+      - IF-72-3#constraints[workflow の突き合わせ]
+test_files:
+  - tests/unit/scripts/test_workflow.py

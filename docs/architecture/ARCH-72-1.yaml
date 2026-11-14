@@ -138,12 +138,12 @@ external_systems:
     notes:
       事前確認: 要。ワークフローの最初のステップで、成果物の作成に要るランタイム（Node 24・uv）を入れ、入らなければ配信せずに失敗させる
   - name: mdmark
-    purpose: 公開の文書の Markdown を 1 枚の HTML にまとめる（`build`）
+    purpose: 公開の文書の Markdown を 1 枚の HTML にまとめる（`build`）。全ての文書の検査で、文書の map を点検する（`check --text`）
     direction: 双方向
     protocol: CLI（子プロセス、`npx` でタグを指定して起動）
     detail: LIB-137-1#
     notes:
-      事前確認: 不要。`build` が 0 以外で終われば、Pages の成果物の作成がその標準エラーを出して失敗する
+      事前確認: 不要。`build` が 0 以外で終われば、Pages の成果物の作成がその標準エラーを出して失敗する。全ての文書の検査は、検査を始める前に `npx` が `PATH` にあるかを確認し、`check --text` が失敗すれば他の検査を終えてから終了コード 2 で終わる
   - name: GitHub Pages
     purpose: 公開の文書の HTML を利用者へ配信する
     direction: 送信のみ

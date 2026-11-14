@@ -26,6 +26,9 @@ READ_WORKERS = 16
 # リポジトリの直下の dev-docs の配信の設定
 CONFIG = "project-index.yaml"
 
+# 「Pages の成果物の作成」と「全ての文書の検査」が npx で呼ぶ mdmark のバージョン
+MDMARK_TAG = "v0.13.0"
+
 type PathPart = str | int
 
 

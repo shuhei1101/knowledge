@@ -32,6 +32,7 @@ from ruamel.yaml.error import YAMLError
 from _common import (
     CONFIG,
     LIMIT_SEC,
+    MDMARK_TAG,
     ConfigError,
     DocumentError,
     as_list,
@@ -44,9 +45,6 @@ from _common import (
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
-
-# npx で呼ぶ mdmark のバージョン
-MDMARK_TAG = "v0.8.0"
 
 # 公開しない文書への参照のリンクの頭
 DEVELOP_BLOB_URL = "https://github.com/shuhei1101/knowledge/blob/develop/"

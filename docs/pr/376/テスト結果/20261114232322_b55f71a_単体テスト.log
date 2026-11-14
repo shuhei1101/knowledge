@@ -1,0 +1,35 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-scripts-check-all-map-workflow-skill
+configfile: pytest.ini
+collected 188 items / 3 errors
+
+==================================== ERRORS ====================================
+____________ ERROR collecting tests/unit/scripts/test_check_all.py _____________
+ImportError while importing test module '/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-scripts-check-all-map-workflow-skill/tests/unit/scripts/test_check_all.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/scripts/test_check_all.py:12: in <module>
+    from _lint import LintFinding, LintSource, MdmarkCheckError
+E   ImportError: cannot import name 'MdmarkCheckError' from '_lint' (/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-scripts-check-all-map-workflow-skill/scripts/_lint.py)
+_______________ ERROR collecting tests/unit/scripts/test_lint.py _______________
+ImportError while importing test module '/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-scripts-check-all-map-workflow-skill/tests/unit/scripts/test_lint.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/scripts/test_lint.py:10: in <module>
+    from _lint import (
+E   ImportError: cannot import name 'MdmarkCheckError' from '_lint' (/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-scripts-check-all-map-workflow-skill/scripts/_lint.py)
+_____________ ERROR collecting tests/unit/scripts/test_workflow.py _____________
+ImportError while importing test module '/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-scripts-check-all-map-workflow-skill/tests/unit/scripts/test_workflow.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/scripts/test_workflow.py:7: in <module>
+    from _lint import extract_map_mermaid
+E   ImportError: cannot import name 'extract_map_mermaid' from '_lint' (/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/feat-scripts-check-all-map-workflow-skill/scripts/_lint.py)
+=========================== short test summary info ============================
+ERROR tests/unit/scripts/test_check_all.py
+ERROR tests/unit/scripts/test_lint.py
+ERROR tests/unit/scripts/test_workflow.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!!
+============================== 3 errors in 2.92s ===============================

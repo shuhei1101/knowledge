@@ -1,7 +1,7 @@
 id: "MOD-176-1"
 visibility: internal
 title: "検査と変換のスクリプト / scripts / _lint.py"
-lead: 全ての文書の検査で適用する markdownlint-cli2（LIB-176-1）・textlint（LIB-176-2）・yamllint（LIB-176-3）の、在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応。
+lead: 全ての文書の検査で適用する markdownlint-cli2（LIB-176-1）・textlint（LIB-176-2）・yamllint（LIB-176-3）と mdmark（LIB-137-1）の map の点検の、在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応。
 data_models:
   - name: LintSource
     title: lint を適用する Markdown
@@ -41,11 +41,11 @@ data_models:
         type: str
         description: 項目のパス。ファイル全体に適用した lint は `-`
       - name: tool
-        type: Literal['markdownlint', 'textlint', 'yamllint']
+        type: Literal['markdownlint', 'textlint', 'yamllint', 'mdmark']
         description: 違反を返却した CLI
       - name: rule
         type: str
-        description: ルールの名前（`MD036`・`one-sentence-per-line`・`ja-technical-writing/ja-no-mixed-period`・`comments`）
+        description: ルールの名前（`MD036`・`one-sentence-per-line`・`ja-technical-writing/ja-no-mixed-period`・`comments`・`map_invalid`）
       - name: message
         type: str
         description: 違反の内容
@@ -63,6 +63,17 @@ data_models:
       - name: message
         type: str
         description: CLI の名前と終了コードと標準エラーの最後の 1 行
+  - name: MdmarkCheckError
+    title: 失敗した mdmark の点検
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    role: 例外
+    summary: mdmark の `check --text` の終了コードが 0・1 でないか、標準出力の最後の行が `ずれ {件数} 件` でない
+    inherits: Exception
+    properties:
+      - name: message
+        type: str
+        description: mdmark の終了コードと標準エラー
 constants:
   - name: MARKDOWNLINT
     title: markdownlint-cli2 のコマンド名
@@ -100,6 +111,12 @@ constants:
     usecase: 全ての文書の検査
     summary: '`schemas/` のスキーマに適用する、lint のフォルダの yamllint の設定。`brackets`・`braces` の `forbid: non-empty` だけを持つ'
     value: '".yamllint-schemas.yaml"'
+  - name: MAP_START
+    title: map の開きのマーカー
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    summary: この文字列を含む文字列の項目を map の点検にかける
+    value: '"<!-- map -->"'
 functions:
   - name: find_lint_clis
     title: lint の CLI の在りかの確認
@@ -324,5 +341,151 @@ functions:
         expected: 空
     refs:
       - LIB-176-3#
+  - name: collect_map_sources
+    title: map を含む項目の取り出し
+    kind: 関数
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: YAML の文書 1 件から、値に `MAP_START` を含む文字列の項目を取り出す
+    args:
+      - name: path
+        title: 文書のパス
+        type: PurePosixPath
+        required: true
+        description: リポジトリの直下からのパス
+      - name: text
+        title: 中身
+        type: str
+        required: true
+        description: '`read_texts` が返却した中身'
+    returns:
+      type: list[LintSource]
+      description: 文書の並びどおりの map を含む項目
+    process: |-
+      1. `path` の拡張子が `.yaml`・`.yml` でない場合、空を返却する
+      2. 文書として読み込む（文書の読み込み）
+         - 読み込めない文書の場合、空を返却する（違反は文書 1 件の検査が出す）
+      3. 文字列の項目を列挙し（文字列の項目の列挙）、値に `MAP_START` を含む項目ごとに `LintSource(path, 項目のパス, 行, 値)` を返却する（項目のパスの組み立て）
+    unit_tests:
+      - name: test_collect_map_sources
+        case: 正常
+        summary: map を含む項目だけを取り出す
+        condition: map を含む `flows[0].flow`・`overall_flow` と、map を含まない `flows[0].summary` を持つ文書
+        mock: なし
+        expected: 2 件で、`item_path` が `flows[0].flow`・`overall_flow`、`start_line` が各キーの行 + 1
+      - name: test_collect_map_sources_when_markdown_file
+        case: 正常
+        summary: .md の文書
+        condition: map を含む `README.md`
+        mock: なし
+        expected: 空
+      - name: test_collect_map_sources_when_broken
+        case: 正常
+        summary: 読み込めない YAML
+        condition: 括弧の閉じていない YAML
+        mock: なし
+        expected: 空
+    callees:
+      - MOD-72-2#functions[load_document]
+      - MOD-72-2#functions[iter_strings]
+      - MOD-72-2#functions[format_path]
+    refs:
+      - IF-72-3#constraints[map の点検の範囲]
+  - name: run_map_check
+    title: map の点検の呼び出し
+    kind: 関数
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    role: 外部呼び出し
+    scope: public
+    summary: map を含む全ての項目を 1 つの Markdown につないで mdmark の `check --text -` を 1 回呼び、`map_` で始まるずれを元の文書の行で返却する
+    args:
+      - name: sources
+        title: map を含む項目
+        type: Sequence[LintSource]
+        required: true
+        description: '`collect_map_sources` が返却した全ての文書の分'
+      - name: npx
+        title: npx の実行ファイル
+        type: str
+        required: true
+        description: '`shutil.which("npx")` が返却した絶対パス'
+    returns:
+      type: list[LintFinding]
+      description: mdmark が出した順の map の違反。`tool` は `mdmark`、`rule` はずれの種類、`warning` は `False`
+    process: |-
+      1. `sources` が空の場合、空を返却する（mdmark を呼ばない）
+      2. `sources` の `text` を、間に空行 2 行（`\n\n\n`）を挟んでつなぐ。項目ごとに、つないだ中の開始行を控える
+      3. 一時フォルダを作業ディレクトリにして、`[npx, "-y", f"github:shuhei1101/mdmark#{MDMARK_TAG}", "check", "--text", "-"]` を、つないだ Markdown を標準入力にして呼ぶ
+         - 終了コードが 0・1 でないか、標準出力の最後の空でない行が `ずれ {件数} 件` でない場合、`MdmarkCheckError`（終了コードと標準エラー）を送出する
+      4. 標準出力の `-:{行}: {種類}: {内容}` の行のうち、種類が `map_` で始まる行ごとに、行を含む項目の `LintSource` で `LintFinding` を作る。行は `start_line` + （mdmark の行 - その項目のつないだ中の開始行）。他の種類の行は捨てる
+      5. 一時フォルダを削除して返却する
+    unit_tests:
+      - name: test_run_map_check
+        case: 正常
+        summary: map のずれだけを元の文書の行で返却する
+        condition: '`start_line` が 10 と 40 の 2 件（どちらも 5 行）'
+        mock: '`npx` を、つないだ中の 2 件目の 3 行目の `map_invalid` と 1 行目の `legacy_mark` と `ずれ 2 件` を標準出力へ出し終了コード 1 で終わるスクリプトに差し替える'
+        expected: '`line` が 42・`rule` が `map_invalid`・`tool` が `mdmark` の 1 件だけ'
+      - name: test_run_map_check_when_empty
+        case: 正常
+        summary: map を含む項目が無い
+        condition: 空の `sources`
+        mock: '`npx` を、呼ばれたらマーカーのファイルを作るスクリプトに差し替える'
+        expected: 空で、マーカーのファイルが無い
+      - name: test_run_map_check_when_not_checked
+        case: 異常
+        summary: 点検せずに終了コード 1 で終わった
+        condition: 1 件
+        mock: '`npx` を、標準出力に何も出さず標準エラーに 1 行出して終了コード 1 で終わるスクリプトに差し替える'
+        expected: '`MdmarkCheckError` で、メッセージに終了コード 1 と標準エラーの行'
+        exception: 標準出力の最後の行が `ずれ {件数} 件` でない
+      - name: test_run_map_check_when_crashed
+        case: 異常
+        summary: 終了コードが 0・1 でない
+        condition: 1 件
+        mock: '`npx` を、終了コード 2 で終わるスクリプトに差し替える'
+        expected: '`MdmarkCheckError` で、メッセージに終了コード 2'
+        exception: 終了コードが 0・1 でない
+    refs:
+      - LIB-137-1#
+      - IF-72-3#constraints[map の点検の呼び出し]
+      - IF-72-3#constraints[map の違反にするずれ]
+      - IF-72-3#constraints[map の違反の行]
+  - name: extract_map_mermaid
+    title: map の中の Mermaid の取り出し
+    kind: 関数
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: map の範囲（`<!-- map -->` から `<!-- /map -->`）の中の ```mermaid のコードブロックの中身を取り出す
+    args:
+      - name: text
+        title: 項目の値
+        type: str
+        required: true
+        description: map を含む Markdown
+    returns:
+      type: str | None
+      description: 最初の map の範囲の最初の ```mermaid のブロックの中身（囲む行を除く）。map の範囲か mermaid のブロックが無ければ `None`
+    process: |-
+      1. `MAP_START` の後ろから `<!-- /map -->` までを範囲にし、無ければ `None` を返却する
+      2. 範囲の中の ```mermaid の行から次の ``` の行までの間の行をつないで返却し、無ければ `None` を返却する
+    unit_tests:
+      - name: test_extract_map_mermaid
+        case: 正常
+        summary: Mermaid を取り出す
+        condition: map の範囲に `flowchart TD` で始まる 3 行の mermaid のブロックを持つ Markdown
+        mock: なし
+        expected: '`flowchart TD` で始まる 3 行'
+      - name: test_extract_map_mermaid_when_missing
+        case: 正常
+        summary: map が無い
+        condition: map の範囲の外にだけ mermaid のブロックを持つ Markdown
+        mock: なし
+        expected: '`None`'
+    refs:
+      - IF-72-3#constraints[workflow の突き合わせ]
 test_files:
   - tests/unit/scripts/test_lint.py

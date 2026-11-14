@@ -69,6 +69,12 @@ constants:
     usecase: 共通
     summary: リポジトリの直下の project-index の配信の設定
     value: '"project-index.yaml"'
+  - name: MDMARK_TAG
+    title: mdmark のタグ
+    container: scripts/_common.py
+    usecase: 共通
+    summary: 「Pages の成果物の作成」と「全ての文書の検査」が `npx` で呼ぶ mdmark のバージョン。外部ライブラリ『mdmark』の採用バージョン（LIB-137-1）と統一する
+    value: '"v0.13.0"'
 functions:
   - name: load_document
     title: 文書の読み込み

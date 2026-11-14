@@ -180,7 +180,13 @@ def test_plan_skills(tmp_path: Path) -> None:
     # 実行
     result = plan_skills(root)
     # 検証
-    assert result == [SkillPlan(path=PurePosixPath("skills/b/SKILL.md"), text=_B_SKILL)]
+    assert result == [
+        SkillPlan(
+            path=PurePosixPath("skills/b/SKILL.md"),
+            text=_B_SKILL,
+            source=PurePosixPath("docs/skill/b.yaml"),
+        )
+    ]
 
 
 def test_plan_skills_when_schema_invalid(tmp_path: Path) -> None:
@@ -467,7 +473,11 @@ def test_render_call(call: dict[str, object], expected: str) -> None:
 def test_write_skill(tmp_path: Path) -> None:
     """無いファイルを作り、同じ中身なら書き出さない（正常系）。"""
     # 準備
-    plan = SkillPlan(path=PurePosixPath("skills/b/SKILL.md"), text=_B_SKILL)
+    plan = SkillPlan(
+        path=PurePosixPath("skills/b/SKILL.md"),
+        text=_B_SKILL,
+        source=PurePosixPath("docs/skill/b.yaml"),
+    )
     # 実行
     first = write_skill(tmp_path, plan)
     second = write_skill(tmp_path, plan)

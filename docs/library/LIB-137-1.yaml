@@ -3,14 +3,14 @@ visibility: internal
 title: "mdmark"
 kind: "CLI"
 version:
-  current: v0.8.0
-  latest: v0.8.0
-  checked_on: '2026-10-31'
-  source: Pages の成果物の作成のスクリプトが呼ぶ `npx -y github:shuhei1101/mdmark#v0.8.0`
+  current: v0.13.0
+  latest: v0.13.0
+  checked_on: '2026-11-14'
+  source: Pages の成果物の作成と全ての文書の検査のスクリプトが呼ぶ `npx -y github:shuhei1101/mdmark#v0.13.0`
   pinning: タグで固定する（npm に公開しておらず、ブランチ名では中身が変わる）
 catalogs:
   - name: コマンド
-    version: v0.8.0
+    version: v0.13.0
     entries:
       - name: build
         kind: コマンド
@@ -47,20 +47,41 @@ catalogs:
           - name: stderr
             type: str
             description: 警告（まとめた HTML に含まれない文書へのリンクなど。終了コードは 0 のまま）と、終了コード 1 の理由
+      - name: check --text
+        kind: コマンド
+        purpose: 標準入力の Markdown を描いたときの記載の警告・知らないマーカー・map のずれを点検する
+        params:
+          - name: --text
+            type: str
+            required: true
+            description: 点検する Markdown。`-` で標準入力から読み込む。設定ファイルが無ければ既定の設定で点検する
+        returns:
+          - name: exit_code
+            type: Literal[0, 1]
+            description: 0 = ずれが 0 件。1 = ずれが 1 件以上（全てのずれを出してから終わる）か、一緒に指定できない引数を指定した・設定ファイルを YAML として読み込めない（点検せずに標準エラーへ原因を出す）。点検したときだけ標準出力の最後の行が `ずれ {件数} 件` になるため、その行の有無で区別できる。npx が取得に失敗したときも npm のエラーで終了コード 1 になる
+          - name: stdout
+            type: str
+            description: 'ずれ 1 件を `-:{行}: {種類}: {内容}` の 1 行で並べ、最後に `ずれ {件数} 件` を出す。種類は map の誤りの `map_invalid`・`map_unknown_ref`・`map_unknown_key`・`map_invalid_value`・`map_unknown_class`・`map_unknown_line` と、前の記法のマーカーの `legacy_mark` など'
+          - name: stderr
+            type: str
+            description: 点検せずに終わったときの原因（一緒に指定できない引数・読み込めない設定ファイル）と、npx の取得の失敗の npm のエラー
 lead: マーカーを持つ Markdown を描くライブラリと CLI。CLI の `build` は、設定の `build` が指す複数の Markdown を、文書の一覧と文書間のリンクで行き来できる CDN を読み込まない 1 枚の HTML にまとめる。
 supplier: shuhei1101
 dependency_scope: 必須
 adoption: 採用
 used_in:
-  - scripts/
+  - scripts/build_pages.py
+  - scripts/check_all.py
 upstream: shuhei1101/mdmark
 verification:
   state: 済
-  date: '2026-10-31'
-  detail: 'WSL2 の Ubuntu（Node 24.14.0）で `npx -y github:shuhei1101/mdmark#v0.8.0` を呼び、依存ごと入って約 8 秒で起動した。develop の `visibility: public` の 5 文書を変換のスクリプトで Markdown にし、`(id:{ID})` を `./{ID}.md` に書き換えて `build`（`include` に 5 文書、`out: out/index.html`）を呼ぶと、`書き出した: out/index.html（文書 5 件）` と終了コード 0 で、警告なしに約 500 KB の 1 枚になった。checkout した `dist/cli.js` を node で直に呼ぶと `ERR_MODULE_NOT_FOUND`（`yaml`）で動かなかった'
+  date: '2026-11-14'
+  detail: 'WSL2 の Ubuntu（Node 24.14.0）で `npx -y github:shuhei1101/mdmark#v0.8.0` を呼び、依存ごと入って約 8 秒で起動した。develop の `visibility: public` の 5 文書を変換のスクリプトで Markdown にし、`(id:{ID})` を `./{ID}.md` に書き換えて `build`（`include` に 5 文書、`out: out/index.html`）を呼ぶと、`書き出した: out/index.html（文書 5 件）` と終了コード 0 で、警告なしに約 500 KB の 1 枚になった。checkout した `dist/cli.js` を node で直に呼ぶと `ERR_MODULE_NOT_FOUND`（`yaml`）で動かなかった。
+
+    2026-11-14 に `v0.13.0` で、同じ手順の `build` が `書き出した: index.html（文書 5 件）` と終了コード 0 で約 900 KB の 1 枚になった。`check --text -` の標準入力に、`<!-- table: data -->` の表と、閉じの無い `loop` と `:` の無いメッセージを持つ map を指定すると、`-:1: legacy_mark`・`-:9: map_invalid`・`-:13: map_invalid` の 3 行と `ずれ 3 件` を出して終了コード 1、誤りの無い map だけなら `ずれ 0 件` と終了コード 0 で終わった（`v0.12.0` も同じ出力）。knowledge の `docs/` の map を含む 107 項目をつないで 1 回呼ぶと、ずれは `legacy_mark` の 3 件だけで、1 回の呼び出しは約 4 秒だった'
 license: ライセンスの表記なし（knowledge と同じ所有者の公開リポジトリ）
 official_url: https://github.com/shuhei1101/mdmark
-docs_url: https://github.com/shuhei1101/mdmark/blob/v0.8.0/docs/%E4%BD%BF%E3%81%84%E6%96%B9/%E6%9B%B8%E3%81%8D%E5%87%BA%E3%81%99/%E6%96%87%E6%9B%B8%E3%82%921%E6%9E%9A%E3%81%AB%E3%81%BE%E3%81%A8%E3%82%81%E3%82%8B.md
+docs_url: https://github.com/shuhei1101/mdmark/blob/v0.13.0/docs/guide/CLI.md
 selection:
   candidates: '`npx github:shuhei1101/mdmark#{タグ}` で呼ぶ、mdmark をタグで checkout してコミット済みの `dist/cli.js` を node で呼ぶ'
   decision: '`dist/cli.js` は `yaml`・`esbuild` などの実行時の依存を同梱しておらず、checkout だけでは `ERR_MODULE_NOT_FOUND` で動かない。`npx` は依存ごと入れ、mdmark の使い方もこの呼び方で記載している'
@@ -68,5 +89,6 @@ install: |-
   入れる手順は無い。Node 24 以降で、呼ぶたびに `npx -y` がタグの中身と依存を取る
 
   ```bash
-  npx -y github:shuhei1101/mdmark#v0.8.0 build --config {設定ファイル}
+  npx -y github:shuhei1101/mdmark#v0.13.0 build --config {設定ファイル}
+  npx -y github:shuhei1101/mdmark#v0.13.0 check --text -
   ```

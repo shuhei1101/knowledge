@@ -1,0 +1,70 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: changed
+    detail: 全ての文書の検査が、map の図の誤り・workflow のインターフェース定義と workflow のファイルの食い違い・SKILL.md と生成元の食い違いも違反として出す
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: none
+    detail: 書き込みの経路の map の点検は project-index が持ち、変わらない
+    depends_on: []
+docs:
+  - page: docs/library/LIB-137-1.yaml
+    new: false
+    change: 採用バージョンを map の点検を持ち前の書き方のマーカーも読むタグへ上げ、`check` のコマンドを catalogs と検証の記録に追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T09:58:04.613963+00:00'
+  - page: docs/dev-command/CMD-72-1.yaml
+    new: false
+    change: 『取り込み前の検査』の `prerequisites` に Node.js 24 以降とネットワークへの接続を、`effects` に mdmark の `check --text` を 1 回起動することを加える。起動時間の実測は実装の後の検証の記録で更新する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T14:07:36.726513+00:00'
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: 全ての文書の検査が mdmark を呼ぶ関係と、workflow のファイル・SKILL.md を読む関係を合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T14:07:36.726513+00:00'
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: scripts/ にファイルを追加した場合、フォルダ構成の行を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T13:50:56.999201+00:00'
+  - page: scripts/files.yaml
+    new: false
+    change: check_all.py の description に追加した検査を合わせ、scripts/ に追加したファイルの行を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T14:43:09.859751+00:00'
+  - page: docs/checksheet/checksheet-review-interface-module.yaml
+    new: false
+    change: workflow のファイルとの一致の行を、検査のスクリプトが確かめる部分とレビューで見る部分（結末ごとのフロー・重なる name）に合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T09:58:04.613963+00:00'
+  - page: schemas/design/interface.schema.yaml
+    new: false
+    change: 変更なし。突き合わせを x-rules の記載に合わせた（IF-72-3 の「workflow の突き合わせ」）ため、食い違いは無い
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T14:07:36.726513+00:00'
+  - page: README.md
+    new: false
+    change: 全ての文書の検査が確認するものに、SKILL.md・workflow のファイル・map の図を加える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T14:07:36.726513+00:00'
+scope_out:
+  - item: 文書のマーカーを mdmark の JSON の記載へ移すこと（`legacy_mark` を返す前の書き方のマーカーの移行）
+    reason: '#316 が受け持ち、#316 の依存に #343 がある。この PR は `legacy_mark` を違反から除く'
+    plan: '#316'
+  - item: 判定フローチャートの ※n の注記の mdmark の注釈への書き換えと、そのための MDMARK_TAG の引き上げ
+    reason: '#173 が受け持つ。必要な shuhei1101/mdmark#304 はこの PR で上げる先のタグに含まれない'
+    plan: '#173'
+  - item: 全ての文書の検査を GitHub Actions で回すこと
+    reason: 'テストの層の実行場所は #352 が受け持つ'
+    plan: '#352'

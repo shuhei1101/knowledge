@@ -17,7 +17,8 @@ diagrams:
         templates["設計書のテンプレートの生成<br>main()<br>load_schemas()<br>build_items()"]
         skills["SKILL.md の生成<br>main()<br>render_skill()"]
         common["共通<br>load_document()<br>iter_strings()<br>read_texts()"]
-        lintcall["lint の呼び出し<br>find_lint_clis()<br>run_markdown_lints()<br>run_yamllint()"]
+        lintcall["lint の呼び出し<br>find_lint_clis()<br>run_markdown_lints()<br>run_yamllint()<br>run_map_check()"]
+        workflow["workflow の突き合わせ<br>check_workflows()<br>parse_flowchart()"]
         checks -.-> common
         markdown -.-> common
         checkall -.-> checks
@@ -31,6 +32,10 @@ diagrams:
         checkall -.-> templates
         skills -.-> templates
         skills -.-> common
+        checkall -.-> skills
+        checkall -.-> workflow
+        workflow -.-> lintcall
+        workflow -.-> common
       ```
 
       <!-- /map -->

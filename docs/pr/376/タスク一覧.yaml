@@ -1,0 +1,86 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存リポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-14T09:16:29.406154+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: 既存の設計書があり、現状の棚卸しは要らない
+    updated_by: planner
+    updated_at: '2026-11-14T09:16:29.406154+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めを依頼する Issue ではない
+    updated_by: planner
+    updated_at: '2026-11-14T09:16:29.406154+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: mdmark の check は既存の CLI の呼び出しで、上げる先のタグでの動きは外部ライブラリ『mdmark』の設計書の検証の記録で確かめる
+    updated_by: planner
+    updated_at: '2026-11-14T09:16:29.406154+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: 開発者が全ての文書の検査を実行する単一ユースケースの中の変更で、複合ユースケースの流れは変わらない
+    updated_by: planner
+    updated_at: '2026-11-14T09:16:29.406154+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 画面を持たない変更
+    updated_by: planner
+    updated_at: '2026-11-14T09:16:29.406154+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面を持たない変更
+    updated_by: planner
+    updated_at: '2026-11-14T09:16:29.406154+00:00'
+  - process: 単一ユースケース設計
+    status: done
+    note: SC-72-6 に 3 つの検査の違反と案内を追加する
+    updated_by: planner
+    updated_at: '2026-11-14T09:24:41.954649+00:00'
+  - process: モック作成
+    status: skipped
+    reason: 画面を持たない変更
+    updated_by: planner
+    updated_at: '2026-11-14T09:16:29.406154+00:00'
+  - process: インターフェース定義設計
+    status: done
+    note: IF-72-3 の流れ・制約に 3 つの検査を追加する。IF-312-1・IF-137-1 は共有と採用バージョンの記述
+    updated_by: planner
+    updated_at: '2026-11-14T09:58:07.762507+00:00'
+  - process: 部品設計
+    status: skipped
+    reason: 画面の部品を持たない変更
+    updated_by: planner
+    updated_at: '2026-11-14T09:16:29.406154+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: 画面を持たない変更
+    updated_by: planner
+    updated_at: '2026-11-14T09:16:29.406154+00:00'
+  - process: モジュール構成設計
+    status: done
+    note: MOD-72-6 の検査の関数、map の Mermaid の取り出しの置き場所、MOD-312-1 の組み立ての共有、MOD-137-1 の MDMARK_TAG
+    updated_by: planner
+    updated_at: '2026-11-14T13:51:01.448072+00:00'
+  - process: ドキュメント修正
+    status: done
+    note: ARCH-72-1・README.md。scripts/files.yaml は実装で修正する
+    updated_by: planner
+    updated_at: '2026-11-14T14:07:51.822625+00:00'
+  - process: 単体テスト作成
+    status: done
+    note: tests/unit/scripts/test_lint.py・test_workflow.py（新規）・test_check_all.py・test_build_skills.py
+    updated_by: planner
+    updated_at: '2026-11-14T14:25:04.019865+00:00'
+  - process: 実装
+    status: done
+    note: scripts/_workflow.py（新規）・_lint.py・check_all.py・_common.py・build_pages.py・build_skills.py・files.yaml
+    updated_by: planner
+    updated_at: '2026-11-14T14:43:15.364066+00:00'
+  - process: 結合テスト作成
+    status: done
+    note: tests/integration/scripts/test_check_all.py
+    updated_by: planner
+    updated_at: '2026-11-14T15:13:39.496704+00:00'

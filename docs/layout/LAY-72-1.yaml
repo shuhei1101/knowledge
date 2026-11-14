@@ -334,7 +334,7 @@ entries:
         contents: 文書の YAML の読み込み・項目のパスと行の対応・違反の型・ファイルの並列の読み込み・project-index.yaml の読み込み
       - type: file
         name: _lint.py
-        contents: markdownlint-cli2・textlint・yamllint の在りかの確認と呼び出し
+        contents: markdownlint-cli2・textlint・yamllint の在りかの確認と呼び出しと、mdmark の map の点検
       - type: file
         name: knowledge_checks.py
         contents: validators の knowledge-checks（文書の違反の検査）
@@ -447,6 +447,9 @@ entries:
             generated_from:
               path: scripts/lint/package-lock.json
               command: CMD-72-1#categories[環境構築（クローン直後）]
+      - type: file
+        name: _workflow.py
+        contents: 入口が trigger のインターフェース定義と GitHub Actions の workflow のファイルの突き合わせ
   - type: folder
     name: skills
     contents: プラグイン knowledge のスキルの本体
