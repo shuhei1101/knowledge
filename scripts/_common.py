@@ -24,7 +24,7 @@ LIMIT_SEC = 20.0
 READ_WORKERS = 16
 
 # リポジトリの直下の dev-docs の配信の設定
-CONFIG = "dev-docs.yaml"
+CONFIG = "project-index.yaml"
 
 type PathPart = str | int
 
@@ -50,7 +50,7 @@ class DocumentError(Exception):
 
 
 class ConfigError(Exception):
-    """dev-docs.yaml が無い・読めない・documents が配列でない。"""
+    """project-index.yaml が無い・読めない・documents が配列でない。"""
 
     def __init__(self, message: str) -> None:
         super().__init__(message)
@@ -209,7 +209,7 @@ def line_of(doc: CommentedMap, parts: Sequence[PathPart]) -> int:
 
 
 def load_config(root: Path) -> list[Mapping[str, Any]]:
-    """dev-docs.yaml の documents[] の行を読む。"""
+    """project-index.yaml の documents[] の行を読む。"""
     path = root / CONFIG
     if not path.is_file():
         message = f"{CONFIG} がありません"

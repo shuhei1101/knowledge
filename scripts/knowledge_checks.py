@@ -116,12 +116,12 @@ def check_document(
                 {
                     "path": "$",
                     "rule": f"1 行目: {error.message}。aliases の衝突を検査できません",
-                    "fix": "配信元の直下に読める dev-docs.yaml を置く",
+                    "fix": "配信元の直下に読める project-index.yaml を置く",
                 }
             )
     if names is not None:
         violations.extend(check_aliases(doc, names))
-    # 文書の中の重複は dev-docs.yaml を使用しないので、名前の索引の有無によらず適用する
+    # 文書の中の重複は project-index.yaml を使用しないので、名前の索引の有無によらず適用する
     violations.extend(check_alias_duplicates(doc))
     # 対応表は examples の検査を後ろにつなぐ
     if _field(doc, "kind") == _WORD_LIST_KIND:

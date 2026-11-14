@@ -60,7 +60,7 @@ WORD_LIST_KIND = "word-list"
 # 対応表の entries のキー
 _WORD_LIST_ENTRIES = "entries"
 
-# 埋め込む対応表のファイルを引く dev-docs.yaml の documents[] の行の id
+# 埋め込む対応表のファイルを引く project-index.yaml の documents[] の行の id
 WORD_LIST_ROW = "word-list"
 
 # 埋め込みのマーカー。/・# を含む dev-docs のパスの書き方には当たらない
@@ -338,7 +338,7 @@ def has_embed(doc: Mapping[str, Any]) -> bool:
 
 
 def load_word_lists(root: Path) -> dict[str, list[Mapping[str, Any]]]:
-    """dev-docs.yaml の word-list の行の対応表を読み、文書の ID から entries への対応にする。"""
+    """project-index.yaml の word-list の行の対応表を読み、文書の ID から entries への対応にする。"""
     row = next((row for row in load_config(root) if row.get("id") == WORD_LIST_ROW), None)
     if row is None:
         return {}

@@ -6,7 +6,7 @@
 #     "yamllint==1.38.0",
 # ]
 # ///
-"""dev-docs.yaml の documents[] が指す全ての文書にスキーマの検査と文書の違反の検査を当て、終了コードで合否を返す。
+"""project-index.yaml の documents[] が指す全ての文書にスキーマの検査と文書の違反の検査を当て、終了コードで合否を返す。
 
 手元から、リポジトリの直下で起動する。違反は 1 件 1 行で「{ファイルのパス}:{行}: {項目のパス}: {内容}」と出す。
 対応表のコピーが正本と一致するか、設計書のテンプレートがスキーマと一致するかも確かめ、文書に markdownlint-cli2・textlint・yamllint を当てる。
@@ -84,7 +84,7 @@ if TYPE_CHECKING:
 CHECKS_ID = "knowledge-checks"
 
 # documents[] に無く、yamllint を当てるリポジトリの直下のファイル
-YAMLLINT_EXTRA = ("dev-docs.yaml", "rules.yaml")
+YAMLLINT_EXTRA = ("project-index.yaml", "rules.yaml")
 
 # 設計書のスキーマ（knowledge の正本）を置くフォルダ
 DESIGN_SCHEMAS_DIR = PurePosixPath("schemas/design")
@@ -144,7 +144,7 @@ def _use_utf8(stream: object) -> None:
 
 def main(argv: Sequence[str] | None = None) -> int:
     """全ての文書を検査し、違反を 1 件 1 行で出して終了コードで合否を返す。"""
-    parser = argparse.ArgumentParser(description="dev-docs.yaml が指す全ての文書の違反を出す")
+    parser = argparse.ArgumentParser(description="project-index.yaml が指す全ての文書の違反を出す")
     parser.add_argument(
         "--lint-dir",
         type=Path,
@@ -165,7 +165,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             return _EXIT_NOT_STARTED
         clis = {name: path for name, path in lint_clis.items() if path is not None}
         root = Path.cwd()
-        # dev-docs.yaml か拡張したメタスキーマを使えなければ検査を始めない
+        # project-index.yaml か拡張したメタスキーマを使えなければ検査を始めない
         try:
             rows = load_config(root)
             meta = load_meta_validator(root)
