@@ -11,7 +11,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml`・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・lint の違反と警告も無い `docs/rule/` の文書 2 件（`body` の文は「。」で終える）を持つ一時フォルダ'
+        description: '`project-index.yaml`・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・lint の違反と警告も無い `docs/rule/` の文書 2 件（`body` の文は「。」で終える）を持つ一時フォルダ'
     flow: |-
       <!-- map -->
 
@@ -22,7 +22,7 @@ flows:
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
         S->>S: markdownlint-cli2・textlint があるかを確認する
-        S->>F: dev-docs.yaml の documents を読み込む
+        S->>F: project-index.yaml の documents を読み込む
         loop 全ての文書
           S->>S: スキーマの検査と文書の違反の検査
         end
@@ -46,7 +46,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml` と、`schemas/design/` に誤りのある設計書のスキーマ 5 件と、それらが `$ref` で指す `common.schema.yaml` と、`schemas/meta.schema.yaml` と、`x-rules` に文字列を記載した `schemas/template.schema.yaml` を持つ一時フォルダ'
+        description: '`project-index.yaml` と、`schemas/design/` に誤りのある設計書のスキーマ 5 件と、それらが `$ref` で指す `common.schema.yaml` と、`schemas/meta.schema.yaml` と、`x-rules` に文字列を記載した `schemas/template.schema.yaml` を持つ一時フォルダ'
         notes: '5 件は、`type` に `strin` を記載したスキーマ（メタスキーマの違反）、`x-rules` に文字列を記載したスキーマ（メタスキーマの違反）、`common.schema.yaml#/$defs/missing` を指すスキーマ（解決できない `$ref`）、`required` のキーを持たない `examples[0]` を持つスキーマ（`examples` の違反）、`properties` の下のキー 1 つと `if` の条件の中のキーに `x-used-by` を記載せず、`x-used-by` を持たない `$defs` の型をキーの側にも `x-used-by` を記載しないキー 1 つから `$ref` で指し、`x-used-by` を持つ `$defs` の型を別のキーから `$ref` で指すスキーマ（`x-used-by` の違反）。5 件とも、違反を作るキー以外の `properties` の下のキーは `x-used-by` を持つ'
     flow: |-
       <!-- map -->
@@ -57,7 +57,7 @@ flows:
         participant S as 全ての文書の検査
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>F: dev-docs.yaml の documents を読み込む
+        S->>F: project-index.yaml の documents を読み込む
         S->>F: schemas/design/ の設計書のスキーマを読み込む
         loop 全ての設計書のスキーマ
           S->>S: 拡張したメタスキーマ・$ref・examples・x-used-by の検査
@@ -81,7 +81,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml`（`docs/rule/` の行と、`schema` が `schemas/design/scenario.schema.yaml` の `docs/scenario/` の行）・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・`schemas/knowledge-common.schema.yaml` と、`common.schema.yaml#/$defs/id` を `$ref` で指す `schemas/design/scenario.schema.yaml`・`schemas/design/common.schema.yaml`（`properties` の下のキーは `x-used-by` を持つ）と、スキーマに合い、既存のキーの引用符の無い値に ` # bar` を付けた行（`title: シナリオ # bar`。コメントの前の空白が 1 つで、yamllint の `comments` の `min-spaces-from-content` だけに該当する）を 1 つ持つ `docs/scenario/` の設計書と、違反の無い `docs/rule/` の文書を持ち、`schemas/` の直下に `common.schema.yaml` を持たない一時フォルダ'
+        description: '`project-index.yaml`（`docs/rule/` の行と、`schema` が `schemas/design/scenario.schema.yaml` の `docs/scenario/` の行）・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・`schemas/knowledge-common.schema.yaml` と、`common.schema.yaml#/$defs/id` を `$ref` で指す `schemas/design/scenario.schema.yaml`・`schemas/design/common.schema.yaml`（`properties` の下のキーは `x-used-by` を持つ）と、スキーマに合い、既存のキーの引用符の無い値に ` # bar` を付けた行（`title: シナリオ # bar`。コメントの前の空白が 1 つで、yamllint の `comments` の `min-spaces-from-content` だけに該当する）を 1 つ持つ `docs/scenario/` の設計書と、違反の無い `docs/rule/` の文書を持ち、`schemas/` の直下に `common.schema.yaml` を持たない一時フォルダ'
     flow: |-
       <!-- map -->
 
@@ -91,7 +91,7 @@ flows:
         participant S as 全ての文書の検査
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>F: dev-docs.yaml の documents を読み込む
+        S->>F: project-index.yaml の documents を読み込む
         S->>F: 行の schema と同じフォルダのスキーマを読み込む
         loop 全ての文書
           S->>S: スキーマの検査
@@ -115,7 +115,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: knowledge のリポジトリの `schemas/` と `docs/template/` のコピーと、`documents` が空の `dev-docs.yaml` を持つ一時フォルダ
+        description: knowledge のリポジトリの `schemas/` と `docs/template/` のコピーと、`documents` が空の `project-index.yaml` を持つ一時フォルダ
     flow: |-
       <!-- map -->
 
@@ -157,7 +157,7 @@ flows:
         participant S as 全ての文書の検査
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>F: dev-docs.yaml の documents を読み込む
+        S->>F: project-index.yaml の documents を読み込む
         loop 全ての文書
           S->>S: スキーマの検査と文書の違反の検査
         end
@@ -185,7 +185,7 @@ flows:
         participant S as 全ての文書の検査
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>F: dev-docs.yaml の documents を読み込む
+        S->>F: project-index.yaml の documents を読み込む
         loop 全ての文書
           S->>S: スキーマの検査と文書の違反の検査
         end
@@ -215,7 +215,7 @@ flows:
         participant S as 全ての文書の検査
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>F: dev-docs.yaml の documents を読み込む
+        S->>F: project-index.yaml の documents を読み込む
         loop 全ての文書
           S->>S: スキーマの検査と文書の違反の検査
         end
@@ -251,7 +251,7 @@ flows:
         participant S as 全ての文書の検査
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>F: dev-docs.yaml の documents を読み込む
+        S->>F: project-index.yaml の documents を読み込む
         loop 全ての文書
           S->>S: スキーマの検査と文書の違反の検査
         end
@@ -284,7 +284,7 @@ flows:
         participant S as 全ての文書の検査
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>F: dev-docs.yaml の documents を読み込む
+        S->>F: project-index.yaml の documents を読み込む
         S->>F: schemas/ のスキーマを読み込む
         S->>S: 文書に .yamllint.yaml、スキーマに .yamllint-schemas.yaml で yamllint を適用する
         S-->>C: 終了コード 1 とスキーマの違反の行
@@ -313,7 +313,7 @@ flows:
         participant S as 全ての文書の検査
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>F: dev-docs.yaml の documents を読み込む
+        S->>F: project-index.yaml の documents を読み込む
         S->>S: 文書の Markdown の項目に markdownlint-cli2・textlint を呼ぶ
         S-->>C: 終了コード 0 と警告の行
       ```
@@ -352,7 +352,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml` を持ち、`schemas/meta.schema.yaml` を持たない一時フォルダ'
+        description: '`project-index.yaml` を持ち、`schemas/meta.schema.yaml` を持たない一時フォルダ'
     flow: |-
       <!-- map -->
 
@@ -372,13 +372,13 @@ flows:
       - 終了コードが 2
       - 標準エラーに `schemas/meta.schema.yaml` を使用できないことと理由が出る
     test: test_error_when_meta_schema_unusable
-  - name: 異常系（dev-docs.yaml が読み込めない・終了コード 2）
-    summary: dev-docs.yaml が無いか読み込めなければ検査を始めずに終わる
+  - name: 異常系（project-index.yaml が読み込めない・終了コード 2）
+    summary: project-index.yaml が無いか読み込めなければ検査を始めずに終わる
     setup:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml` を持たない一時フォルダ'
+        description: '`project-index.yaml` を持たない一時フォルダ'
     flow: |-
       <!-- map -->
 
@@ -388,7 +388,7 @@ flows:
         participant S as 全ての文書の検査
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>F: dev-docs.yaml を読み込む
+        S->>F: project-index.yaml を読み込む
         F-->>S: ファイルが無い
         S-->>C: 終了コード 2 と標準エラーの理由
       ```
@@ -396,9 +396,9 @@ flows:
       <!-- /map -->
     expected:
       - 終了コードが 2
-      - 標準エラーに `dev-docs.yaml` が無いことが出る
+      - 標準エラーに `project-index.yaml` が無いことが出る
     test: test_error_when_config_missing
-lead: '`dev-docs.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を適用し、`schemas/design/` の設計書のスキーマにスキーマ自身の検査を適用し、設計書のテンプレートがスキーマと一致するかを比べ、全ての違反を出して終了コードで合否を返却する。'
+lead: '`project-index.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を適用し、`schemas/design/` の設計書のスキーマにスキーマ自身の検査を適用し、設計書のテンプレートがスキーマと一致するかを比べ、全ての違反を出して終了コードで合否を返却する。'
 identifier: check-all
 idempotent: true
 side_effects: なし（ファイルを書き換えない）
@@ -410,7 +410,7 @@ request:
     type: Path
     required: true
     location: argument
-    description: knowledge のリポジトリの直下。`dev-docs.yaml` を読み込む
+    description: knowledge のリポジトリの直下。`project-index.yaml` を読み込む
     notes: 作業ディレクトリとして受け取る
   - name: --lint-dir
     type: Path
@@ -429,17 +429,17 @@ response:
     description: 終了コード 2 のときの理由
   - name: exit_code
     type: Literal[0, 1, 2]
-    description: 0 = 違反なし（警告だけのときを含む）。1 = 違反が 1 件以上。2 = 検査の CLI が見つからないか、`dev-docs.yaml` が読み込めないか、拡張したメタスキーマを使用できず、検査を始めなかった
+    description: 0 = 違反なし（警告だけのときを含む）。1 = 違反が 1 件以上。2 = 検査の CLI が見つからないか、`project-index.yaml` が読み込めないか、拡張したメタスキーマを使用できず、検査を始めなかった
 exceptions:
   - name: なし（正常終了）
     condition: 全ての文書に違反が無い（終了コード 0）。警告にしたルールの違反だけのときを含む
   - name: 終了コード 1
     condition: 違反（設計書のスキーマの誤りを含む）が 1 件以上ある。全ての文書と設計書のスキーマを検査し終えてから返却する
   - name: 終了コード 2
-    condition: markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`dev-docs.yaml` が無い・YAML として読み込めないか、`schemas/meta.schema.yaml` が無い・YAML として読み込めない・それ自身が JSON Schema 2020-12 のメタスキーマに合わない
+    condition: markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`project-index.yaml` が無い・YAML として読み込めないか、`schemas/meta.schema.yaml` が無い・YAML として読み込めない・それ自身が JSON Schema 2020-12 のメタスキーマに合わない
 constraints:
   - item: 検査の範囲
-    constraint: '`dev-docs.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も適用する。
+    constraint: '`project-index.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も適用する。
 
       行の `schema` の `$ref` は、そのスキーマと同じフォルダの `*.schema.yaml` をファイル名で登録して解く（`schemas/design/` の設計書のスキーマが指す `common.schema.yaml` は `schemas/design/common.schema.yaml`）'
   - item: 設計書のスキーマの検査の範囲
@@ -462,7 +462,7 @@ constraints:
   - item: スキーマの違反の行
     constraint: '設計書のスキーマと `schemas/*.schema.yaml` の違反の行は、スキーマの YAML の中の誤りのある位置の行。メタスキーマの違反は誤りのあるキー、`$ref` の違反は `$ref` のキー、`examples` の違反は誤りのある要素（要素の中の項目が誤りなら、その項目）の行、`x-used-by` の違反は `x-used-by` の無いキー（`$ref` の先の型にも無いときもキー）の行。項目のパスは同じ位置を `format_path` の記載方法で出す'
   - item: lint の適用先
-    constraint: 'markdownlint-cli2・textlint は、`documents[]` の YAML の文書の Markdown の項目（パスの末尾が `body` の文字列）を 1 項目 1 ファイルの一時の `.md` にして適用し、`.md` の文書にはそのまま適用する。yamllint は `documents[]` の YAML の文書と、直下の `dev-docs.yaml`・`rules.yaml` と、`schemas/*.schema.yaml`・`schemas/design/*.schema.yaml` に適用する'
+    constraint: 'markdownlint-cli2・textlint は、`documents[]` の YAML の文書の Markdown の項目（パスの末尾が `body` の文字列）を 1 項目 1 ファイルの一時の `.md` にして適用し、`.md` の文書にはそのまま適用する。yamllint は `documents[]` の YAML の文書と、直下の `project-index.yaml`・`rules.yaml` と、`schemas/*.schema.yaml`・`schemas/design/*.schema.yaml` に適用する'
   - item: lint の行
     constraint: 一時の `.md` の違反の行は、CLI の行に `iter_strings` が返却する項目の開始行を加算して 1 を減算した、元の文書の YAML の行で出す
   - item: lint の CLI の呼び出し

@@ -11,7 +11,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml`・スキーマ・変換のスクリプトと、`visibility: public` の文書 2 件・`visibility: internal` の文書 1 件を持つ一時フォルダ'
+        description: '`project-index.yaml`・スキーマ・変換のスクリプトと、`visibility: public` の文書 2 件・`visibility: internal` の文書 1 件を持つ一時フォルダ'
         notes: 公開の文書の 1 件が、もう 1 件の公開の文書の項目と internal の文書を 1 つずつ参照する
     flow: |-
       <!-- map -->
@@ -23,7 +23,7 @@ flows:
         participant V as 変換のスクリプト
         participant M as mdmark
         C->>S: リポジトリの直下で --out を付けて起動する
-        S->>S: dev-docs.yaml の documents を読み込み、公開の文書を選ぶ
+        S->>S: project-index.yaml の documents を読み込み、公開の文書を選ぶ
         loop 公開の文書
           S->>V: 標準入力に文書の YAML
           V-->>S: Markdown
@@ -45,7 +45,7 @@ flows:
     summary: 変換のスクリプトが失敗した文書で止め、出力を残さずに終わる
     setup:
       - name: Mock
-        description: '`dev-docs.yaml` の `converters[].run` を、標準エラーに 1 行出して終了コード 1 で終わるコマンドに差し替える'
+        description: '`project-index.yaml` の `converters[].run` を、標準エラーに 1 行出して終了コード 1 で終わるコマンドに差し替える'
       - name: リポジトリ
         description: 正常系と同じ一時フォルダ
     flow: |-
@@ -147,13 +147,13 @@ flows:
       - 終了コードが 2
       - 標準エラーに公開の文書が無いことが出る
     test: test_error_when_no_public
-  - name: 異常系（dev-docs.yaml が読み込めない・終了コード 2）
-    summary: dev-docs.yaml が無いか読み込めなければ成果物を作り始めずに終わる
+  - name: 異常系（project-index.yaml が読み込めない・終了コード 2）
+    summary: project-index.yaml が無いか読み込めなければ成果物を作り始めずに終わる
     setup:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`dev-docs.yaml` を持たない一時フォルダ'
+        description: '`project-index.yaml` を持たない一時フォルダ'
     flow: |-
       <!-- map -->
 
@@ -162,16 +162,16 @@ flows:
         participant C as 呼び出し元
         participant S as Pages の成果物の作成
         C->>S: リポジトリの直下で --out を付けて起動する
-        S->>S: dev-docs.yaml が無い
+        S->>S: project-index.yaml が無い
         S-->>C: 終了コード 2 と標準エラーの理由
       ```
 
       <!-- /map -->
     expected:
       - 終了コードが 2
-      - 標準エラーに `dev-docs.yaml` が無いことが出る
+      - 標準エラーに `project-index.yaml` が無いことが出る
     test: test_error_when_config_missing
-lead: '`dev-docs.yaml` の `documents[]` が指す文書のうち `visibility: public` のものを変換のスクリプトで Markdown にし、文書の ID への参照をリンクに書き換えて、mdmark の `build` で 1 枚の HTML にまとめた出力のフォルダを作る。'
+lead: '`project-index.yaml` の `documents[]` が指す文書のうち `visibility: public` のものを変換のスクリプトで Markdown にし、文書の ID への参照をリンクに書き換えて、mdmark の `build` で 1 枚の HTML にまとめた出力のフォルダを作る。'
 identifier: build-pages
 idempotent: true
 side_effects: 出力のフォルダを再作成する（中身を削除してから `index.html` を書き込む）。途中の Markdown と mdmark の設定は一時フォルダに配置し、終了時に削除する。リポジトリのファイルは書き換えない
@@ -184,7 +184,7 @@ request:
     type: Path
     required: true
     location: argument
-    description: knowledge のリポジトリの直下。`dev-docs.yaml` と文書の YAML を読み込む
+    description: knowledge のリポジトリの直下。`project-index.yaml` と文書の YAML を読み込む
     notes: 作業ディレクトリとして受け取る
   - name: --out
     type: Path
@@ -204,14 +204,14 @@ response:
     description: 終了コード 1・2 のときの理由。変換の失敗は失敗した文書のパスと変換のスクリプトの標準エラー
   - name: exit_code
     type: Literal[0, 1, 2]
-    description: 0 = 出力を作った。1 = 変換か mdmark の `build` が失敗した。2 = `dev-docs.yaml` が読み込めないか、公開の文書が 0 件で、成果物を作り始めなかった
+    description: 0 = 出力を作った。1 = 変換か mdmark の `build` が失敗した。2 = `project-index.yaml` が読み込めないか、公開の文書が 0 件で、成果物を作り始めなかった
 exceptions:
   - name: なし（正常終了）
     condition: 全ての公開の文書を変換し、`index.html` を書き込んだ（終了コード 0）
   - name: 終了コード 1
     condition: 変換のスクリプトが 0 以外で終わった文書がある、参照先の ID が `documents[]` の文書に無い、または mdmark の `build` が 0 以外で終わった。最初の失敗で止め、出力のフォルダに `index.html` を残さない
   - name: 終了コード 2
-    condition: '`dev-docs.yaml` が無い・YAML として読み込めない、または `visibility: public` の文書が 0 件'
+    condition: '`project-index.yaml` が無い・YAML として読み込めない、または `visibility: public` の文書が 0 件'
 constraints:
   - item: 対象の文書
     constraint: '`documents[]` のうち `converter` を持つ行の `paths` に該当する YAML で、`visibility` が `public` のもの。`records` の行（files.yaml）は対象にしない'

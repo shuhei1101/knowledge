@@ -3,7 +3,7 @@ visibility: internal
 title: "文書の Markdown への変換"
 entry:
   kind: operation
-  value: '`dev-docs.yaml` の `converters[]` の `knowledge-markdown`（`documents[]` の `docs/` の種類（`rule`・`template`・`flowchart`・`guide`・`changelog`・`skill`・`word-list`）の行が `converter` で指す。files.yaml の行は `converter` を持たない。project-index が配信元の直下で子プロセスとして起動する。`cache: false` で、project-index は変換の結果を記録せずに文書を開くたびに起動する）'
+  value: '`project-index.yaml` の `converters[]` の `knowledge-markdown`（`documents[]` の `docs/` の種類（`rule`・`template`・`flowchart`・`guide`・`changelog`・`skill`・`word-list`）の行が `converter` で指す。files.yaml の行は `converter` を持たない。project-index が配信元の直下で子プロセスとして起動する。`cache: false` で、project-index は変換の結果を記録せずに文書を開くたびに起動する）'
 flows:
   - name: 正常系
     summary: 規約を、group の階層を見出しにした Markdown にする
@@ -70,7 +70,7 @@ flows:
         description: '項目の本文に `<!-- embed: word-list-ai-slop -->` の行と、コードブロックの中の同じマーカーを持つ rule の文書'
         notes: develop の `convention-writing-style.yaml` の `word-choice-table-02` と同じ記載方法
       - name: 配信元の対応表
-        description: '`dev-docs.yaml` の `documents[]` の `word-list` の行の `paths` に該当する、`id: word-list-ai-slop` の対応表'
+        description: '`project-index.yaml` の `documents[]` の `word-list` の行の `paths` に該当する、`id: word-list-ai-slop` の対応表'
     flow: |-
       <!-- map -->
 
@@ -81,7 +81,7 @@ flows:
         participant F as 配信元のファイル
         D->>S: 標準入力に文書の YAML
         S->>F: kind のスキーマを読み込む
-        S->>F: dev-docs.yaml の word-list の行の対応表を読み込む
+        S->>F: project-index.yaml の word-list の行の対応表を読み込む
         S->>S: マーカーの行を ID の対応表の NG・OK の表に置き換える
         S-->>D: 終了コード 0 と Markdown
       ```
@@ -109,7 +109,7 @@ flows:
         participant S as 文書の Markdown への変換
         participant F as 配信元のファイル
         D->>S: 標準入力に文書の YAML
-        S->>F: dev-docs.yaml の word-list の行の対応表を読み込む
+        S->>F: project-index.yaml の word-list の行の対応表を読み込む
         F-->>S: ID が missing の対応表が無い
         S-->>D: 終了コード 0 と、マーカーの位置に注意書きを持つ Markdown
       ```
@@ -170,14 +170,14 @@ flows:
       - 標準エラーに読み込めない行が出る
     test: test_error_when_invalid_yaml
   - name: 異常系（対応表が読み込めない・終了コード 1）
-    summary: 埋め込みのマーカーがあり、対応表を指す dev-docs.yaml か対応表のファイルが読み込めなければ変換せずに終わる
+    summary: 埋め込みのマーカーがあり、対応表を指す project-index.yaml か対応表のファイルが読み込めなければ変換せずに終わる
     setup:
       - name: Mock
         description: 差し替えない
       - name: 標準入力
         description: '項目の本文に `<!-- embed: word-list-ai-slop -->` の行を持つ rule の文書'
       - name: 配信元の対応表
-        description: '`dev-docs.yaml` の `word-list` の行の `paths` に該当するファイルの 1 つが、括弧の閉じていない YAML'
+        description: '`project-index.yaml` の `word-list` の行の `paths` に該当するファイルの 1 つが、括弧の閉じていない YAML'
     flow: |-
       <!-- map -->
 
@@ -187,7 +187,7 @@ flows:
         participant S as 文書の Markdown への変換
         participant F as 配信元のファイル
         D->>S: 標準入力に文書の YAML
-        S->>F: dev-docs.yaml の word-list の行の対応表を読み込む
+        S->>F: project-index.yaml の word-list の行の対応表を読み込む
         F-->>S: 読み込めないファイル
         S-->>D: 終了コード 1 と標準エラーの理由
       ```
@@ -217,7 +217,7 @@ request:
     type: Path
     required: true
     location: argument
-    description: knowledge の配信元の直下。`schemas/{kind}.schema.yaml` を読み込み、種類に固有のキーの見出しにスキーマの `title` を使用する。埋め込みのマーカーがあるときは `dev-docs.yaml` の `documents[]` の `word-list` の行の `paths` に該当する対応表を読み込む
+    description: knowledge の配信元の直下。`schemas/{kind}.schema.yaml` を読み込み、種類に固有のキーの見出しにスキーマの `title` を使用する。埋め込みのマーカーがあるときは `project-index.yaml` の `documents[]` の `word-list` の行の `paths` に該当する対応表を読み込む
     notes: 子プロセスの作業ディレクトリとして受け取る
 response:
   - name: stdout
@@ -258,7 +258,7 @@ exceptions:
   - name: なし（正常終了）
     condition: 変換できた
   - name: 終了コード 1
-    condition: 標準入力が YAML として読み込めないか、`kind` に該当する `schemas/{kind}.schema.yaml` が無い。埋め込みのマーカーがある文書で、`dev-docs.yaml` か `word-list` の行の `paths` に該当するファイルが読み込めない
+    condition: 標準入力が YAML として読み込めないか、`kind` に該当する `schemas/{kind}.schema.yaml` が無い。埋め込みのマーカーがある文書で、`project-index.yaml` か `word-list` の行の `paths` に該当するファイルが読み込めない
 constraints:
   - item: 処理時間
     constraint: 起動から 20 秒
