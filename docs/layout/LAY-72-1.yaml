@@ -101,6 +101,7 @@ entries:
         generated_from:
           path: docs/index.yaml
           command: CMD-72-1#categories[ビルド・生成]
+          tracked: GitHub でフォルダを開いたときに表示する目次
       - type: file
         name: changelog.yaml
         contents: knowledge のバージョンごとの変更履歴
@@ -123,6 +124,7 @@ entries:
         generated_from:
           path: schemas/design/
           command: CMD-72-1#categories[ビルド・生成]
+          tracked: project-index が knowledge の文書として配信する
       - type: folder
         name: flowchart
         contents: 判定フローチャート
@@ -167,6 +169,7 @@ entries:
             generated_from:
               path: docs/architecture/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
+              tracked: GitHub でフォルダを開いたときに表示する目次
       - type: folder
         name: nonfunctional
         contents: 非機能要件
@@ -180,6 +183,7 @@ entries:
             generated_from:
               path: docs/nonfunctional/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
+              tracked: GitHub でフォルダを開いたときに表示する目次
       - type: folder
         name: scenario
         contents: 複合・単一ユースケースのシナリオ
@@ -193,6 +197,7 @@ entries:
             generated_from:
               path: docs/scenario/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
+              tracked: GitHub でフォルダを開いたときに表示する目次
       - type: folder
         name: interface
         contents: インターフェース定義
@@ -206,6 +211,7 @@ entries:
             generated_from:
               path: docs/interface/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
+              tracked: GitHub でフォルダを開いたときに表示する目次
       - type: folder
         name: module
         contents: モジュール構成と、分類ごとのまとめの設計書
@@ -219,6 +225,7 @@ entries:
             generated_from:
               path: docs/module/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
+              tracked: GitHub でフォルダを開いたときに表示する目次
       - type: folder
         name: library
         contents: 外部ライブラリ・CLI
@@ -232,6 +239,7 @@ entries:
             generated_from:
               path: docs/library/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
+              tracked: GitHub でフォルダを開いたときに表示する目次
       - type: folder
         name: test-procedure
         contents: テスト実行方法
@@ -245,6 +253,7 @@ entries:
             generated_from:
               path: docs/test-procedure/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
+              tracked: GitHub でフォルダを開いたときに表示する目次
       - type: folder
         name: dev-command
         contents: 開発コマンド
@@ -258,6 +267,7 @@ entries:
             generated_from:
               path: docs/dev-command/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
+              tracked: GitHub でフォルダを開いたときに表示する目次
       - type: folder
         name: layout
         contents: フォルダ構成
@@ -271,6 +281,7 @@ entries:
             generated_from:
               path: docs/layout/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
+              tracked: GitHub でフォルダを開いたときに表示する目次
       - type: folder
         name: pr
         contents: 作業 PR ごとの計画書と記録
@@ -333,6 +344,7 @@ entries:
         generated_from:
           path: scripts/knowledge_checks.py
           command: CMD-72-1#categories[依存の追加・更新・削除]
+          tracked: '`uv run --frozen` がロックのバージョンで依存を入れる'
       - type: file
         name: knowledge_markdown.py
         contents: converters の knowledge-markdown（文書の Markdown への変換）
@@ -342,6 +354,7 @@ entries:
         generated_from:
           path: scripts/knowledge_markdown.py
           command: CMD-72-1#categories[依存の追加・更新・削除]
+          tracked: '`uv run --frozen` がロックのバージョンで依存を入れる'
       - type: file
         name: check_all.py
         contents: 全ての文書の検査（手元の CLI）
@@ -351,6 +364,7 @@ entries:
         generated_from:
           path: scripts/check_all.py
           command: CMD-72-1#categories[依存の追加・更新・削除]
+          tracked: '`uv run --frozen` がロックのバージョンで依存を入れる'
       - type: file
         name: build_pages.py
         contents: Pages の成果物の作成（CI と手元の CLI）
@@ -361,6 +375,7 @@ entries:
         generated_from:
           path: scripts/build_pages.py
           command: CMD-72-1#categories[依存の追加・更新・削除]
+          tracked: '`uv run --frozen` がロックのバージョンで依存を入れる'
       - type: file
         name: build_word_list.py
         contents: 対応表のコピーの作成（手元の CLI）
@@ -371,6 +386,7 @@ entries:
         generated_from:
           path: scripts/build_word_list.py
           command: CMD-72-1#categories[依存の追加・更新・削除]
+          tracked: '`uv run --frozen` がロックのバージョンで依存を入れる'
       - type: file
         name: build_templates.py
         contents: 設計書のテンプレートの生成（手元の CLI）
@@ -380,6 +396,7 @@ entries:
         generated_from:
           path: scripts/build_templates.py
           command: CMD-72-1#categories[依存の追加・更新・削除]
+          tracked: '`uv run --frozen` がロックのバージョンで依存を入れる'
       - type: file
         name: build_skills.py
         contents: SKILL.md の生成（手元の CLI）
@@ -389,6 +406,7 @@ entries:
         generated_from:
           path: scripts/build_skills.py
           command: CMD-72-1#categories[依存の追加・更新・削除]
+          tracked: '`uv run --frozen` がロックのバージョンで依存を入れる'
       - type: file
         name: files.yaml
         contents: '`scripts/` のファイルの一覧（project-index の files の行）'
@@ -407,6 +425,7 @@ entries:
             generated_from:
               path: scripts/lint/package.json
               command: CMD-72-1#categories[依存の追加・更新・削除]
+              tracked: '`npm ci` がロックのバージョンで依存を入れる'
           - type: file
             name: .markdownlint-cli2.jsonc
             contents: markdownlint の設定
@@ -445,6 +464,7 @@ entries:
             generated_from:
               path: docs/skill/{skill}.yaml
               command: CMD-72-1#categories[ビルド・生成]
+              tracked: プラグインを git から入れたときに Claude Code が SKILL.md を読み込む
       - type: file
         name: files.yaml
         contents: '`skills/` のファイルの一覧（project-index の files の行）'
@@ -493,6 +513,7 @@ entries:
                     generated_from:
                       path: docs/word-list/word-list-ai-slop.yaml
                       command: CMD-72-1#categories[ビルド・生成]
+                      tracked: プラグインを git から入れたときに slop-check のフックが読み込む
   - type: folder
     name: tests
     contents: テスト。層のフォルダの下を、テストする対象ごとに分ける
