@@ -1,7 +1,6 @@
 """scripts/knowledge_checks.py の単体テスト。"""
 
 import json
-from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 import knowledge_checks
@@ -18,6 +17,7 @@ from knowledge_checks import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from pathlib import Path
 
     import pytest
