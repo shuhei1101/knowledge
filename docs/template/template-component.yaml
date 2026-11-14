@@ -86,7 +86,7 @@ items:
       | tags | タグ | array | - | - | - | 設計書を検索で絞り込むタグで、`name` にタグの名前（`action:`・`topic:`・`tool:` などで始める）、最も分量の多い主題 1 つに `main: true` を記載する。<br>付け方は knowledge の規約『文書のタグと description の記載』に従う。 | project-index の検索で、文書をタグで絞り込む。 | `[{main: true, name: topic:タグ}, name: action:記載]` |
       | tags[].name | タグの名前 | string | 必須 | - | minLength: `1` | タグの名前。`action:`・`topic:`・`tool:` などで始める。 | 検索で、文書をタグで絞り込む値にする。 | - |
       | tags[].main | 主題 | boolean | - | - | - | 最も分量の多い主題のタグだけ `true` にする。 | 検索で、文書の主題のタグとして扱う。 | - |
-      | aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | project-index の検索で、文書を名前と同じように検索できる言い換えにする。 | `[フォルダ構成の設計書]` |
+      | aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | project-index の検索で、文書を名前と同じように検索できる言い換えにする。 | - |
       | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
 
       <!-- /table -->
