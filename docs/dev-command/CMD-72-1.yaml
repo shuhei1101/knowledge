@@ -3,16 +3,8 @@ visibility: internal
 title: "開発コマンド"
 categories:
   - name: 環境構築（クローン直後）
-    prerequisites:
-      - WSL では、npm のグローバルの配置先が Linux 側のファイルシステムにある（`/mnt/c` の `node_modules` の maid は 1 回の起動に 9〜14 秒かかる）
     commands: |-
-      1. mermaid の検査に使用する maid を PATH で見つかる場所に入れる
-
-      ```bash
-      npm install -g @probelabs/maid@0.0.29
-      ```
-
-      2. 入口のスクリプトごとに、ロックの依存を uv のキャッシュに入れる（初回の起動で依存の取得に 20 秒を超えないようにする）
+      1. 入口のスクリプトごとに、ロックの依存を uv のキャッシュに入れる（初回の起動で依存の取得に 20 秒を超えないようにする）
 
       ```bash
       uv sync --script scripts/knowledge_checks.py
@@ -23,7 +15,7 @@ categories:
       uv sync --script scripts/build_templates.py
       ```
 
-      3. 全ての文書の検査が呼ぶ markdownlint-cli2・textlint とルールを、ロック（`scripts/lint/package-lock.json`）のバージョンで `scripts/lint/node_modules/` に入れる
+      2. 全ての文書の検査が呼ぶ markdownlint-cli2・textlint とルールを、ロック（`scripts/lint/package-lock.json`）のバージョンで `scripts/lint/node_modules/` に入れる
 
       ```bash
       npm ci --prefix scripts/lint
@@ -31,7 +23,7 @@ categories:
     verification:
       state: 済
       date: '2026-11-06'
-      detail: WSL2 で maid 0.0.29 を入れ、`maid - --format json` が 0.35 秒で終了コード 0 を返却した。3 つのスクリプトの `uv sync --script` がロックの依存を入れた（2026-10-31）。worktree で `npm ci --prefix scripts/lint` を実行し、`scripts/lint/node_modules/.bin/` に `markdownlint-cli2`・`textlint` が入った（2026-11-05）。worktree で `uv sync --script scripts/build_templates.py` がロックの依存を入れた（2026-11-06）
+      detail: 3 つのスクリプトの `uv sync --script` がロックの依存を入れた（2026-10-31）。worktree で `npm ci --prefix scripts/lint` を実行し、`scripts/lint/node_modules/.bin/` に `markdownlint-cli2`・`textlint` が入った（2026-11-05）。worktree で `uv sync --script scripts/build_templates.py` がロックの依存を入れた（2026-11-06）
   - name: 取り込み後の追従（pull 後）
     commands: |-
       1. ロック（`scripts/*.py.lock`）が変わったときは、入口のスクリプトごとに依存を再インストールする
@@ -53,7 +45,7 @@ categories:
     verification:
       state: 済
       date: '2026-11-05'
-      detail: 3 つのスクリプトで実行し、ロックの依存が入っていることを確認した（2026-10-31）。2 は環境構築の 3 と同じコマンドで確認した（2026-11-05）。`build_templates.py` の 1 は環境構築の 2 と同じコマンドで確認した（2026-11-06）
+      detail: 3 つのスクリプトで実行し、ロックの依存が入っていることを確認した（2026-10-31）。2 は環境構築の 2 と同じコマンドで確認した（2026-11-05）。`build_templates.py` の 1 は環境構築の 1 と同じコマンドで確認した（2026-11-06）
   - name: 依存の追加・更新・削除
     commands: |-
       依存はスクリプトの PEP 723 のメタデータとロック（`{スクリプト}.py.lock`）が持つ。`pyproject.toml` は作らない。
@@ -76,9 +68,7 @@ categories:
       uv remove --script scripts/{スクリプト}.py {パッケージ}
       ```
 
-      4. maid のバージョンを上げるときは、環境構築の `@probelabs/maid@{バージョン}` を書き換える
-
-      5. markdownlint-cli2・textlint とルールのバージョンを上げるときは、完全なバージョンで `scripts/lint/package.json` とロックを書き換える
+      4. markdownlint-cli2・textlint とルールのバージョンを上げるときは、完全なバージョンで `scripts/lint/package.json` とロックを書き換える
 
       ```bash
       npm install --prefix scripts/lint --save-exact {パッケージ}@{バージョン}
@@ -151,7 +141,7 @@ categories:
       ```
 
       2. 単体テストと静的検査は、テスト実行方法の各層の全件実行のコマンドを実行する
-    effects: 文書 267 件で約 60 秒（WSL の `/mnt/c` の worktree。mermaid の図ごとに maid を起動し、markdownlint-cli2・textlint を 1 回ずつ起動する）。既定の lint の設定は全てのルールを error にし、違反を違反の行で出す
+    effects: 文書 267 件で約 60 秒（WSL の `/mnt/c` の worktree。markdownlint-cli2・textlint を 1 回ずつ起動する）。既定の lint の設定は全てのルールを error にし、違反を違反の行で出す
     refs:
       - TP-72-1#layers[単体テスト（バック）]
       - TP-72-1#layers[lint]
@@ -163,4 +153,4 @@ categories:
     commands: 未確定
 prerequisites:
   - uv（`uv run --script` と `uv lock --script` が使用できるバージョン。Python 3.14 は uv が入れる）
-  - Node.js と npm（maid と、`scripts/lint/` の markdownlint-cli2・textlint を入れる）
+  - Node.js と npm（`scripts/lint/` の markdownlint-cli2・textlint を入れる）

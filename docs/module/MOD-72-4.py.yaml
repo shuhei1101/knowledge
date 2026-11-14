@@ -1,7 +1,7 @@
 id: "MOD-72-4"
 visibility: internal
 title: "検査と変換のスクリプト / scripts / knowledge_checks.py"
-lead: project-index の validators の `knowledge-checks`。標準入力の文書 1 件に、項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複・mermaid の文法を適用し、違反の配列を返却する（IF-72-1）。
+lead: project-index の validators の `knowledge-checks`。標準入力の文書 1 件に、項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複を適用し、違反の配列を返却する（IF-72-1）。
 constants:
   - name: ID_LINK
     title: 'id: の参照'
@@ -31,38 +31,22 @@ functions:
         required: false
         default: None
         description: コマンドの引数。`None` は `sys.argv[1:]`。引数は取らない（`--help` だけ）
-      - name: limit_sec
-        title: 処理時間の上限
-        type: float
-        required: false
-        default: LIMIT_SEC
-        passing: keyword
-        description: 起動からの上限（秒）。結合テストが時間切れになるときに差し替える
     returns:
       type: int
-      description: 終了コード。`0` = 検査を終えた（違反の有無に依らない）、`2` = maid が PATH に無い、`1` = 想定していない例外
+      description: 終了コード。`0` = 検査を終えた（違反の有無に依らない）、`1` = 想定していない例外
     process: |-
-      1. `time.monotonic() + limit_sec` を締め切りにする
-      2. argparse で引数を読み込む
-      3. 標準入出力を UTF-8 にする（`sys.stdin.reconfigure(encoding="utf-8")`・`sys.stdout` も同じ）
-      4. maid の在りかを確認する（maid の在りかの確認）
-         - 見つからない場合、標準エラーへ `maid が PATH にありません。開発コマンドの『環境構築（クローン直後）』で maid を入れてください` を出し、標準出力へ何も出さず 2 を返却する
-      5. 標準入力を読み込み、作業ディレクトリを配信元の直下にして検査する（文書の検査）
-      6. 違反の配列を `json.dumps(..., ensure_ascii=False)` で標準出力へ出し、`0` を返却する
+      1. argparse で引数を読み込む
+      2. 標準入出力を UTF-8 にする（`sys.stdin.reconfigure(encoding="utf-8")`・`sys.stdout` も同じ）
+      3. 標準入力を読み込み、作業ディレクトリを配信元の直下にして検査する（文書の検査）
+      4. 違反の配列を `json.dumps(..., ensure_ascii=False)` で標準出力へ出し、`0` を返却する
          - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返却する
     unit_tests:
       - name: test_main
         case: 正常
         summary: 違反の無い文書
         condition: '標準入力に違反の無い文書。作業ディレクトリは空の `docs/` と、`documents: []` の `dev-docs.yaml` を持つ一時フォルダ'
-        mock: maid の在りかの確認を、図が正しいと回答するスクリプトのパスに差し替える
+        mock: なし
         expected: '`0` を返却し、標準出力が `[]`'
-      - name: test_main_when_maid_missing
-        case: 正常
-        summary: maid が無い
-        condition: 標準入力に文書
-        mock: maid の在りかの確認を `None` に差し替える
-        expected: '`2` を返却し、標準出力が空で、標準エラーに `maid` と `環境構築` が出る'
       - name: test_main_when_unexpected_error
         case: 正常
         summary: 想定していない例外
@@ -70,7 +54,7 @@ functions:
         mock: 文書の検査を `RuntimeError` を送出する関数に差し替える
         expected: '`1` を返却し、標準エラーに `Traceback` が出る'
     callees:
-      - MOD-72-3#functions[find_maid]
+      - '#functions[check_document]'
     refs:
       - IF-72-1#
   - name: check_document
@@ -92,16 +76,6 @@ functions:
         type: Path
         required: true
         description: '`docs/**/*.yaml` を読み込むリポジトリの直下'
-      - name: executable
-        title: maid の実行ファイル
-        type: str
-        required: true
-        description: '`find_maid` が返却したパス'
-      - name: deadline
-        title: 締め切り
-        type: float
-        required: true
-        description: '`time.monotonic()` の時刻'
       - name: index
         title: ID の索引
         type: Mapping[str, frozenset[str]] | None
@@ -118,51 +92,51 @@ functions:
         description: 作った名前の索引。`None` ならこの関数で `dev-docs.yaml` を読み込んで作る。全ての文書の検査が 1 度だけ作って指定する
     returns:
       type: list[Violation]
-      description: 項目の ID の重複 → `id:` の参照 → `related` の `to` → `aliases` の衝突 → 文書の中の `aliases` の重複 → mermaid の順の違反
+      description: 項目の ID の重複 → `id:` の参照 → `related` の `to` → `aliases` の衝突 → 文書の中の `aliases` の重複の順の違反
     process: |-
       1. 文書を読み込む（文書の読み込み）
          - 読み込めない文書の場合、`path: $`・`{行} 行目: YAML として読めません: {理由}`・`YAML の文法の誤りを修正する` の 1 件を返却する
       2. `index` が `None` なら ID の索引を作る（ID の索引の作成）
       3. `names` が `None` なら、`dev-docs.yaml` を読み込み（dev-docs.yaml の読み込み）、名前の索引を作る（名前の索引の作成）
          - `ConfigError` の場合、`aliases` の衝突の検査を適用せず、`path: $`・`1 行目: {理由}。aliases の衝突を検査できません`・`配信元の直下に読める dev-docs.yaml を置く` の違反を 1 件加える
-      4. 項目の ID の重複・参照・`aliases` の衝突・文書の中の `aliases` の重複・mermaid を順に検査し、違反をつないで返却する（項目の ID の重複の検査・参照の検査・aliases の衝突の検査・文書の中の aliases の重複の検査・mermaid の検査）。文書の中の `aliases` の重複の検査は、手順 3 の `ConfigError` の場合も適用する
+      4. 項目の ID の重複・参照・`aliases` の衝突・文書の中の `aliases` の重複を順に検査し、違反をつないで返却する（項目の ID の重複の検査・参照の検査・aliases の衝突の検査・文書の中の aliases の重複の検査）。文書の中の `aliases` の重複の検査は、手順 3 の `ConfigError` の場合も適用する
       5. 最上位の `kind` が `word-list` なら、対応表の examples の検査の違反を後ろにつなぐ
     unit_tests:
       - name: test_check_document
         case: 正常
         summary: 違反を検査の順に並べる
-        condition: '項目の ID が重なり、`[B](id:missing)` と `related` の `to: missing` と `end` の抜けた subgraph を持つ文書。`index` に `a` だけ、`names` に `{}`'
-        mock: 'maid を、`line: 2` の誤りを返却するスクリプトに差し替える'
-        expected: 4 件で、`path` が `items[1].id`・`items[2].body`・`related[0].to`・`items[3].body` の順
+        condition: '項目の ID が重なり、`[B](id:missing)` と `related` の `to: missing` を持つ文書。`index` に `a` だけ、`names` に `{}`'
+        mock: 'なし'
+        expected: 3 件で、`path` が `items[1].id`・`items[2].body`・`related[0].to` の順
       - name: test_check_document_when_word_list
         case: 正常
         summary: 対応表の examples の違反をつなぐ
         condition: '`kind: word-list` で、`examples.hit` の文が `ng` にヒットしない 1 行を持つ文書。`index`・`names` に `{}`'
-        mock: 'maid を、誤りの無い結果を返却するスクリプトに差し替える'
+        mock: 'なし'
         expected: '`path` が `entries[0].examples.hit[0]` の 1 件'
       - name: test_check_document_when_broken
         case: 正常
         summary: 読み込めない YAML
         condition: '`items:\n  - id: a\n    name: [`'
         mock: なし
-        expected: '`path` が `$` の 1 件で、`rule` が `行目: YAML として読めません` を含む。索引を作らず maid も呼ばない'
+        expected: '`path` が `$` の 1 件で、`rule` が `行目: YAML として読めません` を含む。索引を作らない'
       - name: test_check_document_when_aliases_collide
         case: 正常
-        summary: aliases の衝突の違反を参照と mermaid の間に並べる
+        summary: aliases の衝突の違反を参照の後に並べる
         condition: '`id: b` で、`items[0].body` に `[B](id:missing)`、`aliases: [アルファ]` を持つ文書。`index` に `a` だけ、`names` に `{"アルファ": [("a", "aliases")]}`'
-        mock: 'maid を、誤りの無い結果を返却するスクリプトに差し替える'
+        mock: 'なし'
         expected: 2 件で、`path` が `items[0].body`・`aliases[0]` の順
       - name: test_check_document_when_config_missing
         case: 正常
         summary: dev-docs.yaml が無い
         condition: '`aliases: [アルファ]` を持つ文書。`index` に `{}`、`names` は指定しない。一時フォルダに `dev-docs.yaml` が無い'
-        mock: 'maid を、誤りの無い結果を返却するスクリプトに差し替える'
+        mock: 'なし'
         expected: '`path` が `$` の 1 件で、`rule` が `dev-docs.yaml` と `aliases の衝突を検査できません` を含む'
       - name: test_check_document_when_aliases_duplicate
         case: 正常
         summary: dev-docs.yaml が無くても文書の中の aliases の重複を検査する
         condition: '`aliases: [アルファ, ｱﾙﾌｧ]` を持つ文書。`index` に `{}`、`names` は指定しない。一時フォルダに `dev-docs.yaml` が無い'
-        mock: 'maid を、誤りの無い結果を返却するスクリプトに差し替える'
+        mock: 'なし'
         expected: 2 件で、`path` が `$`・`aliases[1]` の順
     callees:
       - MOD-72-2#functions[load_document]
@@ -502,114 +476,9 @@ functions:
         condition: 本文の ```yaml の囲みの中に `[B](id:missing)`、囲みの後に `[C](id:gone)`。索引は空
         mock: なし
         expected: 1 件で、`rule` が `gone` を含み、行が `[C](id:gone)` の行
-  - name: mermaid_blocks
-    title: mermaid のブロックの取り出し
-    kind: 関数
-    container: scripts/knowledge_checks.py
-    usecase: 文書の違反の検査
-    scope: public
-    summary: 文字列から mermaid のコードブロックを、中身の 1 行目の位置と中身で取り出す
-    args:
-      - name: text
-        title: 文字列
-        type: str
-        required: true
-        description: 文字列の項目の値
-    returns:
-      type: list[tuple[int, str]]
-      description: （中身の 1 行目が `text` の何行目か（0 始まり）、囲みの行を除いた中身）
-    process: |-
-      1. `text` を行ごとに確認して、`FENCE` に該当する行で囲みを開く・閉じる（閉じるのは、開いた囲みと同じ数以上のバッククォートで情報文字列の無い行）
-         - 囲みの外で、バッククォートが 3 つで情報文字列が `mermaid` の場合、閉じるまでの行を mermaid のブロックにする
-         - バッククォートが 4 つ以上の囲みの場合、閉じるまでの行を見ない（記述例の中の図を検査しない）
-         - 閉じずに文字列が終わった mermaid のブロックは、末尾までを中身にする
-    unit_tests:
-      - name: test_mermaid_blocks
-        case: 正常
-        summary: mermaid のブロックだけを取り出す
-        condition: 段落・```mermaid のブロック（3 行目から）・```python のブロックを持つ文字列
-        mock: なし
-        expected: 1 件で、位置が 3、中身が囲みの行を含まない
-      - name: test_mermaid_blocks_when_nested_in_example
-        case: 正常
-        summary: 4 つ以上の囲みの中は見ない
-        condition: '````markdown の囲みの中に ```mermaid のブロック'
-        mock: なし
-        expected: 空
-      - name: test_mermaid_blocks_when_unclosed
-        case: 正常
-        summary: 閉じ忘れ
-        condition: '```mermaid の後に閉じの行が無い'
-        mock: なし
-        expected: 1 件で、末尾までが中身
-  - name: check_mermaid
-    title: mermaid の検査
-    kind: 関数
-    container: scripts/knowledge_checks.py
-    usecase: 文書の違反の検査
-    scope: public
-    summary: 文書の中の mermaid のブロックを 1 つずつ maid で検査し、誤りと時間切れを違反にする
-    side_effects: maid をブロックの数だけ起動する
-    args:
-      - name: doc
-        title: 文書
-        type: CommentedMap
-        required: true
-        description: 読み込んだ文書
-      - name: executable
-        title: maid の実行ファイル
-        type: str
-        required: true
-        description: '`find_maid` が返却したパス'
-      - name: deadline
-        title: 締め切り
-        type: float
-        required: true
-        description: '`time.monotonic()` の時刻'
-    returns:
-      type: list[Violation]
-      description: ブロックの並びの違反
-    process: |-
-      1. 文字列の項目ごとに mermaid のブロックを取り出す（文字列の項目の列挙・mermaid のブロックの取り出し）。ブロックの文書の行は、本文の 1 行目の行 + 中身の位置
-      2. ブロックごとに、締め切りまでの残り時間を求める
-         - 残りが `MIN_REMAINING_SEC` より短い場合、maid を呼ばずに時間切れの違反（`{ブロックの行} 行目: mermaid: 処理時間の上限に達したため検査していません`・`図の数を減らすか、文書を分ける`）にする
-      3. 残り時間を打ち切りにして maid を呼ぶ（maid の呼び出し）
-         - `subprocess.TimeoutExpired` の場合、時間切れの違反にする
-         - 読み込めない maid の出力の場合、`{ブロックの行} 行目: mermaid: {理由}`・`開発コマンドの環境構築で入れた maid のバージョンを確かめる` の違反にする
-      4. maid の誤りごとに、`{ブロックの行 + 誤りの line - 1} 行目: mermaid: {message}`・`mermaid の文法の誤りを修正する` の違反にする
-    unit_tests:
-      - name: test_check_mermaid
-        case: 正常
-        summary: 誤りを文書の行に戻す
-        condition: '`items[3].body` の mermaid のブロックの中身が文書の 40 行目から始まる'
-        mock: 'maid を、`line: 3` の誤りを返却するスクリプトに差し替える'
-        expected: '1 件で、`path` が `items[3].body`、`rule` が `42 行目: mermaid: ` で始まる'
-      - name: test_check_mermaid_when_no_time_left
-        case: 正常
-        summary: 残り時間が足りない
-        condition: '`deadline` が今から 0.5 秒後'
-        mock: maid を、呼ばれたことを一時ファイルに記録するスクリプトに差し替える
-        expected: 時間切れの 1 件で、maid が呼ばれていない
-      - name: test_check_mermaid_when_timeout
-        case: 正常
-        summary: maid を打ち切った
-        condition: '`deadline` が今から 1.5 秒後'
-        mock: maid を、5 秒待つスクリプトに差し替える
-        expected: 時間切れの 1 件で、2.5 秒以内に戻る
-      - name: test_check_mermaid_when_bad_output
-        case: 正常
-        summary: maid の出力が読み込めない
-        condition: mermaid のブロック 1 つ
-        mock: maid を、`ok` を出すスクリプトに差し替える
-        expected: 1 件で、`fix` が maid のバージョンを確かめる 1 文
-    callees:
-      - MOD-72-2#functions[iter_strings]
-      - MOD-72-3#functions[run_maid]
-    refs:
-      - MOD-72-3#constants[MIN_REMAINING_SEC]
 notes:
   依存: |-
-    PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を記載し、`_common.py`・`_maid.py` を同じフォルダから import する。
+    PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を記載し、`_common.py` を同じフォルダから import する。
     `slop_check.py`（MOD-148-2）は、`Path(__file__).resolve().parents[1] / "plugins/slop-check/hooks/post-tool-use"` を `sys.path` の先頭に入れてから import する（MOD-148-1 の照合の共有）。
 test_files:
   - tests/unit/scripts/test_knowledge_checks.py

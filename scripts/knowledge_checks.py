@@ -6,7 +6,7 @@
 # ///
 """標準入力の文書 1 件に、スキーマで見られない決まりを当て、違反の配列の JSON を標準出力へ出す。
 
-dev-docs の validators の knowledge-checks。項目の ID の重複・id: の参照と related の to の実在・aliases の衝突・文書の中の aliases の重複・mermaid の文法と、
+dev-docs の validators の knowledge-checks。項目の ID の重複・id: の参照と related の to の実在・aliases の衝突・文書の中の aliases の重複と、
 対応表の examples が照合と合うかを検査する。
 作業ディレクトリは配信元（knowledge のリポジトリ）の直下にする。
 
@@ -19,9 +19,7 @@ import argparse
 import io
 import json
 import re
-import subprocess
 import sys
-import time
 import traceback
 import unicodedata
 from pathlib import Path
@@ -30,7 +28,6 @@ from typing import TYPE_CHECKING, Any, cast
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 from _common import (
-    LIMIT_SEC,
     ConfigError,
     DocumentError,
     Violation,
@@ -43,7 +40,6 @@ from _common import (
     read_texts,
     value_line,
 )
-from _maid import MIN_REMAINING_SEC, MaidOutputError, find_maid, run_maid
 
 # 対応表の照合は slop-check のフックが持つものを使う
 sys.path.insert(
@@ -60,19 +56,10 @@ ID_LINK = re.compile(r"\]\(id:([^)#\s]+)(?:#([^)\s]+))?\)")
 # 行頭のバッククォート 3 つ以上と情報文字列
 FENCE = re.compile(r"^ {0,3}(`{3,})\s*(\S*)")
 
-# mermaid のブロックとして取り出す囲みのバッククォートの数。これより多い囲みは記述例として見ない
-_MERMAID_TICKS = 3
-
 # 対応表の文書の種類
 _WORD_LIST_KIND = "word-list"
 
-# maid が PATH に無いときに標準エラーへ出す理由
-_MAID_MISSING = (
-    "maid が PATH にありません。開発コマンドの『環境構築（クローン直後）』で maid を入れてください"
-)
-
-# 終了コード。2 = maid が無く検査を始めなかった、1 = 想定していない例外
-_EXIT_MAID_MISSING = 2
+# 終了コード。1 = 想定していない例外
 _EXIT_UNEXPECTED = 1
 
 
@@ -82,22 +69,15 @@ def _use_utf8(stream: object) -> None:
         stream.reconfigure(encoding="utf-8")
 
 
-def main(argv: Sequence[str] | None = None, *, limit_sec: float = LIMIT_SEC) -> int:
+def main(argv: Sequence[str] | None = None) -> int:
     """標準入力の文書を検査し、違反の配列の JSON を標準出力へ出す。"""
-    deadline = time.monotonic() + limit_sec
     parser = argparse.ArgumentParser(description="標準入力の文書 1 件の違反を JSON の配列で出す")
     parser.parse_args(argv)
     _use_utf8(sys.stdin)
     _use_utf8(sys.stdout)
 
-    # maid が無ければ検査を始めない（dev-docs が「検査を実行できませんでした」に置き換える）
-    executable = find_maid()
-    if executable is None:
-        print(_MAID_MISSING, file=sys.stderr)
-        return _EXIT_MAID_MISSING
-
     try:
-        violations = check_document(sys.stdin.read(), Path.cwd(), executable, deadline)
+        violations = check_document(sys.stdin.read(), Path.cwd())
     except Exception:  # noqa: BLE001 - 想定していない例外は traceback を出して終了コードで返す
         traceback.print_exc()
         return _EXIT_UNEXPECTED
@@ -108,8 +88,6 @@ def main(argv: Sequence[str] | None = None, *, limit_sec: float = LIMIT_SEC) -> 
 def check_document(
     text: str,
     root: Path,
-    executable: str,
-    deadline: float,
     *,
     index: Mapping[str, frozenset[str]] | None = None,
     names: Mapping[str, Sequence[tuple[str, str]]] | None = None,
@@ -118,7 +96,7 @@ def check_document(
     try:
         doc = load_document(text)
     except DocumentError as error:
-        # 読めない文書は、索引を作らず maid も呼ばずに 1 件だけ返す
+        # 読めない文書は、索引を作らずに 1 件だけ返す
         return [
             {
                 "path": "$",
@@ -145,7 +123,6 @@ def check_document(
         violations.extend(check_aliases(doc, names))
     # 文書の中の重複は dev-docs.yaml を使用しないので、名前の索引の有無によらず適用する
     violations.extend(check_alias_duplicates(doc))
-    violations.extend(check_mermaid(doc, executable, deadline))
     # 対応表は examples の検査を後ろにつなぐ
     if _field(doc, "kind") == _WORD_LIST_KIND:
         violations.extend(check_word_list(doc))
@@ -422,87 +399,6 @@ def _fenced_lines(text: str) -> frozenset[int]:
         if matched and len(matched.group(1)) >= open_ticks and not matched.group(2):
             open_ticks = 0
     return frozenset(fenced)
-
-
-def mermaid_blocks(text: str) -> list[tuple[int, str]]:
-    """文字列から mermaid のコードブロックを、中身の 1 行目の位置（0 始まり）と中身で取り出す。"""
-    blocks: list[tuple[int, str]] = []
-    # 開いている囲みのバッククォートの数。0 は囲みの外
-    open_ticks = 0
-    collecting = False
-    start = 0
-    lines: list[str] = []
-    for position, line in enumerate(text.split("\n")):
-        matched = FENCE.match(line)
-        # 囲みの外: 囲みを開く行かを見る
-        if open_ticks == 0:
-            if matched:
-                open_ticks = len(matched.group(1))
-                # バッククォート 3 つの mermaid だけを取り出す。4 つ以上の囲みの中は記述例なので見ない
-                collecting = open_ticks == _MERMAID_TICKS and matched.group(2) == "mermaid"
-                start = position + 1
-                lines = []
-            continue
-        # 囲みの中: 開いた数以上のバッククォートで情報文字列の無い行で閉じる
-        if matched and len(matched.group(1)) >= open_ticks and not matched.group(2):
-            if collecting:
-                blocks.append((start, "\n".join(lines)))
-            open_ticks = 0
-            collecting = False
-            continue
-        if collecting:
-            lines.append(line)
-    # 閉じずに終わった mermaid のブロックは末尾までを中身にする
-    if collecting:
-        blocks.append((start, "\n".join(lines)))
-    return blocks
-
-
-def _timeout_violation(path: str, line: int) -> Violation:
-    """maid を呼べなかった・打ち切ったブロックの時間切れの違反を作る。"""
-    return {
-        "path": path,
-        "rule": f"{line} 行目: mermaid: 処理時間の上限に達したため検査していません",
-        "fix": "図の数を減らすか、文書を分ける",
-    }
-
-
-def check_mermaid(doc: CommentedMap, executable: str, deadline: float) -> list[Violation]:
-    """文書の中の mermaid のブロックを 1 つずつ maid で検査し、誤りと時間切れを違反にする。"""
-    violations: list[Violation] = []
-    for parts, first_line, value in iter_strings(doc):
-        path = format_path(parts)
-        for position, diagram in mermaid_blocks(value):
-            block_line = first_line + position
-            remaining = deadline - time.monotonic()
-            # 残り時間が足りない: maid を呼ばずに時間切れにする
-            if remaining < MIN_REMAINING_SEC:
-                violations.append(_timeout_violation(path, block_line))
-                continue
-            try:
-                findings = run_maid(executable, diagram, remaining)
-            except subprocess.TimeoutExpired:
-                violations.append(_timeout_violation(path, block_line))
-                continue
-            except MaidOutputError as error:
-                violations.append(
-                    {
-                        "path": path,
-                        "rule": f"{block_line} 行目: mermaid: {error.message}",
-                        "fix": "開発コマンドの環境構築で入れた maid のバージョンを確かめる",
-                    }
-                )
-                continue
-            # maid の行は図の中の行（1 始まり）なので、ブロックの文書の行へ戻す
-            violations.extend(
-                {
-                    "path": path,
-                    "rule": f"{block_line + finding.line - 1} 行目: mermaid: {finding.message}",
-                    "fix": "mermaid の文法の誤りを修正する",
-                }
-                for finding in findings
-            )
-    return violations
 
 
 def _examples(entry: CommentedMap, key: str) -> list[tuple[int, str]]:

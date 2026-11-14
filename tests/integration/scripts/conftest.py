@@ -2,7 +2,6 @@
 
 import os
 import subprocess
-import sys
 import textwrap
 import time
 from collections.abc import Callable, Mapping, Sequence
@@ -17,16 +16,6 @@ SCRIPTS = REPO_ROOT / "scripts"
 
 # 子プロセスを待つ上限の秒数。スクリプトの処理時間の上限（20 秒）に、起動と lint の CLI の起動（WSL の /mnt/c で 1 回 50 秒前後）の時間を加えた値
 _WAIT_SEC = 120
-
-# 打ち切られるまで返らない maid の差し替えの本体
-_HANGING_MAID = textwrap.dedent(
-    """\
-    #!{python}
-    import time
-
-    time.sleep(600)
-    """
-)
 
 # リポジトリの拡張したメタスキーマ
 META_SCHEMA = (Path(__file__).resolve().parents[3] / "schemas/meta.schema.yaml").read_text(
@@ -104,14 +93,7 @@ class Completed:
 
 
 type RunScript = Callable[..., Completed]
-type RunChecksWithLimit = Callable[[Path, str, float], Completed]
 type RepoFactory = Callable[[Mapping[str, str]], Path]
-
-
-def _path_without_maid() -> str:
-    """今の PATH から、maid を持つフォルダを除いた PATH を返す。"""
-    folders = os.environ.get("PATH", "").split(os.pathsep)
-    return os.pathsep.join(folder for folder in folders if not (Path(folder) / "maid").exists())
 
 
 def _run(command: Sequence[str], cwd: Path, stdin: str, path: str) -> Completed:
@@ -144,38 +126,15 @@ def run_script() -> RunScript:
         cwd: Path,
         stdin: str = "",
         *,
-        without_maid: bool = False,
         args: Sequence[str] = (),
         path_prefix: Path | None = None,
     ) -> Completed:
-        # maid を外すときは、maid を持つフォルダを PATH から除く
-        path = _path_without_maid() if without_maid else os.environ.get("PATH", "")
+        path = os.environ.get("PATH", "")
         # 差し替えのコマンドを置いたフォルダは PATH の先頭に置く
         if path_prefix is not None:
             path = os.pathsep.join([str(path_prefix), path])
         command = ["uv", "run", "--frozen", "--script", str(SCRIPTS / f"{name}.py"), *args]
         return _run(command, cwd, stdin, path)
-
-    return _start
-
-
-@pytest.fixture
-def run_checks_with_limit(tmp_path: Path) -> RunChecksWithLimit:
-    """処理時間の上限を引数で差し替え、打ち切りまで返らない maid で文書の違反の検査を起動する関数を返す。"""
-    folder = tmp_path / "hanging-maid-bin"
-    folder.mkdir()
-    maid = folder / "maid"
-    maid.write_text(_HANGING_MAID.format(python=sys.executable), encoding="utf-8")
-    maid.chmod(0o755)
-
-    def _start(cwd: Path, stdin: str, limit_sec: float) -> Completed:
-        # 入口の main を、上限の引数を渡して子プロセスの中で呼ぶ
-        code = (
-            f"import sys; sys.path.insert(0, {str(SCRIPTS)!r}); import knowledge_checks; "
-            f"sys.exit(knowledge_checks.main([], limit_sec={limit_sec!r}))"
-        )
-        path = os.pathsep.join([str(folder), _path_without_maid()])
-        return _run([sys.executable, "-c", code], cwd, stdin, path)
 
     return _start
 
