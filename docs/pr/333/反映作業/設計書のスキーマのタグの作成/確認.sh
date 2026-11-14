@@ -9,7 +9,12 @@ if [ -z "$LATEST" ]; then
 fi
 STATUS=0
 for SCHEMA in schemas/design/interface.schema.yaml schemas/design/module.schema.yaml; do
-  COUNT=$(git show "$LATEST:$SCHEMA" 2>/dev/null | grep -cF 'common.schema.yaml#/$defs/mermaid' || true)
+  if ! BODY=$(git show "$LATEST:$SCHEMA" 2>/dev/null); then
+    echo "最新の design-schemas のタグ $LATEST の $SCHEMA: failed（ファイルを読めません）"
+    STATUS=1
+    continue
+  fi
+  COUNT=$(echo "$BODY" | grep -cF 'common.schema.yaml#/$defs/mermaid' || true)
   if [ "$COUNT" -eq 0 ]; then
     echo "最新の design-schemas のタグ $LATEST の $SCHEMA の \$defs/mermaid の参照: ok（0 件）"
   else
