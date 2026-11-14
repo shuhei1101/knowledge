@@ -15,6 +15,7 @@
 | [文書の Markdown への変換](./IF-72-2.py.yaml) | converters の約束で、文書 1 件を group の階層を見出しにした Markdown にする |
 | [文書の違反の検査](./IF-72-1.py.yaml) | validators の約束で、文書 1 件の違反を配列で返却する |
 | [設計書のテンプレートの生成](./IF-201-1.py.yaml) | 設計書のスキーマから、対応するテンプレートの文書の items を組み立てて書き出す CLI |
-| [書き込んだ中身の照合](./IF-148-1.py.yaml) | PostToolUse で書き込んだ中身を対応表で照合し、ヒットした単語を additionalContext で通知する |
+| [SKILL.md の生成](./IF-312-1.py.yaml) | スキルの設計書から SKILL.md を組み立てて書き出す CLI |
+| [書き込んだ中身の照合](./IF-148-1.py.yaml) | PostToolUse で書き込んだ中身を対応表で照合し、ヒットした単語を additionalContext で通知して systemMessage で画面に 1 行出す |
 
 <!-- /table -->
