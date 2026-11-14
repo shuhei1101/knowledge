@@ -1,0 +1,23 @@
+$ cd $(mktemp -d) && claude -p "Use the Write tool to create the file note.md in the current directory with exactly this content: 設定を直す。 Then reply with only: done" --plugin-dir {worktree}/plugins/slop-check --output-format stream-json --verbose --include-hook-events --model haiku --allowedTools Write
+# Claude Code 2.1.325。書き込んだ note.md の中身: 設定を直す。
+
+# PostToolUse:Write のフックの標準出力（stream-json の hook_response）
+{"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": "AI がよく使う単語（AI slop）が入っています。OK の単語に置き換えてください。\nNG の単語でないと意味が通らない理由があるときだけ、そのままにしてかまいません。\n\n| NG | OK |\n| --- | --- |\n| 直す | 修正 |\n\nまだ読んでいなければ、用途に合う規約を読んでください。\nsearch_docs は mcp__plugin_project-index_project-index__search_docs か mcp__plugin_dev-docs_dev-docs__search_docs の使用できる方で呼んでください。\n- 文書・コメント: 規約『文章の書き方』\n  search_docs（source: \"knowledge\", filter: {\"field\": \"id\", \"op\": \"eq\", \"values\": [\"convention-writing-style\"]}, view: \"full\"）\n- 画面の文言: 規約『入力と文言』\n  search_docs（source: \"knowledge\", filter: {\"field\": \"id\", \"op\": \"eq\", \"values\": [\"ui-input-wording\"]}, view: \"full\"）"}, "systemMessage": "AI slop を検知: 直す（Write）"}
+
+# 利用者の画面に出す通知（stream-json の system / informational）
+{"type": "system", "subtype": "informational", "content": "PostToolUse:Write says: AI slop を検知: 直す（Write）", "level": "notice"}
+
+# エージェントのコンテキストへ入った通知の文（セッションの記録の attachment: hook_additional_context）
+AI がよく使う単語（AI slop）が入っています。OK の単語に置き換えてください。
+NG の単語でないと意味が通らない理由があるときだけ、そのままにしてかまいません。
+
+| NG | OK |
+| --- | --- |
+| 直す | 修正 |
+
+まだ読んでいなければ、用途に合う規約を読んでください。
+search_docs は mcp__plugin_project-index_project-index__search_docs か mcp__plugin_dev-docs_dev-docs__search_docs の使用できる方で呼んでください。
+- 文書・コメント: 規約『文章の書き方』
+  search_docs（source: "knowledge", filter: {"field": "id", "op": "eq", "values": ["convention-writing-style"]}, view: "full"）
+- 画面の文言: 規約『入力と文言』
+  search_docs（source: "knowledge", filter: {"field": "id", "op": "eq", "values": ["ui-input-wording"]}, view: "full"）

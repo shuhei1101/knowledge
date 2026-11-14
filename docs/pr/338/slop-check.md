@@ -49,3 +49,9 @@
 | ファイル | メソッド | 変更種別 | 結果 | 補足 |
 | --- | --- | --- | --- | --- |
 | [tests/integration/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/daaac25/tests/integration/slop-check/test_slop_check.py) | 全実行 | 変更 | ✅ | 11 テスト pass。IF-148-1 の 5 つのフローに `systemMessage` の確認を加え、`test_normal_when_dev_docs_mcp_tool` を新設した<br>`テスト結果/20261114151228_daaac25_結合テスト.log` |
+
+### Claude Code での表示の確認
+
+| 確認 | 結果 | 補足 |
+| --- | --- | --- |
+| `systemMessage` と `additionalContext` を同時に返却したときの表示 | ✅ | Claude Code 2.1.325 で、この PR の `plugins/slop-check` を `--plugin-dir` で読み込み、Write で「設定を直す。」を書き込んだ。利用者の画面に出す通知に `PostToolUse:Write says: AI slop を検知: 直す（Write）` が出て、エージェントのコンテキストに NG と OK の表を持つ通知の文が入った<br>`テスト結果/20261114152117_c5c9b3a_Claude_Codeでの表示の確認.log` |
