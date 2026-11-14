@@ -2,7 +2,9 @@ docs:
   - page: rules.yaml
     new: false
     change: '設計書の種類のフォルダのファイル（`**/docs/{種類}/*.yaml`・`index.yaml`）へ `schemas/design/{種類}.schema.yaml` を `on: [write]` で案内する 16 行を加える'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:39:31.309523+00:00'
 scope_out:
   - item: '`schemas/design/layout.schema.yaml` を `**/docs/layout/*.yaml` へ案内する行'
     reason: Issue の表に無く、AI Monitor の `rules.global.yaml` にも無い。`**/docs/layout/*.yaml` には規約『フォルダ構成』の行が既にある
