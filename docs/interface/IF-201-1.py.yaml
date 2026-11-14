@@ -14,6 +14,9 @@ flows:
         description: '`schemas/design/` に `er.schema.yaml`・`config.schema.yaml`・`common.schema.yaml`・`index.schema.yaml` を、`docs/template/` に `template-er.yaml`・`template-config.yaml` を持つ一時フォルダ。`template-config.yaml` は今のスキーマから生成した状態で、`template-er.yaml` は `items` が古い'
         notes: '`er.schema.yaml` はトップの `x-rules`、キーの `$ref`・`enum`・`x-rules`・`x-bad-examples`・`x-used-by`・入れ子の配列、トップの `examples` を 1 件持つ'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant G as 設計書のテンプレートの生成
@@ -27,6 +30,9 @@ flows:
         G->>G: 種類ごとに items を組み立てる
         G->>F: items が違う template-er.yaml の items だけを置き換えて書き出す
         G-->>C: 書き換えたテンプレートのパスと終了コード 0
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 標準出力が `docs/template/template-er.yaml` の 1 行だけ
@@ -43,6 +49,9 @@ flows:
       - name: リポジトリ
         description: 正常系の一時フォルダで、`config.schema.yaml` のキーの `$ref` を `common.schema.yaml#/$defs/無い型` にし、`template-er.yaml` の `items` が古いもの
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant G as 設計書のテンプレートの生成
@@ -52,6 +61,9 @@ flows:
         F-->>G: スキーマ
         G->>G: 全ての $ref を解決する
         G-->>C: 解決できない $ref のパスと終了コード 2
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 2
       - 標準エラーに `schemas/design/config.schema.yaml` と、解決できない `$ref` の値が出る
@@ -65,6 +77,9 @@ flows:
       - name: リポジトリ
         description: 正常系の一時フォルダで、`config.schema.yaml` を YAML として読み込めない中身（閉じていない引用符）にし、`template-er.yaml` の `items` が古いもの
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant G as 設計書のテンプレートの生成
@@ -73,6 +88,9 @@ flows:
         G->>F: schemas/design/ の全てのスキーマを読み込む
         F-->>G: 読み込めないスキーマ
         G-->>C: 読み込めないスキーマのパスと終了コード 2
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 2
       - 標準エラーに `schemas/design/config.schema.yaml` が出る
@@ -86,6 +104,9 @@ flows:
       - name: リポジトリ
         description: 正常系の一時フォルダから `template-config.yaml` を削除し、`template-er.yaml` の `items` が古いもの
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant G as 設計書のテンプレートの生成
@@ -97,6 +118,9 @@ flows:
         G->>F: 種類のスキーマに対応する全てのテンプレートの文書を読み込む
         F-->>G: template-config.yaml が無い
         G-->>C: 無いテンプレートの ID とスキーマのパスと終了コード 2
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 2
       - 標準エラーに `template-config` と `schemas/design/config.schema.yaml` が出る
@@ -110,6 +134,9 @@ flows:
       - name: リポジトリ
         description: 正常系の一時フォルダで、`config.schema.yaml` に `entries[]`（要素は `#/$defs/entry`）を追加し、`$defs/entry` が `name` と、要素が `#/$defs/entry` を指す `children[]` を持つもの。`template-er.yaml`・`template-config.yaml` は今のスキーマから生成した状態
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant G as 設計書のテンプレートの生成
@@ -123,6 +150,9 @@ flows:
         G->>G: 種類ごとに items を組み立てる（再帰する $ref の先はたどらない）
         G->>F: items が違う template-config.yaml の items だけを置き換えて書き出す
         G-->>C: 書き換えたテンプレートのパスと終了コード 0
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 標準出力が `docs/template/template-config.yaml` の 1 行だけ

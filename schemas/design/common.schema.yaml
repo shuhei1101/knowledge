@@ -180,15 +180,6 @@ $defs:
       - 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。
     additionalProperties:
       $ref: "#/$defs/markdown"
-  mermaid:
-    $ref: "#/$defs/markdown"
-    title: 図
-    description: 手で記載する Mermaid の図。図の構文は `mermaid.parse()` で検証する。
-    x-used-by:
-      - 検査で、図の構文を確認する。
-      - 生成で、図にする。
-    x-rules:
-      - '```mermaid のコードブロックで記載する。'
   map:
     $ref: "#/$defs/markdown"
     title: 図

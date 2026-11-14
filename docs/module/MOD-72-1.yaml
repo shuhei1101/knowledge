@@ -5,51 +5,35 @@ lead: project-index の validators・converters の約束で動く文書の検�
 diagrams:
   - name: 全体
     diagram: |-
-      classDiagram
-          direction LR
-          class checks["文書の違反の検査"]
-          checks : main()
-          checks : check_document()
-          class markdown["文書の Markdown への変換"]
-          markdown : main()
-          markdown : convert()
-          class checkall["全ての文書の検査"]
-          checkall : main()
-          checkall : check_target()
-          class pages["Pages の成果物の作成"]
-          pages : main()
-          pages : rewrite_references()
-          class build["対応表のコピーの作成"]
-          build : main()
-          build : render_copy()
-          class templates["設計書のテンプレートの生成"]
-          templates : main()
-          templates : load_schemas()
-          templates : build_items()
-          class common["共通"]
-          common : load_document()
-          common : iter_strings()
-          common : read_texts()
-          class maidcall["maid の呼び出し"]
-          maidcall : find_maid()
-          maidcall : run_maid()
-          class lintcall["lint の呼び出し"]
-          lintcall : find_lint_clis()
-          lintcall : run_markdown_lints()
-          lintcall : run_yamllint()
-          checks ..> common
-          checks ..> maidcall
-          markdown ..> common
-          checkall ..> checks
-          checkall ..> common
-          checkall ..> maidcall
-          checkall ..> lintcall
-          lintcall ..> common
-          pages ..> common
-          build ..> common
-          checkall ..> build
-          templates ..> common
-          checkall ..> templates
+      <!-- map -->
+
+      ```mermaid
+      flowchart LR
+        checks["文書の違反の検査<br>main()<br>check_document()"]
+        markdown["文書の Markdown への変換<br>main()<br>convert()"]
+        checkall["全ての文書の検査<br>main()<br>check_target()"]
+        pages["Pages の成果物の作成<br>main()<br>rewrite_references()"]
+        build["対応表のコピーの作成<br>main()<br>render_copy()"]
+        templates["設計書のテンプレートの生成<br>main()<br>load_schemas()<br>build_items()"]
+        common["共通<br>load_document()<br>iter_strings()<br>read_texts()"]
+        maidcall["maid の呼び出し<br>find_maid()<br>run_maid()"]
+        lintcall["lint の呼び出し<br>find_lint_clis()<br>run_markdown_lints()<br>run_yamllint()"]
+        checks -.-> common
+        checks -.-> maidcall
+        markdown -.-> common
+        checkall -.-> checks
+        checkall -.-> common
+        checkall -.-> maidcall
+        checkall -.-> lintcall
+        lintcall -.-> common
+        pages -.-> common
+        build -.-> common
+        checkall -.-> build
+        templates -.-> common
+        checkall -.-> templates
+      ```
+
+      <!-- /map -->
 notes:
   起動の方式: |-
     各入口のスクリプトは PEP 723 のインラインのメタデータ（`requires-python = ">=3.14"` と依存）を持ち、`uv lock --script` のロック（`{スクリプト}.py.lock`）でバージョンを固定する。

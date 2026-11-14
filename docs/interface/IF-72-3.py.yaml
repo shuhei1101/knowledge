@@ -13,6 +13,9 @@ flows:
       - name: リポジトリ
         description: '`dev-docs.yaml`・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・lint の違反と警告も無い `docs/rule/` の文書 2 件（`body` の文は「。」で終える）を持つ一時フォルダ'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
@@ -30,6 +33,9 @@ flows:
         S->>S: 文書の Markdown の項目を 1 項目ずつ一時の .md に書き出す
         S->>S: markdownlint-cli2・textlint を 1 回ずつ呼び、yamllint を適用する
         S-->>C: 終了コード 0 と件数の行
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 標準出力の最後の行が、文書 2 件・違反 0 件・警告 0 件を示す
@@ -43,6 +49,9 @@ flows:
         description: '`dev-docs.yaml` と、`schemas/design/` に誤りのある設計書のスキーマ 5 件と、それらが `$ref` で指す `common.schema.yaml` と、`schemas/meta.schema.yaml` と、`x-rules` に文字列を記載した `schemas/template.schema.yaml` を持つ一時フォルダ'
         notes: '5 件は、`type` に `strin` を記載したスキーマ（メタスキーマの違反）、`x-rules` に文字列を記載したスキーマ（メタスキーマの違反）、`common.schema.yaml#/$defs/missing` を指すスキーマ（解決できない `$ref`）、`required` のキーを持たない `examples[0]` を持つスキーマ（`examples` の違反）、`properties` の下のキー 1 つと `if` の条件の中のキーに `x-used-by` を記載せず、`x-used-by` を持たない `$defs` の型をキーの側にも `x-used-by` を記載しないキー 1 つから `$ref` で指し、`x-used-by` を持つ `$defs` の型を別のキーから `$ref` で指すスキーマ（`x-used-by` の違反）。5 件とも、違反を作るキー以外の `properties` の下のキーは `x-used-by` を持つ'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
@@ -58,6 +67,9 @@ flows:
           S->>S: 拡張したメタスキーマの検査
         end
         S-->>C: 終了コード 1 と全ての違反の行
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - '標準出力に `schemas/design/{ファイル名}:{行}: {項目のパス}: {内容}` の行が 6 件と、`schemas/template.schema.yaml:{行}: x-rules: metaschema: {内容}` の行が出る'
@@ -71,6 +83,9 @@ flows:
       - name: リポジトリ
         description: '`dev-docs.yaml`（`docs/rule/` の行と、`schema` が `schemas/design/scenario.schema.yaml` の `docs/scenario/` の行）・`schemas/meta.schema.yaml`・`schemas/rule.schema.yaml`・`schemas/knowledge-common.schema.yaml` と、`common.schema.yaml#/$defs/id` を `$ref` で指す `schemas/design/scenario.schema.yaml`・`schemas/design/common.schema.yaml`（`properties` の下のキーは `x-used-by` を持つ）と、スキーマに合い、既存のキーの引用符の無い値に ` # bar` を付けた行（`title: シナリオ # bar`。コメントの前の空白が 1 つで、yamllint の `comments` の `min-spaces-from-content` だけに該当する）を 1 つ持つ `docs/scenario/` の設計書と、違反の無い `docs/rule/` の文書を持ち、`schemas/` の直下に `common.schema.yaml` を持たない一時フォルダ'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
@@ -86,6 +101,9 @@ flows:
         end
         S->>S: 設計書を含む文書の Markdown の項目と YAML に lint を適用する
         S-->>C: 終了コード 1 と設計書の lint の行
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - '標準出力に `{設計書のパス}:{行}: -: yamllint/comments: {内容}` の行が 1 件だけ出て、行は ` # bar` を付けた行'
@@ -99,6 +117,9 @@ flows:
       - name: リポジトリ
         description: knowledge のリポジトリの `schemas/` と `docs/template/` のコピーと、`documents` が空の `dev-docs.yaml` を持つ一時フォルダ
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
@@ -112,6 +133,9 @@ flows:
           S->>S: 組み立てた items とテンプレートの items を比べる
         end
         S-->>C: スキーマの違反なし
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 標準出力が、文書 0 件・違反 0 件・警告 0 件を示す 1 行だけ
@@ -125,6 +149,9 @@ flows:
       - name: リポジトリ
         description: スキーマに合わない文書（`description` が無い）と、項目の ID が重複した文書を 1 つずつ持ち、`schemas/meta.schema.yaml` を持つ一時フォルダ
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
@@ -135,6 +162,9 @@ flows:
           S->>S: スキーマの検査と文書の違反の検査
         end
         S-->>C: 終了コード 1 と全ての違反の行
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - 標準出力に 2 つの文書の違反が、ファイルのパス・行・項目のパス・内容つきで 1 行ずつ出る
@@ -147,6 +177,9 @@ flows:
       - name: リポジトリ
         description: '`docs/word-list/word-list-ai-slop.yaml` と、その 1 行を削除したコピー `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` と、`schemas/meta.schema.yaml` を持つ一時フォルダ'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
@@ -159,6 +192,9 @@ flows:
         S->>F: 原本と対応表のコピーを読み込む
         S->>S: 原本から再作成したコピーと比べる
         S-->>C: 終了コード 1 とコピーの違反の行
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - 標準出力に、コピーのパスと、「対応表のコピーの作成」を実行する案内の行が出る
@@ -171,6 +207,9 @@ flows:
       - name: リポジトリ
         description: '`schemas/design/er.schema.yaml`・`schemas/design/common.schema.yaml` と、`er.schema.yaml` のキーの `x-rules` を 1 件追加する前に生成した `docs/template/template-er.yaml` と、`schemas/meta.schema.yaml`・`schemas/template.schema.yaml` を持つ一時フォルダ'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
@@ -188,6 +227,9 @@ flows:
           S->>S: 「設計書のテンプレートの生成」と同じ組み立てで items を作り、テンプレートの items と比べる
         end
         S-->>C: 終了コード 1 とテンプレートの違反の行
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - 標準出力に、`docs/template/template-er.yaml` のパスと、生成元の `schemas/design/er.schema.yaml` と、「設計書のテンプレートの生成」を実行する案内の行が出る
@@ -201,6 +243,9 @@ flows:
         description: '`items[].body` の 3 行目が太字だけの段落の文書と、既存のキーの引用符の無い値に ` #bar` を付けた文書（`description: B の文書 #bar`）を 1 つずつ持ち、`schemas/meta.schema.yaml` を持つ一時フォルダ'
         notes: 太字だけの段落は markdownlint の `MD036`、`#bar` は yamllint の `comments` に該当する
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
@@ -214,6 +259,9 @@ flows:
         S->>S: markdownlint-cli2・textlint を 1 回ずつ呼び、yamllint を適用する
         S->>S: CLI の行に項目の開始行を加算して、元の文書の YAML の行にする
         S-->>C: 終了コード 1 と全ての違反の行
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - '標準出力に `{文書のパス}:{行}: items[0].body: markdownlint/MD036: {内容}` の行が出て、行は文書の YAML の中の太字の段落の行'
@@ -228,6 +276,9 @@ flows:
         description: '`required: [id, title]` の行を持つ `schemas/rule.schema.yaml` と、`tags: [{name: scope:規約}]` の行を持ち、そのスキーマに合う `docs/rule/` の文書と、`schemas/meta.schema.yaml` を持つ一時フォルダ'
         notes: '`[id, title]` は `schemas/` に適用する yamllint の設定の `brackets` に該当する'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
@@ -237,6 +288,9 @@ flows:
         S->>F: schemas/ のスキーマを読み込む
         S->>S: 文書に .yamllint.yaml、スキーマに .yamllint-schemas.yaml で yamllint を適用する
         S-->>C: 終了コード 1 とスキーマの違反の行
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - '標準出力に `schemas/rule.schema.yaml:{行}: -: yamllint/brackets: {内容}` の行が出て、行は `required: [id, title]` の行'
@@ -251,6 +305,9 @@ flows:
         description: '`items[].body` に `A です。B です。` の 1 行を持つ文書と `schemas/meta.schema.yaml` だけを持つ一時フォルダ'
         notes: '`--lint-dir` に一時の lint のフォルダを指定する（既定の設定に警告にするルールは無い）。一時の lint のフォルダは、`scripts/lint/` の `.markdownlint-cli2.jsonc`・`no-inline-strong.mjs`・`.yamllint.yaml`・`.yamllint-schemas.yaml` のコピーと、textlint の `one-sentence-per-line` だけを `severity: warning` にした `.textlintrc.json` を持ち、`node_modules` は `scripts/lint/node_modules` へのシンボリックリンクにする'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
@@ -259,6 +316,9 @@ flows:
         S->>F: dev-docs.yaml の documents を読み込む
         S->>S: 文書の Markdown の項目に markdownlint-cli2・textlint を呼ぶ
         S-->>C: 終了コード 0 と警告の行
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - '標準出力に `{文書のパス}:{行}: items[0].body: warning: textlint/one-sentence-per-line: {内容}` の行が出る'
@@ -270,12 +330,18 @@ flows:
       - name: Mock
         description: PATH から maid を除外し、`--lint-dir` に存在しないフォルダを指定する
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
         C->>S: リポジトリの直下で起動する
         S->>S: 検査の CLI が無い
         S-->>C: 終了コード 2 と標準エラーの理由
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 2
       - 標準エラーに、見つからない CLI の名前と、開発コマンドの環境構築で入れる案内が CLI ごとに 1 行ずつ出る
@@ -288,6 +354,9 @@ flows:
       - name: リポジトリ
         description: '`dev-docs.yaml` を持ち、`schemas/meta.schema.yaml` を持たない一時フォルダ'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
@@ -296,6 +365,9 @@ flows:
         S->>F: schemas/meta.schema.yaml を読み込む
         F-->>S: ファイルが無い
         S-->>C: 終了コード 2 と標準エラーの理由
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 2
       - 標準エラーに `schemas/meta.schema.yaml` を使用できないことと理由が出る
@@ -308,6 +380,9 @@ flows:
       - name: リポジトリ
         description: '`dev-docs.yaml` を持たない一時フォルダ'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 全ての文書の検査
@@ -316,6 +391,9 @@ flows:
         S->>F: dev-docs.yaml を読み込む
         F-->>S: ファイルが無い
         S-->>C: 終了コード 2 と標準エラーの理由
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 2
       - 標準エラーに `dev-docs.yaml` が無いことが出る

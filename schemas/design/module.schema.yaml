@@ -104,14 +104,16 @@ properties:
             - 実装で、ソースコードの名前にする。
             - 設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。
         diagram:
-          $ref: common.schema.yaml#/$defs/mermaid
+          $ref: common.schema.yaml#/$defs/map
           title: 図
-          description: Mermaid の `classDiagram`。
+          description: mdmark の map の図。Mermaid の `flowchart` で、要素をノード、依存を矢印にする。
           x-used-by:
-            - 生成で、クラス図にする。
+            - 生成で、構成図にする。
           x-rules:
-            - 次の行に `direction` を記載する。
-            - 図の中の名前は論理名で記載する。
+            - '`<!-- map -->` から `<!-- /map -->` の範囲に、```mermaid のコードブロックを 1 つ記載する。'
+            - 1 行目に向きを記載する（`flowchart LR`）。
+            - ノードのラベルは要素の論理名にし、関数・属性を `<br>` で区切って続ける。
+            - 依存は点線 `-.->` にする。
             - 定数・先頭 `_` の要素と、他の要素と矢印で繋がらない要素は記載しない。
   data_models:
     type: array

@@ -14,6 +14,9 @@ flows:
         description: '`dev-docs.yaml`・スキーマ・変換のスクリプトと、`visibility: public` の文書 2 件・`visibility: internal` の文書 1 件を持つ一時フォルダ'
         notes: 公開の文書の 1 件が、もう 1 件の公開の文書の項目と internal の文書を 1 つずつ参照する
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as Pages の成果物の作成
@@ -29,6 +32,9 @@ flows:
         S->>M: build
         M-->>S: 終了コード 0
         S-->>C: 終了コード 0 と出力のフォルダの index.html
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - 出力のフォルダにあるファイルは `index.html` だけ
@@ -43,6 +49,9 @@ flows:
       - name: リポジトリ
         description: 正常系と同じ一時フォルダ
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as Pages の成果物の作成
@@ -51,6 +60,9 @@ flows:
         S->>V: 標準入力に文書の YAML
         V-->>S: 終了コード 1 と標準エラー
         S-->>C: 終了コード 1 と失敗した文書のパス・標準エラー
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - 標準エラーに失敗した文書のパスと、変換のスクリプトの標準エラーが出る
@@ -64,6 +76,9 @@ flows:
       - name: リポジトリ
         description: 公開の文書が `documents[]` のどの文書にも無い ID を参照する一時フォルダ
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as Pages の成果物の作成
@@ -73,6 +88,9 @@ flows:
         V-->>S: Markdown
         S->>S: 参照先の ID が見つからない
         S-->>C: 終了コード 1 と文書のパス・参照先の ID
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - 標準エラーに参照元の文書のパスと、見つからない ID が出る
@@ -86,6 +104,9 @@ flows:
       - name: リポジトリ
         description: 正常系と同じ一時フォルダ
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as Pages の成果物の作成
@@ -94,6 +115,9 @@ flows:
         S->>M: build
         M-->>S: 終了コード 1 と標準エラー
         S-->>C: 終了コード 1 と mdmark の標準エラー
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 1
       - 標準エラーに mdmark の標準エラーが出る
@@ -107,12 +131,18 @@ flows:
       - name: リポジトリ
         description: '`visibility: internal` の文書だけを持つ一時フォルダ'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as Pages の成果物の作成
         C->>S: リポジトリの直下で --out を付けて起動する
         S->>S: 公開の文書が 0 件
         S-->>C: 終了コード 2 と標準エラーの理由
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 2
       - 標準エラーに公開の文書が無いことが出る
@@ -125,12 +155,18 @@ flows:
       - name: リポジトリ
         description: '`dev-docs.yaml` を持たない一時フォルダ'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as Pages の成果物の作成
         C->>S: リポジトリの直下で --out を付けて起動する
         S->>S: dev-docs.yaml が無い
         S-->>C: 終了コード 2 と標準エラーの理由
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 2
       - 標準エラーに `dev-docs.yaml` が無いことが出る

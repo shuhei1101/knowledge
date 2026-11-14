@@ -13,6 +13,9 @@ flows:
       - name: リポジトリ
         description: '`docs/word-list/word-list-ai-slop.yaml`（2 行）と `plugins/slop-check/hooks/post-tool-use/` を持つ一時フォルダ'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 対応表のコピーの作成
@@ -22,6 +25,9 @@ flows:
         F-->>S: 対応表
         S->>F: JSON のコピーを書き出す
         S-->>C: 終了コード 0
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 0
       - '`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` の `entries` が原本の 2 行と同じ並びで、各行が `id`・`ng`・`ok`・`pattern`・`allow`・`note` だけを持つ'
@@ -35,6 +41,9 @@ flows:
       - name: リポジトリ
         description: '`docs/word-list/word-list-ai-slop.yaml` を持たず、前回のコピーだけを持つ一時フォルダ'
     flow: |-
+      <!-- map -->
+
+      ```mermaid
       sequenceDiagram
         participant C as 呼び出し元
         participant S as 対応表のコピーの作成
@@ -43,6 +52,9 @@ flows:
         S->>F: 原本の対応表の YAML を読み込む
         F-->>S: ファイルが無い
         S-->>C: 終了コード 2 と標準エラーの理由
+      ```
+
+      <!-- /map -->
     expected:
       - 終了コードが 2
       - 標準エラーに、読み込めなかった原本のパスが出る
