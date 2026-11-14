@@ -1,0 +1,1 @@
+# 直下の dev-docs.yaml を project-index.yaml へ改名し、ファイル名の記述と端末の設定を合わせる
