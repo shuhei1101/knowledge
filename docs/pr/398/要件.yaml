@@ -1,0 +1,17 @@
+docs:
+  - page: rules.yaml
+    new: false
+    change: '#194: write_docs で設計書を書き込むときに operations.kind に当たる schemas/design のスキーマを案内し、describe(source, kind) で既読にする行を設計書の種類ごとに追加する。#205: knowledge の文書を指す全てのエントリ（schemas/template.schema.yaml・schemas/meta.schema.yaml を除く）に、project-index の search_docs で文書の ID を指定する read_tool を記載する'
+    status: todo
+  - page: docs/rule/dev-rule-index-registration.yaml
+    new: false
+    change: '#205: 記載するときの記載方法に read_tool の書き方（ツール名・source・作業範囲の外から参照するときの outside_scope）を追加するかを決め、追加するなら追加する'
+    status: todo
+use_cases: []
+scope_out:
+  - item: AI Monitor とほかのプロジェクトの索引（rules.global.yaml 等）への read_tool の記載
+    reason: 別のリポジトリの索引で、knowledge の rules.yaml ではない
+    plan: shuhei1101/ai-monitor#3422
+  - item: schemas/template.schema.yaml・schemas/meta.schema.yaml のエントリへの read_tool の記載
+    reason: project-index.yaml の documents[] に無く search_docs で参照できない（#205 の終わりの条件が除いている）
+    plan: none
