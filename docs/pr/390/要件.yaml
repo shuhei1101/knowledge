@@ -1,0 +1,24 @@
+use_cases: []
+docs:
+  - page: docs/rule/testing-core-e2e.yaml
+    new: false
+    change: folder-responsibility-01 のツリーの {domain}/・usecases/ を 複合ユースケース/・単一ユースケース/ に置き換え、pages/・fixtures/・helpers/ などの支援のフォルダの置き場所を決める。testDir（playwright-config-01）・.auth（playwright-config-03）・snapshots（rules-05）のパスを決めた置き場所に合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T14:45:54.689711+00:00'
+  - page: docs/rule/testing-core-fixture.yaml
+    new: false
+    change: factory-as-fixture-01 の tests/e2e/fixtures.ts を、testing-core-e2e で決めた fixture の置き場所に合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T14:45:54.689711+00:00'
+scope_out:
+  - item: Python の規約『テストの種類と配置』（python-testing-layers.yaml）の E2E テストの配置
+    reason: 'Python の規約で、作業 PR #386 が扱う'
+    plan: '#380'
+  - item: GitHub Actions の workflow のテストの配置 tests/e2e/workflow/
+    reason: Python の規約とインターフェース定義のテンプレートで、別の Issue が扱う
+    plan: '#389'
+  - item: 規約『フォルダ構成』（react-core-folder-structure.yaml）の frontend/tests/e2e/
+    reason: tests/e2e/ の置き場所だけを記載し、配下のツリーを持たないため変更が要らない
+    plan: none

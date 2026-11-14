@@ -87,7 +87,7 @@ items:
     name: fixture は関数を返却する
     body: |-
       - Playwright で、複数のインスタンスや引数付きのリソースを作るときは、fixture が関数（factory）を返却する構造にする。
-        - 1 fixture = 1 責務にし、`createUser`・`createProfile`・`createTask` を分けて `tests/e2e/fixtures.ts` に並べる
+        - 1 fixture = 1 責務にし、`createUser`・`createProfile`・`createTask` を分けて `tests/e2e/fixtures/` に並べる
         - 依存は、テスト本体で引数として明示する（`createProfile(userA)`）
         - cleanup は fixture の中で作成したものを追跡し、`use()` の後に作成順の逆順で delete する
         - テストは、必要な factory だけを引数で受ける（Playwright は要求された fixture だけを初期化する）

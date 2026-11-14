@@ -86,9 +86,9 @@ items:
     body: |-
       ```text
       tests/e2e/
-      ├── {domain}/                   # spec のみ（画面・ドメイン単位のフォルダ）
-      │   └── login.spec.ts
-      ├── usecases/                   # 横断ユースケース
+      ├── 複合ユースケース/           # spec のみ（複合ユースケースのシナリオの test_file）
+      ├── 単一ユースケース/           # spec のみ（単一ユースケースのシナリオの test_file）
+      │   └── {シナリオ名}.spec.ts
       ├── pages/                      # Page Object（UI 操作の抽象化だけ。業務ロジックは置かない）
       ├── fixtures/                   # テストデータの Factory
       ├── helpers/                    # 共通操作。責務ごとに分割する（helper.ts を乱立させない）
