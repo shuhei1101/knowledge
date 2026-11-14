@@ -24,7 +24,6 @@ if TYPE_CHECKING:
 # リポジトリの直下
 _REPO = Path(__file__).resolve().parents[3]
 
-type FakeMaidFactory = Callable[..., str]
 type RepoFactory = Callable[[Mapping[str, str]], Path]
 
 # 両方とも引けたときの lint の CLI の在りか
@@ -131,14 +130,11 @@ def test_main(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
     repo_factory: RepoFactory,
-    fake_maid_factory: FakeMaidFactory,
 ) -> None:
     """違反の無いリポジトリ（正常系）。"""
     # 準備
     root = repo_factory({"docs/rule/rule-a.yaml": _VALID_A, "docs/rule/rule-b.yaml": _VALID_B})
     monkeypatch.chdir(root)
-    maid = fake_maid_factory()
-    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
     monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
     monkeypatch.setattr(check_all, "check_lints", _no_lints)
     # 実行
@@ -155,7 +151,6 @@ def test_main_when_violations(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
     repo_factory: RepoFactory,
-    fake_maid_factory: FakeMaidFactory,
 ) -> None:
     """違反がある（正常系）。"""
     # 準備
@@ -178,8 +173,6 @@ def test_main_when_violations(
         }
     )
     monkeypatch.chdir(root)
-    maid = fake_maid_factory()
-    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
     monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
     monkeypatch.setattr(check_all, "check_lints", _no_lints)
     # 実行
@@ -195,14 +188,11 @@ def test_main_when_lint_findings(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
     repo_factory: RepoFactory,
-    fake_maid_factory: FakeMaidFactory,
 ) -> None:
     """lint の違反と警告（正常系）。"""
     # 準備
     root = repo_factory({"docs/rule/rule-a.yaml": _VALID_A, "docs/rule/rule-b.yaml": _VALID_B})
     monkeypatch.chdir(root)
-    maid = fake_maid_factory()
-    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
     monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
     monkeypatch.setattr(
         check_all, "check_lints", _lints_returning([_ERROR_FINDING, _WARNING_FINDING])
@@ -226,14 +216,11 @@ def test_main_when_lint_findings(
 def test_main_when_only_warnings(
     monkeypatch: pytest.MonkeyPatch,
     repo_factory: RepoFactory,
-    fake_maid_factory: FakeMaidFactory,
 ) -> None:
     """警告だけ（正常系）。"""
     # 準備
     root = repo_factory({"docs/rule/rule-a.yaml": _VALID_A, "docs/rule/rule-b.yaml": _VALID_B})
     monkeypatch.chdir(root)
-    maid = fake_maid_factory()
-    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
     monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
     monkeypatch.setattr(check_all, "check_lints", _lints_returning([_WARNING_FINDING]))
     # 実行
@@ -252,14 +239,12 @@ def test_main_when_check_cli_missing(
     # 準備
     root = repo_factory({"docs/rule/rule-a.yaml": _VALID_A})
     monkeypatch.chdir(root)
-    monkeypatch.setattr(check_all, "find_maid", lambda: None)
     # 実行
     code = check_all.main(["--lint-dir", str(tmp_path / "missing")])
     # 検証
     err_lines = capsys.readouterr().err.splitlines()
     assert code == 2
     assert [line.split(" ", 1)[0] for line in err_lines] == [
-        "maid",
         "markdownlint-cli2",
         "textlint",
     ]
@@ -269,13 +254,10 @@ def test_main_when_config_missing(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
-    fake_maid_factory: FakeMaidFactory,
 ) -> None:
     """dev-docs.yaml が無い（正常系）。"""
     # 準備
     monkeypatch.chdir(tmp_path)
-    maid = fake_maid_factory()
-    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
     monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
     # 実行
     code = check_all.main([])
@@ -386,7 +368,7 @@ def test_build_validators_when_missing(repo_factory: RepoFactory) -> None:
     assert isinstance(result["schemas/missing.schema.yaml"], str)
 
 
-def test_check_target(repo_factory: RepoFactory, fake_maid_factory: FakeMaidFactory) -> None:
+def test_check_target(repo_factory: RepoFactory) -> None:
     """スキーマと文書の違反を並べる（正常系）。"""
     # 準備
     root = repo_factory({"docs/rule/rule-c.yaml": _BROKEN_BOTH})
@@ -397,7 +379,7 @@ def test_check_target(repo_factory: RepoFactory, fake_maid_factory: FakeMaidFact
         checks=True,
     )
     # 実行
-    result = check_target(target, _BROKEN_BOTH, validator, root, fake_maid_factory(), {}, {})
+    result = check_target(target, _BROKEN_BOTH, validator, root, {}, {})
     # 検証
     assert len(result) == 2
     assert result[0][2].startswith("schema: ")
@@ -418,7 +400,7 @@ def test_check_target_when_no_checks(repo_factory: RepoFactory) -> None:
         checks=False,
     )
     # 実行
-    result = check_target(target, text, validator, root, "maid", {}, {})
+    result = check_target(target, text, validator, root, {}, {})
     # 検証
     assert result == []
 
@@ -433,7 +415,7 @@ def test_check_target_when_unreadable(repo_factory: RepoFactory) -> None:
         checks=True,
     )
     # 実行
-    result = check_target(target, None, "スキーマが無い", root, "maid", {}, {})
+    result = check_target(target, None, "スキーマが無い", root, {}, {})
     # 検証
     assert result == [(1, "$", "ファイルを UTF-8 で読めません")]
 
@@ -449,9 +431,7 @@ def test_check_target_when_broken(repo_factory: RepoFactory) -> None:
         checks=True,
     )
     # 実行
-    result = check_target(
-        target, "items:\n  - id: a\n    name: [\n", validator, root, "maid", {}, {}
-    )
+    result = check_target(target, "items:\n  - id: a\n    name: [\n", validator, root, {}, {})
     # 検証
     assert len(result) == 1
     assert result[0][0] >= 3
@@ -928,7 +908,6 @@ def test_main_when_design_schemas_invalid(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
     repo_factory: RepoFactory,
-    fake_maid_factory: FakeMaidFactory,
 ) -> None:
     """設計書のスキーマに誤りがある（正常系）。"""
     # 準備
@@ -941,8 +920,6 @@ def test_main_when_design_schemas_invalid(
         }
     )
     monkeypatch.chdir(root)
-    maid = fake_maid_factory()
-    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
     monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
     monkeypatch.setattr(check_all, "check_lints", _no_lints)
     # 実行
@@ -1221,7 +1198,6 @@ def test_main_when_document_schemas_invalid(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
     repo_factory: RepoFactory,
-    fake_maid_factory: FakeMaidFactory,
 ) -> None:
     """schemas/ の直下のスキーマに誤りがある（正常系）。"""
     # 準備
@@ -1233,8 +1209,6 @@ def test_main_when_document_schemas_invalid(
         }
     )
     monkeypatch.chdir(root)
-    maid = fake_maid_factory()
-    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
     monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
     monkeypatch.setattr(check_all, "check_lints", _no_lints)
     # 実行
@@ -1252,15 +1226,12 @@ def test_main_when_meta_schema_unusable(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
     repo_factory: RepoFactory,
-    fake_maid_factory: FakeMaidFactory,
 ) -> None:
     """拡張したメタスキーマが無い（正常系）。"""
     # 準備
     root = repo_factory({})
     (root / "schemas/meta.schema.yaml").unlink()
     monkeypatch.chdir(root)
-    maid = fake_maid_factory()
-    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
     monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
     # 実行
     code = check_all.main([])
@@ -1351,7 +1322,6 @@ def test_main_when_design_documents(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
     repo_factory: RepoFactory,
-    fake_maid_factory: FakeMaidFactory,
 ) -> None:
     """設計書の行（正常系）。"""
     # 準備
@@ -1366,14 +1336,12 @@ def test_main_when_design_documents(
         }
     )
     monkeypatch.chdir(root)
-    maid = fake_maid_factory()
     received: list[list[Target]] = []
 
     def _record(_root: Path, targets: list[Target], *_args: object) -> list[LintFinding]:
         received.append(list(targets))
         return []
 
-    monkeypatch.setattr(check_all, "find_maid", lambda: maid)
     monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
     monkeypatch.setattr(check_all, "check_lints", _record)
     # 実行

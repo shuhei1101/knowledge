@@ -1,0 +1,124 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: changed
+    detail: 全ての文書の検査の前に確かめる CLI から maid を外し、maid が見つからないときの異常シナリオを lint の CLI が見つからないときのシナリオへ置き換える
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: changed
+    detail: mermaid の文法の違反を前提にした書き込みの異常シナリオを、別の違反（ID の重複 等）へ置き換え、maid を入れる前提条件を外す
+    depends_on: []
+docs:
+  - page: docs/rule/dev-yaml.yaml
+    new: false
+    change: '`inspection-04` の「mermaid の文法など」の例と `inspection-05`（mermaid の検査）と `tool:mermaid` のタグを削除する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:23:04.989027+00:00'
+  - page: docs/interface/IF-72-1.py.yaml
+    new: false
+    change: maid の確認・呼び出しのフロー、maid が無いときの異常系、終了コード 2、maid の打ち切りの時間の制約を削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:04:49.351209+00:00'
+  - page: docs/interface/IF-72-3.py.yaml
+    new: false
+    change: 検査の前に確かめる CLI と、見つからないときの異常系・終了条件から maid を外す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:04:49.351209+00:00'
+  - page: docs/module/MOD-72-3.py.yaml
+    new: false
+    change: '`_maid.py` のモジュール構成を削除する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:14:31.081650+00:00'
+  - page: docs/module/MOD-72-1.yaml
+    new: false
+    change: 構成図と説明から `_maid.py` を外す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:14:31.081650+00:00'
+  - page: docs/module/MOD-72-4.py.yaml
+    new: false
+    change: maid の在りかの確認・mermaid のブロックの検査・終了コード 2 と、テストの maid の差し替えを削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:14:31.081650+00:00'
+  - page: docs/module/MOD-72-6.py.yaml
+    new: false
+    change: 検査の前の在りかの確認とテストの差し替えから maid を外す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:14:31.081650+00:00'
+  - page: docs/module/index.yaml
+    new: false
+    change: '`_maid.py` の行を削除する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:14:31.081650+00:00'
+  - page: docs/library/LIB-72-3.yaml
+    new: false
+    change: 外部ライブラリ maid を削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:23:04.989027+00:00'
+  - page: docs/library/index.yaml
+    new: false
+    change: maid の行を削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:23:04.989027+00:00'
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: 構成図のノード・線と外部システムから maid を削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:23:04.989027+00:00'
+  - page: docs/dev-command/CMD-72-1.yaml
+    new: false
+    change: 環境構築の maid の導入・バージョンの更新・所要時間と前提の maid の記述を削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:23:04.989027+00:00'
+  - page: docs/nonfunctional/NFR-72-1.yaml
+    new: false
+    change: 処理時間の打ち切りと動作環境の根拠から maid の呼び出しを外す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:23:04.989027+00:00'
+  - page: docs/test-procedure/TP-72-1.yaml
+    new: false
+    change: maid の前提条件と差し替えのスクリプトの記述を削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:23:04.989027+00:00'
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: '`scripts/` の配置から `_maid.py` を削除する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:23:04.989027+00:00'
+  - page: README.md
+    new: false
+    change: 検査の説明の mermaid の文法と、`@probelabs/maid` の配置の手順を削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:23:04.989027+00:00'
+  - page: dev-docs.yaml
+    new: false
+    change: knowledge-checks の説明から mermaid の文法の検査を外す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:23:04.989027+00:00'
+scope_out:
+  - item: '`template-eval-criterion`・`schemas/design/eval_criterion.schema.yaml` の記載例の「Mermaid の図が描画できる」（`aituber.evals.checks.mermaid:is_valid`）'
+    reason: 精度評価の観点の記載例で、knowledge の検査の maid とは関係しない
+    plan: none
+  - item: 全ての文書の検査で、文書の Markdown の項目の map の中の Mermaid を mdmark の点検にかけることと、mdmark の採用バージョンを map の点検を持つタグへ上げること
+    reason: knowledge が採用する mdmark の v0.8.0 は map の点検を持たない（map の点検は v0.11.0 以降）。採用バージョンの更新は IF-137-1・LIB-137-1 などに及び、maid の削除と独立して成り立つ
+    plan: '#343'
+  - item: '`schemas/design/interface.schema.yaml` の flow の description が 3 文あり、結合テスト `test_check_all.py::test_normal_when_repository_schemas` が fail する'
+    reason: 結合テストの description は 2 文までとする決まりから外れている。#333 で入った不具合で develop でも fail し、maid の削除の要望に含まれない
+    plan: '#364'

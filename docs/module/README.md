@@ -11,7 +11,6 @@
 | [slop-check / hooks / slop_check.py](./MOD-148-2.py.yaml) | プラグイン slop-check の PostToolUse のフック。書き込んだ中身を対応表のコピーで照合し、ヒットした行の通知の文を `additionalContext` で、検知した単語の 1 行を `systemMessage` で返却する（IF-148-1）。 |
 | [検査と変換のスクリプト / scripts / _common.py](./MOD-72-2.py.yaml) | 文書の読み込み・項目のパスと行の対応・違反の型・並列の読み込み |
 | [検査と変換のスクリプト / scripts / _lint.py](./MOD-176-1.py.yaml) | markdownlint-cli2・textlint・yamllint の在りかの確認と呼び出しと違反の行の対応 |
-| [検査と変換のスクリプト / scripts / _maid.py](./MOD-72-3.py.yaml) | maid の在りかの確認と打ち切りつきの呼び出し |
 | [検査と変換のスクリプト / scripts / build_pages.py](./MOD-137-1.py.yaml) | 公開文書の配信のワークフローと手元から呼ぶ Pages の成果物の作成 |
 | [検査と変換のスクリプト / scripts / build_templates.py](./MOD-201-1.py.yaml) | 手元から呼ぶ設計書のテンプレートの生成 |
 | [検査と変換のスクリプト / scripts / build_skills.py](./MOD-312-1.py.yaml) | 手元から呼ぶ SKILL.md の生成 |

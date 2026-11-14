@@ -1,0 +1,70 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: run_only
+    detail: 実行場所と workflow の全体の流れを追加したスキーマから、テスト実行方法とインターフェース定義のテンプレートを生成し直す。生成の手順は変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 変えたスキーマがスキーマ自身の検査を通り、テンプレートがスキーマと一致し、新設した判定フローチャートと書き換えた規約が検査を通ることを確認する。検査の手順は変えない
+    depends_on: []
+docs:
+  - page: docs/flowchart/flowchart-test-location.yaml
+    new: true
+    change: テストの層ごとに GitHub Actions のランナー（`runner`）と手元（`local`）のどちらで回すかを判定する判定フローチャートを新設する。`runner` にした層の扱い（手元のコマンドを残す・skip の件数を手元と照合する）を補足に記載する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
+  - page: schemas/design/test_procedure.schema.yaml
+    new: false
+    change: '`layers[]` に実行場所のキーと、ランナーの全件実行のコマンド（`workflow_dispatch` で起動し、終わるまで待ち、ログを取る）のキーを、省略できるキーとして追加する。`run_all`・`run_one` は手元のコマンドのまま残す'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
+  - page: schemas/design/interface.schema.yaml
+    new: false
+    change: '`flows[].flow` に、入口が `trigger` のときは通る step だけを並べた一本道のフローチャートにできる決まりを追加し、workflow 全体の分岐を描く省略できる項目を追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
+  - page: docs/template/template-test-procedure.yaml
+    new: false
+    change: '`uv run --frozen --script scripts/build_templates.py` で生成し直す'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
+  - page: docs/template/template-interface.yaml
+    new: false
+    change: '`uv run --frozen --script scripts/build_templates.py` で生成し直す'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
+  - page: docs/rule/dev-hook-ci-scope.yaml
+    new: false
+    change: push・PR で起動する CI と、エージェントが手動で起動するテストの実行とを書き分ける（要件.md の未確定をユーザーへ確認してから修正する）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
+  - page: docs/checksheet/checksheet-review-interface-module.yaml
+    new: false
+    change: 入口が `trigger` のとき、全体の流れの分岐がフローで漏れなく扱われ、フローの図の step が `name` で指されているかの観点を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
+scope_out:
+  - item: knowledge 自身のテスト実行方法（TP-72-1）の層への実行場所の記載と、GitHub Actions への移行
+    reason: 後続の Issue の範囲
+    plan: '#352'
+  - item: 前例の公開文書の配信のワークフロー（IF-137-2）をフローチャートと全体の流れで記載し直す
+    reason: 追加するのは省略できる書式で、今の記載は検査を通ったまま。この作業 PR の書式を前提にする。#352 はテストの層の移行で IF-137-2 を対象にしないため、別の Issue にした（レビューで確定）
+    plan: '#360'
+  - item: workflow の静的な検査（actionlint を lint の層へ入れる・設計書と workflow のファイルの突き合わせ）
+    reason: '#351 の終わりの条件に含まれない。突き合わせはこの作業 PR で決める書式を前提にする'
+    plan: '#361'
+  - item: workflow のフローを pytest から `gh` で確認するテストの書き方（検証用のブランチの push・起動・結果の照合・削除）の規約
+    reason: '#351 の終わりの条件に含まれない。フローの書式が確定してから中身が決まる'
+    plan: '#362'
+  - item: AI Monitor のテストの層の実行場所の記載と、手元の層だけに上限を当てる変更（shuhei1101/ai-monitor#2646・shuhei1101/ai-monitor#3358）
+    reason: 別のリポジトリの作業
+    plan: none

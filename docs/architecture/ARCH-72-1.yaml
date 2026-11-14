@@ -31,9 +31,6 @@ overview:
     - id: devdocs
       label: dev-docs
       kind: external
-    - id: maid
-      label: maid
-      kind: external
     - id: actions
       label: GitHub Actions
       kind: external
@@ -62,9 +59,6 @@ overview:
     - from: agent
       to: scripts
       label: 全ての文書の検査
-    - from: scripts
-      to: maid
-      label: 子プロセス
     - from: actions
       to: ci
       label: develop への push
@@ -137,13 +131,6 @@ external_systems:
     protocol: project-index の読み取り API（knowledge と直接はやり取りしない）
     notes:
       事前確認: 不要。knowledge から dev-docs を呼ばない
-  - name: '@probelabs/maid'
-    purpose: mermaid の文法の検査（`--fix` を付けない）
-    direction: 双方向
-    protocol: CLI（子プロセス）
-    notes:
-      事前確認: 要。検査のスクリプトの起動時に `maid` が PATH で見つかるかを確認し、無ければ検査を始めずに足りないものを返却する。maid を呼ぶ前に残り時間を確認する（非機能要件のスクリプトの処理時間）
-    detail: LIB-72-3#
   - name: GitHub Actions
     purpose: develop への push で公開文書の配信のワークフローを動かす
     direction: 受信のみ

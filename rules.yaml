@@ -36,6 +36,71 @@ rules:
   - rule: schemas/meta.schema.yaml
     paths:
       - "**/schemas/**/*.schema.yaml"
+  - rule: schemas/design/scenario.schema.yaml
+    paths:
+      - "**/docs/scenario/*.yaml"
+    on: [write]
+  - rule: schemas/design/interface.schema.yaml
+    paths:
+      - "**/docs/interface/*.yaml"
+    on: [write]
+  - rule: schemas/design/module.schema.yaml
+    paths:
+      - "**/docs/module/*.yaml"
+    on: [write]
+  - rule: schemas/design/architecture.schema.yaml
+    paths:
+      - "**/docs/architecture/*.yaml"
+    on: [write]
+  - rule: schemas/design/nonfunctional.schema.yaml
+    paths:
+      - "**/docs/nonfunctional/*.yaml"
+    on: [write]
+  - rule: schemas/design/config.schema.yaml
+    paths:
+      - "**/docs/config/*.yaml"
+    on: [write]
+  - rule: schemas/design/er.schema.yaml
+    paths:
+      - "**/docs/er/*.yaml"
+    on: [write]
+  - rule: schemas/design/data.schema.yaml
+    paths:
+      - "**/docs/data/*.yaml"
+    on: [write]
+  - rule: schemas/design/state_transition.schema.yaml
+    paths:
+      - "**/docs/state-transition/*.yaml"
+    on: [write]
+  - rule: schemas/design/screen.schema.yaml
+    paths:
+      - "**/docs/screen/*.yaml"
+    on: [write]
+  - rule: schemas/design/dataflow.schema.yaml
+    paths:
+      - "**/docs/dataflow/*.yaml"
+    on: [write]
+  - rule: schemas/design/external_api.schema.yaml
+    paths:
+      - "**/docs/external-api/*.yaml"
+    on: [write]
+  - rule: schemas/design/library.schema.yaml
+    paths:
+      - "**/docs/library/*.yaml"
+    on: [write]
+  - rule: schemas/design/test_procedure.schema.yaml
+    paths:
+      - "**/docs/test-procedure/*.yaml"
+    on: [write]
+  - rule: schemas/design/dev_command.schema.yaml
+    paths:
+      - "**/docs/dev-command/*.yaml"
+    on: [write]
+  - rule: schemas/design/index.schema.yaml
+    paths:
+      - "**/docs/**/index.yaml"
+      - "**/docs/index.yaml"
+    on: [write]
   - rule: docs/rule/convention-writing-style.yaml
     paths:
       - "**/docs/**/*.{md,yaml}"
