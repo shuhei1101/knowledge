@@ -4,7 +4,7 @@
 #     "ruamel.yaml==0.19.1",
 # ]
 # ///
-"""dev-docs.yaml の documents[] の visibility: public の文書を、mdmark の build で 1 枚の HTML にまとめる。
+"""project-index.yaml の documents[] の visibility: public の文書を、mdmark の build で 1 枚の HTML にまとめる。
 
 公開文書の配信のワークフローと手元から、リポジトリの直下で起動する。変換は converters[].run を子プロセスで呼び、
 文書の ID への参照を、公開の文書なら 1 枚の中のリンク、それ以外なら develop の YAML の URL に書き換える。
@@ -171,7 +171,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 def load_converters(root: Path) -> dict[str, tuple[str, ...]]:
-    """dev-docs.yaml の converters[] を id → run にする。"""
+    """project-index.yaml の converters[] を id → run にする。"""
     try:
         doc = load_document((root / CONFIG).read_text(encoding="utf-8"))
     except DocumentError as error:

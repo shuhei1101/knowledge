@@ -7,7 +7,7 @@ scenarios:
       - name: Mock
         description: 差し替えない。端末の project-index（管理の MCP の `check_project`・`reload`）をそのまま使用する
       - name: knowledge のクローン
-        description: develop を踏んだクローン。`dev-docs.yaml` と `files.yaml` が範囲のファイルと一致している
+        description: develop を踏んだクローン。`project-index.yaml` と `files.yaml` が範囲のファイルと一致している
       - name: 端末の設定
         description: '`sources[]` に knowledge が無い'
     flow: |-
@@ -22,7 +22,7 @@ scenarios:
         participant C as 端末の設定
         U->>S: /project-index:setup とクローンのパス
         S->>A: check_project
-        A->>K: dev-docs.yaml と文書・スクリプトを参照する
+        A->>K: project-index.yaml と文書・スクリプトを参照する
         A-->>S: 違反なし
         S->>U: scope.write と scope.read を聞く
         U-->>S: scope.read は全ての作業場所、scope.write はクローンと worktree
@@ -34,7 +34,7 @@ scenarios:
 
       <!-- /map -->
     expected:
-      - '`sources[]` に knowledge の行があり、`config` が knowledge の `dev-docs.yaml` の絶対パス'
+      - '`sources[]` に knowledge の行があり、`config` が knowledge の `project-index.yaml` の絶対パス'
       - '`scope.read` が全ての作業場所、`scope.write` が knowledge のクローンと worktree'
       - 管理の MCP の `status` に knowledge が配信中で載る
     test: test_normal
@@ -43,7 +43,7 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: 壊した knowledge のクローン
-        description: '`dev-docs.yaml` の documents の行が存在しないスキーマを指す'
+        description: '`project-index.yaml` の documents の行が存在しないスキーマを指す'
         notes: '`schema: schemas/missing.schema.yaml`'
     flow: |-
       <!-- map -->
@@ -70,7 +70,7 @@ primary_actor: 利用者
 trigger: 利用者が `/project-index:setup {knowledge のクローンのパス}` を実行する
 preconditions:
   - '`/project-index:global-setup` を終え、端末の設定（`~/.config/project-index/settings.yaml`）がある'
-  - knowledge のクローンの直下に `dev-docs.yaml` がある
+  - knowledge のクローンの直下に `project-index.yaml` がある
 success_guarantee: '`sources[]` に knowledge の行（`config`・`scope.read`・`scope.write`）があり、project-index が設定を再読み込みして knowledge を配信している。'
 minimal_guarantee: 点検で違反があれば端末の設定を書き換えない。
 notes:

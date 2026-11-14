@@ -160,7 +160,7 @@ def test_line_of_when_empty() -> None:
 def test_load_config(tmp_path: Path) -> None:
     """行を読む（正常系）。"""
     # 準備
-    (tmp_path / "dev-docs.yaml").write_text(
+    (tmp_path / "project-index.yaml").write_text(
         "name: knowledge\n"
         "documents:\n"
         "  - id: rule\n"
@@ -182,25 +182,27 @@ def test_load_config(tmp_path: Path) -> None:
 def test_load_config_when_missing(tmp_path: Path) -> None:
     """ファイルが無い（異常系）。"""
     # 実行・検証
-    with pytest.raises(ConfigError, match=r"dev-docs\.yaml がありません"):
+    with pytest.raises(ConfigError, match=r"project-index\.yaml がありません"):
         load_config(tmp_path)
 
 
 def test_load_config_when_broken(tmp_path: Path) -> None:
     """YAML として読めない（異常系）。"""
     # 準備
-    (tmp_path / "dev-docs.yaml").write_text("name: knowledge\ndocuments: [\n", encoding="utf-8")
+    (tmp_path / "project-index.yaml").write_text(
+        "name: knowledge\ndocuments: [\n", encoding="utf-8"
+    )
     # 実行・検証
-    with pytest.raises(ConfigError, match=r"dev-docs\.yaml の \d+ 行目が読めません"):
+    with pytest.raises(ConfigError, match=r"project-index\.yaml の \d+ 行目が読めません"):
         load_config(tmp_path)
 
 
 def test_load_config_when_no_documents(tmp_path: Path) -> None:
     """documents が無い（異常系）。"""
     # 準備
-    (tmp_path / "dev-docs.yaml").write_text("name: knowledge\n", encoding="utf-8")
+    (tmp_path / "project-index.yaml").write_text("name: knowledge\n", encoding="utf-8")
     # 実行・検証
-    with pytest.raises(ConfigError, match=r"dev-docs\.yaml に documents の配列がありません"):
+    with pytest.raises(ConfigError, match=r"project-index\.yaml に documents の配列がありません"):
         load_config(tmp_path)
 
 

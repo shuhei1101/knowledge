@@ -153,7 +153,7 @@ def test_normal_when_repository_schemas(run_script: RunScript, tmp_path: Path) -
     root.mkdir()
     shutil.copytree(_REPO / "schemas", root / "schemas")
     shutil.copytree(_REPO / "docs" / "template", root / "docs" / "template")
-    (root / "dev-docs.yaml").write_text("documents: []\n", encoding="utf-8")
+    (root / "project-index.yaml").write_text("documents: []\n", encoding="utf-8")
     # 実行
     result = run_script("check_all", root)
     # 検証
@@ -430,7 +430,7 @@ def test_error_when_check_cli_missing(
 
 
 def test_error_when_config_missing(run_script: RunScript, tmp_path: Path) -> None:
-    """dev-docs.yaml が無いか読めなければ検査を始めずに終わる（異常系）。"""
+    """project-index.yaml が無いか読めなければ検査を始めずに終わる（異常系）。"""
     # 準備
     root = tmp_path / "empty"
     root.mkdir()
@@ -438,7 +438,7 @@ def test_error_when_config_missing(run_script: RunScript, tmp_path: Path) -> Non
     result = run_script("check_all", root)
     # 検証
     assert result.exit_code == 2
-    assert "dev-docs.yaml" in result.stderr
+    assert "project-index.yaml" in result.stderr
 
 
 def test_error_when_meta_schema_unusable(run_script: RunScript, repo_factory: RepoFactory) -> None:
@@ -458,7 +458,7 @@ def test_normal_when_design_documents(run_script: RunScript, repo_factory: RepoF
     # 準備
     root = repo_factory(
         {
-            "dev-docs.yaml": (
+            "project-index.yaml": (
                 'version: "3"\n'
                 "name: knowledge\n"
                 "validators:\n"

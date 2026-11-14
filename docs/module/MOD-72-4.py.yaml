@@ -44,7 +44,7 @@ functions:
       - name: test_main
         case: 正常
         summary: 違反の無い文書
-        condition: '標準入力に違反の無い文書。作業ディレクトリは空の `docs/` と、`documents: []` の `dev-docs.yaml` を持つ一時フォルダ'
+        condition: '標準入力に違反の無い文書。作業ディレクトリは空の `docs/` と、`documents: []` の `project-index.yaml` を持つ一時フォルダ'
         mock: なし
         expected: '`0` を返却し、標準出力が `[]`'
       - name: test_main_when_unexpected_error
@@ -89,7 +89,7 @@ functions:
         required: false
         default: None
         passing: keyword
-        description: 作った名前の索引。`None` ならこの関数で `dev-docs.yaml` を読み込んで作る。全ての文書の検査が 1 度だけ作って指定する
+        description: 作った名前の索引。`None` ならこの関数で `project-index.yaml` を読み込んで作る。全ての文書の検査が 1 度だけ作って指定する
     returns:
       type: list[Violation]
       description: 項目の ID の重複 → `id:` の参照 → `related` の `to` → `aliases` の衝突 → 文書の中の `aliases` の重複の順の違反
@@ -97,8 +97,8 @@ functions:
       1. 文書を読み込む（文書の読み込み）
          - 読み込めない文書の場合、`path: $`・`{行} 行目: YAML として読めません: {理由}`・`YAML の文法の誤りを修正する` の 1 件を返却する
       2. `index` が `None` なら ID の索引を作る（ID の索引の作成）
-      3. `names` が `None` なら、`dev-docs.yaml` を読み込み（dev-docs.yaml の読み込み）、名前の索引を作る（名前の索引の作成）
-         - `ConfigError` の場合、`aliases` の衝突の検査を適用せず、`path: $`・`1 行目: {理由}。aliases の衝突を検査できません`・`配信元の直下に読める dev-docs.yaml を置く` の違反を 1 件加える
+      3. `names` が `None` なら、`project-index.yaml` を読み込み（project-index.yaml の読み込み）、名前の索引を作る（名前の索引の作成）
+         - `ConfigError` の場合、`aliases` の衝突の検査を適用せず、`path: $`・`1 行目: {理由}。aliases の衝突を検査できません`・`配信元の直下に読める project-index.yaml を置く` の違反を 1 件加える
       4. 項目の ID の重複・参照・`aliases` の衝突・文書の中の `aliases` の重複を順に検査し、違反をつないで返却する（項目の ID の重複の検査・参照の検査・aliases の衝突の検査・文書の中の aliases の重複の検査）。文書の中の `aliases` の重複の検査は、手順 3 の `ConfigError` の場合も適用する
       5. 最上位の `kind` が `word-list` なら、対応表の examples の検査の違反を後ろにつなぐ
     unit_tests:
@@ -128,14 +128,14 @@ functions:
         expected: 2 件で、`path` が `items[0].body`・`aliases[0]` の順
       - name: test_check_document_when_config_missing
         case: 正常
-        summary: dev-docs.yaml が無い
-        condition: '`aliases: [アルファ]` を持つ文書。`index` に `{}`、`names` は指定しない。一時フォルダに `dev-docs.yaml` が無い'
+        summary: project-index.yaml が無い
+        condition: '`aliases: [アルファ]` を持つ文書。`index` に `{}`、`names` は指定しない。一時フォルダに `project-index.yaml` が無い'
         mock: 'なし'
-        expected: '`path` が `$` の 1 件で、`rule` が `dev-docs.yaml` と `aliases の衝突を検査できません` を含む'
+        expected: '`path` が `$` の 1 件で、`rule` が `project-index.yaml` と `aliases の衝突を検査できません` を含む'
       - name: test_check_document_when_aliases_duplicate
         case: 正常
-        summary: dev-docs.yaml が無くても文書の中の aliases の重複を検査する
-        condition: '`aliases: [アルファ, ｱﾙﾌｧ]` を持つ文書。`index` に `{}`、`names` は指定しない。一時フォルダに `dev-docs.yaml` が無い'
+        summary: project-index.yaml が無くても文書の中の aliases の重複を検査する
+        condition: '`aliases: [アルファ, ｱﾙﾌｧ]` を持つ文書。`index` に `{}`、`names` は指定しない。一時フォルダに `project-index.yaml` が無い'
         mock: 'なし'
         expected: 2 件で、`path` が `$`・`aliases[1]` の順
     callees:

@@ -80,8 +80,7 @@ items:
       ```
 
       点検は管理の MCP の `check_project` で行う。
-      knowledge の `dev-docs.yaml`・スキーマ・`scripts/` に違反があると、キーのパスと理由を示して止まり、`sources[]` に行が追加されない。
-      project-index は、配信元のフォルダに `project-index.yaml` が無ければ `dev-docs.yaml` を読み込む。
+      knowledge の `project-index.yaml`・スキーマ・`scripts/` に違反があると、キーのパスと理由を示して止まり、`sources[]` に行が追加されない。
   - id: step-setup-02
     group: 手順 > knowledge を配信元に登録する
     name: 参照・書き込みできる範囲の回答
@@ -91,13 +90,13 @@ items:
 
       ```yaml
       sources:
-        - config: {knowledge のクローンの絶対パス}/dev-docs.yaml
+        - config: {knowledge のクローンの絶対パス}/project-index.yaml
           scope:
             read: ["{作業場所を配置するフォルダ}/**"]
             write: ["{knowledge のクローンの絶対パス}"]
       ```
 
-      配信元の ID は、knowledge の `dev-docs.yaml` の `name`（`knowledge`）になる。
+      配信元の ID は、knowledge の `project-index.yaml` の `name`（`knowledge`）になる。
       worktree（`.claude/worktrees/*`）の中の作業場所はクローンにいるものとして判定するので、`scope.write` に worktree を並べなくてよい。
       `scope.read` にヒットしない作業場所からは、knowledge の文書を参照できない。
   - id: step-screen-01
@@ -128,7 +127,7 @@ items:
     name: 反映のタイミング
     body: |-
       - 端末の設定の `sources[]`: `即時`（`/project-index:setup` が最後に管理の MCP の `reload` を呼ぶ）
-      - knowledge の `dev-docs.yaml`・スキーマ・`scripts/`: 管理の MCP の `reload` を呼ぶまで、変える前の設定で配信する。
+      - knowledge の `project-index.yaml`・スキーマ・`scripts/`: 管理の MCP の `reload` を呼ぶまで、変える前の設定で配信する。
         確認の方法は project-index の [配信元を配信する](https://github.com/shuhei1101/project-index/blob/develop/docs/guide/%E9%85%8D%E4%BF%A1%E5%85%83%E3%82%92%E9%85%8D%E4%BF%A1%E3%81%99%E3%82%8B.md) にある
   - id: check-served-01
     group: 確認 > knowledge が配信中になっている

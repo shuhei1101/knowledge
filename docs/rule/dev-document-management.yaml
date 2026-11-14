@@ -211,7 +211,7 @@ items:
     name: project-index と dev-docs の使用
     body: |-
       - 文書の MCP と配信元の登録は project-index、開発ドキュメントサーバーの画面は dev-docs を使用する
-      - 各リポジトリは、直下に `dev-docs.yaml`・スキーマ・検査と変換のスクリプトだけを配置する
+      - 各リポジトリは、直下に `project-index.yaml`・スキーマ・検査と変換のスクリプトだけを配置する
   - id: delivery-05
     group: 配信
     name: project-index と dev-docs の導入方法
@@ -228,7 +228,7 @@ items:
     group: 配信
     name: メタデータとエイリアスの対応づけ
     body: |-
-      - 文書のメタデータとエイリアスは、`dev-docs.yaml` の documents の行の `metadata` で文書の列と対応づける
+      - 文書のメタデータとエイリアスは、`project-index.yaml` の documents の行の `metadata` で文書の列と対応づける
         `metadata` は列の対応だけで、`alias_type` は行の属性
       - エイリアスの共通のスキーマは、alias-inject の [エイリアスのスキーマ](https://github.com/shuhei1101/alias-inject/blob/develop/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/%E3%82%A8%E3%82%A4%E3%83%AA%E3%82%A2%E3%82%B9%E3%81%AE%E3%82%B9%E3%82%AD%E3%83%BC%E3%83%9E.md) を参照する
   - id: delivery-08

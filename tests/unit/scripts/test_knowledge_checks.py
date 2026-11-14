@@ -34,10 +34,10 @@ _VALID_DOC = (
     "    body: 本文\n"
 )
 
-# documents[] が空の dev-docs.yaml
+# documents[] が空の project-index.yaml
 _EMPTY_CONFIG = 'version: "3"\nname: knowledge\ndocuments: []\n'
 
-# docs/rule/*.yaml の行だけが alias_type を持つ dev-docs.yaml
+# docs/rule/*.yaml の行だけが alias_type を持つ project-index.yaml
 _ALIAS_CONFIG = (
     'version: "3"\n'
     "name: knowledge\n"
@@ -59,7 +59,7 @@ def test_main(
     """違反の無い文書（正常系）。"""
     # 準備
     (tmp_path / "docs").mkdir()
-    (tmp_path / "dev-docs.yaml").write_text(_EMPTY_CONFIG, encoding="utf-8")
+    (tmp_path / "project-index.yaml").write_text(_EMPTY_CONFIG, encoding="utf-8")
     monkeypatch.chdir(tmp_path)
     stdin_factory(_VALID_DOC)
     # 実行
@@ -156,7 +156,7 @@ def test_check_document_when_aliases_collide(tmp_path: Path) -> None:
 
 
 def test_check_document_when_config_missing(tmp_path: Path) -> None:
-    """dev-docs.yaml が無い（正常系）。"""
+    """project-index.yaml が無い（正常系）。"""
     # 準備
     text = "id: b\naliases:\n  - アルファ\n"
     # 実行
@@ -164,12 +164,12 @@ def test_check_document_when_config_missing(tmp_path: Path) -> None:
     # 検証
     assert len(result) == 1
     assert result[0]["path"] == "$"
-    assert "dev-docs.yaml" in result[0]["rule"]
+    assert "project-index.yaml" in result[0]["rule"]
     assert "aliases の衝突を検査できません" in result[0]["rule"]
 
 
 def test_check_document_when_aliases_duplicate(tmp_path: Path) -> None:
-    """dev-docs.yaml が無くても文書の中の aliases の重複を検査する（正常系）。"""
+    """project-index.yaml が無くても文書の中の aliases の重複を検査する（正常系）。"""
     # 準備
     text = "id: b\naliases:\n  - アルファ\n  - ｱﾙﾌｧ\n"
     # 実行
@@ -239,7 +239,7 @@ def test_build_name_index(tmp_path: Path) -> None:
     # 準備
     (tmp_path / "docs" / "rule").mkdir(parents=True)
     (tmp_path / "docs" / "word-list").mkdir(parents=True)
-    (tmp_path / "dev-docs.yaml").write_text(_ALIAS_CONFIG, encoding="utf-8")
+    (tmp_path / "project-index.yaml").write_text(_ALIAS_CONFIG, encoding="utf-8")
     (tmp_path / "docs" / "rule" / "a.yaml").write_text(
         "id: a\nname: Alpha\naliases:\n  - アルファ\n", encoding="utf-8"
     )
@@ -257,7 +257,7 @@ def test_build_name_index_when_broken(tmp_path: Path) -> None:
     """読めない文書を飛ばす（正常系）。"""
     # 準備
     (tmp_path / "docs" / "rule").mkdir(parents=True)
-    (tmp_path / "dev-docs.yaml").write_text(_ALIAS_CONFIG, encoding="utf-8")
+    (tmp_path / "project-index.yaml").write_text(_ALIAS_CONFIG, encoding="utf-8")
     (tmp_path / "docs" / "rule" / "a.yaml").write_text("id: a\nname: Alpha\n", encoding="utf-8")
     (tmp_path / "docs" / "rule" / "c.yaml").write_text("id: c\nname: [\n", encoding="utf-8")
     rows = load_config(tmp_path)
@@ -267,7 +267,7 @@ def test_build_name_index_when_broken(tmp_path: Path) -> None:
     assert result == {"alpha": [("a", "name")]}
 
 
-# 用語集の行（records: terms・alias_type: term）を持つ dev-docs.yaml
+# 用語集の行（records: terms・alias_type: term）を持つ project-index.yaml
 _TERMS_CONFIG = (
     'version: "3"\n'
     "name: knowledge\n"
@@ -285,7 +285,7 @@ def test_build_name_index_when_records(tmp_path: Path) -> None:
     """records を持つ行の要素を集める（正常系）。"""
     # 準備
     (tmp_path / "docs").mkdir()
-    (tmp_path / "dev-docs.yaml").write_text(_TERMS_CONFIG, encoding="utf-8")
+    (tmp_path / "project-index.yaml").write_text(_TERMS_CONFIG, encoding="utf-8")
     (tmp_path / "docs" / "terms.yaml").write_text(
         "id: terms\n"
         "name: 用語集\n"

@@ -77,8 +77,8 @@ functions:
       description: 終了コード。`0` = 作った、`1` = 作れない成果物か想定していない例外、`2` = 作り始めなかった
     process: |-
       1. argparse で `--out` を読み込み、標準出力と標準エラーを UTF-8 にする
-      2. 作業ディレクトリの `documents[]` を読み込み（dev-docs.yaml の読み込み）、`converters[]` を読み込む（変換のコマンドの読み込み）
-         - 読み込めない dev-docs.yaml の場合、標準エラーへ理由を出し `2` を返却する
+      2. 作業ディレクトリの `documents[]` を読み込み（project-index.yaml の読み込み）、`converters[]` を読み込む（変換のコマンドの読み込み）
+         - 読み込めない project-index.yaml の場合、標準エラーへ理由を出し `2` を返却する
       3. 公開の候補の文書を取得する（公開の候補の文書の列挙）
          - `public` が無い場合、標準エラーへ `visibility: public の文書がありません` を出し `2` を返却する
       4. 出力のフォルダを空にして再作成する
@@ -108,10 +108,10 @@ functions:
         expected: '`2` を返却し、標準エラーに `visibility: public` が出る'
       - name: test_main_when_config_missing
         case: 正常
-        summary: dev-docs.yaml が無い
-        condition: '`dev-docs.yaml` を持たない一時フォルダ'
+        summary: project-index.yaml が無い
+        condition: '`project-index.yaml` を持たない一時フォルダ'
         mock: なし
-        expected: '`2` を返却し、標準エラーに `dev-docs.yaml` が出る'
+        expected: '`2` を返却し、標準エラーに `project-index.yaml` が出る'
     callees:
       - MOD-72-2#functions[load_config]
     refs:
@@ -123,29 +123,29 @@ functions:
     usecase: Pages の成果物の作成
     role: 読み込み
     scope: public
-    summary: '`dev-docs.yaml` の `converters[]` を `id` → `run` にする'
+    summary: '`project-index.yaml` の `converters[]` を `id` → `run` にする'
     args:
       - name: root
         title: リポジトリの直下
         type: Path
         required: true
-        description: '`dev-docs.yaml` を持つフォルダ'
+        description: '`project-index.yaml` を持つフォルダ'
     returns:
       type: dict[str, tuple[str, ...]]
       description: 変換の `id` → `run`。`run` が文字列の配列でない行は入れない
     process: |-
-      1. `{root}/dev-docs.yaml` を文書として読み込む（文書の読み込み）
-         - 読み込めない文書の場合、`dev-docs.yaml の {行} 行目が読めません: {理由}` の読み込めない dev-docs.yaml を送出する
+      1. `{root}/project-index.yaml` を文書として読み込む（文書の読み込み）
+         - 読み込めない文書の場合、`project-index.yaml の {行} 行目が読めません: {理由}` の読み込めない project-index.yaml を送出する
       2. `converters` の各行の `id` と `run` を返却する
     exceptions:
       - name: ConfigError
         condition: YAML として読み込めない
-        message: 'dev-docs.yaml の {行} 行目が読めません: {理由}'
+        message: 'project-index.yaml の {行} 行目が読めません: {理由}'
     unit_tests:
       - name: test_load_converters
         case: 正常
         summary: 変換のコマンドを取得する
-        condition: '`converters` に `knowledge-markdown`（`run: [uv, run, ...]`）を持つ `dev-docs.yaml`'
+        condition: '`converters` に `knowledge-markdown`（`run: [uv, run, ...]`）を持つ `project-index.yaml`'
         mock: なし（一時ディレクトリ）
         expected: '`{"knowledge-markdown": ("uv", "run", ...)}`'
     callees:
@@ -462,6 +462,6 @@ functions:
       - LIB-137-1#catalogs[コマンド].entries[build]
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を記載し、`_common.py` を同じフォルダから import する。mdmark（LIB-137-1）は `npx` で子プロセスとして呼ぶので Python の依存には入れない
-  変換を子プロセスで呼ぶ: 変換は `knowledge_markdown.py` を import せず、`dev-docs.yaml` の `converters[].run` を起動する。dev-docs の画面と同じ Markdown になる
+  変換を子プロセスで呼ぶ: 変換は `knowledge_markdown.py` を import せず、`project-index.yaml` の `converters[].run` を起動する。dev-docs の画面と同じ Markdown になる
 test_files:
   - tests/unit/scripts/test_build_pages.py

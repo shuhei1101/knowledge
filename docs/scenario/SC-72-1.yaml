@@ -7,7 +7,7 @@ scenarios:
       - name: Mock
         description: 差し替えない。端末の project-index・dev-docs と knowledge のクローンをそのまま使用する
       - name: knowledge のクローン
-        description: develop を踏んだ knowledge のクローン。`dev-docs.yaml`・`files.yaml`・スクリプトがある
+        description: develop を踏んだ knowledge のクローン。`project-index.yaml`・`files.yaml`・スクリプトがある
       - name: 端末の設定
         description: '`~/.config/project-index/settings.yaml` の `sources[]` に knowledge が無い'
     flow: |-
@@ -34,7 +34,7 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: 壊した knowledge のクローン
-        description: '`dev-docs.yaml` の documents の行が存在しないスキーマを指すクローン'
+        description: '`project-index.yaml` の documents の行が存在しないスキーマを指すクローン'
         notes: '`schema: schemas/missing.schema.yaml`'
     flow: |-
       <!-- map -->
@@ -47,7 +47,7 @@ scenarios:
       <!-- /map -->
     expected:
       - '`sources[]` に knowledge の行が追加されていない'
-      - 誤りのあるファイル（`dev-docs.yaml`）と内容が利用者へ返る
+      - 誤りのあるファイル（`project-index.yaml`）と内容が利用者へ返る
     test: test_error_when_setup_check_fails
     uses:
       - SC-72-2#scenarios[異常シナリオ（点検で違反がある）]

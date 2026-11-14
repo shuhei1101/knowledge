@@ -1,0 +1,869 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml
+configfile: pytest.ini
+collected 247 items
+
+tests/unit/scripts/test_build_pages.py FFFFF..............               [  7%]
+tests/unit/scripts/test_build_skills.py .......................          [ 17%]
+tests/unit/scripts/test_build_templates.py ........................      [ 26%]
+tests/unit/scripts/test_build_word_list.py ...                           [ 27%]
+tests/unit/scripts/test_check_all.py FFFF.F.......................F..... [ 42%]
+........FF.F                                                             [ 46%]
+tests/unit/scripts/test_common.py ............FFFF....                   [ 55%]
+tests/unit/scripts/test_knowledge_checks.py F....F.....FFF............   [ 65%]
+tests/unit/scripts/test_knowledge_markdown.py ...FF..................... [ 76%]
+.FFF....                                                                 [ 79%]
+tests/unit/scripts/test_lint.py ............                             [ 84%]
+tests/unit/slop-check/test_slop_check.py ............................... [ 96%]
+........                                                                 [100%]
+
+=================================== FAILURES ===================================
+__________________________________ test_main ___________________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e77556a7950>
+repo_writer = <function repo_writer.<locals>._create at 0x7e7754f5a1f0>
+fake_mdmark = []
+
+    def test_main(
+        monkeypatch: pytest.MonkeyPatch,
+        repo_writer: RepoWriter,
+        fake_mdmark: list[dict[str, Any]],
+    ) -> None:
+        """公開の文書だけをまとめる（正常系）。"""
+        # 準備
+        root = repo_writer(
+            {
+                "project-index.yaml": _CONFIG_YAML,
+                "docs/guide/guide-a.yaml": _document("guide-a", "public"),
+                "docs/guide/guide-b.yaml": _document("guide-b", "public"),
+                "docs/guide/guide-c.yaml": _document("guide-c", "internal"),
+                "scripts/files.yaml": "files: []\n",
+                "_site/old.html": "<html></html>",
+            }
+        )
+        monkeypatch.chdir(root)
+    
+        def _convert(_root: Path, source: Source) -> str:
+            return f"# {source.id}\n"
+    
+        monkeypatch.setattr(build_pages, "convert_source", _convert)
+        # 実行
+        code = build_pages.main(["--out", "_site"])
+        # 検証
+>       assert code == 0
+E       assert 2 == 0
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_build_pages.py:122: AssertionError
+----------------------------- Captured stderr call -----------------------------
+dev-docs.yaml がありません
+__________________________ test_main_when_build_fails __________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754f34510>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e7754ed42f0>
+repo_writer = <function repo_writer.<locals>._create at 0x7e7754f58eb0>
+fake_mdmark = []
+
+    def test_main_when_build_fails(
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        repo_writer: RepoWriter,
+        fake_mdmark: list[dict[str, Any]],
+    ) -> None:
+        """作れない成果物（正常系）。"""
+        # 準備
+        root = repo_writer(
+            {
+                "project-index.yaml": _CONFIG_YAML,
+                "docs/guide/guide-a.yaml": _document("guide-a", "public"),
+                "docs/guide/guide-b.yaml": _document("guide-b", "public"),
+                "docs/guide/guide-c.yaml": _document("guide-c", "internal"),
+                "scripts/files.yaml": "files: []\n",
+                "_site/index.html": "<html></html>",
+            }
+        )
+        monkeypatch.chdir(root)
+    
+        def _fail(_root: Path, source: Source) -> str:
+            message = f"{source.path}: 変換のスクリプトが終了コード 1 で失敗しました"
+            raise BuildError(message)
+    
+        monkeypatch.setattr(build_pages, "convert_source", _fail)
+        # 実行
+        code = build_pages.main(["--out", "_site"])
+        # 検証
+>       assert code == 1
+E       assert 2 == 1
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_build_pages.py:155: AssertionError
+----------------------------- Captured stderr call -----------------------------
+dev-docs.yaml がありません
+___________________________ test_main_when_no_public ___________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7755074dd0>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e7754fcb390>
+repo_writer = <function repo_writer.<locals>._create at 0x7e7754f5a2a0>
+
+    def test_main_when_no_public(
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        repo_writer: RepoWriter,
+    ) -> None:
+        """公開の文書が無い（正常系）。"""
+        # 準備
+        root = repo_writer(
+            {
+                "project-index.yaml": _CONFIG_YAML,
+                "docs/guide/guide-c.yaml": _document("guide-c", "internal"),
+            }
+        )
+        monkeypatch.chdir(root)
+        # 実行
+        code = build_pages.main(["--out", "_site"])
+        # 検証
+        assert code == 2
+>       assert "visibility: public" in capsys.readouterr().err
+E       AssertionError: assert 'visibility: public' in 'dev-docs.yaml がありません\n'
+E        +  where 'dev-docs.yaml がありません\n' = CaptureResult(out='', err='dev-docs.yaml がありません\n').err
+E        +    where CaptureResult(out='', err='dev-docs.yaml がありません\n') = readouterr()
+E        +      where readouterr = <_pytest.capture.CaptureFixture object at 0x7e7754fcb390>.readouterr
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_build_pages.py:179: AssertionError
+________________________ test_main_when_config_missing _________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_main_when_config_missing0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754ea8af0>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e7754e00050>
+
+    def test_main_when_config_missing(
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """project-index.yaml が無い（正常系）。"""
+        # 準備
+        monkeypatch.chdir(tmp_path)
+        # 実行
+        code = build_pages.main(["--out", "_site"])
+        # 検証
+        assert code == 2
+>       assert "project-index.yaml" in capsys.readouterr().err
+E       AssertionError: assert 'project-index.yaml' in 'dev-docs.yaml がありません\n'
+E        +  where 'dev-docs.yaml がありません\n' = CaptureResult(out='', err='dev-docs.yaml がありません\n').err
+E        +    where CaptureResult(out='', err='dev-docs.yaml がありません\n') = readouterr()
+E        +      where readouterr = <_pytest.capture.CaptureFixture object at 0x7e7754e00050>.readouterr
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_build_pages.py:194: AssertionError
+_____________________________ test_load_converters _____________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_load_converters0')
+
+    def test_load_converters(tmp_path: Path) -> None:
+        """変換のコマンドを引く（正常系）。"""
+        # 準備
+        (tmp_path / "project-index.yaml").write_text(_CONFIG_YAML, encoding="utf-8")
+        # 実行
+>       result = load_converters(tmp_path)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/scripts/test_build_pages.py:202: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/build_pages.py:176: in load_converters
+    doc = load_document((root / CONFIG).read_text(encoding="utf-8"))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/shuhei2441/.local/share/uv/python/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/pathlib/__init__.py:787: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_load_converters0/dev-docs.yaml')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-shuhei2441/pytest-8122/test_load_converters0/dev-docs.yaml'
+
+/home/shuhei2441/.local/share/uv/python/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/pathlib/__init__.py:771: FileNotFoundError
+__________________________________ test_main ___________________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754f041b0>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e7754ec5d60>
+repo_factory = <function repo_factory.<locals>._create at 0x7e7755087e20>
+
+    def test_main(
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        repo_factory: RepoFactory,
+    ) -> None:
+        """違反の無いリポジトリ（正常系）。"""
+        # 準備
+        root = repo_factory({"docs/rule/rule-a.yaml": _VALID_A, "docs/rule/rule-b.yaml": _VALID_B})
+        monkeypatch.chdir(root)
+        monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+        monkeypatch.setattr(check_all, "check_lints", _no_lints)
+        # 実行
+        code = check_all.main([])
+        # 検証
+>       assert code == 0
+E       assert 2 == 0
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_check_all.py:143: AssertionError
+----------------------------- Captured stderr call -----------------------------
+dev-docs.yaml がありません
+__________________________ test_main_when_violations ___________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754f83b10>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e775567faf0>
+repo_factory = <function repo_factory.<locals>._create at 0x7e7755087c10>
+
+    def test_main_when_violations(
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        repo_factory: RepoFactory,
+    ) -> None:
+        """違反がある（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {
+                "docs/rule/rule-b.yaml": (
+                    "id: rule-b\nkind: rule\nname: 規約 B\nitems:\n  - id: overview\n    name: 概要\n"
+                ),
+                "docs/rule/rule-c.yaml": (
+                    "id: rule-c\n"
+                    "kind: rule\n"
+                    "name: 規約 C\n"
+                    "description: 説明\n"
+                    "items:\n"
+                    "  - id: x\n"
+                    "    name: 一つ目\n"
+                    "  - id: x\n"
+                    "    name: 二つ目\n"
+                ),
+            }
+        )
+        monkeypatch.chdir(root)
+        monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+        monkeypatch.setattr(check_all, "check_lints", _no_lints)
+        # 実行
+        code = check_all.main([])
+        # 検証
+        out = capsys.readouterr().out
+>       assert code == 1
+E       assert 2 == 1
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_check_all.py:182: AssertionError
+_________________________ test_main_when_lint_findings _________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754fd5d10>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e775567f930>
+repo_factory = <function repo_factory.<locals>._create at 0x7e7755087110>
+
+    def test_main_when_lint_findings(
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        repo_factory: RepoFactory,
+    ) -> None:
+        """lint の違反と警告（正常系）。"""
+        # 準備
+        root = repo_factory({"docs/rule/rule-a.yaml": _VALID_A, "docs/rule/rule-b.yaml": _VALID_B})
+        monkeypatch.chdir(root)
+        monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+        monkeypatch.setattr(
+            check_all, "check_lints", _lints_returning([_ERROR_FINDING, _WARNING_FINDING])
+        )
+        # 実行
+        code = check_all.main([])
+        # 検証
+        lines = capsys.readouterr().out.splitlines()
+>       assert code == 1
+E       assert 2 == 1
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_check_all.py:204: AssertionError
+_________________________ test_main_when_only_warnings _________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7755097e30>
+repo_factory = <function repo_factory.<locals>._create at 0x7e7755086fb0>
+
+    def test_main_when_only_warnings(
+        monkeypatch: pytest.MonkeyPatch,
+        repo_factory: RepoFactory,
+    ) -> None:
+        """警告だけ（正常系）。"""
+        # 準備
+        root = repo_factory({"docs/rule/rule-a.yaml": _VALID_A, "docs/rule/rule-b.yaml": _VALID_B})
+        monkeypatch.chdir(root)
+        monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+        monkeypatch.setattr(check_all, "check_lints", _lints_returning([_WARNING_FINDING]))
+        # 実行
+        code = check_all.main([])
+        # 検証
+>       assert code == 0
+E       assert 2 == 0
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_check_all.py:229: AssertionError
+----------------------------- Captured stderr call -----------------------------
+dev-docs.yaml がありません
+________________________ test_main_when_config_missing _________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_main_when_config_missing1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754cb9cd0>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e7754dde390>
+
+    def test_main_when_config_missing(
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """project-index.yaml が無い（正常系）。"""
+        # 準備
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+        # 実行
+        code = check_all.main([])
+        # 検証
+        assert code == 2
+>       assert "project-index.yaml" in capsys.readouterr().err
+E       AssertionError: assert 'project-index.yaml' in 'dev-docs.yaml がありません\n'
+E        +  where 'dev-docs.yaml がありません\n' = CaptureResult(out='', err='dev-docs.yaml がありません\n').err
+E        +    where CaptureResult(out='', err='dev-docs.yaml がありません\n') = readouterr()
+E        +      where readouterr = <_pytest.capture.CaptureFixture object at 0x7e7754dde390>.readouterr
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_check_all.py:266: AssertionError
+____________________ test_main_when_design_schemas_invalid _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754e0c440>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e7754ba2090>
+repo_factory = <function repo_factory.<locals>._create at 0x7e7755023c10>
+
+    def test_main_when_design_schemas_invalid(
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        repo_factory: RepoFactory,
+    ) -> None:
+        """設計書のスキーマに誤りがある（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {
+                "docs/rule/rule-a.yaml": _VALID_A,
+                "docs/rule/rule-b.yaml": _VALID_B,
+                "schemas/design/common.schema.yaml": _DESIGN_COMMON,
+                "schemas/design/scenario.schema.yaml": _DESIGN_BAD_EXAMPLE,
+            }
+        )
+        monkeypatch.chdir(root)
+        monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+        monkeypatch.setattr(check_all, "check_lints", _no_lints)
+        # 実行
+        code = check_all.main([])
+        # 検証
+        out = capsys.readouterr().out
+>       assert code == 1
+E       assert 2 == 1
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_check_all.py:929: AssertionError
+___________________ test_main_when_document_schemas_invalid ____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754e27070>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e7755020f70>
+repo_factory = <function repo_factory.<locals>._create at 0x7e7755021a60>
+
+    def test_main_when_document_schemas_invalid(
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        repo_factory: RepoFactory,
+    ) -> None:
+        """schemas/ の直下のスキーマに誤りがある（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {
+                "docs/rule/rule-a.yaml": _VALID_A,
+                "docs/rule/rule-b.yaml": _VALID_B,
+                "schemas/template.schema.yaml": "title: テンプレート\nx-rules: 文字列\n",
+            }
+        )
+        monkeypatch.chdir(root)
+        monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+        monkeypatch.setattr(check_all, "check_lints", _no_lints)
+        # 実行
+        code = check_all.main([])
+        # 検証
+>       assert code == 1
+E       assert 2 == 1
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_check_all.py:1217: AssertionError
+----------------------------- Captured stderr call -----------------------------
+dev-docs.yaml がありません
+_____________________ test_main_when_meta_schema_unusable ______________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754e25ef0>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e77550214f0>
+repo_factory = <function repo_factory.<locals>._create at 0x7e7755021850>
+
+    def test_main_when_meta_schema_unusable(
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        repo_factory: RepoFactory,
+    ) -> None:
+        """拡張したメタスキーマが無い（正常系）。"""
+        # 準備
+        root = repo_factory({})
+        (root / "schemas/meta.schema.yaml").unlink()
+        monkeypatch.chdir(root)
+        monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+        # 実行
+        code = check_all.main([])
+        # 検証
+        assert code == 2
+>       assert "schemas/meta.schema.yaml" in capsys.readouterr().err
+E       AssertionError: assert 'schemas/meta.schema.yaml' in 'dev-docs.yaml がありません\n'
+E        +  where 'dev-docs.yaml がありません\n' = CaptureResult(out='', err='dev-docs.yaml がありません\n').err
+E        +    where CaptureResult(out='', err='dev-docs.yaml がありません\n') = readouterr()
+E        +      where readouterr = <_pytest.capture.CaptureFixture object at 0x7e77550214f0>.readouterr
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_check_all.py:1240: AssertionError
+_______________________ test_main_when_design_documents ________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754d9e120>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e7754d33070>
+repo_factory = <function repo_factory.<locals>._create at 0x7e7755013e20>
+
+    def test_main_when_design_documents(
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        repo_factory: RepoFactory,
+    ) -> None:
+        """設計書の行（正常系）。"""
+        # 準備
+        root = repo_factory(
+            {
+                "project-index.yaml": _CONFIG_WITH_DESIGN,
+                "docs/rule/rule-a.yaml": _VALID_A,
+                "docs/rule/rule-b.yaml": _VALID_B,
+                "docs/scenario/SC-1-1.yaml": _SCENARIO_DOC,
+                "schemas/design/scenario.schema.yaml": _DESIGN_SCENARIO_SCHEMA,
+                "schemas/design/common.schema.yaml": _DESIGN_COMMON_SCHEMA,
+            }
+        )
+        monkeypatch.chdir(root)
+        received: list[list[Target]] = []
+    
+        def _record(_root: Path, targets: list[Target], *_args: object) -> list[LintFinding]:
+            received.append(list(targets))
+            return []
+    
+        monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+        monkeypatch.setattr(check_all, "check_lints", _record)
+        # 実行
+        code = check_all.main([])
+        # 検証
+        out = capsys.readouterr().out
+>       assert code == 0
+E       assert 2 == 0
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_check_all.py:1351: AssertionError
+_______________________________ test_load_config _______________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_load_config0')
+
+    def test_load_config(tmp_path: Path) -> None:
+        """行を読む（正常系）。"""
+        # 準備
+        (tmp_path / "project-index.yaml").write_text(
+            "name: knowledge\n"
+            "documents:\n"
+            "  - id: rule\n"
+            "    paths:\n"
+            "      - docs/rule/*.yaml\n"
+            "    schema: schemas/rule.schema.yaml\n"
+            "  - id: guide\n"
+            "    paths:\n"
+            "      - docs/guide/*.yaml\n"
+            "    schema: schemas/guide.schema.yaml\n",
+            encoding="utf-8",
+        )
+        # 実行
+>       result = load_config(tmp_path)
+                 ^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/scripts/test_common.py:177: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_load_config0')
+
+    def load_config(root: Path) -> list[Mapping[str, Any]]:
+        """dev-docs.yaml の documents[] の行を読む。"""
+        path = root / CONFIG
+        if not path.is_file():
+            message = f"{CONFIG} がありません"
+>           raise ConfigError(message)
+E           _common.ConfigError: dev-docs.yaml がありません
+
+scripts/_common.py:216: ConfigError
+________________________ test_load_config_when_missing _________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_load_config_when_missing0')
+
+    def test_load_config_when_missing(tmp_path: Path) -> None:
+        """ファイルが無い（異常系）。"""
+        # 実行・検証
+>       with pytest.raises(ConfigError, match=r"project-index\.yaml がありません"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'project-index\\.yaml がありません'
+E         Actual message: 'dev-docs.yaml がありません'
+
+tests/unit/scripts/test_common.py:185: AssertionError
+_________________________ test_load_config_when_broken _________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_load_config_when_broken0')
+
+    def test_load_config_when_broken(tmp_path: Path) -> None:
+        """YAML として読めない（異常系）。"""
+        # 準備
+        (tmp_path / "project-index.yaml").write_text(
+            "name: knowledge\ndocuments: [\n", encoding="utf-8"
+        )
+        # 実行・検証
+>       with pytest.raises(ConfigError, match=r"project-index\.yaml の \d+ 行目が読めません"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'project-index\\.yaml の \\d+ 行目が読めません'
+E         Actual message: 'dev-docs.yaml がありません'
+
+tests/unit/scripts/test_common.py:196: AssertionError
+______________________ test_load_config_when_no_documents ______________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_load_config_when_no_docum0')
+
+    def test_load_config_when_no_documents(tmp_path: Path) -> None:
+        """documents が無い（異常系）。"""
+        # 準備
+        (tmp_path / "project-index.yaml").write_text("name: knowledge\n", encoding="utf-8")
+        # 実行・検証
+>       with pytest.raises(ConfigError, match=r"project-index\.yaml に documents の配列がありません"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'project-index\\.yaml に documents の配列がありません'
+E         Actual message: 'dev-docs.yaml がありません'
+
+tests/unit/scripts/test_common.py:205: AssertionError
+__________________________________ test_main ___________________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_main5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754cdcde0>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e7754cc3b10>
+stdin_factory = <function stdin_factory.<locals>._set at 0x7e7754f7ddd0>
+
+    def test_main(
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        stdin_factory: Callable[[str], None],
+    ) -> None:
+        """違反の無い文書（正常系）。"""
+        # 準備
+        (tmp_path / "docs").mkdir()
+        (tmp_path / "project-index.yaml").write_text(_EMPTY_CONFIG, encoding="utf-8")
+        monkeypatch.chdir(tmp_path)
+        stdin_factory(_VALID_DOC)
+        # 実行
+        code = knowledge_checks.main([])
+        # 検証
+        assert code == 0
+>       assert json.loads(capsys.readouterr().out) == []
+E       AssertionError: assert [{'path': '$'...cs.yaml を置く'}] == []
+E         
+E         Left contains one more item: {'path': '$', 'rule': '1 行目: dev-docs.yaml がありません。aliases の衝突を検査できません', 'fix': '配信元の直下に読める dev-docs.yaml を置く'}
+E         Use -v to get more diff
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_knowledge_checks.py:69: AssertionError
+___________________ test_check_document_when_config_missing ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_check_document_when_confi0')
+
+    def test_check_document_when_config_missing(tmp_path: Path) -> None:
+        """project-index.yaml が無い（正常系）。"""
+        # 準備
+        text = "id: b\naliases:\n  - アルファ\n"
+        # 実行
+        result = check_document(text, tmp_path, index={})
+        # 検証
+        assert len(result) == 1
+        assert result[0]["path"] == "$"
+>       assert "project-index.yaml" in result[0]["rule"]
+E       AssertionError: assert 'project-index.yaml' in '1 行目: dev-docs.yaml がありません。aliases の衝突を検査できません'
+
+tests/unit/scripts/test_knowledge_checks.py:167: AssertionError
+____________________________ test_build_name_index _____________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_build_name_index0')
+
+    def test_build_name_index(tmp_path: Path) -> None:
+        """alias_type を持つ行の文書だけを集める（正常系）。"""
+        # 準備
+        (tmp_path / "docs" / "rule").mkdir(parents=True)
+        (tmp_path / "docs" / "word-list").mkdir(parents=True)
+        (tmp_path / "project-index.yaml").write_text(_ALIAS_CONFIG, encoding="utf-8")
+        (tmp_path / "docs" / "rule" / "a.yaml").write_text(
+            "id: a\nname: Alpha\naliases:\n  - アルファ\n", encoding="utf-8"
+        )
+        (tmp_path / "docs" / "word-list" / "w.yaml").write_text(
+            "id: w\nname: 単語表\n", encoding="utf-8"
+        )
+>       rows = load_config(tmp_path)
+               ^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/scripts/test_knowledge_checks.py:249: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_build_name_index0')
+
+    def load_config(root: Path) -> list[Mapping[str, Any]]:
+        """dev-docs.yaml の documents[] の行を読む。"""
+        path = root / CONFIG
+        if not path.is_file():
+            message = f"{CONFIG} がありません"
+>           raise ConfigError(message)
+E           _common.ConfigError: dev-docs.yaml がありません
+
+scripts/_common.py:216: ConfigError
+______________________ test_build_name_index_when_broken _______________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_build_name_index_when_bro0')
+
+    def test_build_name_index_when_broken(tmp_path: Path) -> None:
+        """読めない文書を飛ばす（正常系）。"""
+        # 準備
+        (tmp_path / "docs" / "rule").mkdir(parents=True)
+        (tmp_path / "project-index.yaml").write_text(_ALIAS_CONFIG, encoding="utf-8")
+        (tmp_path / "docs" / "rule" / "a.yaml").write_text("id: a\nname: Alpha\n", encoding="utf-8")
+        (tmp_path / "docs" / "rule" / "c.yaml").write_text("id: c\nname: [\n", encoding="utf-8")
+>       rows = load_config(tmp_path)
+               ^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/scripts/test_knowledge_checks.py:263: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_build_name_index_when_bro0')
+
+    def load_config(root: Path) -> list[Mapping[str, Any]]:
+        """dev-docs.yaml の documents[] の行を読む。"""
+        path = root / CONFIG
+        if not path.is_file():
+            message = f"{CONFIG} がありません"
+>           raise ConfigError(message)
+E           _common.ConfigError: dev-docs.yaml がありません
+
+scripts/_common.py:216: ConfigError
+______________________ test_build_name_index_when_records ______________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_build_name_index_when_rec0')
+
+    def test_build_name_index_when_records(tmp_path: Path) -> None:
+        """records を持つ行の要素を集める（正常系）。"""
+        # 準備
+        (tmp_path / "docs").mkdir()
+        (tmp_path / "project-index.yaml").write_text(_TERMS_CONFIG, encoding="utf-8")
+        (tmp_path / "docs" / "terms.yaml").write_text(
+            "id: terms\n"
+            "name: 用語集\n"
+            "terms:\n"
+            "  - id: ai-slop\n"
+            "    name: AI slop\n"
+            "    aliases:\n"
+            "      - AI らしい単語\n"
+            "  - name: 名前だけ\n",
+            encoding="utf-8",
+        )
+>       rows = load_config(tmp_path)
+               ^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/scripts/test_knowledge_checks.py:300: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_build_name_index_when_rec0')
+
+    def load_config(root: Path) -> list[Mapping[str, Any]]:
+        """dev-docs.yaml の documents[] の行を読む。"""
+        path = root / CONFIG
+        if not path.is_file():
+            message = f"{CONFIG} がありません"
+>           raise ConfigError(message)
+E           _common.ConfigError: dev-docs.yaml がありません
+
+scripts/_common.py:216: ConfigError
+_________________________ test_main_when_embed_marker __________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_main_when_embed_marker0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754f85400>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e7754e62ed0>
+stdin_factory = <function stdin_factory.<locals>._set at 0x7e7754e187d0>
+
+    def test_main_when_embed_marker(
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        stdin_factory: Callable[[str], None],
+    ) -> None:
+        """マーカーを展開する（正常系）。"""
+        # 準備
+        _write_repo(tmp_path)
+        monkeypatch.chdir(tmp_path)
+        stdin_factory(_EMBED_RULE)
+        # 実行
+        code = knowledge_markdown.main([])
+        # 検証
+        out = capsys.readouterr().out
+>       assert code == 0
+E       assert 1 == 0
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_knowledge_markdown.py:135: AssertionError
+_______________________ test_main_when_word_list_broken ________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_main_when_word_list_broke0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e7754f85010>
+capsys = <_pytest.capture.CaptureFixture object at 0x7e7754e60cd0>
+stdin_factory = <function stdin_factory.<locals>._set at 0x7e7754e19640>
+
+    def test_main_when_word_list_broken(
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str],
+        stdin_factory: Callable[[str], None],
+    ) -> None:
+        """読めない対応表（正常系）。"""
+        # 準備
+        _write_repo(tmp_path, word_list="entries:\n  - ng: [\n")
+        monkeypatch.chdir(tmp_path)
+        stdin_factory(_EMBED_RULE)
+        # 実行
+        code = knowledge_markdown.main([])
+        # 検証
+        captured = capsys.readouterr()
+        assert code == 1
+        assert captured.out == ""
+>       assert "docs/word-list/x.yaml" in captured.err
+E       AssertionError: assert 'docs/word-list/x.yaml' in 'dev-docs.yaml がありません\n'
+E        +  where 'dev-docs.yaml がありません\n' = CaptureResult(out='', err='dev-docs.yaml がありません\n').err
+
+/mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/refactor-config-rename-to-project-index-yaml/tests/unit/scripts/test_knowledge_markdown.py:158: AssertionError
+_____________________________ test_load_word_lists _____________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_load_word_lists0')
+
+    def test_load_word_lists(tmp_path: Path) -> None:
+        """対応表を読む（正常系）。"""
+        # 準備
+        _write_repo(tmp_path)
+        (tmp_path / "docs" / "word-list" / "r.yaml").write_text(
+            "id: r\nkind: rule\nname: 規約\n", encoding="utf-8"
+        )
+        # 実行
+>       result = load_word_lists(tmp_path)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/scripts/test_knowledge_markdown.py:532: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/knowledge_markdown.py:342: in load_word_lists
+    row = next((row for row in load_config(root) if row.get("id") == WORD_LIST_ROW), None)
+                               ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_load_word_lists0')
+
+    def load_config(root: Path) -> list[Mapping[str, Any]]:
+        """dev-docs.yaml の documents[] の行を読む。"""
+        path = root / CONFIG
+        if not path.is_file():
+            message = f"{CONFIG} がありません"
+>           raise ConfigError(message)
+E           _common.ConfigError: dev-docs.yaml がありません
+
+scripts/_common.py:216: ConfigError
+_______________________ test_load_word_lists_when_no_row _______________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_load_word_lists_when_no_r0')
+
+    def test_load_word_lists_when_no_row(tmp_path: Path) -> None:
+        """word-list の行が無い（正常系）。"""
+        # 準備
+        (tmp_path / "project-index.yaml").write_text(
+            'documents:\n  - id: rule\n    paths: ["docs/rule/*.yaml"]\n', encoding="utf-8"
+        )
+        # 実行
+>       result = load_word_lists(tmp_path)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/scripts/test_knowledge_markdown.py:545: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/knowledge_markdown.py:342: in load_word_lists
+    row = next((row for row in load_config(root) if row.get("id") == WORD_LIST_ROW), None)
+                               ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_load_word_lists_when_no_r0')
+
+    def load_config(root: Path) -> list[Mapping[str, Any]]:
+        """dev-docs.yaml の documents[] の行を読む。"""
+        path = root / CONFIG
+        if not path.is_file():
+            message = f"{CONFIG} がありません"
+>           raise ConfigError(message)
+E           _common.ConfigError: dev-docs.yaml がありません
+
+scripts/_common.py:216: ConfigError
+_______________________ test_load_word_lists_when_broken _______________________
+
+tmp_path = PosixPath('/tmp/pytest-of-shuhei2441/pytest-8122/test_load_word_lists_when_brok0')
+
+    def test_load_word_lists_when_broken(tmp_path: Path) -> None:
+        """読めない対応表（異常系）。"""
+        # 準備
+        _write_repo(tmp_path, word_list="entries:\n  - ng: [\n")
+        # 実行・検証
+>       with pytest.raises(ConfigError, match=r"docs/word-list/x\.yaml の \d+ 行目が読めません"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'docs/word-list/x\\.yaml の \\d+ 行目が読めません'
+E         Actual message: 'dev-docs.yaml がありません'
+
+tests/unit/scripts/test_knowledge_markdown.py:555: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/scripts/test_build_pages.py::test_main - assert 2 == 0
+FAILED tests/unit/scripts/test_build_pages.py::test_main_when_build_fails - a...
+FAILED tests/unit/scripts/test_build_pages.py::test_main_when_no_public - Ass...
+FAILED tests/unit/scripts/test_build_pages.py::test_main_when_config_missing
+FAILED tests/unit/scripts/test_build_pages.py::test_load_converters - FileNot...
+FAILED tests/unit/scripts/test_check_all.py::test_main - assert 2 == 0
+FAILED tests/unit/scripts/test_check_all.py::test_main_when_violations - asse...
+FAILED tests/unit/scripts/test_check_all.py::test_main_when_lint_findings - a...
+FAILED tests/unit/scripts/test_check_all.py::test_main_when_only_warnings - a...
+FAILED tests/unit/scripts/test_check_all.py::test_main_when_config_missing - ...
+FAILED tests/unit/scripts/test_check_all.py::test_main_when_design_schemas_invalid
+FAILED tests/unit/scripts/test_check_all.py::test_main_when_document_schemas_invalid
+FAILED tests/unit/scripts/test_check_all.py::test_main_when_meta_schema_unusable
+FAILED tests/unit/scripts/test_check_all.py::test_main_when_design_documents
+FAILED tests/unit/scripts/test_common.py::test_load_config - _common.ConfigEr...
+FAILED tests/unit/scripts/test_common.py::test_load_config_when_missing - Ass...
+FAILED tests/unit/scripts/test_common.py::test_load_config_when_broken - Asse...
+FAILED tests/unit/scripts/test_common.py::test_load_config_when_no_documents
+FAILED tests/unit/scripts/test_knowledge_checks.py::test_main - AssertionErro...
+FAILED tests/unit/scripts/test_knowledge_checks.py::test_check_document_when_config_missing
+FAILED tests/unit/scripts/test_knowledge_checks.py::test_build_name_index - _...
+FAILED tests/unit/scripts/test_knowledge_checks.py::test_build_name_index_when_broken
+FAILED tests/unit/scripts/test_knowledge_checks.py::test_build_name_index_when_records
+FAILED tests/unit/scripts/test_knowledge_markdown.py::test_main_when_embed_marker
+FAILED tests/unit/scripts/test_knowledge_markdown.py::test_main_when_word_list_broken
+FAILED tests/unit/scripts/test_knowledge_markdown.py::test_load_word_lists - ...
+FAILED tests/unit/scripts/test_knowledge_markdown.py::test_load_word_lists_when_no_row
+FAILED tests/unit/scripts/test_knowledge_markdown.py::test_load_word_lists_when_broken
+======================= 28 failed, 219 passed in 14.49s ========================

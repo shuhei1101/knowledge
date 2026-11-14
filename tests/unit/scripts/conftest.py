@@ -55,8 +55,8 @@ RULE_SCHEMA = textwrap.dedent(
     """
 )
 
-# 規約の文書を docs/rule/ から引き、文書の違反の検査も当てる dev-docs.yaml
-DEV_DOCS_YAML = textwrap.dedent(
+# 規約の文書を docs/rule/ から引き、文書の違反の検査も当てる project-index.yaml
+CONFIG_YAML = textwrap.dedent(
     """\
     version: "3"
     name: knowledge
@@ -75,7 +75,7 @@ type RepoFactory = Callable[[Mapping[str, str]], Path]
 
 @pytest.fixture
 def repo_factory(tmp_path: Path) -> RepoFactory:
-    """schemas/ と dev-docs.yaml と、渡した文書を持つリポジトリの直下を作る関数を返す。"""
+    """schemas/ と project-index.yaml と、渡した文書を持つリポジトリの直下を作る関数を返す。"""
 
     def _create(files: Mapping[str, str]) -> Path:
         root = tmp_path / "repo"
@@ -86,7 +86,7 @@ def repo_factory(tmp_path: Path) -> RepoFactory:
         )
         (root / "schemas" / "rule.schema.yaml").write_text(RULE_SCHEMA, encoding="utf-8")
         (root / "schemas" / "meta.schema.yaml").write_text(META_SCHEMA, encoding="utf-8")
-        (root / "dev-docs.yaml").write_text(DEV_DOCS_YAML, encoding="utf-8")
+        (root / "project-index.yaml").write_text(CONFIG_YAML, encoding="utf-8")
         # 渡したファイルで既定のファイルを上書きできる
         for relative, text in files.items():
             path = root / relative

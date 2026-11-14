@@ -255,7 +255,7 @@ def test_main_when_config_missing(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    """dev-docs.yaml が無い（正常系）。"""
+    """project-index.yaml が無い（正常系）。"""
     # 準備
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
@@ -263,7 +263,7 @@ def test_main_when_config_missing(
     code = check_all.main([])
     # 検証
     assert code == 2
-    assert "dev-docs.yaml" in capsys.readouterr().err
+    assert "project-index.yaml" in capsys.readouterr().err
 
 
 def test_list_targets(tmp_path: Path) -> None:
@@ -1280,8 +1280,8 @@ _ROOT_COMMON_SCHEMA = (
 # 設計書のスキーマに合う設計書
 _SCENARIO_DOC = "id: SC-1-1\ntitle: シナリオ\n"
 
-# 規約の文書と、schemas/design/ のスキーマを指す設計書の行を持つ dev-docs.yaml
-_DEV_DOCS_WITH_DESIGN = (
+# 規約の文書と、schemas/design/ のスキーマを指す設計書の行を持つ project-index.yaml
+_CONFIG_WITH_DESIGN = (
     'version: "3"\n'
     "name: knowledge\n"
     "documents:\n"
@@ -1327,7 +1327,7 @@ def test_main_when_design_documents(
     # 準備
     root = repo_factory(
         {
-            "dev-docs.yaml": _DEV_DOCS_WITH_DESIGN,
+            "project-index.yaml": _CONFIG_WITH_DESIGN,
             "docs/rule/rule-a.yaml": _VALID_A,
             "docs/rule/rule-b.yaml": _VALID_B,
             "docs/scenario/SC-1-1.yaml": _SCENARIO_DOC,
