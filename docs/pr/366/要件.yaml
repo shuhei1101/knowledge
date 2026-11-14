@@ -1,0 +1,47 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: run_only
+    detail: インターフェース定義のスキーマの flow の説明を短くした後に、設計書のテンプレートを生成し直す（#364）
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 全ての文書の検査で、設計書のスキーマの説明が 2 文以内であることの検査が通る（#364）
+    depends_on: []
+docs:
+  - page: schemas/design/interface.schema.yaml
+    new: false
+    change: '`flows[].flow` の description を 2 文以内にする（#364）'
+    status: todo
+  - page: docs/template/template-interface.yaml
+    new: false
+    change: スキーマの変更に合わせて設計書のテンプレートの生成で作り直す（#364）
+    status: todo
+  - page: schemas/design/common.schema.yaml
+    new: false
+    change: '`er`・`state_transitions` から Mermaid の `erDiagram`・`stateDiagram-v2` を生成する決まりを記載する（#363。knowledge が持つと決めた場合）'
+    status: todo
+  - page: schemas/design/er.schema.yaml
+    new: false
+    change: '`er` の生成の決まりを、生成の持ち主の決定に合わせて記載する（#363）'
+    status: todo
+  - page: schemas/design/state_transition.schema.yaml
+    new: false
+    change: '`state_transitions` の生成の決まりを、生成の持ち主の決定に合わせて記載する（#363）'
+    status: todo
+  - page: docs/template/template-er.yaml
+    new: false
+    change: スキーマの変更に合わせて設計書のテンプレートの生成で作り直す（#363）
+    status: todo
+  - page: docs/template/template-state-transition.yaml
+    new: false
+    change: スキーマの変更に合わせて設計書のテンプレートの生成で作り直す（#363）
+    status: todo
+scope_out:
+  - item: 描く側（dev-docs・ai-monitor の `design_docs publish`）で、生成した Mermaid を mdmark の map で描く変更
+    reason: knowledge の外のリポジトリの変更。#363 の本文のとおり dev-docs へ別に起票する
+    plan: to_file
+  - item: '`architecture`・`dataflow`（`x-diagram` を持つ他の設計書の種類）からの Mermaid の生成'
+    reason: '#363 の要望は ER図・状態遷移に限られる。今回の持ち主の決定を前提に中身が決まる'
+    plan: to_file
