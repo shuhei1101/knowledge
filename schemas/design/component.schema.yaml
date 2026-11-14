@@ -84,7 +84,7 @@ properties:
     description: 部品が受け取る値。引数 1 つ = 1 要素。
     x-used-by:
       - 実装で、部品の引数とストーリーの `args` にする。
-      - 画面設計で、部品へ渡す値を決める。
+      - 画面設計で、部品へ指定する値を決める。
       - 生成で、引数の表にする。
     x-rules:
       - オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 要素に展開する。
@@ -157,7 +157,7 @@ properties:
           title: 有効になる条件
           description: 他の引数の値によって意味を持つときの条件。
           x-used-by:
-            - 実装で、引数を使う条件にする。
+            - 実装で、引数を使用する条件にする。
             - テストで、条件を満たす状態と満たさない状態のストーリーにする。
           examples:
           - "`filterable` が `true` のとき"
@@ -166,7 +166,7 @@ properties:
           title: 説明
           description: 引数に指定する値が何を表すか。
           x-used-by:
-            - 画面設計で、引数に何を渡すかを決める。
+            - 画面設計で、引数に何を指定するかを決める。
           examples:
           - "行の状態。色とアイコンを決める"
         status:
@@ -222,7 +222,7 @@ properties:
           title: スロットに渡る値
           description: 差し込んだ中身から使用できる値（Jinja2 の `caller()` の引数など）。
           x-used-by:
-            - 実装で、差し込んだ中身に渡す値にする。
+            - 実装で、差し込んだ中身に指定する値にする。
           examples:
           - "`caller(item)` の `item`（行 1 件）"
   events:
@@ -265,7 +265,7 @@ properties:
           title: 通知する値
           description: 使用する側が受け取る値と、その配置場所（`data-*` 属性など）。
           x-used-by:
-            - 実装で、通知する値とその置き場所にする。
+            - 実装で、通知する値とその配置先にする。
           examples:
           - "key（`data-sort`）"
           - "issue（`data-issue`）"
@@ -401,7 +401,7 @@ properties:
                 title: 値
                 description: JSON として解釈できる値はその型で指定される（`true`・`12`・`["#1598"]` など）。
                 x-used-by:
-                  - 実装で、ストーリーに渡す引数の値にする。
+                  - 実装で、ストーリーに指定する引数の値にする。
                 examples:
                 - "todo"
                 - "true"
@@ -413,7 +413,7 @@ properties:
     title: 使用する部品
     description: この部品が中で使用する別の部品。
     x-used-by:
-      - 実装で、中で使う部品にする。
+      - 実装で、中で使用する部品にする。
       - レビューで、部品の依存の向きを確認する。
     x-heading: 使用する部品
     x-shape: table
@@ -436,7 +436,7 @@ properties:
           title: 使用方法
           description: 中の部品へ指定する値とスロットへの差し込み方。
           x-used-by:
-            - 実装で、中の部品へ渡す値と差し込み方にする。
+            - 実装で、中の部品へ指定する値と差し込み方にする。
           examples:
           - "停止中の一時停止のアイコン"
   accessibility:

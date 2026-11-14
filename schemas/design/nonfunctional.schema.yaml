@@ -189,13 +189,13 @@ properties:
               title: 端末
               description: 確認した端末（OS・ブラウザなど）。
               x-used-by:
-                - 保守で、確認した端末と違う端末で確認し直すかを判断する。
+                - 保守で、確認した端末と違う端末で再確認するかを判断する。
             version:
               type: string
               title: バージョン
               description: 確認した端末のバージョン（OS・ブラウザのバージョン）。
               x-used-by:
-                - 保守で、確認したバージョンと違うバージョンで確認し直すかを判断する。
+                - 保守で、確認したバージョンと違うバージョンで再確認するかを判断する。
             date:
               type: string
               title: 確認日
@@ -385,7 +385,7 @@ examples:
     source: API-2#
     value: 10 万
     unit: トークン
-    rationale: 内部のシステムプロンプトと出力枠を差し引く
+    rationale: 内部のシステムプロンプトと出力枠を除く
     measurement: API へ渡ったトークン数を数える
     test_file: tests/nfr/test_input_limit.py
     overflow: |-
