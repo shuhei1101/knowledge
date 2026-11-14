@@ -46,4 +46,6 @@
 
 ### 結合
 
-なし（結合テスト作成の工程で記入する）
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| [tests/integration/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/daaac25/tests/integration/slop-check/test_slop_check.py) | 全実行 | 変更 | ✅ | 11 テスト pass。IF-148-1 の 5 つのフローに `systemMessage` の確認を加え、`test_normal_when_dev_docs_mcp_tool` を新設した<br>`テスト結果/20261114151228_daaac25_結合テスト.log` |
