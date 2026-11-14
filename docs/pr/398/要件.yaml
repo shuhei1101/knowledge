@@ -2,11 +2,15 @@ docs:
   - page: rules.yaml
     new: false
     change: '#194: write_docs で設計書を書き込むときに operations.kind に当たる schemas/design のスキーマを案内し、describe(source, kind) で既読にする行を設計書の種類ごとに追加する。#205: knowledge の文書を指す全てのエントリ（schemas/template.schema.yaml・schemas/meta.schema.yaml を除く）に、project-index の search_docs で文書の ID を指定する read_tool を記載する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:08:20.737023+00:00'
   - page: docs/rule/dev-rule-index-registration.yaml
     new: false
-    change: '#205: 記載するときの記載方法に read_tool の書き方（ツール名・source・作業範囲の外から参照するときの outside_scope）を追加するかを決め、追加するなら追加する'
-    status: todo
+    change: '#205: 記載するときの記載方法に read_tool の記載（search_docs で文書の ID・describe で kind）を追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:08:20.737023+00:00'
 use_cases: []
 scope_out:
   - item: AI Monitor とほかのプロジェクトの索引（rules.global.yaml 等）への read_tool の記載
