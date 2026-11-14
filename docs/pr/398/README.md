@@ -1,0 +1,1 @@
+# rules.yaml に、write_docs で設計書を書き込むときに種類ごとのスキーマを案内する行を追加し、knowledge の文書を指すエントリに read_tool を記載する
