@@ -1,0 +1,1 @@
+# rules.yaml に、設計書の種類のフォルダのファイルへ schemas/design の Schema を案内する行を加える
