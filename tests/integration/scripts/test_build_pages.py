@@ -87,8 +87,8 @@ _DOC_A_MISSING = (
 )
 
 
-def _dev_docs(run: list[str]) -> str:
-    """docs/rule/ の文書を、渡したコマンドで変換する dev-docs.yaml を返す。"""
+def _config(run: list[str]) -> str:
+    """docs/rule/ の文書を、渡したコマンドで変換する project-index.yaml を返す。"""
     # run は JSON の配列で書く（JSON は YAML として読める）
     return (
         'version: "3"\n'
@@ -110,7 +110,7 @@ def test_normal(run_script: RunScript, repo_factory: RepoFactory) -> None:
     # 準備
     root = repo_factory(
         {
-            "dev-docs.yaml": _dev_docs(_CONVERTER_RUN),
+            "project-index.yaml": _config(_CONVERTER_RUN),
             "docs/rule/a.yaml": _DOC_A,
             "docs/rule/b.yaml": _DOC_B,
             "docs/rule/c.yaml": _DOC_C,
@@ -134,7 +134,7 @@ def test_error_when_converter_fails(run_script: RunScript, repo_factory: RepoFac
     # 準備
     root = repo_factory(
         {
-            "dev-docs.yaml": _dev_docs(_FAILING_RUN),
+            "project-index.yaml": _config(_FAILING_RUN),
             "docs/rule/a.yaml": _DOC_A,
             "docs/rule/b.yaml": _DOC_B,
             "docs/rule/c.yaml": _DOC_C,
@@ -154,7 +154,7 @@ def test_error_when_reference_missing(run_script: RunScript, repo_factory: RepoF
     # 準備
     root = repo_factory(
         {
-            "dev-docs.yaml": _dev_docs(_CONVERTER_RUN),
+            "project-index.yaml": _config(_CONVERTER_RUN),
             "docs/rule/a.yaml": _DOC_A_MISSING,
         }
     )
@@ -174,7 +174,7 @@ def test_error_when_mdmark_fails(
     # 準備
     root = repo_factory(
         {
-            "dev-docs.yaml": _dev_docs(_CONVERTER_RUN),
+            "project-index.yaml": _config(_CONVERTER_RUN),
             "docs/rule/a.yaml": _DOC_A,
             "docs/rule/b.yaml": _DOC_B,
             "docs/rule/c.yaml": _DOC_C,
@@ -198,7 +198,7 @@ def test_error_when_no_public(run_script: RunScript, repo_factory: RepoFactory) 
     # 準備
     root = repo_factory(
         {
-            "dev-docs.yaml": _dev_docs(_CONVERTER_RUN),
+            "project-index.yaml": _config(_CONVERTER_RUN),
             "docs/rule/c.yaml": _DOC_C,
         }
     )
@@ -210,7 +210,7 @@ def test_error_when_no_public(run_script: RunScript, repo_factory: RepoFactory) 
 
 
 def test_error_when_config_missing(run_script: RunScript, tmp_path: Path) -> None:
-    """dev-docs.yaml が無いか読めなければ成果物を作り始めずに終わる（異常系）。"""
+    """project-index.yaml が無いか読めなければ成果物を作り始めずに終わる（異常系）。"""
     # 準備
     root = tmp_path / "empty"
     root.mkdir()
@@ -218,4 +218,4 @@ def test_error_when_config_missing(run_script: RunScript, tmp_path: Path) -> Non
     result = run_script("build_pages", root, args=["--out", "_site"])
     # 検証
     assert result.exit_code == 2
-    assert "dev-docs.yaml がありません" in result.stderr
+    assert "project-index.yaml がありません" in result.stderr

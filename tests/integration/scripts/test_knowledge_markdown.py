@@ -140,7 +140,7 @@ def test_normal_when_kind_specific_keys(run_script: RunScript, tmp_path: Path) -
         "properties:\n  arguments:\n    title: 引数\n  preconditions:\n    title: 事前条件\n",
         encoding="utf-8",
     )
-    shutil.copy(_ROOT / "dev-docs.yaml", tmp_path / "dev-docs.yaml")
+    shutil.copy(_ROOT / "project-index.yaml", tmp_path / "project-index.yaml")
     stdin = (
         "id: text-review\n"
         "kind: sample\n"
@@ -219,7 +219,7 @@ def test_error_when_word_list_unreadable(run_script: RunScript, tmp_path: Path) 
     """対応表のファイルが読めなければ変換せずに終わる（異常系）。"""
     # 準備
     shutil.copytree(_ROOT / "schemas", tmp_path / "schemas")
-    shutil.copy(_ROOT / "dev-docs.yaml", tmp_path / "dev-docs.yaml")
+    shutil.copy(_ROOT / "project-index.yaml", tmp_path / "project-index.yaml")
     (tmp_path / "docs" / "word-list").mkdir(parents=True)
     (tmp_path / "docs" / "word-list" / "broken.yaml").write_text(
         "entries:\n  - ng: [\n", encoding="utf-8"

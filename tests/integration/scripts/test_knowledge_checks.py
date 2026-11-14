@@ -127,7 +127,7 @@ def test_normal_when_word_list_examples_fail(
         assert text in lines[number - 1]
 
 
-# docs/rule/*.yaml の行が alias_type を持ち、docs/word-list/*.yaml の行は持たない dev-docs.yaml
+# docs/rule/*.yaml の行が alias_type を持ち、docs/word-list/*.yaml の行は持たない project-index.yaml
 _ALIAS_CONFIG = (
     'version: "3"\n'
     "name: knowledge\n"
@@ -145,7 +145,7 @@ def test_normal_when_aliases_collide(run_script: RunScript, repo_factory: RepoFa
     # 準備
     root = repo_factory(
         {
-            "dev-docs.yaml": _ALIAS_CONFIG,
+            "project-index.yaml": _ALIAS_CONFIG,
             "docs/rule/a.yaml": "id: a\nname: Alpha 規約\naliases:\n  - アルファ\n",
             # 書き込む前の b
             "docs/rule/b.yaml": "id: b\nname: B\naliases:\n  - ベータ\n",
@@ -170,7 +170,7 @@ def test_normal_when_aliases_collide(run_script: RunScript, repo_factory: RepoFa
         assert text in lines[number - 1]
 
 
-# 規約の行（alias_type: doc）と用語集の行（records: terms・alias_type: term）を持つ dev-docs.yaml
+# 規約の行（alias_type: doc）と用語集の行（records: terms・alias_type: term）を持つ project-index.yaml
 _TERMS_CONFIG = (
     'version: "3"\n'
     "name: knowledge\n"
@@ -192,7 +192,7 @@ def test_normal_when_aliases_collide_with_terms(
     # 準備
     root = repo_factory(
         {
-            "dev-docs.yaml": _TERMS_CONFIG,
+            "project-index.yaml": _TERMS_CONFIG,
             "docs/terms.yaml": (
                 "id: terms\n"
                 "name: 用語集\n"
@@ -217,7 +217,7 @@ def test_normal_when_aliases_collide_with_terms(
 def test_normal_when_aliases_duplicate(run_script: RunScript, repo_factory: RepoFactory) -> None:
     """自分の name か前の aliases と正規化して一致する aliases を、1 件 1 違反で返す（正常系）。"""
     # 準備
-    root = repo_factory({"dev-docs.yaml": _ALIAS_CONFIG, "docs/rule/a.yaml": _DOC_A})
+    root = repo_factory({"project-index.yaml": _ALIAS_CONFIG, "docs/rule/a.yaml": _DOC_A})
     stdin = "id: b\nname: Beta 規約\naliases:\n  - ベータ\n  - ' ｂｅｔａ 規約 '\n  - べーた\n  - ' ベータ '\n"
     lines = stdin.splitlines()
     # 実行
@@ -236,10 +236,10 @@ def test_normal_when_aliases_duplicate(run_script: RunScript, repo_factory: Repo
 
 
 def test_normal_when_config_missing(run_script: RunScript, repo_factory: RepoFactory) -> None:
-    """dev-docs.yaml が無ければ aliases を照合せず、path: $ の違反とほかの検査の違反を返す（正常系）。"""
+    """project-index.yaml が無ければ aliases を照合せず、path: $ の違反とほかの検査の違反を返す（正常系）。"""
     # 準備
     root = repo_factory({"docs/rule/a.yaml": _DOC_A})
-    (root / "dev-docs.yaml").unlink()
+    (root / "project-index.yaml").unlink()
     stdin = "id: self\naliases:\n  - アルファ\nitems:\n  - id: p\n    body: '[B](id:missing)'\n"
     # 実行
     result = run_script("knowledge_checks", root, stdin)
@@ -248,7 +248,7 @@ def test_normal_when_config_missing(run_script: RunScript, repo_factory: RepoFac
     violations = json.loads(result.stdout)
     assert sorted(violation["path"] for violation in violations) == ["$", "items[0].body"]
     config = next(violation for violation in violations if violation["path"] == "$")
-    assert "dev-docs.yaml" in config["rule"]
+    assert "project-index.yaml" in config["rule"]
 
 
 def test_normal_when_invalid_yaml(run_script: RunScript, repo_factory: RepoFactory) -> None:
