@@ -13,31 +13,45 @@ docs:
   - page: docs/flowchart/flowchart-test-location.yaml
     new: true
     change: テストの層ごとに GitHub Actions のランナー（`runner`）と手元（`local`）のどちらで回すかを判定する判定フローチャートを新設する。`runner` にした層の扱い（手元のコマンドを残す・skip の件数を手元と照合する）を補足に記載する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
   - page: schemas/design/test_procedure.schema.yaml
     new: false
     change: '`layers[]` に実行場所のキーと、ランナーの全件実行のコマンド（`workflow_dispatch` で起動し、終わるまで待ち、ログを取る）のキーを、省略できるキーとして追加する。`run_all`・`run_one` は手元のコマンドのまま残す'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
   - page: schemas/design/interface.schema.yaml
     new: false
     change: '`flows[].flow` に、入口が `trigger` のときは通る step だけを並べた一本道のフローチャートにできる決まりを追加し、workflow 全体の分岐を描く省略できる項目を追加する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
   - page: docs/template/template-test-procedure.yaml
     new: false
     change: '`uv run --frozen --script scripts/build_templates.py` で生成し直す'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
   - page: docs/template/template-interface.yaml
     new: false
     change: '`uv run --frozen --script scripts/build_templates.py` で生成し直す'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
   - page: docs/rule/dev-hook-ci-scope.yaml
     new: false
     change: push・PR で起動する CI と、エージェントが手動で起動するテストの実行とを書き分ける（要件.md の未確定をユーザーへ確認してから修正する）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
   - page: docs/checksheet/checksheet-review-interface-module.yaml
     new: false
     change: 入口が `trigger` のとき、全体の流れの分岐がフローで漏れなく扱われ、フローの図の step が `name` で指されているかの観点を追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T03:25:15.700549+00:00'
 scope_out:
   - item: knowledge 自身のテスト実行方法（TP-72-1）の層への実行場所の記載と、GitHub Actions への移行
     reason: 後続の Issue の範囲
