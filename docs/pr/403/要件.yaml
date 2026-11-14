@@ -1,0 +1,10 @@
+scope_out:
+  - item: docs/rule/ の既存の文書に残る AI slop の単語の置き換え（同じファイルを含む）
+    reason: 目的が別で、対象の 2 文には対応表の単語が無い
+    plan: '#399'
+use_cases: []
+docs:
+  - page: docs/rule/dev-rule-index-registration.yaml
+    new: false
+    change: index-writing-14（read_tool の記載）の 2 文（170 文字・155 文字）を、決まりの中身を変えずに 100 文字以内の文に分ける
+    status: todo
