@@ -1,0 +1,111 @@
+id: SC-352-1
+visibility: internal
+title: 開発者がランナーでテストの層の全件を実行する
+lead: 開発者がテスト実行方法の `run_runner` を実行し、GitHub Actions のランナーでテストの層の全件を回して、手元でログと合否を受け取る。
+primary_actor: 開発者（エージェントを含む）
+stakeholders:
+  - name: 開発者
+    interest: 手元の WSL のメモリを使用せずに層の全件を回し、手元で回したときと同じ合否とログを受け取る
+  - name: レビュワー
+    interest: 配置されたテストのログが `run_runner` の出力で、テストランナーの集計を含むことを照合できる
+trigger: 開発者が作業ブランチを push した後に、テスト実行方法の `location` が `runner` の層の `run_runner` を実行する
+preconditions:
+  - develop に、テストの全件実行のワークフローがある
+  - 作業ブランチが GitHub へ push してある
+  - 手元の `gh` が knowledge のリポジトリへ認証してある
+success_guarantee: ランナーで層の全件を回した結果のログが手元に出て、`run_runner` の終了コードがテストの合否と一致する。
+minimal_guarantee: テストが失敗したときもログを手元に出してから失敗で終わる。ワークフローを起動できないときは失敗で終わり、開発者は同じ層の `run_all` を手元で実行できる。
+frequency: 作業 PR ごとに、テスト作成・実装の全件実行のたびに 1 回
+scenarios:
+  - name: 正常シナリオ
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 作業ブランチ
+        description: 層の全てのテストが成功する状態で push してある
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor D as 開発者
+        participant C as gh
+        participant G as GitHub Actions
+        participant W as テストの全件実行のワークフロー
+        D->>C: run_runner を実行する
+        C->>G: 作業ブランチと層を指定してワークフローを起動する
+        G->>W: ランナーで起動する
+        W->>W: 作業ブランチを取得し、層の道具を入れる
+        W->>W: 層の全件を回す
+        W->>G: ログを成果物に上げて成功で終わる
+        C->>G: 終わるまで待つ
+        C-->>G: ログを取得する
+        G-->>C: ログ
+        C-->>D: ログを出して終了コード 0
+      ```
+
+      <!-- /map -->
+    expected:
+      - '`run_runner` の終了コードが 0'
+      - 手元に出たログに、テストランナーの最終行の集計（成功・skip の件数）が出る
+      - GitHub Actions の実行の成果物にログがある
+  - name: 異常シナリオ（テストが失敗する）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 作業ブランチ
+        description: 層のテストのうち 1 件が失敗する状態で push してある
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor D as 開発者
+        participant C as gh
+        participant G as GitHub Actions
+        participant W as テストの全件実行のワークフロー
+        D->>C: run_runner を実行する
+        C->>G: 作業ブランチと層を指定してワークフローを起動する
+        G->>W: ランナーで起動する
+        W->>W: 層の全件を回し、1 件が失敗する
+        W->>G: ログを成果物に上げて失敗で終わる
+        C->>G: 終わるまで待つ
+        C-->>G: ログを取得する
+        G-->>C: ログ
+        C-->>D: ログを出して 0 以外の終了コード
+      ```
+
+      <!-- /map -->
+    expected:
+      - '`run_runner` の終了コードが 0 以外'
+      - 手元に出たログに、失敗したテストの名前とテストランナーの集計が出る
+  - name: 異常シナリオ（ワークフローを起動できない）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: ワークフロー
+        description: develop にテストの全件実行のワークフローが無い
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor D as 開発者
+        participant C as gh
+        participant G as GitHub Actions
+        D->>C: run_runner を実行する
+        C->>G: 作業ブランチと層を指定してワークフローを起動する
+        G-->>C: 起動できない
+        C-->>D: 起動できない理由を出して 0 以外の終了コード
+        D->>D: 同じ層の run_all を手元で実行する
+      ```
+
+      <!-- /map -->
+    expected:
+      - '`run_runner` の終了コードが 0 以外'
+      - 標準エラーに、ワークフローを起動できない理由が出る
+      - 同じ層の `run_all` を手元で実行でき、手元のコマンドは変わっていない
+refs:
+  - TP-72-1#layers
+notes:
+  E2E テストを置かない理由: '`run_runner` は GitHub の上のワークフローを起動するため、手元のテストで再現できない。ワークフローの分岐ごとの確認は、インターフェース定義の結合テストが持つ'
