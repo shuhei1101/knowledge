@@ -5,10 +5,10 @@
   時期: マージの後
   回数: 1 回限り
   可逆: true
-  疎通確認: null
-  実行: null
-  確認: null
-  切り戻し: null
+  疎通確認: 設計書のスキーマのタグの作成/疎通確認.sh
+  実行: 設計書のスキーマのタグの作成/実行.sh
+  確認: 設計書のスキーマのタグの作成/確認.sh
+  切り戻し: 設計書のスキーマのタグの作成/切り戻し.sh
   失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
   確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグが `design-schemas/v8.3.0` で、その commit の `schemas/design/layout.schema.yaml` の `entries[].generated_from` が `source`・`tracked` を持つ"
   状態: "-"
@@ -19,9 +19,9 @@
   時期: マージの後
   回数: 1 回限り
   可逆: true
-  疎通確認: null
-  実行: null
-  確認: null
+  疎通確認: 依頼元へのタグの名前の連絡/疎通確認.sh
+  実行: 依頼元へのタグの名前の連絡/実行.sh
+  確認: 依頼元へのタグの名前の連絡/確認.sh
   切り戻し: null
   失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
   確認方法: shuhei1101/alias-inject#107 の会話欄に、`design-schemas/v8.3.0` の名前を記載したコメントがある
