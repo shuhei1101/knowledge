@@ -48,7 +48,7 @@ properties:
     title: リポジトリ
     description: 対象のリポジトリ（`owner/name`）。
     x-used-by:
-      - 実装で、フォルダ構成を当てるリポジトリにする。
+      - 実装で、フォルダ構成を適用するリポジトリにする。
     x-rules:
       - アーキテクチャ図の `repository.repositories[].name` のどれかと同じ値にする。
     pattern: ^[^/\s]+/[^/\s]+$
@@ -182,8 +182,8 @@ $defs:
     title: エントリ
     description: フォルダかファイル 1 つ。`type` が `folder` のときだけ、配下のエントリと配下の決まりを持つ。
     x-used-by:
-      - 実装で、フォルダとファイルを置く場所にする。
-      - レビューで、置いたファイルがエントリと一致するかを確認する。
+      - 実装で、フォルダとファイルを配置する場所にする。
+      - レビューで、配置したファイルがエントリと一致するかを確認する。
     additionalProperties: false
     required:
     - type
@@ -216,7 +216,7 @@ $defs:
         title: 配置するもの
         description: このフォルダかファイルに配置するものを 1 行で記載する。
         x-used-by:
-          - 実装で、新しいファイルを置くフォルダを決める。
+          - 実装で、新しいファイルを配置するフォルダを決める。
         examples:
         - 全ての機能が参照する設定・ログ・例外
       content_types:
@@ -238,7 +238,7 @@ $defs:
         title: 生成元
         description: 生成物・複製のエントリの生成元と、生成するコマンド。
         x-used-by:
-          - 実装で、生成物を手で書き換えず、生成元を直してコマンドで作り直す。
+          - 実装で、生成物を手で書き換えず、生成元を修正してコマンドで再生成する。
         additionalProperties: false
         required:
         - path
@@ -249,7 +249,7 @@ $defs:
             title: 生成元のパス
             description: 生成元のリポジトリの直下からのパス。
             x-used-by:
-              - 実装で、生成物を直すときに書き換える生成元にする。
+              - 実装で、生成物を修正するときに書き換える生成元にする。
             examples:
             - frontend/
           command:
@@ -257,7 +257,7 @@ $defs:
             title: 生成するコマンド
             description: 生成するコマンドを持つ『開発コマンド』の分類への参照。
             x-used-by:
-              - 実装で、生成物を作り直すコマンドを実行する。
+              - 実装で、生成物を再生成するコマンドを実行する。
             examples:
             - CMD-1#categories[ビルド・生成]
       placeholders:
@@ -294,7 +294,7 @@ $defs:
         title: 配下のエントリ
         description: '`type` が `folder` のときだけ記載する、配下のフォルダとファイル。'
         x-used-by:
-          - 実装で、フォルダの配下に置くフォルダとファイルにする。
+          - 実装で、フォルダの配下に配置するフォルダとファイルにする。
         items:
           $ref: '#/$defs/entry'
       naming:

@@ -80,6 +80,7 @@ items:
     name: permissionDecision の記載
     body: |-
       PreToolUse のフックが JSON を出力するときは、`hookSpecificOutput` に `hookEventName` と `permissionDecision` を記載する。
+      許可・拒否を判断せずに文脈を加えるときは除く（`pretooluse-output-02`）。
       `permissionDecision` の値は `allow`・`deny`・`ask`・`defer` のどれか。
       `updatedInput` を返却するときは `permissionDecision` を省略しない。
 
@@ -103,6 +104,7 @@ items:
       | 自分の MCP のツールの入力に値を追加するだけ | `permissionDecision: allow` |
       | 利用者に確認させる | `permissionDecision: ask` |
       | 呼び出しを止める | `permissionDecision: deny` と、理由を `permissionDecisionReason` |
+      | 許可・拒否を判断せずに文脈を加える | `permissionDecision` を記載せず、`hookEventName` と `additionalContext` だけを出力する |
       | 許可・拒否を判断しない | 出力なしで終了コード 0 |
 
       <!-- /table -->

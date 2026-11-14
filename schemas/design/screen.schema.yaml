@@ -125,8 +125,8 @@ properties:
           title: 部品へ指定する引数
           description: 部品設計の引数へ指定する値。`component` を持つ要素だけが持ち、部品設計の必須の引数を全て並べる。
           x-used-by:
-            - 実装で、部品へ渡す値にする。
-            - レビューで、部品の必須の引数が全て渡されているかを確認する。
+            - 実装で、部品へ指定する値にする。
+            - レビューで、部品の必須の引数が全て指定されているかを確認する。
           x-shape: table
           x-key: name
           items:
@@ -141,7 +141,7 @@ properties:
                 title: 引数
                 description: 部品設計の `args` の `name`。
                 x-used-by:
-                  - 実装で、渡す部品の引数にする。
+                  - 実装で、指定する部品の引数にする。
                 examples:
                 - "status"
                 - "filterable"
@@ -150,7 +150,7 @@ properties:
                 title: 指定する値
                 description: 固定の値か取得元（`{インターフェース定義の論理名}.{フィールドのパス}`）。
                 x-used-by:
-                  - 実装で、引数に渡す固定の値か、値を取るインターフェース定義のフィールドにする。
+                  - 実装で、引数に指定する固定の値か、値を取るインターフェース定義のフィールドにする。
                 examples:
                 - "`計画画面.行の材料[].status`"
                 - "※2 で絞り込みを持つ列なら `true`"
@@ -192,7 +192,7 @@ properties:
           title: 位置
           description: '`>` で区切った入れ子のパス。'
           x-used-by:
-            - 実装で、要素を置く入れ子の場所にする。
+            - 実装で、要素を配置する入れ子の場所にする。
           examples:
             - 削除確認ダイアログ > フッター
         description:
@@ -344,9 +344,9 @@ properties:
         autofocus:
           type: boolean
           title: 初期フォーカス
-          description: 画面を開いたときにフォーカスを配置する要素なら `true`。
+          description: 画面を開いたときにフォーカスを設定する要素なら `true`。
           x-used-by:
-            - 実装で、画面を開いたときにフォーカスを置く要素にする。
+            - 実装で、画面を開いたときにフォーカスを設定する要素にする。
         initial_state:
           type: string
           title: 初期状態
@@ -422,7 +422,7 @@ properties:
           title: 送信先
           description: '`{インターフェース定義の論理名}.{フィールドのパス}`。変換・合成・除外は括弧書きで添える。'
           x-used-by:
-            - 実装で、入力した値を送るインターフェース定義のフィールドにする。
+            - 実装で、入力した値を送信するインターフェース定義のフィールドにする。
         action:
           type: string
           title: アクション

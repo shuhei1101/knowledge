@@ -70,7 +70,7 @@ $defs:
     title: 状態
     description: 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。
     x-used-by:
-      - 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。
+      - 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。
       - 生成で、状態の表示にする。
     enum:
     - planned
@@ -80,7 +80,7 @@ $defs:
   verification_state:
     type: string
     title: 確認の状態
-    description: 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確かめた方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。
+    description: 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確認した方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。
     x-used-by:
       - 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。
       - レビューで、`verified` でない値を確認せずに実装していないかを確認する。
@@ -94,7 +94,7 @@ $defs:
     title: 確認日時
     description: '`verification_state` を `verified` にした日時（ISO 8601、タイムゾーン付き）。'
     x-used-by:
-      - 保守で、外部 API・外部ライブラリの版が上がったときに、その後に確認し直したかを判断する。
+      - 保守で、外部 API・外部ライブラリのバージョンが上がったときに、その後に再確認したかを判断する。
       - 生成で、表の確認日時の列にする。
     format: date-time
     examples:
@@ -121,9 +121,9 @@ $defs:
   aliases:
     type: array
     title: 別名
-    description: 検索で当てたい言い換え。
+    description: 検索でヒットさせたい言い換え。
     x-used-by:
-      - dev-docs の検索で、文書を名前と同じように引く言い換えにする。
+      - dev-docs の検索で、文書を名前と同じように検索できる言い換えにする。
     items:
       type: string
       minLength: 1
@@ -175,7 +175,7 @@ $defs:
     description: 項目に分けられない残り。セクションの名前 → 本文。
     x-used-by:
       - 実装で、項目に分けられない前提・制約を参照する。
-      - 生成で、セクションの名前を見出しにした節にする。
+      - 生成で、セクションの名前を見出しにしたセクションにする。
     x-rules:
       - 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。
     additionalProperties:
@@ -294,7 +294,7 @@ $defs:
             title: 中のノード
             description: 枠の中に配置するノードの `id`。
             x-used-by:
-              - 生成で、枠の中に置くノードを決める。
+              - 生成で、枠の中に配置するノードを決める。
             items:
               type: string
       clicks:
@@ -351,7 +351,7 @@ $defs:
           ノードが何を表すか（データフロー・アーキテクチャは `actor` = 人・外部の相手 / `process` = 処理 / `store` = データストア / `system` = システム・サブシステム / `external` = 外部システム、判定は `start` = 開始 / `question` = 質問 / `action` = アクション / `result` = 結果）。
           記載しなければ `process`。
         x-used-by:
-          - 生成で、ノードの形と色にする。
+          - 生成で、ノードの形状と色にする。
         enum:
         - actor
         - process
@@ -500,7 +500,7 @@ $defs:
               title: きっかけ
               description: 遷移のきっかけになる操作や出来事。
               x-used-by:
-                - 実装で、遷移を起こす操作・出来事にする。
+                - 実装で、遷移のきっかけになる操作・出来事にする。
                 - 生成で、矢印のラベルにする。
             condition:
               type: string
@@ -616,7 +616,7 @@ $defs:
                     title: キー
                     description: カラムのキーの種類（`PK`・`FK`・`UK`）。キーでないときは記載しない。
                     x-used-by:
-                      - 生成で、主キー・外部キー・一意キーの印にする。
+                      - 生成で、主キー・外部キー・一意キーのマーカーにする。
                     enum:
                     - PK
                     - FK
@@ -681,7 +681,7 @@ $defs:
     title: 多重度
     description: 関連の片端の多重度（`1` = ちょうど 1 / `0..1` = 0 か 1 / `1..n` = 1 以上 / `0..n` = 0 以上）。
     x-used-by:
-      - 生成で、線の端の多重度の印にする。
+      - 生成で、線の端の多重度のマーカーにする。
       - 実装で、外部キーの必須・一意の制約にする。
     enum:
     - "1"

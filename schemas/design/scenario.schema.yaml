@@ -142,7 +142,7 @@ properties:
     description: 正常・異常のシナリオを並列に並べる。異常の無い機能は `異常シナリオ` を持たない。
     x-used-by:
       - E2E テストで、シナリオごとのテスト関数にする。
-      - 生成で、シナリオごとの節にする。
+      - 生成で、シナリオごとのセクションにする。
     x-heading: シナリオ
     x-shape: sections
     x-key: name
@@ -201,7 +201,7 @@ properties:
                 title: 補足
                 description: 引数に指定する重要な値・分岐を決定的に誘発する値。
                 x-used-by:
-                  - E2E テストで、分岐を決定的に起こす値にする。
+                  - E2E テストで、分岐を決定的に発生させる値にする。
         flow:
           $ref: common.schema.yaml#/$defs/map
           title: フロー
