@@ -28,7 +28,7 @@ _RULE_SCHEMA = "title: 規約\nproperties:\n  arguments:\n    title: 引数\n"
 # Markdown の見出しの行
 _HEADING = re.compile(r"^#{1,6} .*$", re.MULTILINE)
 
-# word-list の行だけを持つ dev-docs.yaml
+# word-list の行だけを持つ project-index.yaml
 _CONFIG = 'documents:\n  - id: word-list\n    paths: ["docs/word-list/*.yaml"]\n'
 
 # ID が x の対応表の文書
@@ -54,10 +54,10 @@ _EMBED_RULE = (
 
 
 def _write_repo(root: Path, word_list: str = _WORD_LIST) -> None:
-    """スキーマ・dev-docs.yaml・対応表を持つ配信元を作る。"""
+    """スキーマ・project-index.yaml・対応表を持つ配信元を作る。"""
     (root / "schemas").mkdir()
     (root / "schemas" / "rule.schema.yaml").write_text(_RULE_SCHEMA, encoding="utf-8")
-    (root / "dev-docs.yaml").write_text(_CONFIG, encoding="utf-8")
+    (root / "project-index.yaml").write_text(_CONFIG, encoding="utf-8")
     (root / "docs" / "word-list").mkdir(parents=True)
     (root / "docs" / "word-list" / "x.yaml").write_text(word_list, encoding="utf-8")
 
@@ -164,7 +164,7 @@ def test_main_when_no_marker_without_config(
     capsys: pytest.CaptureFixture[str],
     stdin_factory: Callable[[str], None],
 ) -> None:
-    """マーカーの無い文書は dev-docs.yaml を読まない（正常系）。"""
+    """マーカーの無い文書は project-index.yaml を読まない（正常系）。"""
     # 準備
     (tmp_path / "schemas").mkdir()
     (tmp_path / "schemas" / "rule.schema.yaml").write_text(_RULE_SCHEMA, encoding="utf-8")
@@ -538,7 +538,7 @@ def test_load_word_lists(tmp_path: Path) -> None:
 def test_load_word_lists_when_no_row(tmp_path: Path) -> None:
     """word-list の行が無い（正常系）。"""
     # 準備
-    (tmp_path / "dev-docs.yaml").write_text(
+    (tmp_path / "project-index.yaml").write_text(
         'documents:\n  - id: rule\n    paths: ["docs/rule/*.yaml"]\n', encoding="utf-8"
     )
     # 実行

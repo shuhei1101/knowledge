@@ -22,8 +22,8 @@ from build_pages import (
     write_bundle_config,
 )
 
-# 公開の文書を変換の行で引く dev-docs.yaml
-_DEV_DOCS_YAML = (
+# 公開の文書を変換の行で引く project-index.yaml
+_CONFIG_YAML = (
     'version: "3"\n'
     "name: knowledge\n"
     "converters:\n"
@@ -102,7 +102,7 @@ def test_main(
     # 準備
     root = repo_writer(
         {
-            "dev-docs.yaml": _DEV_DOCS_YAML,
+            "project-index.yaml": _CONFIG_YAML,
             "docs/guide/guide-a.yaml": _document("guide-a", "public"),
             "docs/guide/guide-b.yaml": _document("guide-b", "public"),
             "docs/guide/guide-c.yaml": _document("guide-c", "internal"),
@@ -134,7 +134,7 @@ def test_main_when_build_fails(
     # 準備
     root = repo_writer(
         {
-            "dev-docs.yaml": _DEV_DOCS_YAML,
+            "project-index.yaml": _CONFIG_YAML,
             "docs/guide/guide-a.yaml": _document("guide-a", "public"),
             "docs/guide/guide-b.yaml": _document("guide-b", "public"),
             "docs/guide/guide-c.yaml": _document("guide-c", "internal"),
@@ -167,7 +167,7 @@ def test_main_when_no_public(
     # 準備
     root = repo_writer(
         {
-            "dev-docs.yaml": _DEV_DOCS_YAML,
+            "project-index.yaml": _CONFIG_YAML,
             "docs/guide/guide-c.yaml": _document("guide-c", "internal"),
         }
     )
@@ -184,20 +184,20 @@ def test_main_when_config_missing(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    """dev-docs.yaml が無い（正常系）。"""
+    """project-index.yaml が無い（正常系）。"""
     # 準備
     monkeypatch.chdir(tmp_path)
     # 実行
     code = build_pages.main(["--out", "_site"])
     # 検証
     assert code == 2
-    assert "dev-docs.yaml" in capsys.readouterr().err
+    assert "project-index.yaml" in capsys.readouterr().err
 
 
 def test_load_converters(tmp_path: Path) -> None:
     """変換のコマンドを引く（正常系）。"""
     # 準備
-    (tmp_path / "dev-docs.yaml").write_text(_DEV_DOCS_YAML, encoding="utf-8")
+    (tmp_path / "project-index.yaml").write_text(_CONFIG_YAML, encoding="utf-8")
     # 実行
     result = load_converters(tmp_path)
     # 検証
