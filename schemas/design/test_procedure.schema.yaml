@@ -159,6 +159,29 @@ properties:
               description: プレースホルダの形式（`{シナリオファイルパス}`）の 1 コマンドのコードブロック。
               x-used-by:
                 - 実行で、失敗したテストだけを再実行するときにプレースホルダを置き換えて実行する。
+        location:
+          type: string
+          title: 実行場所
+          description: 全件を回す場所（`runner` = GitHub Actions のランナー / `local` = 手元）。
+          x-used-by:
+            - 実行で、全件をランナーの全件実行で回すか、手元の全件実行で回すかを決める。
+          x-rules:
+            - 判定フローチャート『テストの実行場所』で決める。
+            - 決めるまでは記載しない。
+          enum:
+          - runner
+          - local
+        run_runner:
+          $ref: common.schema.yaml#/$defs/markdown
+          title: ランナーの全件実行
+          description: '`location` が `runner` の層だけが持つ。層の全件を回す workflow を `workflow_dispatch` で起動し、終わるまで待ち、ログを取得する 1 コマンドのコードブロック（`bash`）。'
+          x-used-by:
+            - 実行で、ランナーで全件を実行するコマンドにする。
+            - レビューで、配置されたテストのログが同じコマンドの出力かを照合する。
+          x-rules:
+            - '`run_all`・`run_one` は手元で回すコマンドのまま残し、ランナーで回せないときに使用する。'
+            - workflow は手動の起動（`workflow_dispatch`）だけで起動し、push・PR を契機にしない。
+            - 失敗したときもログを取得してから失敗で終える。
         carry_over:
           $ref: common.schema.yaml#/$defs/markdown
           title: セッションを跨いで実行する形式
@@ -248,6 +271,11 @@ examples:
         ```bash
         uv run pytest {単体テストファイルパス}
         ```
+    location: runner
+    run_runner: |-
+      ```bash
+      run_url=$(gh workflow run test.yml --ref "$(git branch --show-current)" -f layer=unit | grep -o 'https://[^ ]*/actions/runs/[0-9]*') && run_id=${run_url##*/} && (rc=0; gh run watch "$run_id" --exit-status > /dev/null || rc=1; gh run view "$run_id" --log; exit $rc)
+      ```
     parallel: true
   - id: TL-2
     name: 外部疎通テスト
@@ -266,6 +294,7 @@ examples:
         ```bash
         uv run pytest {外部疎通テストファイルパス} --run-external
         ```
+    location: local
     external_cost: テストごとの料金は外部API の設計書の料金を参照する
   - id: TL-3
     name: lint

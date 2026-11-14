@@ -101,6 +101,7 @@ items:
       | constraints[].constraint | 制約 | string | 必須 | - | - | 設けないときも `制限なし` と記載する。 | 実装で、制約の値と処理にする。 | - |
       | constraints[].decided_by | 決定値 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 値の出所になる非機能要件の項目。 | 実装で、値を非機能要件の決定値と同じにする。<br>レビューで、値が非機能要件の決定値と一致するかを確認する。 | `IF-12#flows[正常系]` / `#functions[resolve_base].exceptions` / `CFG-3#` / `#notes[main.py の補足]` / `#functions[main#3]` |
       | constraints[].notes | 補足 | string | - | - | - | 制約の前提（守れないときの扱い 等）。 | 実装で、制約を守れないときの扱いを決める。 | - |
+      | overall_flow | 全体の流れ | string | - | - | - | 入口が `trigger` の GitHub Actions の workflow だけが持つ。全ての分岐と結末を描いた mdmark の map の図（Mermaid の `flowchart`）。 | レビューで、分岐ごとの結末にフローがあるかを確認する。<br>生成で、フローの前の図にする。 | - |
       | flows | フロー | array | 必須 | - | minItems: `1` | 正常系と異常系のフロー。1 フロー = 結合テストの 1 ケース。 | 結合テストで、フローごとのテスト関数にする。<br>設計で、モジュール構成の処理の順と呼ぶ相手を決める。 | - |
       | flows[].name | フロー名 | string | 必須 | - | pattern: `^(正常系\|異常系)(（.+）)?$` | 正常の基本形は `正常系`。正常な結末が条件で分かれるときは `正常系（{条件}）`、異常は `異常系（{原因}・{ステータスか例外名}）`。 | 結合テストで、テスト関数の名前に対応させる。<br>設計で、ほかの設計書の参照（`flows[正常系]`）からフローを指す。 | - |
       | flows[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行でフローの中身を要約する。 | 生成で、フローの一覧の説明にする。<br>結合テストで、関数の docstring の要約にする。 | - |
@@ -108,7 +109,7 @@ items:
       | flows[].setup[].name | セットアップ | string | 必須 | - | - | 前提を作る Factory 関数名か状態の名前。 | 結合テストで、呼ぶ Factory 関数か作る状態にする。 | - |
       | flows[].setup[].description | 説明 | string | 必須 | - | - | その前提の意味・役割・依存関係。Mock の行は差し替える依存と応答。 | 結合テストで、前提の役割と Mock の応答にする。 | - |
       | flows[].setup[].notes | 補足 | string | - | - | - | 引数に指定する重要な値・分岐を決定的に誘発する値。 | 結合テストで、分岐を決定的に発生させる値にする。 | - |
-      | flows[].flow | フロー | string | 必須 | - | - | mdmark の map の図。Mermaid の `sequenceDiagram`。1 図 = 結末 1 本の一本道。 | 設計で、モジュール構成の処理の順と呼ぶ相手を決める。<br>生成で、シーケンス図にする。 | - |
+      | flows[].flow | フロー | string | 必須 | - | - | mdmark の map の図。Mermaid の `sequenceDiagram`（入口が `trigger` の GitHub Actions の workflow は `flowchart`）。1 図 = 結末 1 本の一本道。 | 設計で、モジュール構成の処理の順と呼ぶ相手を決める。<br>生成で、シーケンス図・フローチャートにする。 | - |
       | flows[].expected | 期待値 | array | 必須 | - | minItems: `1` | フローの終了時点で外部から観測できる状態・戻り値。1 要素 = 1 つの確認項目。 | 結合テストで、確認する項目にする。 | - |
       | flows[].test | テスト | string | - | - | pattern: `^test_[A-Za-z0-9_]+$` | 対応する結合テストの関数（`正常系` → `test_normal` / `正常系（{条件}）` → `test_normal_when_{条件}` / `異常系（{条件}）` → `test_error_when_{条件}`。`{条件}` は英訳）。 | 検査で、テストのファイルにその名前の関数があるかを確認する。<br>レビューで、項目ごとにテストがあるかを確認する。 | - |
       | flows[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
@@ -135,16 +136,17 @@ items:
       | status_codes | 異常の行は異常系のフローと 1:1 にする。 | - | - |
       | error_format | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
       | constraints[].decided_by | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | overall_flow | step は、workflow のファイルの step の `name` で記載する。<br>分岐の判定は、workflow のファイルの `if` の条件と、step の成否で記載する。 | - | - |
       | flows | 並びは正常 → 異常にする。<br>フロー一覧は各フローの名前と概要から生成する。 | - | - |
       | flows[].setup | `Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず配置する。 | - | - |
       | flows[].setup[].name | `Mock` の行を必ず配置する。 | - | - |
-      | flows[].flow | `<!-- map -->` から `<!-- /map -->` の範囲に、```mermaid のコードブロックを 1 つ記載する。<br>登場人物は呼び出し元（バックエンドは `participant クライアント`、フロントエンドは `actor ユーザー`）・インターフェース・外部システムの境界だけにする。<br>読み取りと応答は点線 `-->>`、書き込み・操作は実線 `->>` にする。 | - | - |
+      | flows[].flow | `<!-- map -->` から `<!-- /map -->` の範囲に、```mermaid のコードブロックを 1 つ記載する。<br>登場人物は呼び出し元（バックエンドは `participant クライアント`、フロントエンドは `actor ユーザー`）・インターフェース・外部システムの境界だけにする。<br>読み取りと応答は点線 `-->>`、書き込み・操作は実線 `->>` にする。<br>`flowchart` は、そのフローで通る step だけを並べ、分岐でどちらへ進んだかを矢印のラベルに記載する。<br>`flowchart` の step は、workflow のファイルの step の `name` で記載する。 | - | - |
       | flows[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
 
       <!-- /table -->
   - id: example-sample-01
-    name: 記載例
+    name: 記載例 1
     body: |-
       ````yaml
       id: IF-1
@@ -194,4 +196,90 @@ items:
         - 採番済みのタスクが返る
         - DB にタスクが 1 件ある
         test: test_normal
+      ````
+  - id: example-sample-02
+    name: 記載例 2
+    body: |-
+      ````yaml
+      id: IF-2
+      title: テストの全件実行
+      entry:
+        kind: trigger
+        value: '`.github/workflows/test.yml`（手動の起動 `workflow_dispatch`）'
+      lead: 指定された層のテストの全件をランナーで実行し、ログを成果物に上げる。
+      test_file: tests/e2e/workflow/test_test_yml.py
+      permissions: '`contents: read`'
+      exclusivity: 同じブランチ・同じ層の実行は、古い方を止める（`concurrency` の `cancel-in-progress`）
+      request:
+      - name: layer
+        type: unit / integration
+        required: true
+        location: argument
+        description: 全件を回す層
+      constraints:
+      - item: ランナー
+        constraint: '`ubuntu-latest`'
+      overall_flow: |-
+        <!-- map -->
+
+        ```mermaid
+        flowchart TD
+          s([workflow_dispatch で起動]) --> a[ブランチを取得する]
+          a -- 成功 --> b[Python と uv を入れる]
+          a -->|"失敗（if: always()）"| d[ログを成果物に上げる]
+          b -- 成功 --> c[層の全件を回す]
+          b -->|"失敗（if: always()）"| d
+          c -->|"成功・失敗（if: always()）"| d
+          d --> q{全ての step が成功したか}
+          q -- YES --> ok([成功])
+          q -- NO --> ng([失敗])
+        ```
+
+        <!-- /map -->
+      flows:
+      - name: 正常系
+        summary: 層の全件が pass して成功で終わる
+        setup:
+        - name: Mock
+          description: なし（本物の GitHub Actions で回す）
+        - name: ブランチ
+          description: 全件が pass するブランチ
+          notes: '`layer: unit`'
+        flow: |-
+          <!-- map -->
+
+          ```mermaid
+          flowchart TD
+            s([layer: unit で起動]) --> a[ブランチを取得する] --> b[Python と uv を入れる]
+            b -- 成功 --> c[層の全件を回す]
+            c -- 全件 pass --> d[ログを成果物に上げる] --> e([成功])
+          ```
+
+          <!-- /map -->
+        expected:
+        - 実行の結論が `success`
+        - 成果物 `test-log` がある
+        test: test_normal
+      - name: 異常系（道具の導入に失敗・failure）
+        summary: 道具の導入に失敗し、層の全件を回さずに失敗で終わる
+        setup:
+        - name: Mock
+          description: なし（本物の GitHub Actions で回す）
+        - name: ブランチ
+          description: 存在しない Python のバージョンを指定したブランチ
+          notes: '`layer: unit`'
+        flow: |-
+          <!-- map -->
+
+          ```mermaid
+          flowchart TD
+            s([layer: unit で起動]) --> a[ブランチを取得する] --> b[Python と uv を入れる]
+            b -- 失敗 --> d[ログを成果物に上げる] --> e([失敗])
+          ```
+
+          <!-- /map -->
+        expected:
+        - 実行の結論が `failure`
+        - step「層の全件を回す」の結論が `skipped`
+        test: test_error_when_setup_fails
       ````

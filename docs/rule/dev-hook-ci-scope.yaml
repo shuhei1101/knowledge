@@ -4,7 +4,7 @@ name: Git フックと CI で動かすもの
 description: Git フックと CI で動かすもの（生成・配布）と動かさないもの（lint・型検査・テスト・依存の監査）を定め、Git フックや CI のワークフローを作る・修正するときに参照する。
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-11-14'
 items:
   - id: overview
@@ -18,7 +18,7 @@ items:
     body: |-
       <!-- table: data -->
 
-      | 種類 | Git フック・CI | 例 |
+      | 種類 | Git フック・push と PR で起動する CI | 例 |
       | --- | --- | --- |
       | 生成・配布 | 動かす | ビルドの成果物を commit に入れる・入れた成果物がソースと合っているかの確認・GitHub Pages への配信・拡張機能の公開 |
       | lint・formatter の check | 動かさない | ruff・ESLint・markdownlint・全ての文書の検査 |
@@ -29,6 +29,7 @@ items:
       <!-- /table -->
 
       動かさないものは、テスト実行方法の各層のコマンドに入れ、作業の手順で実行する。
+      実行場所を `runner` にした層（判定フローチャート [テストの実行場所](id:flowchart-test-location)）は、作業の手順でランナーの全件実行を手動で起動する。
   - id: hook-01
     group: Git フック
     name: Git フックのツール
