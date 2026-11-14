@@ -1,0 +1,28 @@
+project-index の端末の設定の配信元の設定のパスの書き換え:
+  説明: 端末の設定 ~/.config/project-index/settings.yaml の sources[] の id が knowledge の行の config を /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/develop/dev-docs.yaml から /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/develop/project-index.yaml へ書き換え、project-index の管理の MCP の reload で読み直させる。develop の worktree が作業 PR のマージを取り込むと dev-docs.yaml が無くなり、config が指すファイルを読めず knowledge を配信できなくなるため、マージの直後に実行する。切り戻しは、作業 PR を develop から revert した後にだけ使用する
+  タグ: [設定の書き換え]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: ~/.config/project-index/settings.yaml の id が knowledge の行の config が /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/develop/project-index.yaml だけで、そのファイルが develop の worktree にあり、project-index の describe の配信元の一覧に knowledge が警告の無い行で出る
+  状態: "-"
+alias-inject の端末の設定の配信元の設定のパスの書き換え:
+  説明: 端末の設定 ~/.config/alias-inject/settings.yaml の global.repositories の knowledge の行の config を /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/develop/dev-docs.yaml から /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/develop/project-index.yaml へ書き換える。develop の worktree が作業 PR のマージを取り込むと dev-docs.yaml が無くなり、alias-inject が knowledge の配信元の設定を照合から外すため、マージの直後に実行する。切り戻しは、作業 PR を develop から revert した後にだけ使用する
+  タグ: [設定の書き換え]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: ~/.config/alias-inject/settings.yaml の global.repositories に /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/develop/project-index.yaml の行が 1 つあり、knowledge の dev-docs.yaml の行が無く、そのパスのファイルが develop の worktree にある
+  状態: "-"

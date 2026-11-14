@@ -1,0 +1,83 @@
+use_cases:
+  - kind: composite
+    scenario: docs/scenario/SC-72-1.yaml
+    impact: changed
+    detail: 導入の前提と異常系で利用者へ返る誤りのあるファイルを、knowledge の配信元の設定 project-index.yaml に合わせる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-2.yaml
+    impact: changed
+    detail: 登録した端末の設定の sources[] の config が指すファイルと、前提・異常系の配信元の設定のファイル名を project-index.yaml に合わせる
+    depends_on:
+      - docs/scenario/SC-72-1.yaml
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: following
+    detail: 画面のタブとサイドバーの並びの元になる設定のファイル名を project-index.yaml に合わせる
+    depends_on:
+      - docs/scenario/SC-72-1.yaml
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 全ての文書の検査が読む配信元の設定のファイル名が変わる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: run_only
+    detail: 書き込みの検査で project-index が起動する検査のスクリプトが読む配信元の設定のファイル名が変わる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: run_only
+    detail: 公開文書の成果物を作るスクリプトが読む配信元の設定のファイル名が変わる
+    depends_on: []
+docs:
+  - page: CLAUDE.md
+    new: false
+    change: 14〜15 行目の配信の設定のファイル名とリンクを project-index.yaml にする
+    status: todo
+  - page: README.md
+    new: false
+    change: 検査の節のファイル名とリンクを project-index.yaml にする
+    status: todo
+  - page: docs/guide/guide-setup-docs-mcp.yaml
+    new: false
+    change: setup の点検・sources[] の例の config・配信元の ID・反映のタイミングのファイル名を project-index.yaml にし、project-index.yaml が無いとき dev-docs.yaml を読む旨の文を削除する
+    status: todo
+  - page: docs/rule/dev-document-management.yaml
+    new: false
+    change: 各リポジトリの直下に置く配信の設定と、documents の行の metadata を持つファイルの名前を project-index.yaml にする
+    status: todo
+  - page: docs/rule/dev-tag-term-registration.yaml
+    new: false
+    change: タグにしない識別子の例のファイル名を project-index.yaml にする
+    status: todo
+  - page: docs/terms.yaml
+    new: false
+    change: 用語『配信元』の description のファイル名を project-index.yaml にする
+    status: todo
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: 文書のサブシステムの role の配信の設定のファイル名を project-index.yaml にする
+    status: todo
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: 直下のエントリの名前と _common.py の contents のファイル名を project-index.yaml にする
+    status: todo
+  - page: scripts/files.yaml
+    new: false
+    change: check_all.py・build_pages.py の行の description のファイル名を project-index.yaml にする
+    status: todo
+scope_out:
+  - item: docs/changelog.yaml・docs/pr/ の dev-docs.yaml の記述
+    reason: 当時の記録で、改名に合わせて書き換えると履歴が変わる（計画の行の概要）
+    plan: none
+  - item: dev-docs の端末の設定 ~/.config/dev-docs/settings.yaml の sources[] の knowledge の行
+    reason: dev-docs の設定のスキーマで sources は「前のバージョンから残った配信元」で、配信に使用しないため、書き換えなくても配信は変わらない
+    plan: none
+  - item: 規約・README・CLAUDE.md・用語『配信元』の「dev-docs が配信する」の文の project-index への書き換え
+    reason: ファイル名ではなく文の書き換えで、同じ内容の open の Issue がある
+    plan: '#328'
+  - item: 使い方『knowledge を project-index の配信元に登録する』の sources[] の行の例（config が 1 つのパスで id を持たない）と、端末の設定の実際の行（id と config の配列）の書式の違い
+    reason: 'ファイル名の改名とは別の記載のずれ。project-index が両方の書式を受け付けるなら直さなくてよく、受け付けないなら使い方の誤りになるため、今回含めるかをレビューで確定する（現時点の判断: 今回は含めず、起票する）'
+    plan: to_file
