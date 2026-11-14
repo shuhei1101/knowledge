@@ -2,6 +2,7 @@
 
 import shutil
 from pathlib import Path, PurePosixPath
+from typing import TYPE_CHECKING, cast
 
 from _workflow import (
     check_exclusivity,
@@ -15,6 +16,9 @@ from _workflow import (
 
 from _common import load_document, load_safe
 from _lint import extract_map_mermaid
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 # リポジトリの直下
 _ROOT = Path(__file__).resolve().parents[3]
@@ -32,6 +36,11 @@ def _interface_text() -> str:
 def _workflow_text() -> str:
     """pages.yml の中身を返却する。"""
     return (_ROOT / _WORKFLOW).read_text(encoding="utf-8")
+
+
+def _workflow(text: str) -> Mapping[str, object]:
+    """workflow のファイルの中身を、文字列のキーで引けるマッピングとして読み込む。"""
+    return cast("Mapping[str, object]", load_safe(text))
 
 
 def _copy_repo(root: Path, workflow: str) -> None:
@@ -133,7 +142,7 @@ def test_check_trigger() -> None:
     """全て含む（正常系）。"""
     # 準備
     doc = load_document(_interface_text())
-    workflow = load_safe(_workflow_text())
+    workflow = _workflow(_workflow_text())
     # 実行
     result = check_trigger(doc, workflow)
     # 検証
@@ -144,7 +153,7 @@ def test_check_trigger_when_missing() -> None:
     """含まない値がある（正常系）。"""
     # 準備
     doc = load_document(_interface_text())
-    workflow = load_safe(
+    workflow = _workflow(
         _workflow_text().replace(
             "  workflow_dispatch:\n",
             "  workflow_dispatch:\n  pull_request:\n    paths:\n      - docs/**\n"
@@ -162,7 +171,7 @@ def test_check_request() -> None:
     """一致する（正常系）。"""
     # 準備
     doc = load_document(_interface_text())
-    workflow = load_safe(_workflow_text())
+    workflow = _workflow(_workflow_text())
     # 実行
     result = check_request(doc, workflow)
     # 検証
@@ -177,7 +186,7 @@ def test_check_request_when_differ() -> None:
         '  value: "`.github/workflows/a.yml`"\n'
         "request:\n  - name: target\n    type: string\n    required: false\n"
     )
-    workflow = load_safe(
+    workflow = _workflow(
         "on:\n  workflow_dispatch:\n    inputs:\n      target:\n        type: boolean\n"
         "        required: true\n"
     )
@@ -196,7 +205,7 @@ def test_check_request_when_names_differ() -> None:
     doc = load_document(
         'id: "IF-1"\ntitle: "配信"\nentry:\n  kind: trigger\n  value: "`.github/workflows/a.yml`"\n'
     )
-    workflow = load_safe(
+    workflow = _workflow(
         "on:\n  workflow_dispatch:\n    inputs:\n      target:\n        type: string\n"
     )
     # 実行
@@ -210,7 +219,7 @@ def test_check_exclusivity() -> None:
     """含む（正常系）。"""
     # 準備
     doc = load_document(_interface_text())
-    workflow = load_safe(_workflow_text())
+    workflow = _workflow(_workflow_text())
     # 実行
     result = check_exclusivity(doc, workflow)
     # 検証
@@ -221,7 +230,7 @@ def test_check_exclusivity_when_differ() -> None:
     """cancel-in-progress が違う（正常系）。"""
     # 準備
     doc = load_document(_interface_text())
-    workflow = load_safe(
+    workflow = _workflow(
         _workflow_text().replace("cancel-in-progress: false", "cancel-in-progress: true")
     )
     # 実行
@@ -236,7 +245,7 @@ def test_check_exclusivity_when_no_concurrency() -> None:
     """concurrency が無い（正常系）。"""
     # 準備
     doc = load_document(_interface_text())
-    workflow = load_safe(
+    workflow = _workflow(
         _workflow_text().replace("concurrency:\n  group: pages\n  cancel-in-progress: false\n", "")
     )
     # 実行
@@ -251,7 +260,7 @@ def test_check_steps() -> None:
     """一致する（正常系）。"""
     # 準備
     doc = load_document(_interface_text())
-    workflow = load_safe(_workflow_text())
+    workflow = _workflow(_workflow_text())
     # 実行
     result = check_steps(doc, workflow)
     # 検証
@@ -262,7 +271,7 @@ def test_check_steps_when_step_added() -> None:
     """overall_flow に無い step（正常系）。"""
     # 準備
     doc = load_document(_interface_text())
-    workflow = load_safe(
+    workflow = _workflow(
         _workflow_text().replace(
             "      - name: 成果物をアップロードする\n",
             "      - name: lint\n        run: echo lint\n      - name: 成果物をアップロードする\n",
@@ -278,7 +287,7 @@ def test_check_steps_when_if_missing() -> None:
     """if が線のラベルに無い（正常系）。"""
     # 準備
     doc = load_document(_interface_text())
-    workflow = load_safe(
+    workflow = _workflow(
         _workflow_text().replace(
             "      - name: 成果物をアップロードする\n",
             "      - name: 成果物をアップロードする\n        if: ${{ success() }}\n",
@@ -296,7 +305,7 @@ def test_check_steps_when_unnamed() -> None:
     """name の無い step（正常系）。"""
     # 準備
     doc = load_document(_interface_text())
-    workflow = load_safe(
+    workflow = _workflow(
         _workflow_text().replace(
             "      - name: Pages へ配信する\n",
             "      - uses: actions/checkout@v4\n      - name: Pages へ配信する\n",
@@ -317,7 +326,7 @@ def test_check_steps_when_flow_label_unknown() -> None:
         "a[ブランチを取得する] --> b[Node を入れる]", "a[別の step] --> b[Node を入れる]", 1
     )
     doc = load_document(text)
-    workflow = load_safe(_workflow_text())
+    workflow = _workflow(_workflow_text())
     # 実行
     result = check_steps(doc, workflow)
     # 検証
