@@ -7,6 +7,7 @@ x-rules:
   - 1 リポジトリ 1 ファイルにする。
   - 配下の細かい配置を言語の規約が定めるフォルダは、`children` を記載せず `convention` で規約を指す。
   - 生成物・複製・一時ファイルは `gitignore` に記載し、生成物・複製のエントリには `generated_from` を記載する。
+  - git で管理する生成物・複製は `gitignore` に記載せず、`generated_from.tracked` に git で管理する理由を記載する。
 x-kind: layout
 x-folder: docs/layout
 x-id-prefix: LAY
@@ -238,13 +239,22 @@ $defs:
       generated_from:
         type: object
         title: 生成元
-        description: 生成物・複製のエントリの生成元と、生成するコマンド。
+        description: 生成物・複製のエントリの生成元と、生成するコマンド。生成元がリポジトリの外にあるときは、`path` の代わりに `source` に外の元とバージョンを記載する。
         x-used-by:
           - 実装で、生成物を手で書き換えず、生成元を修正してコマンドで再生成する。
+          - 実装で、元がリポジトリの外（`source`）の複製は手で書き換えず、`source` のバージョンを上げて取り直す。
+        x-rules:
+          - '`path` か `source` のどちらか 1 つを記載する。`path` を記載するときは `command` も記載し、`source` を記載するときは、取り出し・複製の開発コマンドがあるときだけ `command` を記載する。'
         additionalProperties: false
-        required:
-        - path
-        - command
+        oneOf:
+        - required:
+          - path
+          - command
+        - required:
+          - source
+          not:
+            required:
+            - path
         properties:
           path:
             type: string
@@ -262,6 +272,26 @@ $defs:
               - 実装で、生成物を再生成するコマンドを実行する。
             examples:
             - CMD-1#categories[ビルド・生成]
+          source:
+            type: string
+            title: 外の生成元
+            description: リポジトリの外にある生成元と、そのバージョン。
+            x-used-by:
+              - 実装で、複製を取り直すときの取得元とバージョンにする。
+              - レビューで、同梱した複製のバージョンが記載と一致するかを確認する。
+            x-rules:
+              - パッケージは `{レジストリ}:{パッケージ名}@{バージョン}`、リポジトリは `{owner}/{name}@{タグ}:{パス}` で記載する。
+            examples:
+            - npm:yaml@2.6.1
+            - shuhei1101/ai-monitor@v1.2.0:docs/_theme/
+          tracked:
+            type: string
+            title: git で管理する理由
+            description: 生成物・複製を `gitignore` に記載せず git で管理する理由。
+            x-used-by:
+              - レビューで、`gitignore` に無い生成物・複製が、記載漏れか意図して管理しているかを見分ける。
+            examples:
+            - hooks モジュールが実行時に import する
       placeholders:
         type: array
         title: 可変の部分
