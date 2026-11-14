@@ -33,26 +33,37 @@ fi
 echo "前提確認: ok"
 
 # 計画（--dry-run もここを通る）
-POSTED=$(gh api "repos/$REPO/issues/$NUMBER/comments" --paginate -q ".[] | select(.body | contains(\"$MARKER\")) | select(.body | contains(\"$TAG\")) | .id" | head -n 1)
-HAS_LABEL=$(gh pr view "$NUMBER" --repo "$REPO" --json labels -q ".labels[].name" | grep -cxF "$LABEL" || true)
+posted_at() {
+  gh api "repos/$REPO/issues/$NUMBER/comments" --paginate -q ".[] | select(.body | contains(\"$MARKER\")) | select(.body | contains(\"$TAG\")) | .created_at" | head -n 1
+}
+POSTED_AT=$(posted_at)
 BODY=$(printf '> from: %s\n> to: @planner\n\nknowledge の設計書のスキーマのタグ `%s` を打ちました %s。\n`dev-docs.yaml` の `documents[].schema` の `ref` をこのタグへ切り替えてください。' "shuhei1101/knowledge#348" "$TAG" "$MARKER")
-if [ -n "$POSTED" ]; then
+if [ -n "$POSTED_AT" ]; then
   echo "会話欄へのタグの名前の記載: skipped"
 else
   echo "$REPO#$NUMBER の会話欄へ記載する本文:"
   echo "$BODY"
   if [ "${1:-}" = "--dry-run" ]; then
     echo "会話欄へのタグの名前の記載: changed"
-  else
-    gh pr comment "$NUMBER" --repo "$REPO" --body "$BODY" > /dev/null
-    echo "会話欄へのタグの名前の記載: changed"
+    echo "$LABEL の付与: changed"
+    exit 0
   fi
+  gh pr comment "$NUMBER" --repo "$REPO" --body "$BODY" > /dev/null
+  echo "会話欄へのタグの名前の記載: changed"
+  POSTED_AT=$(posted_at)
 fi
-if [ "$HAS_LABEL" -gt 0 ]; then
+# 記載したコメント以後に付与のイベントがあれば済み。前から付いているだけのラベルは付け直して、記載の後の付与にする
+LABELED_AT=$(gh api "repos/$REPO/issues/$NUMBER/events" --paginate -q ".[] | select(.event == \"labeled\" and .label.name == \"$LABEL\" and .created_at >= \"$POSTED_AT\") | .created_at" | head -n 1)
+if [ -n "$LABELED_AT" ]; then
   echo "$LABEL の付与: skipped"
-elif [ "${1:-}" = "--dry-run" ]; then
-  echo "$LABEL の付与: changed"
-else
-  gh pr edit "$NUMBER" --repo "$REPO" --add-label "$LABEL" > /dev/null
-  echo "$LABEL の付与: changed"
+  exit 0
 fi
+if [ "${1:-}" = "--dry-run" ]; then
+  echo "$LABEL の付与: changed"
+  exit 0
+fi
+if gh pr view "$NUMBER" --repo "$REPO" --json labels -q ".labels[].name" | grep -qxF "$LABEL"; then
+  gh pr edit "$NUMBER" --repo "$REPO" --remove-label "$LABEL" > /dev/null
+fi
+gh pr edit "$NUMBER" --repo "$REPO" --add-label "$LABEL" > /dev/null
+echo "$LABEL の付与: changed"
