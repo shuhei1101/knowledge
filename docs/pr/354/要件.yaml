@@ -1,0 +1,13 @@
+scope_out:
+  - item: 公開済みでアイコンの無い拡張機能（shuhei1101/mdmark の ShuheiNishikawa.mdmark-vscode）へのアイコンの登録
+    reason: knowledge の外のリポジトリの作業で、この PR で追加する規約に従って行う
+    plan: to_file
+docs:
+  - page: docs/rule/dev-vscode-extension-distribution.yaml
+    new: false
+    change: 新しい group「アイコン」に、初めて公開する前に SVG の案をユーザーに確認して図案を決め、決まった SVG を原本としてリポジトリに置き、PNG に書き出して package.json の icon に PNG のパスを書く項目を追加する。Marketplace のアイコンの要件を sources に追加し、description・タグを合わせる
+    status: todo
+  - page: rules.yaml
+    new: false
+    change: dev-vscode-extension-distribution.yaml の既存の paths（**/vscode/package.json）でアイコンの登録とアイコンの原本の SVG を作る操作に注入されるかを確かめ、当たらない場合は paths を追加する
+    status: todo
