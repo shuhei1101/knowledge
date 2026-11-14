@@ -1,0 +1,62 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-148-1.yaml
+    impact: changed
+    detail: AI slop の単語を検知したとき、利用者の画面にも検知した単語が 1 行で出る。dev-docs と project-index のどちらの文書の MCP で書き込んでも照合され、通知の規約の参照先に両方のツールが並ぶ
+    depends_on: []
+docs:
+  - page: docs/skill/text-review.yaml
+    new: false
+    change: 規約を参照する工程を、project-index か dev-docs の search_docs のどちらかを使用できれば参照し、どちらも無いか規約が見つからなければファイルを参照する手順にする（#313）
+    status: todo
+  - page: skills/text-review/SKILL.md
+    new: false
+    change: docs/skill/text-review.yaml から生成したものに置き換える（#312・#313）
+    status: todo
+  - page: skills/files.yaml
+    new: false
+    change: SKILL.md の行の説明を、設計書から生成したファイルであることが分かる記載にする（#312）
+    status: todo
+  - page: scripts/files.yaml
+    new: false
+    change: SKILL.md を生成するスクリプトの行を加える（#312）
+    status: todo
+  - page: docs/dev-command/CMD-72-1.yaml
+    new: false
+    change: SKILL.md を生成するスクリプトの uv sync --script と実行のコマンドを、既存の生成のスクリプトと同じ分類に加える（#312）
+    status: todo
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: scripts/ に新しいスクリプトとロックのファイルを加え、skills/{skill}/ の SKILL.md が docs/skill/ から生成されることを記載する（#312）
+    status: todo
+  - page: plugins/slop-check/hooks/hooks.json
+    new: false
+    change: _description に、利用者の画面へ検知した単語を 1 行で表示することを加える（#248）
+    status: todo
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: slop-check のサブシステムの役割に、利用者の画面への 1 行の表示を加える（#248）
+    status: todo
+  - page: docs/guide/guide-setup-install-plugin.yaml
+    new: false
+    change: 概要と「単語の通知の確認」を、利用者の画面に検知した単語の 1 行が出ることで確認できる記載にする（#248）
+    status: todo
+scope_out:
+  - item: 全ての文書の検査（check_all.py・IF-72-3）で、SKILL.md が生成元の docs/skill/ の文書と一致するかを比べる
+    reason: 終わりの条件は生成の変換があり SKILL.md が生成物になっていることで、一致の検査は含まない。設計書のテンプレートは IF-72-3 でスキーマとの一致を比べており、同じ検査を加えると手で修正した SKILL.md を止められる。今の判断は「この PR では加えず別の Issue にする」で、含めるかはレビューで確定する
+    plan: to_file
+  - item: プラグイン knowledge の skills/ などの置き場所の統一と、移した後の skill.path の書き換え・SKILL.md の生成し直し
+    reason: 置き場所の移動は別の Issue の要望で、この PR は今の skill.path へ生成する
+    plan: '#278'
+  - item: 検知した単語の 1 行を MindStella の画面に出す
+    reason: '#248 で表示される場所は Claude Code の画面だけと決まっている'
+    plan: none
+  - item: 規約・判定フローチャート・使い方・README・CLAUDE.md の、文書の MCP・管理の MCP・配信元の登録を dev-docs が持つ記述
+    reason: 実行時のコードでない記述の修正で、別の Issue の要望
+    plan: '#328'
+  - item: rule-inject・ai-monitor の、dev-docs の MCP の名前を参照している実行時のコード
+    reason: knowledge のリポジトリの外で、それぞれのリポジトリの Issue（shuhei1101/ai-monitor#3387 など）が扱う
+    plan: none
+  - item: docs/pr/148・docs/pr/300 など過去の PR ドキュメントのツールの完全名
+    reason: 過去の PR の記録
+    plan: none
