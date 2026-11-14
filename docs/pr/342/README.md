@@ -1,0 +1,1 @@
+# 規約・判定フローチャート・使い方・README・CLAUDE.md の dev-docs の記述を project-index に合わせ、規約『フック作成ガイド』に additionalContext だけを出す行を追加する
