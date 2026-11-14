@@ -12,7 +12,7 @@
 
 ## 文書の検査
 
-[dev-docs.yaml](./dev-docs.yaml) が指す全ての文書に、スキーマの検査と、スキーマで見られない決まり（ID の重複・参照の実在・mermaid の文法・対応表の `examples` が照合と合うか）の検査を適用する。
+[dev-docs.yaml](./dev-docs.yaml) が指す全ての文書に、スキーマの検査と、スキーマで見られない決まり（ID の重複・参照の実在・対応表の `examples` が照合と合うか）の検査を適用する。
 対応表のコピー（`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json`）が原本と一致するかも確認する。
 検査のスクリプトは [scripts/](./scripts/) にある。
 
@@ -22,4 +22,3 @@ uv run --frozen --script scripts/check_all.py
 ```
 
 1 行目は初回だけ実行する。
-mermaid の検査に使用する `@probelabs/maid` を、PATH から検索できる場所（WSL では Linux 側のファイルシステム）に配置しておく。
