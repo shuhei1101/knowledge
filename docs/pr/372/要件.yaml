@@ -35,39 +35,57 @@ docs:
   - page: CLAUDE.md
     new: false
     change: 14〜15 行目の配信の設定のファイル名とリンクを project-index.yaml にする
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T07:33:48.277358+00:00'
   - page: README.md
     new: false
     change: 検査の節のファイル名とリンクを project-index.yaml にする
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T07:33:48.277358+00:00'
   - page: docs/guide/guide-setup-docs-mcp.yaml
     new: false
     change: setup の点検・sources[] の例の config・配信元の ID・反映のタイミングのファイル名を project-index.yaml にし、project-index.yaml が無いとき dev-docs.yaml を読む旨の文を削除する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T07:33:48.277358+00:00'
   - page: docs/rule/dev-document-management.yaml
     new: false
     change: 各リポジトリの直下に置く配信の設定と、documents の行の metadata を持つファイルの名前を project-index.yaml にする
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T07:33:48.277358+00:00'
   - page: docs/rule/dev-tag-term-registration.yaml
     new: false
     change: タグにしない識別子の例のファイル名を project-index.yaml にする
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T07:33:48.277358+00:00'
   - page: docs/terms.yaml
     new: false
     change: 用語『配信元』の description のファイル名を project-index.yaml にする
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T07:33:48.277358+00:00'
   - page: docs/architecture/ARCH-72-1.yaml
     new: false
     change: 文書のサブシステムの role の配信の設定のファイル名を project-index.yaml にする
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T07:33:48.277358+00:00'
   - page: docs/layout/LAY-72-1.yaml
     new: false
     change: 直下のエントリの名前と _common.py の contents のファイル名を project-index.yaml にする
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T07:33:48.277358+00:00'
   - page: scripts/files.yaml
     new: false
     change: check_all.py・build_pages.py の行の description のファイル名を project-index.yaml にする
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T07:33:48.277358+00:00'
 scope_out:
   - item: docs/changelog.yaml・docs/pr/ の dev-docs.yaml の記述
     reason: 当時の記録で、改名に合わせて書き換えると履歴が変わる（計画の行の概要）
@@ -81,3 +99,6 @@ scope_out:
   - item: 使い方『knowledge を project-index の配信元に登録する』の sources[] の行の例（config が 1 つのパスで id を持たない）と、端末の設定の実際の行（id と config の配列）の書式の違い
     reason: 'project-index が config の文字列 1 つの書式と id の省略を受け付ける（SourceEntry の _as_list・id: str | None）ため、使い方の例は誤りではない'
     plan: none
+  - item: 'project-index の search_docs が kind: layout の文書（LAY-72-1）を引くと Unresolvable: common.schema.yaml#/$defs/summary で落ち、版を引けず write_docs で書き換えられない不具合'
+    reason: project-index のスキーマの $ref の解決の不具合で、改名とは関係が無い（base の develop でも起きる）。今回は LAY-72-1 を YAML の直接編集で書き換えた
+    plan: to_file
