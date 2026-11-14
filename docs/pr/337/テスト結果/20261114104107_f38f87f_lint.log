@@ -1,0 +1,20 @@
+$ uvx ruff@0.17.3 check scripts tests plugins
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+All checks passed!
+$ uvx ruff@0.17.3 format --check scripts tests plugins
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+29 files already formatted
+$ uv run --no-project --python 3.14 --with pyright==1.1.414 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pyright
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-scripts-remove-maid-check/tests/unit/scripts/test_check_all.py:382:14 - error: Argument missing for parameter "names" (reportCallIssue)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-scripts-remove-maid-check/tests/unit/scripts/test_check_all.py:403:14 - error: Argument missing for parameter "names" (reportCallIssue)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-scripts-remove-maid-check/tests/unit/scripts/test_check_all.py:418:14 - error: Argument missing for parameter "names" (reportCallIssue)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-scripts-remove-maid-check/tests/unit/scripts/test_check_all.py:434:14 - error: Argument missing for parameter "names" (reportCallIssue)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-scripts-remove-maid-check/tests/unit/scripts/test_knowledge_checks.py:114:14 - error: Arguments missing for parameters "executable", "deadline" (reportCallIssue)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-scripts-remove-maid-check/tests/unit/scripts/test_knowledge_checks.py:138:14 - error: Arguments missing for parameters "executable", "deadline" (reportCallIssue)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-scripts-remove-maid-check/tests/unit/scripts/test_knowledge_checks.py:148:14 - error: Arguments missing for parameters "executable", "deadline" (reportCallIssue)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-scripts-remove-maid-check/tests/unit/scripts/test_knowledge_checks.py:163:14 - error: Arguments missing for parameters "executable", "deadline" (reportCallIssue)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-scripts-remove-maid-check/tests/unit/scripts/test_knowledge_checks.py:176:14 - error: Arguments missing for parameters "executable", "deadline" (reportCallIssue)
+  /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-scripts-remove-maid-check/tests/unit/scripts/test_knowledge_checks.py:192:14 - error: Arguments missing for parameters "executable", "deadline" (reportCallIssue)
+10 errors, 31 warnings, 0 informations

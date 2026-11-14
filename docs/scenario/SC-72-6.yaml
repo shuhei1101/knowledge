@@ -17,7 +17,7 @@ scenarios:
         participant C as 全ての文書の検査
         participant V as 検査のスクリプト
         D->>C: クローンの直下で起動する
-        C->>C: maid・markdownlint・textlint が入ったかを確認する
+        C->>C: markdownlint・textlint が入ったかを確認する
         loop 全ての文書
           C->>C: スキーマの検査
           C->>V: 標準入力に文書の YAML
@@ -172,7 +172,7 @@ scenarios:
   - name: 異常シナリオ（検査の CLI が入っていない）
     setup:
       - name: Mock
-        description: PATH から maid を除外する
+        description: '`--lint-dir` に存在しないフォルダを指定する'
     flow: |-
       <!-- map -->
 
@@ -181,14 +181,14 @@ scenarios:
         actor D as 開発者
         participant C as 全ての文書の検査
         D->>C: クローンの直下で起動する
-        C->>C: maid・markdownlint・textlint が入ったかを確認する
-        C-->>D: PATH に無い CLI の名前を標準エラーに出して終了コード 2
+        C->>C: markdownlint・textlint が入ったかを確認する
+        C-->>D: 見つからない CLI の名前を標準エラーに出して終了コード 2
       ```
 
       <!-- /map -->
     expected:
       - 文書の検査を始めずに終了コード 2 で終わる
-      - 標準エラーに、PATH で見つからない CLI の名前（maid）が出る
+      - 標準エラーに、見つからない CLI の名前（markdownlint-cli2・textlint）が出る
     test: test_error_when_check_cli_missing
 lead: 開発者が knowledge のクローンで全ての文書の検査を実行し、全ての文書へスキーマの検査と検査のスクリプトを適用して、違反があれば終了コードで失敗を返却する。
 primary_actor: 開発者
@@ -200,5 +200,5 @@ preconditions:
 success_guarantee: 違反が無ければ終了コード 0 で終わる。
 minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反・スキーマのフロー形式・設計書のスキーマの誤り・スキーマとずれたテンプレート）が 1 つでもあれば終了コード 1 で終わり、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名。スキーマとずれたテンプレートは、行が `items` のキーの行で、内容が生成元のスキーマのパスと生成のコマンド）が標準出力に出る。文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに終了コード 2 で終わる。
 notes:
-  E2E テストの動かし方: 全ての文書の検査のコマンド（`uv run --frozen --script scripts/check_all.py`）を、knowledge のクローンで子プロセスとして起動し、終了コードと標準出力で確認する。maid が入っていない場合は PATH から maid を除外して起動する
+  E2E テストの動かし方: 全ての文書の検査のコマンド（`uv run --frozen --script scripts/check_all.py`）を、knowledge のクローンで子プロセスとして起動し、終了コードと標準出力で確認する。lint の CLI が入っていない場合は `--lint-dir` に存在しないフォルダを指定して起動する
 test_file: tests/e2e/単一ユースケース/test_開発者が文書の違反を検査する.py

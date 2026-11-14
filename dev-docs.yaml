@@ -8,7 +8,7 @@ instructions: |-
   本文は `items[]` の各項目が持ち、`[名前](id:{文書の ID}#{項目の ID})` で他の文書・項目を指す。`related[].when` がその文書を読むときを表す。
   `skills/`・`scripts/` のファイルは、各フォルダの `files.yaml` が名前・概要文・タグを持つ。
   設計書（`docs/` の `scenario`・`interface`・`module` などの種類のフォルダ）は AI Monitor の設計書で、書式は knowledge の原本 `schemas/design/{種類}.schema.yaml` が持ち、他の設計書は `{ID}#{項目のパス}` で指す。
-  書き込みのときは knowledge-checks が、項目の ID の重複・参照先の実在・`aliases` の衝突・文書の中の `aliases` の重複・mermaid の文法を検査する。
+  書き込みのときは knowledge-checks が、項目の ID の重複・参照先の実在・`aliases` の衝突・文書の中の `aliases` の重複を検査する。
 when:
   - コードを作成・レビューする前に、言語やフレームワークの規約を確認するとき
   - 設計書・文書を作成する前に、テンプレートと記載方法の規約を確認するとき

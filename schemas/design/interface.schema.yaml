@@ -59,6 +59,8 @@ properties:
     x-used-by:
       - 実装で、操作の入口（エンドポイント・MCP ツール・画面操作・周期の処理）を作る。
       - 生成で、冒頭のメタ情報の行にする。
+    x-rules:
+      - 入口が `trigger` の GitHub Actions の workflow は、`value` に workflow のファイルの `on` のイベントと、起動を絞る条件（`branches`・`paths`・`types`・`schedule` の `cron` 等）を記載する。
     x-shape: attributes
     additionalProperties: false
     required:
@@ -167,6 +169,8 @@ properties:
     description: 同時に呼ばれたときの扱い。
     x-used-by:
       - 実装で、同時に呼ばれたときのロック・キューにする。
+    x-rules:
+      - 入口が `trigger` の GitHub Actions の workflow は、workflow のファイルの `concurrency` の `group` と `cancel-in-progress` を記載する。
   request:
     type: array
     title: リクエスト
@@ -174,6 +178,8 @@ properties:
     x-used-by:
       - 実装で、引数の型と検証にする。
       - 生成で、リクエストの表にする。
+    x-rules:
+      - 入口が `trigger` の GitHub Actions の workflow は、workflow のファイルの `on.workflow_dispatch.inputs` の名前・型・必須・既定値と一致させる。
     x-heading: リクエスト
     x-shape: table
     x-key: name
@@ -554,12 +560,13 @@ properties:
         flow:
           $ref: common.schema.yaml#/$defs/map
           title: フロー
-          description: mdmark の map の図。Mermaid の `sequenceDiagram`（入口が `trigger` の GitHub Actions の workflow は `flowchart`）。1 図 = 結末 1 本の一本道。
+          description: mdmark の map の図。1 図 = 結末 1 本の一本道。
           x-used-by:
             - 設計で、モジュール構成の処理の順と呼ぶ相手を決める。
             - 生成で、シーケンス図・フローチャートにする。
           x-rules:
             - '`<!-- map -->` から `<!-- /map -->` の範囲に、```mermaid のコードブロックを 1 つ記載する。'
+            - Mermaid は `sequenceDiagram` にする。入口が `trigger` の GitHub Actions の workflow は `flowchart` にする。
             - 登場人物は呼び出し元（バックエンドは `participant クライアント`、フロントエンドは `actor ユーザー`）・インターフェース・外部システムの境界だけにする。
             - 読み取りと応答は点線 `-->>`、書き込み・操作は実線 `->>` にする。
             - '`flowchart` は、そのフローで通る step だけを並べ、分岐でどちらへ進んだかを矢印のラベルに記載する。'
@@ -678,7 +685,7 @@ examples:
   lead: 指定された層のテストの全件をランナーで実行し、ログを成果物に上げる。
   test_file: tests/e2e/workflow/test_test_yml.py
   permissions: '`contents: read`'
-  exclusivity: 同じブランチ・同じ層の実行は、古い方を止める（`concurrency` の `cancel-in-progress`）
+  exclusivity: '同じブランチ・同じ層の実行は、古い方を止める（`concurrency` の `group: test-${{ github.ref }}-${{ inputs.layer }}`・`cancel-in-progress: true`）'
   request:
   - name: layer
     type: unit / integration
