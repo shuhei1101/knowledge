@@ -13,7 +13,9 @@ docs:
   - page: docs/skill/text-review.yaml
     new: false
     change: 規約を参照する工程を、project-index か dev-docs の search_docs のどちらかを使用できれば参照し、どちらも無いか規約が見つからなければファイルを参照する手順にする（#313）。summary に参照するときを加える（#312）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T05:00:43.053700+00:00'
   - page: skills/text-review/SKILL.md
     new: false
     change: docs/skill/text-review.yaml から生成したものに置き換える（#312・#313）
@@ -33,19 +35,27 @@ docs:
   - page: docs/layout/LAY-72-1.yaml
     new: false
     change: scripts/ に新しいスクリプトとロックのファイルを加え、skills/{skill}/ の SKILL.md が docs/skill/ から生成されることを記載する（#312）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T05:00:43.053700+00:00'
   - page: plugins/slop-check/hooks/hooks.json
     new: false
     change: _description に、利用者の画面へ検知した単語を 1 行で表示することを加える（#248）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T05:00:43.053700+00:00'
   - page: docs/architecture/ARCH-72-1.yaml
     new: false
     change: slop-check のサブシステムの役割に、利用者の画面への 1 行の表示を加える（#248）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T05:00:43.053700+00:00'
   - page: docs/guide/guide-setup-install-plugin.yaml
     new: false
     change: 概要と「単語の通知の確認」を、利用者の画面に検知した単語の 1 行が出ることで確認できる記載にする（#248）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T05:00:43.053700+00:00'
 scope_out:
   - item: 全ての文書の検査（check_all.py・IF-72-3）で、SKILL.md が生成元の docs/skill/ の文書と一致するかを比べる
     reason: 終わりの条件は生成の変換があり SKILL.md が生成物になっていることで、一致の検査を含まない
