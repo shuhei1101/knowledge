@@ -1,0 +1,1 @@
+# 手書きのテンプレートと schemas/design の AI slop の単語と、目次のスキーマに残る dev/ を修正する
