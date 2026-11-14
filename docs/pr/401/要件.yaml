@@ -1,0 +1,26 @@
+docs:
+  - page: schemas/design/layout.schema.yaml
+    new: false
+    change: x-rules の convention の行を、convention のフォルダでも生成物・複製のエントリだけは children に記載すると読める記載に修正し、examples の src/aituber の children を生成物のエントリにして x-rules と揃える。entries[].convention の description には書き足さない
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T21:38:29.176308+00:00'
+  - page: docs/template/template-layout.yaml
+    new: false
+    change: スキーマの修正に合わせて scripts/build_templates.py で生成し直す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T21:38:29.176308+00:00'
+scope_out:
+  - item: design-schemas のタグの作成
+    reason: x-rules の説明文と examples の修正で検査の挙動が変わらず、各プロジェクトの設計書の検査結果は今のタグのままで変わらないため。タグを要する依頼元も無い
+    plan: none
+  - item: layout.schema.yaml の 222・242・280 行目の AI slop の単語（新しい・外の）の置き換え
+    reason: 要望に含まれない。同じ内容の open の Issue がある
+    plan: '#399'
+  - item: 規約『フォルダ構成の切り方とレビュー』（dev-folder-layout）への convention と children の関係の記載
+    reason: 規約には convention と children の関係の記載が無く、決まりはスキーマの x-rules の 1 か所に置くため
+    plan: none
+  - item: docs/rule/dev-rule-index-registration.yaml の items[4].body の 2 文の textlint の sentence-length の違反
+    reason: 規約『文章の書き方』と全ての文書の検査の textlint（上限 100 文字）から外れている。今回の要望に含まれない
+    plan: '#402'
