@@ -1,0 +1,1 @@
+# slop-check のフックの検知の画面表示・SKILL.md の生成・dev-docs と project-index の MCP の名前の両対応をまとめて行う
