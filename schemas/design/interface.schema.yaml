@@ -225,7 +225,7 @@ properties:
           title: 説明
           description: 引数が何を表すか。
           x-used-by:
-            - 呼び出し元の実装で、渡す値を決める。
+            - 呼び出し元の実装で、指定する値を決める。
         constraints:
           type: string
           title: 制限
@@ -343,7 +343,7 @@ properties:
     title: ステータスコード
     description: HTTP を返却する操作の出口。
     x-used-by:
-      - 実装で、返すステータスコードにする。
+      - 実装で、返却するステータスコードにする。
       - テストで、ステータスコードごとのケースにする。
     x-rules:
       - 異常の行は異常系のフローと 1:1 にする。
@@ -362,13 +362,13 @@ properties:
           title: ステータスコード
           description: ステータスコード・終了コード。
           x-used-by:
-            - 実装で、返すステータスコードにする。
+            - 実装で、返却するステータスコードにする。
         condition:
           type: string
           title: 発生条件
           description: そのコードを返却する条件。
           x-used-by:
-            - 実装で、そのコードを返す条件にする。
+            - 実装で、そのコードを返却する条件にする。
         notes:
           type: string
           title: 補足
@@ -416,7 +416,7 @@ properties:
     description: エラー応答の形式（RFC 9457 の type・title・status・detail 等）。
     x-used-by:
       - 実装で、エラー応答の形式にする。
-      - 呼び出し元の実装で、エラーの読み方にする。
+      - 呼び出し元の実装で、エラーの解釈方法にする。
   constraints:
     type: array
     title: 制約
@@ -535,7 +535,7 @@ properties:
                 title: 補足
                 description: 引数に指定する重要な値・分岐を決定的に誘発する値。
                 x-used-by:
-                  - 結合テストで、分岐を決定的に起こす値にする。
+                  - 結合テストで、分岐を決定的に発生させる値にする。
         flow:
           $ref: common.schema.yaml#/$defs/map
           title: フロー

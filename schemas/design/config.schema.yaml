@@ -44,7 +44,7 @@ properties:
     title: ファイル一覧
     description: 設定ファイルを持たないサブシステムは持たない。
     x-used-by:
-      - 実装で、設定を読むファイルとその置き場所を決める。
+      - 実装で、設定を読み込むファイルとその配置先を決める。
       - 生成で、ファイル一覧の表にする。
     x-heading: ファイル一覧
     x-shape: table
@@ -61,7 +61,7 @@ properties:
           title: ファイル
           description: リポジトリの直下からの相対パス・ホーム起点の絶対パス・ファイル名のいずれか。
           x-used-by:
-            - 実装で、設定を読むファイルのパスにする。
+            - 実装で、設定を読み込むファイルのパスにする。
         manages:
           type: string
           title: 管理する値
@@ -114,7 +114,7 @@ properties:
           title: ファイル
           description: このキーを持つファイル（`files` の `file`）。
           x-used-by:
-            - 実装で、キーを読むファイルにする。
+            - 実装で、キーを読み込むファイルにする。
         type:
           type: string
           title: 型

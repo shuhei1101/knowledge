@@ -73,7 +73,7 @@ properties:
     description: テーブル 1 つ = 1 要素。並びは依存の上流から下流。
     x-used-by:
       - 実装で、テーブル・ファイルの定義とマイグレーションにする。
-      - 生成で、テーブルごとの節にする。
+      - 生成で、テーブルごとのセクションにする。
     x-heading: テーブル
     x-shape: sections
     x-key: name
@@ -101,7 +101,7 @@ properties:
           title: 論理名
           description: テーブルの論理名。
           x-used-by:
-            - 生成で、節の見出しにする。
+            - 生成で、セクションの見出しにする。
         source:
           $ref: common.schema.yaml#/$defs/ref
           title: 保存するデータ
@@ -116,7 +116,7 @@ properties:
           title: データストア
           description: '`PostgreSQL` / `SQLite` / `JSON` / `YAML` 等。'
           x-used-by:
-            - 実装で、読み書きに使うライブラリ・ドライバを決める。
+            - 実装で、参照・更新に使用するライブラリ・ドライバを決める。
         summary:
           $ref: common.schema.yaml#/$defs/summary
           title: 概要
@@ -146,7 +146,7 @@ properties:
           title: 保持期間
           description: 行を残す期間。
           x-used-by:
-            - 実装で、古い行を消す処理にする。
+            - 実装で、古い行を削除する処理にする。
         deletion:
           type: string
           title: 削除の方針
@@ -166,7 +166,7 @@ properties:
           title: アクセス方式
           description: JSON / YAML のとき、全件か キーで検索するか。
           x-used-by:
-            - 実装で、全件を読むか、キーで検索するかを決める。
+            - 実装で、全件を取得するか、キーで検索するかを決める。
         description:
           $ref: common.schema.yaml#/$defs/markdown
           title: 説明
