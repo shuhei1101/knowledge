@@ -1,0 +1,43 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: run_only
+    detail: フォルダ構成のスキーマを変えた後に、テンプレート『フォルダ構成』の本文を生成し直す
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 変えたスキーマで、フォルダ構成の設計書と生成し直したテンプレートが検査に合格するかを確かめる
+    depends_on: []
+docs:
+  - page: schemas/design/layout.schema.yaml
+    new: false
+    change: entries[].generated_from にリポジトリの外の元を記載するキーを追加し（path・command の必須を見直す）、x-rules の生成物・複製・一時ファイルの決まりに git で管理する生成物・複製の記載方法を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T09:51:03.528037+00:00'
+  - page: docs/template/template-layout.yaml
+    new: false
+    change: スキーマから items を生成し直す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T09:51:03.528037+00:00'
+  - page: docs/rule/dev-folder-layout.yaml
+    new: false
+    change: レビューの観点『管理しないもの』を、git で管理する生成物・複製と、リポジトリの外を元にする複製の記載方法に合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T09:51:03.528037+00:00'
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: git で管理する生成物・複製（docs/template/・対応表のコピー 等）を新しい記載方法へ合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T09:51:03.528037+00:00'
+scope_out:
+  - item: shuhei1101/alias-inject のフォルダ構成の設計書（alias-inject#100 で contents に記載した複製の元）の新しい記載方法への書き換え
+    reason: 別のリポジトリの設計書で、design-schemas のタグを上げる alias-inject 側の作業になる
+    plan: shuhei1101/alias-inject#107
+  - item: knowledge 以外のリポジトリのフォルダ構成の設計書の見直し
+    reason: 記載方法を増やすだけで既存の設計書は検査に合格したままのため、各リポジトリが design-schemas のタグを上げるときに合わせる
+    plan: none

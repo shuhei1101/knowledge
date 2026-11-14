@@ -1,0 +1,14 @@
+docs:
+  - page: docs/rule/python-testing-layers.yaml
+    new: false
+    change: '`file-placement-01` のツリーの `integration/` を `{サブシステム名}/` の下にインターフェース定義・画面設計・部品設計の 1 つ = 1 テストファイル、`e2e/` を `複合ユースケース/`・`単一ユースケース/` の下にシナリオ 1 つ = 1 テストファイルにし、`integration-test-01` の単位と `test-policy-01` の結合テスト・E2E テストの目的を規約『V字モデル』の対応表に合わせる'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T13:56:54.256860+00:00'
+scope_out:
+  - item: GitHub Actions の workflow のインターフェース定義のテストの配置（規約『GitHub Actions の workflow のテスト』の `placement-01`・`python-testing-layers` の `file-placement-04` の `tests/e2e/workflow/`、テンプレート『インターフェース定義』と `schemas/design/interface.schema.yaml` の `test_file` の例 `tests/e2e/workflow/test_test_yml.py`）を規約『V字モデル』の `tests/integration/{サブシステム名}/` に合わせるか
+    reason: スコープに含めるか判断が分かれる（レビューで確定する）。その時点の判断はスコープ外。#378 が本物の GitHub Actions を起動する手元で回す層として `tests/e2e/workflow/` に決めた直後で、V字モデルの側に例外を書くか配置を変えるかを決め直す必要があり、Issue の要望（`python-testing-layers` の結合・E2E の単位と配置）が入らなくても同じ内容で成り立つ
+    plan: '#389'
+  - item: TypeScript の規約『E2E テスト（Playwright）』（`docs/rule/testing-core-e2e.yaml` の `folder-responsibility-01`）の `tests/e2e/` のツリーを、規約『V字モデル』の `複合ユースケース/`・`単一ユースケース/` に分ける
+    reason: スコープに含めるか判断が分かれる（レビューで確定する）。その時点の判断はスコープ外。Issue の要望は Python の規約で、Playwright のツリーは `{domain}/`・`usecases/`・`pages/` などの別の分け方を持ち、今回の変更が入らなくても同じ内容で成り立つ
+    plan: '#388'
