@@ -1,0 +1,1 @@
+# 設計書のスキーマへの tags・aliases と管理用の YAML のキーの取り込み・design-schemas のタグと、検索・配信の持ち主を dev-docs とする記述の修正をまとめて行う
