@@ -83,7 +83,8 @@ items:
     group: テストの実行場所 判定フローチャート
     name: ※5 マーカーを付けたテスト
     body: |-
-      - ※5 マーカーを付けたテスト: pytest の marker・vitest と Playwright の tag など、テストの実行器が選び分けられるマーカー。
+      - ※5 マーカーを付けたテスト: pytest の marker・Playwright の tag など、テストの実行器が選び分けられるマーカー。
+        マーカーを付けたテストは skip にせず、ランナーの全件実行では実行器の選び分け（pytest の `-m "not {マーカー}"`・Playwright の `--grep-invert` 等）で除く。
         マーカーを付けたテストは手元で回し、手元の全件実行はマーカーの有無によらず全件を回す
   - id: job-limit-01
     group: 1 ジョブの上限を超えそうな層

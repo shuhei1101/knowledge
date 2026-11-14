@@ -694,10 +694,11 @@ examples:
     ```mermaid
     flowchart TD
       s([workflow_dispatch で起動]) --> a[ブランチを取得する]
-      a --> b[Python と uv を入れる]
+      a -- 成功 --> b[Python と uv を入れる]
+      a -->|"失敗（if: always()）"| d[ログを成果物に上げる]
       b -- 成功 --> c[層の全件を回す]
-      b -- 失敗 --> d[ログを成果物に上げる]
-      c --> d
+      b -->|"失敗（if: always()）"| d
+      c -->|"成功・失敗（if: always()）"| d
       d --> q{全ての step が成功したか}
       q -- YES --> ok([成功])
       q -- NO --> ng([失敗])
