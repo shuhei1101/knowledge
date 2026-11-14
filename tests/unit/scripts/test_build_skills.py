@@ -188,7 +188,7 @@ def test_plan_skills_when_schema_invalid(tmp_path: Path) -> None:
     # 準備
     root = _repo(tmp_path, {"docs/skill/b.yaml": _B_DOC_WITHOUT_PATH})
     # 実行・検証
-    with pytest.raises(BuildError, match=r"docs/skill/b\.yaml[\s\S]*skill"):
+    with pytest.raises(BuildError, match=r"docs/skill/b\.yaml: skill\.path"):
         plan_skills(root)
 
 
