@@ -14,11 +14,11 @@ files:
     tags: [topic:変換, topic:markdown, tool:dev-docs, tool:mdmark]
   - path: check_all.py
     name: 全ての文書の検査
-    description: dev-docs.yaml が指す全ての文書にスキーマの検査と文書の違反の検査を当て、手元のコマンドで合否を返す。検査の範囲や出力を変えるときに参照する。
+    description: project-index.yaml が指す全ての文書にスキーマの検査と文書の違反の検査を当て、手元のコマンドで合否を返す。検査の範囲や出力を変えるときに参照する。
     tags: [topic:検査, topic:スキーマ, tool:jsonschema]
   - path: build_pages.py
     name: Pages の成果物の作成
-    description: dev-docs.yaml が指す visibility が public の文書を変換し、参照をリンクに書き換えて mdmark の build で 1 枚の HTML にまとめる。Pages に出す文書の範囲やリンクの書き換えを変えるときに参照する。
+    description: project-index.yaml が指す visibility が public の文書を変換し、参照をリンクに書き換えて mdmark の build で 1 枚の HTML にまとめる。Pages に出す文書の範囲やリンクの書き換えを変えるときに参照する。
     tags: [topic:変換, topic:ci, tool:mdmark]
   - path: build_word_list.py
     name: 対応表のコピーの作成

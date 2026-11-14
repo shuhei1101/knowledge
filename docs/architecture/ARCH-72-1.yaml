@@ -97,7 +97,7 @@ repository:
 subsystems:
   - name: 文書
     scope: docs
-    role: 規約・テンプレート・判定フローチャート・判定表・チェックシート・使い方・変更履歴・スキルの YAML とそのスキーマ、YAML でないファイルを記載する files.yaml、project-index への配信の設定 `dev-docs.yaml` を持つ。各プロジェクトが `design-schemas/v*` のタグで指す設計書のスキーマの原本（`schemas/design/`）も持つ
+    role: 規約・テンプレート・判定フローチャート・判定表・チェックシート・使い方・変更履歴・スキルの YAML とそのスキーマ、YAML でないファイルを記載する files.yaml、project-index への配信の設定 `project-index.yaml` を持つ。各プロジェクトが `design-schemas/v*` のタグで指す設計書のスキーマの原本（`schemas/design/`）も持つ
     runtime: YAML（JSON Schema 2020-12）
     runs_on: project-index が読み込むリポジトリの作業ツリー
   - name: 検査と変換のスクリプト
