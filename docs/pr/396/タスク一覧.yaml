@@ -1,0 +1,82 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存リポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: 既存の設計書の棚卸しを伴わない文書の書き換えのため対象外
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めを依頼する Issue でないため対象外
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: mdmark の map と注記の記法は mdmark の develop に入っており、未検証の技術機構に依存しない
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: 文書の記法の書き換えで、ユースケースが変わらない
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 画面を作る変更でない（判定フローチャート『モック要否』）
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面を作る変更でない（判定フローチャート『モック要否』）
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: 単一ユースケース設計
+    status: skipped
+    reason: 文書の記法の書き換えで、ユースケースが変わらない
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: モック作成
+    status: skipped
+    reason: 画面を作る変更でない（判定フローチャート『モック要否』）
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: インターフェース定義設計
+    status: skipped
+    reason: 検査と変換のスクリプトの入出力は変わらない
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: 部品設計
+    status: skipped
+    reason: 画面の部品を作る変更でない
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: 画面を作る変更でない（判定フローチャート『画面設計要否』）
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: モジュール構成設計
+    status: skipped
+    reason: スクリプトの変更は定数 MDMARK_TAG の値だけで、モジュールの構成は変わらない
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: ドキュメント修正
+    status: todo
+    note: テンプレート『判定フローチャート』・判定フローチャート 26 件・規約『ドキュメント管理』『Storybook』『画面の分け方』『GitHub Actions の workflow のテスト』
+  - process: 単体テスト作成
+    status: skipped
+    reason: 定数 MDMARK_TAG の値の変更だけで、追加・変更する単体テストが無い
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
+  - process: 実装
+    status: todo
+    note: scripts/_common.py の MDMARK_TAG を mdmark#562 を含むタグへ上げる
+  - process: 結合テスト作成
+    status: skipped
+    reason: 追加・変更する結合テストが無い。文書の検査は全ての文書の検査（scripts/check_all.py）で確認する
+    updated_by: planner
+    updated_at: '2026-11-14T15:53:28.780528+00:00'
