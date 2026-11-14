@@ -4,6 +4,11 @@ use_cases:
     impact: changed
     detail: AI slop の単語を検知したとき、利用者の画面にも検知した単語が 1 行で出る。dev-docs と project-index のどちらの文書の MCP で書き込んでも照合され、通知の規約の参照先に両方のツールが並ぶ
     depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-312-1.yaml
+    impact: new
+    detail: 開発者がスキルの設計書を変えた後に生成のコマンドを実行し、スキルの SKILL.md を設計書から書き出す
+    depends_on: []
 docs:
   - page: docs/skill/text-review.yaml
     new: false
