@@ -42,7 +42,7 @@
 
 | ファイル | メソッド | 変更種別 | 結果 | 補足 |
 | --- | --- | --- | --- | --- |
-| [tests/unit/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/68d4bc7/tests/unit/slop-check/test_slop_check.py) | 全実行 | 変更 | ✅ | Python 3.14 と 3.12 で全 pass。`systemMessage`・dev-docs の `write_docs`・`tool_label`・`build_system_message` のケースを加えた<br>`テスト結果/20261114142339_68d4bc7_単体テスト.log` |
+| [tests/unit/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/68d4bc7/tests/unit/slop-check/test_slop_check.py) | 全実行 | 変更 | ✅ | Python 3.14 と 3.12 で全 pass。`systemMessage`・dev-docs の `write_docs`・`tool_label`・`build_system_message` のケースを加えた<br>`テスト結果/20261114150103_63086c5_単体テスト.log` |
 
 ### 結合
 
