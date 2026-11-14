@@ -19,3 +19,9 @@ scope_out:
   - item: schemas/template.schema.yaml・schemas/meta.schema.yaml のエントリへの read_tool の記載
     reason: project-index.yaml の documents[] に無く search_docs で参照できない（#205 の終わりの条件が除いている）
     plan: none
+  - item: '`schemas/design/layout.schema.yaml` を `write_docs` の `kind: layout` へ案内する行'
+    reason: 'PR #359 で `paths` の行を作っておらず、`**/docs/layout/*.yaml` と `write_docs`（`operations.id` が `LAY-`）には規約『フォルダ構成の切り方とレビュー』の行が当たる'
+    plan: none
+  - item: 'PR #359 の行に無い設計書のスキーマ（agent・agent_flow・component・launch・llm_call・mcp_server・evaluation・eval_criterion・eval_case）を `write_docs` へ案内する行'
+    reason: 'この種類を使用するプロジェクトが無い（PR #359 のスコープ外と同じ）'
+    plan: none
