@@ -1,0 +1,27 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-148-1.yaml
+    impact: run_only
+    detail: 対応表の NG の単語が増えるだけで、シナリオの記述は変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 追加した行の examples と対応表のコピーの一致を検査する
+    depends_on: []
+docs:
+  - page: docs/word-list/word-list-ai-slop.yaml
+    new: false
+    change: 12 単語の行を追加し、行 kuchi の examples.pass の「入口」を置き換え、行 toosu の pattern から名詞の「通し」を除く
+    status: todo
+  - page: plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json
+    new: false
+    change: scripts/build_word_list.py で再生成する
+    status: todo
+scope_out:
+  - item: knowledge の既存の文書に残る 12 単語の置き換え
+    reason: slop-check の通知は書き込んだ中身だけを照合し、check_all.py は文書の本文を対応表で検査しないため、行の追加で既存の文書の検査は落ちない。置き換えは対応表の行が決定した後に、ヒットした箇所を見て判断する
+    plan: to_file
+  - item: 建物の入口・外の気温など、起点・外部の意味でない「入口」「外の」の除外
+    reason: knowledge の文書でこの意味の使用が無く、誤検出の報告も無い。誤検出が見つかった時点で allow へ追加する
+    plan: none
