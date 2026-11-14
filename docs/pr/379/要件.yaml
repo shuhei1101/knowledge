@@ -1,0 +1,13 @@
+docs:
+  - page: docs/rule/python-testing-layers.yaml
+    new: false
+    change: ファイル配置のツリーに規約『V字モデル』と同じ `nfr/`（非機能要件）を加え、4 種類のテストの比較の表・概要・description にも非機能要件テストを加える
+    status: todo
+use_cases: []
+scope_out:
+  - item: '`python-testing-layers` の結合テスト（`integration/` の単位）と E2E テスト（`e2e/` の下の複合・単一ユースケースの分け方）の配置を `dev-v-model` に統一する'
+    reason: Issue の要望は `nfr/` の追加だけで、結合・E2E の食い違いは今回の変更が入らなくても同じ内容で成り立つ
+    plan: '#380'
+  - item: 規約『フォルダ構成』（`react-core-folder-structure`）への `tests/nfr/` の追加
+    reason: React の規約は `frontend/tests/e2e/` だけを定め、`tests/` の下の種類ごとの配置は Python の規約が受け持つ
+    plan: none
