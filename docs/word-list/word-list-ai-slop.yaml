@@ -127,10 +127,10 @@ entries:
     ng: 口
     ok: [インターフェース]
     pattern: '(?<![㐀-鿿々])口(?![㐀-鿿々])'
-    allow: [受け口]
+    allow: [受け口, 入り口]
     examples:
       hit: [描画の口を用意する]
-      pass: [出口, 窓口, 口調, 起動の受け口]
+      pass: [出口, 窓口, 口調, 起動の受け口, 起動する入り口]
   - id: toi
     ng: 問い
     ok: [質問, リクエスト]
@@ -631,9 +631,10 @@ entries:
   - id: iriguchi
     ng: 入口
     ok: [エンドポイント, 起点, 最初の画面]
+    pattern: '入り?口'
     note: API・URL・処理や画面の起点の意味のとき
     examples:
-      hit: [入口 `POST /prompts`, 起動する入口]
+      hit: [入口 `POST /prompts`, 起動する入口, 起動する入り口]
       pass: [エンドポイント `POST /prompts`, 起動するファイル]
   - id: owari
     ng: 終わり
@@ -699,9 +700,9 @@ entries:
   - id: kimaru
     ng: 決まる
     ok: [決定, 決定事項]
-    pattern: '(?<![㐀-鿿々])決ま(?:る|っ|ら|れ|ろ)'
+    pattern: '(?<![㐀-鿿々])決ま(?:る|っ|ら|れ|ろ|り(?=ま))'
     examples:
-      hit: [決まったこと, 回答で決まる, その資料で新しく決まること]
+      hit: [決まったこと, 回答で決まる, その資料で新しく決まること, 値が決まります]
       pass: [決定事項, 正規表現の記載の決まり]
   - id: furui-ko
     ng: 古い
