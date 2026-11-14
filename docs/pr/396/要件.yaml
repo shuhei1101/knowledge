@@ -51,6 +51,12 @@ docs:
     status: done
     updated_by: planner
     updated_at: '2026-11-14T16:32:59.924354+00:00'
+  - page: docs/rule/convention-doc-presentation.yaml
+    new: false
+    change: diagram-02 の「Mermaid は使用しない」を、Mermaid は mdmark の map の範囲の中でだけ記載する決まりに書き換える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:46:59.713037+00:00'
 scope_out:
   - item: 判定表（decision-table-alias-exclusion・decision-table-poc）とテンプレート『判定表』の表のセルの ※n の注記を、注記の記法へ移す
     reason: 要望は判定フローチャートの注記。表のセルの注記も同じ記法で記載できるが、MDMARK_TAG を mdmark#562 を含むタグへ上げるこの PR を前提にする後続
@@ -58,9 +64,6 @@ scope_out:
   - item: テンプレート『画面設計』の表のセルの ※2
     reason: 表の列の説明の中の注記で、判定フローチャートの注記と別。判定表と同じ後続で扱う
     plan: to_file
-  - item: 規約『表し方の優先順位』の「Mermaid は使用しない」と、map の Mermaid の記載の関係
-    reason: map の Mermaid は mdmark の部品の定義として、シナリオ・インターフェース定義で既に使用している。この PR では規約の文言は変えない判断で、レビューで確定する
-    plan: none
   - item: 文書のマーカーを mdmark の JSON の記載へ移す
     reason: 同じ文書を触るが別の要望で、#316 が扱う
     plan: '#316'
