@@ -2,7 +2,7 @@
 id: python-architecture-layout
 kind: rule
 name: トップレベルレイアウト + feature 内構造
-description: トップレベルと feature 内のフォルダ構成、shared・integrations・server・tests の配置方法を定め、Python プロジェクトのフォルダやファイルを新しく配置するときに参照する。
+description: トップレベルと feature 内のフォルダ構成、shared・integrations・server・ui・tests の配置方法を定め、Python プロジェクトのフォルダやファイルを新しく配置するときに参照する。
 aliases:
   - architecture/レイアウト
 inject_when:
@@ -54,7 +54,8 @@ items:
       ├── integrations/                 # 外部サービス連携（任意）
       ├── {command}/                    # 任意: python -m {pkg}.{command} で起動する入口（__main__.py だけ）
       ├── runtime/                      # 実行時インフラ（任意: queue / workflow / state）
-      └── server/                       # HTTP/WS サーバ（任意: FastAPI 使用時）
+      ├── server/                       # HTTP/WS サーバ（任意: FastAPI 使用時）
+      └── ui/                           # デスクトップの画面の入口（任意: GUI・トレイを持つとき）
       ```
   - id: top-level-02
     group: トップレベル構成
@@ -141,6 +142,26 @@ items:
     body: |-
       route の配置先は `features/{feature}/route.py` を基本にする（feature 内で完結）。
       `server/app.py` から `include_router` で集約。
+  - id: ui-folder-01
+    group: ui/（GUI・トレイを持つとき）
+    name: ui の構成例
+    body: |-
+      ```tree
+      {pkg}/ui/
+      ├── __init__.py
+      ├── controller.py           # main.py から受け取った関数と画面をつなぐ
+      ├── bridge.py               # ワーカースレッドから画面のスレッドへの橋渡し
+      ├── tray.py                 # トレイ（常駐する場合のみ）
+      ├── style.py                # 色・フォント・余白
+      └── windows/                # 画面ごとのウィンドウ（1 画面 1 ファイル）
+      ```
+  - id: ui-folder-02
+    group: ui/（GUI・トレイを持つとき）
+    name: ui の依存の向き
+    body: |-
+      `ui/` は `features/`・`integrations/` を import しない。
+      `main.py` が `features/{feature}/` の公開 API で組んだ関数を `controller.py` で受け取って呼ぶ。
+      層の向きは [依存方向のルール](id:python-architecture-dependency-management#dependency-rules-04) に従う。
   - id: tests-folder-01
     group: tests/
     name: tests の構成
