@@ -79,5 +79,5 @@ scope_out:
     reason: ファイル名ではなく文の書き換えで、同じ内容の open の Issue がある
     plan: '#328'
   - item: 使い方『knowledge を project-index の配信元に登録する』の sources[] の行の例（config が 1 つのパスで id を持たない）と、端末の設定の実際の行（id と config の配列）の書式の違い
-    reason: 'ファイル名の改名とは別の記載のずれ。project-index が両方の書式を受け付けるなら直さなくてよく、受け付けないなら使い方の誤りになるため、今回含めるかをレビューで確定する（現時点の判断: 今回は含めず、起票する）'
-    plan: to_file
+    reason: 'project-index が config の文字列 1 つの書式と id の省略を受け付ける（SourceEntry の _as_list・id: str | None）ため、使い方の例は誤りではない'
+    plan: none
