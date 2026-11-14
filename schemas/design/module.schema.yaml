@@ -742,7 +742,7 @@ properties:
               title: 補足
               description: 説明に収まらない前提・制約。
               x-used-by:
-                - 実装で、戻り値が返却前に満たす条件を、検証の処理か docstring にする。
+                - 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。
         implementations:
           type: array
           title: 実装
@@ -1518,7 +1518,7 @@ $defs:
             title: 補足
             description: 説明に収まらない前提・制約。
             x-used-by:
-              - 実装で、戻り値が返却前に満たす条件を、検証の処理か docstring にする。
+              - 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。
       returns_example:
         $ref: common.schema.yaml#/$defs/markdown
         title: 戻り値例

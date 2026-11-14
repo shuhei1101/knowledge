@@ -91,7 +91,7 @@ items:
       | data_models[].methods[].returns | 戻り値 | object | - | - | - | 関数の戻り値。戻り値を持たないときは型を `None` にする。 | 実装で、戻り値にする。 | - |
       | data_models[].methods[].returns.type | 型 | string | 必須 | - | - | void / None も記載する。 | 実装で、戻り値の型にする。 | - |
       | data_models[].methods[].returns.description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 呼び出し元の実装で、戻り値で分岐する条件を決める。 | - |
-      | data_models[].methods[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、戻り値が返却前に満たす条件を、検証の処理か docstring にする。 | - |
+      | data_models[].methods[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。 | - |
       | data_models[].methods[].returns_example | 戻り値例 | string | - | - | - | 返り値の実形（コードブロック）。void / None は持たない。 | 単体テストで、期待する戻り値の見本にする。 | - |
       | data_models[].methods[].process | 処理 | string | - | - | - | 番号付きのステップ。1 ステップ = 意味のある処理の単位。 | 実装で、処理の順と分岐にする。<br>レビューで、実装の処理が設計の順と一致するかを確認する。 | - |
       | data_models[].methods[].exceptions | 例外 | array | - | - | - | 送出する例外。 | 実装で、送出する例外にする。<br>単体テストで、例外ごとのケースにする。 | - |
@@ -198,7 +198,7 @@ items:
       | classes[].methods[].returns | 戻り値 | object | - | - | - | 関数の戻り値。戻り値を持たないときは型を `None` にする。 | 実装で、戻り値にする。 | - |
       | classes[].methods[].returns.type | 型 | string | 必須 | - | - | void / None も記載する。 | 実装で、戻り値の型にする。 | - |
       | classes[].methods[].returns.description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 呼び出し元の実装で、戻り値で分岐する条件を決める。 | - |
-      | classes[].methods[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、戻り値が返却前に満たす条件を、検証の処理か docstring にする。 | - |
+      | classes[].methods[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。 | - |
       | classes[].methods[].returns_example | 戻り値例 | string | - | - | - | 返り値の実形（コードブロック）。void / None は持たない。 | 単体テストで、期待する戻り値の見本にする。 | - |
       | classes[].methods[].process | 処理 | string | - | - | - | 番号付きのステップ。1 ステップ = 意味のある処理の単位。 | 実装で、処理の順と分岐にする。<br>レビューで、実装の処理が設計の順と一致するかを確認する。 | - |
       | classes[].methods[].exceptions | 例外 | array | - | - | - | 送出する例外。 | 実装で、送出する例外にする。<br>単体テストで、例外ごとのケースにする。 | - |
@@ -289,7 +289,7 @@ items:
       | functions[].returns | 戻り値 | object | - | - | - | 関数の戻り値。戻り値を持たないときは型を `None` にする。 | 実装で、戻り値にする。 | - |
       | functions[].returns.type | 型 | string | 必須 | - | - | void / None も記載する。 | 実装で、戻り値の型にする。 | - |
       | functions[].returns.description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 呼び出し元の実装で、戻り値で分岐する条件を決める。 | - |
-      | functions[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、戻り値が返却前に満たす条件を、検証の処理か docstring にする。 | - |
+      | functions[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。 | - |
       | functions[].returns_example | 戻り値例 | string | - | - | - | 返り値の実形（コードブロック）。void / None は持たない。 | 単体テストで、期待する戻り値の見本にする。 | - |
       | functions[].process | 処理 | string | - | - | - | 番号付きのステップ。1 ステップ = 意味のある処理の単位。 | 実装で、処理の順と分岐にする。<br>レビューで、実装の処理が設計の順と一致するかを確認する。 | - |
       | functions[].exceptions | 例外 | array | - | - | - | 送出する例外。 | 実装で、送出する例外にする。<br>単体テストで、例外ごとのケースにする。 | - |
@@ -344,7 +344,7 @@ items:
       | function_types[].returns | 戻り値 | object | - | - | - | シグネチャの戻り値。 | 実装で、シグネチャの戻り値にする。 | - |
       | function_types[].returns.type | 型 | string | 必須 | - | - | 言語の型の表記。 | 実装で、戻り値の型にする。 | - |
       | function_types[].returns.description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、返却する値を決め、戻り値の docstring にする。 | - |
-      | function_types[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、戻り値が返却前に満たす条件を、検証の処理か docstring にする。 | - |
+      | function_types[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。 | - |
       | function_types[].implementations | 実装 | array | - | - | - | シグネチャを満たす関数と、それを使用する条件。1 要素 = 1 関数。 | 実装で、シグネチャを満たす関数と、それを使用する条件にする。 | - |
       | function_types[].implementations[].target | 実装 | string | 必須 | - | - | この契約を満たす実装の論理名（別の設計書なら参照）。 | 実装で、契約を満たすクラス・関数を作る対象にする。 | - |
       | function_types[].implementations[].notes | 補足 | string | - | - | - | どの条件で使用されるか。 | 実装で、その実装を使用する条件にする。 | - |
@@ -453,7 +453,7 @@ items:
       | stores[].actions[].returns | 戻り値 | object | - | - | - | 関数の戻り値。戻り値を持たないときは型を `None` にする。 | 実装で、戻り値にする。 | - |
       | stores[].actions[].returns.type | 型 | string | 必須 | - | - | void / None も記載する。 | 実装で、戻り値の型にする。 | - |
       | stores[].actions[].returns.description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 呼び出し元の実装で、戻り値で分岐する条件を決める。 | - |
-      | stores[].actions[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、戻り値が返却前に満たす条件を、検証の処理か docstring にする。 | - |
+      | stores[].actions[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。 | - |
       | stores[].actions[].returns_example | 戻り値例 | string | - | - | - | 返り値の実形（コードブロック）。void / None は持たない。 | 単体テストで、期待する戻り値の見本にする。 | - |
       | stores[].actions[].process | 処理 | string | - | - | - | 番号付きのステップ。1 ステップ = 意味のある処理の単位。 | 実装で、処理の順と分岐にする。<br>レビューで、実装の処理が設計の順と一致するかを確認する。 | - |
       | stores[].actions[].exceptions | 例外 | array | - | - | - | 送出する例外。 | 実装で、送出する例外にする。<br>単体テストで、例外ごとのケースにする。 | - |
