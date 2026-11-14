@@ -128,7 +128,7 @@ items:
       | 名前 | 決まり | 悪い例 | 理由 |
       | --- | --- | --- | --- |
       | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
-      | entry | 入口が `trigger` の GitHub Actions の workflow は、`value` に workflow のファイルの `on` のイベントを記載する。 | - | - |
+      | entry | 入口が `trigger` の GitHub Actions の workflow は、`value` に workflow のファイルの `on` のイベントと、起動を絞る条件（`branches`・`paths`・`types`・`schedule` の `cron` 等）を記載する。 | - | - |
       | lead | 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
       | side_effects | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
       | exclusivity | 入口が `trigger` の GitHub Actions の workflow は、workflow のファイルの `concurrency` の `group` と `cancel-in-progress` を記載する。 | - | - |
@@ -212,7 +212,7 @@ items:
       lead: 指定された層のテストの全件をランナーで実行し、ログを成果物に上げる。
       test_file: tests/e2e/workflow/test_test_yml.py
       permissions: '`contents: read`'
-      exclusivity: 同じブランチ・同じ層の実行は、古い方を止める（`concurrency` の `cancel-in-progress`）
+      exclusivity: '同じブランチ・同じ層の実行は、古い方を止める（`concurrency` の `group: test-${{ github.ref }}-${{ inputs.layer }}`・`cancel-in-progress: true`）'
       request:
       - name: layer
         type: unit / integration

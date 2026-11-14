@@ -60,7 +60,7 @@ properties:
       - 実装で、操作の入口（エンドポイント・MCP ツール・画面操作・周期の処理）を作る。
       - 生成で、冒頭のメタ情報の行にする。
     x-rules:
-      - 入口が `trigger` の GitHub Actions の workflow は、`value` に workflow のファイルの `on` のイベントを記載する。
+      - 入口が `trigger` の GitHub Actions の workflow は、`value` に workflow のファイルの `on` のイベントと、起動を絞る条件（`branches`・`paths`・`types`・`schedule` の `cron` 等）を記載する。
     x-shape: attributes
     additionalProperties: false
     required:
@@ -684,7 +684,7 @@ examples:
   lead: 指定された層のテストの全件をランナーで実行し、ログを成果物に上げる。
   test_file: tests/e2e/workflow/test_test_yml.py
   permissions: '`contents: read`'
-  exclusivity: 同じブランチ・同じ層の実行は、古い方を止める（`concurrency` の `cancel-in-progress`）
+  exclusivity: '同じブランチ・同じ層の実行は、古い方を止める（`concurrency` の `group: test-${{ github.ref }}-${{ inputs.layer }}`・`cancel-in-progress: true`）'
   request:
   - name: layer
     type: unit / integration
