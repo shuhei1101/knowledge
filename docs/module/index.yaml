@@ -1,7 +1,7 @@
 summary: "物理ファイルごとの関数・型・定数と、分類の構成図"
 items:
   - page: MOD-148-2.py.yaml
-    summary: "プラグイン slop-check の PostToolUse のフック。書き込んだ中身を対応表のコピーで照合し、ヒットした行の通知の文を `additionalContext` で返却する（IF-148-1）。"
+    summary: "プラグイン slop-check の PostToolUse のフック。書き込んだ中身を対応表のコピーで照合し、ヒットした行の通知の文を `additionalContext` で、検知した単語の 1 行を `systemMessage` で返却する（IF-148-1）。"
   - page: MOD-72-2.py.yaml
     summary: "文書の読み込み・項目のパスと行の対応・違反の型・並列の読み込み"
   - page: MOD-176-1.py.yaml
@@ -12,6 +12,8 @@ items:
     summary: "公開文書の配信のワークフローと手元から呼ぶ Pages の成果物の作成"
   - page: MOD-201-1.py.yaml
     summary: "手元から呼ぶ設計書のテンプレートの生成"
+  - page: MOD-312-1.py.yaml
+    summary: "手元から呼ぶ SKILL.md の生成"
   - page: MOD-148-3.py.yaml
     summary: "手元から呼ぶ対応表のコピーの作成"
   - page: MOD-72-6.py.yaml

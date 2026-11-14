@@ -15,6 +15,7 @@ diagrams:
         pages["Pages の成果物の作成<br>main()<br>rewrite_references()"]
         build["対応表のコピーの作成<br>main()<br>render_copy()"]
         templates["設計書のテンプレートの生成<br>main()<br>load_schemas()<br>build_items()"]
+        skills["SKILL.md の生成<br>main()<br>render_skill()"]
         common["共通<br>load_document()<br>iter_strings()<br>read_texts()"]
         maidcall["maid の呼び出し<br>find_maid()<br>run_maid()"]
         lintcall["lint の呼び出し<br>find_lint_clis()<br>run_markdown_lints()<br>run_yamllint()"]
@@ -31,6 +32,8 @@ diagrams:
         checkall -.-> build
         templates -.-> common
         checkall -.-> templates
+        skills -.-> templates
+        skills -.-> common
       ```
 
       <!-- /map -->
