@@ -21,6 +21,7 @@ uv run --frozen --script scripts/check_all.py [--lint-dir {フォルダ}]
 import argparse
 import io
 import re
+import shutil
 import sys
 import traceback
 from dataclasses import dataclass
@@ -64,12 +65,18 @@ from _lint import (
     LintFinding,
     LintOutputError,
     LintSource,
+    MdmarkCheckError,
+    collect_map_sources,
     collect_sources,
     find_lint_clis,
     load_yamllint_config,
+    run_map_check,
     run_markdown_lints,
     run_yamllint,
 )
+from _workflow import check_workflows
+from build_skills import COMMAND as SKILLS_COMMAND
+from build_skills import SKILLS_DIR, plan_skills
 from build_word_list import COPY, SOURCE, render_copy
 from knowledge_checks import build_id_index, build_name_index, check_document
 
@@ -100,6 +107,12 @@ _NAMED_SCHEMA_KEYWORDS = frozenset({"properties", "patternProperties", "$defs", 
 
 # yamllint を当てる文書の拡張子
 _YAML_SUFFIXES = (".yaml", ".yml")
+
+# workflow のファイルと突き合わせるインターフェース定義の行の schema
+_INTERFACE_SCHEMA = "schemas/design/interface.schema.yaml"
+
+# mdmark を呼ぶ npx のコマンド名
+_NPX = "npx"
 
 # 互いに $ref で引き合うスキーマの置き場所と名前
 _SCHEMAS_GLOB = "schemas/*.schema.yaml"
@@ -158,8 +171,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         # 検査の CLI が 1 つでも無ければ検査を始めない
         lint_clis = find_lint_clis(lint_dir)
-        missing = [name for name, found in lint_clis.items() if found is None]
-        if missing:
+        npx = shutil.which(_NPX)
+        missing = [name for name, found in {**lint_clis, _NPX: npx}.items() if found is None]
+        if missing or npx is None:
             for name in missing:
                 print(_CLI_MISSING.format(name=name), file=sys.stderr)
             return _EXIT_NOT_STARTED
@@ -194,6 +208,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             *check_document_schemas(root, meta),
             *check_word_list_copy(root),
             *check_design_templates(root),
+            *check_skills(root),
+            *check_workflows(root, _interface_docs(targets, texts, root)),
         ):
             print(f"{file_path}:{line}: {path}: {message}")
             count += 1
@@ -205,6 +221,21 @@ def main(argv: Sequence[str] | None = None) -> int:
             return _EXIT_VIOLATIONS
         warnings = _print_lints(findings)
         count += len(findings) - warnings
+        # map の点検は lint の違反を出し終えてから呼び、失敗しても lint の違反は失わない
+        map_sources = [
+            source
+            for target in targets
+            if (text := texts[root / target.path]) is not None
+            for source in collect_map_sources(target.path, text)
+        ]
+        try:
+            map_findings = run_map_check(map_sources, npx)
+        except MdmarkCheckError as error:
+            print(f"mdmark の点検が失敗しました: {error.message}", file=sys.stderr)
+            return _EXIT_NOT_STARTED
+        map_warnings = _print_lints(map_findings)
+        warnings += map_warnings
+        count += len(map_findings) - map_warnings
         print(f"{len(targets)} 件の文書を検査し、違反は {count} 件、警告は {warnings} 件でした")
     except Exception:  # noqa: BLE001 - 想定していない例外は traceback を出して終了コードで返す
         traceback.print_exc()
@@ -634,6 +665,53 @@ def check_design_templates(root: Path) -> list[tuple[str, int, str, str]]:
         )
     return sorted(results, key=lambda result: result[0])
 
+
+
+def _interface_docs(
+    targets: Sequence[Target], texts: Mapping[Path, str | None], root: Path
+) -> list[tuple[PurePosixPath, CommentedMap]]:
+    """インターフェース定義の行の文書のうち、読み込めたものを返却する。"""
+    docs: list[tuple[PurePosixPath, CommentedMap]] = []
+    for target in targets:
+        text = texts[root / target.path]
+        # インターフェース定義でないか、中身を読めない文書は突き合わせない
+        if target.schema != _INTERFACE_SCHEMA or text is None:
+            continue
+        try:
+            docs.append((target.path, load_document(text)))
+        except DocumentError:
+            # 読めない文書の違反は文書 1 件の検査が出す
+            continue
+    return docs
+
+
+def check_skills(root: Path) -> list[tuple[str, int, str, str]]:
+    """スキルの設計書から組み立てた SKILL.md の中身が、skill.path のファイルと一致するかを確認する。"""
+    if not (root / SKILLS_DIR).is_dir():
+        return []
+    try:
+        plans = plan_skills(root)
+    except BuildError as error:
+        return [(str(SKILLS_DIR), 1, "-", f"SKILL.md を組み立てられません: {error}")]
+    results: list[tuple[str, int, str, str]] = []
+    for plan in plans:
+        path = root / plan.path
+        try:
+            current = path.read_bytes()
+        except FileNotFoundError:
+            current = None
+        # 生成と同じバイト列（改行は LF）で比べる
+        if current == plan.text.encode("utf-8"):
+            continue
+        results.append(
+            (
+                str(plan.path),
+                1,
+                "-",
+                f"SKILL.md が設計書 {plan.source} と一致しません。{SKILLS_COMMAND} で作り直してください",
+            )
+        )
+    return sorted(results, key=lambda result: result[0])
 
 if __name__ == "__main__":
     sys.exit(main())

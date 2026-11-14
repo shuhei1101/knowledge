@@ -1,4 +1,4 @@
-"""全ての文書の検査で当てる markdownlint-cli2・textlint・yamllint の、在りかの確認と呼び出しと違反の行の対応。
+"""全ての文書の検査で当てる markdownlint-cli2・textlint・yamllint と mdmark の map の点検の、在りかの確認と呼び出しと違反の行の対応。
 
 check_all.py が同じフォルダから import する。
 """
@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Literal, cast
 from yamllint import linter  # pyright: ignore[reportMissingTypeStubs]
 from yamllint.config import YamlLintConfig  # pyright: ignore[reportMissingTypeStubs]
 
-from _common import DocumentError, format_path, iter_strings, load_document
+from _common import MDMARK_TAG, DocumentError, format_path, iter_strings, load_document
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -56,7 +56,25 @@ _MARKDOWNLINT_LINE = re.compile(
     r"(?P<rule>[^/\s]+)/\S+ (?P<message>.*)$"
 )
 
-type LintTool = Literal["markdownlint", "textlint", "yamllint"]
+# この文字列を含む文字列の項目を map の点検にかける
+MAP_START = "<!-- map -->"
+
+# map の範囲の閉じのマーカー
+_MAP_END = "<!-- /map -->"
+
+# map の点検でつないだ項目の間に挟む空行
+_MAP_SEPARATOR = "\n\n\n"
+
+# mdmark の check --text のずれの行: -:{行}: {種類}: {内容}
+_MDMARK_LINE = re.compile(r"^-:(?P<line>\d+): (?P<kind>[a-z_]+): (?P<message>.*)$")
+
+# mdmark の check --text が点検したときの最後の行: ずれ {件数} 件
+_MDMARK_SUMMARY = re.compile(r"^ずれ \d+ 件$")
+
+# 違反にする mdmark のずれの種類の接頭辞（map の誤り）
+_MAP_KIND_PREFIX = "map_"
+
+type LintTool = Literal["markdownlint", "textlint", "yamllint", "mdmark"]
 
 
 @dataclass(frozen=True)
@@ -88,6 +106,14 @@ class LintFinding:
     warning: bool
 
 
+class MdmarkCheckError(Exception):
+    """mdmark の check --text の終了コードが 0・1 でないか、標準出力の最後の行が ずれ {件数} 件 でない。"""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+        self.message = message
+
+
 class LintOutputError(Exception):
     """markdownlint-cli2・textlint の終了コードが 0・1 でないか、出力が読めない。"""
 
@@ -117,6 +143,96 @@ def collect_sources(path: PurePosixPath, text: str) -> list[LintSource]:
         for parts, line, value in iter_strings(doc)
         if parts and parts[-1] == MARKDOWN_KEY
     ]
+
+
+def collect_map_sources(path: PurePosixPath, text: str) -> list[LintSource]:
+    """YAML の文書 1 件から、値に map の開きのマーカーを含む文字列の項目を取り出す。"""
+    # map の点検は YAML の文書の項目だけに当てる
+    if path.suffix not in {".yaml", ".yml"}:
+        return []
+    try:
+        doc = load_document(text)
+    except DocumentError:
+        # 読めない文書の違反は文書 1 件の検査が出す
+        return []
+    return [
+        LintSource(path, format_path(parts), line, value)
+        for parts, line, value in iter_strings(doc)
+        if MAP_START in value
+    ]
+
+
+def extract_map_mermaid(text: str) -> str | None:
+    """最初の map の範囲の中の、最初の mermaid のコードブロックの中身を返却する。"""
+    start = text.find(MAP_START)
+    if start < 0:
+        return None
+    end = text.find(_MAP_END, start)
+    # 閉じのマーカーが無ければ map の範囲を決められない
+    if end < 0:
+        return None
+    lines = text[start + len(MAP_START) : end].splitlines()
+    try:
+        opening = next(index for index, line in enumerate(lines) if line.strip() == "```mermaid")
+    except StopIteration:
+        return None
+    body: list[str] = []
+    for line in lines[opening + 1 :]:
+        # 閉じのフェンスで mermaid のブロックが終わる
+        if line.strip() == "```":
+            return "\n".join(body)
+        body.append(line)
+    # 閉じのフェンスが無い
+    return None
+
+
+def run_map_check(sources: Sequence[LintSource], npx: str) -> list[LintFinding]:
+    """map を含む全ての項目をつないで mdmark の check --text - を 1 回呼び、map のずれを元の文書の行で返却する。"""
+    if not sources:
+        return []
+    # 項目ごとの、つないだ Markdown の中の開始行（1 始まり）を控えてつなぐ
+    starts: list[int] = []
+    line = 1
+    for source in sources:
+        starts.append(line)
+        line += source.text.count("\n") + _MAP_SEPARATOR.count("\n")
+    joined = _MAP_SEPARATOR.join(source.text for source in sources) + "\n"
+    with tempfile.TemporaryDirectory() as workdir:
+        # 一時のフォルダで呼び、リポジトリの設定ファイルを読ませない
+        result = subprocess.run(  # noqa: S603 - 引数は配列で渡し、シェルを通さない
+            [npx, "-y", f"github:shuhei1101/mdmark#{MDMARK_TAG}", "check", "--text", "-"],
+            cwd=workdir,
+            input=joined,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=False,
+        )
+    lines = [text for text in result.stdout.splitlines() if text.strip()]
+    # 点検したときだけ、終了コードが 0・1 で最後の行が ずれ {件数} 件 になる
+    if result.returncode not in _EXIT_CODES or not lines or not _MDMARK_SUMMARY.match(lines[-1]):
+        message = f"mdmark が終了コード {result.returncode} で終わりました: {result.stderr.strip()}"
+        raise MdmarkCheckError(message)
+    findings: list[LintFinding] = []
+    for text in lines[:-1]:
+        match = _MDMARK_LINE.match(text)
+        # map の誤りの種類だけを違反にし、legacy_mark など他の種類は捨てる
+        if match is None or not match["kind"].startswith(_MAP_KIND_PREFIX):
+            continue
+        number = int(match["line"])
+        # 行を含む項目は、開始行が mdmark の行以下の最後の項目
+        index = max(i for i, start in enumerate(starts) if start <= number)
+        findings.append(
+            _finding(
+                sources[index],
+                number - starts[index] + 1,
+                "mdmark",
+                match["kind"],
+                match["message"],
+                warning=False,
+            )
+        )
+    return findings
 
 
 def _run_cli(name: str, args: Sequence[str], cwd: Path) -> subprocess.CompletedProcess[str]:
