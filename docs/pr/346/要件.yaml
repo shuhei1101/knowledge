@@ -1,0 +1,20 @@
+use_cases:
+  - kind: composite
+    scenario: docs/scenario/SC-72-1.yaml
+    impact: none
+    detail: 導入の手順の使い方から dev-docs のページへのリンク先を直すだけで、導入の流れは変わらない
+    depends_on: []
+docs:
+  - page: docs/guide/guide-setup-docs-mcp.yaml
+    new: false
+    change: prerequisite-01 の dev-docs『dev-docsを入れる』と step-screen-01 の dev-docs『画面で読む』へのリンクを、dev-docs の docs/guide/ のパスに修正する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T01:27:10.006544+00:00'
+scope_out:
+  - item: docs/rule/dev-document-management.yaml の dev-docs の docs/使い方/ を指すリンク
+    reason: '作業 PR #342 が修正する'
+    plan: '#342'
+  - item: docs/library/LIB-137-1.yaml の docs_url（mdmark の v0.8.0 のタグの docs/使い方/ を指す）
+    reason: dev-docs ではなく mdmark の、タグで固定した版のページを指していて、リンク先は実在する
+    plan: none
