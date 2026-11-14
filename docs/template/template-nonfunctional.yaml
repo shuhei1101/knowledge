@@ -49,8 +49,8 @@ items:
       | requirements[].measurement | 測り方 | string | - | - | - | 値を測る方法（測る場所・条件・回数）。 | テストで、値を測る方法にする。 | - |
       | requirements[].test_file | 対応テスト | string | - | - | pattern: `^tests/.+` | 非機能要件テストのファイル（`tests/nfr/test_{英語名}.py`）。測れない項目は持たない（規約『V字モデル』）。 | テストで、非機能要件のテストを作るファイルにする。<br>検査で、テストのファイルがあるかを確認する。 | - |
       | requirements[].verification | 確認の記録 | object | - | - | - | 確認した結果。 | レビューで、実機で確認した結果を確認する。 | `{date: '2026-10-05', device: Windows 11 の PC の Edge, result: 合格, version: Edge 140}` |
-      | requirements[].verification.device | 端末 | string | 必須 | - | - | 確認した端末（OS・ブラウザなど）。 | 保守で、確認した端末と違う端末で確認し直すかを判断する。 | - |
-      | requirements[].verification.version | バージョン | string | 必須 | - | - | 確認した端末のバージョン（OS・ブラウザのバージョン）。 | 保守で、確認したバージョンと違うバージョンで確認し直すかを判断する。 | - |
+      | requirements[].verification.device | 端末 | string | 必須 | - | - | 確認した端末（OS・ブラウザなど）。 | 保守で、確認した端末と違う端末で再確認するかを判断する。 | - |
+      | requirements[].verification.version | バージョン | string | 必須 | - | - | 確認した端末のバージョン（OS・ブラウザのバージョン）。 | 保守で、確認したバージョンと違うバージョンで再確認するかを判断する。 | - |
       | requirements[].verification.date | 確認日 | string | 必須 | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | `YYYY-MM-DD`。 | 保守で、確認の記録が古くなっていないかを判断する。 | - |
       | requirements[].verification.result | 合否 | string | 必須 | `合格` / `不合格` | - | 確認した結果の合否。 | 実装で、不合格の要件を修正する対象にする。 | - |
       | requirements[].verification.detail | 確認内容 | string | - | - | - | 不合格のとき、起きた事象。 | 実装で、不合格の要件を修正するときに、起きた事象から原因を決める。 | - |
@@ -68,12 +68,12 @@ items:
       | requirements[].tests[].notes | 補足 | string | - | - | - | テストの前提（環境・データの量 等）。 | テストで、ケースの準備（環境・データの量）にする。 | - |
       | requirements[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | requirements[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
-      | requirements[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | requirements[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | requirements[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | requirements[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+      | requirements[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
-      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
 
       <!-- /table -->
   - id: key-rules-01
@@ -109,7 +109,7 @@ items:
         source: API-2#
         value: 10 万
         unit: トークン
-        rationale: 内部のシステムプロンプトと出力枠を差し引く
+        rationale: 内部のシステムプロンプトと出力枠を除く
         measurement: API へ渡ったトークン数を数える
         test_file: tests/nfr/test_input_limit.py
         overflow: |-

@@ -46,10 +46,10 @@ items:
       | diagrams | 構成図 | array | - | - | - | 矢印で繋がる塊 1 つ = 1 枚の図。 | 生成で、構成図にする。<br>レビューで、要素どうしの依存の向きを確認する。 | - |
       | diagrams[].name | 塊の論理名 | string | 必須 | - | - | 図が 1 枚なら `全体`。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | diagrams[].diagram | 図 | string | 必須 | - | - | mdmark の map の図。Mermaid の `flowchart` で、要素をノード、依存を矢印にする。 | 生成で、構成図にする。 | - |
-      | data_models | データモデル | array | - | - | - | プロパティ主体の型（dataclass・BaseModel・TypedDict・TS の type 等）。 | 実装で、プロパティ主体の型（dataclass・BaseModel・TypedDict 等）にする。<br>生成で、要素ごとの節にする。 | - |
+      | data_models | データモデル | array | - | - | - | プロパティ主体の型（dataclass・BaseModel・TypedDict・TS の type 等）。 | 実装で、プロパティ主体の型（dataclass・BaseModel・TypedDict 等）にする。<br>生成で、要素ごとのセクションにする。 | - |
       | data_models[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | data_models[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | 生成で、図と見出しの名前にする。 | - |
-      | data_models[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を書くファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
+      | data_models[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を記載するファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
       | data_models[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | 生成で、ユースケースごとの一覧にする。<br>レビューで、ユースケースの変更が及ぶ要素を探す。 | - |
       | data_models[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。 | - |
       | data_models[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、要素の一覧の説明にする。 | - |
@@ -67,7 +67,7 @@ items:
       | data_models[].methods | メソッド | array | - | - | - | 型が持つメソッド。書式は関数と同じ。 | 実装で、型のメソッドにする。 | - |
       | data_models[].methods[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | data_models[].methods[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | 生成で、図と見出しの名前にする。 | - |
-      | data_models[].methods[].container | コンテナ | string | - | - | - | 所属ファイル。 | 実装で、要素を書くファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
+      | data_models[].methods[].container | コンテナ | string | - | - | - | 所属ファイル。 | 実装で、要素を記載するファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
       | data_models[].methods[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | 生成で、ユースケースごとの一覧にする。<br>レビューで、ユースケースの変更が及ぶ要素を探す。 | - |
       | data_models[].methods[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。 | - |
       | data_models[].methods[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、要素の一覧の説明にする。 | - |
@@ -78,20 +78,20 @@ items:
       | data_models[].methods[].is_async | 非同期 | boolean | - | - | - | 非同期関数か。 | 実装で、`async` の関数にするかを決める。 | - |
       | data_models[].methods[].thread_safe | 並行で呼べる | boolean | - | - | - | 並行で呼んでよいか。 | 実装で、ロックの要否を決める。<br>呼び出し元の実装で、並行で呼んでよいかを判断する。 | - |
       | data_models[].methods[].side_effects | 副作用 | string | - | - | - | 引数の書き換え・外への書き込み。 | 実装で、引数の書き換えと外への書き込みにする。<br>単体テストで、副作用を確認する項目にする。 | - |
-      | data_models[].methods[].args | 引数 | array | - | - | - | 引数の表。引数の無い関数は持たない。 | 実装で、関数の引数にする。<br>呼び出し元の実装で、渡す値を決める。 | - |
+      | data_models[].methods[].args | 引数 | array | - | - | - | 引数の表。引数の無い関数は持たない。 | 実装で、関数の引数にする。<br>呼び出し元の実装で、指定する値を決める。 | - |
       | data_models[].methods[].args[].name | 引数名 | string | 必須 | - | - | コード上の引数名。 | 実装で、コード上の名前にする。 | - |
       | data_models[].methods[].args[].title | 論理名 | string | - | - | - | 日本語で表した名前。 | 生成で、表の論理名にする。 | - |
       | data_models[].methods[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で記載する。 | 実装で、型にする。 | - |
       | data_models[].methods[].args[].required | 必須 | boolean | - | - | - | 省けない項目なら `true`。 | 実装で、省けるかを決める。 | - |
       | data_models[].methods[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には記載しない。 | 実装で、省いたときの値にする。 | - |
-      | data_models[].methods[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで渡すかを決める。 | - |
+      | data_models[].methods[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで指定するかを決める。 | - |
       | data_models[].methods[].args[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、入れる値を決め、docstring・コメントの説明にする。 | - |
       | data_models[].methods[].args[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、満たす前提を検証の処理か docstring にする。 | - |
       | data_models[].methods[].args_example | 引数例 | string | - | - | - | 呼び出しのコード 1〜数行（コードブロック）。 | 呼び出し元の実装で、呼び出しの見本にする。 | - |
       | data_models[].methods[].returns | 戻り値 | object | - | - | - | 関数の戻り値。戻り値を持たないときは型を `None` にする。 | 実装で、戻り値にする。 | - |
       | data_models[].methods[].returns.type | 型 | string | 必須 | - | - | void / None も記載する。 | 実装で、戻り値の型にする。 | - |
       | data_models[].methods[].returns.description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 呼び出し元の実装で、戻り値で分岐する条件を決める。 | - |
-      | data_models[].methods[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、戻り値を返す前に満たす条件を、検証の処理か docstring にする。 | - |
+      | data_models[].methods[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。 | - |
       | data_models[].methods[].returns_example | 戻り値例 | string | - | - | - | 返り値の実形（コードブロック）。void / None は持たない。 | 単体テストで、期待する戻り値の見本にする。 | - |
       | data_models[].methods[].process | 処理 | string | - | - | - | 番号付きのステップ。1 ステップ = 意味のある処理の単位。 | 実装で、処理の順と分岐にする。<br>レビューで、実装の処理が設計の順と一致するかを確認する。 | - |
       | data_models[].methods[].exceptions | 例外 | array | - | - | - | 送出する例外。 | 実装で、送出する例外にする。<br>単体テストで、例外ごとのケースにする。 | - |
@@ -123,19 +123,19 @@ items:
       | data_models[].methods[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | data_models[].methods[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | data_models[].methods[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | data_models[].methods[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | data_models[].methods[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | data_models[].methods[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | data_models[].methods[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+      | data_models[].methods[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | data_models[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | data_models[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | data_models[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | data_models[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | data_models[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | data_models[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | data_models[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
-      | enums | Enum | array | - | - | - | 取りうる値の列挙。`Literal` の型エイリアスも含む。 | 実装で、Enum・`Literal` の型にする。<br>生成で、要素ごとの節にする。 | - |
+      | data_models[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
+      | enums | Enum | array | - | - | - | 取りうる値の列挙。`Literal` の型エイリアスも含む。 | 実装で、Enum・`Literal` の型にする。<br>生成で、要素ごとのセクションにする。 | - |
       | enums[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | enums[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | 生成で、図と見出しの名前にする。 | - |
-      | enums[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を書くファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
+      | enums[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を記載するファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
       | enums[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | 生成で、ユースケースごとの一覧にする。<br>レビューで、ユースケースの変更が及ぶ要素を探す。 | - |
       | enums[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。 | - |
       | enums[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、要素の一覧の説明にする。 | - |
@@ -144,18 +144,18 @@ items:
       | enums[].values[].value | 値 | string | 必須 | - | - | 実際に持つ値。 | 実装で、メンバーが持つ値にする。 | - |
       | enums[].values[].member | メンバー名 | string | - | - | - | コード上の識別子。 | 実装で、メンバーの識別子にする。 | - |
       | enums[].values[].title | 論理名 | string | 必須 | - | - | 日本語で表した名前。 | 生成で、表の論理名にする。 | - |
-      | enums[].values[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、メンバーを使い分ける条件を決める。 | - |
+      | enums[].values[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、どのメンバーを使用するかの条件を決める。 | - |
       | enums[].values[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、メンバーを使用する前に満たす前提を、検証の処理か docstring にする。 | - |
       | enums[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | enums[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | enums[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | enums[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | enums[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | enums[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | enums[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
-      | classes | クラス | array | - | - | - | 振る舞いを持つクラス・抽象クラス・インタフェース。 | 実装で、振る舞いを持つクラス・インタフェースにする。<br>生成で、要素ごとの節にする。 | - |
+      | enums[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
+      | classes | クラス | array | - | - | - | 振る舞いを持つクラス・抽象クラス・インタフェース。 | 実装で、振る舞いを持つクラス・インタフェースにする。<br>生成で、要素ごとのセクションにする。 | - |
       | classes[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | classes[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | 生成で、図と見出しの名前にする。 | - |
-      | classes[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を書くファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
+      | classes[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を記載するファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
       | classes[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | 生成で、ユースケースごとの一覧にする。<br>レビューで、ユースケースの変更が及ぶ要素を探す。 | - |
       | classes[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。 | - |
       | classes[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、要素の一覧の説明にする。 | - |
@@ -174,7 +174,7 @@ items:
       | classes[].methods | メソッド | array | - | - | - | インタフェース・抽象クラスの契約のメソッドは引数と戻り値だけを持つ。 | 実装で、クラスのメソッドにする。 | - |
       | classes[].methods[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | classes[].methods[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | 生成で、図と見出しの名前にする。 | - |
-      | classes[].methods[].container | コンテナ | string | - | - | - | 所属ファイル。 | 実装で、要素を書くファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
+      | classes[].methods[].container | コンテナ | string | - | - | - | 所属ファイル。 | 実装で、要素を記載するファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
       | classes[].methods[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | 生成で、ユースケースごとの一覧にする。<br>レビューで、ユースケースの変更が及ぶ要素を探す。 | - |
       | classes[].methods[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。 | - |
       | classes[].methods[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、要素の一覧の説明にする。 | - |
@@ -185,20 +185,20 @@ items:
       | classes[].methods[].is_async | 非同期 | boolean | - | - | - | 非同期関数か。 | 実装で、`async` の関数にするかを決める。 | - |
       | classes[].methods[].thread_safe | 並行で呼べる | boolean | - | - | - | 並行で呼んでよいか。 | 実装で、ロックの要否を決める。<br>呼び出し元の実装で、並行で呼んでよいかを判断する。 | - |
       | classes[].methods[].side_effects | 副作用 | string | - | - | - | 引数の書き換え・外への書き込み。 | 実装で、引数の書き換えと外への書き込みにする。<br>単体テストで、副作用を確認する項目にする。 | - |
-      | classes[].methods[].args | 引数 | array | - | - | - | 引数の表。引数の無い関数は持たない。 | 実装で、関数の引数にする。<br>呼び出し元の実装で、渡す値を決める。 | - |
+      | classes[].methods[].args | 引数 | array | - | - | - | 引数の表。引数の無い関数は持たない。 | 実装で、関数の引数にする。<br>呼び出し元の実装で、指定する値を決める。 | - |
       | classes[].methods[].args[].name | 引数名 | string | 必須 | - | - | コード上の引数名。 | 実装で、コード上の名前にする。 | - |
       | classes[].methods[].args[].title | 論理名 | string | - | - | - | 日本語で表した名前。 | 生成で、表の論理名にする。 | - |
       | classes[].methods[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で記載する。 | 実装で、型にする。 | - |
       | classes[].methods[].args[].required | 必須 | boolean | - | - | - | 省けない項目なら `true`。 | 実装で、省けるかを決める。 | - |
       | classes[].methods[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には記載しない。 | 実装で、省いたときの値にする。 | - |
-      | classes[].methods[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで渡すかを決める。 | - |
+      | classes[].methods[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで指定するかを決める。 | - |
       | classes[].methods[].args[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、入れる値を決め、docstring・コメントの説明にする。 | - |
       | classes[].methods[].args[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、満たす前提を検証の処理か docstring にする。 | - |
       | classes[].methods[].args_example | 引数例 | string | - | - | - | 呼び出しのコード 1〜数行（コードブロック）。 | 呼び出し元の実装で、呼び出しの見本にする。 | - |
       | classes[].methods[].returns | 戻り値 | object | - | - | - | 関数の戻り値。戻り値を持たないときは型を `None` にする。 | 実装で、戻り値にする。 | - |
       | classes[].methods[].returns.type | 型 | string | 必須 | - | - | void / None も記載する。 | 実装で、戻り値の型にする。 | - |
       | classes[].methods[].returns.description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 呼び出し元の実装で、戻り値で分岐する条件を決める。 | - |
-      | classes[].methods[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、戻り値を返す前に満たす条件を、検証の処理か docstring にする。 | - |
+      | classes[].methods[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。 | - |
       | classes[].methods[].returns_example | 戻り値例 | string | - | - | - | 返り値の実形（コードブロック）。void / None は持たない。 | 単体テストで、期待する戻り値の見本にする。 | - |
       | classes[].methods[].process | 処理 | string | - | - | - | 番号付きのステップ。1 ステップ = 意味のある処理の単位。 | 実装で、処理の順と分岐にする。<br>レビューで、実装の処理が設計の順と一致するかを確認する。 | - |
       | classes[].methods[].exceptions | 例外 | array | - | - | - | 送出する例外。 | 実装で、送出する例外にする。<br>単体テストで、例外ごとのケースにする。 | - |
@@ -230,22 +230,22 @@ items:
       | classes[].methods[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | classes[].methods[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | classes[].methods[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | classes[].methods[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | classes[].methods[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | classes[].methods[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | classes[].methods[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
-      | classes[].implementations | 実装 | array | - | - | - | インタフェース・抽象クラスだけが持つ。この契約を満たすクラス。 | 実装で、契約を満たすクラスと、それを使う条件にする。 | - |
+      | classes[].methods[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
+      | classes[].implementations | 実装 | array | - | - | - | インタフェース・抽象クラスだけが持つ。この契約を満たすクラス。 | 実装で、契約を満たすクラスと、それを使用する条件にする。 | - |
       | classes[].implementations[].target | 実装 | string | 必須 | - | - | この契約を満たす実装の論理名（別の設計書なら参照）。 | 実装で、契約を満たすクラス・関数を作る対象にする。 | - |
-      | classes[].implementations[].notes | 補足 | string | - | - | - | どの条件で使用されるか。 | 実装で、その実装を使う条件にする。 | - |
+      | classes[].implementations[].notes | 補足 | string | - | - | - | どの条件で使用されるか。 | 実装で、その実装を使用する条件にする。 | - |
       | classes[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | classes[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | classes[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | classes[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | classes[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | classes[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | classes[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
-      | constants | 定数 | array | - | - | - | 定数。 | 実装で、定数にする。<br>生成で、要素ごとの節にする。 | - |
+      | classes[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
+      | constants | 定数 | array | - | - | - | 定数。 | 実装で、定数にする。<br>生成で、要素ごとのセクションにする。 | - |
       | constants[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | constants[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | 生成で、図と見出しの名前にする。 | - |
-      | constants[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を書くファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
+      | constants[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を記載するファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
       | constants[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | 生成で、ユースケースごとの一覧にする。<br>レビューで、ユースケースの変更が及ぶ要素を探す。 | - |
       | constants[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。 | - |
       | constants[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、要素の一覧の説明にする。 | - |
@@ -254,18 +254,18 @@ items:
       | constants[].entries | 値 | array | - | - | - | 辞書・配列の定数の要素。1 要素 = 1 つの要素。 | 実装で、辞書・配列の定数の要素にする。 | - |
       | constants[].entries[].key | キー | string | 必須 | - | - | 配列は添字。 | 実装で、要素のキー・添字にする。 | - |
       | constants[].entries[].value | 値 | string | 必須 | - | - | 要素の値。辞書の定数ではキーに対応する値。 | 実装で、要素の値にする。 | - |
-      | constants[].entries[].description | 説明 | string | - | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、要素を使い分ける条件を決める。 | - |
+      | constants[].entries[].description | 説明 | string | - | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、どの要素を使用するかの条件を決める。 | - |
       | constants[].entries[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、要素を使用する前に満たす前提を、検証の処理か docstring にする。 | - |
       | constants[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | constants[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | constants[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | constants[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | constants[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | constants[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | constants[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
-      | functions | 関数 | array | - | - | - | 関数・フック。1 関数 = 1 要素で、`container` に所属ファイルを記載する。 | 実装で、関数・フックにする。<br>生成で、要素ごとの節にする。 | - |
+      | constants[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
+      | functions | 関数 | array | - | - | - | 関数・フック。1 関数 = 1 要素で、`container` に所属ファイルを記載する。 | 実装で、関数・フックにする。<br>生成で、要素ごとのセクションにする。 | - |
       | functions[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | functions[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | 生成で、図と見出しの名前にする。 | - |
-      | functions[].container | コンテナ | string | - | - | - | 所属ファイル。 | 実装で、要素を書くファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
+      | functions[].container | コンテナ | string | - | - | - | 所属ファイル。 | 実装で、要素を記載するファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
       | functions[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | 生成で、ユースケースごとの一覧にする。<br>レビューで、ユースケースの変更が及ぶ要素を探す。 | - |
       | functions[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。 | - |
       | functions[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、要素の一覧の説明にする。 | - |
@@ -276,20 +276,20 @@ items:
       | functions[].is_async | 非同期 | boolean | - | - | - | 非同期関数か。 | 実装で、`async` の関数にするかを決める。 | - |
       | functions[].thread_safe | 並行で呼べる | boolean | - | - | - | 並行で呼んでよいか。 | 実装で、ロックの要否を決める。<br>呼び出し元の実装で、並行で呼んでよいかを判断する。 | - |
       | functions[].side_effects | 副作用 | string | - | - | - | 引数の書き換え・外への書き込み。 | 実装で、引数の書き換えと外への書き込みにする。<br>単体テストで、副作用を確認する項目にする。 | - |
-      | functions[].args | 引数 | array | - | - | - | 引数の表。引数の無い関数は持たない。 | 実装で、関数の引数にする。<br>呼び出し元の実装で、渡す値を決める。 | - |
+      | functions[].args | 引数 | array | - | - | - | 引数の表。引数の無い関数は持たない。 | 実装で、関数の引数にする。<br>呼び出し元の実装で、指定する値を決める。 | - |
       | functions[].args[].name | 引数名 | string | 必須 | - | - | コード上の引数名。 | 実装で、コード上の名前にする。 | - |
       | functions[].args[].title | 論理名 | string | - | - | - | 日本語で表した名前。 | 生成で、表の論理名にする。 | - |
       | functions[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で記載する。 | 実装で、型にする。 | - |
       | functions[].args[].required | 必須 | boolean | - | - | - | 省けない項目なら `true`。 | 実装で、省けるかを決める。 | - |
       | functions[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には記載しない。 | 実装で、省いたときの値にする。 | - |
-      | functions[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで渡すかを決める。 | - |
+      | functions[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで指定するかを決める。 | - |
       | functions[].args[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、入れる値を決め、docstring・コメントの説明にする。 | - |
       | functions[].args[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、満たす前提を検証の処理か docstring にする。 | - |
       | functions[].args_example | 引数例 | string | - | - | - | 呼び出しのコード 1〜数行（コードブロック）。 | 呼び出し元の実装で、呼び出しの見本にする。 | - |
       | functions[].returns | 戻り値 | object | - | - | - | 関数の戻り値。戻り値を持たないときは型を `None` にする。 | 実装で、戻り値にする。 | - |
       | functions[].returns.type | 型 | string | 必須 | - | - | void / None も記載する。 | 実装で、戻り値の型にする。 | - |
       | functions[].returns.description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 呼び出し元の実装で、戻り値で分岐する条件を決める。 | - |
-      | functions[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、戻り値を返す前に満たす条件を、検証の処理か docstring にする。 | - |
+      | functions[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。 | - |
       | functions[].returns_example | 戻り値例 | string | - | - | - | 返り値の実形（コードブロック）。void / None は持たない。 | 単体テストで、期待する戻り値の見本にする。 | - |
       | functions[].process | 処理 | string | - | - | - | 番号付きのステップ。1 ステップ = 意味のある処理の単位。 | 実装で、処理の順と分岐にする。<br>レビューで、実装の処理が設計の順と一致するかを確認する。 | - |
       | functions[].exceptions | 例外 | array | - | - | - | 送出する例外。 | 実装で、送出する例外にする。<br>単体テストで、例外ごとのケースにする。 | - |
@@ -321,13 +321,13 @@ items:
       | functions[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | functions[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | functions[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | functions[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | functions[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | functions[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | functions[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
-      | function_types | 関数型 | array | - | - | - | 関数のシグネチャの型（DI・Mock の差し替え用）。処理・例外・単体テストは実装の側が持つ。 | 実装で、DI・Mock の差し替えに使う関数のシグネチャの型にする。<br>生成で、要素ごとの節にする。 | - |
+      | functions[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
+      | function_types | 関数型 | array | - | - | - | 関数のシグネチャの型（DI・Mock の差し替え用）。処理・例外・単体テストは実装の側が持つ。 | 実装で、DI・Mock の差し替えに使用する関数のシグネチャの型にする。<br>生成で、要素ごとのセクションにする。 | - |
       | function_types[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | function_types[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | 生成で、図と見出しの名前にする。 | - |
-      | function_types[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を書くファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
+      | function_types[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を記載するファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
       | function_types[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | 生成で、ユースケースごとの一覧にする。<br>レビューで、ユースケースの変更が及ぶ要素を探す。 | - |
       | function_types[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。 | - |
       | function_types[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、要素の一覧の説明にする。 | - |
@@ -338,26 +338,26 @@ items:
       | function_types[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で記載する。 | 実装で、型にする。 | - |
       | function_types[].args[].required | 必須 | boolean | - | - | - | 省けない項目なら `true`。 | 実装で、省けるかを決める。 | - |
       | function_types[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には記載しない。 | 実装で、省いたときの値にする。 | - |
-      | function_types[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで渡すかを決める。 | - |
+      | function_types[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで指定するかを決める。 | - |
       | function_types[].args[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、入れる値を決め、docstring・コメントの説明にする。 | - |
       | function_types[].args[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、満たす前提を検証の処理か docstring にする。 | - |
       | function_types[].returns | 戻り値 | object | - | - | - | シグネチャの戻り値。 | 実装で、シグネチャの戻り値にする。 | - |
       | function_types[].returns.type | 型 | string | 必須 | - | - | 言語の型の表記。 | 実装で、戻り値の型にする。 | - |
       | function_types[].returns.description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、返却する値を決め、戻り値の docstring にする。 | - |
-      | function_types[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、戻り値を返す前に満たす条件を、検証の処理か docstring にする。 | - |
-      | function_types[].implementations | 実装 | array | - | - | - | シグネチャを満たす関数と、それを使用する条件。1 要素 = 1 関数。 | 実装で、シグネチャを満たす関数と、それを使う条件にする。 | - |
+      | function_types[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。 | - |
+      | function_types[].implementations | 実装 | array | - | - | - | シグネチャを満たす関数と、それを使用する条件。1 要素 = 1 関数。 | 実装で、シグネチャを満たす関数と、それを使用する条件にする。 | - |
       | function_types[].implementations[].target | 実装 | string | 必須 | - | - | この契約を満たす実装の論理名（別の設計書なら参照）。 | 実装で、契約を満たすクラス・関数を作る対象にする。 | - |
-      | function_types[].implementations[].notes | 補足 | string | - | - | - | どの条件で使用されるか。 | 実装で、その実装を使う条件にする。 | - |
+      | function_types[].implementations[].notes | 補足 | string | - | - | - | どの条件で使用されるか。 | 実装で、その実装を使用する条件にする。 | - |
       | function_types[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | function_types[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | function_types[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | function_types[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | function_types[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | function_types[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | function_types[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
-      | components | 画面・コンポーネント | array | - | - | - | 画面とコンポーネント（1 定義 = 1 ファイル）。Custom Element は `props` の代わりに `attributes` / `properties` / `events` を持つ。 | 実装で、画面・コンポーネントにする。<br>生成で、要素ごとの節にする。 | - |
+      | function_types[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
+      | components | 画面・コンポーネント | array | - | - | - | 画面とコンポーネント（1 定義 = 1 ファイル）。Custom Element は `props` の代わりに `attributes` / `properties` / `events` を持つ。 | 実装で、画面・コンポーネントにする。<br>生成で、要素ごとのセクションにする。 | - |
       | components[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | components[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | 生成で、図と見出しの名前にする。 | - |
-      | components[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を書くファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
+      | components[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を記載するファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
       | components[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | 生成で、ユースケースごとの一覧にする。<br>レビューで、ユースケースの変更が及ぶ要素を探す。 | - |
       | components[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。 | - |
       | components[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、要素の一覧の説明にする。 | - |
@@ -408,13 +408,13 @@ items:
       | components[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | components[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | components[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | components[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | components[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | components[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | components[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
-      | stores | ストア | array | - | - | - | 状態管理のオブジェクト（Zustand / Redux 等）。 | 実装で、状態管理のストアにする。<br>生成で、要素ごとの節にする。 | - |
+      | components[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
+      | stores | ストア | array | - | - | - | 状態管理のオブジェクト（Zustand / Redux 等）。 | 実装で、状態管理のストアにする。<br>生成で、要素ごとのセクションにする。 | - |
       | stores[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | stores[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | 生成で、図と見出しの名前にする。 | - |
-      | stores[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を書くファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
+      | stores[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を記載するファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
       | stores[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | 生成で、ユースケースごとの一覧にする。<br>レビューで、ユースケースの変更が及ぶ要素を探す。 | - |
       | stores[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。 | - |
       | stores[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、要素の一覧の説明にする。 | - |
@@ -429,7 +429,7 @@ items:
       | stores[].actions | action | array | - | - | - | ストアの状態を変える action。書式は関数と同じ。 | 実装で、ストアの action にする。 | - |
       | stores[].actions[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | stores[].actions[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | 生成で、図と見出しの名前にする。 | - |
-      | stores[].actions[].container | コンテナ | string | - | - | - | 所属ファイル。 | 実装で、要素を書くファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
+      | stores[].actions[].container | コンテナ | string | - | - | - | 所属ファイル。 | 実装で、要素を記載するファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
       | stores[].actions[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | 生成で、ユースケースごとの一覧にする。<br>レビューで、ユースケースの変更が及ぶ要素を探す。 | - |
       | stores[].actions[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。 | - |
       | stores[].actions[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、要素の一覧の説明にする。 | - |
@@ -440,20 +440,20 @@ items:
       | stores[].actions[].is_async | 非同期 | boolean | - | - | - | 非同期関数か。 | 実装で、`async` の関数にするかを決める。 | - |
       | stores[].actions[].thread_safe | 並行で呼べる | boolean | - | - | - | 並行で呼んでよいか。 | 実装で、ロックの要否を決める。<br>呼び出し元の実装で、並行で呼んでよいかを判断する。 | - |
       | stores[].actions[].side_effects | 副作用 | string | - | - | - | 引数の書き換え・外への書き込み。 | 実装で、引数の書き換えと外への書き込みにする。<br>単体テストで、副作用を確認する項目にする。 | - |
-      | stores[].actions[].args | 引数 | array | - | - | - | 引数の表。引数の無い関数は持たない。 | 実装で、関数の引数にする。<br>呼び出し元の実装で、渡す値を決める。 | - |
+      | stores[].actions[].args | 引数 | array | - | - | - | 引数の表。引数の無い関数は持たない。 | 実装で、関数の引数にする。<br>呼び出し元の実装で、指定する値を決める。 | - |
       | stores[].actions[].args[].name | 引数名 | string | 必須 | - | - | コード上の引数名。 | 実装で、コード上の名前にする。 | - |
       | stores[].actions[].args[].title | 論理名 | string | - | - | - | 日本語で表した名前。 | 生成で、表の論理名にする。 | - |
       | stores[].actions[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で記載する。 | 実装で、型にする。 | - |
       | stores[].actions[].args[].required | 必須 | boolean | - | - | - | 省けない項目なら `true`。 | 実装で、省けるかを決める。 | - |
       | stores[].actions[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には記載しない。 | 実装で、省いたときの値にする。 | - |
-      | stores[].actions[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで渡すかを決める。 | - |
+      | stores[].actions[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで指定するかを決める。 | - |
       | stores[].actions[].args[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、入れる値を決め、docstring・コメントの説明にする。 | - |
       | stores[].actions[].args[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、満たす前提を検証の処理か docstring にする。 | - |
       | stores[].actions[].args_example | 引数例 | string | - | - | - | 呼び出しのコード 1〜数行（コードブロック）。 | 呼び出し元の実装で、呼び出しの見本にする。 | - |
       | stores[].actions[].returns | 戻り値 | object | - | - | - | 関数の戻り値。戻り値を持たないときは型を `None` にする。 | 実装で、戻り値にする。 | - |
       | stores[].actions[].returns.type | 型 | string | 必須 | - | - | void / None も記載する。 | 実装で、戻り値の型にする。 | - |
       | stores[].actions[].returns.description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 呼び出し元の実装で、戻り値で分岐する条件を決める。 | - |
-      | stores[].actions[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、戻り値を返す前に満たす条件を、検証の処理か docstring にする。 | - |
+      | stores[].actions[].returns.notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。 | - |
       | stores[].actions[].returns_example | 戻り値例 | string | - | - | - | 返り値の実形（コードブロック）。void / None は持たない。 | 単体テストで、期待する戻り値の見本にする。 | - |
       | stores[].actions[].process | 処理 | string | - | - | - | 番号付きのステップ。1 ステップ = 意味のある処理の単位。 | 実装で、処理の順と分岐にする。<br>レビューで、実装の処理が設計の順と一致するかを確認する。 | - |
       | stores[].actions[].exceptions | 例外 | array | - | - | - | 送出する例外。 | 実装で、送出する例外にする。<br>単体テストで、例外ごとのケースにする。 | - |
@@ -485,19 +485,19 @@ items:
       | stores[].actions[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | stores[].actions[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | stores[].actions[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | stores[].actions[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | stores[].actions[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | stores[].actions[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | stores[].actions[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+      | stores[].actions[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | stores[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | stores[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | stores[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | stores[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | stores[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | stores[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | stores[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
-      | styles | スタイル | array | - | - | - | CSS のクラス群 1 まとまり。 | 実装で、CSS のクラス群にする。<br>生成で、要素ごとの節にする。 | - |
+      | stores[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
+      | styles | スタイル | array | - | - | - | CSS のクラス群 1 まとまり。 | 実装で、CSS のクラス群にする。<br>生成で、要素ごとのセクションにする。 | - |
       | styles[].name | 物理名 | string | 必須 | - | - | ソースコード上の名前。項目のパスで指すときのキー。 | 実装で、ソースコードの名前にする。<br>設計で、ほかの設計書の参照（`functions[main]`）から要素を指す。 | - |
       | styles[].title | 論理名 | string | 必須 | - | - | 図と見出しに出す名前。 | 生成で、図と見出しの名前にする。 | - |
-      | styles[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を書くファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
+      | styles[].container | コンテナ | string | 必須 | - | - | 所属ファイル。 | 実装で、要素を記載するファイルにする。<br>検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。 | `oauth/service.ts` |
       | styles[].usecase | ユースケース | string | - | - | - | 属するユースケース名。複数で共用するものは `共通`。 | 生成で、ユースケースごとの一覧にする。<br>レビューで、ユースケースの変更が及ぶ要素を探す。 | - |
       | styles[].role | 役割 | string | - | - | - | 設計上のパターン・ロールの短いラベル（`DTO` / `リポジトリ` / `サービス` 等）。 | レビューで、役割（DTO・リポジトリ・サービス）に合う責務と依存の向きかを確認する。 | - |
       | styles[].summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 1 行で何を担うか。 | 生成で、要素の一覧の説明にする。 | - |
@@ -510,12 +510,12 @@ items:
       | styles[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | styles[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | styles[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | styles[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使わない。<br>生成で、状態の表示にする。 | - |
+      | styles[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
       | styles[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
-      | styles[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+      | styles[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
-      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにした節にする。 | - |
+      | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
 
       <!-- /table -->
   - id: key-rules-01

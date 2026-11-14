@@ -66,7 +66,7 @@ properties:
     description: Level 0（外部の境界）と Level 1（主要な処理とデータストア）は必須。Level 2 は複雑な処理だけ。
     x-used-by:
       - 生成で、レベルごとのデータフロー図にする。
-      - 実装で、処理とデータストアの間で受け渡すデータの型を決める。
+      - 実装で、処理とデータストアの間でやり取りするデータの型を決める。
     x-shape: sections
     x-key: name
     minItems: 1
@@ -144,7 +144,7 @@ properties:
           title: 構造
           description: ペイロードの型（`{name, email}`）。
           x-used-by:
-            - 実装で、受け渡すデータの型にする。
+            - 実装で、やり取りするデータの型にする。
         crosses_boundary:
           type: boolean
           title: 信頼境界を越える

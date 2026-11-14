@@ -87,7 +87,7 @@ properties:
     title: 採用状態
     description: 採用の状態（採用・検討中・廃止）。
     x-used-by:
-      - 実装で、採用したライブラリだけを使い、検討中・廃止のものを新しく使わない。
+      - 実装で、採用したライブラリだけを使用し、検討中・廃止のものを新しく使用しない。
     enum:
     - 採用
     - 未採用
@@ -96,7 +96,7 @@ properties:
     title: 使用箇所
     description: 呼び出す境界層のパス（リポジトリの直下から）。エージェントの手順から呼ぶ CLI は手順を持つドキュメントのパス。
     x-used-by:
-      - 保守で、ライブラリを上げる・外すときに修正する境界層のファイルを探す。
+      - 保守で、ライブラリを上げる・削除するときに修正する境界層のファイルを探す。
     items:
       type: string
   upstream:
@@ -104,7 +104,7 @@ properties:
     title: 上流リポジトリ
     description: GitHub の `owner/repo`。規約『不具合の報告』の上流 Issue の検索がここを参照する。
     x-used-by:
-      - 保守で、不具合に当たったときに上流の Issue を検索する。
+      - 保守で、不具合に遭遇したときに上流の Issue を検索する。
     pattern: ^[^/\s]+/[^/\s]+$
   verification:
     type: object
@@ -184,7 +184,7 @@ properties:
         title: バージョンの固定方法
         description: バージョンの固定方法（完全一致・範囲 等）。
         x-used-by:
-          - 保守で、依存を上げるときのバージョンの指定の書き方にする。
+          - 保守で、依存を上げるときのバージョンの指定の記載方法にする。
       support_until:
         type: string
         title: サポート期限
@@ -208,7 +208,7 @@ properties:
     title: ライセンス
     description: 商用利用の可否を確認して記載する。
     x-used-by:
-      - レビューで、配布の形とライセンスが合うかを確認する。
+      - レビューで、配布の形態とライセンスが合うかを確認する。
   official_url:
     type: string
     title: 公式 URL
@@ -244,7 +244,7 @@ properties:
         $ref: common.schema.yaml#/$defs/markdown
         title: 結果
         x-used-by:
-          - 実装で、採用で受け入れた制約を満たす使い方にする。
+          - 実装で、採用で受け入れた制約を満たす使用方法にする。
   install:
     $ref: common.schema.yaml#/$defs/markdown
     title: インストール手順
@@ -258,7 +258,7 @@ properties:
     description: 使用する API・コマンド・設定を単位ごとに並べた一覧。1 要素 = 1 つの単位。
     x-used-by:
       - 実装で、呼ぶ API・コマンドと指定する設定を決める。
-      - 生成で、一覧の表と節にする。
+      - 生成で、一覧の表とセクションにする。
     x-shape: sections
     x-key: name
     minItems: 1
@@ -281,13 +281,13 @@ properties:
           title: バージョン
           description: 一覧を作ったバージョン。
           x-used-by:
-            - 保守で、ライブラリを上げたときに一覧を作り直すかを判断する。
+            - 保守で、ライブラリを上げたときに一覧を再作成するかを判断する。
         entries:
           type: array
           title: 対象
           description: このプロジェクトで使用する対象だけ。一覧の表は各対象の種別・名前・用途から生成する。
           x-used-by:
-            - 実装で、使う関数・コマンドの呼び方にする。
+            - 実装で、使用する関数・コマンドの呼び方にする。
           x-shape: sections
           x-key: name
           minItems: 1
@@ -329,7 +329,7 @@ properties:
                 title: パラメータ
                 description: 使用するものだけでなく主要なパラメータも全て記載する。
                 x-used-by:
-                  - 実装で、渡す引数にする。
+                  - 実装で、指定する引数にする。
                 x-heading: パラメータ
                 x-shape: table
                 x-key: name
@@ -376,7 +376,7 @@ properties:
                       title: 制限
                       description: 値の上限・下限・形式などの制限。
                       x-used-by:
-                        - 実装で、渡す前の検証にする。
+                        - 実装で、指定する前の検証にする。
                     notes:
                       type: string
                       title: 補足
@@ -398,7 +398,7 @@ properties:
                 title: 戻り値
                 description: 単純な値は `name` を `-` にした 1 要素。
                 x-used-by:
-                  - 実装で、戻り値を読む型にする。
+                  - 実装で、戻り値の受け取りに使用する型にする。
                 x-heading: 戻り値
                 x-shape: table
                 x-key: name
@@ -473,7 +473,7 @@ properties:
                 $ref: common.schema.yaml#/$defs/notes
               verification_state:
                 $ref: common.schema.yaml#/$defs/verification_state
-                description: 対象（関数・コマンド・設定のキー 等）の振る舞いを確かめた方法。引数ごとの状態は `params[].verification_state` に記載する。
+                description: 対象（関数・コマンド・設定のキー 等）の振る舞いを確認した方法。引数ごとの状態は `params[].verification_state` に記載する。
               verified_at:
                 $ref: common.schema.yaml#/$defs/verified_at
   limitations:
@@ -481,8 +481,8 @@ properties:
     title: 制限事項
     description: 仕様として常に成り立つ制約。
     x-used-by:
-      - 実装で、ライブラリでできないことを避ける。
-      - レビューで、制限事項に当たる使い方が無いかを確認する。
+      - 実装で、ライブラリでできないことに依存しない。
+      - レビューで、制限事項に該当する使用方法が無いかを確認する。
     x-heading: 制限事項
     x-shape: table
     x-key: item
@@ -508,7 +508,7 @@ properties:
         notes:
           type: string
           title: 補足
-          description: 制限の前提（効くバージョン・設定 等）。
+          description: 制限の前提（有効なバージョン・設定 等）。
           x-used-by:
             - 実装で、制限が有効になるバージョン・設定のときの回避の処理を決める。
   usage_limits:
@@ -551,8 +551,8 @@ properties:
     title: 不具合一覧
     description: 仕様どおりに使用しても期待どおり動かない事象。
     x-used-by:
-      - 実装で、仕様どおりに動かない事象を避ける。
-      - 生成で、不具合一覧の節にする。
+      - 実装で、仕様どおりに動かない事象を回避する。
+      - 生成で、不具合一覧のセクションにする。
     x-rules:
       - こちらの使用方法の誤りだったものは記載しない。
       - 解消を確認したら削除する。
@@ -574,7 +574,7 @@ properties:
           title: タイトル
           description: 事象を 1 行で表したタイトル。
           x-used-by:
-            - 生成で、節の見出しにする。
+            - 生成で、セクションの見出しにする。
         summary:
           $ref: common.schema.yaml#/$defs/summary
           title: 概要
@@ -586,7 +586,7 @@ properties:
           title: 発生日
           description: 事象を確認した日（`YYYY-MM-DD`）。再確認して続いていたら更新する。
           x-used-by:
-            - 保守で、事象が今も続いているかを確認し直す時期を判断する。
+            - 保守で、事象が今も続いているかを再確認する時期を判断する。
           pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
         state:
           type: string
@@ -609,7 +609,7 @@ properties:
           title: 条件
           description: 再現する状況。
           x-used-by:
-            - 実装で、事象を避ける条件にする。
+            - 実装で、事象を回避する条件にする。
             - テストで、事象を再現するケースにする。
           x-shape: list
           items:
@@ -660,7 +660,7 @@ properties:
           title: 解消版
           description: 解消したバージョン。達したら回避策を削除する候補になる。
           x-used-by:
-            - 保守で、解消した版へ上げた後に回避策を外す。
+            - 保守で、解消したバージョンへ上げた後に回避策を削除する。
         refs:
           type: array
           title: 関連
@@ -705,7 +705,7 @@ properties:
     x-shape: sections
     description: 対象固有の解説セクション（セクションの名前 → 本文）。一覧・制限事項・不具合に属さないもの。
     x-used-by:
-      - 実装で、一覧・制限事項・不具合に属さない対象固有の挙動に合わせて使い方を決める。
+      - 実装で、一覧・制限事項・不具合に属さない対象固有の挙動に合わせて使用方法を決める。
 examples:
 - id: LIB-1
   title: react-image-crop

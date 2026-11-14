@@ -121,7 +121,7 @@ properties:
     description: プロパティ主体の型（dataclass・BaseModel・TypedDict・TS の type 等）。
     x-used-by:
       - 実装で、プロパティ主体の型（dataclass・BaseModel・TypedDict 等）にする。
-      - 生成で、要素ごとの節にする。
+      - 生成で、要素ごとのセクションにする。
     x-heading: データモデル
     x-shape: sections
     x-key: name
@@ -152,7 +152,7 @@ properties:
           title: コンテナ
           description: 所属ファイル。
           x-used-by:
-            - 実装で、要素を書くファイルにする。
+            - 実装で、要素を記載するファイルにする。
             - 検査で、設計書の全ての要素が同じ物理ファイルを指すかを確認する。
           examples:
             - oauth/service.ts
@@ -294,7 +294,7 @@ properties:
     description: 取りうる値の列挙。`Literal` の型エイリアスも含む。
     x-used-by:
       - 実装で、Enum・`Literal` の型にする。
-      - 生成で、要素ごとの節にする。
+      - 生成で、要素ごとのセクションにする。
     x-heading: Enum
     x-shape: sections
     x-key: name
@@ -355,7 +355,7 @@ properties:
                 title: 説明
                 description: 値が何を表すか（意味・単位・取りうる範囲）。
                 x-used-by:
-                  - 実装で、メンバーを使い分ける条件を決める。
+                  - 実装で、どのメンバーを使用するかの条件を決める。
               notes:
                 type: string
                 title: 補足
@@ -394,7 +394,7 @@ properties:
     description: 振る舞いを持つクラス・抽象クラス・インタフェース。
     x-used-by:
       - 実装で、振る舞いを持つクラス・インタフェースにする。
-      - 生成で、要素ごとの節にする。
+      - 生成で、要素ごとのセクションにする。
     x-heading: クラス
     x-shape: sections
     x-key: name
@@ -456,7 +456,7 @@ properties:
           title: 実装
           description: インタフェース・抽象クラスだけが持つ。この契約を満たすクラス。
           x-used-by:
-            - 実装で、契約を満たすクラスと、それを使う条件にする。
+            - 実装で、契約を満たすクラスと、それを使用する条件にする。
           x-heading: 実装
           x-shape: table
           x-key: target
@@ -477,7 +477,7 @@ properties:
                 title: 補足
                 description: どの条件で使用されるか。
                 x-used-by:
-                  - 実装で、その実装を使う条件にする。
+                  - 実装で、その実装を使用する条件にする。
         refs:
           type: array
           title: 関連
@@ -510,7 +510,7 @@ properties:
     description: 定数。
     x-used-by:
       - 実装で、定数にする。
-      - 生成で、要素ごとの節にする。
+      - 生成で、要素ごとのセクションにする。
     x-rules:
       - 単純な即値は `value` だけを持ち、辞書・配列は `entries` を持つ。
       - 設定値はここではなく設計書『設定』に記載する。
@@ -572,7 +572,7 @@ properties:
                 title: 説明
                 description: 値が何を表すか（意味・単位・取りうる範囲）。
                 x-used-by:
-                  - 実装で、要素を使い分ける条件を決める。
+                  - 実装で、どの要素を使用するかの条件を決める。
               notes:
                 type: string
                 title: 補足
@@ -611,7 +611,7 @@ properties:
     description: 関数・フック。1 関数 = 1 要素で、`container` に所属ファイルを記載する。
     x-used-by:
       - 実装で、関数・フックにする。
-      - 生成で、要素ごとの節にする。
+      - 生成で、要素ごとのセクションにする。
     x-heading: 関数
     x-shape: sections
     x-key: name
@@ -622,8 +622,8 @@ properties:
     title: 関数型
     description: 関数のシグネチャの型（DI・Mock の差し替え用）。処理・例外・単体テストは実装の側が持つ。
     x-used-by:
-      - 実装で、DI・Mock の差し替えに使う関数のシグネチャの型にする。
-      - 生成で、要素ごとの節にする。
+      - 実装で、DI・Mock の差し替えに使用する関数のシグネチャの型にする。
+      - 生成で、要素ごとのセクションにする。
     x-heading: 関数型
     x-shape: sections
     x-key: name
@@ -695,7 +695,7 @@ properties:
                 title: 指定方法
                 description: '`positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。'
                 x-used-by:
-                  - 実装で、位置・キーワード・依存の注入のどれで渡すかを決める。
+                  - 実装で、位置・キーワード・依存の注入のどれで指定するかを決める。
                 enum:
                 - positional
                 - keyword
@@ -742,13 +742,13 @@ properties:
               title: 補足
               description: 説明に収まらない前提・制約。
               x-used-by:
-                - 実装で、戻り値を返す前に満たす条件を、検証の処理か docstring にする。
+                - 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。
         implementations:
           type: array
           title: 実装
           description: シグネチャを満たす関数と、それを使用する条件。1 要素 = 1 関数。
           x-used-by:
-            - 実装で、シグネチャを満たす関数と、それを使う条件にする。
+            - 実装で、シグネチャを満たす関数と、それを使用する条件にする。
           x-heading: 実装
           x-shape: table
           x-key: target
@@ -785,7 +785,7 @@ properties:
     description: 画面とコンポーネント（1 定義 = 1 ファイル）。Custom Element は `props` の代わりに `attributes` / `properties` / `events` を持つ。
     x-used-by:
       - 実装で、画面・コンポーネントにする。
-      - 生成で、要素ごとの節にする。
+      - 生成で、要素ごとのセクションにする。
     x-heading: 画面・コンポーネント
     x-shape: sections
     x-key: name
@@ -1177,7 +1177,7 @@ properties:
     description: 状態管理のオブジェクト（Zustand / Redux 等）。
     x-used-by:
       - 実装で、状態管理のストアにする。
-      - 生成で、要素ごとの節にする。
+      - 生成で、要素ごとのセクションにする。
     x-heading: ストア
     x-shape: sections
     x-key: name
@@ -1293,7 +1293,7 @@ properties:
     description: CSS のクラス群 1 まとまり。
     x-used-by:
       - 実装で、CSS のクラス群にする。
-      - 生成で、要素ごとの節にする。
+      - 生成で、要素ごとのセクションにする。
     x-heading: スタイル
     x-shape: sections
     x-key: name
@@ -1477,7 +1477,7 @@ $defs:
         description: 引数の表。引数の無い関数は持たない。
         x-used-by:
           - 実装で、関数の引数にする。
-          - 呼び出し元の実装で、渡す値を決める。
+          - 呼び出し元の実装で、指定する値を決める。
         x-heading: 引数
         x-shape: table
         x-key: name
@@ -1518,7 +1518,7 @@ $defs:
             title: 補足
             description: 説明に収まらない前提・制約。
             x-used-by:
-              - 実装で、戻り値を返す前に満たす条件を、検証の処理か docstring にする。
+              - 実装で、返却する戻り値が満たす条件を、検証の処理か docstring にする。
       returns_example:
         $ref: common.schema.yaml#/$defs/markdown
         title: 戻り値例

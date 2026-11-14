@@ -23,8 +23,8 @@ visibility: internal
 rev: 1
 last_reviewed: '2026-11-03'
 sources:
-  - title: 'dev-docs: 文書の MCP'
-    url: https://github.com/shuhei1101/dev-docs/blob/develop/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/%E6%96%87%E6%9B%B8%E3%81%AEMCP.md
+  - title: 'project-index: 文書の MCP'
+    url: https://github.com/shuhei1101/project-index/blob/develop/docs/guide/%E6%96%87%E6%9B%B8%E3%81%AEMCP.md
     note: search_docs の filter
   - title: 'alias-inject: エイリアスのスキーマ'
     url: https://github.com/shuhei1101/alias-inject/blob/develop/docs/%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9/%E3%82%A8%E3%82%A4%E3%83%AA%E3%82%A2%E3%82%B9%E3%81%AE%E3%82%B9%E3%82%AD%E3%83%BC%E3%83%9E.md
@@ -53,7 +53,7 @@ items:
 
       | 要素 | キー | 意味 |
       | --- | --- | --- |
-      | 条件 | `field`・`op`・`values`・`match`・`case_sensitive` | 1 つの項目を比べる。`op` は dev-docs の `filter` の比べ方の名前（`eq`・`ne`・`contains`・`not_contains` など）を使用し、ツールが受け付ける比べ方はその一部に限ってよい。`values` が複数のときは `match: any`（どれか。既定）か `all`（全て） |
+      | 条件 | `field`・`op`・`values`・`match`・`case_sensitive` | 1 つの項目を比べる。`op` は project-index の `filter` の比べ方の名前（`eq`・`ne`・`contains`・`not_contains` など）を使用し、ツールが受け付ける比べ方はその一部に限ってよい。`values` が複数のときは `match: any`（どれか。既定）か `all`（全て） |
       | AND の束 | `and` | 条件か束の配列の全てに該当する |
       | OR の束 | `or` | 条件か束の配列のどれかに該当する |
       | NOT の束 | `not` | 中の 1 つの条件か束に該当しない |

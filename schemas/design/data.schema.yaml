@@ -4,7 +4,7 @@ description: |-
   利用者と決めるデータの構造を、オブジェクトのキーの表で記載する。
   1 ファイル = 書き込みの単位（1 つのトランザクションで整合を保つまとまり）のオブジェクト 1 つ。
 x-rules:
-  - 1 つのオブジェクトにまとめるのは同じ使われ方をするデータだけにし、種類ごとに使用するキーが分かれるものは種類ごとに別のオブジェクトにする。
+  - 1 つのオブジェクトにまとめるのは同じ用途で使用するデータだけにし、種類ごとに使用するキーが分かれるものは種類ごとに別のオブジェクトにする。
   - 1 つのデータが 2 つのオブジェクトにまたがるときは、持ち主のオブジェクトを 1 つ決め、ほかのオブジェクトは `ref` で参照する。
   - 関連の図は記載せず、親子の関連はキーの入れ子、ほかのオブジェクトとの関連は `ref` で表す。
   - テーブルの分け方・物理名・データベースの型・インデックス・削除時の連動は記載せず、ER 図の設計書に記載する。
@@ -39,7 +39,7 @@ properties:
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
-    description: 何のデータで、誰が読み書きするかを 1〜3 行で説明する。
+    description: 何のデータで、誰が参照・更新するかを 1〜3 行で説明する。
     x-used-by:
       - 生成で、ページの冒頭の説明にする。
       - dev-docs の検索で、文書の概要文にする。
@@ -311,12 +311,12 @@ properties:
             - 削除しない
   usage:
     type: array
-    title: 読み書きするインターフェース
-    description: このオブジェクトを読み書きするインターフェース 1 つ = 1 要素。
+    title: 参照・更新するインターフェース
+    description: このオブジェクトを参照・更新するインターフェース 1 つ = 1 要素。
     x-used-by:
-      - レビューで、ユースケースごとに読み書きするキーを確認する。
+      - レビューで、ユースケースごとに参照・更新するキーを確認する。
       - インターフェース定義で、入出力のキーにする。
-    x-heading: 読み書きするインターフェース
+    x-heading: 参照・更新するインターフェース
     x-shape: table
     x-key: interface
     items:
@@ -330,14 +330,14 @@ properties:
         interface:
           type: string
           title: インターフェース
-          description: データを読み書きするインターフェース定義の ID。
+          description: データを参照・更新するインターフェース定義の ID。
           x-used-by:
             - インターフェース定義で、そのインターフェースの設計書を決める。
           examples:
             - 動画の取得
         access:
           type: string
-          title: 読み書き
+          title: 参照・更新
           description: そのインターフェースが読み取るか、書き込むか。
           x-used-by:
             - インターフェース定義で、読み取りか書き込みかを決める。
@@ -347,7 +347,7 @@ properties:
         fields:
           type: array
           title: キー
-          description: 読み書きする `fields[].key`。
+          description: 参照・更新する `fields[].key`。
           x-used-by:
             - インターフェース定義で、入出力のキーにする。
           minItems: 1
@@ -421,7 +421,7 @@ examples:
     title: バージョン
     type: int
     required: true
-    description: 1 から始まり、作成し直すたびに 1 増える
+    description: 1 から始まり、再作成するたびに 1 増える
     example: '2'
   - key: segments[].artifacts[].state
     title: 状態
