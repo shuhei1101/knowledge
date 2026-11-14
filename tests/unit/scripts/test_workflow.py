@@ -3,8 +3,6 @@
 import shutil
 from pathlib import Path, PurePosixPath
 
-from _common import load_document, load_safe
-from _lint import extract_map_mermaid
 from _workflow import (
     check_exclusivity,
     check_request,
@@ -14,6 +12,9 @@ from _workflow import (
     parse_flowchart,
     workflow_path,
 )
+
+from _common import load_document, load_safe
+from _lint import extract_map_mermaid
 
 # リポジトリの直下
 _ROOT = Path(__file__).resolve().parents[3]
@@ -108,7 +109,9 @@ def test_check_workflows_when_differ(tmp_path: Path) -> None:
 def test_workflow_path() -> None:
     """workflow のパスを取り出す（正常系）。"""
     # 準備
-    value = "`.github/workflows/pages.yml`。`develop` への `push` と、手動の起動（`workflow_dispatch`）"
+    value = (
+        "`.github/workflows/pages.yml`。`develop` への `push` と、手動の起動（`workflow_dispatch`）"
+    )
     # 実行
     result = workflow_path(value)
     # 検証
@@ -191,8 +194,7 @@ def test_check_request_when_names_differ() -> None:
     """名前の並びが違う（正常系）。"""
     # 準備
     doc = load_document(
-        'id: "IF-1"\ntitle: "配信"\nentry:\n  kind: trigger\n'
-        '  value: "`.github/workflows/a.yml`"\n'
+        'id: "IF-1"\ntitle: "配信"\nentry:\n  kind: trigger\n  value: "`.github/workflows/a.yml`"\n'
     )
     workflow = load_safe(
         "on:\n  workflow_dispatch:\n    inputs:\n      target:\n        type: string\n"

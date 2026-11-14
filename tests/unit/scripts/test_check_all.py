@@ -82,7 +82,8 @@ def _which_without_npx(name: str, *_args: object, **_kwargs: object) -> str | No
 
 def _failing_map_check(*_args: object) -> list[LintFinding]:
     """map の点検の呼び出しの差し替え。点検の失敗を送出する。"""
-    raise MdmarkCheckError("mdmark の終了コード 1: npm error code E404")
+    message = "mdmark の終了コード 1: npm error code E404"
+    raise MdmarkCheckError(message)
 
 
 # scripts/lint/.yamllint.yaml と同じ内容の設定
@@ -715,9 +716,7 @@ def _skill_repo(tmp_path: Path, files: Mapping[str, str]) -> Path:
 def test_check_skills(tmp_path: Path) -> None:
     """一致する（正常系）。"""
     # 準備
-    root = _skill_repo(
-        tmp_path, {"docs/skill/a.yaml": _SKILL_DOC, "skills/a/SKILL.md": _SKILL_MD}
-    )
+    root = _skill_repo(tmp_path, {"docs/skill/a.yaml": _SKILL_DOC, "skills/a/SKILL.md": _SKILL_MD})
     # 実行
     result = check_all.check_skills(root)
     # 検証
@@ -758,7 +757,8 @@ def test_check_skills_when_build_error(tmp_path: Path) -> None:
     """組み立てられない（正常系）。"""
     # 準備
     root = _skill_repo(
-        tmp_path, {"docs/skill/a.yaml": _SKILL_DOC.replace("  path: skills/a/SKILL.md\n", "  name: a\n")}
+        tmp_path,
+        {"docs/skill/a.yaml": _SKILL_DOC.replace("  path: skills/a/SKILL.md\n", "  name: a\n")},
     )
     # 実行
     result = check_all.check_skills(root)

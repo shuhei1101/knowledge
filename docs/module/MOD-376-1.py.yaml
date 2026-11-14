@@ -170,7 +170,7 @@ functions:
         summary: 含まない値がある
         condition: "`on` に `pull_request`（`paths: [docs/**]`）と `schedule`（`cron: '0 0 * * *'`）を加えた workflow"
         mock: なし
-        expected: '`pull_request`・`docs/**`・`0 0 * * *` の 3 件'
+        expected: '`pull_request`・`docs/**`・`schedule`・`0 0 * * *` の 4 件'
     refs:
       - IF-72-3#constraints[workflow の突き合わせ]
   - name: check_request
@@ -367,3 +367,5 @@ functions:
         expected: '`None`'
     refs:
       - IF-72-3#constraints[workflow の突き合わせ]
+test_files:
+  - tests/unit/scripts/test_workflow.py
