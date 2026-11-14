@@ -117,13 +117,14 @@ flows:
         H->>F: ファイル全体を読み込む
         F-->>H: ファイルが無い
         H->>H: tool_input.new_string を各行で照合する
-        H-->>C: 終了コード 0 と additionalContext に通知の文
+        H-->>C: 終了コード 0 と additionalContext に通知の文、systemMessage に 1 行
       ```
 
       <!-- /map -->
     expected:
       - 終了コードが 0
       - '`hookSpecificOutput.additionalContext` の表が `| 直す | 修正 |` の 1 行'
+      - '`systemMessage` が `AI slop を検知: 直す（Edit）`'
     test: test_normal_when_edited_file_unreadable
   - name: 正常系（NotebookEdit）
     summary: NotebookEdit はセルの新しい中身を照合する
@@ -381,7 +382,7 @@ response_example: |-
   ```json
   {"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": "AI がよく使う単語（AI slop）が入っています。OK の単語に置き換えてください。\n…\n| NG | OK |\n| --- | --- |\n| 直す | 修正 |\n…"}, "systemMessage": "AI slop を検知: 直す・形（Write）"}
   ```
-response_notes: '`decision` と `reason` は返却しない。Claude Code は終了コード 0 の標準出力の JSON の `additionalContext` を、ツールの結果に続けてエージェントのコンテキストへ入れ、`systemMessage` を利用者の画面にだけ表示する'
+response_notes: '`decision` と `reason` は返却しない。Claude Code は終了コード 0 の標準出力の JSON の `additionalContext` を、ツールの結果に続けてエージェントのコンテキストへ入れ、`systemMessage` を利用者の画面に表示する'
 exceptions:
   - name: なし（正常終了）
     condition: 照合を終えた。ヒットの有無に依らず終了コード 0
