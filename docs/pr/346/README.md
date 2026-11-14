@@ -1,0 +1,1 @@
+# 使い方『knowledge を project-index の配信元に登録する』の dev-docs のページへのリンクを docs/guide/ のパスに修正する
