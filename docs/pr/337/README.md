@@ -1,0 +1,1 @@
+# dev-yaml の Mermaid の検査と scripts の maid の検査を削除する
