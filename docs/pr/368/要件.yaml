@@ -1,0 +1,39 @@
+docs:
+  - page: docs/template/template-test-procedure.yaml
+    new: false
+    change: '`layers` の記載方法の lint 層に、GitHub Actions の workflow のファイルを持つリポジトリは actionlint（workflow の書き方・式・参照・`run:` のシェル）を含めることを追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T05:44:26.965974+00:00'
+  - page: docs/template/template-interface.yaml
+    new: false
+    change: 入口が `trigger` の GitHub Actions の workflow の、`entry`（起動の条件）・`request`・`exclusivity`（排他）の記載方法に、workflow のファイルの `on`・`on.workflow_dispatch.inputs`・`concurrency` と一致させることを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T05:44:26.965974+00:00'
+  - page: docs/checksheet/checksheet-review-interface-module.yaml
+    new: false
+    change: workflow の観点の行を、起動の条件・リクエスト・排他・step の `name`・`if` が workflow のファイルと一致するかの突き合わせへ広げる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T05:44:26.965974+00:00'
+  - page: schemas/design/test_procedure.schema.yaml
+    new: false
+    change: '`layers` の `x-rules` に actionlint の行を追加する（テンプレート『テスト実行方法』の生成元）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T05:44:35.182551+00:00'
+  - page: schemas/design/interface.schema.yaml
+    new: false
+    change: '`entry`・`exclusivity`・`request` の `x-rules` に workflow のファイルとの対応を追加する（テンプレート『インターフェース定義』の生成元）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T05:44:35.182551+00:00'
+use_cases: []
+scope_out:
+  - item: knowledge 自身の `docs/test-procedure/TP-72-1.yaml` の lint 層への actionlint の追加
+    reason: 'TP-72-1 は #352 が新しい書式へ書き直すため、#352 の後に行う（計画の行の概要）'
+    plan: '#370'
+  - item: インターフェース定義と workflow のファイルの突き合わせを、検査のスクリプト（`scripts/`）として実装すること
+    reason: この PR では突き合わせを記載方法とレビュー観点で定める（レビューで案 A に確定）。Mermaid の図の step 名・分岐を読む仕組みが今のスクリプトに無く、#361 の範囲を超えるため、後続の Issue で扱う
+    plan: '#369'
