@@ -16,6 +16,7 @@ scenarios:
         actor D as 開発者
         participant C as 全ての文書の検査
         participant V as 検査のスクリプト
+        participant M as mdmark
         D->>C: クローンの直下で起動する
         C->>C: markdownlint・textlint が入ったかを確認する
         loop 全ての文書
@@ -31,6 +32,16 @@ scenarios:
         end
         loop 設計書の種類のテンプレート
           C->>C: スキーマから組み立てた items と、テンプレートの items を比べる
+        end
+        loop map を含む文書の Markdown の項目
+          C->>M: 項目の Markdown の点検
+          M-->>C: map の誤りの無い点検の結果
+        end
+        loop 入口が trigger の workflow のインターフェース定義
+          C->>C: 起動の条件・リクエスト・排他・step の name と if を workflow のファイルと比べる
+        end
+        loop スキルの設計書
+          C->>C: 設計書から組み立てた中身と SKILL.md を比べる
         end
         C->>C: YAML と schemas/ のスキーマに yamllint、Markdown と文書の Markdown の項目に markdownlint と textlint
         C-->>D: 終了コード 0
@@ -190,6 +201,84 @@ scenarios:
       - 文書の検査を始めずに終了コード 2 で終わる
       - 標準エラーに、見つからない CLI の名前（markdownlint-cli2・textlint）が出る
     test: test_error_when_check_cli_missing
+  - name: 異常シナリオ（map の図に誤りがある）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: knowledge のクローン
+        description: map の中の Mermaid に構文の誤りがある文書と、前の記法のマーカーだけを持つ違反の無い文書を 1 つずつ含む
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor D as 開発者
+        participant C as 全ての文書の検査
+        participant M as mdmark
+        D->>C: クローンの直下で起動する
+        loop map を含む文書の Markdown の項目
+          C->>M: 項目の Markdown の点検
+          M-->>C: 点検の結果
+        end
+        C-->>D: map の誤りだけを違反として出して終了コード 1
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コード 1 で終わる
+      - 標準出力に、誤りのある文書のパス・元の文書の YAML の行・mdmark の違反の種類（`map_invalid` など）・内容つきで map の誤りが出る
+      - 前の記法のマーカーの `legacy_mark` は違反として出ない
+    test: test_error_when_maps_are_invalid
+  - name: 異常シナリオ（workflow のファイルがインターフェース定義と食い違う）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: knowledge のクローン
+        description: 入口が `trigger` のインターフェース定義と、`concurrency` の `cancel-in-progress` と step の `name` 1 つがその設計書と違う workflow のファイルを含む
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor D as 開発者
+        participant C as 全ての文書の検査
+        D->>C: クローンの直下で起動する
+        loop 入口が trigger の workflow のインターフェース定義
+          C->>C: 起動の条件・リクエスト・排他・step の name と if を workflow のファイルと比べる
+        end
+        C-->>D: 全ての食い違いを出して終了コード 1
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コード 1 で終わる
+      - 標準出力に 2 つの食い違いの両方が、インターフェース定義のパス・行・項目と、workflow のファイルのパス・値つきで出る
+    test: test_error_when_workflows_differ_from_interfaces
+  - name: 異常シナリオ（SKILL.md が生成元とずれている）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: knowledge のクローン
+        description: '`docs/skill/` のスキルの設計書の工程を 1 つ変更し、生成のコマンドを実行していない'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor D as 開発者
+        participant C as 全ての文書の検査
+        D->>C: クローンの直下で起動する
+        loop スキルの設計書
+          C->>C: 設計書から組み立てた中身と SKILL.md を比べる
+        end
+        C-->>D: ずれた SKILL.md と生成のコマンドを出して終了コード 1
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コード 1 で終わる
+      - 標準出力に、ずれた SKILL.md のパス（`skills/text-review/SKILL.md`）・生成元の設計書のパス・生成のコマンド（`uv run --frozen --script scripts/build_skills.py`）が出る
+    test: test_error_when_skills_out_of_date
 lead: 開発者が knowledge のクローンで全ての文書の検査を実行し、全ての文書へスキーマの検査と検査のスクリプトを適用して、違反があれば終了コードで失敗を返却する。
 primary_actor: 開発者
 trigger: 開発者が knowledge のクローンで全ての文書の検査のコマンド（`uv run --frozen --script scripts/check_all.py`）を実行する
@@ -198,7 +287,7 @@ preconditions:
   - '`scripts/lint/.yamllint-schemas.yaml` が `brackets`・`braces` を `forbid: non-empty` にしている'
   - 開発コマンドの環境構築（クローン直後）を実行してある
 success_guarantee: 違反が無ければ終了コード 0 で終わる。
-minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反・スキーマのフロー形式・設計書のスキーマの誤り・スキーマとずれたテンプレート）が 1 つでもあれば終了コード 1 で終わり、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名。スキーマとずれたテンプレートは、行が `items` のキーの行で、内容が生成元のスキーマのパスと生成のコマンド）が標準出力に出る。文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに終了コード 2 で終わる。
+minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反・スキーマのフロー形式・設計書のスキーマの誤り・スキーマとずれたテンプレート・map の図の誤り・workflow のファイルとインターフェース定義の食い違い・生成元とずれた SKILL.md）が 1 つでもあれば終了コード 1 で終わり、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名。スキーマとずれたテンプレートは、行が `items` のキーの行で、内容が生成元のスキーマのパスと生成のコマンド。map の図の誤りは mdmark の違反の種類。workflow のファイルとの食い違いは、インターフェース定義の項目のパスと workflow のファイルのパスと値。生成元とずれた SKILL.md は、内容が生成元の設計書のパスと生成のコマンド）が標準出力に出る。文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに終了コード 2 で終わる。
 notes:
   E2E テストの動かし方: 全ての文書の検査のコマンド（`uv run --frozen --script scripts/check_all.py`）を、knowledge のクローンで子プロセスとして起動し、終了コードと標準出力で確認する。lint の CLI が入っていない場合は `--lint-dir` に存在しないフォルダを指定して起動する
 test_file: tests/e2e/単一ユースケース/test_開発者が文書の違反を検査する.py
