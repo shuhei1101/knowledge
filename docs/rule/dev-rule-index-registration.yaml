@@ -63,8 +63,12 @@ items:
     group: 記載するときの記載方法
     name: read_tool の記載
     body: |-
-      - project-index の配信元の文書を指すエントリは、`read_tool` の `tool` に `mcp__plugin_project-index_project-index__search_docs`、`args` に `source`・文書の ID で絞る `filter`・`view: full`・`outside_scope: true` を記載する
-      - 設計書のスキーマ（`schemas/design/`）を指すエントリは、`read_tool` の `tool` に `mcp__plugin_project-index_project-index__describe`、`args` に `kind` だけを記載する（`source` は書き込む側のプロジェクトで変わるため記載しない）
+      - project-index の配信元の文書を指すエントリは、`read_tool` を次のとおり記載する
+        - `tool`: `mcp__plugin_project-index_project-index__search_docs`
+        - `args`: `source`・文書の ID で絞る `filter`・`view: full`・`outside_scope: true`
+      - 設計書のスキーマ（`schemas/design/`）を指すエントリは、`read_tool` を次のとおり記載する
+        - `tool`: `mcp__plugin_project-index_project-index__describe`
+        - `args`: `kind` だけ（`source` は書き込む側のプロジェクトで変わるため記載しない）
   - id: index-writing-09
     group: 記載するときの記載方法
     name: 複数の索引がある場合
