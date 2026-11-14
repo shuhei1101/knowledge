@@ -5,7 +5,7 @@
         "matcher": "Write|Edit|NotebookEdit|mcp__.*",
         "hooks": [
           {
-            "_description": "書き込んだ中身を AI slop の単語の対応表で照合し、ヒットした単語と置き換え先を additionalContext で通知する。書き込みは止めない",
+            "_description": "書き込んだ中身を AI slop の単語の対応表で照合し、ヒットした単語と置き換え先を additionalContext で通知し、検知した単語を systemMessage で利用者の画面に 1 行で表示する。書き込みは止めない",
             "type": "command",
             "command": "python3",
             "args": [
