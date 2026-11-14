@@ -1,7 +1,7 @@
 docs:
   - page: docs/rule/dev-vscode-extension-distribution.yaml
     new: false
-    change: 'publish-01 を Marketplace へはタグの push で CI が Trusted Publishing（id-token: write・vsce publish --oidc）で公開し PAT では公開しない決まりに書き直し、publish-02（ポリシーの登録を Repository owner・Repository・Workflow・Environment を添えてユーザーに依頼する）・publish-03（CI の公開の工程ができるまでは .vsix を publisher 管理画面からアップロードする）・publish-04（Open VSX へ公開するかはプロジェクトごとにユーザーへ確認して決める。要件.md の未確定の推奨 B）を追加する。sources に Trusted Publishing の参照先 2 件を追加し、description・タグを合わせる。vsix-02・reinstall-01 は食い違わないため変更しない'
+    change: 'publish-01 を Marketplace へはタグの push で CI が Trusted Publishing（id-token: write・vsce publish --oidc）で公開し PAT では公開しない決まりに書き直し、publish-02（ポリシーの登録を Repository owner・Repository・Workflow・Environment を添えてユーザーに依頼する）・publish-03（CI の公開の工程ができるまでは .vsix を publisher 管理画面からアップロードする）・publish-04（Open VSX へは公開しない。ユーザーの回答 C）を追加する。sources に Marketplace の Trusted Publishing の参照先を追加し、Open VSX の参照先を除き、description・タグを合わせる。vsix-02・reinstall-01 は食い違わないため変更しない'
     status: done
     updated_by: planner
     updated_at: '2026-11-14T03:37:03.391870+00:00'
