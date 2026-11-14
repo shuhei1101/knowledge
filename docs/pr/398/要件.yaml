@@ -1,0 +1,27 @@
+docs:
+  - page: rules.yaml
+    new: false
+    change: '#194: write_docs で設計書を書き込むときに operations.kind に当たる schemas/design のスキーマを案内し、describe(source, kind) で既読にする行を設計書の種類ごとに追加する。#205: knowledge の文書を指す全てのエントリ（schemas/template.schema.yaml・schemas/meta.schema.yaml を除く）に、project-index の search_docs で文書の ID を指定する read_tool を記載する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:08:20.737023+00:00'
+  - page: docs/rule/dev-rule-index-registration.yaml
+    new: false
+    change: '#205: 記載するときの記載方法に read_tool の記載（search_docs で文書の ID・describe で kind）を追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:08:20.737023+00:00'
+use_cases: []
+scope_out:
+  - item: AI Monitor とほかのプロジェクトの索引（rules.global.yaml 等）への read_tool の記載
+    reason: 別のリポジトリの索引で、knowledge の rules.yaml ではない
+    plan: shuhei1101/ai-monitor#3422
+  - item: schemas/template.schema.yaml・schemas/meta.schema.yaml のエントリへの read_tool の記載
+    reason: project-index.yaml の documents[] に無く search_docs で参照できない（#205 の終わりの条件が除いている）
+    plan: none
+  - item: '`schemas/design/layout.schema.yaml` を `write_docs` の `kind: layout` へ案内する行'
+    reason: 'PR #359 で `paths` の行を作っておらず、`**/docs/layout/*.yaml` と `write_docs`（`operations.id` が `LAY-`）には規約『フォルダ構成の切り方とレビュー』の行が当たる'
+    plan: none
+  - item: 設計書のスキーマ（agent・launch・llm_call・mcp_server・evaluation・eval_criterion・eval_case）を `write_docs` へ案内する行
+    reason: knowledge・ai-monitor・rule-inject・project-index・alias-inject・voice-paste の配信の設定の documents[] に、このスキーマを使用する種類が無い
+    plan: none

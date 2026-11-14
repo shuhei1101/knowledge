@@ -21,8 +21,8 @@ tags:
   - name: action:登録
 status: current
 visibility: internal
-rev: 5
-last_reviewed: '2026-11-05'
+rev: 6
+last_reviewed: '2026-11-15'
 items:
   - id: overview
     name: 概要
@@ -59,6 +59,12 @@ items:
     body: |-
       - MCP のツールで書き込む文書の規約は、書き込みのツールを `tools` に、文書の種類・タグを `args` に記載し、`on` に `mcp` を含める
       - ファイルを直接編集する経路も残るときは、`paths` も並べて記載する
+  - id: index-writing-14
+    group: 記載するときの記載方法
+    name: read_tool の記載
+    body: |-
+      - project-index の配信元の文書を指すエントリは、`read_tool` の `tool` に `mcp__plugin_project-index_project-index__search_docs`、`args` に `source`・文書の ID で絞る `filter`・`view: full`・`outside_scope: true` を記載する
+      - 設計書のスキーマ（`schemas/design/`）を指すエントリは、`read_tool` の `tool` に `mcp__plugin_project-index_project-index__describe`、`args` に `kind` だけを記載する（`source` は書き込む側のプロジェクトで変わるため記載しない）
   - id: index-writing-09
     group: 記載するときの記載方法
     name: 複数の索引がある場合
