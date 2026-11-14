@@ -278,7 +278,7 @@ functions:
       description: '`---` で始まり `---` で終わる文字列'
     process: |-
       1. `name`（`skill.name`、無ければ `skill.path` の親のフォルダ名）・`description`（`summary`）・`argument-hint`（`skill.arguments[].hint` を半角空白でつなぐ）・`arguments`・`allowed-tools`・`skill.frontmatter` のキーをこの並びの辞書にし、値が無いキーを除く
-      2. `ruamel.yaml` の `YAML(typ="safe", pure=True)`（`default_flow_style=False`、`allow_unicode=True`、`width` は折り返さない大きな値）で書き出し、`---` の行で囲む
+      2. `ruamel.yaml` の `YAML(typ="rt")`（`default_flow_style=False`、`allow_unicode=True`、`width` は折り返さない大きな値）で書き出し、`---` の行で囲む
     unit_tests:
       - name: test_render_frontmatter
         case: 正常
