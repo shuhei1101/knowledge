@@ -35,3 +35,15 @@
 | インターフェース定義設計 | `08b42c7..be305c7` | - |
 | インターフェース定義設計 | `d2bf9c7..57067b2` | レビューの指摘の修正 |
 | モジュール構成設計 | `be094c0..2d4f057` | - |
+
+## テスト結果
+
+### 単体
+
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| [tests/unit/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/68d4bc7/tests/unit/slop-check/test_slop_check.py) | 全実行 | 変更 | ✅ | Python 3.14 と 3.12 で全 pass。`systemMessage`・dev-docs の `write_docs`・`tool_label`・`build_system_message` のケースを加えた<br>`テスト結果/20261114142339_68d4bc7_単体テスト.log` |
+
+### 結合
+
+なし（結合テスト作成の工程で記入する）
