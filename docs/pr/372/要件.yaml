@@ -101,4 +101,4 @@ scope_out:
     plan: none
   - item: 'project-index の search_docs が kind: layout の文書（LAY-72-1）を引くと Unresolvable: common.schema.yaml#/$defs/summary で落ち、版を引けず write_docs で書き換えられない不具合'
     reason: project-index のスキーマの $ref の解決の不具合で、改名とは関係が無い（base の develop でも起きる）。今回は LAY-72-1 を YAML の直接編集で書き換えた
-    plan: to_file
+    plan: shuhei1101/project-index#78
