@@ -1,0 +1,21 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: run_only
+    detail: スキーマの文言を修正した後に設計書のテンプレートを生成し直す。手順と結果の形は変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 修正した文書・スキーマ・生成したテンプレートが検査に合格するかを確かめる。手順と結果の形は変わらない
+    depends_on: []
+docs:
+  - page: docs/template
+    new: false
+    change: 手書きのテンプレート（TEMPLATE_IDS に載らないもの）の AI slop の単語を対応表の OK の単語へ修正する。生成するテンプレートは schemas/design を修正した後に生成し直す
+    status: todo
+  - page: schemas/design
+    new: false
+    change: description・x-rules などの文の AI slop の単語を対応表の OK の単語へ修正し、index.schema.yaml の 3 行目・18 行目の description から dev/ を削除する
+    status: todo
+scope_out: []
