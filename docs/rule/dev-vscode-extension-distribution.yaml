@@ -2,11 +2,11 @@
 id: dev-vscode-extension-distribution
 kind: rule
 name: VS Code 拡張機能の配布
-description: VS Code 拡張機能のバージョンの更新・.vsix の作成・Marketplace と Open VSX への公開・利用者への入れ替えの依頼・ID の扱いを定め、VS Code 拡張機能のコードを変更するときと公開するときに参照する。
+description: VS Code 拡張機能のバージョンの更新・.vsix の作成・Marketplace と Open VSX への公開・利用者への入れ替えの依頼・ID・アイコンの扱いを定め、VS Code 拡張機能のコードを変更するときと公開するときに参照する。
 status: current
 visibility: internal
-rev: 2
-last_reviewed: '2026-11-12'
+rev: 3
+last_reviewed: '2026-11-14'
 sources:
   - title: 'VS Code: Publishing Extensions'
     url: https://code.visualstudio.com/api/working-with-extensions/publishing-extension
@@ -14,6 +14,9 @@ sources:
   - title: 'Open VSX: Publishing Extensions'
     url: https://github.com/eclipse/openvsx/wiki/Publishing-Extensions
     note: ovsx publish
+  - title: 'VS Code: Extension Manifest'
+    url: https://code.visualstudio.com/api/references/extension-manifest
+    note: icon の寸法
 items:
   - id: overview
     name: 概要
@@ -48,6 +51,17 @@ items:
     group: 拡張機能の ID
     name: 公開後に ID を変えない
     body: "- 拡張機能の ID（`publisher.name`）は公開した後に変えない\n  - 変えると別の拡張機能として載る"
+  - id: icon-01
+    group: アイコン
+    name: 初めて公開する前にアイコンを登録する
+    body: |-
+      - 初めて公開する前に、アイコンを作って `package.json` の `icon` に登録する
+      - 図案は SVG で案を作り、ユーザーに確認して決める
+      - 決まった SVG を原本としてリポジトリに配置し、`.vscodeignore` で .vsix から除く
+        - vsce は拡張機能に同梱した SVG を含むと公開しない
+      - `icon` には原本から書き出した PNG のパスを記載する
+        - `icon` に SVG は使用できない
+        - 寸法は Extension Manifest の `icon` の要件に従う
 tags:
   - name: scope:dev
   - name: topic:拡張機能
@@ -59,3 +73,5 @@ tags:
   - name: tool:github
   - name: action:公開
   - name: action:配布
+  - name: topic:アイコン
+  - name: tool:svg
