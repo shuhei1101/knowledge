@@ -35,14 +35,20 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-14T05:25:49.774485+00:00'
   - process: 単一ユースケース設計
-    status: todo
+    status: skipped
+    reason: knowledge の利用者の操作は変わらない。Mermaid の生成は描く側（dev-docs・ai-monitor）が持つと決めた（要件.md）ため、knowledge に新しい単一ユースケースは要らない
+    updated_by: planner
+    updated_at: '2026-11-14T05:32:24.750056+00:00'
   - process: モック作成
     status: skipped
     reason: 画面を変えない（判定フローチャート『モック要否』）
     updated_by: planner
     updated_at: '2026-11-14T05:25:49.774485+00:00'
   - process: インターフェース定義設計
-    status: todo
+    status: skipped
+    reason: 検査と変換のスクリプトの入出力は変わらない。knowledge の変換は knowledge 自身の文書だけに当たり、ER図・状態遷移の設計書は持たない
+    updated_by: planner
+    updated_at: '2026-11-14T05:32:24.750056+00:00'
   - process: 部品設計
     status: skipped
     reason: 画面の部品を持たない
@@ -54,12 +60,22 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-14T05:25:49.774485+00:00'
   - process: モジュール構成設計
-    status: todo
+    status: skipped
+    reason: スクリプトのコードを変えない
+    updated_by: planner
+    updated_at: '2026-11-14T05:32:24.750056+00:00'
   - process: ドキュメント修正
     status: todo
+    note: schemas/design の interface・common・er・state_transition のスキーマと、テンプレートの生成し直し
   - process: 単体テスト作成
-    status: todo
+    status: skipped
+    reason: スクリプトのコードを変えない
+    updated_by: planner
+    updated_at: '2026-11-14T05:32:24.750056+00:00'
   - process: 実装
-    status: todo
+    status: skipped
+    reason: スクリプトのコードを変えない。スキーマの修正とテンプレートの生成し直しはドキュメント修正で行う
+    updated_by: planner
+    updated_at: '2026-11-14T05:32:24.750056+00:00'
   - process: 結合テスト作成
     status: todo

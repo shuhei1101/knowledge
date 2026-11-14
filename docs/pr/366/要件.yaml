@@ -20,15 +20,15 @@ docs:
     status: todo
   - page: schemas/design/common.schema.yaml
     new: false
-    change: '`er`・`state_transitions` から Mermaid の `erDiagram`・`stateDiagram-v2` を生成する決まりを記載する（#363。knowledge が持つと決めた場合）'
+    change: '`er`・`state_transitions` の `x-used-by` の生成を、Mermaid の `erDiagram`・`stateDiagram-v2` にすると記載する（#363）'
     status: todo
   - page: schemas/design/er.schema.yaml
     new: false
-    change: '`er` の生成の決まりを、生成の持ち主の決定に合わせて記載する（#363）'
+    change: '`er` の `x-used-by` の生成を、Mermaid の `erDiagram` にすると記載する（#363）'
     status: todo
   - page: schemas/design/state_transition.schema.yaml
     new: false
-    change: '`state_transitions` の生成の決まりを、生成の持ち主の決定に合わせて記載する（#363）'
+    change: '`state_transitions` の `x-used-by` の生成を、Mermaid の `stateDiagram-v2` にすると記載する（#363）'
     status: todo
   - page: docs/template/template-er.yaml
     new: false
@@ -39,9 +39,12 @@ docs:
     change: スキーマの変更に合わせて設計書のテンプレートの生成で作り直す（#363）
     status: todo
 scope_out:
-  - item: 描く側（dev-docs・ai-monitor の `design_docs publish`）で、生成した Mermaid を mdmark の map で描く変更
-    reason: knowledge の外のリポジトリの変更。#363 の本文のとおり dev-docs へ別に起票する
-    plan: to_file
+  - item: dev-docs で、ER図・状態遷移の設計書から Mermaid を生成して mdmark の map で描く変更
+    reason: knowledge の外のリポジトリの変更。shuhei1101/dev-docs#201 が持つ
+    plan: shuhei1101/dev-docs#201
   - item: '`architecture`・`dataflow`（`x-diagram` を持つ他の設計書の種類）からの Mermaid の生成'
-    reason: '#363 の要望は ER図・状態遷移に限られる。今回の持ち主の決定を前提に中身が決まる'
+    reason: '#363 の要望は ER図・状態遷移に限られる。図の生成は描く側が持つため、knowledge では対応しない'
+    plan: none
+  - item: ai-monitor の `design_docs publish` で、ER図・状態遷移の設計書を Mermaid の `erDiagram`・`stateDiagram-v2` にして mdmark の map で描く変更
+    reason: knowledge の外のリポジトリの変更。ai-monitor の `features/design_docs/diagrams.py` も `x-diagram` から図を組み立てている
     plan: to_file
