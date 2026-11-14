@@ -1,0 +1,13 @@
+docs:
+  - page: schemas/design/common.schema.yaml
+    new: false
+    change: ER 図の関連の from_column の x-used-by を「実装で、外部キーが参照する列にする。」、to_column の x-used-by を「実装で、外部キーの列にする。」へ入れ替える
+    status: todo
+  - page: docs/template/template-er.yaml
+    new: false
+    change: scripts/build_templates.py で生成し直し、er.relations[].from_column・to_column の行の x-used-by を揃える
+    status: todo
+scope_out:
+  - item: dev-docs の ER 図の描画（to_column の列への `参照:` のコメント）
+    reason: dev-docs のリポジトリの変更で、shuhei1101/dev-docs#210 が扱う
+    plan: none
