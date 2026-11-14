@@ -1,0 +1,1 @@
+# GitHub Actions の workflow のテストの配置 tests/e2e/workflow/ を、規約『V字モデル』の対応表と統一する
