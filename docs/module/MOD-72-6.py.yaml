@@ -1,7 +1,7 @@
 id: "MOD-72-6"
 visibility: internal
 title: "検査と変換のスクリプト / scripts / check_all.py"
-lead: 手元から呼ぶ「全ての文書の検査」。`project-index.yaml` の `documents[]` が指す全ての文書に、スキーマの検査と文書の違反の検査を適用し、`schemas/design/` の設計書のスキーマと `schemas/` の直下のスキーマにスキーマ自身の検査を適用し、終了コードで合否を返却する（IF-72-3）。
+lead: 手元から呼ぶ「全ての文書の検査」。`project-index.yaml` の `documents[]` が指す全ての文書に、スキーマの検査と文書の違反の検査を適用し、`schemas/design/` の設計書のスキーマと `schemas/` の直下のスキーマにスキーマ自身の検査を適用し、SKILL.md と workflow のファイルを生成元・インターフェース定義と比べ、終了コードで合否を返却する（IF-72-3）。
 data_models:
   - name: Target
     title: 検査する文書
@@ -74,10 +74,10 @@ functions:
         description: コマンドの引数。`None` は `sys.argv[1:]`。`--lint-dir`（既定は `DEFAULT_LINT_DIR`）だけを取る
     returns:
       type: int
-      description: 終了コード。`0` = 違反なし、`1` = 違反が 1 件以上か想定していない例外、`2` = 検査を始めなかった
+      description: 終了コード。`0` = 違反なし、`1` = 違反が 1 件以上か想定していない例外、`2` = 検査を始めなかったか mdmark の点検が失敗した
     process: |-
       1. argparse で引数を読み込み、標準出力を UTF-8 にする
-      2. lint の CLI の在りかを確認する（lint の CLI の在りかの確認）
+      2. lint の CLI の在りかを確認し（lint の CLI の在りかの確認）、`shutil.which("npx")` で npx を探す
          - 見つからない CLI がある場合、見つからない CLI ごとに標準エラーへ `{CLI} がありません。開発コマンドの『環境構築（クローン直後）』で入れてください` を出し `2` を返却する
       3. 作業ディレクトリの `project-index.yaml` の `documents[]` を読み込む（project-index.yaml の読み込み）
          - 読み込めない project-index.yaml の場合、標準エラーへ理由を出し `2` を返却する
@@ -89,8 +89,11 @@ functions:
       8. 設計書のスキーマと `schemas/` の直下のスキーマを検査し（設計書のスキーマの検査・文書の種類のスキーマの検査）、違反を同じ形式の行で出す
       9. 対応表のコピーを検査し（対応表のコピーの検査）、違反を同じ形式の行で出す
          設計書のテンプレートを検査し（設計書のテンプレートの検査）、違反を同じ形式の行で出す
+         SKILL.md を検査し（SKILL.md の検査）、違反を同じ形式の行で出す
+         5 で読み込んだ文書のうち、`schema` が `schemas/design/interface.schema.yaml` の文書を workflow のファイルと突き合わせ（workflow のファイルの突き合わせ）、違反を同じ形式の行で出す
       10. lint を適用する（lint の検査）。違反を `{ファイルのパス}:{行}: {項目のパス}: {tool}/{rule}: {message}`、`warning` の違反は `{内容}` の前に `warning: ` を付けた行で、文書のパスと行の順に出す
          - 読み込めない lint の出力の場合、標準エラーへ理由を出し `1` を返却する
+         - 失敗した mdmark の点検の場合、それまでの違反の行を出した後、標準エラーへ `mdmark の点検が失敗しました: {理由}` を出し `2` を返却する
       11. 最後に `{文書の数} 件の文書を検査し、違反は {違反の数} 件、警告は {警告の数} 件でした` を出し、違反があれば `1`、無ければ `0` を返却する（警告は数えない）
          - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返却する
     unit_tests:
@@ -154,6 +157,18 @@ functions:
         condition: 違反の無いリポジトリに、`common.schema.yaml#/$defs/id` を `$ref` で指す `schemas/design/scenario.schema.yaml` と `schemas/design/common.schema.yaml` と、`schema` がそのスキーマの `docs/scenario/` の行と、スキーマに合う設計書 1 件を加える（`schemas/` の直下に `common.schema.yaml` を配置しない）
         mock: lint の CLI の在りかの確認を差し替える。lint の検査を、受け取った `targets` を記録して空を返却する関数に差し替える
         expected: '`0` を返却し、最後の行が文書 3 件・違反 0 件で、lint の検査に指定した `targets` に設計書がある'
+      - name: test_main_when_npx_missing
+        case: 正常
+        summary: npx が無い
+        condition: 違反の無いリポジトリ
+        mock: lint の CLI の在りかの確認を差し替える。`shutil.which` を `npx` に `None` を返却する関数に差し替える
+        expected: '`2` を返却し、標準エラーに `npx` の行が出る'
+      - name: test_main_when_mdmark_check_fails
+        case: 正常
+        summary: mdmark の点検が失敗する
+        condition: '`description` の無い文書を持つリポジトリ'
+        mock: lint の CLI の在りかの確認を差し替える。lint の検査を `MdmarkCheckError` を送出する関数に差し替える
+        expected: '`2` を返却し、標準出力にスキーマの違反の行、標準エラーに `mdmark の点検が失敗しました` が出る'
     callees:
       - '#functions[load_meta_validator]'
       - MOD-176-1#functions[find_lint_clis]
@@ -161,6 +176,8 @@ functions:
       - MOD-72-2#functions[read_texts]
       - MOD-72-4#functions[build_id_index]
       - MOD-72-4#functions[build_name_index]
+      - '#functions[check_skills]'
+      - MOD-376-1#functions[check_workflows]
     refs:
       - IF-72-3#
   - name: check_lints
@@ -170,7 +187,7 @@ functions:
     usecase: 全ての文書の検査
     role: サービス
     scope: public
-    summary: 設計書を含む全ての文書の Markdown に markdownlint-cli2・textlint、YAML のファイルと `schemas/` のスキーマに yamllint を適用する
+    summary: 設計書を含む全ての文書の Markdown に markdownlint-cli2・textlint、YAML のファイルと `schemas/` のスキーマに yamllint、文書の map に mdmark の点検を適用する
     args:
       - name: root
         title: リポジトリの直下
@@ -197,6 +214,11 @@ functions:
         type: Mapping[str, str]
         required: true
         description: '`find_lint_clis` が返却した絶対パス'
+      - name: npx
+        title: npx の実行ファイル
+        type: str
+        required: true
+        description: '`shutil.which("npx")` が返却した絶対パス'
     returns:
       type: list[LintFinding]
       description: 文書のパスと行の順の違反
@@ -204,7 +226,8 @@ functions:
       1. 中身の読み込めた文書ごとに Markdown を取り出し（lint を適用する Markdown の取り出し）、まとめて Markdown の lint を呼ぶ（Markdown の lint の呼び出し）
       2. yamllint の設定を読み込み（yamllint の設定の読み込み）、拡張子が `.yaml`・`.yml` の文書と、`YAMLLINT_EXTRA` のうち在るファイルに yamllint を適用する（yamllint の呼び出し）
       3. `YAMLLINT_SCHEMAS_CONFIG` の設定を読み込み（yamllint の設定の読み込み）、`schemas/*.schema.yaml` と `DESIGN_SCHEMAS_DIR` の `*.schema.yaml` をパスの順に UTF-8 で読み込んで yamllint を適用する（yamllint の呼び出し）。UTF-8 で読み込めないファイルは、違反を設計書のスキーマの検査と文書の種類のスキーマの検査が出すため、yamllint を適用せずに飛ばす
-      4. パスと行の順に並べて返却する
+      4. 中身の読み込めた文書ごとに map を含む項目を取り出し（map を含む項目の取り出し）、まとめて map の点検を呼ぶ（map の点検の呼び出し）。`MdmarkCheckError` はそのまま送出する
+      5. パスと行の順に並べて返却する
     unit_tests:
       - name: test_check_lints
         case: 正常
@@ -229,6 +252,8 @@ functions:
       - MOD-176-1#functions[run_markdown_lints]
       - MOD-176-1#functions[load_yamllint_config]
       - MOD-176-1#functions[run_yamllint]
+      - MOD-176-1#functions[collect_map_sources]
+      - MOD-176-1#functions[run_map_check]
     refs:
       - IF-72-3#constraints[lint の適用先]
       - IF-72-3#constraints[lint の設定]
@@ -720,6 +745,64 @@ functions:
       - MOD-72-2#functions[line_of]
       - MOD-72-2#functions[format_path]
       - MOD-72-4#functions[check_document]
+  - name: check_skills
+    title: SKILL.md の検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: スキルの設計書から組み立てた SKILL.md の中身が、`skill.path` のファイルと一致するかを確認する
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`SKILLS_DIR`・`skill.path` の起点'
+    returns:
+      type: list[tuple[str, int, str, str]]
+      description: （ファイルのパス、行、項目のパス、内容）。全て一致すれば空
+    process: |-
+      1. `SKILLS_DIR` が無ければ空を返却する
+      2. 書き出す SKILL.md を組み立てる（書き出す SKILL.md の組み立て）
+         - `BuildError` の場合、`("docs/skill", 1, "-", "SKILL.md を組み立てられません: {理由}")` の 1 件を返却する
+      3. 組み立てた SKILL.md ごとに、`root / path` のバイト列と `text` を UTF-8 にしたバイト列を比べる
+         - 無いか違う場合、`(SKILL.md のパス, 1, "-", "SKILL.md が設計書 {source} と一致しません。{COMMAND} で作り直してください")` を追加する（`COMMAND` は「SKILL.md の生成」の定数）
+      4. 追加した違反をパスの順に返却する
+    unit_tests:
+      - name: test_check_skills
+        case: 正常
+        summary: 一致する
+        condition: '`agent_flow`・`common` のスキーマと、`docs/skill/a.yaml` と生成した `skills/a/SKILL.md`'
+        mock: なし（一時ディレクトリ）
+        expected: 空
+      - name: test_check_skills_when_stale
+        case: 正常
+        summary: 一致しない
+        condition: '`docs/skill/a.yaml` の工程を 1 つ変更する前に生成した `skills/a/SKILL.md`'
+        mock: なし（一時ディレクトリ）
+        expected: 1 件で、パスが `skills/a/SKILL.md`、行が 1、内容に `docs/skill/a.yaml` と `build_skills.py` がある
+      - name: test_check_skills_when_missing
+        case: 正常
+        summary: SKILL.md が無い
+        condition: '`docs/skill/a.yaml` だけで `skills/a/SKILL.md` が無い'
+        mock: なし（一時ディレクトリ）
+        expected: 1 件で、パスが `skills/a/SKILL.md`
+      - name: test_check_skills_when_build_error
+        case: 正常
+        summary: 組み立てられない
+        condition: '`skill.path` の無い `docs/skill/a.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: 1 件で、パスが `docs/skill`、内容に `SKILL.md を組み立てられません`
+      - name: test_check_skills_when_no_skill_dir
+        case: 正常
+        summary: docs/skill/ が無い
+        condition: '`docs/skill/` を持たない一時フォルダ'
+        mock: なし（一時ディレクトリ）
+        expected: 空
+    callees:
+      - MOD-312-1#functions[plan_skills]
+    refs:
+      - IF-72-3#constraints[SKILL.md]
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と `jsonschema>=4.26.0`（LIB-72-2）と `yamllint==1.38.0`（LIB-176-3）を記載し、`knowledge_checks.py`・`build_word_list.py`・`_lint.py` を同じフォルダから import する。
 test_files:

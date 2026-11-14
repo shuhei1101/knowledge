@@ -19,6 +19,9 @@ data_models:
       - name: text
         type: str
         description: 組み立てた SKILL.md の中身（末尾は改行 1 つ）
+      - name: source
+        type: PurePosixPath
+        description: 生成元の設計書のリポジトリの直下からのパス。「全ての文書の検査」の SKILL.md の違反に出す
 constants:
   - name: SKILLS_DIR
     title: スキルの設計書のフォルダ
@@ -125,7 +128,7 @@ functions:
         summary: skill だけを組み立てる
         condition: '`type: skill` が 1 件、`type: flow` が 1 件の一時フォルダ'
         mock: なし（一時ディレクトリ）
-        expected: '`skill` の設計書の 1 件だけを返却する'
+        expected: '`skill` の設計書の 1 件だけを返却し、`source` がその設計書のパス'
       - name: test_plan_skills_when_schema_invalid
         case: 異常
         summary: スキーマに合わない設計書

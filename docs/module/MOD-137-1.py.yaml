@@ -38,12 +38,6 @@ data_models:
         type: str
         description: 標準エラーへ出す理由。失敗した子プロセスの標準エラーを続ける
 constants:
-  - name: MDMARK_TAG
-    title: mdmark のタグ
-    container: scripts/build_pages.py
-    usecase: Pages の成果物の作成
-    summary: '`npx` で呼ぶ mdmark のバージョン。外部ライブラリ『mdmark』の採用バージョン（LIB-137-1）と統一する'
-    value: '"v0.8.0"'
   - name: DEVELOP_BLOB_URL
     title: develop のファイルの URL
     container: scripts/build_pages.py
