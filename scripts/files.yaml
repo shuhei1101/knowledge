@@ -14,7 +14,7 @@ files:
     tags: [topic:変換, topic:markdown, tool:dev-docs, tool:mdmark]
   - path: check_all.py
     name: 全ての文書の検査
-    description: project-index.yaml が指す全ての文書にスキーマの検査と文書の違反の検査を当て、手元のコマンドで合否を返す。検査の範囲や出力を変えるときに参照する。
+    description: project-index.yaml が指す全ての文書にスキーマの検査と文書の違反の検査を当て、SKILL.md と workflow のファイルを生成元・インターフェース定義と比べ、手元のコマンドで合否を返す。検査の範囲や出力を変えるときに参照する。
     tags: [topic:検査, topic:スキーマ, tool:jsonschema]
   - path: build_pages.py
     name: Pages の成果物の作成
@@ -34,7 +34,7 @@ files:
     tags: [topic:スキル, topic:生成, tool:ruamel.yaml]
   - path: _lint.py
     name: lint の呼び出し
-    description: markdownlint-cli2・textlint・yamllint の在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応を受け持つ。lint の CLI のバージョンを上げるときや、CLI の出力の読み方を変えるときに参照する。
+    description: markdownlint-cli2・textlint・yamllint と mdmark の map の点検の、在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応を受け持つ。lint の CLI のバージョンを上げるときや、CLI の出力の読み方を変えるときに参照する。
     tags:
       - topic:検査
       - topic:lint
@@ -42,6 +42,14 @@ files:
       - tool:textlint
       - tool:yamllint
     id: scripts/_lint.py
+  - path: _workflow.py
+    name: workflow の突き合わせ
+    description: 入口が trigger のインターフェース定義と GitHub Actions の workflow のファイルの、起動の条件・リクエスト・排他・step・分岐の食い違いを出す。突き合わせる項目や flowchart の読み取りを変えるときに参照する。
+    tags:
+      - topic:検査
+      - topic:ci
+      - tool:github
+      - tool:mermaid
   - path: lint/no-inline-strong.mjs
     name: 文中の太字の検査
     description: markdownlint のカスタムルールとして、太字（strong）を違反にする。太字の検査の対象や違反の内容を変えるときに参照する。
