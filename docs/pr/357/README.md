@@ -1,0 +1,1 @@
+# 規約『VS Code 拡張機能の配布』に、Marketplace へ Trusted Publishing でタグから自動公開する決まりを追加する
