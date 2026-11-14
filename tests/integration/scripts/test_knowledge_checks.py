@@ -264,4 +264,3 @@ def test_normal_when_invalid_yaml(run_script: RunScript, repo_factory: RepoFacto
     assert len(violations) == 1
     assert violations[0]["path"] == "$"
     assert " 行目: " in violations[0]["rule"]
-
