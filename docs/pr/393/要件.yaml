@@ -1,0 +1,10 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: none
+    detail: 文書とスキーマのファイルを変えず、検査の結果を変えない
+    depends_on: []
+scope_out:
+  - item: shuhei1101/alias-inject#108 の `project-index.yaml` の `ref` を `design-schemas/v8.3.0` へ上げる修正
+    reason: alias-inject の作業 PR の作業。タグを作成したら shuhei1101/alias-inject#107 へタグの名前を記載して知らせる
+    plan: none
