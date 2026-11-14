@@ -16,20 +16,12 @@ flows:
       <!-- map -->
 
       ```mermaid
-      sequenceDiagram
-        participant G as GitHub Actions
-        participant W as 公開文書の配信のワークフロー
-        participant S as Pages の成果物の作成
-        participant P as GitHub Pages
-        G->>W: develop への push で起動する
-        W->>W: Node 24 と uv を入れる
-        W->>S: リポジトリの直下で --out _site を付けて起動する
-        S-->>W: 終了コード 0
-        W->>W: _site に .yaml と .yml が無いことを確認する
-        W->>W: _site を Pages の成果物として上げる
-        W->>P: 成果物を配信する
-        P-->>W: サイトの URL
-        W-->>G: 成功
+      flowchart TD
+        s([develop への push で起動する]) --> a[ブランチを取得する] --> b[Node を入れる] --> c[uv を入れる] --> d[Pages を設定する] --> e[公開の文書を 1 枚の HTML にまとめる]
+        e -- 成功 --> f[成果物に YAML が無いことを確かめる]
+        f -- YAML が無い --> g[成果物をアップロードする]
+        g -->|"成功（needs: build）"| h[Pages へ配信する]
+        h -- 成功 --> ok([成功。サイトの URL を出す])
       ```
 
       <!-- /map -->
@@ -45,16 +37,9 @@ flows:
       <!-- map -->
 
       ```mermaid
-      sequenceDiagram
-        participant G as GitHub Actions
-        participant W as 公開文書の配信のワークフロー
-        participant S as Pages の成果物の作成
-        participant P as GitHub Pages
-        G->>W: develop への push で起動する
-        W->>S: リポジトリの直下で --out _site を付けて起動する
-        S-->>W: 終了コード 1 と標準エラー
-        W-->>G: build が失敗し、deploy は動かない
-        Note over P: 前に配信したサイトのまま
+      flowchart TD
+        s([develop への push で起動する]) --> a[ブランチを取得する] --> b[Node を入れる] --> c[uv を入れる] --> d[Pages を設定する] --> e[公開の文書を 1 枚の HTML にまとめる]
+        e -->|"失敗（終了コード 1）"| ng([build が失敗し、deploy は動かない。前に配信したサイトのまま])
       ```
 
       <!-- /map -->
@@ -70,23 +55,39 @@ flows:
       <!-- map -->
 
       ```mermaid
-      sequenceDiagram
-        participant G as GitHub Actions
-        participant W as 公開文書の配信のワークフロー
-        participant S as Pages の成果物の作成
-        participant P as GitHub Pages
-        G->>W: develop への push で起動する
-        W->>S: リポジトリの直下で --out _site を付けて起動する
-        S-->>W: 終了コード 0
-        W->>W: _site に .yaml がある
-        W-->>G: 混じったパスを出して build が失敗し、deploy は動かない
-        Note over P: 前に配信したサイトのまま
+      flowchart TD
+        s([develop への push で起動する]) --> a[ブランチを取得する] --> b[Node を入れる] --> c[uv を入れる] --> d[Pages を設定する] --> e[公開の文書を 1 枚の HTML にまとめる]
+        e -- 成功 --> f[成果物に YAML が無いことを確かめる]
+        f -->|"YAML がある（パスを出す）"| ng([build が失敗し、deploy は動かない。前に配信したサイトのまま])
       ```
 
       <!-- /map -->
     expected:
       - '`build` のジョブが失敗で終わり、`deploy` のジョブは動かない'
       - ジョブのログに混じった YAML のパスが出る
+  - name: 異常系（配信の失敗・ジョブの失敗）
+    summary: Pages への配信が失敗すれば、成果物をサイトに反映せずに失敗する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: Pages の設定
+        description: 'リポジトリの Pages の配信元を GitHub Actions 以外にする（`actions/deploy-pages` が配信の作成で失敗する）'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      flowchart TD
+        s([develop への push で起動する]) --> a[ブランチを取得する] --> b[Node を入れる] --> c[uv を入れる] --> d[Pages を設定する] --> e[公開の文書を 1 枚の HTML にまとめる]
+        e -- 成功 --> f[成果物に YAML が無いことを確かめる]
+        f -- YAML が無い --> g[成果物をアップロードする]
+        g -->|"成功（needs: build）"| h[Pages へ配信する]
+        h -- 失敗 --> ng2([deploy が失敗する])
+      ```
+
+      <!-- /map -->
+    expected:
+      - '`build` のジョブが成功で終わり、`deploy` のジョブが失敗で終わる'
+      - '`deploy` のジョブの成果物はサイトに反映されない'
 lead: 「Pages の成果物の作成」で公開の文書だけを 1 枚の HTML にし、出力に YAML が無いことを確認してから GitHub Pages へ配信する。
 idempotent: true
 permissions: '`contents: read`・`pages: write`・`id-token: write`'
@@ -111,3 +112,30 @@ constraints:
     constraint: '`actions/checkout`・`actions/setup-node`（Node 24）・`astral-sh/setup-uv`・`actions/configure-pages`・`actions/upload-pages-artifact`・`actions/deploy-pages`'
 notes:
   確認方法: 結合テストのファイルは持たない（GitHub Actions の上でしかジョブの成否と配信を確認できない）。ジョブが起動する「Pages の成果物の作成」の合否はその結合テストが確認する。Pages への配信そのものは、develop へのマージの後の配信のジョブの結果で確認する
+overall_flow: |-
+  <!-- map -->
+
+  ```mermaid
+  flowchart TD
+    s([develop への push・workflow_dispatch で起動する])
+    subgraph build
+      a[ブランチを取得する] -- 成功 --> b[Node を入れる]
+      b -- 成功 --> c[uv を入れる]
+      c -- 成功 --> d[Pages を設定する]
+      d -- 成功 --> e[公開の文書を 1 枚の HTML にまとめる]
+      e -- 成功 --> f[成果物に YAML が無いことを確かめる]
+      f -- YAML が無い --> g[成果物をアップロードする]
+    end
+    subgraph deploy
+      h[Pages へ配信する]
+    end
+    s --> a
+    g -->|"成功（needs: build）"| h
+    h -- 成功 --> ok([成功。サイトの URL を出す])
+    h -- 失敗 --> ng2([deploy が失敗する])
+    a & b & c & d & g -- 失敗 --> ng([build が失敗し、deploy は動かない。前に配信したサイトのまま])
+    e -- 失敗 --> ng
+    f -- YAML がある --> ng
+  ```
+
+  <!-- /map -->
