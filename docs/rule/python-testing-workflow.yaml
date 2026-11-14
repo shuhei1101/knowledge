@@ -1,0 +1,79 @@
+id: python-testing-workflow
+kind: rule
+name: GitHub Actions の workflow のテスト
+description: 入口が trigger の GitHub Actions の workflow のインターフェース定義のフローを、pytest から gh で本物の GitHub Actions に起動して確認するテストの配置・実行場所・手順を定め、workflow のテストを作るときに参照する。
+inject_when:
+  field: text
+  op: contains
+  values:
+    - gh workflow run
+    - gh run watch
+    - tests/e2e/workflow
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-14'
+related:
+  - to: template-interface
+    type: references
+    when: テストにするフローの書式を確認するとき
+  - to: template-test-procedure
+    type: references
+    when: gh の呼び方を確認するとき
+items:
+  - id: overview
+    name: 概要
+    body: 入口が `trigger` の workflow のインターフェース定義のフローを、pytest から `gh` で本物の GitHub Actions に起動して確認するテストの記載方法。
+  - id: placement-01
+    group: 配置と実行場所
+    name: フローとテストの関数の対応
+    body: |-
+      - テストのファイルは、インターフェース定義の `test_file`（`tests/e2e/workflow/`）に配置する
+      - フロー 1 つ（`flows[]` の 1 要素）をテストの関数 1 つにし、関数名は `flows[].test` にする
+  - id: placement-02
+    group: 配置と実行場所
+    name: 手元で回す層
+    body: |-
+      - 検証用のブランチを本物のリポジトリへ push するため、手元で回す層にする。
+        テスト実行方法の層の `location` は `local`（判定フローチャート [テストの実行場所](id:flowchart-test-location#test-location-flow-03) の ※2）
+  - id: steps-01
+    group: 手順
+    name: テストの関数の手順
+    body: |-
+      1. フローの `setup` のブランチの行のとおり、検証用のブランチを用意して push する
+      2. `gh workflow run {workflow のファイル} --ref {ブランチ} -f {入力}={値}` で起動し、出力の URL の末尾から実行の ID を取る
+      3. `gh run watch {ID} --exit-status` で終わるまで待つ
+      4. `gh run view {ID} --json conclusion,jobs` で、実行の結論と step ごとの結論を取得する
+      5. フローの図の step が図のとおりに通り、図に無い step が `skipped` かと、`expected` を確認する
+      6. 成果物を確認するフローは、`gh run download {ID} -n {成果物} -D {一時フォルダ}` で取得して中身を確認する
+      7. 検証用のブランチを削除する
+  - id: steps-02
+    group: 手順
+    name: ブランチの用意と削除
+    body: |-
+      - 手順 1 と 7 は fixture にまとめ、`yield` の後でブランチを削除して、テストが失敗しても削除する
+      - ブランチ名にはテストの関数名と実行の時刻を含め、同時に回したテストと重ならないようにする
+  - id: steps-03
+    group: 手順
+    name: 結論と step の突き合わせ
+    body: |-
+      - 異常系のフローは `gh run watch` が 0 以外で終わるため、終了コードで失敗にせず、手順 4 の結論で確認する
+      - step は、図のノードの名前と `jobs[].steps[].name` で突き合わせる（図の step は workflow の step の `name` で記載されている）
+  - id: steps-04
+    group: 手順
+    name: gh の呼び方
+    body: '- 実行の ID の取り方と待ち方は、テンプレート [テスト実行方法](id:template-test-procedure) の `run_runner` の記載例と同じにする'
+tags:
+  - name: scope:python
+  - name: topic:testing
+    main: true
+  - name: topic:e2e
+  - name: topic:ci
+  - name: topic:フロー
+  - name: topic:ブランチ
+  - name: tool:github
+  - name: tool:pytest
+  - name: action:実行
+  - name: action:起動
+  - name: action:検証
+  - name: action:削除
