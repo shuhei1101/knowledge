@@ -12,12 +12,16 @@ use_cases:
 docs:
   - page: docs/word-list/word-list-ai-slop.yaml
     new: false
-    change: 12 単語の行を追加し、行 kuchi の examples.pass の「入口」を置き換え、行 toosu の pattern から名詞の「通し」を除く
-    status: todo
+    change: 12 単語の行を追加し、行 kuchi の examples.pass の「入口」を置き換えて allow に「受け口」を追加し、行 toosu の pattern から名詞の「通し」を除く
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:02:16.442896+00:00'
   - page: plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json
     new: false
     change: scripts/build_word_list.py で再生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:02:16.442896+00:00'
 scope_out:
   - item: knowledge の既存の文書に残る 12 単語の置き換え
     reason: slop-check の通知は書き込んだ中身だけを照合し、check_all.py は文書の本文を対応表で検査しないため、行の追加で既存の文書の検査は落ちない。置き換えは対応表の行が決定した後に、ヒットした箇所を見て判断する
