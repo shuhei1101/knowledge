@@ -59,6 +59,8 @@ items:
     body: |-
       - 異常系のフローは `gh run watch` が 0 以外で終わるため、終了コードで失敗にせず、手順 4 の結論で確認する
       - step は、図のノードの名前と `jobs[].steps[].name` で突き合わせる（図の step は workflow の step の `name` で記載されている）
+      - 突き合わせる step は、workflow のファイルの step の `name` に絞る。
+        GitHub が追加する step（`Set up job`・`Complete job`・`Post {step の名前}`）は確認しない
   - id: steps-04
     group: 手順
     name: gh の呼び方
