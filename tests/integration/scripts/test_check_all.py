@@ -412,10 +412,208 @@ def test_normal_when_templates_out_of_date(
     assert "scripts/build_templates.py" in line
 
 
+# map の中の Mermaid に `:` の無いメッセージの行を持つ文書（13 行目が誤りの行）
+_MAP_INVALID = (
+    "id: rule-a\n"
+    "kind: rule\n"
+    "name: 規約 A\n"
+    "description: 説明\n"
+    "items:\n"
+    "  - id: overview\n"
+    "    name: 概要\n"
+    "    body: |-\n"
+    "      <!-- map -->\n"
+    "\n"
+    "      ```mermaid\n"
+    "      sequenceDiagram\n"
+    "        A->>B hello\n"
+    "      ```\n"
+    "\n"
+    "      <!-- /map -->\n"
+)
+
+# 1 つの項目に誤りの無い map と前の記法のマーカーの表を持つ文書
+_MAP_WITH_LEGACY_TABLE = (
+    "id: rule-b\n"
+    "kind: rule\n"
+    "name: 規約 B\n"
+    "description: 説明\n"
+    "items:\n"
+    "  - id: overview\n"
+    "    name: 概要\n"
+    "    body: |-\n"
+    "      <!-- map -->\n"
+    "\n"
+    "      ```mermaid\n"
+    "      sequenceDiagram\n"
+    "        A->>B: hello\n"
+    "      ```\n"
+    "\n"
+    "      <!-- /map -->\n"
+    "\n"
+    "      <!-- table: data -->\n"
+    "\n"
+    "      | 列 | 値 |\n"
+    "      | --- | --- |\n"
+    "      | a | 1 |\n"
+    "\n"
+    "      <!-- /table -->\n"
+)
+
+# インターフェース定義の行を加えた project-index.yaml
+_CONFIG_WITH_INTERFACE = (
+    'version: "3"\n'
+    "name: knowledge\n"
+    "documents:\n"
+    "  - id: interface\n"
+    "    paths:\n"
+    "      - docs/interface/*.yaml\n"
+    "    schema: schemas/design/interface.schema.yaml\n"
+)
+
+# スキルの設計書と、その工程を変更する前に生成した SKILL.md
+_SKILL_DOC = (
+    "id: a\n"
+    "type: skill\n"
+    "title: A を処理する\n"
+    "summary: A を処理するスキル\n"
+    "skill:\n"
+    "  path: skills/a/SKILL.md\n"
+    "steps:\n"
+    "  - name: 取得する\n"
+    "    body: A を一覧で取得する。\n"
+)
+_STALE_SKILL_MD = (
+    "---\n"
+    "name: a\n"
+    "description: A を処理するスキル\n"
+    "---\n"
+    "\n"
+    "<!-- docs/skill/a.yaml から生成した。このファイルを修正せず、設計書を修正して再生成する -->\n"
+    "\n"
+    "# A を処理する\n"
+    "\n"
+    "## 手順\n"
+    "\n"
+    "### 取得する\n"
+    "\n"
+    "A を取得する。\n"
+)
+
+
+def _copy_schemas(root: Path, names: list[str]) -> None:
+    """リポジトリの schemas/design/ から、指定したスキーマを root にコピーする。"""
+    (root / "schemas" / "design").mkdir(parents=True, exist_ok=True)
+    for name in names:
+        shutil.copyfile(_REPO / "schemas" / "design" / name, root / "schemas" / "design" / name)
+
+
+def test_normal_when_maps_invalid(run_script: RunScript, repo_factory: RepoFactory) -> None:
+    """map の誤りだけを違反として出し、前の記法のマーカーの legacy_mark は違反にしない（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {"docs/rule/rule-a.yaml": _MAP_INVALID, "docs/rule/rule-b.yaml": _MAP_WITH_LEGACY_TABLE}
+    )
+    # 実行
+    result = run_script("check_all", root)
+    # 検証
+    assert result.exit_code == 1
+    assert any(
+        line.startswith("docs/rule/rule-a.yaml:13: items[0].body: mdmark/map_invalid: ")
+        for line in result.stdout.splitlines()
+    )
+    assert "legacy_mark" not in result.stdout
+
+
+def test_normal_when_workflows_differ_from_interfaces(
+    run_script: RunScript, repo_factory: RepoFactory
+) -> None:
+    """入口が trigger のインターフェース定義と workflow のファイルの食い違いを、食い違い 1 件ごとに違反として出す（正常系）。"""
+    # 準備
+    workflow = (
+        (_REPO / ".github/workflows/pages.yml")
+        .read_text(encoding="utf-8")
+        .replace("cancel-in-progress: false", "cancel-in-progress: true")
+        .replace(
+            "      - name: 成果物をアップロードする\n",
+            "      - name: 成果物の大きさを確かめる\n        run: du -sh _site\n"
+            "      - name: 成果物をアップロードする\n",
+        )
+    )
+    root = repo_factory(
+        {
+            "project-index.yaml": _CONFIG_WITH_INTERFACE,
+            "docs/interface/IF-137-2.yml.yaml": (
+                _REPO / "docs/interface/IF-137-2.yml.yaml"
+            ).read_text(encoding="utf-8"),
+            ".github/workflows/pages.yml": workflow,
+        }
+    )
+    _copy_schemas(root, ["interface.schema.yaml", "common.schema.yaml"])
+    # 実行
+    result = run_script("check_all", root)
+    # 検証
+    lines = [
+        line
+        for line in result.stdout.splitlines()
+        if line.startswith("docs/interface/IF-137-2.yml.yaml:")
+    ]
+    assert result.exit_code == 1
+    assert any(": exclusivity: " in line and "cancel-in-progress: true" in line for line in lines)
+    assert any(": overall_flow: " in line and "成果物の大きさを確かめる" in line for line in lines)
+    assert all(".github/workflows/pages.yml" in line for line in lines)
+
+
+def test_normal_when_skills_out_of_date(run_script: RunScript, repo_factory: RepoFactory) -> None:
+    """スキルの設計書から組み立てた中身が SKILL.md と違えば、違反として出す（正常系）。"""
+    # 準備
+    root = repo_factory({"docs/skill/a.yaml": _SKILL_DOC, "skills/a/SKILL.md": _STALE_SKILL_MD})
+    _copy_schemas(root, ["agent_flow.schema.yaml", "common.schema.yaml"])
+    # 実行
+    result = run_script("check_all", root)
+    # 検証
+    line = next(
+        line for line in result.stdout.splitlines() if line.startswith("skills/a/SKILL.md:")
+    )
+    assert result.exit_code == 1
+    assert "docs/skill/a.yaml" in line
+    assert "uv run --frozen --script scripts/build_skills.py" in line
+
+
+def test_error_when_mdmark_check_fails(
+    run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
+) -> None:
+    """mdmark の点検が失敗したら、他の検査の違反を出し終えてから終了コード 2 で終わる（異常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "docs/rule/rule-a.yaml": _MAP_WITH_LEGACY_TABLE.replace("rule-b", "rule-a"),
+            "docs/rule/rule-c.yaml": (
+                "id: rule-c\nkind: rule\nname: 規約 C\nitems:\n  - id: x\n    name: 一つ目\n"
+            ),
+        }
+    )
+    # npx を、標準出力に何も出さずに終了コード 1 で終わるものに差し替える
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    (bin_dir / "npx").write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
+    (bin_dir / "npx").chmod(0o755)
+    # 実行
+    result = run_script("check_all", root, path_prefix=bin_dir)
+    # 検証
+    assert result.exit_code == 2
+    assert any(
+        line.startswith("docs/rule/rule-c.yaml:") and ": schema: " in line
+        for line in result.stdout.splitlines()
+    )
+    assert "mdmark の点検が失敗しました" in result.stderr
+    assert "終了コード 1" in result.stderr
+
+
 def test_error_when_check_cli_missing(
     run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
 ) -> None:
-    """markdownlint-cli2・textlint のどちらかが見つからなければ検査を始めずに終わる（異常系）。"""
+    """markdownlint-cli2・textlint・npx のどれかが見つからなければ検査を始めずに終わる（異常系）。"""
     # 準備
     root = repo_factory({})
     missing = tmp_path / "missing-lint"
