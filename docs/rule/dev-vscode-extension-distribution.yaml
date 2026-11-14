@@ -2,7 +2,7 @@
 id: dev-vscode-extension-distribution
 kind: rule
 name: VS Code 拡張機能の配布
-description: VS Code 拡張機能のバージョンの更新・.vsix の作成・Marketplace への Trusted Publishing での公開と Open VSX への公開の決め方・利用者への入れ替えの依頼・ID・アイコンの扱いを定め、VS Code 拡張機能のコードを変更するときと公開するときに参照する。
+description: VS Code 拡張機能のバージョンの更新・.vsix の作成・Marketplace への Trusted Publishing での公開・利用者への入れ替えの依頼・ID・アイコンの扱いを定め、VS Code 拡張機能のコードを変更するときと公開するときに参照する。
 status: current
 visibility: internal
 rev: 4
@@ -14,12 +14,6 @@ sources:
   - title: 'VS Code: Publish with GitHub Actions and Trusted Publishing'
     url: https://code.visualstudio.com/api/working-with-extensions/publishing-extension#publish-with-github-actions-and-trusted-publishing
     note: 'ポリシーの登録・id-token: write・vsce publish --oidc と、グローバル PAT の廃止'
-  - title: 'Open VSX: Publishing Extensions'
-    url: https://github.com/eclipse/openvsx/wiki/Publishing-Extensions
-    note: ovsx publish
-  - title: 'Open VSX: Trusted Publishing'
-    url: https://github.com/eclipse/openvsx/wiki/Trusted-Publishing
-    note: Open VSX の Trusted Publishing の前提
   - title: 'VS Code: Extension Manifest'
     url: https://code.visualstudio.com/api/references/extension-manifest
     note: icon の寸法
@@ -62,8 +56,8 @@ items:
     body: '- CI の公開の工程ができるまでは、.vsix を Marketplace の publisher 管理画面からアップロードして公開する'
   - id: publish-04
     group: 公開
-    name: Open VSX へ公開するかはプロジェクトごとに決める
-    body: '- Open VSX へ公開するかは、利用者が使用するエディタで判断し、プロジェクトごとにユーザーへ確認して決める'
+    name: Open VSX へは公開しない
+    body: '- Open VSX へは公開しない'
   - id: reinstall-01
     group: 利用者への入れ替えの依頼
     name: 公開が自動でない間の入れ替え
