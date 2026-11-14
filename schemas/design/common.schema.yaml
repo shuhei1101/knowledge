@@ -371,7 +371,7 @@ $defs:
     title: 状態遷移
     description: 状態の一覧と遷移の表。状態遷移図はここから生成する。
     x-used-by:
-      - 生成で、状態遷移図と状態・遷移の表にする。
+      - 生成で、Mermaid の `stateDiagram-v2` の状態遷移図と、状態・遷移の表にする。
       - 実装で、状態の値と許可する遷移の判定にする。
       - テストで、許可した遷移と許可しない遷移のケースにする。
     additionalProperties: false
@@ -556,7 +556,7 @@ $defs:
     title: ER 図
     description: 実体（テーブルとカラム）と関連。ER 図はここから生成する。
     x-used-by:
-      - 生成で、ER 図にする。
+      - 生成で、Mermaid の `erDiagram` の ER 図にする。
       - レビューで、テーブルどうしの関連と多重度が要件と合うかを確認する。
     additionalProperties: false
     required:
