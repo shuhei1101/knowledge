@@ -1,0 +1,76 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存リポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-14T22:47:26.282765+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: 設計書があるため対象外
+    updated_by: planner
+    updated_at: '2026-11-14T22:47:26.282765+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めの依頼ではない
+    updated_by: planner
+    updated_at: '2026-11-14T22:47:26.282765+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: workflow_dispatch と gh の CLI での起動・待機・ログの取得は既存の仕組みで、未検証の機構に依存しない
+    updated_by: planner
+    updated_at: '2026-11-14T22:47:26.282765+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: 単一ユースケースの連鎖を変えない
+    updated_by: planner
+    updated_at: '2026-11-14T22:47:26.282765+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 画面に関わる変更ではない（判定フローチャート『モック要否』）
+    updated_by: planner
+    updated_at: '2026-11-14T22:47:26.282765+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面に関わる変更ではない（判定フローチャート『モック要否』）
+    updated_by: planner
+    updated_at: '2026-11-14T22:47:26.282765+00:00'
+  - process: 単一ユースケース設計
+    status: todo
+    note: 新規の SC-352-1（開発者がランナーでテストの層の全件を実行する）
+  - process: モック作成
+    status: skipped
+    reason: 画面に関わる変更ではない（判定フローチャート『モック要否』）
+    updated_by: planner
+    updated_at: '2026-11-14T22:47:26.282765+00:00'
+  - process: インターフェース定義設計
+    status: todo
+    note: 新規の IF-352-1.yml.yaml（テストの全件実行のワークフロー）
+  - process: 部品設計
+    status: skipped
+    reason: 画面の部品を持たない
+    updated_by: planner
+    updated_at: '2026-11-14T22:47:26.282765+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: 画面に関わる変更ではない（判定フローチャート『画面設計要否』）
+    updated_by: planner
+    updated_at: '2026-11-14T22:47:26.282765+00:00'
+  - process: モジュール構成設計
+    status: todo
+    note: ARCH-72-1・LAY-72-1・NFR-72-1・CMD-72-1 の CI とテストの記述
+  - process: ドキュメント修正
+    status: skipped
+    reason: 設計書のほかに更新するページが無い（README.md・CLAUDE.md はテストの実行場所に触れていない）
+    updated_by: planner
+    updated_at: '2026-11-14T22:47:26.282765+00:00'
+  - process: 単体テスト作成
+    status: skipped
+    reason: workflow と設計書の記載だけを変え、規約『V字モデル』で対応する単体テストが無い
+    updated_by: planner
+    updated_at: '2026-11-14T22:47:26.282765+00:00'
+  - process: 実装
+    status: todo
+    note: workflow・テスト実行方法の location と run_runner・必要ならマーカー
+  - process: 結合テスト作成
+    status: todo
+    note: tests/e2e/workflow/ の workflow の結合テスト

@@ -1,0 +1,16 @@
+scope_out:
+  - item: ランナーでの初回の実行と、ランナーと手元の skip の件数の突き合わせ
+    reason: workflow_dispatch は develop にある workflow だけを起動できるため、workflow が develop へ入った後の作業 PR で行う
+    plan: to_file
+  - item: lint の層（TL-1）への actionlint の追加
+    reason: 要望に含まれない。この作業 PR がテスト実行方法を書き直した後に行う
+    plan: '#370'
+  - item: 外部疎通・非機能要件・E2E の層（TL-4〜TL-6）の実行場所
+    reason: run_all が未確定で、テンプレート『テスト実行方法』は確定させるまで location を記載しない
+    plan: none
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: none
+    detail: 公開文書の配信のワークフローは変えない
+    depends_on: []
