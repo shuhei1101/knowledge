@@ -23,15 +23,21 @@ docs:
   - page: schemas/design/
     new: false
     change: 種別のスキーマ（`common.schema.yaml`・`index.schema.yaml` を除く）の最上位の `properties` に、`common.schema.yaml#/$defs/tags`・`$defs/aliases` を指す `tags`・`aliases` を追加する（既に持つ `layout` はそのまま。独自の `tags` を持つ `agent_flow`・`eval_criterion` は要件.md の未確定の推奨案で `aliases` だけを追加する）。文書の検索・配信の持ち主を dev-docs とする記述（`x-used-by` の「dev-docs の検索で」「dev-docs の配信で」、`layout` の「dev-docs が配下の文書の ID を…」）を project-index にする。画面の記述（「dev-docs の画面…」）は変えない
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T02:08:40.694280+00:00'
   - page: schemas/knowledge-files.schema.yaml
     new: false
     change: '`files.items.properties` に `id`（文書の ID。`alias_type` を付けた行で要る）・`aliases`・`inject_when`（alias-inject の照合条件）を追加する。型は `knowledge-common.schema.yaml` の `$defs` を参照する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T02:08:40.694280+00:00'
   - page: docs/template/
     new: false
     change: '`uv run --frozen --script scripts/build_templates.py` で設計書のテンプレートを生成し直す'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T02:08:40.694280+00:00'
 scope_out:
   - item: AI Monitor のコピーにあるシナリオの `issue`・モジュール構成の `functions[].callers`・`introduced` などのキーの取り込み
     reason: '#266 で設けないと決めたキーで、AI Monitor 側の設計書から変換で除く（#336 の本文）'
