@@ -79,9 +79,6 @@ docs:
     change: knowledge-checks の説明から mermaid の文法の検査を外す
     status: todo
 scope_out:
-  - item: map（`<!-- map -->`〜`<!-- /map -->`）の中の ```mermaid のブロックの文法の検査を、maid から mdmark の点検（`mdmark check`。map の Mermaid を `parseFlowchart`・`parseSequence` で読んで誤りを返す）へ置き換えること
-    reason: 判断が分かれている。#272・#333 で設計書とテンプレートの図は map の中の Mermaid になり、#333 の要件は「map の ```mermaid のブロックは maid の検査の対象になる」としていた。maid を削除すると、knowledge の全ての文書の検査と書き込みの検査で map の Mermaid の文法を確かめる手段が無くなる（`write_docs` の mdmark の点検は MCP からの書き込みだけに当たる）。planner の判断は、描く側の mdmark の点検が map の Mermaid を検査するため置き換えを今回の要望に含める。レビューで確定する
-    plan: to_file
   - item: '`template-eval-criterion`・`schemas/design/eval_criterion.schema.yaml` の記載例の「Mermaid の図が描画できる」（`aituber.evals.checks.mermaid:is_valid`）'
     reason: 精度評価の観点の記載例で、knowledge の検査の maid とは関係しない
     plan: none
