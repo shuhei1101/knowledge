@@ -16,6 +16,7 @@ from slop_check import (
     NOTICE_TAIL,
     Entry,
     build_notice,
+    build_system_message,
     collect_strings,
     compile_entry,
     entry_hits,
@@ -24,6 +25,7 @@ from slop_check import (
     is_target,
     is_word_list_write,
     load_entries,
+    tool_label,
 )
 
 if TYPE_CHECKING:
@@ -61,6 +63,7 @@ def test_main(
     output = json.loads(capsys.readouterr().out)
     assert output["hookSpecificOutput"]["hookEventName"] == "PostToolUse"
     assert "| 直す | 修正 |" in output["hookSpecificOutput"]["additionalContext"]
+    assert output["systemMessage"] == "AI slop を検知: 直す（Write）"
 
 
 def test_main_when_no_hit(
@@ -171,6 +174,7 @@ def test_main_when_unexpected_error(
     [
         pytest.param("Write", id="write"),
         pytest.param("mcp__plugin_project-index_project-index__write_docs", id="write_docs"),
+        pytest.param("mcp__plugin_dev-docs_dev-docs__write_docs", id="dev_docs_write_docs"),
         pytest.param("mcp__plugin_ai-monitor_ai-monitor-tools__comment", id="comment"),
         pytest.param("mcp__plugin_mindstella_mindstella__reply", id="mindstella_reply"),
     ],
@@ -188,6 +192,7 @@ def test_is_target(tool_name: str) -> None:
     [
         pytest.param("Read", id="read"),
         pytest.param("mcp__plugin_project-index_project-index__search_docs", id="search_docs"),
+        pytest.param("mcp__plugin_dev-docs_dev-docs__search_docs", id="dev_docs_search_docs"),
         pytest.param("mcp__other__comment", id="other_server"),
     ],
 )
@@ -453,3 +458,49 @@ def test_build_notice() -> None:
         result
         == NOTICE_HEAD + "\n| 形 | スキーマ・構造（形状の意味なら「形状」） |\n" + NOTICE_TAIL
     )
+
+
+@pytest.mark.parametrize(
+    ("tool_name", "expected"),
+    [
+        pytest.param("Write", "Write", id="builtin"),
+        pytest.param(
+            "mcp__plugin_mindstella_mindstella__reply", "mindstella の reply", id="mindstella"
+        ),
+        pytest.param(
+            "mcp__plugin_ai-monitor_ai-monitor-tools__comment",
+            "ai-monitor の comment",
+            id="ai_monitor",
+        ),
+        pytest.param(
+            "mcp__plugin_dev-docs_dev-docs__write_docs", "dev-docs の write_docs", id="dev_docs"
+        ),
+    ],
+)
+def test_tool_label(tool_name: str, expected: str) -> None:
+    """組み込みのツールとプラグインの MCP ツール（正常系）。"""
+    # 実行
+    result = tool_label(tool_name)
+    # 検証
+    assert result == expected
+
+
+def test_tool_label_when_not_plugin() -> None:
+    """プラグインでない MCP ツール（正常系）。"""
+    # 実行
+    result = tool_label("mcp__mindstella__reply")
+    # 検証
+    assert result == "mindstella の reply"
+
+
+def test_build_system_message() -> None:
+    """単語を並びの順につなぐ（正常系）。"""
+    # 準備
+    hits = [
+        compile_entry({"id": "naosu", "ng": "直す", "ok": ["修正"]}),
+        compile_entry({"id": "katachi", "ng": "形", "ok": ["スキーマ", "構造"]}),
+    ]
+    # 実行
+    result = build_system_message(hits, "Write")
+    # 検証
+    assert result == "AI slop を検知: 直す・形（Write）"
