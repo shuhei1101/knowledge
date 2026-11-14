@@ -32,7 +32,7 @@ scenarios:
       <!-- /map -->
     expected:
       - 全ての種類の文書が HTTP 200 で開け、本文が空でない
-      - タブとサイドバーの並びが `dev-docs.yaml` の `nav` と一致する
+      - タブとサイドバーの並びが `project-index.yaml` の `nav` と一致する
       - '規約『文章の書き方』（`docs/rule/convention-writing-style`）の本文で、埋め込みのマーカー `<!-- embed: word-list-ai-slop -->` の位置に対応表の `| NG | OK |` の表が出て、マーカーと「埋め込めません」の注意書きが残らない'
     test: test_normal
   - name: 正常シナリオ（対応表を更新した後に再度開く）
