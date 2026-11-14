@@ -66,7 +66,7 @@ flows:
       - '`build` のジョブが失敗で終わり、`deploy` のジョブは動かない'
       - ジョブのログに混じった YAML のパスが出る
   - name: 異常系（配信の失敗・ジョブの失敗）
-    summary: Pages への配信が失敗すれば、前に配信したサイトのまま失敗する
+    summary: Pages への配信が失敗すれば、成果物をサイトに反映せずに失敗する
     setup:
       - name: Mock
         description: 差し替えない
@@ -81,13 +81,13 @@ flows:
         e -- 成功 --> f[成果物に YAML が無いことを確かめる]
         f -- YAML が無い --> g[成果物をアップロードする]
         g -->|"成功（needs: build）"| h[Pages へ配信する]
-        h -- 失敗 --> ng2([deploy が失敗する。前に配信したサイトのまま])
+        h -- 失敗 --> ng2([deploy が失敗する])
       ```
 
       <!-- /map -->
     expected:
       - '`build` のジョブが成功で終わり、`deploy` のジョブが失敗で終わる'
-      - サイトは前に配信した内容のまま
+      - '`deploy` のジョブの成果物はサイトに反映されない'
 lead: 「Pages の成果物の作成」で公開の文書だけを 1 枚の HTML にし、出力に YAML が無いことを確認してから GitHub Pages へ配信する。
 idempotent: true
 permissions: '`contents: read`・`pages: write`・`id-token: write`'
@@ -132,7 +132,7 @@ overall_flow: |-
     s --> a
     g -->|"成功（needs: build）"| h
     h -- 成功 --> ok([成功。サイトの URL を出す])
-    h -- 失敗 --> ng2([deploy が失敗する。前に配信したサイトのまま])
+    h -- 失敗 --> ng2([deploy が失敗する])
     a & b & c & d & g -- 失敗 --> ng([build が失敗し、deploy は動かない。前に配信したサイトのまま])
     e -- 失敗 --> ng
     f -- YAML がある --> ng
