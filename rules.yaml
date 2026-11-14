@@ -243,6 +243,32 @@ rules:
     read_tool:
       tool: mcp__plugin_project-index_project-index__describe
       args: '{"kind": "dev_command"}'
+  - rule: schemas/design/component.schema.yaml
+    paths:
+      - "**/docs/component/**/*.yaml"
+    exclude:
+      - "**/index.yaml"
+    tools:
+      - "mcp__*__write_docs"
+    args:
+      operations.kind:
+        - component
+    on: [write, mcp]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__describe
+      args: '{"kind": "component"}'
+  - rule: schemas/design/agent_flow.schema.yaml
+    paths:
+      - "**/docs/skill/*.yaml"
+    tools:
+      - "mcp__*__write_docs"
+    args:
+      operations.kind:
+        - skill
+    on: [write, mcp]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__describe
+      args: '{"kind": "skill"}'
   - rule: schemas/design/index.schema.yaml
     paths:
       - "**/docs/**/index.yaml"
