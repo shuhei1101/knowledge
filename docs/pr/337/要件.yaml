@@ -119,3 +119,6 @@ scope_out:
   - item: 全ての文書の検査で、文書の Markdown の項目の map の中の Mermaid を mdmark の点検にかけることと、mdmark の採用バージョンを map の点検を持つタグへ上げること
     reason: knowledge が採用する mdmark の v0.8.0 は map の点検を持たない（map の点検は v0.11.0 以降）。採用バージョンの更新は IF-137-1・LIB-137-1 などに及び、maid の削除と独立して成り立つ
     plan: '#343'
+  - item: '`schemas/design/interface.schema.yaml` の flow の description が 3 文あり、結合テスト `test_check_all.py::test_normal_when_repository_schemas` が fail する'
+    reason: 結合テストの description は 2 文までとする決まりから外れている。#333 で入った不具合で develop でも fail し、maid の削除の要望に含まれない
+    plan: '#364'
