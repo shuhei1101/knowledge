@@ -180,7 +180,13 @@ def test_plan_skills(tmp_path: Path) -> None:
     # 実行
     result = plan_skills(root)
     # 検証
-    assert result == [SkillPlan(path=PurePosixPath("skills/b/SKILL.md"), text=_B_SKILL)]
+    assert result == [
+        SkillPlan(
+            path=PurePosixPath("skills/b/SKILL.md"),
+            text=_B_SKILL,
+            source=PurePosixPath("docs/skill/b.yaml"),
+        )
+    ]
 
 
 def test_plan_skills_when_schema_invalid(tmp_path: Path) -> None:

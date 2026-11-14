@@ -12,9 +12,13 @@ from _lint import (
     LintFinding,
     LintOutputError,
     LintSource,
+    MdmarkCheckError,
+    collect_map_sources,
     collect_sources,
+    extract_map_mermaid,
     find_lint_clis,
     load_yamllint_config,
+    run_map_check,
     run_markdown_lints,
     run_yamllint,
 )
@@ -158,6 +162,146 @@ def test_collect_sources_when_broken() -> None:
     result = collect_sources(PurePosixPath("docs/rule/a.yaml"), text)
     # 検証
     assert result == []
+
+
+def test_collect_map_sources() -> None:
+    """map を含む項目だけを取り出す（正常系）。"""
+    # 準備
+    text = (
+        "id: IF-1\n"
+        "flows:\n"
+        "  - name: 正常系\n"
+        "    summary: 概要\n"
+        "    flow: |-\n"
+        "      <!-- map -->\n"
+        "\n"
+        "      ```mermaid\n"
+        "      flowchart TD\n"
+        "        a --> b\n"
+        "      ```\n"
+        "\n"
+        "      <!-- /map -->\n"
+        "overall_flow: |-\n"
+        "  <!-- map -->\n"
+        "\n"
+        "  ```mermaid\n"
+        "  flowchart TD\n"
+        "    a --> b\n"
+        "  ```\n"
+        "\n"
+        "  <!-- /map -->\n"
+    )
+    # 実行
+    result = collect_map_sources(PurePosixPath("docs/interface/IF-1.yml.yaml"), text)
+    # 検証
+    assert [(source.item_path, source.start_line) for source in result] == [
+        ("flows[0].flow", 6),
+        ("overall_flow", 15),
+    ]
+
+
+def test_collect_map_sources_when_markdown_file() -> None:
+    """.md の文書（正常系）。"""
+    # 準備
+    text = "<!-- map -->\n\n```mermaid\nflowchart TD\n  a --> b\n```\n\n<!-- /map -->\n"
+    # 実行
+    result = collect_map_sources(PurePosixPath("README.md"), text)
+    # 検証
+    assert result == []
+
+
+def test_collect_map_sources_when_broken() -> None:
+    """読み込めない YAML（正常系）。"""
+    # 準備
+    text = "id: a\nitems: [\n"
+    # 実行
+    result = collect_map_sources(PurePosixPath("docs/rule/a.yaml"), text)
+    # 検証
+    assert result == []
+
+
+def test_run_map_check(fake_cli_factory: FakeCliFactory) -> None:
+    """map のずれだけを元の文書の行で返却する（正常系）。"""
+    # 準備
+    npx = fake_cli_factory(
+        "npx",
+        stdout=(
+            "-:10: map_invalid: 2 行目 `A->>B hello` を読めません\n"
+            "-:1: legacy_mark: table のマーカーの引数が今の書き方です\n"
+            "ずれ 2 件\n"
+        ),
+        exit_code=1,
+    )
+    sources = [
+        LintSource(PurePosixPath("docs/a.yaml"), "flows[0].flow", 10, "1\n2\n3\n4\n5"),
+        LintSource(PurePosixPath("docs/b.yaml"), "overall_flow", 40, "1\n2\n3\n4\n5"),
+    ]
+    # 実行
+    result = run_map_check(sources, npx)
+    # 検証
+    assert result == [
+        LintFinding(
+            PurePosixPath("docs/b.yaml"),
+            42,
+            "overall_flow",
+            "mdmark",
+            "map_invalid",
+            "2 行目 `A->>B hello` を読めません",
+            False,
+        )
+    ]
+
+
+def test_run_map_check_when_empty(tmp_path: Path, fake_cli_factory: FakeCliFactory) -> None:
+    """map を含む項目が無い（正常系）。"""
+    # 準備
+    marker = tmp_path / "called.txt"
+    npx = fake_cli_factory("npx", stdout="ずれ 0 件\n", marker=marker)
+    # 実行
+    result = run_map_check([], npx)
+    # 検証
+    assert result == []
+    assert not marker.exists()
+
+
+def test_run_map_check_when_not_checked(fake_cli_factory: FakeCliFactory) -> None:
+    """点検せずに終了コード 1 で終わった（異常系）。"""
+    # 準備
+    npx = fake_cli_factory("npx", stderr="npm error code E404\n", exit_code=1)
+    sources = [LintSource(PurePosixPath("docs/a.yaml"), "flows[0].flow", 10, "本文")]
+    # 実行・検証
+    with pytest.raises(MdmarkCheckError, match=r"1.*npm error code E404"):
+        run_map_check(sources, npx)
+
+
+def test_run_map_check_when_crashed(fake_cli_factory: FakeCliFactory) -> None:
+    """終了コードが 0・1 でない（異常系）。"""
+    # 準備
+    npx = fake_cli_factory("npx", stdout="ずれ 0 件\n", exit_code=2)
+    sources = [LintSource(PurePosixPath("docs/a.yaml"), "flows[0].flow", 10, "本文")]
+    # 実行・検証
+    with pytest.raises(MdmarkCheckError, match=r"2"):
+        run_map_check(sources, npx)
+
+
+def test_extract_map_mermaid() -> None:
+    """Mermaid を取り出す（正常系）。"""
+    # 準備
+    text = "前文\n\n<!-- map -->\n\n```mermaid\nflowchart TD\n  a --> b\n  b --> c\n```\n\n<!-- /map -->\n"
+    # 実行
+    result = extract_map_mermaid(text)
+    # 検証
+    assert result == "flowchart TD\n  a --> b\n  b --> c"
+
+
+def test_extract_map_mermaid_when_missing() -> None:
+    """map が無い（正常系）。"""
+    # 準備
+    text = "```mermaid\nflowchart TD\n  a --> b\n```\n"
+    # 実行
+    result = extract_map_mermaid(text)
+    # 検証
+    assert result is None
 
 
 def test_run_markdown_lints(tmp_path: Path, fake_cli_factory: FakeCliFactory) -> None:

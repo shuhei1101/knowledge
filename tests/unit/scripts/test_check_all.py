@@ -1,6 +1,7 @@
 """scripts/check_all.py の単体テスト。"""
 
 import re
+import shutil
 from collections.abc import Callable, Mapping
 from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING
@@ -8,7 +9,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 import check_all
-from _lint import LintFinding, LintSource
+from _lint import LintFinding, LintSource, MdmarkCheckError
 from check_all import (
     MetaSchemaError,
     Target,
@@ -72,6 +73,16 @@ def _lints_returning(findings: list[LintFinding]) -> Callable[..., list[LintFind
         return findings
 
     return _check
+
+
+def _which_without_npx(name: str, *_args: object, **_kwargs: object) -> str | None:
+    """shutil.which の差し替え。npx だけ見つからない。"""
+    return None if name == "npx" else f"/bin/{name}"
+
+
+def _failing_map_check(*_args: object) -> list[LintFinding]:
+    """map の点検の呼び出しの差し替え。点検の失敗を送出する。"""
+    raise MdmarkCheckError("mdmark の終了コード 1: npm error code E404")
 
 
 # scripts/lint/.yamllint.yaml と同じ内容の設定
@@ -248,6 +259,46 @@ def test_main_when_check_cli_missing(
         "markdownlint-cli2",
         "textlint",
     ]
+
+
+def test_main_when_npx_missing(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    repo_factory: RepoFactory,
+) -> None:
+    """npx が無い（正常系）。"""
+    # 準備
+    root = repo_factory({"docs/rule/rule-a.yaml": _VALID_A})
+    monkeypatch.chdir(root)
+    monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+    monkeypatch.setattr(check_all.shutil, "which", _which_without_npx)
+    # 実行
+    code = check_all.main([])
+    # 検証
+    assert code == 2
+    assert "npx" in capsys.readouterr().err
+
+
+def test_main_when_mdmark_check_fails(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    repo_factory: RepoFactory,
+) -> None:
+    """mdmark の点検が失敗する（正常系）。"""
+    # 準備
+    root = repo_factory({"docs/rule/rule-b.yaml": _BROKEN_BOTH})
+    monkeypatch.chdir(root)
+    monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+    monkeypatch.setattr(check_all, "check_lints", _lints_returning([_ERROR_FINDING]))
+    monkeypatch.setattr(check_all, "run_map_check", _failing_map_check)
+    # 実行
+    code = check_all.main([])
+    # 検証
+    captured = capsys.readouterr()
+    assert code == 2
+    assert re.search(r"^docs/rule/rule-b\.yaml:\d+: \$: schema: ", captured.out, re.MULTILINE)
+    assert "markdownlint/MD036" in captured.out
+    assert "mdmark の点検が失敗しました" in captured.err
 
 
 def test_main_when_config_missing(
@@ -611,6 +662,118 @@ def test_check_design_templates_when_ref_unresolvable(repo_factory: RepoFactory)
     )
     # 実行
     result = check_all.check_design_templates(root)
+    # 検証
+    assert result == []
+
+
+# リポジトリの設計書のスキーマのフォルダ
+_DESIGN_SCHEMAS = _REPO / "schemas" / "design"
+
+# スキルの設計書
+_SKILL_DOC = (
+    "id: a\n"
+    "type: skill\n"
+    "title: A を処理する\n"
+    "summary: A を処理するスキル\n"
+    "skill:\n"
+    "  path: skills/a/SKILL.md\n"
+    "steps:\n"
+    "  - name: 取得する\n"
+    "    body: A を取得する。\n"
+)
+
+# _SKILL_DOC から生成した SKILL.md
+_SKILL_MD = (
+    "---\n"
+    "name: a\n"
+    "description: A を処理するスキル\n"
+    "---\n"
+    "\n"
+    "<!-- docs/skill/a.yaml から生成した。このファイルを修正せず、設計書を修正して再生成する -->\n"
+    "\n"
+    "# A を処理する\n"
+    "\n"
+    "## 手順\n"
+    "\n"
+    "### 取得する\n"
+    "\n"
+    "A を取得する。\n"
+)
+
+
+def _skill_repo(tmp_path: Path, files: Mapping[str, str]) -> Path:
+    """schemas/design/ のコピーと、指定したファイルを持つリポジトリの直下を作る。"""
+    root = tmp_path / "repo"
+    shutil.copytree(_DESIGN_SCHEMAS, root / "schemas" / "design")
+    for relative, text in files.items():
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+    return root
+
+
+def test_check_skills(tmp_path: Path) -> None:
+    """一致する（正常系）。"""
+    # 準備
+    root = _skill_repo(
+        tmp_path, {"docs/skill/a.yaml": _SKILL_DOC, "skills/a/SKILL.md": _SKILL_MD}
+    )
+    # 実行
+    result = check_all.check_skills(root)
+    # 検証
+    assert result == []
+
+
+def test_check_skills_when_stale(tmp_path: Path) -> None:
+    """一致しない（正常系）。"""
+    # 準備
+    root = _skill_repo(
+        tmp_path,
+        {
+            "docs/skill/a.yaml": _SKILL_DOC.replace("A を取得する。", "A を一覧で取得する。"),
+            "skills/a/SKILL.md": _SKILL_MD,
+        },
+    )
+    # 実行
+    result = check_all.check_skills(root)
+    # 検証
+    assert len(result) == 1
+    assert result[0][:3] == ("skills/a/SKILL.md", 1, "-")
+    assert "docs/skill/a.yaml" in result[0][3]
+    assert "build_skills.py" in result[0][3]
+
+
+def test_check_skills_when_missing(tmp_path: Path) -> None:
+    """SKILL.md が無い（正常系）。"""
+    # 準備
+    root = _skill_repo(tmp_path, {"docs/skill/a.yaml": _SKILL_DOC})
+    # 実行
+    result = check_all.check_skills(root)
+    # 検証
+    assert len(result) == 1
+    assert result[0][0] == "skills/a/SKILL.md"
+
+
+def test_check_skills_when_build_error(tmp_path: Path) -> None:
+    """組み立てられない（正常系）。"""
+    # 準備
+    root = _skill_repo(
+        tmp_path, {"docs/skill/a.yaml": _SKILL_DOC.replace("  path: skills/a/SKILL.md\n", "  name: a\n")}
+    )
+    # 実行
+    result = check_all.check_skills(root)
+    # 検証
+    assert len(result) == 1
+    assert result[0][0] == "docs/skill"
+    assert "SKILL.md を組み立てられません" in result[0][3]
+
+
+def test_check_skills_when_no_skill_dir(tmp_path: Path) -> None:
+    """docs/skill/ が無い（正常系）。"""
+    # 準備
+    root = _skill_repo(tmp_path, {})
+    # 実行
+    result = check_all.check_skills(root)
     # 検証
     assert result == []
 
