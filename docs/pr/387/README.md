@@ -1,0 +1,1 @@
+# スキーマ『共通』の ER 図の関連の from_column・to_column の x-used-by の外部キーの向きを、例と設計書に合わせる
