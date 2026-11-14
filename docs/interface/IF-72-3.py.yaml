@@ -419,7 +419,7 @@ flows:
       - 標準出力に、`skills/a/SKILL.md` のパスと、生成元の `docs/skill/a.yaml` と、「SKILL.md の生成」を実行する案内（`uv run --frozen --script scripts/build_skills.py`）の行が出る
     test: test_normal_when_skills_out_of_date
   - name: 異常系（検査の CLI が無い・終了コード 2）
-    summary: markdownlint-cli2・textlint のどちらかが見つからなければ検査を始めずに終わる
+    summary: markdownlint-cli2・textlint・npx のどれかが見つからなければ検査を始めずに終わる
     setup:
       - name: Mock
         description: '`--lint-dir` に存在しないフォルダを指定する'
@@ -438,7 +438,7 @@ flows:
       <!-- /map -->
     expected:
       - 終了コードが 2
-      - 標準エラーに、見つからない CLI の名前と、開発コマンドの環境構築で入れる案内が CLI ごとに 1 行ずつ出る
+      - 標準エラーに、見つからない CLI の名前（markdownlint-cli2・textlint。`npx` が `PATH` に無ければ npx も）と、開発コマンドの環境構築で入れる案内が CLI ごとに 1 行ずつ出る
     test: test_error_when_check_cli_missing
   - name: 異常系（拡張したメタスキーマを使用できない・終了コード 2）
     summary: 拡張したメタスキーマが無いか、読み込めないか、それ自身がメタスキーマに合わなければ検査を始めずに終わる
@@ -492,6 +492,34 @@ flows:
       - 終了コードが 2
       - 標準エラーに `project-index.yaml` が無いことが出る
     test: test_error_when_config_missing
+  - name: 異常系（mdmark の点検が失敗する・終了コード 2）
+    summary: mdmark の点検が失敗したら、他の検査の違反を出し終えてから終了コード 2 で終わる
+    setup:
+      - name: Mock
+        description: '`npx` を、標準出力に何も出さずに終了コード 1 で終わるものに差し替える'
+      - name: リポジトリ
+        description: 誤りの無い map を `items[].body` に持つ文書と、スキーマに合わない文書（`description` が無い）と、`schemas/meta.schema.yaml` を持つ一時フォルダ
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant M as mdmark
+        C->>S: リポジトリの直下で起動する
+        S->>S: スキーマの検査と文書の違反の検査
+        S->>M: つないだ Markdown を check --text - の標準入力で点検する
+        M-->>S: 終了コード 1 と空の標準出力
+        S-->>C: 他の違反の行と標準エラーの理由と終了コード 2
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 2
+      - 標準出力に、`description` が無い文書のスキーマの違反の行が出る
+      - 標準エラーに、mdmark の点検が失敗したことと mdmark の終了コードが出る
+    test: test_error_when_mdmark_check_fails
 lead: '`project-index.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を適用し、`schemas/design/` の設計書のスキーマにスキーマ自身の検査を適用し、設計書のテンプレートがスキーマと、SKILL.md が生成元と、workflow のファイルがインターフェース定義と一致するかを比べ、文書の map を mdmark で点検し、全ての違反を出して終了コードで合否を返却する。'
 identifier: check-all
 idempotent: true
@@ -523,14 +551,14 @@ response:
     description: 終了コード 2 のときの理由
   - name: exit_code
     type: Literal[0, 1, 2]
-    description: 0 = 違反なし（警告だけのときを含む）。1 = 違反が 1 件以上。2 = 検査の CLI が見つからないか、mdmark の点検が終了コード 0・1 以外で終わったか、`project-index.yaml` が読み込めないか、拡張したメタスキーマを使用できず、検査を始めなかった
+    description: 0 = 違反なし（警告だけのときを含む）。1 = 違反が 1 件以上。2 = 検査の CLI が見つからないか、`project-index.yaml` が読み込めないか、拡張したメタスキーマを使用できず、検査を始めなかった。または mdmark の点検が失敗し、他の検査を終えてから返却した
 exceptions:
   - name: なし（正常終了）
     condition: 全ての文書に違反が無い（終了コード 0）。警告にしたルールの違反だけのときを含む
   - name: 終了コード 1
     condition: 違反（設計書のスキーマの誤りを含む）が 1 件以上ある。全ての文書と設計書のスキーマを検査し終えてから返却する
   - name: 終了コード 2
-    condition: markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`npx` が `PATH` に無いか、`project-index.yaml` が無い・YAML として読み込めないか、`schemas/meta.schema.yaml` が無い・YAML として読み込めない・それ自身が JSON Schema 2020-12 のメタスキーマに合わない。mdmark の点検が終了コード 0・1 以外で終わったときも、他の検査を終えてから標準エラーに mdmark の標準エラーを出して終了コード 2 で終わる
+    condition: markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`npx` が `PATH` に無いか、`project-index.yaml` が無い・YAML として読み込めないか、`schemas/meta.schema.yaml` が無い・YAML として読み込めない・それ自身が JSON Schema 2020-12 のメタスキーマに合わない。mdmark の点検が失敗したとき（終了コードが 0・1 以外か、標準出力の最後の行が `ずれ {件数} 件` でない）も、他の検査を終えてから標準エラーに mdmark の標準エラーを出して終了コード 2 で終わる
 constraints:
   - item: 検査の範囲
     constraint: '`project-index.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も適用する。
@@ -584,7 +612,7 @@ constraints:
     constraint: 該当する全ての項目を、項目の間に空行 2 行を挟んで 1 つの Markdown につなぎ、`npx -y github:shuhei1101/mdmark#{タグ} check --text -` を一時のフォルダで 1 回呼び、標準入力へ書き込む。タグは「Pages の成果物の作成」と同じ値を使用する
     decided_by: LIB-137-1#
   - item: map の違反にするずれ
-    constraint: 'mdmark が出した `-:{行}: {種類}: {内容}` の行のうち、種類が `map_` で始まるものだけを違反にし、内容は `mdmark/{種類}: {内容}` で出す。`legacy_mark` など他の種類と、最後の `ずれ {件数} 件` の行は捨てる'
+    constraint: 'mdmark が出した `-:{行}: {種類}: {内容}` の行のうち、種類が `map_` で始まるものだけを違反にし、内容は `mdmark/{種類}: {内容}` で出す。`legacy_mark` など他の種類と、最後の `ずれ {件数} 件` の行は捨てる。終了コードが 0・1 以外か、標準出力の最後の行が `ずれ {件数} 件` でなければ点検の失敗とし、終了コード 2 の理由にする（終了コード 1 は、点検せずに標準エラーへ原因を出したときにも返る）'
   - item: map の違反の行
     constraint: つないだ Markdown の行から、その行を含む項目のつないだ中の開始行を減算して `iter_strings` が返却する項目の開始行を加算した、元の文書の YAML の行で出す。項目のパスはその項目のパス
   - item: workflow の突き合わせの範囲
@@ -592,11 +620,11 @@ constraints:
   - item: workflow の突き合わせ
     constraint: |-
       食い違い 1 件を、設計書のその項目のキーの行の違反 1 件にし、内容に workflow のファイルのパスと workflow の側の値を出す。
-      起動の条件: `on` のイベント名と、イベントの下の `branches`・`branches-ignore`・`tags`・`paths`・`paths-ignore`・`types` の値と `schedule` の `cron` が、全て `entry.value` のコードスパンにある。`entry.value` のコードスパンは、workflow のファイルのパスとそれらの値のどれか。
+      起動の条件: `on` のイベント名と、イベントの下の `branches`・`branches-ignore`・`tags`・`paths`・`paths-ignore`・`types` の値と `schedule` の `cron` を、全て `entry.value` が含む。
       リクエスト: `request[].name` の並びが `on.workflow_dispatch.inputs` のキーの並びと同じで、名前ごとに `type`（workflow の `type`。無ければ `string`）・`required`（無ければ `false`）・`default`（文字列にして比べる）が一致する。
-      排他: workflow が `concurrency` を持つとき、`exclusivity` が `group` の値と `cancel-in-progress: {値}` をコードスパンで持つ。持たないとき、`exclusivity` に `cancel-in-progress` が無い。
+      排他: workflow が `concurrency` を持つとき、`exclusivity` が `group` の値と `cancel-in-progress: {値}` を含む。持たないとき、`exclusivity` に `cancel-in-progress` が無い。
       step: `overall_flow` の `flowchart` の開始・終わり（`([...])`）を除くノードのラベルの集まりが、全てのジョブの step の `name` の集まりと同じで、`subgraph` の ID がジョブの ID で、`subgraph` の中のノードがそのジョブの step である。`flows[].flow` の開始・終わりを除くノードのラベルは、全て step の `name` にある。`name` の無い step は、`overall_flow` の行でジョブの ID と step の番号を出す違反 1 件にする。
-      分岐: `if` を持つ step・ジョブは、`overall_flow` のその step（ジョブは `subgraph`）へ入る線のどれかのラベルに `if` の式をコードスパンで持つ
+      分岐: `if` を持つ step・ジョブは、`overall_flow` のその step（ジョブは `subgraph`）へ入る線のどれかのラベルが、`if` の式（式を囲む `${{`・`}}` を除外した文字列）を含む
     decided_by: IF-137-2#
   - item: SKILL.md
     constraint: 「SKILL.md の生成」と同じ組み立てで作った中身のバイト列が、設計書ごとの `skill.path` のファイルと一致する。違うかファイルが無ければ、SKILL.md のパスの 1 行で違反 1 件にし、内容に生成元の設計書のパスと生成のコマンドを出す。組み立てられなければ（設計書がスキーマに合わない 等）、`docs/skill` の 1 行で理由の違反 1 件にする。`docs/skill/` が無ければ比べない

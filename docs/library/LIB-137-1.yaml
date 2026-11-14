@@ -58,10 +58,13 @@ catalogs:
         returns:
           - name: exit_code
             type: Literal[0, 1]
-            description: 0 = ずれが 0 件。1 = ずれが 1 件以上（全てのずれを出してから終わる）
+            description: 0 = ずれが 0 件。1 = ずれが 1 件以上（全てのずれを出してから終わる）か、一緒に指定できない引数を指定した・設定ファイルを YAML として読み込めない（点検せずに標準エラーへ原因を出す）。点検したときだけ標準出力の最後の行が `ずれ {件数} 件` になるため、その行の有無で区別できる。npx が取得に失敗したときも npm のエラーで終了コード 1 になる
           - name: stdout
             type: str
             description: 'ずれ 1 件を `-:{行}: {種類}: {内容}` の 1 行で並べ、最後に `ずれ {件数} 件` を出す。種類は map の誤りの `map_invalid`・`map_unknown_ref`・`map_unknown_key`・`map_invalid_value`・`map_unknown_class`・`map_unknown_line` と、前の記法のマーカーの `legacy_mark` など'
+          - name: stderr
+            type: str
+            description: 点検せずに終わったときの原因（一緒に指定できない引数・読み込めない設定ファイル）と、npx の取得の失敗の npm のエラー
 lead: マーカーを持つ Markdown を描くライブラリと CLI。CLI の `build` は、設定の `build` が指す複数の Markdown を、文書の一覧と文書間のリンクで行き来できる CDN を読み込まない 1 枚の HTML にまとめる。
 supplier: shuhei1101
 dependency_scope: 必須
