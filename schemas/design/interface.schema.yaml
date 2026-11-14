@@ -111,7 +111,7 @@ properties:
   test_file:
     type: string
     title: 対応テストファイル
-    description: 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`。規約『V字モデル』）。
+    description: 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`。入口が `trigger` の GitHub Actions の workflow は `tests/e2e/workflow/…`。規約『V字モデル』）。
     x-used-by:
       - テストで、結合テストを作るファイルにする。
       - 検査で、テストのファイルがあるかを確認する。

@@ -46,6 +46,8 @@ items:
       | モジュール | モジュール構成 | `tests/unit/{パッケージのパス}/` | 設計書 1 つ = 物理ファイル 1 つ = 単体テストのファイル 1 つ（`test_files` は 1 つ）、関数・メソッドの `unit_tests` の 1 要素 = テスト関数 1 つ（`unit_tests[].name`） | モジュール構成の `test_files` |
 
       <!-- /table -->
+
+      入口が `trigger` の GitHub Actions の workflow のインターフェース定義だけは、テストを `tests/e2e/workflow/` に配置する（[GitHub Actions の workflow のテスト](id:python-testing-workflow)）。
   - id: mapping-02
     group: 対応表
     name: 対応の記録の向き
