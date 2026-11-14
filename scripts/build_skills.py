@@ -42,7 +42,9 @@ SKILLS_DIR = PurePosixPath("docs/skill")
 SCHEMA_NAME = "agent_flow.schema.yaml"
 
 # frontmatter の後ろに配置する生成元のコメント
-GENERATED_NOTE = "<!-- {source} から生成した。このファイルを修正せず、設計書を修正して再生成する -->"
+GENERATED_NOTE = (
+    "<!-- {source} から生成した。このファイルを修正せず、設計書を修正して再生成する -->"
+)
 
 # 再生成するコマンド（docstring の Usage と同じ）
 COMMAND = "uv run --frozen --script scripts/build_skills.py"
@@ -115,7 +117,7 @@ def plan_skills(root: Path) -> list[SkillPlan]:
     violations = [
         f"{path}: {format_path(list(error.absolute_path)) or '(最上位)'}: {error.message}"
         for path, doc in docs.items()
-        for error in validator.iter_errors(doc)  # pyright: ignore[reportUnknownMemberType]
+        for error in validator.iter_errors(cast("Any", doc))  # pyright: ignore[reportUnknownMemberType]
     ]
     if violations:
         raise BuildError(str(SKILLS_DIR), "設計書がスキーマに合いません\n" + "\n".join(violations))

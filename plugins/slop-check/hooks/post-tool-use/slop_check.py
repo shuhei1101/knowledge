@@ -379,7 +379,6 @@ def build_notice(hits: Sequence[Entry]) -> str:
     return "\n".join([NOTICE_HEAD, *rows, NOTICE_TAIL])
 
 
-
 def tool_label(tool_name: str) -> str:
     """ツール名から、利用者向けの 1 行の括弧の中に出す書き込みの名前を作る。"""
     parts = _split_mcp(tool_name)
