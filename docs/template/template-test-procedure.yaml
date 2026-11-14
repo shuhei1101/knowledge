@@ -48,6 +48,8 @@ items:
       | layers[].run_one | 個別実行 | object | - | - | - | 1 つのテストだけを実行するコマンドと、その指定方法。 | 実行で、失敗したテストだけを再実行するコマンドにする。 | - |
       | layers[].run_one.label | 単位 | string | 必須 | - | - | `シナリオ` / `画面` / `エンドポイント` / `ファイル` 等。見出しは `個別{単位}実行`。 | 生成で、`個別{単位}実行` の見出しにする。 | - |
       | layers[].run_one.command | コマンド | string | 必須 | - | - | プレースホルダの形式（`{シナリオファイルパス}`）の 1 コマンドのコードブロック。 | 実行で、失敗したテストだけを再実行するときにプレースホルダを置き換えて実行する。 | - |
+      | layers[].location | 実行場所 | string | - | `runner` / `local` | - | 全件を回す場所（`runner` = GitHub Actions のランナー / `local` = 手元）。 | 実行で、全件をランナーの全件実行で回すか、手元の全件実行で回すかを決める。 | - |
+      | layers[].run_runner | ランナーの全件実行 | string | - | - | - | `location` が `runner` の層だけが持つ。層の全件を回す workflow を `workflow_dispatch` で起動し、終わるまで待ち、ログを取得する 1 コマンドのコードブロック（`bash`）。 | 実行で、ランナーで全件を実行するコマンドにする。<br>レビューで、配置されたテストのログが同じコマンドの出力かを照合する。 | - |
       | layers[].carry_over | セッションを跨いで実行する形式 | string | - | - | - | E2E テストだけが持つ。結果と状態を配置するフォルダ（`RUN_DIR`）と、その中のファイルの名前を記載する。 | 実行で、E2E の結果と状態を配置するフォルダとファイルを決める。 | - |
       | layers[].monitoring | 実行中の進行の監視 | string | - | - | - | E2E テストだけが持つ。 | 実行で、E2E の実行中に進行を確認する方法にする。 | - |
       | layers[].abort | 実行の中断 | string | - | - | - | 中断の仕方。E2E テストは合図ファイル（`$RUN_DIR/abort`）。 | 実行で、実行を中断するときの手順にする。 | - |
@@ -76,6 +78,8 @@ items:
       | layers[].prerequisites | 料金・副作用のある種別は必ず記載する。 | - | - |
       | layers[].run_all | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
       | layers[].run_one.command | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | layers[].location | 判定フローチャート『テストの実行場所』で決める。<br>決めるまでは記載しない。 | - | - |
+      | layers[].run_runner | `run_all`・`run_one` は手元で回すコマンドのまま残し、ランナーで回せないときに使用する。<br>workflow は手動の起動（`workflow_dispatch`）だけで起動し、push・PR を契機にしない。<br>失敗したときもログを取得してから失敗で終える。 | - | - |
       | layers[].carry_over | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
       | layers[].monitoring | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
       | layers[].abort | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
@@ -109,6 +113,11 @@ items:
             ```bash
             uv run pytest {単体テストファイルパス}
             ```
+        location: runner
+        run_runner: |-
+          ```bash
+          run_url=$(gh workflow run test.yml --ref "$(git branch --show-current)" -f layer=unit | grep -o 'https://[^ ]*/actions/runs/[0-9]*') && run_id=${run_url##*/} && (rc=0; gh run watch "$run_id" --exit-status > /dev/null || rc=1; gh run view "$run_id" --log; exit $rc)
+          ```
         parallel: true
       - id: TL-2
         name: 外部疎通テスト
@@ -127,6 +136,7 @@ items:
             ```bash
             uv run pytest {外部疎通テストファイルパス} --run-external
             ```
+        location: local
         external_cost: テストごとの料金は外部API の設計書の料金を参照する
       - id: TL-3
         name: lint
