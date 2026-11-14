@@ -1,0 +1,1 @@
+# GitHub Actions の workflow の静的な検査（actionlint と、インターフェース定義と workflow のファイルの突き合わせ）を決める
