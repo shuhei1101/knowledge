@@ -11,7 +11,7 @@ inject_when:
     - tests/e2e/workflow
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-11-14'
 related:
   - to: template-interface
@@ -35,7 +35,7 @@ items:
     name: 手元で回す層
     body: |-
       - 検証用のブランチを本物のリポジトリへ push するため、手元で回す層にする。
-        テスト実行方法の層の `location` は `local`（判定フローチャート [テストの実行場所](id:flowchart-test-location#test-location-flow-03) の ※2）
+        テスト実行方法の層の `location` は `local`（判定フローチャート [テストの実行場所](id:flowchart-test-location#test-location-flow-01) の注記「外部のサービスへ実際に接続する」）
   - id: steps-01
     group: 手順
     name: テストの関数の手順

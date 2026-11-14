@@ -18,7 +18,7 @@ tags:
   - name: action:登録
 status: current
 visibility: internal
-rev: 4
+rev: 5
 items:
   - id: overview
     name: 概要
@@ -28,63 +28,49 @@ items:
     group: 用語の登録 判定フローチャート
     name: 判定フロー
     body: |-
-      <!-- flow -->
+      <!-- map: {"title": "用語の登録"} -->
 
-      ```json
-      {
-        "title": "用語の登録",
-        "scope": "単語を用語集へ登録するかを決めるとき",
-        "updated": "2026-11-02",
-        "width": 1378,
-        "height": 1888,
-        "nodes": [
-          {"id": "start", "kind": "start", "x": 444, "y": 24, "w": 140, "h": 140, "name": "用語として登録するか決めたい単語がある"},
-          {"id": "q0", "kind": "question", "x": 334, "y": 220, "w": 360, "h": 200, "name": "knowledge かこのリポジトリの既存の用語と同じものの別の言い方か"},
-          {"id": "q1", "kind": "question", "x": 764, "y": 258, "w": 280, "h": 124, "name": "使用してよい言い方か ※1"},
-          {"id": "r1", "kind": "result", "x": 1114, "y": 284, "w": 240, "h": 72, "name": "既存の用語の aliases に入れる"},
-          {"id": "r2", "kind": "result", "x": 784, "y": 522, "w": 240, "h": 72, "name": "既存の用語の avoid に入れる"},
-          {"id": "q2", "kind": "question", "x": 374, "y": 476, "w": 280, "h": 164, "name": "1 文書の中だけで使用し、他の文書に出ない単語か"},
-          {"id": "r3", "kind": "result", "x": 24, "y": 530, "w": 240, "h": 56, "name": "用語として登録しない"},
-          {"id": "q3", "kind": "question", "x": 374, "y": 696, "w": 280, "h": 164, "name": "一般的な意味のまま使用している技術用語か"},
-          {"id": "r3-2", "kind": "result", "x": 24, "y": 750, "w": 240, "h": 56, "name": "用語として登録しない"},
-          {"id": "q4", "kind": "question", "x": 374, "y": 916, "w": 280, "h": 124, "name": "プロジェクト固有の呼び名か ※2"},
-          {"id": "q5", "kind": "question", "x": 334, "y": 1096, "w": 360, "h": 200, "name": "一般的な単語を、このプロジェクトで一般と違う・狭い意味で使用しているか"},
-          {"id": "q6", "kind": "question", "x": 374, "y": 1352, "w": 280, "h": 164, "name": "調べた外部のライブラリ・外部サービスの名前か"},
-          {"id": "r3-3", "kind": "result", "x": 24, "y": 1406, "w": 240, "h": 56, "name": "用語として登録しない"},
-          {"id": "q7", "kind": "question", "x": 374, "y": 1572, "w": 280, "h": 164, "name": "複数のリポジトリで同じ意味で使用するか"},
-          {"id": "r4", "kind": "result", "x": 24, "y": 1618, "w": 240, "h": 72, "name": "knowledge に新しい用語として登録する"},
-          {"id": "r5", "kind": "result", "x": 394, "y": 1792, "w": 240, "h": 72, "name": "このリポジトリに新しい用語として登録する"}
-        ],
-        "wires": [
-          {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[514, 164], [514, 220]]},
-          {"id": "j-q0-q1", "from": "q0", "to": "q1", "line": "flow", "points": [[694, 320], [764, 320]], "label": "YES", "labelAt": [729, 320]},
-          {"id": "j-q0-q2", "from": "q0", "to": "q2", "line": "flow", "points": [[514, 420], [514, 476]], "label": "NO", "labelAt": [514, 448]},
-          {"id": "j-q1-r1", "from": "q1", "to": "r1", "line": "flow", "points": [[1044, 320], [1114, 320]], "label": "YES", "labelAt": [1079, 320]},
-          {"id": "j-q1-r2", "from": "q1", "to": "r2", "line": "flow", "points": [[904, 382], [904, 522]], "label": "NO", "labelAt": [904, 452]},
-          {"id": "j-q2-r3", "from": "q2", "to": "r3", "line": "flow", "points": [[374, 558], [264, 558]], "label": "YES", "labelAt": [319, 558]},
-          {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[514, 640], [514, 696]], "label": "NO", "labelAt": [514, 668]},
-          {"id": "j-q3-q4", "from": "q3", "to": "q4", "line": "flow", "points": [[514, 860], [514, 916]], "label": "NO", "labelAt": [514, 888]},
-          {"id": "j-q3-r3-2", "from": "q3", "to": "r3-2", "line": "flow", "points": [[374, 778], [264, 778]], "label": "YES", "labelAt": [319, 778]},
-          {"id": "j-q4-q7", "from": "q4", "to": "q7", "line": "flow", "points": [[654, 978], [770, 978], [770, 1654], [654, 1654]], "label": "YES", "labelAt": [712, 978]},
-          {"id": "j-q4-q5", "from": "q4", "to": "q5", "line": "flow", "points": [[514, 1040], [514, 1096]], "label": "NO", "labelAt": [514, 1068]},
-          {"id": "j-q5-q7", "from": "q5", "to": "q7", "line": "flow", "points": [[694, 1196], [756, 1196], [756, 1654], [654, 1654]], "label": "YES", "labelAt": [725, 1196]},
-          {"id": "j-q5-q6", "from": "q5", "to": "q6", "line": "flow", "points": [[514, 1296], [514, 1352]], "label": "NO", "labelAt": [514, 1324]},
-          {"id": "j-q6-r3-3", "from": "q6", "to": "r3-3", "line": "flow", "points": [[374, 1434], [264, 1434]], "label": "NO", "labelAt": [319, 1434]},
-          {"id": "j-q6-q7", "from": "q6", "to": "q7", "line": "flow", "points": [[514, 1516], [514, 1572]], "label": "YES", "labelAt": [514, 1544]},
-          {"id": "j-q7-r4", "from": "q7", "to": "r4", "line": "flow", "points": [[374, 1654], [264, 1654]], "label": "YES", "labelAt": [319, 1654]},
-          {"id": "j-q7-r5", "from": "q7", "to": "r5", "line": "flow", "points": [[514, 1736], [514, 1792]], "label": "NO", "labelAt": [514, 1764]}
-        ]
-      }
+      ```mermaid
+      flowchart TB
+        start(("用語として登録するか決めたい単語がある"))
+        q0{"knowledge かこのリポジトリの既存の用語と同じものの別の言い方か"}
+        q1{"使用してよい言い方か"}
+        r1(["既存の用語の aliases に入れる"])
+        r2(["既存の用語の avoid に入れる"])
+        q2{"1 文書の中だけで使用し、他の文書に出ない単語か"}
+        r3(["用語として登録しない"])
+        q3{"一般的な意味のまま使用している技術用語か"}
+        r3_2(["用語として登録しない"])
+        q4{"プロジェクト固有の呼び名か"}
+        q5{"一般的な単語を、このプロジェクトで一般と違う・狭い意味で使用しているか"}
+        q6{"調べた外部のライブラリ・外部サービスの名前か"}
+        r3_3(["用語として登録しない"])
+        q7{"複数のリポジトリで同じ意味で使用するか"}
+        r4(["knowledge に新しい用語として登録する"])
+        r5(["このリポジトリに新しい用語として登録する"])
+        start --> q0
+        q0 -->|YES| q1
+        q0 -->|NO| q2
+        q1 -->|YES| r1
+        q1 -->|NO| r2
+        q2 -->|YES| r3
+        q2 -->|NO| q3
+        q3 -->|NO| q4
+        q3 -->|YES| r3_2
+        q4 -->|YES| q7
+        q4 -->|NO| q5
+        q5 -->|YES| q7
+        q5 -->|NO| q6
+        q6 -->|NO| r3_3
+        q6 -->|YES| q7
+        q7 -->|YES| r4
+        q7 -->|NO| r5
       ```
 
-      <!-- /flow -->
-  - id: term-registration-flow-02
-    group: 用語の登録 判定フローチャート
-    name: ※1 使用してよい言い方
-    body: |-
-      - ※1 使用してよい言い方: 正式な単語と並べて使用してよい言い方なら `aliases`、やめた言い方なら `avoid` に入れる
-  - id: term-registration-flow-03
-    group: 用語の登録 判定フローチャート
-    name: ※2 プロジェクト固有の呼び名
-    body: |-
-      - ※2 プロジェクト固有の呼び名: システム名・製品の固有の単語・話し合いで決めた呼び名
+      <!-- map-data: {"version": 1, "notes": {"q1": {"annotations": ["term-registration-n1"]}, "q4": {"annotations": ["term-registration-n2"]}}} -->
+
+      <!-- /map -->
+
+      ※[term-registration-n1]: 使用してよい言い方: 正式な単語と並べて使用してよい言い方なら `aliases`、やめた言い方なら `avoid` に入れる
+
+      ※[term-registration-n2]: プロジェクト固有の呼び名: システム名・製品の固有の単語・話し合いで決めた呼び名

@@ -21,7 +21,7 @@ tags:
     main: true
 status: current
 visibility: internal
-rev: 5
+rev: 6
 items:
   - id: overview
     name: 概要
@@ -31,53 +31,39 @@ items:
     group: 用語の選び方 判定フローチャート
     name: 判定フロー
     body: |-
-      <!-- flow -->
+      <!-- map: {"title": "用語の選び方"} -->
 
-      ```json
-      {
-        "title": "用語の選び方",
-        "scope": "画面・ドキュメント・コードのコメント・論理名に記載する単語を選ぶとき",
-        "updated": "2026-11-02",
-        "width": 1028,
-        "height": 1352,
-        "nodes": [
-          {"id": "start", "kind": "start", "x": 454, "y": 24, "w": 120, "h": 120, "name": "記載する単語を選びたい"},
-          {"id": "q0", "kind": "question", "x": 374, "y": 200, "w": 280, "h": 164, "name": "コードの識別子・Enum の値・定数か"},
-          {"id": "r1", "kind": "result", "x": 764, "y": 254, "w": 240, "h": 56, "name": "英語で記載する"},
-          {"id": "q1", "kind": "question", "x": 334, "y": 420, "w": 360, "h": 200, "name": "文章の中か（ラベル・見出し・表の列名・項目名・論理名ではないか）"},
-          {"id": "r2", "kind": "result", "x": 24, "y": 484, "w": 240, "h": 72, "name": "自然な文で記載する。冗長な言い回しと話し言葉を使用しない"},
-          {"id": "q2", "kind": "question", "x": 374, "y": 676, "w": 280, "h": 124, "name": "対応表にある単語か ※1"},
-          {"id": "r3", "kind": "result", "x": 764, "y": 710, "w": 240, "h": 56, "name": "対応表の単語を使用する"},
-          {"id": "q3", "kind": "question", "x": 374, "y": 856, "w": 280, "h": 164, "name": "用語集・公式ドキュメントで使用されている単語か ※2"},
-          {"id": "r4", "kind": "result", "x": 24, "y": 910, "w": 240, "h": 56, "name": "その単語を使用する"},
-          {"id": "q4", "kind": "question", "x": 374, "y": 1076, "w": 280, "h": 124, "name": "訓読みの動詞・一字の単語・比喩か"},
-          {"id": "a1", "kind": "action", "x": 764, "y": 1102, "w": 240, "h": 72, "name": "定着した漢語・カタカナ語に言い換える"},
-          {"id": "r5", "kind": "result", "x": 394, "y": 1256, "w": 240, "h": 72, "name": "そのまま使用する。新しい単語なら用語集に登録する"}
-        ],
-        "wires": [
-          {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[514, 144], [514, 200]]},
-          {"id": "j-q0-r1", "from": "q0", "to": "r1", "line": "flow", "points": [[654, 282], [764, 282]], "label": "YES", "labelAt": [709, 282]},
-          {"id": "j-q0-q1", "from": "q0", "to": "q1", "line": "flow", "points": [[514, 364], [514, 420]], "label": "NO", "labelAt": [514, 392]},
-          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[514, 620], [514, 676]], "label": "NO", "labelAt": [514, 648]},
-          {"id": "j-q1-r2", "from": "q1", "to": "r2", "line": "flow", "points": [[334, 520], [264, 520]], "label": "YES", "labelAt": [299, 520]},
-          {"id": "j-q2-r3", "from": "q2", "to": "r3", "line": "flow", "points": [[654, 738], [764, 738]], "label": "YES", "labelAt": [709, 738]},
-          {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[514, 800], [514, 856]], "label": "NO", "labelAt": [514, 828]},
-          {"id": "j-q3-q4", "from": "q3", "to": "q4", "line": "flow", "points": [[514, 1020], [514, 1076]], "label": "NO", "labelAt": [514, 1048]},
-          {"id": "j-q3-r4", "from": "q3", "to": "r4", "line": "flow", "points": [[374, 938], [264, 938]], "label": "YES", "labelAt": [319, 938]},
-          {"id": "j-q4-a1", "from": "q4", "to": "a1", "line": "flow", "points": [[654, 1138], [764, 1138]], "label": "YES", "labelAt": [709, 1138]},
-          {"id": "j-q4-r5", "from": "q4", "to": "r5", "line": "flow", "points": [[514, 1200], [514, 1256]], "label": "NO", "labelAt": [514, 1228]}
-        ]
-      }
+      ```mermaid
+      flowchart TB
+        start(("記載する単語を選びたい"))
+        q0{"コードの識別子・Enum の値・定数か"}
+        r1(["英語で記載する"])
+        q1{"文章の中か（ラベル・見出し・表の列名・項目名・論理名ではないか）"}
+        r2(["自然な文で記載する。冗長な言い回しと話し言葉を使用しない"])
+        q2{"対応表にある単語か"}
+        r3(["対応表の単語を使用する"])
+        q3{"用語集・公式ドキュメントで使用されている単語か"}
+        r4(["その単語を使用する"])
+        q4{"訓読みの動詞・一字の単語・比喩か"}
+        a1["定着した漢語・カタカナ語に言い換える"]
+        r5(["そのまま使用する。新しい単語なら用語集に登録する"])
+        start --> q0
+        q0 -->|YES| r1
+        q0 -->|NO| q1
+        q1 -->|NO| q2
+        q1 -->|YES| r2
+        q2 -->|YES| r3
+        q2 -->|NO| q3
+        q3 -->|NO| q4
+        q3 -->|YES| r4
+        q4 -->|YES| a1
+        q4 -->|NO| r5
       ```
 
-      <!-- /flow -->
-  - id: word-choice-flow-02
-    group: 用語の選び方 判定フローチャート
-    name: ※1 対応表
-    body: |-
-      - ※1 対応表: 規約『文章の書き方』の `## 用語の選び方` にあるドキュメントの用語の対応表と、規約『入力と文言』の UI の操作の単語の対応表
-  - id: word-choice-flow-03
-    group: 用語の選び方 判定フローチャート
-    name: ※2 用語集・公式ドキュメント
-    body: |-
-      - ※2 用語集・公式ドキュメント: Microsoft の用語集・Android の日本語文字列・その技術の公式ドキュメント
+      <!-- map-data: {"version": 1, "notes": {"q2": {"annotations": ["word-choice-n1"]}, "q3": {"annotations": ["word-choice-n2"]}}} -->
+
+      <!-- /map -->
+
+      ※[word-choice-n1]: 対応表: 規約『文章の書き方』の `## 用語の選び方` にあるドキュメントの用語の対応表と、規約『入力と文言』の UI の操作の単語の対応表
+
+      ※[word-choice-n2]: 用語集・公式ドキュメント: Microsoft の用語集・Android の日本語文字列・その技術の公式ドキュメント

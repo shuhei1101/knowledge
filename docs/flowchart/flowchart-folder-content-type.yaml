@@ -6,7 +6,7 @@ aliases:
   - フォルダの中身の種類の決め方
 status: current
 visibility: internal
-rev: 1
+rev: 2
 related:
   - to: dev-folder-layout
     type: references
@@ -22,61 +22,50 @@ items:
     group: フォルダの中身の種類の決め方 判定フローチャート
     name: 判定フロー
     body: |-
-      <!-- flow -->
+      <!-- map: {"title": "フォルダの中身の種類の決め方"} -->
 
-      ```json
-      {
-        "title": "フォルダの中身の種類の決め方",
-        "scope": "フォルダ構成の設計書にエントリを追加するとき",
-        "updated": "2026-11-12",
-        "width": 1378,
-        "height": 1000,
-        "nodes": [
-          {"id": "start", "kind": "start", "x": 414, "y": 24, "w": 120, "h": 120, "name": "エントリを追加する"},
-          {"id": "q0", "kind": "question", "x": 334, "y": 200, "w": 280, "h": 120, "name": "ファイルのエントリか"},
-          {"id": "q1", "kind": "question", "x": 334, "y": 376, "w": 280, "h": 120, "name": "直下にファイルを持たないフォルダか ※1"},
-          {"id": "r0", "kind": "result", "x": 24, "y": 408, "w": 240, "h": 56, "name": "付けない"},
-          {"id": "q2", "kind": "question", "x": 334, "y": 552, "w": 280, "h": 120, "name": "直下のファイルは同じ役割 ※2 を持つか"},
-          {"id": "q3", "kind": "question", "x": 764, "y": 552, "w": 280, "h": 120, "name": "1 つの機能 ※3 だけが参照するか"},
-          {"id": "r1", "kind": "result", "x": 1114, "y": 584, "w": 240, "h": 56, "name": "役割と機能の単語を付ける"},
-          {"id": "r2", "kind": "result", "x": 784, "y": 728, "w": 240, "h": 56, "name": "役割の単語だけを付ける"},
-          {"id": "q4", "kind": "question", "x": 334, "y": 728, "w": 280, "h": 120, "name": "機能ごとに分けたフォルダか"},
-          {"id": "r3", "kind": "result", "x": 24, "y": 760, "w": 240, "h": 56, "name": "機能の単語だけを付ける"},
-          {"id": "r4", "kind": "result", "x": 354, "y": 904, "w": 240, "h": 72, "name": "役割か機能でフォルダを再分割する ※4"}
-        ],
-        "wires": [
-          {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[474, 144], [474, 200]]},
-          {"id": "j-q0-q3", "from": "q0", "to": "q3", "line": "flow", "points": [[614, 260], [904, 260], [904, 552]], "label": "YES", "labelAt": [689, 260]},
-          {"id": "j-q0-q1", "from": "q0", "to": "q1", "line": "flow", "points": [[474, 320], [474, 376]], "label": "NO", "labelAt": [474, 348]},
-          {"id": "j-q1-r0", "from": "q1", "to": "r0", "line": "flow", "points": [[334, 436], [264, 436]], "label": "YES", "labelAt": [299, 436]},
-          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[474, 496], [474, 552]], "label": "NO", "labelAt": [474, 524]},
-          {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[614, 612], [764, 612]], "label": "YES", "labelAt": [689, 612]},
-          {"id": "j-q3-r1", "from": "q3", "to": "r1", "line": "flow", "points": [[1044, 612], [1114, 612]], "label": "YES", "labelAt": [1079, 612]},
-          {"id": "j-q3-r2", "from": "q3", "to": "r2", "line": "flow", "points": [[904, 672], [904, 728]], "label": "NO", "labelAt": [904, 700]},
-          {"id": "j-q2-q4", "from": "q2", "to": "q4", "line": "flow", "points": [[474, 672], [474, 728]], "label": "NO", "labelAt": [474, 700]},
-          {"id": "j-q4-r3", "from": "q4", "to": "r3", "line": "flow", "points": [[334, 788], [264, 788]], "label": "YES", "labelAt": [299, 788]},
-          {"id": "j-q4-r4", "from": "q4", "to": "r4", "line": "flow", "points": [[474, 848], [474, 904]], "label": "NO", "labelAt": [474, 876]}
-        ]
-      }
+      ```mermaid
+      flowchart TB
+        start(("エントリを追加する"))
+        q0{"ファイルのエントリか"}
+        q1{"直下にファイルを持たないフォルダか"}
+        r0(["付けない"])
+        q2{"直下のファイルは同じ役割 を持つか"}
+        q3{"1 つの機能 だけが参照するか"}
+        r1(["役割と機能の単語を付ける"])
+        r2(["役割の単語だけを付ける"])
+        q4{"機能ごとに分けたフォルダか"}
+        r3(["機能の単語だけを付ける"])
+        r4(["役割か機能でフォルダを再分割する"])
+        start --> q0
+        q0 -->|YES| q3
+        q0 -->|NO| q1
+        q1 -->|YES| r0
+        q1 -->|NO| q2
+        q2 -->|YES| q3
+        q3 -->|YES| r1
+        q3 -->|NO| r2
+        q2 -->|NO| q4
+        q4 -->|YES| r3
+        q4 -->|NO| r4
       ```
 
-      <!-- /flow -->
-  - id: folder-content-type-flow-02
-    group: フォルダの中身の種類の決め方 判定フローチャート
-    name: ※1 直下にファイルを持たないフォルダ
-    body: "- ※1 直下にファイルを持たないフォルダ: `plugins/` のように、子のフォルダだけをまとめる入れ物。\n  種類は子のエントリに付ける"
-  - id: folder-content-type-flow-03
-    group: フォルダの中身の種類の決め方 判定フローチャート
-    name: ※2 役割
-    body: "- ※2 役割: 設定・スキーマ・フック・テスト・手順など、ファイルが何として使用されるか。\n  ファイルのエントリは、そのファイルの役割。\n  設計書の `content_types[]`（`group: role`）から選び、無ければ追加する"
-  - id: folder-content-type-flow-04
-    group: フォルダの中身の種類の決め方 判定フローチャート
-    name: ※3 機能
-    body: "- ※3 機能: `features/{feature}/` のような、1 つの機能の単位。\n  設計書の `content_types[]`（`group: feature`）から選び、無ければ追加する"
-  - id: folder-content-type-flow-05
-    group: フォルダの中身の種類の決め方 判定フローチャート
-    name: ※4 再分割
-    body: "- ※4 再分割: 役割と機能のどちらも一致しない中身が入っている。\n  規約 [フォルダ構成の切り方とレビュー](id:dev-folder-layout#review-02) の観点「種類が混ざる」で取り上げる"
+      <!-- map-data: {"version": 1, "notes": {"q1": {"annotations": ["folder-content-type-n1"]}, "q2": {"annotations": ["folder-content-type-n2"]}, "q3": {"annotations": ["folder-content-type-n3"]}, "r4": {"annotations": ["folder-content-type-n4"]}}} -->
+
+      <!-- /map -->
+
+      ※[folder-content-type-n1]: 直下にファイルを持たないフォルダ: `plugins/` のように、子のフォルダだけをまとめる入れ物。
+          種類は子のエントリに付ける
+
+      ※[folder-content-type-n2]: 役割: 設定・スキーマ・フック・テスト・手順など、ファイルが何として使用されるか。
+          ファイルのエントリは、そのファイルの役割。
+          設計書の `content_types[]`（`group: role`）から選び、無ければ追加する
+
+      ※[folder-content-type-n3]: 機能: `features/{feature}/` のような、1 つの機能の単位。
+          設計書の `content_types[]`（`group: feature`）から選び、無ければ追加する
+
+      ※[folder-content-type-n4]: 再分割: 役割と機能のどちらも一致しない中身が入っている。
+          規約 [フォルダ構成の切り方とレビュー](id:dev-folder-layout#review-02) の観点「種類が混ざる」で取り上げる
   - id: folder-content-type-example-01
     group: 例
     name: 結果ごとの値の例

@@ -38,7 +38,7 @@ tags:
   - name: tool:project-index
 status: current
 visibility: internal
-rev: 12
+rev: 13
 last_reviewed: '2026-11-07'
 sources:
   - title: "Anthropic: Effective context engineering for AI agents"
@@ -243,43 +243,35 @@ items:
     body: |-
       - 除外の条件に該当しないファイルは全て記載し、1 行を 1 ファイルにする
 
-      <!-- flow -->
+      <!-- map: {"title": "files.yaml に記載するファイル"} -->
 
-      ```json
-      {
-        "title": "files.yaml に記載するファイル",
-        "scope": "files.yaml に記載するかを決めたいファイルがあるとき",
-        "updated": "2026-11-02",
-        "width": 1028,
-        "height": 1136,
-        "nodes": [
-          {"id": "start", "kind": "start", "x": 424, "y": 24, "w": 180, "h": 180, "name": "files.yaml に記載するか決めたいファイルがある"},
-          {"id": "q0", "kind": "question", "x": 334, "y": 260, "w": 360, "h": 164, "name": "生成物・ロック・バイナリ・ベンダーのコードに該当するか ※1"},
-          {"id": "q1", "kind": "question", "x": 334, "y": 480, "w": 360, "h": 164, "name": "再エクスポートや空の __init__ だけのファイルか"},
-          {"id": "r1", "kind": "result", "x": 764, "y": 534, "w": 240, "h": 56, "name": "記載しない"},
-          {"id": "q2", "kind": "question", "x": 374, "y": 700, "w": 280, "h": 120, "name": "テストか"},
-          {"id": "r2", "kind": "result", "x": 24, "y": 714, "w": 240, "h": 92, "name": "記載する。related の tests で対象のコードを指す"},
-          {"id": "q3", "kind": "question", "x": 374, "y": 876, "w": 280, "h": 124, "name": "対応する設計書があるか"},
-          {"id": "r3", "kind": "result", "x": 764, "y": 892, "w": 240, "h": 92, "name": "記載する。related の implements でその設計書を指す"},
-          {"id": "r4", "kind": "result", "x": 394, "y": 1056, "w": 240, "h": 56, "name": "記載する"}
-        ],
-        "wires": [
-          {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[514, 204], [514, 260]]},
-          {"id": "j-q0-r1", "from": "q0", "to": "r1", "line": "flow", "points": [[694, 342], [884, 342], [884, 534]], "label": "YES", "labelAt": [789, 342]},
-          {"id": "j-q0-q1", "from": "q0", "to": "q1", "line": "flow", "points": [[514, 424], [514, 480]], "label": "NO", "labelAt": [514, 452]},
-          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[514, 644], [514, 700]], "label": "NO", "labelAt": [514, 672]},
-          {"id": "j-q1-r1", "from": "q1", "to": "r1", "line": "flow", "points": [[694, 562], [764, 562]], "label": "YES", "labelAt": [729, 562]},
-          {"id": "j-q2-r2", "from": "q2", "to": "r2", "line": "flow", "points": [[374, 760], [264, 760]], "label": "YES", "labelAt": [319, 760]},
-          {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[514, 820], [514, 876]], "label": "NO", "labelAt": [514, 848]},
-          {"id": "j-q3-r3", "from": "q3", "to": "r3", "line": "flow", "points": [[654, 938], [764, 938]], "label": "YES", "labelAt": [709, 938]},
-          {"id": "j-q3-r4", "from": "q3", "to": "r4", "line": "flow", "points": [[514, 1000], [514, 1056]], "label": "NO", "labelAt": [514, 1028]}
-        ]
-      }
+      ```mermaid
+      flowchart TB
+        start(("files.yaml に記載するか決めたいファイルがある"))
+        q0{"生成物・ロック・バイナリ・ベンダーのコードに該当するか"}
+        q1{"再エクスポートや空の __init__ だけのファイルか"}
+        r1(["記載しない"])
+        q2{"テストか"}
+        r2(["記載する。related の tests で対象のコードを指す"])
+        q3{"対応する設計書があるか"}
+        r3(["記載する。related の implements でその設計書を指す"])
+        r4(["記載する"])
+        start --> q0
+        q0 -->|YES| r1
+        q0 -->|NO| q1
+        q1 -->|NO| q2
+        q1 -->|YES| r1
+        q2 -->|YES| r2
+        q2 -->|NO| q3
+        q3 -->|YES| r3
+        q3 -->|NO| r4
       ```
 
-      <!-- /flow -->
+      <!-- map-data: {"version": 1, "notes": {"q0": {"annotations": ["document-management-n1"]}}} -->
 
-      - ※1 除外の条件の見分け方: Q0・Q1 の除外の条件は、project-index の [文書のメタデータ](https://github.com/shuhei1101/project-index/blob/develop/docs/guide/%E3%82%B3%E3%82%A2%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%97%E3%83%88-%E6%96%87%E6%9B%B8%E3%81%AE%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF.md) の「載せるファイルの判定」に従う
+      <!-- /map -->
+
+      ※[document-management-n1]: 除外の条件の見分け方: Q0・Q1 の除外の条件は、project-index の [文書のメタデータ](https://github.com/shuhei1101/project-index/blob/develop/docs/guide/%E3%82%B3%E3%82%A2%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%97%E3%83%88-%E6%96%87%E6%9B%B8%E3%81%AE%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF.md) の「載せるファイルの判定」に従う
   - id: files-yaml-02
     group: 配信
     name: files.yaml の行の列に入れる値

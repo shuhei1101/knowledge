@@ -22,7 +22,7 @@ tags:
   - name: action:選択
 status: current
 visibility: internal
-rev: 2
+rev: 3
 items:
   - id: overview
     name: 概要
@@ -36,52 +36,41 @@ items:
     group: 表し方の選び方 判定フローチャート
     name: 判定フロー
     body: |-
-      <!-- flow -->
+      <!-- map: {"title": "表し方の選び方"} -->
 
-      ```json
-      {
-        "title": "表し方の選び方",
-        "scope": "図・表・箇条書き・文のどれで表すかを決めるとき",
-        "updated": "2026-11-02",
-        "width": 1338,
-        "height": 1352,
-        "nodes": [
-          {"id": "start", "kind": "start", "x": 434, "y": 24, "w": 120, "h": 120, "name": "表し方を選びたい内容がある"},
-          {"id": "q1", "kind": "question", "x": 334, "y": 200, "w": 320, "h": 164, "name": "つながり・順番・包含・時間の流れ・数の大小を伝えるか"},
-          {"id": "q6", "kind": "question", "x": 724, "y": 200, "w": 280, "h": 164, "name": "図で表せない値（全文のラベル・補足）があるか"},
-          {"id": "r1", "kind": "result", "x": 1074, "y": 236, "w": 240, "h": 92, "name": "図にし、図で表せない値を図の下に閉じた表で配置する ※1"},
-          {"id": "r2", "kind": "result", "x": 744, "y": 474, "w": 240, "h": 56, "name": "図だけにする ※1"},
-          {"id": "q2", "kind": "question", "x": 354, "y": 420, "w": 280, "h": 164, "name": "同じ属性を持つ項目が 2 件以上あるか"},
-          {"id": "r3", "kind": "result", "x": 24, "y": 474, "w": 240, "h": 56, "name": "表にする"},
-          {"id": "q3", "kind": "question", "x": 354, "y": 640, "w": 280, "h": 164, "name": "1 つの項目の属性が 3 つ以上あるか"},
-          {"id": "r4", "kind": "result", "x": 744, "y": 686, "w": 240, "h": 72, "name": "「項目 / 値」の 2 列の表にする"},
-          {"id": "q4", "kind": "question", "x": 354, "y": 860, "w": 280, "h": 120, "name": "順番のある手順か"},
-          {"id": "r5", "kind": "result", "x": 24, "y": 884, "w": 240, "h": 72, "name": "番号付きの箇条書きかステップの部品にする"},
-          {"id": "q5", "kind": "question", "x": 354, "y": 1036, "w": 280, "h": 164, "name": "短い事柄が並列に 2 つ以上あるか"},
-          {"id": "r6", "kind": "result", "x": 744, "y": 1090, "w": 240, "h": 56, "name": "箇条書きにする"},
-          {"id": "r7", "kind": "result", "x": 374, "y": 1256, "w": 240, "h": 72, "name": "文で記載する（1 文 1 行。長ければ折りたたむ）"}
-        ],
-        "wires": [
-          {"id": "j-start-q1", "from": "start", "to": "q1", "line": "flow", "points": [[494, 144], [494, 200]]},
-          {"id": "j-q1-q6", "from": "q1", "to": "q6", "line": "flow", "points": [[654, 282], [724, 282]], "label": "YES", "labelAt": [689, 282]},
-          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[494, 364], [494, 420]], "label": "NO", "labelAt": [494, 392]},
-          {"id": "j-q6-r1", "from": "q6", "to": "r1", "line": "flow", "points": [[1004, 282], [1074, 282]], "label": "YES", "labelAt": [1039, 282]},
-          {"id": "j-q6-r2", "from": "q6", "to": "r2", "line": "flow", "points": [[864, 364], [864, 474]], "label": "NO", "labelAt": [864, 419]},
-          {"id": "j-q2-r3", "from": "q2", "to": "r3", "line": "flow", "points": [[354, 502], [264, 502]], "label": "YES", "labelAt": [309, 502]},
-          {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[494, 584], [494, 640]], "label": "NO", "labelAt": [494, 612]},
-          {"id": "j-q3-q4", "from": "q3", "to": "q4", "line": "flow", "points": [[494, 804], [494, 860]], "label": "NO", "labelAt": [494, 832]},
-          {"id": "j-q3-r4", "from": "q3", "to": "r4", "line": "flow", "points": [[634, 722], [744, 722]], "label": "YES", "labelAt": [689, 722]},
-          {"id": "j-q4-r5", "from": "q4", "to": "r5", "line": "flow", "points": [[354, 920], [264, 920]], "label": "YES", "labelAt": [309, 920]},
-          {"id": "j-q4-q5", "from": "q4", "to": "q5", "line": "flow", "points": [[494, 980], [494, 1036]], "label": "NO", "labelAt": [494, 1008]},
-          {"id": "j-q5-r7", "from": "q5", "to": "r7", "line": "flow", "points": [[494, 1200], [494, 1256]], "label": "NO", "labelAt": [494, 1228]},
-          {"id": "j-q5-r6", "from": "q5", "to": "r6", "line": "flow", "points": [[634, 1118], [744, 1118]], "label": "YES", "labelAt": [689, 1118]}
-        ]
-      }
+      ```mermaid
+      flowchart TB
+        start(("表し方を選びたい内容がある"))
+        q1{"つながり・順番・包含・時間の流れ・数の大小を伝えるか"}
+        q6{"図で表せない値（全文のラベル・補足）があるか"}
+        r1(["図にし、図で表せない値を図の下に閉じた表で配置する"])
+        r2(["図だけにする"])
+        q2{"同じ属性を持つ項目が 2 件以上あるか"}
+        r3(["表にする"])
+        q3{"1 つの項目の属性が 3 つ以上あるか"}
+        r4(["「項目 / 値」の 2 列の表にする"])
+        q4{"順番のある手順か"}
+        r5(["番号付きの箇条書きかステップの部品にする"])
+        q5{"短い事柄が並列に 2 つ以上あるか"}
+        r6(["箇条書きにする"])
+        r7(["文で記載する（1 文 1 行。長ければ折りたたむ）"])
+        start --> q1
+        q1 -->|YES| q6
+        q1 -->|NO| q2
+        q6 -->|YES| r1
+        q6 -->|NO| r2
+        q2 -->|YES| r3
+        q2 -->|NO| q3
+        q3 -->|NO| q4
+        q3 -->|YES| r4
+        q4 -->|YES| r5
+        q4 -->|NO| q5
+        q5 -->|NO| r7
+        q5 -->|YES| r6
       ```
 
-      <!-- /flow -->
-  - id: presentation-choice-flow-02
-    group: 表し方の選び方 判定フローチャート
-    name: ※1 図の種類
-    body: |-
-      - ※1 図の種類: 規約 [表し方の優先順位](id:convention-doc-presentation) の、伝えるものと図の種類の表で選ぶ
+      <!-- map-data: {"version": 1, "notes": {"r1": {"annotations": ["presentation-choice-n1"]}, "r2": {"annotations": ["presentation-choice-n1"]}}} -->
+
+      <!-- /map -->
+
+      ※[presentation-choice-n1]: 図の種類: 規約 [表し方の優先順位](id:convention-doc-presentation) の、伝えるものと図の種類の表で選ぶ
