@@ -67,7 +67,7 @@ docs:
 scope_out:
   - item: 全ての文書の検査（check_all.py・IF-72-3）で、SKILL.md が生成元の docs/skill/ の文書と一致するかを比べる
     reason: 終わりの条件は生成の変換があり SKILL.md が生成物になっていることで、一致の検査を含まない
-    plan: to_file
+    plan: '#371'
   - item: プラグイン knowledge の skills/ などの置き場所の統一と、移した後の skill.path の書き換え・SKILL.md の生成し直し
     reason: 置き場所の移動は別の Issue の要望で、この PR は今の skill.path へ生成する
     plan: '#278'
