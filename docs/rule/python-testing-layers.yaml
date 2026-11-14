@@ -2,7 +2,7 @@
 id: python-testing-layers
 kind: rule
 name: テストの種類と配置
-description: 単体・結合・外部疎通・E2E の 4 種類のテストについて、単位ごとの方針・ファイル配置・実行方法を定め、Python のテストを作る・実行するときに参照する。
+description: 単体・結合・外部疎通・E2E・非機能要件のテストについて、単位ごとの方針・ファイル配置・実行方法を定め、Python のテストを作る・実行するときに参照する。
 inject_when:
   field: text
   op: contains
@@ -39,9 +39,10 @@ tags:
   - name: action:疎通
   - name: action:配置
   - name: action:集約
+  - name: topic:要件
 status: current
 visibility: internal
-rev: 5
+rev: 6
 last_reviewed: '2026-10-30'
 related:
   - to: python-testing-strategy
@@ -51,11 +52,11 @@ items:
   - id: overview
     name: 概要
     body: |-
-      単体・結合・外部疎通・E2E の 4 種類を記載する。
+      単体・結合・外部疎通・E2E・非機能要件のテストを記載する。
       テストの対応関係は設計書（モジュール構成 / 結合 / シナリオ）のテスト表が SoT で、テストは表と 1:1 で実装する。
   - id: test-policy-01
     group: テスト方針
-    name: 4 種類のテストの比較
+    name: テストの種類の比較
     body: |-
       <!-- table: data -->
 
@@ -65,6 +66,7 @@ items:
       | 結合テスト     | ユースケース 1 単位（入力 → サービス → 分岐 → 結果）を通しで確認。外部依存と Claude Code のエージェントは Mock 注入 | 作業の手順で実行                                        |
       | 外部疎通テスト | 外部サービスへの実接続確認（実際に使用するパラメータ値の網羅）                             | CI では実行しない。AI は、副作用が発生するか、見積もりが規約『開発時の従量課金APIの実行』の閾値を超える課金が発生するときは、ユーザーが実行を許可したときだけ実行する |
       | E2E テスト     | シナリオ設計書どおりの業務フローを実環境で確認。Claude Code のエージェントは Mock にする | 手動 or 明示実行のみ                                     |
+      | 非機能要件テスト | 非機能要件の設計書の要件ごとに、基準を満たすかを測って確認。外部サービスへの実接続が要る要件は外部疎通テストに配置する | 作業の手順で実行 |
 
       <!-- /table -->
   - id: unit-test-01
@@ -118,6 +120,7 @@ items:
       ├── conftest.py       # 共通 fixtures
       ├── unit/             # 単体（src をミラー・1 テストファイル = 1 実装ファイル）
       ├── integration/      # 結合（src をミラー・1 テストファイル = 1 ユースケース）
+      ├── nfr/              # 非機能要件（非機能要件の設計書の requirements の 1 要素 = 1 テストファイル）
       ├── external/         # 外部疎通（--run-external ガード）
       └── e2e/              # シナリオ E2E（実環境で実行）
       ```
@@ -125,7 +128,7 @@ items:
     group: ファイル配置
     name: テストの実行コマンド
     body: |-
-      - 実行: `uv run pytest`（external / e2e はガードで skip され、単体 + 結合だけが走る）
+      - 実行: `uv run pytest`（external / e2e はガードで skip され、単体 + 結合 + 非機能要件だけが走る）
   - id: file-placement-03
     group: ファイル配置
     name: e2e の実行方法
