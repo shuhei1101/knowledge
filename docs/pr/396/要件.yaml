@@ -1,0 +1,69 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: run_only
+    detail: MDMARK_TAG を上げ、判定フローチャートの図を map と注記で記載するため、公開文書の図と既存のページの描画が変わりうる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: run_only
+    detail: 画面で開く判定フローチャートの本文が map と注記の記法になる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: MDMARK_TAG を上げるため、全ての文書の検査の map の点検に使用する mdmark のバージョンが変わる
+    depends_on: []
+docs:
+  - page: docs/template/template-flowchart.yaml
+    new: false
+    change: '判定フローの記載例を <!-- flow --> から mdmark の map（Mermaid の flowchart と補足 map-data）へ書き換え、※N の注記を注記の記法（map-data の notes の annotations と行頭の ※[ID]: 本文）へ書き換える。セクション一覧・ノードの種類の表・用語のマーカーと採番の決まりも合わせ、座標の配置の決まり（一本道の配置）を削除する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:32:59.924354+00:00'
+  - page: docs/flowchart/
+    new: false
+    change: 判定フローチャート 26 件の図を map へ書き換え、※n の注記の項目を図の項目の注記の定義へ移す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:32:59.924354+00:00'
+  - page: docs/rule/dev-document-management.yaml
+    new: false
+    change: 判定フローチャートの図を map へ書き換え、※1 除外の条件の見分け方を注記へ移す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:32:59.924354+00:00'
+  - page: docs/rule/react-devtools-storybook.yaml
+    new: false
+    change: 判定フローチャートの図を map へ書き換え、※1〜※4 の注記を注記の記法へ移す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:32:59.924354+00:00'
+  - page: docs/rule/ui-screen-division.yaml
+    new: false
+    change: <!-- flow --> の図を map へ書き換える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:32:59.924354+00:00'
+  - page: docs/rule/python-testing-workflow.yaml
+    new: false
+    change: 判定フローチャート『テストの実行場所』の注記の項目 test-location-flow-03 と「※2」への参照を、移した後の注記を指す記載に書き換える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:32:59.924354+00:00'
+  - page: docs/rule/convention-doc-presentation.yaml
+    new: false
+    change: diagram-02 の「Mermaid は使用しない」を、Mermaid は mdmark の map の範囲の中でだけ記載する決まりに書き換える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T16:46:59.713037+00:00'
+scope_out:
+  - item: 判定表（decision-table-alias-exclusion・decision-table-poc）とテンプレート『判定表』の表のセルの ※n の注記を、注記の記法へ移す
+    reason: 要望は判定フローチャートの注記。表のセルの注記も同じ記法で記載できるが、MDMARK_TAG を mdmark#562 を含むタグへ上げるこの PR を前提にする後続
+    plan: to_file
+  - item: テンプレート『画面設計』の表のセルの ※2
+    reason: 表の列の説明の中の注記で、判定フローチャートの注記と別。判定表と同じ後続で扱う
+    plan: to_file
+  - item: 文書のマーカーを mdmark の JSON の記載へ移す
+    reason: 同じ文書を触るが別の要望で、#316 が扱う
+    plan: '#316'
