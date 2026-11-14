@@ -39,7 +39,7 @@ items:
     name: 概要
     body: |-
       ```text
-      features / server
+      features / server / ui
               ↓
          integrations / runtime
               ↓
@@ -60,6 +60,11 @@ items:
     name: 同層内の相互参照は禁止
     body: |-
       - 同層内（features 同士、integrations 同士）の相互参照は基本禁止
+  - id: dependency-rules-04
+    group: 依存方向のルール
+    name: ui は features を直に呼ばない
+    body: |-
+      - `ui/` は `features/`・`integrations/` を import せず、`main.py` が組んだ関数を受け取って呼ぶ
   - id: same-layer-patterns-01
     group: 同層参照が必要になったときの 3 パターン
     name: 同層参照のパターン表
