@@ -1,0 +1,1 @@
+# GitHub Actions の workflow のフローを pytest から gh で確認するテストの書き方の規約を追加する
