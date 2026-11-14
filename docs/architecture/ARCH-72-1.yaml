@@ -112,7 +112,7 @@ subsystems:
     runs_on: GitHub Actions
   - name: slop-check
     scope: slopcheck
-    role: 書き込むツールの実行の後に、書き込んだ中身を対応表のコピーで照合し、ヒットした単語と置き換え先の通知を返却する（書き込みは止めない）。対応表の原本は文書の `docs/word-list/`、コピーは検査と変換のスクリプトが作る
+    role: 書き込むツールの実行の後に、書き込んだ中身を対応表のコピーで照合し、ヒットした単語と置き換え先の通知と、利用者の画面に出す検知した単語の 1 行を返却する（書き込みは止めない）。対応表の原本は文書の `docs/word-list/`、コピーは検査と変換のスクリプトが作る
     runtime: Python 3.12 以上（標準ライブラリだけ）
     runs_on: Claude Code が PostToolUse で起動する子プロセス（端末の python3）
 lead: |-

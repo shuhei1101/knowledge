@@ -1,0 +1,391 @@
+id: MOD-312-1
+visibility: internal
+title: 検査と変換のスクリプト / scripts / build_skills.py
+lead: '手元から呼ぶ「SKILL.md の生成」。`docs/skill/` の `type: skill` の設計書から、`skill.path` の SKILL.md を組み立てて書き出す（IF-312-1）。'
+test_files:
+  - tests/unit/scripts/test_build_skills.py
+data_models:
+  - name: SkillPlan
+    title: 書き出す SKILL.md
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    role: DTO
+    summary: 設計書 1 件から組み立てた SKILL.md の書き出す先と中身
+    description: '`dataclass(frozen=True, slots=True)`。'
+    properties:
+      - name: path
+        type: PurePosixPath
+        description: リポジトリの直下からの `skill.path`
+      - name: text
+        type: str
+        description: 組み立てた SKILL.md の中身（末尾は改行 1 つ）
+constants:
+  - name: SKILLS_DIR
+    title: スキルの設計書のフォルダ
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    summary: リポジトリの直下からのパス
+    value: PurePosixPath("docs/skill")
+  - name: SCHEMA_NAME
+    title: エージェントフローのスキーマのファイル名
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    summary: '`schemas/design/` の中のファイル名'
+    value: '"agent_flow.schema.yaml"'
+  - name: GENERATED_NOTE
+    title: 生成元のコメント
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    summary: frontmatter の後ろに配置する 1 行。`{source}` に設計書のパスを入れる
+    value: '"<!-- {source} から生成した。このファイルを修正せず、設計書を修正して再生成する -->"'
+    refs:
+      - IF-312-1#constraints[組み立てる本文]
+  - name: COMMAND
+    title: 生成のコマンド
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    summary: docstring の Usage と同じコマンド
+    value: '"uv run --frozen --script scripts/build_skills.py"'
+functions:
+  - name: main
+    title: SKILL.md の生成の入口
+    kind: 関数
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    role: 入口
+    scope: public
+    summary: 全ての SKILL.md を組み立ててから、中身が違うものだけを書き出す
+    args:
+      - name: argv
+        title: 引数
+        type: Sequence[str] | None
+        required: false
+        default: None
+        description: コマンドの引数。`None` は `sys.argv[1:]`。引数は取らない（`--help` だけ）
+    returns:
+      type: int
+      description: 終了コード。`0` = 全て一致した（書き換えたものを含む）、`2` = 生成できなかった、`1` = 想定していない例外
+    process: |-
+      1. argparse で引数を読み込み、標準出力を UTF-8 にする
+      2. 作業ディレクトリをリポジトリの直下にして、書き出す SKILL.md を全て組み立てる（書き出す SKILL.md の組み立て）
+         - `BuildError` の場合、標準エラーへ理由を出し `2` を返却する
+      3. 各 SKILL.md を中身が違うときだけ書き出し（SKILL.md の書き出し）、書き換えたパスを昇順で標準出力へ 1 行ずつ出す
+      4. `0` を返却する
+         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返却する
+    unit_tests:
+      - name: test_main
+        case: 正常
+        summary: 違うものだけ書き出す
+        condition: SKILL.md が無い設計書と、生成済みの設計書の 2 件を持つ一時フォルダを作業ディレクトリにする
+        mock: 標準出力を `capsys` で受ける
+        expected: '`0` を返却し、標準出力が前者の `skill.path` の 1 行だけ'
+      - name: test_main_when_build_error
+        case: 異常
+        summary: 生成できない
+        condition: '`skill.path` が無い設計書を持つ一時フォルダ'
+        mock: 標準エラーを `capsys` で受ける
+        expected: '`2` を返却し、標準エラーに設計書のパスが出て、どのファイルも作らない'
+        exception: 設計書がスキーマに合わない
+      - name: test_main_when_unexpected_error
+        case: 異常
+        summary: 想定していない例外
+        condition: 書き出す SKILL.md の組み立てが `RuntimeError` を送出する
+        mock: 書き出す SKILL.md の組み立てを `RuntimeError` を送出する関数に差し替える
+        expected: '`1` を返却し、標準エラーに `Traceback` が出る'
+        exception: 想定していない例外
+    refs:
+      - IF-312-1#
+  - name: plan_skills
+    title: 書き出す SKILL.md の組み立て
+    kind: 関数
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    role: サービス
+    scope: public
+    summary: '全ての設計書を読み込んで検査し、`type: skill` の設計書ごとに書き出す SKILL.md を組み立てる'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: 設計書とスキーマを読み込むリポジトリ
+    returns:
+      type: list[SkillPlan]
+      description: '`type: skill` の設計書の、設計書のパスの昇順の書き出す SKILL.md'
+    process: |-
+      1. `build_templates.load_schemas(root)` で `schemas/design/` のスキーマと `$ref` の登録を読み込む
+      2. 設計書を読み込む（設計書の読み込み）
+      3. `Draft202012Validator`（`registry` は読み込んだ登録）で全ての設計書を `SCHEMA_NAME` のスキーマで検査し、違反を設計書のパスと項目のパスで集める
+         - 違反が 1 件以上なら、全ての違反を改行でつないだ `BuildError` を送出する
+      4. `type` が `skill` の設計書ごとに、工程を解決し（工程の埋め込みの解決）、SKILL.md の中身を組み立てる（SKILL.md の組み立て）
+      5. `skill.path` を `root` につないだパスが `root` の外なら `BuildError` を送出する
+    unit_tests:
+      - name: test_plan_skills
+        case: 正常
+        summary: skill だけを組み立てる
+        condition: '`type: skill` が 1 件、`type: flow` が 1 件の一時フォルダ'
+        mock: なし（一時ディレクトリ）
+        expected: '`skill` の設計書の 1 件だけを返却する'
+      - name: test_plan_skills_when_schema_invalid
+        case: 異常
+        summary: スキーマに合わない設計書
+        condition: '`skill.path` が無い設計書'
+        mock: なし（一時ディレクトリ）
+        expected: 設計書のパスと `skill` を持つ `BuildError` を送出する
+        exception: 設計書がスキーマに合わない
+      - name: test_plan_skills_when_path_outside
+        case: 異常
+        summary: リポジトリの外を指す skill.path
+        condition: '`skill.path: ../out/SKILL.md`'
+        mock: なし（一時ディレクトリ）
+        expected: '`BuildError` を送出する'
+        exception: '`skill.path` がリポジトリの外'
+  - name: load_skill_docs
+    title: 設計書の読み込み
+    kind: 関数
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    role: 読み込み
+    scope: public
+    summary: '`docs/skill/*.yaml` を読み込み、設計書のパスごとの中身を返却する'
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: 設計書を読み込むリポジトリ
+    returns:
+      type: dict[PurePosixPath, Mapping[str, object]]
+      description: リポジトリの直下からのパス → 設計書（パスの昇順）
+    process: |-
+      1. `SKILLS_DIR` の `*.yaml` をパスの昇順に `_common.load_safe` で読み込む
+         - `OSError`・`UnicodeDecodeError`・`YAMLError` の場合、あるいは最上位がマッピングでない場合、そのパスの `BuildError` を送出する
+    unit_tests:
+      - name: test_load_skill_docs_when_unreadable
+        case: 異常
+        summary: YAML として読み込めない
+        condition: 閉じていない引用符の設計書
+        mock: なし（一時ディレクトリ）
+        expected: そのパスの `BuildError` を送出する
+        exception: YAML として読み込めない
+  - name: resolve_steps
+    title: 工程の埋め込みの解決
+    kind: 関数
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    scope: public
+    summary: '`ref` を持つ工程を、参照先の設計書の同じ名前の工程に置き換えた工程の並びを返却する'
+    args:
+      - name: path
+        title: 設計書のパス
+        type: PurePosixPath
+        required: true
+        description: 工程を解決する設計書
+      - name: docs
+        title: 全ての設計書
+        type: Mapping[PurePosixPath, Mapping[str, object]]
+        required: true
+        description: 設計書の読み込みの結果
+    returns:
+      type: list[Mapping[str, object]]
+      description: '`ref` を持たない工程の並び'
+    process: |-
+      1. 設計書の `id` → 設計書の対応を作る
+      2. `steps[]` を並びの順にたどり、`ref` を持たない工程はそのまま、`ref`（`{id}#steps[{name}]`）を持つ工程は参照先の工程に置き換える。参照先も `ref` を持てばたどる
+         - 参照先の設計書か工程が無い場合、たどっている途中の `ref` へ戻る場合、`path` と `ref` を持つ `BuildError` を送出する
+    unit_tests:
+      - name: test_resolve_steps
+        case: 正常
+        summary: ref を参照先に置き換える
+        condition: '`a` の 2 つ目の工程が `ref: b#steps[取得する]`'
+        mock: なし
+        expected: 2 つ目が `b` の「取得する」の工程
+      - name: test_resolve_steps_when_missing
+        case: 異常
+        summary: 参照先が無い
+        condition: '`ref: b#steps[無い工程]`'
+        mock: なし
+        expected: '`b#steps[無い工程]` を持つ `BuildError` を送出する'
+        exception: 参照先の工程が無い
+      - name: test_resolve_steps_when_cyclic
+        case: 異常
+        summary: 戻る ref
+        condition: '`a` の工程が `b` を、`b` のその工程が `a` のその工程を指す'
+        mock: なし
+        expected: '`BuildError` を送出する'
+        exception: 戻る `ref`
+    refs:
+      - IF-312-1#constraints[工程の埋め込み]
+  - name: render_skill
+    title: SKILL.md の組み立て
+    kind: 関数
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    scope: public
+    summary: 設計書と解決した工程から SKILL.md の中身を組み立てる
+    args:
+      - name: doc
+        title: 設計書
+        type: Mapping[str, object]
+        required: true
+        description: '`type: skill` の設計書'
+      - name: source
+        title: 設計書のパス
+        type: PurePosixPath
+        required: true
+        description: 生成元のコメントに出すパス
+      - name: steps
+        title: 工程
+        type: Sequence[Mapping[str, object]]
+        required: true
+        description: 工程の埋め込みの解決の結果
+    returns:
+      type: str
+      description: SKILL.md の中身。改行は LF で、末尾を改行 1 つで終える
+    process: |-
+      1. frontmatter を組み立てる（frontmatter の組み立て）
+      2. `GENERATED_NOTE`・`# {title か name}`・`skill.arguments` があれば `## 引数` の表・`## 手順` と工程ごとの工程のセクションの組み立ての結果を、空行で区切ってつなぐ
+    unit_tests:
+      - name: test_render_skill
+        case: 正常
+        summary: 引数と工程を持つスキル
+        condition: '`skill.arguments` を 1 件、工程を 2 つ持つ設計書'
+        mock: なし
+        expected: frontmatter・生成元のコメント・見出し・`## 引数` の表・`## 手順` と 2 つの `###` がこの順に並び、末尾が改行 1 つ
+      - name: test_render_skill_when_no_arguments
+        case: 正常
+        summary: 引数を持たないスキル
+        condition: '`skill.arguments` が無い設計書'
+        mock: なし
+        expected: '`## 引数` が無い'
+    refs:
+      - IF-312-1#constraints[組み立てる本文]
+  - name: render_frontmatter
+    title: frontmatter の組み立て
+    kind: 関数
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    scope: public
+    summary: 設計書から SKILL.md の frontmatter を `---` の行で囲んだ YAML にする
+    args:
+      - name: doc
+        title: 設計書
+        type: Mapping[str, object]
+        required: true
+        description: '`type: skill` の設計書'
+    returns:
+      type: str
+      description: '`---` で始まり `---` で終わる文字列'
+    process: |-
+      1. `name`（`skill.name`、無ければ `skill.path` の親のフォルダ名）・`description`（`summary`）・`argument-hint`（`skill.arguments[].hint` を半角空白でつなぐ）・`arguments`・`allowed-tools`・`skill.frontmatter` のキーをこの並びの辞書にし、値が無いキーを除く
+      2. `ruamel.yaml` の `YAML(typ="rt")`（`default_flow_style=False`、`allow_unicode=True`、`width` は折り返さない大きな値）で書き出し、`---` の行で囲む
+    unit_tests:
+      - name: test_render_frontmatter
+        case: 正常
+        summary: 全てのキー
+        condition: '`skill.name` が無く、`arguments` 2 件・`allowed_tools`・`frontmatter: {paths: [docs/**]}` を持つ設計書'
+        mock: なし
+        expected: YAML として読むと `name` が `skill.path` の親のフォルダ名、`argument-hint` が 2 件の `hint` を半角空白でつないだもの、キーの並びが `name`・`description`・`argument-hint`・`arguments`・`allowed-tools`・`paths`
+      - name: test_render_frontmatter_when_minimal
+        case: 正常
+        summary: 任意のキーが無い
+        condition: '`skill` が `path` だけの設計書'
+        mock: なし
+        expected: キーが `name`・`description` だけ
+    refs:
+      - IF-312-1#constraints[組み立てる frontmatter]
+  - name: render_step
+    title: 工程のセクションの組み立て
+    kind: 関数
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    scope: public
+    summary: 工程 1 つを `###` のセクションにする
+    args:
+      - name: step
+        title: 工程
+        type: Mapping[str, object]
+        required: true
+        description: '`ref` を持たない工程'
+    returns:
+      type: str
+      description: '`### {name}` で始まるセクション'
+    process: 1. `### {name}`・`when` があれば `{when}だけ行う。`・`body`・`calls` があれば `呼ぶもの:` と呼ぶものの行の組み立ての結果の箇条書きを、空行で区切ってつなぐ
+    unit_tests:
+      - name: test_render_step
+        case: 正常
+        summary: 条件と呼ぶものを持つ工程
+        condition: '`when: 一覧が空でないとき`・`body`・`calls: [{type: tool, tool: Edit}]`'
+        mock: なし
+        expected: '`### {name}`・`一覧が空でないときだけ行う。`・`body`・`呼ぶもの:` とツール Edit の行がこの順'
+      - name: test_render_step_when_body_only
+        case: 正常
+        summary: 本文だけの工程
+        condition: '`name` と `body` だけ'
+        mock: なし
+        expected: '`### {name}` と `body` だけ'
+    refs:
+      - IF-312-1#constraints[工程のセクション]
+  - name: render_call
+    title: 呼ぶものの行の組み立て
+    kind: 関数
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    scope: public
+    summary: 呼ぶもの 1 つを箇条書きの 1 行にする
+    args:
+      - name: call
+        title: 呼ぶもの
+        type: Mapping[str, object]
+        required: true
+        description: '`steps[].calls[]` の 1 件'
+    returns:
+      type: str
+      description: '`- ` で始まる 1 行'
+    process: |-
+      1. `type` ごとに IF-312-1 の「工程のセクション」の書式の行にする
+      2. `args` があれば、`json.dumps(args, ensure_ascii=False)` をインラインコードにして行の後ろに空白を挟んで添える
+    unit_tests:
+      - name: test_render_call
+        case: 正常
+        summary: 種類ごとの書式
+        condition: '`tool`・`mcp`（`args` あり）・`command`・`skill`・`flow`・`agent`（`agent_type` なし・`instruction` あり）の 6 件'
+        mock: なし
+        expected: それぞれ IF-312-1 の書式の行で、`agent` は `general-purpose`、`mcp` の行の後ろに `args` のインラインコード
+    refs:
+      - IF-312-1#constraints[工程のセクション]
+  - name: write_skill
+    title: SKILL.md の書き出し
+    kind: 関数
+    container: scripts/build_skills.py
+    usecase: SKILL.md の生成
+    role: 書き込み
+    scope: public
+    summary: 中身が今のファイルと違うときだけ SKILL.md を書き出す
+    side_effects: SKILL.md とその親のフォルダを作る・書き換える
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: 書き出すリポジトリ
+      - name: plan
+        title: 書き出す SKILL.md
+        type: SkillPlan
+        required: true
+        description: 書き出す先と中身
+    returns:
+      type: bool
+      description: 書き出したら `True`
+    process: |-
+      1. 今のファイルをバイト列で読み、`plan.text` を UTF-8 にしたバイト列と同じなら `False` を返却する（ファイルが無ければ違うものとする）
+      2. 親のフォルダを作り、バイト列で書き出して `True` を返却する（改行を LF のまま保つ）
+    unit_tests:
+      - name: test_write_skill
+        case: 正常
+        summary: 無いファイルを作り、同じ中身なら書き出さない
+        condition: 親のフォルダが無い `skill.path` に 2 回書き出す
+        mock: なし（一時ディレクトリ）
+        expected: 1 回目が `True` でファイルができ、2 回目が `False`
+notes:
+  依存: PEP 723 の依存は `build_templates.py` と同じ `jsonschema`・`ruamel.yaml`。`build_templates.load_schemas`・`BuildError` と `_common.load_safe`・`as_mapping`・`as_list` を同じフォルダから import する

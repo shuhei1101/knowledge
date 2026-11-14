@@ -381,6 +381,15 @@ entries:
           path: scripts/build_templates.py
           command: CMD-72-1#categories[依存の追加・更新・削除]
       - type: file
+        name: build_skills.py
+        contents: SKILL.md の生成（手元の CLI）
+      - type: file
+        name: build_skills.py.lock
+        contents: build_skills.py の依存のロック
+        generated_from:
+          path: scripts/build_skills.py
+          command: CMD-72-1#categories[依存の追加・更新・削除]
+      - type: file
         name: files.yaml
         contents: '`scripts/` のファイルの一覧（project-index の files の行）'
         content_types: [file_list]
@@ -429,6 +438,13 @@ entries:
         contents: 1 つのスキルの本体
         content_types: [skill, knowledge_plugin]
         naming: [SKILL.md]
+        children:
+          - type: file
+            name: SKILL.md
+            contents: スキルの手順
+            generated_from:
+              path: docs/skill/{skill}.yaml
+              command: CMD-72-1#categories[ビルド・生成]
       - type: file
         name: files.yaml
         contents: '`skills/` のファイルの一覧（project-index の files の行）'

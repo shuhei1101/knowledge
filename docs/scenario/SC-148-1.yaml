@@ -10,12 +10,13 @@ scenarios:
         description: knowledge の対応表 `word-list-ai-slop`
       - name: 書き込む中身
         description: 対応表の単語を 2 つ含む文
-        notes: 'Write の `content` に「設定を直す。この形で記載する。」'
+        notes: Write の `content` に「設定を直す。この形で記載する。」
     flow: |-
       <!-- map -->
 
       ```mermaid
       sequenceDiagram
+        actor U as 利用者
         participant E as エージェント
         participant C as Claude Code
         participant H as slop-check のフック
@@ -25,15 +26,17 @@ scenarios:
         C->>H: 標準入力に PostToolUse の入力
         H->>L: 対応表を読み込む
         H->>H: 書き込んだ中身を対応表の各行で照合する
-        H-->>C: additionalContext に通知の文
+        H-->>C: additionalContext に通知の文、systemMessage に検知した単語の 1 行
+        C-->>U: 画面に検知した単語の 1 行を表示する
         C-->>E: 書き込みの結果と通知の文
       ```
 
       <!-- /map -->
     expected:
       - ファイルが書き込む中身のとおりに書き込まれる
-      - 'フックの出力の `hookSpecificOutput.additionalContext` に通知の文が入り、表に `| 直す | 修正 |` と `| 形 | スキーマ・構造（形状の意味なら「形状」） |` の 2 行だけが対応表の並びの順で出る'
-      - 通知の文に、規約『文章の書き方』と規約『入力と文言』を `search_docs` で参照する行が入る
+      - フックの出力の `hookSpecificOutput.additionalContext` に通知の文が入り、表に `| 直す | 修正 |` と `| 形 | スキーマ・構造（形状の意味なら「形状」） |` の 2 行だけが対応表の並びの順で出る
+      - 通知の文に、規約『文章の書き方』と規約『入力と文言』を project-index と dev-docs の `search_docs` で参照する行が入る
+      - 'フックの出力の `systemMessage` が `AI slop を検知: 直す・形（Write）` の 1 行で、置き換え先を含まない'
       - フックの出力に `decision` が無く、終了コードが 0
     test: test_normal
   - name: 正常シナリオ（対応表の単語を含まない）
@@ -42,7 +45,7 @@ scenarios:
         description: 差し替えない
       - name: 書き込む中身
         description: 対応表の単語を含まない文と、`allow` に該当する複合語・前後に漢字が続く漢字 1 文字の単語だけを含む文
-        notes: 'Write の `content` に「設定を修正して割り当てる。形式と円形を確認する。」'
+        notes: Write の `content` に「設定を修正して割り当てる。形式と円形を確認する。」
     flow: |-
       <!-- map -->
 
@@ -68,10 +71,10 @@ scenarios:
         description: 差し替えない
       - name: 既存のファイル
         description: 対応表の単語「版」を含む Markdown のファイル
-        notes: '「新しい版を出す。」の行を持つ'
+        notes: 「新しい版を出す。」の行を持つ
       - name: 書き込む中身
         description: 対応表の単語を含まない差分
-        notes: 'Edit の `new_string` に「設定を修正する。」'
+        notes: Edit の `new_string` に「設定を修正する。」
     flow: |-
       <!-- map -->
 
@@ -86,13 +89,14 @@ scenarios:
         C->>H: 標準入力に PostToolUse の入力
         H->>F: 修正後のファイル全体を読み込む
         H->>H: ファイル全体を対応表の各行で照合する
-        H-->>C: additionalContext に通知の文
+        H-->>C: additionalContext に通知の文、systemMessage に検知した単語の 1 行
         C-->>E: 修正の結果と通知の文
       ```
 
       <!-- /map -->
     expected:
       - 通知の文の表に `| 版 | バージョン |` の行が出る
+      - 'フックの出力の `systemMessage` が `AI slop を検知: 版（Edit）`'
       - フックの出力に `decision` が無く、終了コードが 0
     test: test_normal_when_edit_keeps_existing_word
   - name: 正常シナリオ（MCP ツールで書き込む）
@@ -116,15 +120,47 @@ scenarios:
         M-->>C: ツールの結果
         C->>H: 標準入力に PostToolUse の入力
         H->>H: ツールの入力から書き込んだ文字列を取り出し、対応表の各行で照合する
-        H-->>C: additionalContext に通知の文
+        H-->>C: additionalContext に通知の文、systemMessage に検知した単語の 1 行
         C-->>E: ツールの結果と通知の文
       ```
 
       <!-- /map -->
     expected:
       - 通知の文の表に `| 足す | 追加 |` の行が出る
+      - 'フックの出力の `systemMessage` が `AI slop を検知: 足す（project-index の write_docs）`'
       - フックの出力に `decision` が無く、終了コードが 0
     test: test_normal_when_mcp_tool_writes
+  - name: 正常シナリオ（dev-docs の MCP ツールで書き込む）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 書き込む中身
+        description: dev-docs の `write_docs` で書き込む文書の文字列の項目に、対応表の単語を含む
+        notes: '`operations[].set` の文字列の項目に「設定を足す。」'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant E as エージェント
+        participant C as Claude Code
+        participant M as 書き込む MCP ツール
+        participant H as slop-check のフック
+        E->>C: dev-docs の write_docs を呼ぶ
+        C->>M: ツールを呼ぶ
+        M-->>C: ツールの結果
+        C->>H: 標準入力に PostToolUse の入力
+        H->>H: ツールの入力から書き込んだ文字列を取り出し、対応表の各行で照合する
+        H-->>C: additionalContext に通知の文、systemMessage に検知した単語の 1 行
+        C-->>E: ツールの結果と通知の文
+      ```
+
+      <!-- /map -->
+    expected:
+      - 通知の文の表に `| 足す | 追加 |` の行が出る
+      - 'フックの出力の `systemMessage` が `AI slop を検知: 足す（dev-docs の write_docs）`'
+      - フックの出力に `decision` が無く、終了コードが 0
+    test: test_normal_when_dev_docs_tool_writes
   - name: 異常シナリオ（対応表が読み込めない）
     setup:
       - name: Mock
@@ -133,7 +169,7 @@ scenarios:
         description: フックが読み込む対応表のファイルが無い
       - name: 書き込む中身
         description: 対応表の単語を含む文
-        notes: 'Write の `content` に「設定を直す。」'
+        notes: Write の `content` に「設定を直す。」
     flow: |-
       <!-- map -->
 
@@ -156,12 +192,12 @@ scenarios:
       - フックの標準出力が空で、終了コードが 0
       - フックの標準エラーに、読み込めなかった対応表のパスが出る
     test: test_error_when_word_list_missing
-lead: エージェントが書き込むツールで対応表の単語を書き込むと、プラグイン slop-check の PostToolUse のフックが書き込んだ中身を対応表で照合し、書き込みを止めずに NG と OK の単語を通知する。
+lead: エージェントが書き込むツールで対応表の単語を書き込むと、プラグイン slop-check の PostToolUse のフックが書き込んだ中身を対応表で照合し、書き込みを止めずに NG と OK の単語をエージェントへ通知し、検知した単語を利用者の画面に 1 行で表示する。
 primary_actor: エージェント
-trigger: エージェントが Write・Edit・NotebookEdit・書き込む MCP ツールで中身を書き込む
+trigger: エージェントが Write・Edit・NotebookEdit・書き込む MCP ツール（project-index か dev-docs の `write_docs` など）で中身を書き込む
 preconditions:
   - Claude Code にプラグイン slop-check が導入され、有効になっている
-success_guarantee: 書き込んだ中身に対応表の単語があれば、ヒットした単語の行だけの表を持つ通知の文がエージェントのコンテキストに入る。
+success_guarantee: 書き込んだ中身に対応表の単語があれば、ヒットした単語の行だけの表を持つ通知の文がエージェントのコンテキストに入り、検知した単語と書き込みの名前の 1 行が利用者の画面に出る。
 minimal_guarantee: フックの照合が失敗しても、書き込みの結果は変わらず、エージェントの作業は止まらない。
 notes:
   E2E テストの動かし方: Claude Code がフックを呼ぶときと同じ PostToolUse の入力の JSON を、プラグインの `hooks.json` に登録したコマンドへ標準入力で与えて子プロセスとして起動し、標準出力の JSON・標準エラー・終了コードを確認する。Claude Code の起動とモデルの呼び出しは含めない

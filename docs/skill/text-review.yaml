@@ -2,7 +2,7 @@
 id: text-review
 type: skill
 title: 文章を点検して修正する
-summary: ファイル・フォルダ・Git のコミットで指定した範囲の文章を、knowledge の文章の規約に合わせて点検して修正し、結果をサマリーで返却する
+summary: ファイル・フォルダ・Git のコミットで指定した範囲の文章を knowledge の文章の規約に合わせて点検して修正し、結果をサマリーで返却するスキルで、文書やルールの文章を規約に統一したいときに使用する
 tags:
   - topic:文章
   - topic:スキル
@@ -48,9 +48,11 @@ steps:
       | ドキュメントの部品 | `doc-parts` |
       | ユーザ配下ルール記載時の規約 | `claude-rule-writing` |
 
-      - project-index の `search_docs` が使えるなら、`source` を `knowledge`、`filter` を `id` の `eq` で上の ID、`view` を `full` にして参照する
-        - ツールの完全名は `mcp__plugin_project-index_project-index__search_docs`
-      - ツールが無いか、規約が見つからないなら、`${CLAUDE_PLUGIN_ROOT}/docs/rule/{ID}.yaml` を参照する
+      - project-index か dev-docs の `search_docs` を使用できるなら、そのツールで参照する
+        - 引数は `source` を `knowledge`、`filter` を `id` の `eq` で上の ID、`view` を `full` にする
+        - project-index のツールの完全名は `mcp__plugin_project-index_project-index__search_docs`
+        - dev-docs のツールの完全名は `mcp__plugin_dev-docs_dev-docs__search_docs`
+      - どちらのツールも無いか、規約が見つからないなら、`${CLAUDE_PLUGIN_ROOT}/docs/rule/{ID}.yaml` を参照する
     calls:
       - type: tool
         tool: Read

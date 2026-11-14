@@ -1,7 +1,7 @@
 id: "MOD-148-2"
 visibility: internal
 title: "slop-check / hooks / slop_check.py"
-lead: プラグイン slop-check の PostToolUse のフック。書き込んだ中身を対応表のコピーで照合し、ヒットした行の通知の文を `additionalContext` で返却する（IF-148-1）。
+lead: プラグイン slop-check の PostToolUse のフック。書き込んだ中身を対応表のコピーで照合し、ヒットした行の通知の文を `additionalContext` で、検知した単語の 1 行を `systemMessage` で返却する（IF-148-1）。
 test_files:
   - tests/unit/slop-check/test_slop_check.py
 data_models:
@@ -59,6 +59,8 @@ constants:
     entries:
       - key: project-index
         value: frozenset({"write_docs"})
+      - key: dev-docs
+        value: frozenset({"write_docs"})
       - key: ai-monitor
         value: frozenset({"comment", "reply_comment", "reply_review_thread", "create_review_comment", "create_file_comment", "create_issue", "create_draft_pr", "update_body", "update_title", "add_notice_row", "notify", "create_defect_issue", "create_monitor_rule_issue", "create_plugin_rule_issue"})
       - key: mindstella
@@ -91,8 +93,16 @@ constants:
     title: 通知の文の後半
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
     usecase: 書き込んだ中身の照合
-    summary: 表の後の、規約を search_docs で読み込む案内（要件の要望 3 の文のとおり。`…` はその文の引数をそのまま記載する）
-    value: '"\nまだ読んでいなければ、用途に合う規約を読んでください。\n- 文書・コメント: 規約『文章の書き方』\n  mcp__plugin_project-index_project-index__search_docs（…\"convention-writing-style\"…）\n- 画面の文言: 規約『入力と文言』\n  mcp__plugin_project-index_project-index__search_docs（…\"ui-input-wording\"…）"'
+    summary: 表の後の、規約を project-index か dev-docs の search_docs で読み込む案内（`…` は今の引数をそのまま記載する）
+    value: '"\nまだ読んでいなければ、用途に合う規約を読んでください。\nsearch_docs は mcp__plugin_project-index_project-index__search_docs か mcp__plugin_dev-docs_dev-docs__search_docs の使用できる方で呼んでください。\n- 文書・コメント: 規約『文章の書き方』\n  search_docs（…\"convention-writing-style\"…）\n- 画面の文言: 規約『入力と文言』\n  search_docs（…\"ui-input-wording\"…）"'
+  - name: SYSTEM_MESSAGE_HEAD
+    title: 利用者向けの 1 行の頭
+    container: plugins/slop-check/hooks/post-tool-use/slop_check.py
+    usecase: 書き込んだ中身の照合
+    summary: '`systemMessage` の先頭の文字列'
+    value: '"AI slop を検知: "'
+    refs:
+      - IF-148-1#response[stdout.systemMessage]
 functions:
   - name: main
     title: 書き込んだ中身の照合の入口
@@ -101,7 +111,7 @@ functions:
     usecase: 書き込んだ中身の照合
     role: 入口
     scope: public
-    summary: 標準入力の PostToolUse の入力を照合し、ヒットがあれば通知の JSON を標準出力へ出す
+    summary: 標準入力の PostToolUse の入力を照合し、ヒットがあれば通知の文と利用者向けの 1 行の JSON を標準出力へ出す
     args:
       - name: argv
         title: 引数
@@ -128,7 +138,7 @@ functions:
       5. 中身を取り出す（中身の取り出し）。空なら `0` を返却する
       6. 対応表を読み込む（対応表の読み込み）
          - `OSError`・`ValueError` の場合、標準エラーへ `対応表を読めません: {パス}: {理由}` を出し `0` を返却する
-      7. ヒットした行を求め（ヒットした行の照合）、1 行以上なら `{"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": 通知の文}}` を `ensure_ascii=False` で標準出力へ出す（通知の文の組み立て）
+      7. ヒットした行を求め（ヒットした行の照合）、1 行以上なら `{"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": 通知の文}, "systemMessage": 利用者向けの 1 行}` を `ensure_ascii=False` で標準出力へ出す（通知の文の組み立て・利用者向けの 1 行の組み立て）
       8. `0` を返却する
          - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `0` を返却する
     unit_tests:
@@ -137,7 +147,7 @@ functions:
         summary: ヒットを通知する
         condition: '標準入力に `tool_name: Write`・`content: 設定を直す。`。`word_list` に `直す` の 1 行のコピー'
         mock: 標準入出力を `io.StringIO` に差し替える
-        expected: '`0` を返却し、標準出力の JSON の `additionalContext` に `| 直す | 修正 |` がある'
+        expected: '`0` を返却し、標準出力の JSON の `additionalContext` に `| 直す | 修正 |` があり、`systemMessage` が `AI slop を検知: 直す（Write）`'
       - name: test_main_when_no_hit
         case: 正常
         summary: ヒットしない
@@ -194,13 +204,13 @@ functions:
       - name: test_is_target
         case: 正常
         summary: 対象のツール
-        condition: '`Write`・`mcp__plugin_project-index_project-index__write_docs`・`mcp__plugin_ai-monitor_ai-monitor-tools__comment`・`mcp__plugin_mindstella_mindstella__reply`'
+        condition: '`Write`・`mcp__plugin_project-index_project-index__write_docs`・`mcp__plugin_dev-docs_dev-docs__write_docs`・`mcp__plugin_ai-monitor_ai-monitor-tools__comment`・`mcp__plugin_mindstella_mindstella__reply`'
         mock: なし
         expected: 全て `True`
       - name: test_is_target_when_not_target
         case: 正常
         summary: 対象外のツール
-        condition: '`Read`・`mcp__plugin_project-index_project-index__search_docs`・`mcp__other__comment`'
+        condition: '`Read`・`mcp__plugin_project-index_project-index__search_docs`・`mcp__plugin_dev-docs_dev-docs__search_docs`・`mcp__other__comment`'
         mock: なし
         expected: 全て `False`
   - name: is_word_list_write
@@ -485,5 +495,72 @@ functions:
         condition: '`形`（`ok: [スキーマ, 構造]`・`note: 形状の意味なら「形状」`）の 1 行'
         mock: なし
         expected: '`| 形 | スキーマ・構造（形状の意味なら「形状」） |` の行を持ち、`NOTICE_HEAD` で始まり `NOTICE_TAIL` で終わる'
+  - name: tool_label
+    title: 書き込みの名前の組み立て
+    kind: 関数
+    container: plugins/slop-check/hooks/post-tool-use/slop_check.py
+    usecase: 書き込んだ中身の照合
+    scope: public
+    summary: ツール名から、利用者向けの 1 行の括弧の中に出す書き込みの名前を作る
+    args:
+      - name: tool_name
+        title: ツール名
+        type: str
+        required: true
+        description: 対象のツールの名前
+    returns:
+      type: str
+      description: 書き込みの名前
+    process: |-
+      1. `mcp__` で始まらなければ `tool_name` を返却する
+      2. 最後の `__` で区切り、前から `mcp__` を除いたものをサーバーの部分、後ろをツール名にする
+      3. サーバーの部分が `plugin_` で始まれば、`plugin_` の後ろから最初の `_` まで（`_` が無ければ末尾まで）を名前にする。始まらなければサーバーの部分を名前にする
+      4. `{名前} の {ツール名}` を返却する
+    unit_tests:
+      - name: test_tool_label
+        case: 正常
+        summary: 組み込みのツールとプラグインの MCP ツール
+        condition: '`Write`・`mcp__plugin_mindstella_mindstella__reply`・`mcp__plugin_ai-monitor_ai-monitor-tools__comment`・`mcp__plugin_dev-docs_dev-docs__write_docs`'
+        mock: なし
+        expected: '`Write`・`mindstella の reply`・`ai-monitor の comment`・`dev-docs の write_docs`'
+      - name: test_tool_label_when_not_plugin
+        case: 正常
+        summary: プラグインでない MCP ツール
+        condition: '`mcp__mindstella__reply`'
+        mock: なし
+        expected: '`mindstella の reply`'
+    refs:
+      - IF-148-1#constraints[書き込みの名前]
+  - name: build_system_message
+    title: 利用者向けの 1 行の組み立て
+    kind: 関数
+    container: plugins/slop-check/hooks/post-tool-use/slop_check.py
+    usecase: 書き込んだ中身の照合
+    scope: public
+    summary: ヒットした行とツール名から、利用者の画面に出す 1 行を作る
+    args:
+      - name: hits
+        title: ヒットした行
+        type: Sequence[Entry]
+        required: true
+        description: 1 件以上。通知の文の表と同じ並び
+      - name: tool_name
+        title: ツール名
+        type: str
+        required: true
+        description: 対象のツールの名前
+    returns:
+      type: str
+      description: '`AI slop を検知: {ng を「・」でつないだもの}（{書き込みの名前}）`'
+    process: 1. `SYSTEM_MESSAGE_HEAD` に、行の `ng` を並びの順に「・」でつないだものと、書き込みの名前の組み立ての結果を全角の括弧で囲んだものをつなぐ
+    unit_tests:
+      - name: test_build_system_message
+        case: 正常
+        summary: 単語を並びの順につなぐ
+        condition: '`直す`・`形` の 2 行と `Write`'
+        mock: なし
+        expected: '`AI slop を検知: 直す・形（Write）`'
+    refs:
+      - IF-148-1#response[stdout.systemMessage]
 notes:
   依存: Python の標準ライブラリだけ（`argparse`・`json`・`os`・`re`・`sys`・`traceback`・`dataclasses`・`pathlib`）。PEP 723 のメタデータは持たない。端末の `python3`（2026-11-03 に WSL2 で測った値は 3.12.3）を下限にし、3.13 以降の構文・API を使用しない

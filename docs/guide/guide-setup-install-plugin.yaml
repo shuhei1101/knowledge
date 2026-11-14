@@ -29,7 +29,7 @@ items:
     name: 概要
     body: |-
       knowledge のスキル（文章を点検して修正する `/knowledge:text-review`）を Claude Code で使用したいときに実行する。
-      プラグイン slop-check を入れると、書き込むツールの実行の後に、書き込んだ中身にある AI slop の単語と置き換え先が通知される。
+      プラグイン slop-check を入れると、書き込むツールの実行の後に、書き込んだ中身にある AI slop の単語と置き換え先が Claude へ通知され、検知した単語が画面に 1 行で出る。
   - id: prerequisite-01
     group: 前提
     name: "前提: Claude Code の導入"
@@ -88,7 +88,7 @@ items:
     name: 単語の通知の確認
     body: |-
       Claude Code のセッションで、一時ファイルに「設定を直す。」と書き込むよう Claude に頼む。
-      書き込みの後に、NG が `直す`・OK が `修正` の表を持つ通知が Claude のコンテキストに入る（通知の内容をそのまま示すよう頼むと返る）。
+      書き込みの後に、画面に `AI slop を検知: 直す（Write）` の 1 行が出る。
   - id: rollback-01
     group: 元に戻す
     name: 元に戻す

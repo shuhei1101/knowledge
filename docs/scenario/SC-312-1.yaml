@@ -1,0 +1,72 @@
+id: SC-312-1
+visibility: internal
+title: 開発者がスキルの設計書から SKILL.md を生成する
+lead: '開発者がスキルの設計書を変えた後に生成のコマンドを実行し、`docs/skill/` の `type: skill` の設計書から、`skill.path` の SKILL.md を書き出す。'
+primary_actor: 開発者
+trigger: '開発者が `docs/skill/` の `type: skill` の設計書を変えて、生成のコマンドを実行する'
+preconditions:
+  - '`docs/skill/` の `type: skill` の設計書が、スキーマ `schemas/design/agent_flow.schema.yaml` に合う'
+success_guarantee: '全ての `type: skill` の設計書の `skill.path` の SKILL.md が、設計書から組み立てたものと一致する。'
+minimal_guarantee: 設計書が読み込めないかスキーマに合わなければ、どのファイルも書き換えずに終了コード 2 で終わり、原因の設計書のパスと項目が標準エラーに出る。
+scenarios:
+  - name: 正常シナリオ
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: スキルの設計書
+        description: 全ての SKILL.md が設計書から生成した状態の knowledge のクローンで、`docs/skill/text-review.yaml` の工程の `body` を 1 か所変え、他の設計書は変えていないもの
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor D as 開発者
+        participant G as 生成のスクリプト
+        participant S as スキルの設計書
+        participant K as SKILL.md
+        D->>G: 生成のコマンドを実行する
+        G->>S: docs/skill/ の設計書を読み込み、type が skill の設計書を選ぶ
+        loop type が skill の設計書
+          G->>G: frontmatter と本文を組み立てる
+        end
+        loop 組み立てた中身が今の SKILL.md と違う設計書
+          G->>K: skill.path へ書き出す
+        end
+        G-->>D: 書き換えた SKILL.md のパスを出して終了コード 0
+      ```
+
+      <!-- /map -->
+    expected:
+      - '`skills/text-review/SKILL.md` の本文に、変えた工程の `body` が出る'
+      - '`skills/text-review/SKILL.md` の frontmatter の `name` が `text-review`、`description` が設計書の `summary`、`argument-hint` が `skill.arguments[0].hint`、`arguments` が `[range]`、`allowed-tools` が `skill.allowed_tools`'
+      - 標準出力に `skills/text-review/SKILL.md` だけが出る
+      - 続けてもう一度実行すると、どのファイルも書き換えず、標準出力が空で終了コード 0
+    test: test_normal
+  - name: 異常シナリオ（設計書がスキーマに合わない）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: スキルの設計書
+        description: '`docs/skill/text-review.yaml` の `skill.path` を削除した knowledge のクローン'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor D as 開発者
+        participant G as 生成のスクリプト
+        participant S as スキルの設計書
+        D->>G: 生成のコマンドを実行する
+        G->>S: docs/skill/ の設計書を読み込み、スキーマで検査する
+        G-->>D: 合わない設計書のパスと項目を出して終了コード 2
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 2
+      - 標準エラーに、設計書のパス（`docs/skill/text-review.yaml`）と合わない項目（`skill.path`）が出る
+      - 全ての SKILL.md は実行の前とバイト単位で同じ
+    test: test_error_when_skill_doc_invalid
+notes:
+  E2E テストの動かし方: 生成のコマンドを、一時フォルダへコピーした knowledge のクローンで子プロセスとして起動し、終了コード・標準出力・標準エラーと、実行の前後のファイルの中身で確認する
+test_file: tests/e2e/単一ユースケース/test_開発者がスキルの設計書からSKILL.mdを生成する.py

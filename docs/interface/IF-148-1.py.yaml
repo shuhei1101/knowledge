@@ -27,7 +27,7 @@ flows:
         H->>L: 対応表を読み込む
         L-->>H: 対応表の行
         H->>H: tool_input.content を各行で照合する
-        H-->>C: 終了コード 0 と additionalContext に通知の文
+        H-->>C: 終了コード 0 と additionalContext に通知の文、systemMessage に 1 行
       ```
 
       <!-- /map -->
@@ -36,6 +36,7 @@ flows:
       - '標準出力の JSON の `hookSpecificOutput.hookEventName` が `PostToolUse`'
       - '`hookSpecificOutput.additionalContext` の表が `| 直す | 修正 |`・`| 形 | スキーマ・構造（形状の意味なら「形状」） |` の 2 行で、この順に並ぶ'
       - '標準出力の JSON に `decision` が無い'
+      - '`systemMessage` が `AI slop を検知: 直す・形（Write）`'
     test: test_normal
   - name: 正常系（対応表の単語を含まない）
     summary: ヒットが無いか、ヒットが全て allow に該当すれば何も出力しない
@@ -88,13 +89,14 @@ flows:
         H->>F: ファイル全体を読み込む
         F-->>H: 修正後の内容
         H->>H: ファイル全体を各行で照合する
-        H-->>C: 終了コード 0 と additionalContext に通知の文
+        H-->>C: 終了コード 0 と additionalContext に通知の文、systemMessage に 1 行
       ```
 
       <!-- /map -->
     expected:
       - 終了コードが 0
       - '`hookSpecificOutput.additionalContext` の表が `| 版 | バージョン |` の 1 行'
+      - '`systemMessage` が `AI slop を検知: 版（Edit）`'
     test: test_normal_when_edit
   - name: 正常系（Edit でファイルが読み込めない）
     summary: 修正後のファイルが読み込めなければ new_string を照合する
@@ -115,13 +117,14 @@ flows:
         H->>F: ファイル全体を読み込む
         F-->>H: ファイルが無い
         H->>H: tool_input.new_string を各行で照合する
-        H-->>C: 終了コード 0 と additionalContext に通知の文
+        H-->>C: 終了コード 0 と additionalContext に通知の文、systemMessage に 1 行
       ```
 
       <!-- /map -->
     expected:
       - 終了コードが 0
       - '`hookSpecificOutput.additionalContext` の表が `| 直す | 修正 |` の 1 行'
+      - '`systemMessage` が `AI slop を検知: 直す（Edit）`'
     test: test_normal_when_edited_file_unreadable
   - name: 正常系（NotebookEdit）
     summary: NotebookEdit はセルの新しい中身を照合する
@@ -139,13 +142,14 @@ flows:
         participant H as 書き込んだ中身の照合
         C->>H: 標準入力に PostToolUse の入力
         H->>H: tool_input.new_source を各行で照合する
-        H-->>C: 終了コード 0 と additionalContext に通知の文
+        H-->>C: 終了コード 0 と additionalContext に通知の文、systemMessage に 1 行
       ```
 
       <!-- /map -->
     expected:
       - 終了コードが 0
       - '`hookSpecificOutput.additionalContext` の表が `| 版 | バージョン |` の 1 行'
+      - '`systemMessage` が `AI slop を検知: 版（NotebookEdit）`'
     test: test_normal_when_notebook_edit
   - name: 正常系（MCP ツール）
     summary: 対象の MCP ツールは、識別子のキーを除いた全ての文字列の値を照合する
@@ -164,13 +168,14 @@ flows:
         participant H as 書き込んだ中身の照合
         C->>H: 標準入力に PostToolUse の入力
         H->>H: 識別子のキーを除いた文字列の値を集めて照合する
-        H-->>C: 終了コード 0 と additionalContext に通知の文
+        H-->>C: 終了コード 0 と additionalContext に通知の文、systemMessage に 1 行
       ```
 
       <!-- /map -->
     expected:
       - 終了コードが 0
       - '`hookSpecificOutput.additionalContext` の表が `| 足す | 追加 |` の 1 行'
+      - '`systemMessage` が `AI slop を検知: 足す（project-index の write_docs）`'
     test: test_normal_when_mcp_tool
   - name: 正常系（対象外のツール）
     summary: 対象の一覧に無いツールは照合せずに何も出力しない
@@ -273,7 +278,32 @@ flows:
       - 標準出力が空
       - 標準エラーに、入力が JSON として読み込めないことが出る
     test: test_error_when_input_invalid
-lead: 書き込むツールの実行の後に、Claude Code から受け取った PostToolUse の入力から書き込んだ中身を取り出して対応表で照合し、ヒットした単語があれば NG と OK の表を持つ通知の文を `additionalContext` で返却する。書き込みは止めない。
+  - name: 正常系（dev-docs の MCP ツール）
+    summary: dev-docs の write_docs も、project-index の write_docs と同じく照合する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: '`tool_name` が `mcp__plugin_dev-docs_dev-docs__write_docs`、`tool_input.operations[0].set.body` が「設定を足す。」'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        C->>H: 標準入力に PostToolUse の入力
+        H->>H: 識別子のキーを除いた文字列の値を集めて照合する
+        H-->>C: 終了コード 0 と additionalContext に通知の文、systemMessage に 1 行
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - '`hookSpecificOutput.additionalContext` の表が `| 足す | 追加 |` の 1 行'
+      - '`systemMessage` が `AI slop を検知: 足す（dev-docs の write_docs）`'
+    test: test_normal_when_dev_docs_mcp_tool
+lead: 書き込むツールの実行の後に、Claude Code から受け取った PostToolUse の入力から書き込んだ中身を取り出して対応表で照合し、ヒットした単語があれば NG と OK の表を持つ通知の文を `additionalContext` で返却し、検知した単語と書き込みの名前の 1 行を `systemMessage` で利用者の画面へ出す。書き込みは止めない。
 identifier: slop-check
 idempotent: true
 side_effects: なし（ファイルを書き換えない）
@@ -283,6 +313,7 @@ callers:
   - SC-148-1#scenarios[正常シナリオ（Edit で前からある単語）]
   - SC-148-1#scenarios[正常シナリオ（MCP ツールで書き込む）]
   - SC-148-1#scenarios[異常シナリオ（対応表が読み込めない）]
+  - SC-148-1#scenarios[正常シナリオ（dev-docs の MCP ツールで書き込む）]
 exclusivity: 制限なし（読み込むだけで、同時に起動されても結果は変わらない）
 request:
   - name: stdin
@@ -336,7 +367,11 @@ response:
     description: フックの種類
   - name: stdout.hookSpecificOutput.additionalContext
     type: str
-    description: 通知の文。要件の要望 3 の文のとおりで、表にはヒットした行だけを対応表の並びの順に 1 行ずつ出す。OK は「・」でつなぎ、`note` があれば OK の後ろに括弧で添える
+    description: 通知の文。要件の要望 3 の文のとおりで、表にはヒットした行だけを対応表の並びの順に 1 行ずつ出す。OK は「・」でつなぎ、`note` があれば OK の後ろに括弧で添える。規約を参照する案内には、project-index と dev-docs の `search_docs` の完全名を並べる
+  - name: stdout.systemMessage
+    type: str
+    description: '利用者の画面に出す 1 行。`AI slop を検知: {NG の単語}（{書き込みの名前}）`。NG の単語は `additionalContext` の表の行と同じ順に「・」でつなぎ、置き換え先は出さない'
+    example: 'AI slop を検知: 直す・形（Write）'
   - name: stderr
     type: str
     description: 対応表・入力が読み込めないときの理由（1 行）
@@ -345,9 +380,9 @@ response:
     description: 常に 0。書き込みの結果を変えない
 response_example: |-
   ```json
-  {"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": "AI がよく使う単語（AI slop）が入っています。OK の単語に置き換えてください。\n…\n| NG | OK |\n| --- | --- |\n| 直す | 修正 |\n…"}}
+  {"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": "AI がよく使う単語（AI slop）が入っています。OK の単語に置き換えてください。\n…\n| NG | OK |\n| --- | --- |\n| 直す | 修正 |\n…"}, "systemMessage": "AI slop を検知: 直す・形（Write）"}
   ```
-response_notes: '`decision` と `reason` は返却しない。Claude Code は終了コード 0 の標準出力の JSON の `additionalContext` を、ツールの結果に続けてエージェントのコンテキストへ入れる'
+response_notes: '`decision` と `reason` は返却しない。Claude Code は終了コード 0 の標準出力の JSON の `additionalContext` を、ツールの結果に続けてエージェントのコンテキストへ入れ、`systemMessage` を利用者の画面に表示する'
 exceptions:
   - name: なし（正常終了）
     condition: 照合を終えた。ヒットの有無に依らず終了コード 0
@@ -357,8 +392,8 @@ exceptions:
     condition: 標準入力が JSON として読み込めないか、`tool_name`・`tool_input` が無い。何も出力せず、標準エラーに理由を出す
 constraints:
   - item: 対象のツール
-    constraint: '`Write`・`Edit`・`NotebookEdit` と、`mcp__` で始まり最後の `__` の後ろが次のツール名の MCP ツール。project-index の `write_docs`。ai-monitor の `comment`・`reply_comment`・`reply_review_thread`・`create_review_comment`・`create_file_comment`・`create_issue`・`create_draft_pr`・`update_body`・`update_title`・`add_notice_row`・`notify`・`create_defect_issue`・`create_monitor_rule_issue`・`create_plugin_rule_issue`。MindStella の `add`・`batch`・`update`・`reply`・`new_thread`・`edit_option`・`update_thread`'
-    notes: MCP ツールはサーバーの部分（`mcp__` と最後の `__` の間）に `project-index`・`ai-monitor`・`mindstella` を含むかも合わせて確認する。`hooks.json` の `matcher` は `Write|Edit|NotebookEdit|mcp__.*` にし、MCP ツールの対象の判定はフックだけが持つ
+    constraint: '`Write`・`Edit`・`NotebookEdit` と、`mcp__` で始まり最後の `__` の後ろが次のツール名の MCP ツール。project-index と dev-docs の `write_docs`。ai-monitor の `comment`・`reply_comment`・`reply_review_thread`・`create_review_comment`・`create_file_comment`・`create_issue`・`create_draft_pr`・`update_body`・`update_title`・`add_notice_row`・`notify`・`create_defect_issue`・`create_monitor_rule_issue`・`create_plugin_rule_issue`。MindStella の `add`・`batch`・`update`・`reply`・`new_thread`・`edit_option`・`update_thread`'
+    notes: MCP ツールはサーバーの部分（`mcp__` と最後の `__` の間）に `project-index`・`dev-docs`・`ai-monitor`・`mindstella` を含むかも合わせて確認する。`hooks.json` の `matcher` は `Write|Edit|NotebookEdit|mcp__.*` にし、MCP ツールの対象の判定はフックだけが持つ
   - item: 照合しない書き込む先
     constraint: '対応表の原本とコピーへの書き込みは照合しない。Write・Edit・NotebookEdit は `file_path`（NotebookEdit は `notebook_path`）が `docs/word-list/` の下の `.yaml` か `hooks/post-tool-use/word-list-` で始まる `.json` のとき。`write_docs` は `operations[]` の全ての `id` が `word-list-` で始まるか、`kind` が `word-list` のとき'
     notes: NG の単語を例文に持つ設計書は除かず、通知の文の注記に任せる
@@ -373,4 +408,7 @@ constraints:
     constraint: 制限なし（`hooks.json` に `timeout` を配置せず、Claude Code の既定の打ち切りに任せる。打ち切られても書き込みの結果は変わらない）
   - item: 中身の大きさ
     constraint: 制限なし
+  - item: 書き込みの名前
+    constraint: '`systemMessage` の括弧の中。組み込みのツールは `tool_name` のまま。MCP ツールは、サーバーの部分が `plugin_` で始まれば `plugin_` の後ろから最初の `_` までを、始まらなければサーバーの部分を名前にして `{名前} の {ツール名}` にする'
+    notes: '`mcp__plugin_mindstella_mindstella__reply` は `mindstella の reply`、`mcp__plugin_ai-monitor_ai-monitor-tools__comment` は `ai-monitor の comment`'
 test_file: tests/integration/slop-check/test_slop_check.py
