@@ -21,7 +21,7 @@ flows:
         participant S as 全ての文書の検査
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>S: markdownlint-cli2・textlint があるかを確認する
+        S->>S: markdownlint-cli2・textlint・npx があるかを確認する
         S->>F: project-index.yaml の documents を読み込む
         loop 全ての文書
           S->>S: スキーマの検査と文書の違反の検査
@@ -32,6 +32,13 @@ flows:
         end
         S->>S: 文書の Markdown の項目を 1 項目ずつ一時の .md に書き出す
         S->>S: markdownlint-cli2・textlint を 1 回ずつ呼び、yamllint を適用する
+        loop 入口が trigger のインターフェース定義
+          S->>F: entry.value の workflow のファイルを読み込む
+          S->>S: on・inputs・concurrency・step の name と if を設計書と比べる
+        end
+        loop docs/skill/ のスキルの設計書
+          S->>S: 「SKILL.md の生成」と同じ組み立ての中身と SKILL.md を比べる
+        end
         S-->>C: 終了コード 0 と件数の行
       ```
 
@@ -324,6 +331,93 @@ flows:
       - '標準出力に `{文書のパス}:{行}: items[0].body: warning: textlint/one-sentence-per-line: {内容}` の行が出る'
       - 標準出力の最後の行が、違反 0 件・警告 1 件を示す
     test: test_normal_when_only_warnings
+  - name: 正常系（map の図に誤りがある・終了コード 1）
+    summary: map の誤りだけを違反として出し、前の記法のマーカーの `legacy_mark` は違反にしない
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`items[].body` の map の `sequenceDiagram` に `:` の無いメッセージの行（`A->>B hello`）を持つ文書と、1 つの `items[].body` に誤りの無い map と `<!-- table: data -->` の表を持つ文書と、`schemas/meta.schema.yaml` を持つ一時フォルダ'
+        notes: '`<!-- table: data -->` は mdmark の点検で `legacy_mark` になる'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant M as mdmark
+        C->>S: リポジトリの直下で起動する
+        S->>S: map を含む文書の Markdown の項目を、空行を挟んでつなぐ
+        S->>M: つないだ Markdown を check --text - の標準入力で点検する
+        M-->>S: 終了コード 1 とずれの行
+        S->>S: map_ で始まる種類のずれだけを、元の文書の YAML の行にする
+        S-->>C: 終了コード 1 と map の違反の行
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 1
+      - '標準出力に `{文書のパス}:{行}: items[0].body: mdmark/map_invalid: {内容}` の行が出て、行は文書の YAML の中の `A->>B hello` の行'
+      - 標準出力に `legacy_mark` の行が出ない
+    test: test_normal_when_maps_invalid
+  - name: 正常系（workflow のファイルがインターフェース定義と食い違う・終了コード 1）
+    summary: 入口が `trigger` のインターフェース定義と workflow のファイルの食い違いを、食い違い 1 件ごとに違反として出す
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`entry.value` が `.github/workflows/pages.yml` を指し、`exclusivity` に `cancel-in-progress: false` を記載したインターフェース定義と、`cancel-in-progress: true` で `overall_flow` に無い `name` の step を 1 つ持つ `.github/workflows/pages.yml` と、`schemas/meta.schema.yaml` を持つ一時フォルダ'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>F: project-index.yaml の documents を読み込む
+        loop 入口が trigger のインターフェース定義
+          S->>F: entry.value の workflow のファイルを読み込む
+          S->>S: on・inputs・concurrency・step の name と if を設計書と比べる
+        end
+        S-->>C: 終了コード 1 と食い違いの行
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 1
+      - '標準出力に `{設計書のパス}:{行}: exclusivity: {内容}` と `{設計書のパス}:{行}: overall_flow: {内容}` の 2 行が出て、内容に workflow のファイルのパスと workflow の側の値（`cancel-in-progress: true`・追加した step の `name`）が出る'
+    test: test_normal_when_workflows_differ_from_interfaces
+  - name: 正常系（SKILL.md が生成元とずれている・終了コード 1）
+    summary: スキルの設計書から組み立てた中身が SKILL.md と違えば、違反として出す
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: '`schemas/design/agent_flow.schema.yaml`・`schemas/design/common.schema.yaml` と、`skill.path` が `skills/a/SKILL.md` の `docs/skill/a.yaml` と、その工程を 1 つ変更する前に生成した `skills/a/SKILL.md` と、`schemas/meta.schema.yaml` を持つ一時フォルダ'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant F as リポジトリ
+        C->>S: リポジトリの直下で起動する
+        S->>F: docs/skill/ のスキルの設計書を読み込む
+        loop type が skill の設計書
+          S->>S: 「SKILL.md の生成」と同じ組み立てで中身を作り、skill.path の SKILL.md と比べる
+        end
+        S-->>C: 終了コード 1 と SKILL.md の違反の行
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 1
+      - 標準出力に、`skills/a/SKILL.md` のパスと、生成元の `docs/skill/a.yaml` と、「SKILL.md の生成」を実行する案内（`uv run --frozen --script scripts/build_skills.py`）の行が出る
+    test: test_normal_when_skills_out_of_date
   - name: 異常系（検査の CLI が無い・終了コード 2）
     summary: markdownlint-cli2・textlint のどちらかが見つからなければ検査を始めずに終わる
     setup:
@@ -398,7 +492,7 @@ flows:
       - 終了コードが 2
       - 標準エラーに `project-index.yaml` が無いことが出る
     test: test_error_when_config_missing
-lead: '`project-index.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を適用し、`schemas/design/` の設計書のスキーマにスキーマ自身の検査を適用し、設計書のテンプレートがスキーマと一致するかを比べ、全ての違反を出して終了コードで合否を返却する。'
+lead: '`project-index.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を適用し、`schemas/design/` の設計書のスキーマにスキーマ自身の検査を適用し、設計書のテンプレートがスキーマと、SKILL.md が生成元と、workflow のファイルがインターフェース定義と一致するかを比べ、文書の map を mdmark で点検し、全ての違反を出して終了コードで合否を返却する。'
 identifier: check-all
 idempotent: true
 side_effects: なし（ファイルを書き換えない）
@@ -429,14 +523,14 @@ response:
     description: 終了コード 2 のときの理由
   - name: exit_code
     type: Literal[0, 1, 2]
-    description: 0 = 違反なし（警告だけのときを含む）。1 = 違反が 1 件以上。2 = 検査の CLI が見つからないか、`project-index.yaml` が読み込めないか、拡張したメタスキーマを使用できず、検査を始めなかった
+    description: 0 = 違反なし（警告だけのときを含む）。1 = 違反が 1 件以上。2 = 検査の CLI が見つからないか、mdmark の点検が終了コード 0・1 以外で終わったか、`project-index.yaml` が読み込めないか、拡張したメタスキーマを使用できず、検査を始めなかった
 exceptions:
   - name: なし（正常終了）
     condition: 全ての文書に違反が無い（終了コード 0）。警告にしたルールの違反だけのときを含む
   - name: 終了コード 1
     condition: 違反（設計書のスキーマの誤りを含む）が 1 件以上ある。全ての文書と設計書のスキーマを検査し終えてから返却する
   - name: 終了コード 2
-    condition: markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`project-index.yaml` が無い・YAML として読み込めないか、`schemas/meta.schema.yaml` が無い・YAML として読み込めない・それ自身が JSON Schema 2020-12 のメタスキーマに合わない
+    condition: markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`npx` が `PATH` に無いか、`project-index.yaml` が無い・YAML として読み込めないか、`schemas/meta.schema.yaml` が無い・YAML として読み込めない・それ自身が JSON Schema 2020-12 のメタスキーマに合わない。mdmark の点検が終了コード 0・1 以外で終わったときも、他の検査を終えてから標準エラーに mdmark の標準エラーを出して終了コード 2 で終わる
 constraints:
   - item: 検査の範囲
     constraint: '`project-index.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も適用する。
@@ -484,4 +578,27 @@ constraints:
   - item: 1 文書あたりの処理時間
     constraint: 「文書の違反の検査」と同じ 20 秒
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
+  - item: map の点検の範囲
+    constraint: '`documents[]` の YAML の文書の、値に `<!-- map -->` を含む文字列の項目（パスの末尾を問わない）。該当する項目が 0 件なら mdmark を呼ばない'
+  - item: map の点検の呼び出し
+    constraint: 該当する全ての項目を、項目の間に空行 2 行を挟んで 1 つの Markdown につなぎ、`npx -y github:shuhei1101/mdmark#{タグ} check --text -` を一時のフォルダで 1 回呼び、標準入力へ書き込む。タグは「Pages の成果物の作成」と同じ値を使用する
+    decided_by: LIB-137-1#
+  - item: map の違反にするずれ
+    constraint: 'mdmark が出した `-:{行}: {種類}: {内容}` の行のうち、種類が `map_` で始まるものだけを違反にし、内容は `mdmark/{種類}: {内容}` で出す。`legacy_mark` など他の種類と、最後の `ずれ {件数} 件` の行は捨てる'
+  - item: map の違反の行
+    constraint: つないだ Markdown の行から、その行を含む項目のつないだ中の開始行を減算して `iter_strings` が返却する項目の開始行を加算した、元の文書の YAML の行で出す。項目のパスはその項目のパス
+  - item: workflow の突き合わせの範囲
+    constraint: '`entry.kind` が `trigger` で、`entry.value` の最初のコードスパンが `.github/workflows/` の `.yml`・`.yaml` を指すインターフェース定義。指すファイルが無いか YAML として読み込めなければ、`entry.value` の行で違反 1 件にする'
+  - item: workflow の突き合わせ
+    constraint: |-
+      食い違い 1 件を、設計書のその項目のキーの行の違反 1 件にし、内容に workflow のファイルのパスと workflow の側の値を出す。
+      起動の条件: `on` のイベント名と、イベントの下の `branches`・`branches-ignore`・`tags`・`paths`・`paths-ignore`・`types` の値と `schedule` の `cron` が、全て `entry.value` のコードスパンにある。`entry.value` のコードスパンは、workflow のファイルのパスとそれらの値のどれか。
+      リクエスト: `request[].name` の並びが `on.workflow_dispatch.inputs` のキーの並びと同じで、名前ごとに `type`（workflow の `type`。無ければ `string`）・`required`（無ければ `false`）・`default`（文字列にして比べる）が一致する。
+      排他: workflow が `concurrency` を持つとき、`exclusivity` が `group` の値と `cancel-in-progress: {値}` をコードスパンで持つ。持たないとき、`exclusivity` に `cancel-in-progress` が無い。
+      step: `overall_flow` の `flowchart` の開始・終わり（`([...])`）を除くノードのラベルの集まりが、全てのジョブの step の `name` の集まりと同じで、`subgraph` の ID がジョブの ID で、`subgraph` の中のノードがそのジョブの step である。`flows[].flow` の開始・終わりを除くノードのラベルは、全て step の `name` にある。`name` の無い step は、`overall_flow` の行でジョブの ID と step の番号を出す違反 1 件にする。
+      分岐: `if` を持つ step・ジョブは、`overall_flow` のその step（ジョブは `subgraph`）へ入る線のどれかのラベルに `if` の式をコードスパンで持つ
+    decided_by: IF-137-2#
+  - item: SKILL.md
+    constraint: 「SKILL.md の生成」と同じ組み立てで作った中身のバイト列が、設計書ごとの `skill.path` のファイルと一致する。違うかファイルが無ければ、SKILL.md のパスの 1 行で違反 1 件にし、内容に生成元の設計書のパスと生成のコマンドを出す。組み立てられなければ（設計書がスキーマに合わない 等）、`docs/skill` の 1 行で理由の違反 1 件にする。`docs/skill/` が無ければ比べない
+    decided_by: IF-312-1#
 test_file: tests/integration/scripts/test_check_all.py
