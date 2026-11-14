@@ -1,0 +1,18 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: none
+    detail: 公開文書の配信の正常シナリオと 2 つの異常シナリオは、呼び出し先のフローの名前と結末が変わらないため記述は変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 記載し直したインターフェース定義が、追加された書式のスキーマの検査を通ることを確認する。検査の手順は変えない
+    depends_on: []
+scope_out:
+  - item: IF-137-2 の `<!-- map -->` のマーカーを mdmark の JSON の記載へ移す
+    reason: '別の Issue の範囲で、この作業 PR の後に入れる（#316 の依存に #360 がある）'
+    plan: '#316'
+  - item: workflow の静的な検査（actionlint を lint の層へ入れる・設計書と workflow のファイルの突き合わせ）
+    reason: 要望に含まれない
+    plan: '#361'
