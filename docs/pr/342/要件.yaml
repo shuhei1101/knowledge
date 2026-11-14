@@ -66,6 +66,9 @@ scope_out:
   - item: docs/rule/dev-tag-term-registration.yaml の dev-docs.yaml の記述
     reason: タグにしない識別子の例としてファイル名を挙げているだけで、MCP の持ち主の記述ではない（#328 の task-reviewer の確認のとおり）
     plan: none
+  - item: docs/guide/guide-setup-docs-mcp.yaml の prerequisite-01・step-screen-01 の dev-docs のページへのリンクが、移動前の docs/使い方/ を指す
+    reason: 'リンク切れの不具合。#328・#330 の要望に含まれず、対象のファイルは #309 の範囲だった'
+    plan: '#344'
 use_cases:
   - kind: single
     scenario: docs/scenario/SC-72-6.yaml
