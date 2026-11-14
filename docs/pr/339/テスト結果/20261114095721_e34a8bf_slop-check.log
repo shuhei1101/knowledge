@@ -1,0 +1,25 @@
+$ python3 slop-check のフックの照合（docs/template・schemas/design の全ファイル）
+TOTAL 13
+docs/template/template-design-policy.yaml:120: [見る→確認/参照] - ワンポイントの題材・配置する場所の決まりは、規約『[シンプルで凡庸でない見た目](id:ui-distinctive-look)』に従う
+docs/template/template-design-policy.yaml:179: [見る→確認/参照] - 機能を変えずに見た目だけ変えられる要素（角丸の大きさ・ボタンの形状・表の罫線と縞・コールアウトの形状）で、そのシステム用に選んだ行は、補足列に `形状の味付け` と記載する
+docs/template/template-flowchart.yaml:126: [使う→使用] - ノードの位置・大きさと線の `points` の記載方法は、mdmark の使い方『図を描く』の「判定フローチャートを記載する」に従う
+docs/template/template-getting-started.yaml:32: [使う→使用] タグは `scope:使い方` と、主題の `topic:はじめに`（`main: true`）にする。
+docs/template/template-getting-started.yaml:79: [見る→確認/参照] - タスクを 1 画面で共有する: 担当と期限をチームの全員が同じ画面で確認する（[タスクを見る](id:guide-usage-view-task)）
+docs/template/template-getting-started.yaml:87: [使う→使用] - リンク先は `使い方` / `リファレンス` のページにする
+docs/template/template-getting-started.yaml:186: [使う→使用] - `使い方` のセクションへの導線を「{セクション}: {何ができるか}」の書式で並べる
+docs/template/template-project-claude.yaml:56: [使う→使用] 使い方は [使い方](./docs/guide/)。
+docs/template/template-project-readme.yaml:51: [使う→使用] 概要・機能・セットアップはドキュメントの `はじめに` / `使い方` に記載する。
+docs/template/template-setup-procedure.yaml:5: [使う→使用] description: 使い方のセットアップ手順に配置する 1 条件につき 1 ページの個別手順の書式を定め、セットアップ手順のページを作るときに参照する。
+docs/template/template-setup-procedure.yaml:29: [使う→使用] タグは `scope:使い方` と、主題の `topic:セットアップ手順`（`main: true`）にする。
+docs/template/template-viewpoint-uc-delete.yaml:19: [消す→削除] - name: action:取り消し
+docs/template/template-viewpoint-uc-delete.yaml:78: [消す→削除] | Undo | 削除直後の一時取り消し可否、期限 |
+TOTAL 4
+schemas/design/dev_command.schema.yaml:6: [書く→記載] - 何を記載するか・どの分類かは判定フローチャート『コマンドの書き先』で決める。
+schemas/design/llm_call.schema.yaml:196: [置く→配置] description: 再試行しても失敗したときに使用する、仕様を満たす代わりの経路（判定フローチャート『フォールバックを置くか』）。記載しなければエラーにする。
+schemas/design/llm_call.schema.yaml:216: [置く→配置] description: 代わりの経路が仕様を満たすとした根拠（『フォールバックを置くか』の判定の結果）。
+schemas/design/screen.schema.yaml:47: [見る→確認/参照] - 実装で、合意したモックの見た目に合わせる。
+TOTAL 4
+docs/template/template-dev-command.yaml:28: [書く→記載] - 何を記載するか・どの分類かは判定フローチャート『コマンドの書き先』で決める。
+docs/template/template-llm-call.yaml:59: [置く→配置] | fallback | 代わりの経路 | object | - | - | - | 再試行しても失敗したときに使用する、仕様を満たす代わりの経路（判定フローチャート『フォールバックを置くか』）。記載しなければエラーにする。 | 実装で、失敗したときの処理にする。 | - |
+docs/template/template-llm-call.yaml:61: [置く→配置] | fallback.basis | 根拠 | string | 必須 | - | - | 代わりの経路が仕様を満たすとした根拠（『フォールバックを置くか』の判定の結果）。 | レビューで、代わりの経路が等価かを確認する。 | `別のプロバイダの同じ用途のモデルで、精度評価に合格した` |
+docs/template/template-screen-design.yaml:36: [見る→確認/参照] | mock | モック | string | - | - | - | 採用したモックの配置場所。 | 実装で、合意したモックの見た目に合わせる。<br>レビューで、実装した画面とモックを照合する。 | - |

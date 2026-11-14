@@ -13,9 +13,16 @@ docs:
   - page: docs/template
     new: false
     change: 手書きのテンプレート（TEMPLATE_IDS に載らないもの）の AI slop の単語を対応表の OK の単語へ修正する。生成するテンプレートは schemas/design を修正した後に生成し直す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T00:59:51.430916+00:00'
   - page: schemas/design
     new: false
     change: description・x-rules などの文の AI slop の単語を対応表の OK の単語へ修正し、index.schema.yaml の 3 行目・18 行目の description から dev/ を削除する
-    status: todo
-scope_out: []
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-14T00:59:51.430916+00:00'
+scope_out:
+  - item: テンプレートから作成済みの他のリポジトリの文書の見出し・列名（ai-monitor の `次に読むもの`・`使わないもの` 等）を、改訂したテンプレートに合わせること
+    reason: テンプレートの改訂に既存の文書を合わせるかは、文書を持つリポジトリが決める
+    plan: none
