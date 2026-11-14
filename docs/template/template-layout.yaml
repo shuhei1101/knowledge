@@ -20,7 +20,7 @@ items:
     name: 決まり
     body: |-
       - 1 リポジトリ 1 ファイルにする。
-      - 配下の細かい配置を言語の規約が定めるフォルダは、`children` を記載せず `convention` で規約を指す。
+      - 配下の細かい配置を言語の規約が定めるフォルダは `convention` で規約を指し、`children` には生成物・複製のエントリ（`generated_from` を記載するエントリ）だけを記載する。
       - 生成物・複製・一時ファイルは `gitignore` に記載し、生成物・複製のエントリには `generated_from` を記載する。
       - git で管理する生成物・複製は `gitignore` に記載せず、`generated_from.tracked` に git で管理する理由を記載する。
   - id: item-list-01
@@ -117,11 +117,13 @@ items:
           contents: サーバー本体のコード
           convention: python-architecture-layout
           children:
-          - type: folder
-            name: shared
-            contents: 全ての機能が参照する設定・ログ・例外
-            content_types:
-            - config
+          - type: file
+            name: flow_schema.py
+            contents: エージェントフローのスキーマから生成した型
+            generated_from:
+              path: content/node-docs/schema.yaml
+              command: CMD-1#categories[ビルド・生成]
+              tracked: 実行時に import する
       - type: folder
         name: content
         contents: コードではない原本
