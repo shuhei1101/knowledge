@@ -21,7 +21,7 @@ flows:
         participant S as 全ての文書の検査
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
-        S->>S: maid・markdownlint-cli2・textlint があるかを確認する
+        S->>S: markdownlint-cli2・textlint があるかを確認する
         S->>F: dev-docs.yaml の documents を読み込む
         loop 全ての文書
           S->>S: スキーマの検査と文書の違反の検査
@@ -325,10 +325,10 @@ flows:
       - 標準出力の最後の行が、違反 0 件・警告 1 件を示す
     test: test_normal_when_only_warnings
   - name: 異常系（検査の CLI が無い・終了コード 2）
-    summary: maid・markdownlint-cli2・textlint のどれかが見つからなければ検査を始めずに終わる
+    summary: markdownlint-cli2・textlint のどちらかが見つからなければ検査を始めずに終わる
     setup:
       - name: Mock
-        description: PATH から maid を除外し、`--lint-dir` に存在しないフォルダを指定する
+        description: '`--lint-dir` に存在しないフォルダを指定する'
     flow: |-
       <!-- map -->
 
@@ -423,7 +423,7 @@ response:
   - name: stdout
     type: str
     description: '違反 1 件を 1 行で `{ファイルのパス}:{行}: {項目のパス}: {内容}` の形式で出し、最後に検査した文書の数と違反の数と警告の数を 1 行で出す。lint の違反の `{内容}` は `{CLI}/{ルール}: {内容}`、ファイル全体に適用した lint（yamllint と `.md` のファイル）の `{項目のパス}` は `-`。警告にしたルールの違反は `{内容}` の前に `warning: ` を付ける'
-    example: "docs/rule/a.yaml:42: items[3].body: mermaid: Expected 'end' to close subgraph"
+    example: "docs/rule/a.yaml:18: items[2].id: 項目の ID `overview` が items[0] と重複しています"
   - name: stderr
     type: str
     description: 終了コード 2 のときの理由
@@ -436,7 +436,7 @@ exceptions:
   - name: 終了コード 1
     condition: 違反（設計書のスキーマの誤りを含む）が 1 件以上ある。全ての文書と設計書のスキーマを検査し終えてから返却する
   - name: 終了コード 2
-    condition: maid が PATH で見つからないか、markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`dev-docs.yaml` が無い・YAML として読み込めないか、`schemas/meta.schema.yaml` が無い・YAML として読み込めない・それ自身が JSON Schema 2020-12 のメタスキーマに合わない
+    condition: markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`dev-docs.yaml` が無い・YAML として読み込めないか、`schemas/meta.schema.yaml` が無い・YAML として読み込めない・それ自身が JSON Schema 2020-12 のメタスキーマに合わない
 constraints:
   - item: 検査の範囲
     constraint: '`dev-docs.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も適用する。
@@ -482,6 +482,6 @@ constraints:
       `$ref` を解決できないスキーマは「設計書のスキーマの検査」が違反にするので、そのスキーマのテンプレートは比べない
     decided_by: IF-201-1#constraints[組み立てる items]
   - item: 1 文書あたりの処理時間
-    constraint: 「文書の違反の検査」と同じ 20 秒。超えたブロックは時間切れの違反にする
+    constraint: 「文書の違反の検査」と同じ 20 秒
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
 test_file: tests/integration/scripts/test_check_all.py

@@ -1,8 +1,6 @@
 """scripts/knowledge_checks.py の単体テスト。"""
 
 import json
-import time
-from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 import knowledge_checks
@@ -14,18 +12,15 @@ from knowledge_checks import (
     check_aliases,
     check_document,
     check_duplicate_ids,
-    check_mermaid,
     check_references,
-    mermaid_blocks,
     normalize_name,
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from pathlib import Path
 
     import pytest
-
-type FakeMaidFactory = Callable[..., str]
 
 # 誤りの無い規約の文書
 _VALID_DOC = (
@@ -37,24 +32,6 @@ _VALID_DOC = (
     "  - id: overview\n"
     "    name: 概要\n"
     "    body: 本文\n"
-)
-
-# items[3].body の mermaid のブロックの中身が 40 行目から始まる文書（本文の 1 行目が 11 行目、囲みが 39 行目）
-_MERMAID_AT_40 = (
-    "id: self\n"
-    "items:\n"
-    "  - id: a\n"
-    "    body: x\n"
-    "  - id: b\n"
-    "    body: x\n"
-    "  - id: c\n"
-    "    body: x\n"
-    "  - id: d\n"
-    "    body: |-\n" + "      段落\n" * 28 + "      ```mermaid\n"
-    "      flowchart TD\n"
-    "        subgraph S\n"
-    "        A\n"
-    "      ```\n"
 )
 
 # documents[] が空の dev-docs.yaml
@@ -77,7 +54,6 @@ def test_main(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
-    fake_maid_factory: FakeMaidFactory,
     stdin_factory: Callable[[str], None],
 ) -> None:
     """違反の無い文書（正常系）。"""
@@ -85,8 +61,6 @@ def test_main(
     (tmp_path / "docs").mkdir()
     (tmp_path / "dev-docs.yaml").write_text(_EMPTY_CONFIG, encoding="utf-8")
     monkeypatch.chdir(tmp_path)
-    maid = fake_maid_factory()
-    monkeypatch.setattr(knowledge_checks, "find_maid", lambda: maid)
     stdin_factory(_VALID_DOC)
     # 実行
     code = knowledge_checks.main([])
@@ -95,38 +69,16 @@ def test_main(
     assert json.loads(capsys.readouterr().out) == []
 
 
-def test_main_when_maid_missing(
-    monkeypatch: pytest.MonkeyPatch,
-    capsys: pytest.CaptureFixture[str],
-    stdin_factory: Callable[[str], None],
-) -> None:
-    """maid が無い（正常系）。"""
-    # 準備
-    monkeypatch.setattr(knowledge_checks, "find_maid", lambda: None)
-    stdin_factory(_VALID_DOC)
-    # 実行
-    code = knowledge_checks.main([])
-    # 検証
-    captured = capsys.readouterr()
-    assert code == 2
-    assert captured.out == ""
-    assert "maid" in captured.err
-    assert "環境構築" in captured.err
-
-
 def test_main_when_unexpected_error(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
-    fake_maid_factory: FakeMaidFactory,
     stdin_factory: Callable[[str], None],
 ) -> None:
     """想定していない例外（正常系）。"""
     # 準備
     (tmp_path / "docs").mkdir()
     monkeypatch.chdir(tmp_path)
-    maid = fake_maid_factory()
-    monkeypatch.setattr(knowledge_checks, "find_maid", lambda: maid)
 
     def _raise(*_args: object, **_kwargs: object) -> list[object]:
         message = "想定していない例外"
@@ -141,7 +93,7 @@ def test_main_when_unexpected_error(
     assert "Traceback" in capsys.readouterr().err
 
 
-def test_check_document(tmp_path: Path, fake_maid_factory: FakeMaidFactory) -> None:
+def test_check_document(tmp_path: Path) -> None:
     """違反を検査の順に並べる（正常系）。"""
     # 準備
     text = (
@@ -153,34 +105,22 @@ def test_check_document(tmp_path: Path, fake_maid_factory: FakeMaidFactory) -> N
         "    body: 本文\n"
         "  - id: y\n"
         "    body: '[B](id:missing)'\n"
-        "  - id: z\n"
-        "    body: |-\n"
-        "      ```mermaid\n"
-        "      flowchart TD\n"
-        "        subgraph S\n"
-        "        A\n"
-        "      ```\n"
         "related:\n"
         "  - to: missing\n"
         "    type: references\n"
         "    when: いつでも\n"
     )
-    stdout = '{"valid": false, "errors": [{"line": 2, "column": 1, "message": "Expected end"}]}'
-    maid = fake_maid_factory(stdout=stdout, exit_code=1)
     # 実行
-    result = check_document(
-        text, tmp_path, maid, time.monotonic() + 10.0, index={"a": frozenset()}, names={}
-    )
+    result = check_document(text, tmp_path, index={"a": frozenset()}, names={})
     # 検証
     assert [v["path"] for v in result] == [
         "items[1].id",
         "items[2].body",
         "related[0].to",
-        "items[3].body",
     ]
 
 
-def test_check_document_when_word_list(tmp_path: Path, fake_maid_factory: FakeMaidFactory) -> None:
+def test_check_document_when_word_list(tmp_path: Path) -> None:
     """対応表の examples の違反をつなぐ（正常系）。"""
     # 準備
     text = (
@@ -194,26 +134,20 @@ def test_check_document_when_word_list(tmp_path: Path, fake_maid_factory: FakeMa
         "      hit: [修正した]\n"
         "      pass: []\n"
     )
-    maid = fake_maid_factory(stdout='{"valid": true, "errors": []}', exit_code=0)
     # 実行
-    result = check_document(text, tmp_path, maid, time.monotonic() + 10.0, index={}, names={})
+    result = check_document(text, tmp_path, index={}, names={})
     # 検証
     assert [violation["path"] for violation in result] == ["entries[0].examples.hit[0]"]
 
 
-def test_check_document_when_aliases_collide(
-    tmp_path: Path, fake_maid_factory: FakeMaidFactory
-) -> None:
-    """aliases の衝突の違反を参照と mermaid の間に並べる（正常系）。"""
+def test_check_document_when_aliases_collide(tmp_path: Path) -> None:
+    """aliases の衝突の違反を参照の後に並べる（正常系）。"""
     # 準備
     text = "id: b\naliases:\n  - アルファ\nitems:\n  - id: x\n    body: '[B](id:missing)'\n"
-    maid = fake_maid_factory(stdout='{"valid": true, "errors": []}', exit_code=0)
     # 実行
     result = check_document(
         text,
         tmp_path,
-        maid,
-        time.monotonic() + 10.0,
         index={"a": frozenset()},
         names={"アルファ": [("a", "aliases")]},
     )
@@ -221,15 +155,12 @@ def test_check_document_when_aliases_collide(
     assert [violation["path"] for violation in result] == ["items[0].body", "aliases[0]"]
 
 
-def test_check_document_when_config_missing(
-    tmp_path: Path, fake_maid_factory: FakeMaidFactory
-) -> None:
+def test_check_document_when_config_missing(tmp_path: Path) -> None:
     """dev-docs.yaml が無い（正常系）。"""
     # 準備
     text = "id: b\naliases:\n  - アルファ\n"
-    maid = fake_maid_factory(stdout='{"valid": true, "errors": []}', exit_code=0)
     # 実行
-    result = check_document(text, tmp_path, maid, time.monotonic() + 10.0, index={})
+    result = check_document(text, tmp_path, index={})
     # 検証
     assert len(result) == 1
     assert result[0]["path"] == "$"
@@ -237,15 +168,12 @@ def test_check_document_when_config_missing(
     assert "aliases の衝突を検査できません" in result[0]["rule"]
 
 
-def test_check_document_when_aliases_duplicate(
-    tmp_path: Path, fake_maid_factory: FakeMaidFactory
-) -> None:
+def test_check_document_when_aliases_duplicate(tmp_path: Path) -> None:
     """dev-docs.yaml が無くても文書の中の aliases の重複を検査する（正常系）。"""
     # 準備
     text = "id: b\naliases:\n  - アルファ\n  - ｱﾙﾌｧ\n"
-    maid = fake_maid_factory(stdout='{"valid": true, "errors": []}', exit_code=0)
     # 実行
-    result = check_document(text, tmp_path, maid, time.monotonic() + 10.0, index={})
+    result = check_document(text, tmp_path, index={})
     # 検証
     assert [violation["path"] for violation in result] == ["$", "aliases[1]"]
 
@@ -260,18 +188,13 @@ def test_check_document_when_broken(tmp_path: Path, monkeypatch: pytest.MonkeyPa
         return {}
 
     monkeypatch.setattr(knowledge_checks, "build_id_index", _spy_index)
-    # 呼ばれないことを確かめるため、無い maid のパスを渡す
-    record = tmp_path / "maid-called"
     # 実行
-    result = check_document(
-        "items:\n  - id: a\n    name: [\n", tmp_path, str(record), time.monotonic() + 10.0
-    )
+    result = check_document("items:\n  - id: a\n    name: [\n", tmp_path)
     # 検証
     assert len(result) == 1
     assert result[0]["path"] == "$"
     assert "行目: YAML として読めません" in result[0]["rule"]
     assert calls == []
-    assert not record.exists()
 
 
 def test_build_id_index(tmp_path: Path) -> None:
@@ -536,92 +459,6 @@ def test_check_references_when_in_code_block() -> None:
     assert len(result) == 1
     assert "gone" in result[0]["rule"]
     assert result[0]["rule"].startswith("8 行目: ")
-
-
-def test_mermaid_blocks() -> None:
-    """mermaid のブロックだけを取り出す（正常系）。"""
-    # 準備
-    text = "段落\n\n```mermaid\nflowchart TD\n  A --> B\n```\n\n```python\nprint(1)\n```"
-    # 実行
-    result = mermaid_blocks(text)
-    # 検証
-    assert result == [(3, "flowchart TD\n  A --> B")]
-
-
-def test_mermaid_blocks_when_nested_in_example() -> None:
-    """4 つ以上の囲みの中は見ない（正常系）。"""
-    # 準備
-    text = "````markdown\n```mermaid\nflowchart TD\n  A --> B\n```\n````"
-    # 実行
-    result = mermaid_blocks(text)
-    # 検証
-    assert result == []
-
-
-def test_mermaid_blocks_when_unclosed() -> None:
-    """閉じ忘れ（正常系）。"""
-    # 準備
-    text = "```mermaid\nflowchart TD\n  A --> B"
-    # 実行
-    result = mermaid_blocks(text)
-    # 検証
-    assert result == [(1, "flowchart TD\n  A --> B")]
-
-
-def test_check_mermaid(fake_maid_factory: FakeMaidFactory) -> None:
-    """誤りを文書の行に戻す（正常系）。"""
-    # 準備
-    doc = load_document(_MERMAID_AT_40)
-    stdout = '{"valid": false, "errors": [{"line": 3, "column": 1, "message": "Expected end"}]}'
-    maid = fake_maid_factory(stdout=stdout, exit_code=1)
-    # 実行
-    result = check_mermaid(doc, maid, time.monotonic() + 10.0)
-    # 検証
-    assert len(result) == 1
-    assert result[0]["path"] == "items[3].body"
-    assert result[0]["rule"].startswith("42 行目: mermaid: ")
-
-
-def test_check_mermaid_when_no_time_left(
-    tmp_path: Path, fake_maid_factory: FakeMaidFactory
-) -> None:
-    """残り時間が足りない（正常系）。"""
-    # 準備
-    doc = load_document(_MERMAID_AT_40)
-    record = tmp_path / "called.jsonl"
-    maid = fake_maid_factory(record=record)
-    # 実行
-    result = check_mermaid(doc, maid, time.monotonic() + 0.5)
-    # 検証
-    assert len(result) == 1
-    assert "処理時間の上限に達したため検査していません" in result[0]["rule"]
-    assert not record.exists()
-
-
-def test_check_mermaid_when_timeout(fake_maid_factory: FakeMaidFactory) -> None:
-    """maid を打ち切った（正常系）。"""
-    # 準備
-    doc = load_document(_MERMAID_AT_40)
-    maid = fake_maid_factory(sleep_sec=5.0)
-    started = time.monotonic()
-    # 実行
-    result = check_mermaid(doc, maid, started + 1.5)
-    # 検証
-    assert time.monotonic() - started < 2.5
-    assert len(result) == 1
-    assert "処理時間の上限に達したため検査していません" in result[0]["rule"]
-
-
-def test_check_mermaid_when_bad_output(fake_maid_factory: FakeMaidFactory) -> None:
-    """maid の出力が読めない（正常系）。"""
-    # 準備
-    doc = load_document(_MERMAID_AT_40)
-    maid = fake_maid_factory(stdout="ok", exit_code=0)
-    # 実行
-    result = check_mermaid(doc, maid, time.monotonic() + 10.0)
-    # 検証
-    assert len(result) == 1
-    assert result[0]["fix"] == "開発コマンドの環境構築で入れた maid のバージョンを確かめる"
 
 
 def test_check_word_list() -> None:

@@ -1,0 +1,10 @@
+$ uvx ruff@0.17.3 check scripts tests plugins
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+All checks passed!
+$ uvx ruff@0.17.3 format --check scripts tests plugins
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+28 files already formatted
+$ uv run --no-project --python 3.14 --with pyright==1.1.414 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pyright
+0 errors, 11 warnings, 0 informations

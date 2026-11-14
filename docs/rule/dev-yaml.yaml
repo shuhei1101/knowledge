@@ -51,7 +51,6 @@ tags:
   - name: topic:違反
   - name: tool:git
   - name: tool:mcp
-  - name: tool:mermaid
   - name: action:クローン
   - name: action:付与
   - name: action:共有
@@ -71,8 +70,8 @@ tags:
   - name: action:集計
 status: current
 visibility: internal
-rev: 13
-last_reviewed: '2026-11-12'
+rev: 14
+last_reviewed: '2026-11-14'
 related:
   - to: claude-plugin
     type: references
@@ -222,13 +221,7 @@ items:
     group: 検査
     name: 独自の検査
     body: |-
-      - スキーマで確認されない決まり（ID の重複・参照の実在・mermaid の文法など）は独自の検査に記載し、スキーマの検査と 1 つの検査のツールにまとめる
-  - id: inspection-05
-    group: 検査
-    name: mermaid の検査
-    body: |-
-      - mermaid は `@probelabs/maid` で検査する
-        自動修正（`--fix`）は意味を変えることがあるので使用しない
+      - スキーマで確認されない決まり（ID の重複・参照の実在など）は独自の検査に記載し、スキーマの検査と 1 つの検査のツールにまとめる
   - id: writing-01
     group: 書き込み
     name: 書き込みの原則
