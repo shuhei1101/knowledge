@@ -49,6 +49,7 @@ scenarios:
       - '`run_runner` の終了コードが 0'
       - 手元に出たログに、テストランナーの最終行の集計（成功・skip の件数）が出る
       - GitHub Actions の実行の成果物にログがある
+    test: test_normal
   - name: 異常シナリオ（テストが失敗する）
     setup:
       - name: Mock
@@ -79,12 +80,11 @@ scenarios:
     expected:
       - '`run_runner` の終了コードが 0 以外'
       - 手元に出たログに、失敗したテストの名前とテストランナーの集計が出る
+    test: test_error_when_tests_fail
   - name: 異常シナリオ（ワークフローを起動できない）
     setup:
       - name: Mock
-        description: 差し替えない
-      - name: ワークフロー
-        description: develop にテストの全件実行のワークフローが無い
+        description: '`run_runner` が起動する workflow のファイル名を、develop に無い名前へ差し替える'
     flow: |-
       <!-- map -->
 
@@ -105,7 +105,10 @@ scenarios:
       - '`run_runner` の終了コードが 0 以外'
       - 標準エラーに、ワークフローを起動できない理由が出る
       - 同じ層の `run_all` を手元で実行でき、手元のコマンドは変わっていない
+    test: test_error_when_workflow_cannot_start
 refs:
   - TP-72-1#layers
 notes:
   E2E テストを置かない理由: '`run_runner` は GitHub の上のワークフローを起動するため、手元のテストで再現できない。ワークフローの分岐ごとの確認は、インターフェース定義の結合テストが持つ'
+  E2E テストの動かし方: 検証用のブランチを push し、テスト実行方法の `run_runner` のコマンドを子プロセスとして起動して、終了コード・標準出力・標準エラーで確認する。ブランチの用意と削除は、規約『GitHub Actions の workflow のテスト』のブランチの用意と削除と同じにする。本番で起動できない場面（無料枠の使い切り・GitHub の障害）は、起動する workflow のファイル名の差し替えで誘発する
+test_file: tests/e2e/単一ユースケース/test_開発者がランナーでテストの層の全件を実行する.py
