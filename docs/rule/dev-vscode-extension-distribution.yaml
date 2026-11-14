@@ -2,18 +2,24 @@
 id: dev-vscode-extension-distribution
 kind: rule
 name: VS Code 拡張機能の配布
-description: VS Code 拡張機能のバージョンの更新・.vsix の作成・Marketplace と Open VSX への公開・利用者への入れ替えの依頼・ID・アイコンの扱いを定め、VS Code 拡張機能のコードを変更するときと公開するときに参照する。
+description: VS Code 拡張機能のバージョンの更新・.vsix の作成・Marketplace への Trusted Publishing での公開と Open VSX への公開の決め方・利用者への入れ替えの依頼・ID・アイコンの扱いを定め、VS Code 拡張機能のコードを変更するときと公開するときに参照する。
 status: current
 visibility: internal
-rev: 3
+rev: 4
 last_reviewed: '2026-11-14'
 sources:
   - title: 'VS Code: Publishing Extensions'
     url: https://code.visualstudio.com/api/working-with-extensions/publishing-extension
     note: vsce package・publish と、Marketplace の拡張機能の ID
+  - title: 'VS Code: Publish with GitHub Actions and Trusted Publishing'
+    url: https://code.visualstudio.com/api/working-with-extensions/publishing-extension#publish-with-github-actions-and-trusted-publishing
+    note: 'ポリシーの登録・id-token: write・vsce publish --oidc と、グローバル PAT の廃止'
   - title: 'Open VSX: Publishing Extensions'
     url: https://github.com/eclipse/openvsx/wiki/Publishing-Extensions
     note: ovsx publish
+  - title: 'Open VSX: Trusted Publishing'
+    url: https://github.com/eclipse/openvsx/wiki/Trusted-Publishing
+    note: Open VSX の Trusted Publishing の前提
   - title: 'VS Code: Extension Manifest'
     url: https://code.visualstudio.com/api/references/extension-manifest
     note: icon の寸法
@@ -39,10 +45,25 @@ items:
         - 同じバージョンは上書きできない
   - id: publish-01
     group: 公開
-    name: Marketplace と Open VSX への公開
-    body: '- Marketplace と Open VSX へ公開する
-
-      - 自動にできる公開先は CI で公開し、できない公開先は手動で公開する'
+    name: Marketplace へは Trusted Publishing でタグから公開する
+    body: |-
+      - Marketplace へは、タグの push で CI が Trusted Publishing（GitHub Actions の OIDC）で公開する
+        - 公開のジョブの `permissions` に `id-token: write` を付け、`vsce publish --oidc` で公開する
+      - PAT では公開しない
+  - id: publish-02
+    group: 公開
+    name: ポリシーの登録をユーザーに依頼する
+    body: |-
+      - Trusted Publishing のポリシーは、Marketplace の publisher 管理画面でユーザーに登録を依頼する
+        - 依頼には Repository owner・Repository・Workflow のファイル名・Environment（使用しなければ空欄）を添える
+  - id: publish-03
+    group: 公開
+    name: CI の公開の工程ができるまでの公開
+    body: '- CI の公開の工程ができるまでは、.vsix を Marketplace の publisher 管理画面からアップロードして公開する'
+  - id: publish-04
+    group: 公開
+    name: Open VSX へ公開するかはプロジェクトごとに決める
+    body: '- Open VSX へ公開するかは、利用者が使用するエディタで判断し、プロジェクトごとにユーザーへ確認して決める'
   - id: reinstall-01
     group: 利用者への入れ替えの依頼
     name: 公開が自動でない間の入れ替え
@@ -50,7 +71,9 @@ items:
   - id: extension-id-01
     group: 拡張機能の ID
     name: 公開後に ID を変えない
-    body: "- 拡張機能の ID（`publisher.name`）は公開した後に変えない\n  - 変えると別の拡張機能として載る"
+    body: |-
+      - 拡張機能の ID（`publisher.name`）は公開した後に変えない
+        - 変えると別の拡張機能として載る
   - id: icon-01
     group: アイコン
     name: 初めて公開する前にアイコンを登録する
@@ -74,3 +97,7 @@ tags:
   - name: action:配布
   - name: topic:アイコン
   - name: tool:svg
+  - name: action:認証
+  - name: topic:トークン
+  - name: action:登録
+  - name: action:アップロード
