@@ -11,8 +11,8 @@
 | ドキュメント | `docs/interface/IF-352-1.yml.yaml` | テストの全件実行のワークフロー | 新規 |
 | ドキュメント | [docs/architecture/ARCH-72-1.yaml](https://github.com/shuhei1101/knowledge/blob/2f52fec0ca6db9cf9f68da711011a0bf06151fce/docs/architecture/ARCH-72-1.yaml) | アーキテクチャ図 | サブシステム CI の役割と GitHub Actions の目的が Pages への配信だけ。更新対象 |
 | ドキュメント | [docs/layout/LAY-72-1.yaml](https://github.com/shuhei1101/knowledge/blob/2f52fec0ca6db9cf9f68da711011a0bf06151fce/docs/layout/LAY-72-1.yaml) | フォルダ構成 | `.github/workflows/` と `tests/` の行。更新対象 |
-| ドキュメント | [docs/nonfunctional/NFR-72-1.yaml](https://github.com/shuhei1101/knowledge/blob/2f52fec0ca6db9cf9f68da711011a0bf06151fce/docs/nonfunctional/NFR-72-1.yaml) | 非機能要件 | CI の 1 回の所要時間は Pages の配信だけを扱う。テストの workflow のタイムアウトを持たせるかをモジュール構成設計で決める |
-| ドキュメント | [docs/dev-command/CMD-72-1.yaml](https://github.com/shuhei1101/knowledge/blob/2f52fec0ca6db9cf9f68da711011a0bf06151fce/docs/dev-command/CMD-72-1.yaml) | 開発コマンド | テストの分類はテスト実行方法の全件実行を指す。`run_runner` を指すかをモジュール構成設計で決める |
+| ドキュメント | [docs/nonfunctional/NFR-72-1.yaml](https://github.com/shuhei1101/knowledge/blob/2f52fec0ca6db9cf9f68da711011a0bf06151fce/docs/nonfunctional/NFR-72-1.yaml) | 非機能要件 | CI の 1 回の所要時間は Pages の配信だけを扱う。変更しない。テストの workflow の `timeout-minutes` は IF-352-1 が判定フローチャート『タイムアウトの決め方』で決める |
+| ドキュメント | [docs/dev-command/CMD-72-1.yaml](https://github.com/shuhei1101/knowledge/blob/2f52fec0ca6db9cf9f68da711011a0bf06151fce/docs/dev-command/CMD-72-1.yaml) | 開発コマンド | テストの分類はテスト実行方法の全体（`TP-72-1#`）を指し、`run_runner` も含むため変更しない |
 | 実装 | [.github/workflows/pages.yml](https://github.com/shuhei1101/knowledge/blob/2f52fec0ca6db9cf9f68da711011a0bf06151fce/.github/workflows/pages.yml) | GitHub Pages への配信 | 変更しない。テストを回す workflow は無い |
 | 実装 | [pytest.ini](https://github.com/shuhei1101/knowledge/blob/2f52fec0ca6db9cf9f68da711011a0bf06151fce/pytest.ini) | pytest の設定 | `strict = true` のため、マーカーを付ける場合は `markers` に登録する |
 
@@ -36,3 +36,4 @@
 | 単一ユースケース設計 | `4b90863..5cabf62` | レビューの指摘の修正 |
 | インターフェース定義設計 | `5cabf62..10d638a` | IF-352-1・TP-72-1・ARCH-72-1 |
 | インターフェース定義設計 | `2a84b92..2f1b2bf` | レビューの指摘の修正 |
+| モジュール構成設計 | `a937480..2b00f33` | LAY-72-1。workflow はモジュール構成を持たない（IF-137-2 と同じく IF-352-1 が step・if・Action を定める） |
