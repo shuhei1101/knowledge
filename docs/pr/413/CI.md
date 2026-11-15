@@ -22,3 +22,9 @@
 | TL-1 の説明と前提 | 検査の対象に `.github/workflows/` を加え、actionlint の入れ方を `prerequisites` に記載する | - |
 | workflow の結合テストを回す層 | `location: local` で、`run_all` に `pytest tests/e2e/workflow`、`run_one` にファイル単位の実行を記載する | TL-6（[要件](./要件.md)）。`duration` は初回の実測で記載する |
 | 結合テストの実行 | `tests/e2e/workflow/test_test_yml.py` の 4 件だけを手元で実行する。他の結合テスト（TL-3）は、TP-72-1 の記載だけの変更で壊れないため実行しない | 実行の前に、この範囲を reviewer に確認する |
+
+## 設計書の確定コミット
+
+| 工程 | 範囲 | 補足 |
+| --- | --- | --- |
+| モジュール構成設計 | `99c4a8f..b4b05ab` | TP-72-1 の TL-1・TL-6 |
