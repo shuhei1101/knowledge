@@ -13,6 +13,6 @@ docs:
     updated_at: '2026-11-15T03:05:49.656214+00:00'
 scope_out:
   - item: interface.schema.yaml の overall_flow の x-rules へ、subgraph の ID をジョブの ID にする決まりを追加すること
-    reason: 要望は記載例を既存の突き合わせ（IF-72-3）に合わせることで、受付の判断も「テンプレートの決まりは変えない」としている。ただし今の x-rules は subgraph に触れず、記載例だけが決まりを示すことになるため、含めるかはレビューで確定する（現時点の判断はスコープ外）
-    plan: to_file
+    reason: 要望は記載例を既存の突き合わせ（IF-72-3）に合わせることで、x-rules の追加はテンプレートの改訂になりユーザーの判断が要る（レビューで確定）
+    plan: '#407'
 use_cases: []
