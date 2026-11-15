@@ -36,6 +36,12 @@
 
 なし（TP-72-1 の記載と PR ドキュメントだけを変え、規約『V字モデル』で対応する単体テストが無い）
 
+### 結合
+
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| [tests/e2e/workflow/test_test_yml.py](https://github.com/shuhei1101/knowledge/blob/a50af49/tests/e2e/workflow/test_test_yml.py) | 全実行 | 実行のみ | ✅ | 4 テスト pass（初回の実行）<br>`テスト結果/20261115201405_a50af49_結合テスト.log` |
+
 ### lint
 
 | コマンド | 結果 | 補足 |
