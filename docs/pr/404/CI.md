@@ -53,10 +53,23 @@ TL-2 の `run_all` を手元で回した。`.github/workflows/test.yml` が deve
 
 ### 結合
 
-結合テスト作成の工程で記入する。
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| `tests/e2e/workflow/test_test_yml.py` | `test_normal`・`test_normal_when_integration`・`test_error_when_tests_fail`・`test_error_when_setup_fails` | 新規 | - | 未実行。`workflow_dispatch` は既定ブランチ（develop）にある workflow だけを起動でき、`test.yml` が develop に入るまで起動できない。収集（`pytest tests/e2e/workflow --collect-only`）で 4 件を確認した |
+
+実行した結合テスト:
+
+| 変更したファイル | 実行する結合テスト | 理由 |
+| --- | --- | --- |
+| `.github/workflows/test.yml` | なし | 対応する結合テストは上の 4 件で、この作業 PR では起動できない |
+| `tests/e2e/workflow/` | なし | 同上 |
+| 設計書（`docs/`） | なし | `tests/integration/` の対象（`scripts/`・slop-check）を変えていない |
+
+`tests/e2e/workflow/` を回す層はテスト実行方法に無い（TL-6 の E2E テストは `run_all` が `未確定`）。初回の実行は、スコープ外の「ランナーでの初回の実行」と同じく develop へ入った後の作業 PR で行う。
 
 ### lint
 
 | 層 | 結果 | 補足 |
 | --- | --- | --- |
 | TL-1 | ✅ | 違反 0 件・警告 12 件（既存の `tests/unit/scripts/` の pyright の警告で、今回の変更に無い）<br>`テスト結果/20261115115304_3e01b8d_lint.log` |
+| TL-1 | ✅ | 結合テストの追加後。違反 0 件・警告 12 件（同上）<br>`テスト結果/20261115121042_e8f631f_lint.log` |

@@ -11,6 +11,9 @@ scope_out:
   - item: テンプレート『インターフェース定義』の workflow の記載例（`example-sample-02`）の `request` の型と `overall_flow` の修正
     reason: テンプレート自身の `request`・`overall_flow` の決まりと IF-72-3 の workflow の突き合わせから外れているが、今回の要望に含まれない
     plan: '#405'
+  - item: workflow の結合テスト `tests/e2e/workflow/test_test_yml.py` の初回の実行と、`tests/e2e/workflow/` を回すテスト実行方法の層の確定
+    reason: workflow_dispatch は既定ブランチ（develop）にある workflow だけを起動できるため、test.yml が develop へ入った後に行う。回す層（TL-6）は run_all が未確定
+    plan: to_file
 use_cases:
   - kind: single
     scenario: docs/scenario/SC-137-1.yaml
