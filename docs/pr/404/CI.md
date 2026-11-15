@@ -23,7 +23,7 @@
 | 対象 | 方針 | 補足 |
 | --- | --- | --- |
 | 層の実行場所 | TL-1 は `local`。TL-2・TL-3 は判定フローチャート『テストの実行場所』で判定する | `/mnt/c`・端末の設定・手元の常駐サーバーを使用するテストは現状調査で見つかっていない。TL-3 は npm の道具（markdownlint-cli2・textlint）を workflow の中で入れる |
-| workflow | `runner` の層を `workflow_dispatch` だけで起動する workflow を作り、ログを成果物に上げる | 1 本にするかは `要件.md` の `未確定` |
+| workflow | `runner` の層を `workflow_dispatch` だけで起動する workflow を作り、ログを成果物に上げる | 1 本の workflow が入力 `layer` で層を選ぶ（[IF-352-1](../../interface/IF-352-1.yml.yaml)） |
 | `run_runner` | `gh workflow run` で起動し、`gh run watch` で待ち、`gh run view --log` でログを取得して、失敗したときもログを取得してから失敗で終える | - |
 | 手元のコマンド | `run_all`・`run_one` を変えずに残す | - |
 | 結合テスト | workflow のフローごとに `tests/e2e/workflow/` へ結合テストを作る | 規約『V字モデル』 |
@@ -34,3 +34,4 @@
 | --- | --- | --- |
 | 単一ユースケース設計 | `2f52fec..7f3f06d` | SC-352-1 |
 | 単一ユースケース設計 | `4b90863..5cabf62` | レビューの指摘の修正 |
+| インターフェース定義設計 | `5cabf62..10d638a` | IF-352-1・TP-72-1・ARCH-72-1 |
