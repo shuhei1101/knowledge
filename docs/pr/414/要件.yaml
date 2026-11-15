@@ -1,0 +1,20 @@
+docs:
+  - page: docs/template/template-interface.yaml
+    new: false
+    change: '`test_file` の説明をスキーマの description の修正（2 文に収める）に合わせて build_templates.py で作り直す'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T07:36:47.535781+00:00'
+scope_out:
+  - item: workflow の結合テスト `tests/e2e/workflow/test_test_yml.py` の初回の実行と、`tests/e2e/workflow/` を回すテスト実行方法の層の確定
+    reason: 要望に含まれない。runner の層の全件の実行とは別の層
+    plan: '#409'
+  - item: lint の層（TL-1）への actionlint の追加
+    reason: 要望に含まれない
+    plan: '#370'
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-352-1.yaml
+    impact: run_only
+    detail: 開発者がランナーで単体・結合の層の全件を回し、手元でログと合否を受け取る流れを初めて実行する
+    depends_on: []

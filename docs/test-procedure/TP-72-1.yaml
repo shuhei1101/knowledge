@@ -13,6 +13,7 @@ layers:
       uvx ruff@0.17.3 check scripts tests plugins && uvx ruff@0.17.3 format --check scripts tests plugins && uv run --no-project --python 3.14 --with pyright==1.1.414 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pyright
       ```
     external_cost: なし
+    location: local
   - id: TL-2
     name: 単体テスト（バック）
     description: pytest で `tests/unit/` を実行する。`pyproject.toml` を持たないため、`uv run --no-project` で依存を一時の環境に入れて起動する。`scripts/` と `plugins/slop-check/hooks/post-tool-use/` は直下の `pytest.ini` の `pythonpath` で import する。slop-check のフックは端末の python3（3.12 以上）で動くため、`tests/unit/slop-check/` は Python 3.12 でも実行する。
@@ -31,6 +32,11 @@ layers:
         ```
     parallel: false
     external_cost: なし
+    location: runner
+    run_runner: |-
+      ```bash
+      run_url=$(gh workflow run test.yml --ref "$(git branch --show-current)" -f layer=unit | grep -o 'https://[^ ]*/actions/runs/[0-9]*') && run_id=${run_url##*/} && (rc=0; gh run watch "$run_id" --exit-status > /dev/null || rc=1; gh run view "$run_id" --log; exit $rc)
+      ```
   - id: TL-3
     name: 結合テスト（バック）
     description: pytest で `tests/integration/` を実行する。入口のスクリプトを project-index・CI と同じ `uv run --frozen --script` で子プロセスとして起動し、標準入力・標準出力・終了コードを確認する。slop-check のフックは `hooks.json` と同じく PATH の `python3` で起動する。
@@ -52,6 +58,11 @@ layers:
     duration: 約 4 分（WSL の `/mnt/c`。全ての文書の検査のフローは、lint の CLI の起動で 1 件 30〜50 秒かかる）
     parallel: false
     external_cost: なし
+    location: runner
+    run_runner: |-
+      ```bash
+      run_url=$(gh workflow run test.yml --ref "$(git branch --show-current)" -f layer=integration | grep -o 'https://[^ ]*/actions/runs/[0-9]*') && run_id=${run_url##*/} && (rc=0; gh run watch "$run_id" --exit-status > /dev/null || rc=1; gh run view "$run_id" --log; exit $rc)
+      ```
   - id: TL-4
     name: 外部疎通テスト
     run_all: 未確定
@@ -61,3 +72,5 @@ layers:
   - id: TL-6
     name: E2E テスト
     run_all: 未確定
+refs:
+  - IF-352-1#
