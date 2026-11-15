@@ -1,7 +1,7 @@
 id: flowchart-repo-location
 kind: flowchart
 name: リポジトリの置き場所 判定フローチャート
-description: WSL で開発するリポジトリを、Windows のドライブ（`/mnt/c`）と Linux 側のどちらに配置するかと、Windows の上で動かすものを別のクローンから動かすかを判定し、リポジトリをクローンする場所・移す先を決めるときに参照する。
+description: WSL で開発するリポジトリを Windows のドライブ（`/mnt/c`）と Linux 側のどちらに配置するかを判定し、リポジトリをクローンする場所・移す先を決めるときに参照する。
 aliases:
   - リポジトリの置き場所
 status: current
@@ -15,7 +15,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      WSL で開発するリポジトリを、Windows のドライブ（`/mnt/c`）と Linux 側のどちらに配置するかと、Windows の上で動かすものを別のクローンから動かすかを判定し、リポジトリをクローンする場所・移す先を決めるときに参照する。
+      WSL で開発するリポジトリを Windows のドライブ（`/mnt/c`）と Linux 側のどちらに配置するかを判定し、リポジトリをクローンする場所・移す先を決めるときに参照する。
 
       新規のリポジトリはクローンする場所に、既存のリポジトリは移す先に、判定の結果を適用する。
   - id: repo-location-flow-01
@@ -74,7 +74,8 @@ items:
     group: リポジトリの置き場所 判定フローチャート
     name: ※3 /mnt/c の別のクローン
     body: |-
-      - ※3 /mnt/c の別のクローン: 同じリモートのクローンを `/mnt/c` にもう 1 つ持ち、Windows 側で動かす前に `git pull` で最新にする。
+      - ※3 /mnt/c の別のクローン: 同じリモートのクローンを `/mnt/c` にもう 1 つ持つ。
+        Windows 側で動かす前は、`git pull` でそのクローンを最新の状態にする
         開発・テスト・commit は Linux 側のクローンで行い、`/mnt/c` のクローンでは編集しない
   - id: repo-location-flow-05
     group: リポジトリの置き場所 判定フローチャート
