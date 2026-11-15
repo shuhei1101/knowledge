@@ -80,12 +80,17 @@ entries:
         name: workflows
         contents: CI のワークフロー
         content_types: [ci]
-        used_by: [IF-137-2#]
+        used_by: [IF-137-2#, IF-352-1#]
         children:
           - type: file
             name: pages.yml
             contents: develop への push で公開の文書を GitHub Pages へ配信するワークフロー
             content_types: [ci, pages]
+          - type: file
+            name: test.yml
+            contents: 手動の起動で、選んだテストの層の全件をランナーで回すワークフロー
+            content_types:
+              - ci
   - type: folder
     name: docs
     contents: 文書の原本。種類のフォルダと、作業 PR の計画の `pr/` に分ける
@@ -552,6 +557,25 @@ entries:
             contents: 書き込んだ中身の照合の結合テスト
             content_types: [test, slop_check]
             naming: [conftest.py, test_slop_check.py]
+      - type: folder
+        name: e2e
+        contents: E2E テストと workflow の結合テスト
+        children:
+          - type: folder
+            name: 単一ユースケース
+            contents: 単一ユースケースのシナリオの E2E テスト。1 シナリオ = 1 テストファイル
+            content_types:
+              - test
+            naming:
+              - test_{シナリオのタイトル}.py
+          - type: folder
+            name: workflow
+            contents: 入口が trigger の GitHub Actions の workflow の結合テスト。1 インターフェース定義 = 1 テストファイル
+            content_types:
+              - test
+            naming:
+              - conftest.py
+              - test_{workflow}_yml.py
   - type: folder
     name: _site
     contents: 公開の文書だけを 1 枚の HTML にまとめた Pages の成果物

@@ -1,0 +1,162 @@
+id: IF-352-1
+visibility: internal
+title: テストの全件実行のワークフロー
+entry:
+  kind: trigger
+  value: '`.github/workflows/test.yml`。手動の起動（`workflow_dispatch`）だけ'
+lead: 入力 `layer` で選んだテスト実行方法の層の全件を GitHub Actions のランナーで回し、ログを成果物に上げて、層の全件の合否で実行の結論を返却する。
+test_file: tests/e2e/workflow/test_test_yml.py
+permissions: '`contents: read`'
+idempotent: true
+side_effects: 実行の成果物 `test-log` にログを上げる（リポジトリには書き込まない）
+callers:
+  - SC-352-1#scenarios[正常シナリオ]
+  - SC-352-1#scenarios[異常シナリオ（テストが失敗する）]
+exclusivity: '同じブランチ・同じ層の実行は、先に起動した実行を取り消す（`concurrency` の group が `test-${{ github.ref }}-${{ inputs.layer }}`、`cancel-in-progress: true`）'
+request:
+  - name: layer
+    type: choice
+    required: true
+    location: argument
+    description: 全件を回す層。選択肢は `unit`（テスト実行方法の TL-2）と `integration`（TL-3）
+constraints:
+  - item: ランナー
+    constraint: '`ubuntu-latest`'
+    decided_by: NFR-72-1#requirements[スクリプトが動く OS]
+  - item: 所要時間
+    constraint: '`timeout-minutes: 40`'
+    notes: 判定フローチャート『タイムアウトの決め方』の ※5 で、層 TL-3 の手元の実測（約 4 分）の 10 倍
+  - item: ジョブの構成
+    constraint: "ジョブは `test` の 1 つ。`layer` が `integration` のときだけ step「Node を入れる」「lint の道具を入れる」を動かす（`if: inputs.layer == 'integration'`）"
+  - item: 層の全件を回すコマンド
+    constraint: テスト実行方法の層の `run_all` と同じコマンドを `bash -o pipefail` で実行し、標準出力と標準エラーを `test.log` へ `tee` で書き出す。コマンドの終了コードを step の成否にする
+  - item: ログの成果物
+    constraint: 'step「ログを成果物に上げる」は `if: always()` で、前の step の成否によらず `test.log` を成果物 `test-log` に上げる。`test.log` が無いときも失敗にしない（`if-no-files-found: ignore`）'
+  - item: 使用する Action
+    constraint: '`actions/checkout`・`astral-sh/setup-uv`・`actions/setup-node`（Node 24）・`actions/upload-artifact`'
+  - item: lint の道具
+    constraint: '`npm ci --prefix scripts/lint`（開発コマンドの環境構築と同じ）'
+  - item: python3
+    constraint: ランナーの `python3`（3.12 以上）を使用し、入れ直さない
+    notes: 層 TL-3 の前提。`ubuntu-latest` の `python3` は 3.12
+overall_flow: |-
+  <!-- map -->
+
+  ```mermaid
+  flowchart TD
+    s([workflow_dispatch で起動する])
+    subgraph test
+      a[ブランチを取得する] -- 成功 --> b[uv を入れる]
+      b -->|"成功（if: inputs.layer == 'integration'）"| c[Node を入れる]
+      c -->|"成功（if: inputs.layer == 'integration'）"| d[lint の道具を入れる]
+      d -- 成功 --> e[層の全件を回す]
+      b -->|"成功（layer: unit）"| e
+      a & b & c & d -->|"失敗（if: always()）"| f[ログを成果物に上げる]
+      e -->|"成功・失敗（if: always()）"| f
+    end
+    s --> a
+    f -->|"全ての step が成功"| ok([成功])
+    f -->|"どれかの step が失敗"| ng([失敗])
+  ```
+
+  <!-- /map -->
+flows:
+  - name: 正常系
+    summary: 層の全件が成功し、ログを成果物に上げて成功で終わる
+    setup:
+      - name: Mock
+        description: なし（本物の GitHub Actions で回す）
+      - name: ブランチ
+        description: 層の全てのテストが成功する検証用のブランチ
+        notes: '`layer: unit`'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      flowchart TD
+        s([layer: unit で起動する]) --> a[ブランチを取得する] --> b[uv を入れる]
+        b -->|"成功（layer: unit）"| e[層の全件を回す]
+        e -- 成功 --> f[ログを成果物に上げる] --> ok([成功])
+      ```
+
+      <!-- /map -->
+    expected:
+      - 実行の結論が `success`
+      - step「Node を入れる」「lint の道具を入れる」の結論が `skipped`
+      - 成果物 `test-log` の `test.log` に、pytest の最終行の集計（成功・skip の件数）がある
+    test: test_normal
+  - name: 正常系（結合テストの層）
+    summary: lint の道具を入れてから結合テストの層の全件を回し、成功で終わる
+    setup:
+      - name: Mock
+        description: なし（本物の GitHub Actions で回す）
+      - name: ブランチ
+        description: 層の全てのテストが成功する検証用のブランチ
+        notes: '`layer: integration`'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      flowchart TD
+        s([layer: integration で起動する]) --> a[ブランチを取得する] --> b[uv を入れる]
+        b -->|"成功（if: inputs.layer == 'integration'）"| c[Node を入れる] --> d[lint の道具を入れる] --> e[層の全件を回す]
+        e -- 成功 --> f[ログを成果物に上げる] --> ok([成功])
+      ```
+
+      <!-- /map -->
+    expected:
+      - 実行の結論が `success`
+      - 成果物 `test-log` の `test.log` に、pytest の最終行の集計がある
+    test: test_normal_when_integration
+  - name: 異常系（テストの失敗・failure）
+    summary: 層のテストが 1 件失敗し、ログを成果物に上げて失敗で終わる
+    setup:
+      - name: Mock
+        description: なし（本物の GitHub Actions で回す）
+      - name: ブランチ
+        description: '`tests/unit/` に必ず失敗するテストを 1 件足した検証用のブランチ'
+        notes: '`layer: unit`'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      flowchart TD
+        s([layer: unit で起動する]) --> a[ブランチを取得する] --> b[uv を入れる]
+        b -->|"成功（layer: unit）"| e[層の全件を回す]
+        e -->|"失敗（if: always()）"| f[ログを成果物に上げる] --> ng([失敗])
+      ```
+
+      <!-- /map -->
+    expected:
+      - 実行の結論が `failure`
+      - step「層の全件を回す」の結論が `failure`、step「ログを成果物に上げる」の結論が `success`
+      - 成果物 `test-log` の `test.log` に、失敗したテストの名前と pytest の最終行の集計がある
+    test: test_error_when_tests_fail
+  - name: 異常系（道具の導入の失敗・failure）
+    summary: lint の道具を入れられず、層の全件を回さずに失敗で終わる
+    setup:
+      - name: Mock
+        description: なし（本物の GitHub Actions で回す）
+      - name: ブランチ
+        description: '`scripts/lint/package-lock.json` を削除した検証用のブランチ（`npm ci` が失敗する）'
+        notes: '`layer: integration`'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      flowchart TD
+        s([layer: integration で起動する]) --> a[ブランチを取得する] --> b[uv を入れる]
+        b -->|"成功（if: inputs.layer == 'integration'）"| c[Node を入れる] --> d[lint の道具を入れる]
+        d -->|"失敗（if: always()）"| f[ログを成果物に上げる] --> ng([失敗])
+      ```
+
+      <!-- /map -->
+    expected:
+      - 実行の結論が `failure`
+      - step「層の全件を回す」の結論が `skipped`
+      - step「ログを成果物に上げる」の結論が `success`
+    test: test_error_when_setup_fails
+refs:
+  - TP-72-1#layers
+notes:
+  確認方法: 結合テストは、規約『GitHub Actions の workflow のテスト』のとおり、検証用のブランチを push して `gh` で起動し、実行の結論・step ごとの結論・成果物で確認する
