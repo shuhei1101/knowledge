@@ -33,8 +33,8 @@ items:
         "height": 940,
         "nodes": [
           {"id": "start", "kind": "start", "x": 414, "y": 24, "w": 120, "h": 120, "name": "リポジトリの配置先を決めたい"},
-          {"id": "q1", "kind": "question", "x": 334, "y": 200, "w": 280, "h": 164, "name": "Windows 側のプロセスがリポジトリのファイルを実行・読み書きするか ※1"},
-          {"id": "q2", "kind": "question", "x": 764, "y": 200, "w": 280, "h": 164, "name": "WSL 側で書き換えた作業中のファイルを、Windows 側のプロセスが書き換えのたびに読み込むか ※2"},
+          {"id": "q1", "kind": "question", "x": 334, "y": 200, "w": 280, "h": 164, "name": "Windows の上でリポジトリのコード・スクリプトを実行するか ※1"},
+          {"id": "q2", "kind": "question", "x": 764, "y": 200, "w": 280, "h": 164, "name": "WSL 側で書き換えた作業中のファイルを、書き換えのたびに Windows の上で読み込んで実行するか ※2"},
           {"id": "r1", "kind": "result", "x": 1114, "y": 254, "w": 240, "h": 56, "name": "/mnt/c に配置する"},
           {"id": "r2", "kind": "result", "x": 784, "y": 420, "w": 240, "h": 92, "name": "Linux 側に配置し、Windows 側で動かすものは /mnt/c の別のクローンから動かす ※3"},
           {"id": "q3", "kind": "question", "x": 334, "y": 420, "w": 280, "h": 164, "name": "Windows のアプリでリポジトリのファイルを日常的に開くか ※4"},
@@ -60,22 +60,23 @@ items:
       <!-- /flow -->
   - id: repo-location-flow-02
     group: リポジトリの置き場所 判定フローチャート
-    name: ※1 Windows 側のプロセス
+    name: ※1 Windows の上で実行する
     body: |-
-      - ※1 Windows 側のプロセス: Windows の Python・Windows のアプリ・Windows のタスクスケジューラーが起動するもの。
-        Windows 専用の依存（`sys_platform == "win32"` の依存・`pywinauto`・`pywin32`・`pycaw`）を Windows の上で動かすものを含む
+      - ※1 Windows の上で実行する: Windows の Python・Windows のタスクスケジューラーが、リポジトリのコード・スクリプトを起動する。
+        Windows 専用の依存（`sys_platform == "win32"` の依存・`pywinauto`・`pywin32`・`pycaw`）を使用するコードを含む。
+        人がファイルを開いて編集するアプリは含めず、※4 の質問で判定する
   - id: repo-location-flow-03
     group: リポジトリの置き場所 判定フローチャート
     name: ※2 書き換えのたびに読み込む
     body: |-
-      - ※2 書き換えのたびに読み込む: WSL 側で編集・生成したファイルを、commit を挟まずに Windows 側のプロセスが読み込んで動かす。
+      - ※2 書き換えのたびに読み込む: WSL 側で編集・生成したファイルを、commit を挟まずに Windows の上で読み込んで実行する。
         Windows 側で動かす前に最新の commit を取得すれば足りるものは含めない
   - id: repo-location-flow-04
     group: リポジトリの置き場所 判定フローチャート
     name: ※3 /mnt/c の別のクローン
     body: |-
       - ※3 /mnt/c の別のクローン: 同じリモートのクローンを `/mnt/c` にもう 1 つ持つ。
-        Windows 側で動かす前は、`git pull` でそのクローンを最新の状態にする
+        Windows 側で動かす前は、`git pull` でそのクローンを最新の状態にする。
         開発・テスト・commit は Linux 側のクローンで行い、`/mnt/c` のクローンでは編集しない
   - id: repo-location-flow-05
     group: リポジトリの置き場所 判定フローチャート
