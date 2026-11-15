@@ -1,0 +1,18 @@
+docs:
+  - page: schemas/design/interface.schema.yaml
+    new: false
+    change: examples の IF-2（テストの全件実行）の request[layer].type を choice にして選択肢を description に記載し、overall_flow をジョブ test の subgraph に入れて判定のノードを外し、終わりへの線のラベルで成否を表す（IF-352-1 と同じ記載）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T03:05:49.656214+00:00'
+  - page: docs/template/template-interface.yaml
+    new: false
+    change: 生成元のスキーマから生成し直し、example-sample-02 をスキーマの記載例と一致させる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T03:05:49.656214+00:00'
+scope_out:
+  - item: interface.schema.yaml の overall_flow の x-rules へ、subgraph の ID をジョブの ID にする決まりを追加すること
+    reason: 要望は記載例を既存の突き合わせ（IF-72-3）に合わせることで、x-rules の追加はテンプレートの改訂になりユーザーの判断が要る（レビューで確定）
+    plan: '#407'
+use_cases: []

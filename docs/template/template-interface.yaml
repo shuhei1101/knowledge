@@ -215,10 +215,10 @@ items:
       exclusivity: '同じブランチ・同じ層の実行は、古い方を止める（`concurrency` の `group: test-${{ github.ref }}-${{ inputs.layer }}`・`cancel-in-progress: true`）'
       request:
       - name: layer
-        type: unit / integration
+        type: choice
         required: true
         location: argument
-        description: 全件を回す層
+        description: 全件を回す層。選択肢は `unit` と `integration`
       constraints:
       - item: ランナー
         constraint: '`ubuntu-latest`'
@@ -227,15 +227,17 @@ items:
 
         ```mermaid
         flowchart TD
-          s([workflow_dispatch で起動]) --> a[ブランチを取得する]
-          a -- 成功 --> b[Python と uv を入れる]
-          a -->|"失敗（if: always()）"| d[ログを成果物に上げる]
-          b -- 成功 --> c[層の全件を回す]
-          b -->|"失敗（if: always()）"| d
-          c -->|"成功・失敗（if: always()）"| d
-          d --> q{全ての step が成功したか}
-          q -- YES --> ok([成功])
-          q -- NO --> ng([失敗])
+          s([workflow_dispatch で起動])
+          subgraph test
+            a[ブランチを取得する] -- 成功 --> b[Python と uv を入れる]
+            a -->|"失敗（if: always()）"| d[ログを成果物に上げる]
+            b -- 成功 --> c[層の全件を回す]
+            b -->|"失敗（if: always()）"| d
+            c -->|"成功・失敗（if: always()）"| d
+          end
+          s --> a
+          d -->|"全ての step が成功"| ok([成功])
+          d -->|"どれかの step が失敗"| ng([失敗])
         ```
 
         <!-- /map -->
