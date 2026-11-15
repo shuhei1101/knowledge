@@ -29,3 +29,15 @@
 | --- | --- | --- |
 | モジュール構成設計 | `99c4a8f..b4b05ab` | TP-72-1 の TL-1・TL-6 |
 | モジュール構成設計 | `b4b05ab..c087850` | reviewer の任意の指摘の反映（TL-1 の shellcheck-py・TL-6 の前提） |
+
+## テスト結果
+
+### 単体
+
+なし（TP-72-1 の記載と PR ドキュメントだけを変え、規約『V字モデル』で対応する単体テストが無い）
+
+### lint
+
+| コマンド | 結果 | 補足 |
+| --- | --- | --- |
+| TL-1 の全件実行 | ✅ | ruff check・ruff format --check・pyright（0 errors）・actionlint（shellcheck を含む）が全て通る<br>`テスト結果/20261115195058_c087850_lint.log` |
