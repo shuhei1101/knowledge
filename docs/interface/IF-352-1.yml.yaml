@@ -15,10 +15,10 @@ callers:
 exclusivity: '同じブランチ・同じ層の実行は、先に起動した実行を取り消す（`concurrency` の group が `test-${{ github.ref }}-${{ inputs.layer }}`、`cancel-in-progress: true`）'
 request:
   - name: layer
-    type: unit / integration
+    type: choice
     required: true
     location: argument
-    description: 全件を回す層。`unit` はテスト実行方法の TL-2、`integration` は TL-3
+    description: 全件を回す層。選択肢は `unit`（テスト実行方法の TL-2）と `integration`（TL-3）
 constraints:
   - item: ランナー
     constraint: '`ubuntu-latest`'
@@ -44,17 +44,19 @@ overall_flow: |-
 
   ```mermaid
   flowchart TD
-    s([workflow_dispatch で起動する]) --> a[ブランチを取得する]
-    a -- 成功 --> b[uv を入れる]
-    b -->|"成功（layer: integration）"| c[Node を入れる]
-    c -- 成功 --> d[lint の道具を入れる]
-    d -- 成功 --> e[層の全件を回す]
-    b -->|"成功（layer: unit）"| e
-    a & b & c & d -->|"失敗（if: always()）"| f[ログを成果物に上げる]
-    e -->|"成功・失敗（if: always()）"| f
-    f --> q{全ての step が成功したか}
-    q -- YES --> ok([成功])
-    q -- NO --> ng([失敗])
+    s([workflow_dispatch で起動する])
+    subgraph test
+      a[ブランチを取得する] -- 成功 --> b[uv を入れる]
+      b -->|"成功（if: inputs.layer == 'integration'）"| c[Node を入れる]
+      c -->|"成功（if: inputs.layer == 'integration'）"| d[lint の道具を入れる]
+      d -- 成功 --> e[層の全件を回す]
+      b -->|"成功（layer: unit）"| e
+      a & b & c & d -->|"失敗（if: always()）"| f[ログを成果物に上げる]
+      e -->|"成功・失敗（if: always()）"| f
+    end
+    s --> a
+    f -->|"全ての step が成功"| ok([成功])
+    f -->|"どれかの step が失敗"| ng([失敗])
   ```
 
   <!-- /map -->
@@ -97,7 +99,7 @@ flows:
       ```mermaid
       flowchart TD
         s([layer: integration で起動する]) --> a[ブランチを取得する] --> b[uv を入れる]
-        b -->|"成功（layer: integration）"| c[Node を入れる] --> d[lint の道具を入れる] --> e[層の全件を回す]
+        b -->|"成功（if: inputs.layer == 'integration'）"| c[Node を入れる] --> d[lint の道具を入れる] --> e[層の全件を回す]
         e -- 成功 --> f[ログを成果物に上げる] --> ok([成功])
       ```
 
@@ -144,7 +146,7 @@ flows:
       ```mermaid
       flowchart TD
         s([layer: integration で起動する]) --> a[ブランチを取得する] --> b[uv を入れる]
-        b -->|"成功（layer: integration）"| c[Node を入れる] --> d[lint の道具を入れる]
+        b -->|"成功（if: inputs.layer == 'integration'）"| c[Node を入れる] --> d[lint の道具を入れる]
         d -->|"失敗（if: always()）"| f[ログを成果物に上げる] --> ng([失敗])
       ```
 
