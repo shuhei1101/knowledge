@@ -116,6 +116,22 @@ properties:
       - テストで、結合テストを作るファイルにする。
       - 検査で、テストのファイルがあるかを確認する。
     pattern: ^tests/.+
+  impl_files:
+    type: array
+    title: 実装のファイル
+    description: この入口だけが使用する実装のファイルの、リポジトリの直下からのパス。
+    x-used-by:
+      - 実行で、判定フローチャート『結合テストの実行範囲』の Q5 で、変更したファイルが 1 つの入口の実装のファイルかを決める。
+      - レビューで、実行範囲の表の R4 の行がこの一覧のとおりかを確認する。
+    x-rules:
+      - 複数の入口が使用するファイルは記載しない。
+      - 実装を作った・移したときに記載する。
+    x-shape: list
+    items:
+      type: string
+      pattern: ^(?!tests/).+
+    examples:
+      - - src/task/service/create_task.py
   identifier:
     type: string
     title: 識別子
@@ -641,6 +657,8 @@ examples:
     value: '`create_task`（サービス層の公開関数）'
   lead: タイトルとサブタスクを受け取ってタスクを永続化し、採番済みのタスクを返却する。
   test_file: tests/integration/task/test_create_task.py
+  impl_files:
+  - src/task/service/create_task.py
   request:
   - name: title
     type: str
