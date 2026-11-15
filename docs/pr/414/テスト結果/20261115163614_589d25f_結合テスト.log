@@ -1,0 +1,310 @@
+# TL-3 結合テスト（バック） commit 589d25f
+# 初回のランナーでの実行のため、run_runner と手元の run_all を両方回して件数を比べた
+# run_runner: tests/integration 61 passed / 0 skipped
+# run_all   : tests/integration 61 passed / 0 skipped
+# skip の件数は一致（ともに 0 件）
+
+## run_runner
+$ run_url=$(gh workflow run test.yml --ref "$(git branch --show-current)" -f layer=integration | grep -o 'https://[^ ]*/actions/runs/[0-9]*') && run_id=${run_url##*/} && (rc=0; gh run watch "$run_id" --exit-status > /dev/null || rc=1; gh run view "$run_id" --log; exit $rc)
+test	Set up job	﻿2026-11-15T07:30:08.4086349Z Current runner version: '2.338.2'
+test	Set up job	2026-11-15T07:30:08.4114068Z ##[group]Runner Image Provisioner
+test	Set up job	2026-11-15T07:30:08.4115041Z Hosted Compute Agent
+test	Set up job	2026-11-15T07:30:08.4115725Z Version: 20261103.629
+test	Set up job	2026-11-15T07:30:08.4116373Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+test	Set up job	2026-11-15T07:30:08.4117082Z Build Date: 2026-11-03T17:26:59Z
+test	Set up job	2026-11-15T07:30:08.4117829Z Worker ID: {f6a34379-a95f-4d40-9388-52987672c69b}
+test	Set up job	2026-11-15T07:30:08.4118836Z Region: westus3
+test	Set up job	2026-11-15T07:30:08.4119525Z Cloud: Azure
+test	Set up job	2026-11-15T07:30:08.4120078Z ##[endgroup]
+test	Set up job	2026-11-15T07:30:08.4121552Z ##[group]Operating System
+test	Set up job	2026-11-15T07:30:08.4122302Z Ubuntu
+test	Set up job	2026-11-15T07:30:08.4122862Z 26.04.1
+test	Set up job	2026-11-15T07:30:08.4123434Z LTS
+test	Set up job	2026-11-15T07:30:08.4123953Z ##[endgroup]
+test	Set up job	2026-11-15T07:30:08.4124496Z ##[group]Runner Image
+test	Set up job	2026-11-15T07:30:08.4125135Z Image: ubuntu-26.04
+test	Set up job	2026-11-15T07:30:08.4125738Z Version: 20261111.196.1
+test	Set up job	2026-11-15T07:30:08.4126797Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261111.196/images/ubuntu/Ubuntu2604-Readme.md
+test	Set up job	2026-11-15T07:30:08.4128869Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261111.196
+test	Set up job	2026-11-15T07:30:08.4130018Z ##[endgroup]
+test	Set up job	2026-11-15T07:30:08.4131182Z ##[group]GITHUB_TOKEN Permissions
+test	Set up job	2026-11-15T07:30:08.4133511Z Contents: read
+test	Set up job	2026-11-15T07:30:08.4134164Z Metadata: read
+test	Set up job	2026-11-15T07:30:08.4134719Z ##[endgroup]
+test	Set up job	2026-11-15T07:30:08.4136999Z Secret source: Actions
+test	Set up job	2026-11-15T07:30:08.4137928Z Cache mode: write
+test	Set up job	2026-11-15T07:30:08.4138947Z Prepare workflow directory
+test	Set up job	2026-11-15T07:30:08.4493409Z Prepare all required actions
+test	Set up job	2026-11-15T07:30:08.4542281Z Getting action download info
+test	Set up job	2026-11-15T07:30:08.7634523Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+test	Set up job	2026-11-15T07:30:08.9547649Z Download action repository 'astral-sh/setup-uv@v6' (SHA:d0cc045d04ccac9d8b7881df0226f9e82c39688e)
+test	Set up job	2026-11-15T07:30:09.6311406Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+test	Set up job	2026-11-15T07:30:09.7048371Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+test	Set up job	2026-11-15T07:30:09.9108351Z Complete job name: test
+test	ブランチを取得する	﻿2026-11-15T07:30:10.0103123Z ##[group]Run actions/checkout@v4
+test	ブランチを取得する	2026-11-15T07:30:10.0104072Z with:
+test	ブランチを取得する	2026-11-15T07:30:10.0104540Z   repository: shuhei1101/knowledge
+test	ブランチを取得する	2026-11-15T07:30:10.0108412Z   token: ***
+test	ブランチを取得する	2026-11-15T07:30:10.0109061Z   ssh-strict: true
+test	ブランチを取得する	2026-11-15T07:30:10.0109504Z   ssh-user: git
+test	ブランチを取得する	2026-11-15T07:30:10.0109955Z   persist-credentials: true
+test	ブランチを取得する	2026-11-15T07:30:10.0110472Z   clean: true
+test	ブランチを取得する	2026-11-15T07:30:10.0110919Z   sparse-checkout-cone-mode: true
+test	ブランチを取得する	2026-11-15T07:30:10.0111445Z   fetch-depth: 1
+test	ブランチを取得する	2026-11-15T07:30:10.0111880Z   fetch-tags: false
+test	ブランチを取得する	2026-11-15T07:30:10.0112326Z   show-progress: true
+test	ブランチを取得する	2026-11-15T07:30:10.0112794Z   lfs: false
+test	ブランチを取得する	2026-11-15T07:30:10.0113213Z   submodules: false
+test	ブランチを取得する	2026-11-15T07:30:10.0113666Z   set-safe-directory: true
+test	ブランチを取得する	2026-11-15T07:30:10.0114171Z   allow-unsafe-pr-checkout: false
+test	ブランチを取得する	2026-11-15T07:30:10.0114994Z ##[endgroup]
+test	ブランチを取得する	2026-11-15T07:30:10.2853482Z Syncing repository: shuhei1101/knowledge
+test	ブランチを取得する	2026-11-15T07:30:10.2855647Z ##[group]Getting Git version info
+test	ブランチを取得する	2026-11-15T07:30:10.2856444Z Working directory is '/home/runner/work/knowledge/knowledge'
+test	ブランチを取得する	2026-11-15T07:30:10.2857603Z [command]/usr/bin/git version
+test	ブランチを取得する	2026-11-15T07:30:10.2875966Z git version 2.56.1
+test	ブランチを取得する	2026-11-15T07:30:10.2897922Z ##[endgroup]
+test	ブランチを取得する	2026-11-15T07:30:10.2914298Z Temporarily overriding HOME='/home/runner/work/_temp/00171360-0a99-48e2-a857-8a7ed2718109' before making global git config changes
+test	ブランチを取得する	2026-11-15T07:30:10.2916852Z Adding repository directory to the temporary git global config as a safe directory
+test	ブランチを取得する	2026-11-15T07:30:10.2920501Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/knowledge/knowledge
+test	ブランチを取得する	2026-11-15T07:30:10.2982952Z Deleting the contents of '/home/runner/work/knowledge/knowledge'
+test	ブランチを取得する	2026-11-15T07:30:10.2986722Z ##[group]Initializing the repository
+test	ブランチを取得する	2026-11-15T07:30:10.2991673Z [command]/usr/bin/git init /home/runner/work/knowledge/knowledge
+test	ブランチを取得する	2026-11-15T07:30:10.3098088Z hint: Using 'master' as the name for the initial branch. This default branch name
+test	ブランチを取得する	2026-11-15T07:30:10.3099683Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+test	ブランチを取得する	2026-11-15T07:30:10.3100731Z hint: to use in all of your new repositories, which will suppress this warning,
+test	ブランチを取得する	2026-11-15T07:30:10.3101470Z hint: call:
+test	ブランチを取得する	2026-11-15T07:30:10.3101876Z hint:
+test	ブランチを取得する	2026-11-15T07:30:10.3102867Z hint: 	git config --global init.defaultBranch <name>
+test	ブランチを取得する	2026-11-15T07:30:10.3103526Z hint:
+test	ブランチを取得する	2026-11-15T07:30:10.3104106Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+test	ブランチを取得する	2026-11-15T07:30:10.3105034Z hint: 'development'. The just-created branch can be renamed via this command:
+test	ブランチを取得する	2026-11-15T07:30:10.3106193Z hint:
+test	ブランチを取得する	2026-11-15T07:30:10.3106664Z hint: 	git branch -m <name>
+test	ブランチを取得する	2026-11-15T07:30:10.3107152Z hint:
+test	ブランチを取得する	2026-11-15T07:30:10.3107780Z hint: Disable this message with "git config set advice.defaultBranchName false"
+test	ブランチを取得する	2026-11-15T07:30:10.3116941Z Initialized empty Git repository in /home/runner/work/knowledge/knowledge/.git/
+test	ブランチを取得する	2026-11-15T07:30:10.3129436Z [command]/usr/bin/git remote add origin https://github.com/shuhei1101/knowledge
+test	ブランチを取得する	2026-11-15T07:30:10.3182278Z ##[endgroup]
+test	ブランチを取得する	2026-11-15T07:30:10.3183693Z ##[group]Disabling automatic garbage collection
+test	ブランチを取得する	2026-11-15T07:30:10.3186433Z [command]/usr/bin/git config --local gc.auto 0
+test	ブランチを取得する	2026-11-15T07:30:10.3219736Z ##[endgroup]
+test	ブランチを取得する	2026-11-15T07:30:10.3221156Z ##[group]Setting up auth
+test	ブランチを取得する	2026-11-15T07:30:10.3227469Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test	ブランチを取得する	2026-11-15T07:30:10.3260854Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test	ブランチを取得する	2026-11-15T07:30:10.3730802Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test	ブランチを取得する	2026-11-15T07:30:10.3764092Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test	ブランチを取得する	2026-11-15T07:30:10.4049956Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test	ブランチを取得する	2026-11-15T07:30:10.4085293Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test	ブランチを取得する	2026-11-15T07:30:10.4365215Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+test	ブランチを取得する	2026-11-15T07:30:10.4404587Z ##[endgroup]
+test	ブランチを取得する	2026-11-15T07:30:10.4405545Z ##[group]Fetching the repository
+test	ブランチを取得する	2026-11-15T07:30:10.4416851Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +589d25f544a62c3655c3377991ea37614b7f3b71:refs/remotes/origin/chore/test/runner-first-run
+test	ブランチを取得する	2026-11-15T07:30:11.3671612Z From https://github.com/shuhei1101/knowledge
+test	ブランチを取得する	2026-11-15T07:30:11.3674418Z  * [new ref]         589d25f544a62c3655c3377991ea37614b7f3b71 -> origin/chore/test/runner-first-run
+test	ブランチを取得する	2026-11-15T07:30:11.3679667Z ##[endgroup]
+test	ブランチを取得する	2026-11-15T07:30:11.3681150Z ##[group]Determining the checkout info
+test	ブランチを取得する	2026-11-15T07:30:11.3683282Z ##[endgroup]
+test	ブランチを取得する	2026-11-15T07:30:11.3688171Z [command]/usr/bin/git sparse-checkout disable
+test	ブランチを取得する	2026-11-15T07:30:11.3743949Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+test	ブランチを取得する	2026-11-15T07:30:11.3774017Z ##[group]Checking out the ref
+test	ブランチを取得する	2026-11-15T07:30:11.3777914Z [command]/usr/bin/git checkout --progress --force -B chore/test/runner-first-run refs/remotes/origin/chore/test/runner-first-run
+test	ブランチを取得する	2026-11-15T07:30:11.4794474Z Switched to a new branch 'chore/test/runner-first-run'
+test	ブランチを取得する	2026-11-15T07:30:11.4799580Z branch 'chore/test/runner-first-run' set up to track 'origin/chore/test/runner-first-run'.
+test	ブランチを取得する	2026-11-15T07:30:11.4810151Z ##[endgroup]
+test	ブランチを取得する	2026-11-15T07:30:11.4862135Z [command]/usr/bin/git log -1 --format=%H
+test	ブランチを取得する	2026-11-15T07:30:11.4890123Z 589d25f544a62c3655c3377991ea37614b7f3b71
+test	uv を入れる	﻿2026-11-15T07:30:11.5432699Z ##[group]Run astral-sh/setup-uv@v6
+test	uv を入れる	2026-11-15T07:30:11.5433947Z with:
+test	uv を入れる	2026-11-15T07:30:11.5434849Z   activate-environment: false
+test	uv を入れる	2026-11-15T07:30:11.5436261Z   working-directory: /home/runner/work/knowledge/knowledge
+test	uv を入れる	2026-11-15T07:30:11.5437824Z   server-url: https://github.com
+test	uv を入れる	2026-11-15T07:30:11.5448257Z   github-token: ***
+test	uv を入れる	2026-11-15T07:30:11.5449342Z   enable-cache: auto
+test	uv を入れる	2026-11-15T07:30:11.5451843Z   cache-dependency-glob: **/*requirements*.txt
+test	uv を入れる	**/*requirements*.in
+test	uv を入れる	**/*constraints*.txt
+test	uv を入れる	**/*constraints*.in
+test	uv を入れる	**/pyproject.toml
+test	uv を入れる	**/uv.lock
+test	uv を入れる	**/*.py.lock
+test	uv を入れる	
+test	uv を入れる	2026-11-15T07:30:11.5454634Z   restore-cache: true
+test	uv を入れる	2026-11-15T07:30:11.5455622Z   save-cache: true
+test	uv を入れる	2026-11-15T07:30:11.5456567Z   prune-cache: true
+test	uv を入れる	2026-11-15T07:30:11.5457578Z   ignore-nothing-to-cache: false
+test	uv を入れる	2026-11-15T07:30:11.5458858Z   ignore-empty-workdir: false
+test	uv を入れる	2026-11-15T07:30:11.5460005Z   add-problem-matchers: true
+test	uv を入れる	2026-11-15T07:30:11.5461069Z ##[endgroup]
+test	uv を入れる	2026-11-15T07:30:11.7529219Z (node:2376) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test	uv を入れる	2026-11-15T07:30:11.7533686Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test	uv を入れる	2026-11-15T07:30:11.7622390Z Trying to find version for uv in: /home/runner/work/knowledge/knowledge/uv.toml
+test	uv を入れる	2026-11-15T07:30:11.7626060Z Could not find file: /home/runner/work/knowledge/knowledge/uv.toml
+test	uv を入れる	2026-11-15T07:30:11.7629925Z Trying to find version for uv in: /home/runner/work/knowledge/knowledge/pyproject.toml
+test	uv を入れる	2026-11-15T07:30:11.7633781Z Could not find file: /home/runner/work/knowledge/knowledge/pyproject.toml
+test	uv を入れる	2026-11-15T07:30:11.7637657Z Could not determine uv version from uv.toml or pyproject.toml. Falling back to latest.
+test	uv を入れる	2026-11-15T07:30:11.7642495Z Getting latest version from GitHub API...
+test	uv を入れる	2026-11-15T07:30:12.1250914Z manifest-file not provided, reading from local file.
+test	uv を入れる	2026-11-15T07:30:12.1287093Z manifest-file does not contain version 0.13.8, arch x86_64, platform unknown-linux-gnu. Falling back to GitHub releases.
+test	uv を入れる	2026-11-15T07:30:12.1293341Z Downloading uv from "https://github.com/astral-sh/uv/releases/download/0.13.8/uv-x86_64-unknown-linux-gnu.tar.gz" ...
+test	uv を入れる	2026-11-15T07:30:12.5305157Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/af41537d-8040-4ee4-8e2c-484afaea57ce -f /home/runner/work/_temp/9202f03c-0ea3-4520-86f8-dff99bc0d063
+test	uv を入れる	2026-11-15T07:30:12.7531390Z Added /home/runner/.local/bin to the path
+test	uv を入れる	2026-11-15T07:30:12.7534298Z Added /opt/hostedtoolcache/uv/0.13.8/x86_64 to the path
+test	uv を入れる	2026-11-15T07:30:12.7564087Z Set UV_CACHE_DIR to /home/runner/work/_temp/setup-uv-cache
+test	uv を入れる	2026-11-15T07:30:12.7564796Z Successfully installed uv version 0.13.8
+test	uv を入れる	2026-11-15T07:30:12.7567866Z Searching files using cache dependency glob: /home/runner/work/knowledge/knowledge/**/*requirements*.txt,/home/runner/work/knowledge/knowledge/**/*requirements*.in,/home/runner/work/knowledge/knowledge/**/*constraints*.txt,/home/runner/work/knowledge/knowledge/**/*constraints*.in,/home/runner/work/knowledge/knowledge/**/pyproject.toml,/home/runner/work/knowledge/knowledge/**/uv.lock,/home/runner/work/knowledge/knowledge/**/*.py.lock
+test	uv を入れる	2026-11-15T07:30:12.9886062Z /home/runner/work/knowledge/knowledge/scripts/build_pages.py.lock
+test	uv を入れる	2026-11-15T07:30:12.9904520Z /home/runner/work/knowledge/knowledge/scripts/build_skills.py.lock
+test	uv を入れる	2026-11-15T07:30:12.9915118Z /home/runner/work/knowledge/knowledge/scripts/build_templates.py.lock
+test	uv を入れる	2026-11-15T07:30:12.9923898Z /home/runner/work/knowledge/knowledge/scripts/build_word_list.py.lock
+test	uv を入れる	2026-11-15T07:30:12.9936676Z /home/runner/work/knowledge/knowledge/scripts/check_all.py.lock
+test	uv を入れる	2026-11-15T07:30:12.9947068Z /home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py.lock
+test	uv を入れる	2026-11-15T07:30:12.9955070Z /home/runner/work/knowledge/knowledge/scripts/knowledge_markdown.py.lock
+test	uv を入れる	2026-11-15T07:30:13.0033469Z Found 7 files to hash.
+test	uv を入れる	2026-11-15T07:30:13.0804895Z Trying to restore uv cache from GitHub Actions cache with key: setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-d0abc58ea00ba726b722b223875ee6fbe07bca33f6455c515a50265972af724b
+test	uv を入れる	2026-11-15T07:30:13.2745616Z Cache hit for: setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-d0abc58ea00ba726b722b223875ee6fbe07bca33f6455c515a50265972af724b
+test	uv を入れる	2026-11-15T07:30:13.2867921Z (node:2376) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+test	uv を入れる	2026-11-15T07:30:13.5565950Z Received 2333 of 2333 (100.0%), 0.0 MBs/sec
+test	uv を入れる	2026-11-15T07:30:13.5567152Z Cache Size: ~0 MB (2333 B)
+test	uv を入れる	2026-11-15T07:30:13.5592283Z [command]/usr/bin/tar -xf /home/runner/work/_temp/68bc0406-7998-4b5a-94b3-e7ca39835e5e/cache.tzst -P -C /home/runner/work/knowledge/knowledge --use-compress-program unzstd
+test	uv を入れる	2026-11-15T07:30:13.5662859Z Cache restored successfully
+test	uv を入れる	2026-11-15T07:30:13.5667618Z uv cache restored from GitHub Actions cache with key: setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-d0abc58ea00ba726b722b223875ee6fbe07bca33f6455c515a50265972af724b
+test	Node を入れる	﻿2026-11-15T07:30:13.5910596Z ##[group]Run actions/setup-node@v4
+test	Node を入れる	2026-11-15T07:30:13.5910915Z with:
+test	Node を入れる	2026-11-15T07:30:13.5911116Z   node-version: 24
+test	Node を入れる	2026-11-15T07:30:13.5911347Z   always-auth: false
+test	Node を入れる	2026-11-15T07:30:13.5911571Z   check-latest: false
+test	Node を入れる	2026-11-15T07:30:13.5913990Z   token: ***
+test	Node を入れる	2026-11-15T07:30:13.5914189Z env:
+test	Node を入れる	2026-11-15T07:30:13.5914443Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+test	Node を入れる	2026-11-15T07:30:13.5914785Z ##[endgroup]
+test	Node を入れる	2026-11-15T07:30:13.7359098Z Found in cache @ /opt/hostedtoolcache/node/24.22.2/x64
+test	Node を入れる	2026-11-15T07:30:13.7365271Z (node:2407) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test	Node を入れる	2026-11-15T07:30:13.7366488Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test	Node を入れる	2026-11-15T07:30:13.7369278Z ##[group]Environment details
+test	Node を入れる	2026-11-15T07:30:14.1456015Z node: v24.22.2
+test	Node を入れる	2026-11-15T07:30:14.1456516Z npm: 11.19.1
+test	Node を入れる	2026-11-15T07:30:14.1456894Z yarn: 1.22.22
+test	Node を入れる	2026-11-15T07:30:14.1457590Z ##[endgroup]
+test	lint の道具を入れる	﻿2026-11-15T07:30:14.1605009Z ##[group]Run npm ci --prefix scripts/lint
+test	lint の道具を入れる	2026-11-15T07:30:14.1605430Z ^[[36;1mnpm ci --prefix scripts/lint^[[0m
+test	lint の道具を入れる	2026-11-15T07:30:14.1669916Z shell: /usr/bin/bash -e {0}
+test	lint の道具を入れる	2026-11-15T07:30:14.1670215Z env:
+test	lint の道具を入れる	2026-11-15T07:30:14.1670475Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+test	lint の道具を入れる	2026-11-15T07:30:14.1670798Z ##[endgroup]
+test	lint の道具を入れる	2026-11-15T07:30:20.3274221Z 
+test	lint の道具を入れる	2026-11-15T07:30:20.3281882Z added 561 packages, and audited 562 packages in 6s
+test	lint の道具を入れる	2026-11-15T07:30:20.3282286Z 
+test	lint の道具を入れる	2026-11-15T07:30:20.3282540Z 206 packages are looking for funding
+test	lint の道具を入れる	2026-11-15T07:30:20.3282941Z   run `npm fund` for details
+test	lint の道具を入れる	2026-11-15T07:30:20.3331190Z 
+test	lint の道具を入れる	2026-11-15T07:30:20.3332019Z 8 vulnerabilities (2 low, 3 moderate, 3 high)
+test	lint の道具を入れる	2026-11-15T07:30:20.3332481Z 
+test	lint の道具を入れる	2026-11-15T07:30:20.3332936Z To address all issues (including breaking changes), run:
+test	lint の道具を入れる	2026-11-15T07:30:20.3333652Z   npm audit fix --force
+test	lint の道具を入れる	2026-11-15T07:30:20.3333936Z 
+test	lint の道具を入れる	2026-11-15T07:30:20.3334193Z Run `npm audit` for details.
+test	層の全件を回す	﻿2026-11-15T07:30:20.4005210Z ##[group]Run set -o pipefail
+test	層の全件を回す	2026-11-15T07:30:20.4005591Z ^[[36;1mset -o pipefail^[[0m
+test	層の全件を回す	2026-11-15T07:30:20.4005831Z ^[[36;1mcase "$LAYER" in^[[0m
+test	層の全件を回す	2026-11-15T07:30:20.4006056Z ^[[36;1m  unit)^[[0m
+test	層の全件を回す	2026-11-15T07:30:20.4006987Z ^[[36;1m    { uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit && uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check; } 2>&1 | tee test.log^[[0m
+test	層の全件を回す	2026-11-15T07:30:20.4007963Z ^[[36;1m    ;;^[[0m
+test	層の全件を回す	2026-11-15T07:30:20.4008171Z ^[[36;1m  integration)^[[0m
+test	層の全件を回す	2026-11-15T07:30:20.4009158Z ^[[36;1m    uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/integration 2>&1 | tee test.log^[[0m
+test	層の全件を回す	2026-11-15T07:30:20.4009878Z ^[[36;1m    ;;^[[0m
+test	層の全件を回す	2026-11-15T07:30:20.4010072Z ^[[36;1mesac^[[0m
+test	層の全件を回す	2026-11-15T07:30:20.4062529Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+test	層の全件を回す	2026-11-15T07:30:20.4062928Z env:
+test	層の全件を回す	2026-11-15T07:30:20.4063364Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+test	層の全件を回す	2026-11-15T07:30:20.4063680Z   LAYER: integration
+test	層の全件を回す	2026-11-15T07:30:20.4063894Z ##[endgroup]
+test	層の全件を回す	2026-11-15T07:30:20.7217390Z Downloading pygments (1.2MiB)
+test	層の全件を回す	2026-11-15T07:30:20.7662579Z  Downloaded pygments
+test	層の全件を回す	2026-11-15T07:30:20.7810338Z Installed 14 packages in 14ms
+test	層の全件を回す	2026-11-15T07:30:23.1010913Z ============================= test session starts ==============================
+test	層の全件を回す	2026-11-15T07:30:23.1012221Z platform linux -- Python 3.14.4, pytest-9.2.0, pluggy-1.7.0
+test	層の全件を回す	2026-11-15T07:30:23.1024397Z rootdir: /home/runner/work/knowledge/knowledge
+test	層の全件を回す	2026-11-15T07:30:23.1025288Z configfile: pytest.ini
+test	層の全件を回す	2026-11-15T07:30:23.1026155Z plugins: platformdirs-4.14.5, typeguard-4.4.4
+test	層の全件を回す	2026-11-15T07:30:23.1026915Z collected 61 items
+test	層の全件を回す	2026-11-15T07:30:23.1027395Z 
+test	層の全件を回す	2026-11-15T07:30:57.4572877Z tests/integration/scripts/test_build_pages.py ......                     [  9%]
+test	層の全件を回す	2026-11-15T07:30:59.1648280Z tests/integration/scripts/test_build_skills.py .....                     [ 18%]
+test	層の全件を回す	2026-11-15T07:31:00.2342210Z tests/integration/scripts/test_build_templates.py .....                  [ 26%]
+test	層の全件を回す	2026-11-15T07:31:00.6112619Z tests/integration/scripts/test_build_word_list.py ..                     [ 29%]
+test	層の全件を回す	2026-11-15T07:31:28.6914135Z tests/integration/scripts/test_check_all.py .................            [ 57%]
+test	層の全件を回す	2026-11-15T07:31:29.5458173Z tests/integration/scripts/test_knowledge_checks.py ........              [ 70%]
+test	層の全件を回す	2026-11-15T07:31:30.4807267Z tests/integration/scripts/test_knowledge_markdown.py .......             [ 81%]
+test	層の全件を回す	2026-11-15T07:31:31.1507032Z tests/integration/slop-check/test_slop_check.py ...........              [100%]
+test	層の全件を回す	2026-11-15T07:31:31.1507631Z 
+test	層の全件を回す	2026-11-15T07:31:31.1508066Z ======================== 61 passed in 68.28s (0:01:08) =========================
+test	ログを成果物に上げる	﻿2026-11-15T07:31:31.2014633Z ##[group]Run actions/upload-artifact@v4
+test	ログを成果物に上げる	2026-11-15T07:31:31.2014939Z with:
+test	ログを成果物に上げる	2026-11-15T07:31:31.2015128Z   name: test-log
+test	ログを成果物に上げる	2026-11-15T07:31:31.2015330Z   path: test.log
+test	ログを成果物に上げる	2026-11-15T07:31:31.2015567Z   if-no-files-found: ignore
+test	ログを成果物に上げる	2026-11-15T07:31:31.2015813Z   compression-level: 6
+test	ログを成果物に上げる	2026-11-15T07:31:31.2016031Z   overwrite: false
+test	ログを成果物に上げる	2026-11-15T07:31:31.2016249Z   include-hidden-files: false
+test	ログを成果物に上げる	2026-11-15T07:31:31.2016485Z env:
+test	ログを成果物に上げる	2026-11-15T07:31:31.2016721Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+test	ログを成果物に上げる	2026-11-15T07:31:31.2017028Z ##[endgroup]
+test	ログを成果物に上げる	2026-11-15T07:31:31.3730226Z (node:3375) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test	ログを成果物に上げる	2026-11-15T07:31:31.3731672Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test	ログを成果物に上げる	2026-11-15T07:31:31.3775226Z With the provided path, there will be 1 file uploaded
+test	ログを成果物に上げる	2026-11-15T07:31:31.3781456Z Artifact name is valid!
+test	ログを成果物に上げる	2026-11-15T07:31:31.3782287Z Root directory input is valid!
+test	ログを成果物に上げる	2026-11-15T07:31:31.7142830Z Beginning upload of artifact content to blob storage
+test	ログを成果物に上げる	2026-11-15T07:31:31.7358334Z (node:3375) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+test	ログを成果物に上げる	2026-11-15T07:31:31.9630038Z Uploaded bytes 527
+test	ログを成果物に上げる	2026-11-15T07:31:32.0286495Z Finished uploading artifact content to blob storage!
+test	ログを成果物に上げる	2026-11-15T07:31:32.0287641Z SHA256 digest of uploaded artifact zip is 95f98ede21ef6ab05934283548c9f7a4a157bbf80c8ae2e957b87b467a7ea5de
+test	ログを成果物に上げる	2026-11-15T07:31:32.0289009Z Finalizing artifact upload
+test	ログを成果物に上げる	2026-11-15T07:31:32.3800189Z Artifact test-log.zip successfully finalized. Artifact ID 14151907295
+test	ログを成果物に上げる	2026-11-15T07:31:32.3801265Z Artifact test-log has been successfully uploaded! Final size is 527 bytes. Artifact ID is 14151907295
+test	ログを成果物に上げる	2026-11-15T07:31:32.3806462Z Artifact download URL: https://github.com/shuhei1101/knowledge/actions/runs/43690201522/artifacts/14151907295
+test	Post Node を入れる	﻿2026-11-15T07:31:32.4015800Z Post job cleanup.
+test	Post Node を入れる	2026-11-15T07:31:32.5312748Z (node:3388) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test	Post Node を入れる	2026-11-15T07:31:32.5314523Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test	Post uv を入れる	﻿2026-11-15T07:31:32.5477563Z Post job cleanup.
+test	Post uv を入れる	2026-11-15T07:31:32.6919446Z (node:3396) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test	Post uv を入れる	2026-11-15T07:31:32.6921092Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test	Post uv を入れる	2026-11-15T07:31:32.6923894Z Cache hit occurred on key setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-d0abc58ea00ba726b722b223875ee6fbe07bca33f6455c515a50265972af724b, not saving cache.
+test	Post ブランチを取得する	﻿2026-11-15T07:31:32.7091557Z Post job cleanup.
+test	Post ブランチを取得する	2026-11-15T07:31:32.7962312Z [command]/usr/bin/git version
+test	Post ブランチを取得する	2026-11-15T07:31:32.8002806Z git version 2.56.1
+test	Post ブランチを取得する	2026-11-15T07:31:32.8043873Z Temporarily overriding HOME='/home/runner/work/_temp/10d2c101-c151-4b8a-99a0-6b19f9fd6a42' before making global git config changes
+test	Post ブランチを取得する	2026-11-15T07:31:32.8045926Z Adding repository directory to the temporary git global config as a safe directory
+test	Post ブランチを取得する	2026-11-15T07:31:32.8050061Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/knowledge/knowledge
+test	Post ブランチを取得する	2026-11-15T07:31:32.8092050Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test	Post ブランチを取得する	2026-11-15T07:31:32.8128869Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test	Post ブランチを取得する	2026-11-15T07:31:32.8415197Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test	Post ブランチを取得する	2026-11-15T07:31:32.8442222Z http.https://github.com/.extraheader
+test	Post ブランチを取得する	2026-11-15T07:31:32.8453582Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+test	Post ブランチを取得する	2026-11-15T07:31:32.8487875Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test	Post ブランチを取得する	2026-11-15T07:31:32.8766336Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test	Post ブランチを取得する	2026-11-15T07:31:32.8799557Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test	Complete job	﻿2026-11-15T07:31:32.9234424Z Cleaning up orphan processes
+test	Complete job	2026-11-15T07:31:32.9719564Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/upload-artifact@v4, astral-sh/setup-uv@v6. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+exit=0
+
+## run_all
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/integration
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-test-runner-first-run
+configfile: pytest.ini
+collected 61 items
+
+tests/integration/scripts/test_build_pages.py ......                     [  9%]
+tests/integration/scripts/test_build_skills.py .....                     [ 18%]
+tests/integration/scripts/test_build_templates.py .....                  [ 26%]
+tests/integration/scripts/test_build_word_list.py ..                     [ 29%]
+tests/integration/scripts/test_check_all.py .................            [ 57%]
+tests/integration/scripts/test_knowledge_checks.py ........              [ 70%]
+tests/integration/scripts/test_knowledge_markdown.py .......             [ 81%]
+tests/integration/slop-check/test_slop_check.py ...........              [100%]
+
+======================== 61 passed in 411.42s (0:06:51) ========================
+exit=0

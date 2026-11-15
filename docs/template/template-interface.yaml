@@ -54,7 +54,7 @@ items:
       | entry.value | 値 | string | 必須 | - | - | 操作を指す値。 | 実装で、メソッドとパス・ツール名・識別子にする。 | `POST /auth/signin` / `add_labels` / `` heartbeat 周期（`heartbeat_interval_sec` ごと） `` |
       | entry.api | 呼び出し API | string | - | - | - | `screen` のときの呼び出す API（Mock）。 | 結合テストで、画面が呼ぶ API の Mock にする。 | - |
       | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>project-index の検索で、文書の概要文にする。 | - |
-      | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`。入口が `trigger` の GitHub Actions の workflow は `tests/e2e/workflow/…`。規約『V字モデル』）。 | テストで、結合テストを作るファイルにする。<br>検査で、テストのファイルがあるかを確認する。 | - |
+      | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`、入口が `trigger` の GitHub Actions の workflow は `tests/e2e/workflow/…`。規約『V字モデル』）。 | テストで、結合テストを作るファイルにする。<br>検査で、テストのファイルがあるかを確認する。 | - |
       | identifier | 識別子 | string | - | - | - | 操作の識別子（OpenAPI の operationId に該当する）。 | 実装で、ハンドラ・ツールの関数の名前にする。 | - |
       | permissions | 必要な権限 | string | - | - | - | 操作に要る権限・ロール。 | 実装で、操作の前に確認する権限にする。<br>テストで、権限が無いときのケースにする。 | - |
       | idempotent | 冪等 | boolean | - | - | - | 同じ要求を繰り返しても結果が変わらないか。 | 実装で、同じ要求の繰り返しを受け付けるか、重複を弾くかを決める。<br>実装で、呼び出し元が失敗したときに再試行してよいかを決める。 | - |
@@ -139,7 +139,7 @@ items:
       | status_codes | 異常の行は異常系のフローと 1:1 にする。 | - | - |
       | error_format | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
       | constraints[].decided_by | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
-      | overall_flow | step は、workflow のファイルの step の `name` で記載する。<br>分岐の判定は、workflow のファイルの `if` の条件と、step の成否で記載する。 | - | - |
+      | overall_flow | step は、workflow のファイルの step の `name` で記載する。<br>分岐の判定は、workflow のファイルの `if` の条件と、step の成否で記載する。<br>`subgraph` は workflow のファイルのジョブごとに 1 つ配置し、ID をジョブの ID にする。<br>`subgraph` の中には、そのジョブの step のノードだけを配置する。<br>開始と終わり（`([...])`）のほかには、全てのジョブの step のノードを 1 つずつ配置する。<br>判定のノードは配置せず、分岐は線のラベルで記載する。 | - | - |
       | flows | 並びは正常 → 異常にする。<br>フロー一覧は各フローの名前と概要から生成する。 | - | - |
       | flows[].setup | `Mock` の行（差し替える依存。差し替えないときも `なし（…）`）を必ず配置する。 | - | - |
       | flows[].setup[].name | `Mock` の行を必ず配置する。 | - | - |
