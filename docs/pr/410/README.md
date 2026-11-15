@@ -1,0 +1,1 @@
+# インターフェース定義のスキーマの overall_flow の x-rules に、subgraph とノードの決まりを追加する
