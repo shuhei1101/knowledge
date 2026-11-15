@@ -3,35 +3,51 @@ docs:
   - page: docs/flowchart/flowchart-integration-test-scope.yaml
     new: true
     change: 判定フローチャート『結合テストの実行範囲』を新規作成する（Q0〜Q6・R1〜R7・※1〜※7）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T11:44:17.717217+00:00'
   - page: docs/flowchart/flowchart-integration-test-parallelism.yaml
     new: true
     change: 判定フローチャート『結合テストの並列の数』を新規作成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T11:44:17.717217+00:00'
   - page: schemas/design/test_procedure.schema.yaml
     new: false
-    change: layers[] に、実行に影響しないパスの一覧・全件にするパスの一覧・フォルダの対応表・関係するテストを選ぶ道具・並列の設定を任意の項目で追加し、run_all・run_one・run_runner の説明に並列の数と実行する結合テストのパスのプレースホルダを加える
-    status: todo
+    change: layers[] に、実行に影響しないパス（excluded_paths）・全件にするパス（full_run_paths）・フォルダの対応表（folder_map）・関係するテストを選ぶ道具（test_selector）・並列の設定（parallelism）を任意の項目で追加し、run_all・run_one・run_runner の x-rules に {並列の数}・{結合テストのパス} を加え、例に結合テストの層 TL-4 を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T11:44:17.717217+00:00'
   - page: schemas/design/interface.schema.yaml
     new: false
-    change: 入口の実装のファイルのパスを記録する任意の項目を追加する
-    status: todo
+    change: 入口の実装のファイルのパスを記録する任意の項目 impl_files を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T11:44:17.717217+00:00'
   - page: schemas/design/screen.schema.yaml
     new: false
-    change: 画面の実装のファイルのパスを記録する任意の項目を追加する
-    status: todo
+    change: screen のほかに画面だけが使用する実装のファイルのパスを記録する任意の項目 impl_files を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T11:44:17.717217+00:00'
   - page: docs/template/template-test-procedure.yaml
     new: false
     change: スキーマから生成し直す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T11:44:17.717217+00:00'
   - page: docs/template/template-interface.yaml
     new: false
     change: スキーマから生成し直す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T11:44:17.717217+00:00'
   - page: docs/template/template-screen-design.yaml
     new: false
     change: スキーマから生成し直す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T11:44:17.717217+00:00'
 scope_out:
   - item: ai-monitor のテスト実行方法への一覧・対応表の記載と、フェーズ『実装』『テスト作成』からの参照・結合テスト用の直列のマーカーの追加
     reason: ai-monitor の変更で、ai-monitor の作業 PR が行う
