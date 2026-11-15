@@ -42,8 +42,14 @@
 
 ### 単体
 
-なし。変更したファイル（`.github/workflows/test.yml` と設計書）に、規約『V字モデル』の対応表で対応する単体テストが無い。
-`test.yml` と IF-352-1 の突き合わせは、全ての文書の検査の `scripts/_workflow.py` の `check_workflows` を IF-352-1・IF-137-2 に当てて違反 0 件を確認した。
+TL-2 の `run_all` を手元で回した。`.github/workflows/test.yml` が develop に無く `workflow_dispatch` で起動できないため、`run_runner` の代わりにした（理由はログの先頭にも記載）。
+
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| `tests/unit/`（Python 3.14） | 全実行 | 実行のみ | ✅ | 284 テスト pass<br>`テスト結果/20261115115931_3e01b8d_単体テスト.log` |
+| `tests/unit/slop-check/`（Python 3.12） | 全実行 | 実行のみ | ✅ | 39 テスト pass<br>`テスト結果/20261115115931_3e01b8d_単体テスト.log` |
+
+`test.yml` と IF-352-1 の突き合わせは、全ての文書の検査の `scripts/_workflow.py` の `check_workflows` を IF-352-1・IF-137-2 に適用して違反 0 件を確認した。
 
 ### 結合
 
