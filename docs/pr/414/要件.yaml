@@ -1,4 +1,10 @@
-docs: []
+docs:
+  - page: docs/template/template-interface.yaml
+    new: false
+    change: '`test_file` の説明をスキーマの description の修正（2 文に収める）に合わせて build_templates.py で作り直す'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T07:36:47.535781+00:00'
 scope_out:
   - item: workflow の結合テスト `tests/e2e/workflow/test_test_yml.py` の初回の実行と、`tests/e2e/workflow/` を回すテスト実行方法の層の確定
     reason: 要望に含まれない。runner の層の全件の実行とは別の層
