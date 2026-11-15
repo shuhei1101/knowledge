@@ -55,6 +55,7 @@ items:
       | entry.api | 呼び出し API | string | - | - | - | `screen` のときの呼び出す API（Mock）。 | 結合テストで、画面が呼ぶ API の Mock にする。 | - |
       | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>project-index の検索で、文書の概要文にする。 | - |
       | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`、入口が `trigger` の GitHub Actions の workflow は `tests/e2e/workflow/…`。規約『V字モデル』）。 | テストで、結合テストを作るファイルにする。<br>検査で、テストのファイルがあるかを確認する。 | - |
+      | impl_files | 実装のファイル | array | - | - | - | この入口だけが使用する実装のファイルの、リポジトリの直下からのパス。 | 実行で、判定フローチャート『結合テストの実行範囲』の Q5 で、変更したファイルが 1 つの入口の実装のファイルかを決める。<br>レビューで、実行範囲の表の R4 の行がこの一覧のとおりかを確認する。 | `[src/task/service/create_task.py]` |
       | identifier | 識別子 | string | - | - | - | 操作の識別子（OpenAPI の operationId に該当する）。 | 実装で、ハンドラ・ツールの関数の名前にする。 | - |
       | permissions | 必要な権限 | string | - | - | - | 操作に要る権限・ロール。 | 実装で、操作の前に確認する権限にする。<br>テストで、権限が無いときのケースにする。 | - |
       | idempotent | 冪等 | boolean | - | - | - | 同じ要求を繰り返しても結果が変わらないか。 | 実装で、同じ要求の繰り返しを受け付けるか、重複を弾くかを決める。<br>実装で、呼び出し元が失敗したときに再試行してよいかを決める。 | - |
@@ -130,6 +131,7 @@ items:
       | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
       | entry | 入口が `trigger` の GitHub Actions の workflow は、`value` に workflow のファイルの `on` のイベントと、起動を絞る条件（`branches`・`paths`・`types`・`schedule` の `cron` 等）を記載する。 | - | - |
       | lead | 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
+      | impl_files | 複数の入口が使用するファイルは記載しない。<br>実装を作った・移したときに記載する。 | - | - |
       | side_effects | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
       | exclusivity | 入口が `trigger` の GitHub Actions の workflow は、workflow のファイルの `concurrency` の `group` と `cancel-in-progress` を記載する。 | - | - |
       | request | 入口が `trigger` の GitHub Actions の workflow は、workflow のファイルの `on.workflow_dispatch.inputs` の名前・型・必須・既定値と一致させる。 | - | - |
@@ -159,6 +161,8 @@ items:
         value: '`create_task`（サービス層の公開関数）'
       lead: タイトルとサブタスクを受け取ってタスクを永続化し、採番済みのタスクを返却する。
       test_file: tests/integration/task/test_create_task.py
+      impl_files:
+      - src/task/service/create_task.py
       request:
       - name: title
         type: str
