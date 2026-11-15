@@ -7,7 +7,7 @@ use_cases:
 scope_out:
   - item: TL-2 の全件実行が `&&` で 2 つの pytest をつなぎ、前の pytest が失敗すると後の pytest を回さない点の修正
     reason: テンプレート『テスト実行方法』の「どれかが失敗しても全ての検査を最後まで回す」から外れるが、要望は TL-1 と tests/e2e/workflow/ を回す層に限る。同じファイルの小さな修正のため、含めるかはレビューで確定する
-    plan: to_file
+    plan: '#416'
   - item: runner の層（TL-2・TL-3）のランナーでの初回の実行と、手元との skip の件数の突き合わせ
     reason: 要望に含まれない
     plan: '#408'
