@@ -8,6 +8,9 @@ scope_out:
   - item: 外部疎通・非機能要件・E2E の層（TL-4〜TL-6）の実行場所
     reason: run_all が未確定で、テンプレート『テスト実行方法』は確定させるまで location を記載しない
     plan: none
+  - item: テンプレート『インターフェース定義』の workflow の記載例（`example-sample-02`）の `request` の型と `overall_flow` の修正
+    reason: テンプレート自身の `request`・`overall_flow` の決まりと IF-72-3 の workflow の突き合わせから外れているが、今回の要望に含まれない
+    plan: '#405'
 use_cases:
   - kind: single
     scenario: docs/scenario/SC-137-1.yaml
