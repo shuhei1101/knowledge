@@ -237,13 +237,13 @@ examples:
   - name: テスト
     refs:
     - to: TP-1
-      type: references
+      type: requires
       when: テストのコマンドを確認・変更するとき。
   - name: 静的検査
     refs:
     - to: TP-1
       item: layers[lint]
-      type: references
+      type: requires
       when: 静的検査のコマンドを確認・変更するとき。
   - name: 管理作業
     commands: |-

@@ -608,13 +608,19 @@ items:
       | data_models[].methods[].unit_tests | 条件分岐の単位で 1 行以上にする。<br>自関数で送出する例外は異常の行にする。<br>キャッチせずに伝播する例外には行を配置しない。 | - | - |
       | data_models[].methods[].unit_tests[].name | `test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）にする。<br>期待値は名前に入れない。<br>先頭が `_` の関数は `_` を除外する。 | test_main_returns_1 | 期待値が名前に入っている |
       | data_models[].methods[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | data_models[].methods[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | data_models[].methods[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | data_models[].methods[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | data_models[].methods[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | data_models[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | data_models[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | data_models[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | data_models[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | data_models[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | enums[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | enums[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | enums[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | enums[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | enums[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | enums[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | classes[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
@@ -627,14 +633,20 @@ items:
       | classes[].methods[].unit_tests | 条件分岐の単位で 1 行以上にする。<br>自関数で送出する例外は異常の行にする。<br>キャッチせずに伝播する例外には行を配置しない。 | - | - |
       | classes[].methods[].unit_tests[].name | `test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）にする。<br>期待値は名前に入れない。<br>先頭が `_` の関数は `_` を除外する。 | test_main_returns_1 | 期待値が名前に入っている |
       | classes[].methods[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | classes[].methods[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | classes[].methods[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | classes[].methods[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | classes[].methods[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | classes[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | classes[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | classes[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | classes[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | classes[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | constants | 単純な即値は `value` だけを持ち、辞書・配列は `entries` を持つ。<br>設定値はここではなく設計書『設定』に記載する。 | - | - |
       | constants[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | constants[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | constants[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | constants[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | constants[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | constants[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | functions[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
@@ -646,15 +658,21 @@ items:
       | functions[].unit_tests | 条件分岐の単位で 1 行以上にする。<br>自関数で送出する例外は異常の行にする。<br>キャッチせずに伝播する例外には行を配置しない。 | - | - |
       | functions[].unit_tests[].name | `test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）にする。<br>期待値は名前に入れない。<br>先頭が `_` の関数は `_` を除外する。 | test_main_returns_1 | 期待値が名前に入っている |
       | functions[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | functions[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | functions[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | functions[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | functions[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | function_types[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | function_types[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | function_types[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | function_types[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | function_types[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | function_types[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | components[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | components[].unit_tests[].name | `test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）にする。<br>期待値は名前に入れない。<br>先頭が `_` の関数は `_` を除外する。 | test_main_returns_1 | 期待値が名前に入っている |
       | components[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | components[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | components[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | components[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | components[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | stores[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
@@ -667,16 +685,24 @@ items:
       | stores[].actions[].unit_tests | 条件分岐の単位で 1 行以上にする。<br>自関数で送出する例外は異常の行にする。<br>キャッチせずに伝播する例外には行を配置しない。 | - | - |
       | stores[].actions[].unit_tests[].name | `test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）にする。<br>期待値は名前に入れない。<br>先頭が `_` の関数は `_` を除外する。 | test_main_returns_1 | 期待値が名前に入っている |
       | stores[].actions[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | stores[].actions[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | stores[].actions[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | stores[].actions[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | stores[].actions[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | stores[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | stores[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | stores[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | stores[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | stores[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | styles[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | styles[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | styles[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | styles[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | styles[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | styles[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
 
       <!-- /table -->

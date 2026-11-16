@@ -135,23 +135,23 @@ categories:
     refs:
       - to: IF-137-1
         type: references
-        when: 「ビルド・生成」のコマンドの入出力を確認するとき。
+        when: Pages の成果物を作成するコマンド（`scripts/build_pages.py`）の入出力を確認・修正するとき。
       - to: IF-137-2
         item: "constraints[YAML の検査]"
         type: references
-        when: 「ビルド・生成」のコマンドの入出力を確認するとき。
+        when: Pages の成果物を手元で作成したときに、出力に YAML が残らない決まりを確認するとき。
       - to: LIB-137-1
         type: references
-        when: 「ビルド・生成」のコマンドの入出力を確認するとき。
+        when: Pages の成果物を作成するコマンドが呼ぶ mdmark の版と `build` の使い方を確認するとき。
       - to: IF-148-2
         type: references
-        when: 「ビルド・生成」のコマンドの入出力を確認するとき。
+        when: 対応表のコピーを作成するコマンド（`scripts/build_word_list.py`）の入出力を確認・修正するとき。
       - to: IF-201-1
         type: references
-        when: 「ビルド・生成」のコマンドの入出力を確認するとき。
+        when: 設計書のテンプレートを生成し直すコマンド（`scripts/build_templates.py`）の入出力を確認・修正するとき。
       - to: IF-312-1
         type: references
-        when: 「ビルド・生成」のコマンドの入出力を確認するとき。
+        when: SKILL.md を生成するコマンド（`scripts/build_skills.py`）の入出力を確認・修正するとき。
     verification:
       state: 済
       date: '2026-11-14'

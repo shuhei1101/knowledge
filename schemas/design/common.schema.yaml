@@ -67,10 +67,6 @@ $defs:
       - 検査で、`to` の設計書と `item` の項目が実在するかを確認する。
       - 生成で、関連する設計書の項目へのリンクにする。
       - レビューで、`when` の場面で関連する設計書をたどって食い違いを確認する。
-    x-rules:
-      - 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。
-      - '`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。'
-      - '`when` を記載できない関連は張らない。'
     x-shape: attributes
     additionalProperties: false
     required:
@@ -109,6 +105,9 @@ $defs:
         x-used-by:
           - レビューで、関連先の変更がこの設計書へ及ぶかを判断する。
           - project-index の `trace_related` で、たどった関連の影響の理由にする。
+        x-rules:
+          - 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。
+          - '`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。'
         enum:
         - requires
         - references
@@ -121,6 +120,8 @@ $defs:
         description: 関連先をいつ参照するかの 1 文。
         x-used-by:
           - 実装とレビューで、関連先を参照する場面を判断する。
+        x-rules:
+          - '`when` を記載できない関連は張らない。'
         minLength: 1
         pattern: "^[^\\n]+$"
         examples:

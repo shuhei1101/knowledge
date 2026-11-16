@@ -80,7 +80,11 @@ items:
       | categories | 初期構築では全ての分類を作る。<br>コマンドは差分が該当した実装・テスト作成の担当が確定させ、確定させるまでは `commands` を `未確定` にする。<br>テストと静的検査以外のセクションは `commands` か `refs` のどちらかを持つ。 | - | - |
       | categories[].commands | 複数あるときは番号つきの手順にし、各コマンドの前に何をするかを 1 行で添える。<br>記載できるまでは `未確定` にする。<br>既に他のページが持つコマンドはコピーせず `refs` で指し、このページだけが持つコマンドを `commands` に記載する。<br>テストと静的検査のセクションはコマンドを持たず、`refs` でテスト実行方法を指す。 | - | - |
       | categories[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | categories[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | categories[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
 
       <!-- /table -->
@@ -109,13 +113,13 @@ items:
       - name: テスト
         refs:
         - to: TP-1
-          type: references
+          type: requires
           when: テストのコマンドを確認・変更するとき。
       - name: 静的検査
         refs:
         - to: TP-1
           item: layers[lint]
-          type: references
+          type: requires
           when: 静的検査のコマンドを確認・変更するとき。
       - name: 管理作業
         commands: |-
