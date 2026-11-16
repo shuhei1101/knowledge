@@ -115,7 +115,7 @@ _ER_ITEMS = [
         "id": "item-list-01",
         "name": "項目",
         "body": (
-            "<!-- table: {\"kind\": \"data\"} -->\n"
+            '<!-- table: {"kind": "data"} -->\n'
             "\n"
             "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
             "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
@@ -132,7 +132,7 @@ _ER_ITEMS = [
         "id": "key-rules-01",
         "name": "キーごとの決まり",
         "body": (
-            "<!-- table: {\"kind\": \"data\"} -->\n"
+            '<!-- table: {"kind": "data"} -->\n'
             "\n"
             "| 名前 | 決まり | 悪い例 | 理由 |\n"
             "| --- | --- | --- | --- |\n"
@@ -156,7 +156,7 @@ _CONFIG_ITEMS = [
         "id": "item-list-01",
         "name": "項目",
         "body": (
-            "<!-- table: {\"kind\": \"data\"} -->\n"
+            '<!-- table: {"kind": "data"} -->\n'
             "\n"
             "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
             "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
@@ -206,7 +206,7 @@ _TEMPLATE_ER = (
     "  - id: item-list-01\n"
     "    name: 項目\n"
     "    body: |-\n"
-    "      <!-- table: {\"kind\": \"data\"} -->\n"
+    '      <!-- table: {"kind": "data"} -->\n'
     "\n"
     "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
     "      | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
@@ -220,7 +220,7 @@ _TEMPLATE_ER = (
     "  - id: key-rules-01\n"
     "    name: キーごとの決まり\n"
     "    body: |-\n"
-    "      <!-- table: {\"kind\": \"data\"} -->\n"
+    '      <!-- table: {"kind": "data"} -->\n'
     "\n"
     "      | 名前 | 決まり | 悪い例 | 理由 |\n"
     "      | --- | --- | --- | --- |\n"
@@ -253,7 +253,7 @@ _TEMPLATE_CONFIG = (
     "  - id: item-list-01\n"
     "    name: 項目\n"
     "    body: |-\n"
-    "      <!-- table: {\"kind\": \"data\"} -->\n"
+    '      <!-- table: {"kind": "data"} -->\n'
     "\n"
     "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
     "      | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
@@ -607,7 +607,7 @@ def test_render_key_table() -> None:
     result = _render_key_table(rows)
     # 検証
     assert result == (
-        "<!-- table: {\"kind\": \"data\"} -->\n"
+        '<!-- table: {"kind": "data"} -->\n'
         "\n"
         "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
         "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
@@ -639,7 +639,7 @@ def test_render_key_rules() -> None:
     result = _render_key_rules(rows)
     # 検証
     assert result == (
-        "<!-- table: {\"kind\": \"data\"} -->\n"
+        '<!-- table: {"kind": "data"} -->\n'
         "\n"
         "| 名前 | 決まり | 悪い例 | 理由 |\n"
         "| --- | --- | --- | --- |\n"

@@ -576,7 +576,7 @@ _GENERATED_TEMPLATE_ER = (
     "  - id: item-list-01\n"
     "    name: 項目\n"
     "    body: |-\n"
-    "      <!-- table: {\"kind\": \"data\"} -->\n"
+    '      <!-- table: {"kind": "data"} -->\n'
     "\n"
     "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
     "      | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
@@ -586,7 +586,7 @@ _GENERATED_TEMPLATE_ER = (
     "  - id: key-rules-01\n"
     "    name: キーごとの決まり\n"
     "    body: |-\n"
-    "      <!-- table: {\"kind\": \"data\"} -->\n"
+    '      <!-- table: {"kind": "data"} -->\n'
     "\n"
     "      | 名前 | 決まり | 悪い例 | 理由 |\n"
     "      | --- | --- | --- | --- |\n"
