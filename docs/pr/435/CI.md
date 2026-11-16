@@ -33,10 +33,14 @@
 
 | 変更したファイル | 結果 | 実行する結合テスト | 結合テストが無い入口 |
 | --- | --- | --- | --- |
-| `.github/workflows/test.yml` | R7（TL-6。IF-352-1 の `test_file`） | `tests/e2e/workflow/test_test_yml.py::test_normal`・`tests/e2e/workflow/test_test_yml.py::test_error_when_tests_fail` | - |
-| `.github/workflows/test.yml` | R7（TL-3） | - | - |
+| `.github/workflows/test.yml` | R7（TL-6 は IF-352-1 の `test_file`。TL-3 は参照する結合テストが無い） | `tests/e2e/workflow/test_test_yml.py::test_normal`・`tests/e2e/workflow/test_test_yml.py::test_error_when_tests_fail` | - |
+| `docs/pr/435/CI.md` | R7（TL-3・TL-6） | - | - |
+| `docs/pr/435/README.md` | R7（TL-3・TL-6） | - | - |
+| `docs/pr/435/タスク一覧.yaml` | R7（TL-3・TL-6） | - | - |
+| `docs/pr/435/テスト結果/20261117062531_1926f0b_lint.log` | R7（TL-3・TL-6） | - | - |
+| `docs/pr/435/要件.md` | R7（TL-3・TL-6） | - | - |
+| `docs/pr/435/要件.yaml` | R7（TL-3・TL-6） | - | - |
 | `docs/test-procedure/TP-72-1.yaml` | R7（TL-3・TL-6） | - | - |
-| `docs/pr/435/CI.md`・`README.md`・`タスク一覧.yaml`・`要件.md`・`要件.yaml` | R7（TL-3・TL-6） | - | - |
 
 - `test.yml` は、`layer: unit` のときの「層の全件を回す」の `run:` だけを変えた。`layer: unit` で起動するフロー（正常系・異常系（テストの失敗））だけが変えたコマンドを通り、`layer: integration` の 2 フローは通らない
 - TL-3 の [tests/integration/scripts/test_check_all.py](https://github.com/shuhei1101/knowledge/blob/1926f0b/tests/integration/scripts/test_check_all.py) は workflow をフィクスチャの `pages.yml` で検査し、`scripts/_workflow.py` の突き合わせも trigger・入力・`concurrency`・step の名前と `if` だけを比べ、`run:` の中身を比べないため影響しない
