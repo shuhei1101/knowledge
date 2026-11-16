@@ -15,7 +15,7 @@ _ROOT = Path(__file__).resolve().parents[3]
 
 # 項目の本文。元の Markdown のまま出ることを確かめる
 _BODY_OVERVIEW = "エージェントが書く文章の確認と、語の選び方の決まり。"
-_BODY_LABEL = "文章でない所は、IT の分野で定着した語で書く。\n\n<!-- table: data -->\n\n| 語 | 例 |\n| --- | --- |\n| 送信 | `送る` |\n\n<!-- /table -->"
+_BODY_LABEL = '文章でない所は、IT の分野で定着した語で書く。\n\n<!-- table: {"kind": "data"} -->\n\n| 語 | 例 |\n| --- | --- |\n| 送信 | `送る` |\n\n<!-- /table -->'
 _BODY_PRINCIPLE = "対応表に無い語は、[語の選び方](id:flowchart-word-choice) で判断する。"
 
 
