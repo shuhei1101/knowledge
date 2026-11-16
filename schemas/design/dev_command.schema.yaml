@@ -169,11 +169,12 @@ properties:
         refs:
           type: array
           title: 参照
-          description: 他のページが持つコマンドの原本。テストのセクションはテスト実行方法（`TP-1#`）を、静的検査のセクションはその `lint` 層（`TP-1#layers[lint]`）を指す。
+          description: 他のページが持つコマンドの原本への関連。テストのセクションはテスト実行方法（`to` が `TP-1`）を、静的検査のセクションはその `lint` 層（`item` が `layers[lint]`）を指す。
           x-used-by:
             - 実行で、テスト・静的検査のコマンドを原本のテスト実行方法から参照する。
+          maxItems: 8
           items:
-            $ref: common.schema.yaml#/$defs/ref
+            $ref: common.schema.yaml#/$defs/related_item
         decisions:
           type: array
           title: 検討事項
@@ -200,14 +201,7 @@ properties:
           - required:
             - refs
   refs:
-    type: array
-    title: 関連
-    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-    x-used-by:
-      - 生成で、関連する設計書へのリンクにする。
-      - レビューで、関連する設計書をたどって食い違いを確認する。
-    items:
-      $ref: common.schema.yaml#/$defs/ref
+    $ref: common.schema.yaml#/$defs/related
   decisions:
     type: array
     title: 検討事項
@@ -242,10 +236,15 @@ examples:
       detail: 空の作業ツリーで実行して依存が入ることを確認した
   - name: テスト
     refs:
-    - TP-1#
+    - to: TP-1
+      type: references
+      when: テストのコマンドを確認・変更するとき。
   - name: 静的検査
     refs:
-    - TP-1#layers[lint]
+    - to: TP-1
+      item: layers[lint]
+      type: references
+      when: 静的検査のコマンドを確認・変更するとき。
   - name: 管理作業
     commands: |-
       ```bash

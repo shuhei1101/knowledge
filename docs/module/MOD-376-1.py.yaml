@@ -97,8 +97,14 @@ functions:
       - MOD-72-2#functions[load_safe]
       - MOD-72-2#functions[line_of]
     refs:
-      - IF-72-3#constraints[workflow の突き合わせの範囲]
-      - IF-72-3#constraints[workflow の突き合わせ]
+      - to: IF-72-3
+        item: "constraints[workflow の突き合わせの範囲]"
+        type: requires
+        when: "`check_workflows` を修正するときに、IF-72-3 の「workflow の突き合わせの範囲」の決まりと突き合わせる。"
+      - to: IF-72-3
+        item: "constraints[workflow の突き合わせ]"
+        type: requires
+        when: "`check_workflows` を修正するときに、IF-72-3 の「workflow の突き合わせ」の決まりと突き合わせる。"
   - name: workflow_path
     title: workflow のパスの取り出し
     kind: 関数
@@ -132,7 +138,10 @@ functions:
         mock: なし
         expected: どちらも `None`
     refs:
-      - IF-72-3#constraints[workflow の突き合わせの範囲]
+      - to: IF-72-3
+        item: "constraints[workflow の突き合わせの範囲]"
+        type: requires
+        when: "`workflow_path` を修正するときに、IF-72-3 の「workflow の突き合わせの範囲」の決まりと突き合わせる。"
   - name: check_trigger
     title: 起動の条件の突き合わせ
     kind: 関数
@@ -172,7 +181,10 @@ functions:
         mock: なし
         expected: '`pull_request`・`docs/**`・`schedule`・`0 0 * * *` の 4 件'
     refs:
-      - IF-72-3#constraints[workflow の突き合わせ]
+      - to: IF-72-3
+        item: "constraints[workflow の突き合わせ]"
+        type: requires
+        when: "`check_trigger` を修正するときに、IF-72-3 の「workflow の突き合わせ」の決まりと突き合わせる。"
   - name: check_request
     title: リクエストの突き合わせ
     kind: 関数
@@ -217,7 +229,10 @@ functions:
         mock: なし
         expected: 項目のパスが `request` の 1 件
     refs:
-      - IF-72-3#constraints[workflow の突き合わせ]
+      - to: IF-72-3
+        item: "constraints[workflow の突き合わせ]"
+        type: requires
+        when: "`check_request` を修正するときに、IF-72-3 の「workflow の突き合わせ」の決まりと突き合わせる。"
   - name: check_exclusivity
     title: 排他の突き合わせ
     kind: 関数
@@ -263,7 +278,10 @@ functions:
         mock: なし
         expected: 内容が `concurrency がありません` の 1 件
     refs:
-      - IF-72-3#constraints[workflow の突き合わせ]
+      - to: IF-72-3
+        item: "constraints[workflow の突き合わせ]"
+        type: requires
+        when: "`check_exclusivity` を修正するときに、IF-72-3 の「workflow の突き合わせ」の決まりと突き合わせる。"
   - name: check_steps
     title: step と分岐の突き合わせ
     kind: 関数
@@ -328,7 +346,10 @@ functions:
       - MOD-176-1#functions[extract_map_mermaid]
       - MOD-72-2#functions[line_of]
     refs:
-      - IF-72-3#constraints[workflow の突き合わせ]
+      - to: IF-72-3
+        item: "constraints[workflow の突き合わせ]"
+        type: requires
+        when: "`check_steps` を修正するときに、IF-72-3 の「workflow の突き合わせ」の決まりと突き合わせる。"
   - name: parse_flowchart
     title: フローチャートの読み取り
     kind: 関数
@@ -366,6 +387,9 @@ functions:
         mock: なし
         expected: '`None`'
     refs:
-      - IF-72-3#constraints[workflow の突き合わせ]
+      - to: IF-72-3
+        item: "constraints[workflow の突き合わせ]"
+        type: requires
+        when: "`parse_flowchart` を修正するときに、IF-72-3 の「workflow の突き合わせ」の決まりと突き合わせる。"
 test_files:
   - tests/unit/scripts/test_workflow.py

@@ -317,14 +317,7 @@ properties:
           - retry_once
           - stop
   refs:
-    type: array
-    title: 関連
-    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-    x-used-by:
-      - 生成で、関連する設計書へのリンクにする。
-      - レビューで、関連する設計書をたどって食い違いを確認する。
-    items:
-      $ref: common.schema.yaml#/$defs/ref
+    $ref: common.schema.yaml#/$defs/related
   decisions:
     type: array
     title: 検討事項
@@ -382,5 +375,9 @@ examples:
   - reason: stopped
     action: stop
   refs:
-  - AG-1#
-  - MCP-1#
+  - to: AG-1
+    type: part_of
+    when: 起動の構成を変えるときに、起動するエージェントの定義と突き合わせる。
+  - to: MCP-1
+    type: references
+    when: 許可するツールを変えるときに、MCP サーバーのツールの一覧を確認する。

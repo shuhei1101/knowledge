@@ -181,7 +181,9 @@ functions:
       - MOD-176-1#functions[collect_map_sources]
       - MOD-176-1#functions[run_map_check]
     refs:
-      - IF-72-3#
+      - to: IF-72-3
+        type: requires
+        when: "`main` を修正するときに、IF-72-3 の決まりと突き合わせる。"
   - name: check_lints
     title: lint の検査
     kind: 関数
@@ -249,8 +251,14 @@ functions:
       - MOD-176-1#functions[load_yamllint_config]
       - MOD-176-1#functions[run_yamllint]
     refs:
-      - IF-72-3#constraints[lint の適用先]
-      - IF-72-3#constraints[lint の設定]
+      - to: IF-72-3
+        item: "constraints[lint の適用先]"
+        type: requires
+        when: "`check_lints` を修正するときに、IF-72-3 の「lint の適用先」の決まりと突き合わせる。"
+      - to: IF-72-3
+        item: "constraints[lint の設定]"
+        type: requires
+        when: "`check_lints` を修正するときに、IF-72-3 の「lint の設定」の決まりと突き合わせる。"
   - name: load_meta_validator
     title: 拡張したメタスキーマの読み込み
     kind: 関数
@@ -306,7 +314,10 @@ functions:
     callees:
       - MOD-72-2#functions[load_safe]
     refs:
-      - IF-72-3#exceptions[終了コード 2]
+      - to: IF-72-3
+        item: "exceptions[終了コード 2]"
+        type: requires
+        when: "`load_meta_validator` を修正するときに、IF-72-3 の「終了コード 2」の決まりと突き合わせる。"
   - name: check_document_schemas
     title: 文書の種類のスキーマの検査
     kind: 関数
@@ -357,8 +368,14 @@ functions:
       - MOD-72-2#functions[line_of]
       - MOD-72-2#functions[format_path]
     refs:
-      - IF-72-3#constraints[文書の種類のスキーマの検査]
-      - IF-72-3#constraints[スキーマの違反の行]
+      - to: IF-72-3
+        item: "constraints[文書の種類のスキーマの検査]"
+        type: requires
+        when: "`check_document_schemas` を修正するときに、IF-72-3 の「文書の種類のスキーマの検査」の決まりと突き合わせる。"
+      - to: IF-72-3
+        item: "constraints[スキーマの違反の行]"
+        type: requires
+        when: "`check_document_schemas` を修正するときに、IF-72-3 の「スキーマの違反の行」の決まりと突き合わせる。"
   - name: check_design_schemas
     title: 設計書のスキーマの検査
     kind: 関数
@@ -477,9 +494,18 @@ functions:
       - MOD-72-2#functions[line_of]
       - MOD-72-2#functions[format_path]
     refs:
-      - IF-72-3#constraints[設計書のスキーマの検査]
-      - IF-72-3#constraints[スキーマの違反の行]
-      - IF-72-3#constraints[`x-rules`・`x-bad-examples` の形式]
+      - to: IF-72-3
+        item: "constraints[設計書のスキーマの検査]"
+        type: requires
+        when: "`check_design_schemas` を修正するときに、IF-72-3 の「設計書のスキーマの検査」の決まりと突き合わせる。"
+      - to: IF-72-3
+        item: "constraints[スキーマの違反の行]"
+        type: requires
+        when: "`check_design_schemas` を修正するときに、IF-72-3 の「スキーマの違反の行」の決まりと突き合わせる。"
+      - to: IF-72-3
+        item: "constraints[`x-rules`・`x-bad-examples` の形式]"
+        type: requires
+        when: "`check_design_schemas` を修正するときに、IF-72-3 の「`x-rules`・`x-bad-examples` の形式」の決まりと突き合わせる。"
   - name: check_word_list_copy
     title: 対応表のコピーの検査
     kind: 関数
@@ -518,7 +544,10 @@ functions:
       - MOD-148-3#functions[render_copy]
       - MOD-72-2#functions[load_document]
     refs:
-      - IF-72-3#constraints[対応表のコピー]
+      - to: IF-72-3
+        item: "constraints[対応表のコピー]"
+        type: requires
+        when: "`check_word_list_copy` を修正するときに、IF-72-3 の「対応表のコピー」の決まりと突き合わせる。"
   - name: check_design_templates
     title: 設計書のテンプレートの検査
     kind: 関数
@@ -575,7 +604,10 @@ functions:
       - MOD-201-1#functions[build_items]
       - MOD-72-2#functions[load_document]
     refs:
-      - IF-72-3#constraints[設計書のテンプレート]
+      - to: IF-72-3
+        item: "constraints[設計書のテンプレート]"
+        type: requires
+        when: "`check_design_templates` を修正するときに、IF-72-3 の「設計書のテンプレート」の決まりと突き合わせる。"
   - name: list_targets
     title: 検査する文書の列挙
     kind: 関数
@@ -796,7 +828,10 @@ functions:
     callees:
       - MOD-312-1#functions[plan_skills]
     refs:
-      - IF-72-3#constraints[SKILL.md]
+      - to: IF-72-3
+        item: "constraints[SKILL.md]"
+        type: requires
+        when: "`check_skills` を修正するときに、IF-72-3 の「SKILL.md」の決まりと突き合わせる。"
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と `jsonschema>=4.26.0`（LIB-72-2）と `yamllint==1.38.0`（LIB-176-3）を記載し、`knowledge_checks.py`・`build_word_list.py`・`build_skills.py`（`plan_skills`・`COMMAND`）・`_lint.py`・`_workflow.py`（`check_workflows`）を同じフォルダから import する。
 test_files:

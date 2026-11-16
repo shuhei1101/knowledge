@@ -158,14 +158,7 @@ properties:
           examples:
           - 一時ファイル
   refs:
-    type: array
-    title: 関連
-    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-    x-used-by:
-      - 生成で、関連する設計書へのリンクにする。
-      - レビューで、関連する設計書をたどって食い違いを確認する。
-    items:
-      $ref: common.schema.yaml#/$defs/ref
+    $ref: common.schema.yaml#/$defs/related
   decisions:
     type: array
     title: 検討事項
@@ -482,4 +475,6 @@ examples:
   - pattern: tmp/
     reason: 一時ファイル
   refs:
-  - ARCH-1#
+  - to: ARCH-1
+    type: references
+    when: サブシステムのフォルダを追加・移動するときに、アーキテクチャ図のサブシステムの分け方を確認する。

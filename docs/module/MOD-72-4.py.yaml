@@ -56,7 +56,9 @@ functions:
     callees:
       - '#functions[check_document]'
     refs:
-      - IF-72-1#
+      - to: IF-72-1
+        type: requires
+        when: "`main` を修正するときに、IF-72-1 の決まりと突き合わせる。"
   - name: check_document
     title: 文書の検査
     kind: 関数
@@ -184,7 +186,10 @@ functions:
       - MOD-148-2#functions[entry_hits]
       - MOD-72-2#functions[line_of]
     refs:
-      - IF-72-1#constraints[対応表の `examples`]
+      - to: IF-72-1
+        item: "constraints[対応表の `examples`]"
+        type: requires
+        when: "`check_word_list` を修正するときに、IF-72-1 の「対応表の `examples`」の決まりと突き合わせる。"
   - name: build_id_index
     title: ID の索引の作成
     kind: 関数
@@ -249,7 +254,10 @@ functions:
         mock: なし
         expected: '`"alpha 規約"`'
     refs:
-      - IF-72-1#constraints[`aliases` の衝突]
+      - to: IF-72-1
+        item: "constraints[`aliases` の衝突]"
+        type: requires
+        when: "`normalize_name` を修正するときに、IF-72-1 の「`aliases` の衝突」の決まりと突き合わせる。"
   - name: build_name_index
     title: 名前の索引の作成
     kind: 関数
@@ -305,7 +313,10 @@ functions:
       - MOD-72-2#functions[load_document]
       - '#functions[normalize_name]'
     refs:
-      - IF-72-1#constraints[`aliases` の衝突]
+      - to: IF-72-1
+        item: "constraints[`aliases` の衝突]"
+        type: requires
+        when: "`build_name_index` を修正するときに、IF-72-1 の「`aliases` の衝突」の決まりと突き合わせる。"
   - name: check_aliases
     title: aliases の衝突の検査
     kind: 関数
@@ -348,7 +359,10 @@ functions:
       - '#functions[normalize_name]'
       - MOD-72-2#functions[line_of]
     refs:
-      - IF-72-1#constraints[`aliases` の衝突]
+      - to: IF-72-1
+        item: "constraints[`aliases` の衝突]"
+        type: requires
+        when: "`check_aliases` を修正するときに、IF-72-1 の「`aliases` の衝突」の決まりと突き合わせる。"
   - name: check_alias_duplicates
     title: 文書の中の aliases の重複の検査
     kind: 関数
@@ -396,7 +410,10 @@ functions:
       - '#functions[normalize_name]'
       - MOD-72-2#functions[line_of]
     refs:
-      - IF-72-1#constraints[文書の中の `aliases` の重複]
+      - to: IF-72-1
+        item: "constraints[文書の中の `aliases` の重複]"
+        type: requires
+        when: "`check_alias_duplicates` を修正するときに、IF-72-1 の「文書の中の `aliases` の重複」の決まりと突き合わせる。"
   - name: check_duplicate_ids
     title: 項目の ID の重複の検査
     kind: 関数

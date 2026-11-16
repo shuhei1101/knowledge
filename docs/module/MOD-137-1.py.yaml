@@ -109,7 +109,9 @@ functions:
     callees:
       - MOD-72-2#functions[load_config]
     refs:
-      - IF-137-1#
+      - to: IF-137-1
+        type: requires
+        when: "`main` を修正するときに、IF-137-1 の決まりと突き合わせる。"
   - name: load_converters
     title: 変換のコマンドの読み込み
     kind: 関数
@@ -285,7 +287,9 @@ functions:
         mock: なし
         expected: '`hello-world`・`使い方`・`uv-で入れる`'
     refs:
-      - LIB-137-1#
+      - to: LIB-137-1
+        type: references
+        when: "`github_slug` の外部ライブラリの呼び出し方を修正するときに、LIB-137-1 の使用する部分を確認する。"
   - name: item_anchors
     title: 項目の見出しの ID の対応
     kind: 関数
@@ -453,7 +457,10 @@ functions:
         expected: '`BuildError` で、メッセージに `npx`'
         exception: '`npx` が PATH に無い'
     refs:
-      - LIB-137-1#catalogs[コマンド].entries[build]
+      - to: LIB-137-1
+        item: "catalogs[コマンド].entries[build]"
+        type: references
+        when: "`run_mdmark` の外部ライブラリの呼び出し方を修正するときに、LIB-137-1 の「build」の使用する部分を確認する。"
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を記載し、`_common.py` を同じフォルダから import する。mdmark（LIB-137-1）は `npx` で子プロセスとして呼ぶので Python の依存には入れない
   変換を子プロセスで呼ぶ: 変換は `knowledge_markdown.py` を import せず、`project-index.yaml` の `converters[].run` を起動する。dev-docs の画面と同じ Markdown になる

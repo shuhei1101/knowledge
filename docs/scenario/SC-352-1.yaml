@@ -107,7 +107,10 @@ scenarios:
       - 同じ層の `run_all` を手元で実行でき、手元のコマンドは変わっていない
     test: test_error_when_workflow_cannot_start
 refs:
-  - TP-72-1#layers
+  - to: TP-72-1
+    item: layers
+    type: references
+    when: 実行する層の種類を確認するとき。
 notes:
   E2E テストの動かし方: 検証用のブランチを push し、テスト実行方法の `run_runner` のコマンドを子プロセスとして起動して、終了コード・標準出力・標準エラーで確認する。ブランチの用意と削除は、規約『GitHub Actions の workflow のテスト』のブランチの用意と削除と同じにする。本番で起動できない場面（無料枠の使い切り・GitHub の障害）は、起動する workflow のファイル名の差し替えで誘発する
 test_file: tests/e2e/単一ユースケース/test_開発者がランナーでテストの層の全件を実行する.py

@@ -93,4 +93,6 @@ layers:
     location: local
     duration: 約 4 分（4 件の workflow の実行を順に待つ。1 件はランナーの割り当てと実行で 1 分前後）
 refs:
-  - IF-352-1#
+  - to: IF-352-1
+    type: references
+    when: "`runner` の層の実行の流れを確認するとき。"
