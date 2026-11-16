@@ -2,19 +2,27 @@ docs:
   - page: schemas/knowhow.schema.yaml
     new: true
     change: '種類「ノウハウ」（kind: knowhow。名前はユーザーへ確認する）のスキーマを新設する。共通のメタデータ（knowledge-common.schema.yaml#/$defs/metadata）に、従う必要があるかのキーと、craft-intake が返却する項目（技法・使用する場面・実例・出典・確からしさ）に合わせてキーで条件を分ける項目を持たせる'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:15.397549+00:00'
   - page: schemas/design/common.schema.yaml
     new: false
     change: 共通の型 flowchart の clicks[].href の description と examples に、id:{文書の ID}・id:{文書の ID}#{項目のパス} のリンクを書けることを追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:15.397549+00:00'
   - page: docs/template/template-architecture.yaml
     new: false
     change: scripts/build_templates.py で生成し直し、clicks[].href の説明の変更を取り込む
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:15.397549+00:00'
   - page: docs/template/template-dataflow.yaml
     new: false
     change: scripts/build_templates.py で生成し直し、clicks[].href の説明の変更を取り込む
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:15.397549+00:00'
 scope_out:
   - item: 配信の設定（project-index.yaml）へのノウハウの行と目次・変換と検査・テンプレート・アーキテクチャ図とフォルダ構成の設計書・規約『ドキュメント管理』の修正、規約からノウハウへの移動
     reason: '#419 の範囲はスキーマの追加だけで、既存の文書と rule.schema は動かさない（後続の #418 が持つ）'

@@ -65,18 +65,20 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-16T21:21:55.351024+00:00'
   - process: ドキュメント修正
-    status: todo
+    status: done
     note: schemas/knowhow.schema.yaml の新設、schemas/design/common.schema.yaml の clicks[].href の説明と例、template-architecture.yaml・template-dataflow.yaml の生成し直し
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:18.358388+00:00'
   - process: 単体テスト作成
     status: skipped
     reason: スクリプトを変えない
     updated_by: planner
     updated_at: '2026-11-16T21:21:55.351024+00:00'
   - process: 実装
-    status: skipped
-    reason: スクリプトを変えない（反映作業のスクリプトはドキュメント修正の工程で書く）
+    status: todo
     updated_by: planner
-    updated_at: '2026-11-16T21:21:55.351024+00:00'
+    updated_at: '2026-11-16T21:29:18.358388+00:00'
+    note: 反映作業『設計書のスキーマのタグの作成』のスクリプトの作成だけ（コードは変えない）
   - process: 結合テスト作成
     status: skipped
     reason: スクリプトを変えない
