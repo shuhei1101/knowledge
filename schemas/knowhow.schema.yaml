@@ -1,0 +1,135 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: ノウハウ
+description: 規約ではない知見（台本・演出・ゲーム作りなどの技法）。1 つの技法を 1 文書にし、使用する場面・実例・裏付け・確信度をキーで持つ。
+allOf:
+  - $ref: knowledge-common.schema.yaml#/$defs/metadata
+properties:
+  kind:
+    title: 種類
+    description: 文書の種類。この種類では `knowhow` に固定する。
+    const: knowhow
+  necessity:
+    title: 従う必要
+    description: '`must` は守らないと質が崩れるので毎回従う技法、`reference` は知っていると質が上がる参考の技法。'
+    enum:
+      - must
+      - reference
+  scenes:
+    title: 使用する場面
+    description: 技法が有効な場面と有効でない場面。
+    type: object
+    additionalProperties: false
+    required:
+      - fits
+    properties:
+      fits:
+        title: 有効な場面
+        description: 技法が有効な場面の並び。
+        type: array
+        minItems: 1
+        items:
+          type: string
+          minLength: 1
+        x-rules:
+          - 1 件を 1 文にする。
+        examples:
+          - - 配信の冒頭で視聴者の注意を集めるとき
+      misfits:
+        title: 有効でない場面
+        description: 技法が有効でない場面と、逆効果になる場面の並び。
+        type: array
+        minItems: 1
+        items:
+          type: string
+          minLength: 1
+        x-rules:
+          - 1 件を 1 文にする。
+        examples:
+          - - 視聴者の質問に回答している途中
+  cases:
+    title: 実例
+    description: 技法を使用した作品・場面・台詞の例。
+    type: array
+    minItems: 1
+    items:
+      $ref: '#/$defs/case'
+  evidence:
+    title: 裏付け
+    description: 技法を述べている出典と、その話し手の種類の並び。
+    type: array
+    minItems: 1
+    items:
+      $ref: '#/$defs/evidence_item'
+    x-rules:
+      - 別の出典が同じことを述べていれば、出典ごとに要素を並べる。
+  confidence:
+    title: 確信度
+    description: '`evidence` から決めた技法の確からしさ。'
+    enum:
+      - high
+      - medium
+      - low
+    x-rules:
+      - '`high` は、実践者本人の言葉があり、別の出所でも同じことが述べられている技法に付ける。'
+      - '`medium` は、実践者本人の言葉だけの技法か、別々の出所の第三者が同じことを述べている技法に付ける。'
+      - '`low` は、匿名の書き込みか、出所が 1 つの第三者のまとめだけの技法に付ける。'
+required:
+  - last_reviewed
+  - sources
+  - necessity
+  - scenes
+  - evidence
+  - confidence
+unevaluatedProperties: false
+$defs:
+  case:
+    title: 実例
+    description: 技法を使用した 1 つの例。
+    type: object
+    additionalProperties: false
+    required:
+      - work
+      - content
+    properties:
+      work:
+        title: 作品・場面
+        description: 例が出てくる作品と場面。
+        type: string
+        minLength: 1
+        examples:
+          - 『{作品名}』第 1 話の冒頭
+      content:
+        title: 内容
+        description: その場面で技法をどう使用しているか。台詞の引用を含めてよい。
+        type: string
+        minLength: 1
+      source:
+        title: 出典の略号
+        description: 例を拠り所にした出典の `sources[].id`。
+        type: string
+        minLength: 1
+        examples:
+          - A
+  evidence_item:
+    title: 裏付けの出典
+    description: 技法を述べている出典 1 件と、その話し手の種類。
+    type: object
+    additionalProperties: false
+    required:
+      - source
+      - speaker
+    properties:
+      source:
+        title: 出典の略号
+        description: 技法を述べている出典の `sources[].id`。
+        type: string
+        minLength: 1
+        examples:
+          - A
+      speaker:
+        title: 話し手
+        description: '`practitioner` は実践者本人、`third_party` は第三者のまとめ、`anonymous` は匿名の書き込み。'
+        enum:
+          - practitioner
+          - third_party
+          - anonymous
