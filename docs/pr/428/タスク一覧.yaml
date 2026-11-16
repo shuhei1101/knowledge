@@ -1,0 +1,69 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存リポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-16T12:24:17.763634+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: 設計書が揃っている既存リポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-16T12:24:17.763634+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めの依頼ではないため対象外
+    updated_by: planner
+    updated_at: '2026-11-16T12:24:17.763634+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: 移行は mdmark v0.11.0 の mdmark upgrade で行い、未検証の技術機構に依存しないため
+    updated_by: planner
+    updated_at: '2026-11-16T12:24:17.763634+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: 利用者の流れの組み合わせは変わらないため
+    updated_by: planner
+    updated_at: '2026-11-16T12:24:17.763634+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 画面を作らないため（モック要否）
+    updated_by: planner
+    updated_at: '2026-11-16T12:24:17.763634+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面を作らないため（モック要否）
+    updated_by: planner
+    updated_at: '2026-11-16T12:24:17.763634+00:00'
+  - process: 単一ユースケース設計
+    status: todo
+    note: SC-72-3・SC-72-6 の本文が今の書き方のマーカーを例に挙げている箇所を追随させる
+  - process: モック作成
+    status: skipped
+    reason: 画面を作らないため（モック要否）
+    updated_by: planner
+    updated_at: '2026-11-16T12:24:17.763634+00:00'
+  - process: インターフェース定義設計
+    status: todo
+    note: IF-72-2（変換の出力の表のマーカー・embed の行）・IF-201-1（テンプレートの表のマーカー）・IF-72-3（legacy_mark の例）
+  - process: 部品設計
+    status: skipped
+    reason: 画面の部品を持たないため
+    updated_by: planner
+    updated_at: '2026-11-16T12:24:17.763634+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: 画面を持たないため（画面設計要否）
+    updated_by: planner
+    updated_at: '2026-11-16T12:24:17.763634+00:00'
+  - process: モジュール構成設計
+    status: todo
+    note: MOD-72-5・MOD-201-1 の表のマーカーと embed の行の記載
+  - process: ドキュメント修正
+    status: todo
+    note: docs/ の YAML の本文（docs/pr を除く）・docs/pr の PR ドキュメントの Markdown へ mdmark upgrade を適用、docs/template を生成し直す、docs/*/README.md を design_docs publish で生成し直す
+  - process: 単体テスト作成
+    status: todo
+  - process: 実装
+    status: todo
+  - process: 結合テスト作成
+    status: todo

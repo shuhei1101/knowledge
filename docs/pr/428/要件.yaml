@@ -1,0 +1,86 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: following
+    detail: 画面で参照する文書の表・埋め込みのマーカーが JSON の記載になる。シナリオの本文の例を追随させる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: following
+    detail: 全ての文書の検査で mdmark の点検が legacy_mark を出さなくなる。シナリオの本文の前の記法の例を追随させる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: run_only
+    detail: 生成するテンプレートの表のマーカーが JSON の記載になる。流れは変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: run_only
+    detail: 公開文書を 1 枚の HTML にする経路が JSON の記載のマーカーを描く。流れは変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: run_only
+    detail: 書き込む文書の本文のマーカーの記載が変わる。流れは変わらない
+    depends_on: []
+docs:
+  - page: docs/rule
+    new: false
+    change: 規約の YAML の本文の今の書き方のマーカーを mdmark upgrade で JSON の記載へ移す
+    status: todo
+  - page: docs/checksheet
+    new: false
+    change: チェックシートの本文のマーカーを JSON の記載へ移す
+    status: todo
+  - page: docs/decision-table
+    new: false
+    change: 判定表の本文のマーカーを JSON の記載へ移す
+    status: todo
+  - page: docs/flowchart
+    new: false
+    change: 判定フローチャートの本文のマーカーを JSON の記載へ移す
+    status: todo
+  - page: docs/word-list
+    new: false
+    change: 対応表の本文のマーカーを JSON の記載へ移す
+    status: todo
+  - page: docs/library/LIB-137-1.yaml
+    new: false
+    change: 本文のマーカーを JSON の記載へ移す
+    status: todo
+  - page: docs/template
+    new: false
+    change: 設計書のテンプレートを scripts/build_templates.py で生成し直し、生成元を持たないテンプレートの本文のマーカーを mdmark upgrade で移す
+    status: todo
+  - page: docs/pr
+    new: false
+    change: マージ済みの PR ドキュメントの Markdown へ mdmark upgrade を適用し、移行の報告に挙がる記載を記載し直す（テスト結果の .log は除く）
+    status: todo
+  - page: docs/README.md
+    new: false
+    change: AI Monitor の design_docs publish で生成し直し、表のマーカーを JSON の記載にする（手で直さない）
+    status: todo
+  - page: docs/interface/README.md
+    new: false
+    change: design_docs publish で生成し直す
+    status: todo
+  - page: docs/library/README.md
+    new: false
+    change: design_docs publish で生成し直す
+    status: todo
+  - page: docs/module/README.md
+    new: false
+    change: design_docs publish で生成し直す
+    status: todo
+  - page: docs/scenario/README.md
+    new: false
+    change: design_docs publish で生成し直す
+    status: todo
+scope_out:
+  - item: docs/pr/{番号}/テスト結果/ の .log に残る今の書き方のマーカー
+    reason: テストの実行時の出力の記録で、mdmark で描かず、書き換えると記録が実際の出力と合わなくなるため
+    plan: none
+  - item: mdmark の記法を含む .md の拡張子を .mark.md へ移す
+    reason: マーカーの記載の移行とは別の変更で、別の Issue がある
+    plan: '#331'
