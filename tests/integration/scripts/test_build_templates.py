@@ -132,7 +132,7 @@ _TEMPLATE_CONFIG = (
     "  - id: item-list-01\n"
     "    name: 項目\n"
     "    body: |-\n"
-    "      <!-- table: data -->\n"
+    '      <!-- table: {"kind": "data"} -->\n'
     "\n"
     "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
     "      | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
@@ -182,7 +182,7 @@ def test_normal(run_script: RunScript, tmp_path: Path) -> None:
     assert doc["items"][0]["body"] == "データストアの構造をまとめる。"
     assert doc["items"][1]["body"] == "- 1 ファイル = 分類 1 つにする。"
     assert doc["items"][2]["body"] == (
-        "<!-- table: data -->\n"
+        '<!-- table: {"kind": "data"} -->\n'
         "\n"
         "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
         "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"
@@ -195,7 +195,7 @@ def test_normal(run_script: RunScript, tmp_path: Path) -> None:
         "<!-- /table -->"
     )
     assert doc["items"][3]["body"] == (
-        "<!-- table: data -->\n"
+        '<!-- table: {"kind": "data"} -->\n'
         "\n"
         "| 名前 | 決まり | 悪い例 | 理由 |\n"
         "| --- | --- | --- | --- |\n"
@@ -258,7 +258,7 @@ def test_normal_recursive_ref(run_script: RunScript, tmp_path: Path) -> None:
         load_safe((root / "docs/template/template-config.yaml").read_text(encoding="utf-8")),
     )
     assert doc["items"][1]["body"] == (
-        "<!-- table: data -->\n"
+        '<!-- table: {"kind": "data"} -->\n'
         "\n"
         "| 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
         "| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"

@@ -161,7 +161,7 @@ def test_normal_when_kind_specific_keys(run_script: RunScript, tmp_path: Path) -
     result = run_script("knowledge_markdown", tmp_path, stdin)
     # 検証
     assert result.exit_code == 0
-    assert "## 引数\n\n<!-- table: data -->\n\n" in result.stdout
+    assert '## 引数\n\n<!-- table: {"kind": "data"} -->\n\n' in result.stdout
     assert "| target | 点検する範囲 |" in result.stdout
     assert "## 事前条件\n\n- 作業ツリーがある\n- 規約を読める\n" in result.stdout
 
