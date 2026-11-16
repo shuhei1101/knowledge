@@ -47,6 +47,12 @@
 - `TP-72-1.yaml` と PR ドキュメントを参照する結合テストは無い
 - 実行するコマンドは TL-6 の `run_one`（`location: local`）
 
+### 結合
+
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| [tests/e2e/workflow/test_test_yml.py](https://github.com/shuhei1101/knowledge/blob/eb07184/tests/e2e/workflow/test_test_yml.py) | `test_normal`・`test_error_when_tests_fail` | 実行のみ | ✅ | 2 テスト pass<br>`テスト結果/20261117063431_eb07184_結合テスト.log`<br>`/tmp/pytest-of-shuhei2441` が root の所有で pytest の一時フォルダを作れなかったため、`TMPDIR` を `/tmp/ai-monitor-435-tmp` にして回した（コマンドは TL-6 の `run_one` のまま） |
+
 ### lint
 
 | コマンド | 結果 | 補足 |

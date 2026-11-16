@@ -1,0 +1,11 @@
+$ TMPDIR=/tmp/ai-monitor-435-tmp uv run --no-project --python 3.14 --with pytest==9.2.0 pytest tests/e2e/workflow/test_test_yml.py::test_normal tests/e2e/workflow/test_test_yml.py::test_error_when_tests_fail
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/shuhei2441/repo/knowledge/.claude/worktrees/chore-test-procedure-tl2-run-all-aggregate-exit-code
+configfile: pytest.ini
+collected 2 items
+
+tests/e2e/workflow/test_test_yml.py ..                                   [100%]
+
+========================= 2 passed in 83.05s (0:01:23) =========================
+exit=0
