@@ -22,3 +22,29 @@
 | 工程 | 範囲 | 補足 |
 | --- | --- | --- |
 | モジュール構成設計 | `8b2f90a..bfa48f6` | TP-72-1 の TL-2 の `run_all`。project-index の `write_docs` が作業ツリーから書き込めず（ai-monitor#3547 と同じ原因）、YAML を直接編集した |
+
+## テスト結果
+
+### 単体
+
+なし（変更は TP-72-1 の記載と `.github/workflows/test.yml` の `run:` のコマンドだけで、規約『V字モデル』で対応する単体テストが無い）
+
+### 結合テストの実行範囲
+
+| 変更したファイル | 結果 | 実行する結合テスト | 結合テストが無い入口 |
+| --- | --- | --- | --- |
+| `.github/workflows/test.yml` | R7（TL-6。IF-352-1 の `test_file`） | `tests/e2e/workflow/test_test_yml.py::test_normal`・`tests/e2e/workflow/test_test_yml.py::test_error_when_tests_fail` | - |
+| `.github/workflows/test.yml` | R7（TL-3） | - | - |
+| `docs/test-procedure/TP-72-1.yaml` | R7（TL-3・TL-6） | - | - |
+| `docs/pr/435/CI.md`・`README.md`・`タスク一覧.yaml`・`要件.md`・`要件.yaml` | R7（TL-3・TL-6） | - | - |
+
+- `test.yml` は、`layer: unit` のときの「層の全件を回す」の `run:` だけを変えた。`layer: unit` で起動するフロー（正常系・異常系（テストの失敗））だけが変えたコマンドを通り、`layer: integration` の 2 フローは通らない
+- TL-3 の [tests/integration/scripts/test_check_all.py](https://github.com/shuhei1101/knowledge/blob/1926f0b/tests/integration/scripts/test_check_all.py) は workflow をフィクスチャの `pages.yml` で検査し、`scripts/_workflow.py` の突き合わせも trigger・入力・`concurrency`・step の名前と `if` だけを比べ、`run:` の中身を比べないため影響しない
+- `TP-72-1.yaml` と PR ドキュメントを参照する結合テストは無い
+- 実行するコマンドは TL-6 の `run_one`（`location: local`）
+
+### lint
+
+| コマンド | 結果 | 補足 |
+| --- | --- | --- |
+| TL-1 の全件実行 | ✅ | ruff check・ruff format --check・pyright（0 errors）・actionlint（shellcheck を含む）が全て通る<br>`テスト結果/20261117062531_1926f0b_lint.log` |
