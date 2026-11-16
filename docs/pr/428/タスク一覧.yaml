@@ -66,8 +66,10 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-16T15:28:13.996101+00:00'
   - process: ドキュメント修正
-    status: todo
-    note: docs/ の YAML の本文（docs/pr を除く）・docs/pr の PR ドキュメントの Markdown へ mdmark upgrade を適用、docs/template を生成し直す、docs/*/README.md を design_docs publish で生成し直す
+    status: done
+    note: docs/template は build_templates.py の修正後に生成し直すため、実装の工程で直す
+    updated_by: planner
+    updated_at: '2026-11-16T15:36:14.412090+00:00'
   - process: 単体テスト作成
     status: todo
   - process: 実装

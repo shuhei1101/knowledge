@@ -27,56 +27,80 @@ use_cases:
 docs:
   - page: docs/rule
     new: false
-    change: 規約の YAML の本文の今の書き方のマーカーを mdmark upgrade で JSON の記載へ移す
-    status: todo
+    change: '規約の YAML の本文の行だけの <!-- table: data --> を JSON の記載にする'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
   - page: docs/checksheet
     new: false
     change: チェックシートの本文のマーカーを JSON の記載へ移す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
   - page: docs/decision-table
     new: false
     change: 判定表の本文のマーカーを JSON の記載へ移す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
   - page: docs/flowchart
     new: false
     change: 判定フローチャートの本文のマーカーを JSON の記載へ移す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
   - page: docs/word-list
     new: false
     change: 対応表の本文のマーカーを JSON の記載へ移す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
   - page: docs/library/LIB-137-1.yaml
     new: false
-    change: 本文のマーカーを JSON の記載へ移す
-    status: todo
+    change: '本文の <!-- table: data --> は点検の結果を説明するインラインの言及で、マーカーではないため変えない'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
   - page: docs/template
     new: false
-    change: 設計書のテンプレートを scripts/build_templates.py で生成し直し、生成元を持たないテンプレートの本文のマーカーを mdmark upgrade で移す
+    change: '設計書のテンプレートを scripts/build_templates.py で生成し直し、生成元を持たないテンプレートの行だけの <!-- table: data --> を JSON の記載にする'
     status: todo
   - page: docs/pr
     new: false
-    change: マージ済みの PR ドキュメントの Markdown へ mdmark upgrade を適用し、移行の報告に挙がる記載を記載し直す（テスト結果の .log は除く）
-    status: todo
+    change: 'マージ済みの PR ドキュメントの Markdown の行だけの <!-- table: data --> を JSON の記載にする（テスト結果の .log とインラインの言及は除く）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
   - page: docs/README.md
     new: false
     change: AI Monitor の design_docs publish で生成し直し、表のマーカーを JSON の記載にする（手で直さない）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
   - page: docs/interface/README.md
     new: false
     change: design_docs publish で生成し直す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
   - page: docs/library/README.md
     new: false
     change: design_docs publish で生成し直す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
   - page: docs/module/README.md
     new: false
     change: design_docs publish で生成し直す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
   - page: docs/scenario/README.md
     new: false
     change: design_docs publish で生成し直す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
 scope_out:
   - item: docs/pr/{番号}/テスト結果/ の .log に残る今の書き方のマーカー
     reason: テストの実行時の出力の記録で、mdmark で描かず、書き換えると記録が実際の出力と合わなくなるため
