@@ -1,13 +1,13 @@
 use_cases:
   - kind: single
     scenario: docs/scenario/SC-72-3.yaml
-    impact: following
-    detail: 画面で参照する文書の表・埋め込みのマーカーが JSON の記載になる。シナリオの本文の例を追随させる
+    impact: run_only
+    detail: 画面で参照する文書の表のマーカーが JSON の記載になる。埋め込みのマーカーと流れは変わらない
     depends_on: []
   - kind: single
     scenario: docs/scenario/SC-72-6.yaml
-    impact: following
-    detail: 全ての文書の検査で mdmark の点検が legacy_mark を出さなくなる。シナリオの本文の前の記法の例を追随させる
+    impact: run_only
+    detail: 全ての文書の検査で mdmark の点検が移した文書を点検する。前の記法を違反にしない場面と流れは変わらない
     depends_on: []
   - kind: single
     scenario: docs/scenario/SC-201-1.yaml

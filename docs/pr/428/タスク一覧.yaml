@@ -35,8 +35,11 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-16T12:24:17.763634+00:00'
   - process: 単一ユースケース設計
-    status: todo
+    status: skipped
     note: SC-72-3・SC-72-6 の本文が今の書き方のマーカーを例に挙げている箇所を追随させる
+    reason: 'SC-72-3 の <!-- embed: ... --> は knowledge の変換のスクリプトが展開する独自のマーカーで mdmark の記法（記法.mark.md の一覧）に無く、mdmark に届かないため変えない。SC-72-6 の <!-- table: data --> は全ての文書の検査が legacy_mark を違反にしないことを確かめる場面の条件で、移行の対象ではない'
+    updated_by: planner
+    updated_at: '2026-11-16T12:31:56.707907+00:00'
   - process: モック作成
     status: skipped
     reason: 画面を作らないため（モック要否）
