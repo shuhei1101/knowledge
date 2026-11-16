@@ -379,7 +379,7 @@ functions:
     container: scripts/build_templates.py
     usecase: 共通
     scope: internal
-    summary: 'キーの行から、`<!-- table: data -->` で包んだキーの表の Markdown を作る'
+    summary: 'キーの行から、`<!-- table: {"kind": "data"} -->` で包んだキーの表の Markdown を作る'
     args:
       - name: rows
         title: キーの行
