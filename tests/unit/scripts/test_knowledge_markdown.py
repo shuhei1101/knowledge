@@ -261,7 +261,7 @@ def test_convert() -> None:
 def test_convert_when_body_has_markers() -> None:
     """本文を書き換えない（正常系）。"""
     # 準備
-    body = "<!-- table: data -->\n\n| 列 | 値 |\n| --- | --- |\n| [A](id:a#x) | `x` |\n\n<!-- /table -->"
+    body = "<!-- table: {\"kind\": \"data\"} -->\n\n| 列 | 値 |\n| --- | --- |\n| [A](id:a#x) | `x` |\n\n<!-- /table -->"
     doc = {
         "id": "a",
         "kind": "rule",
@@ -313,7 +313,7 @@ def test_convert_when_extra_keys() -> None:
     # 実行
     result = convert(doc, {"title": "規約", "properties": {"arguments": {"title": "引数"}}}, {})
     # 検証
-    assert "## 引数\n\n<!-- table: data -->" in result
+    assert "## 引数\n\n<!-- table: {\"kind\": \"data\"} -->" in result
 
 
 def test_convert_when_no_title_in_schema() -> None:
@@ -358,7 +358,7 @@ def test_convert_when_word_list() -> None:
         doc, {"title": "単語の対応表", "properties": {"entries": {"title": "対応表の行"}}}, {}
     )
     # 検証
-    assert "## 対応表の行\n\n<!-- table: data -->\n\n| NG | OK |" in result
+    assert "## 対応表の行\n\n<!-- table: {\"kind\": \"data\"} -->\n\n| NG | OK |" in result
     assert "| 形 | スキーマ |" in result
     assert "(?<!" not in result
     assert "形を決める" not in result
@@ -377,7 +377,7 @@ def test_convert_when_overview_has_embed() -> None:
     # 実行
     result = convert(doc, {"title": "規約"}, {"x": _ENTRIES})
     # 検証
-    assert result.startswith("# 名前\n\n説明\n\n<!-- table: data -->\n\n| NG | OK |")
+    assert result.startswith("# 名前\n\n説明\n\n<!-- table: {\"kind\": \"data\"} -->\n\n| NG | OK |")
     assert "<!-- embed:" not in result
 
 
@@ -457,7 +457,7 @@ def test_render_value_when_object_list() -> None:
     # 実行
     result = render_value([{"name": "x", "note": "a|b"}, {"name": "y"}])
     # 検証
-    assert result.startswith("<!-- table: data -->")
+    assert result.startswith("<!-- table: {\"kind\": \"data\"} -->")
     assert result.endswith("<!-- /table -->")
     assert "| name | note |" in result
     assert "| x | a\\|b |" in result
@@ -488,7 +488,7 @@ def test_render_word_list() -> None:
     # 実行
     result = render_word_list(entries)
     # 検証
-    assert result.startswith("<!-- table: data -->")
+    assert result.startswith("<!-- table: {\"kind\": \"data\"} -->")
     assert result.endswith("<!-- /table -->")
     assert "| NG | OK |" in result
     assert "| 形 | スキーマ・構造（図形は除く） |" in result
