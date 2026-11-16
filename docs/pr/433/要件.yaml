@@ -1,0 +1,33 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-352-1.yaml
+    impact: none
+    detail: 関連の記載方法だけが変わり、テストの層の全件を実行する流れは変わらない
+    depends_on: []
+docs:
+  - page: schemas/design/common.schema.yaml
+    new: false
+    change: 設計書の関連の要素の型と関連の並びの型（上限 8 件）を追加し、`$defs/markdown` の `x-rules` の `refs` の記載を関連の要素に合わせる。`$defs/ref` は変えない
+    status: todo
+  - page: schemas/design/module.schema.yaml
+    new: false
+    change: 全ての `refs` を関連の並びの型にする（他の種類のスキーマ 22 件も同じ変更。refs 以外の `$defs/ref` は変えない）
+    status: todo
+  - page: docs/template/template-module.yaml
+    new: false
+    change: '`scripts/build_templates.py` で設計書のテンプレートを全て生成し直す'
+    status: todo
+  - page: docs/dev-command/CMD-72-1.yaml
+    new: false
+    change: '`refs` を関連の要素（to・item・type・when）へ書き換える（`refs` を持つ knowledge 自身の設計書と docs/skill/text-review.yaml も同じ変更）'
+    status: todo
+scope_out:
+  - item: 前のタグの設計書の `refs` を関連の要素へ書き換えるバージョンアップ変換・`type`・`when` の検証・`trace_related` のための `dev-docs.yaml` の対応
+    reason: 起点 Issue の本文で AI Monitor の作業 PR が受け持つと決まっている
+    plan: shuhei1101/ai-monitor#3534
+  - item: AI Monitor の規約『ドキュメント管理』の `refs` を参照の型で持つという記載
+    reason: AI Monitor のリポジトリの文書で、新規のタグへの追従と合わせて AI Monitor の作業 PR が修正する
+    plan: shuhei1101/ai-monitor#3534
+  - item: '`refs` 以外の `$defs/ref` を使用する構造の参照（container・callers・callees・uses 等）の関連の要素への移行'
+    reason: 起点 Issue の本文で文字列のまま残すと決まっている
+    plan: none
