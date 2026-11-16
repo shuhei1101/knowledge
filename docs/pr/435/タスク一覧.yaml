@@ -80,5 +80,8 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-16T21:26:08.939572+00:00'
   - process: 結合テスト作成
-    status: todo
+    status: done
     note: 'テストコードは変えない。tests/e2e/workflow/test_test_yml.py の layer: unit のフローを実行するかを、結合テストの実行範囲で reviewer に確認して決める'
+    reason: テストコードは変えず、reviewer が合格した範囲の test_test_yml.py の 2 件を回して全 pass を確認した
+    updated_by: planner
+    updated_at: '2026-11-16T21:34:42.975051+00:00'
