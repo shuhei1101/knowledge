@@ -265,7 +265,7 @@ def _table(rows: Sequence[Mapping[str, Any]]) -> str:
     lines.extend(
         "| " + " | ".join(_cell(row.get(column)) for column in columns) + " |" for row in rows
     )
-    return "<!-- table: data -->\n\n" + "\n".join(lines) + "\n\n<!-- /table -->"
+    return '<!-- table: {"kind": "data"} -->\n\n' + "\n".join(lines) + "\n\n<!-- /table -->"
 
 
 def render_value(value: object) -> str:
@@ -297,7 +297,7 @@ def render_word_list(entries: Sequence[Mapping[str, Any]]) -> str:
         if entry.get("note"):
             ok += f"（{entry['note']}）"
         lines.append(f"| {_cell(entry.get('ng'))} | {_cell(ok)} |")
-    return "<!-- table: data -->\n\n" + "\n".join(lines) + "\n\n<!-- /table -->"
+    return '<!-- table: {"kind": "data"} -->\n\n' + "\n".join(lines) + "\n\n<!-- /table -->"
 
 
 def _outside_fences(body: str) -> Iterator[tuple[int, str]]:
