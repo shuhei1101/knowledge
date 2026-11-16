@@ -58,7 +58,7 @@ flows:
       <!-- /map -->
     expected:
       - 終了コードが 0
-      - '`arguments` が `## {arguments の title}` の下の `<!-- table: data -->` の表になる'
+      - '`arguments` が `## {arguments の title}` の下の `<!-- table: {"kind": "data"} -->` の表になる'
       - '`preconditions` が `## {preconditions の title}` の下の箇条書きになる'
     test: test_normal_when_kind_specific_keys
   - name: 正常系（埋め込みのマーカーがある）
@@ -253,7 +253,7 @@ response_example: |-
 
   - [flowchart-word-choice](id:flowchart-word-choice)（references）: 迷ったとき
   ```
-response_notes: '項目の本文は記載された Markdown のまま出し、`<!-- table: data -->` などの mdmark のマーカーと `id:` のリンクを書き換えない。書き換えるのは埋め込みのマーカーの行だけ'
+response_notes: '項目の本文は記載された Markdown のまま出し、`<!-- table: {"kind": "data"} -->` などの mdmark のマーカーと `id:` のリンクを書き換えない。書き換えるのは埋め込みのマーカーの行だけ'
 exceptions:
   - name: なし（正常終了）
     condition: 変換できた
@@ -270,5 +270,5 @@ constraints:
   - item: 出さないキー
     constraint: '`id`・`kind`・`tags`・`status`・`visibility`・`rev`・`last_reviewed`・`aliases` は本文に出さない（dev-docs の画面がメタデータとして出す）。alias-inject の照合条件の `inject_when` も本文に出さない'
   - item: 種類に固有のキー
-    constraint: '共通のメタデータ以外のキー（スキルの `arguments` など）は `## {スキーマの title}` のセクションにし、文字列は段落、文字列の配列は箇条書き、オブジェクトの配列は `<!-- table: data -->` の表で出す'
+    constraint: '共通のメタデータ以外のキー（スキルの `arguments` など）は `## {スキーマの title}` のセクションにし、文字列は段落、文字列の配列は箇条書き、オブジェクトの配列は `<!-- table: {"kind": "data"} -->` の表で出す'
 test_file: tests/integration/scripts/test_knowledge_markdown.py

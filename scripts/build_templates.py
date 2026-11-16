@@ -108,7 +108,7 @@ _KEY_TABLE_COLUMNS = (
 _KEY_RULES_COLUMNS = ("名前", "決まり", "悪い例", "理由")
 
 # 表の範囲のマーカー
-_TABLE_OPEN = "<!-- table: data -->"
+_TABLE_OPEN = '<!-- table: {"kind": "data"} -->'
 _TABLE_CLOSE = "<!-- /table -->"
 
 # コードフェンスのバッククォートの最小の数
@@ -372,7 +372,7 @@ def _iter_keys(
 
 
 def _render_table(columns: Sequence[str], rows: Sequence[Sequence[str]]) -> str:
-    """列と行から、<!-- table: data --> で包んだ表の Markdown を作る。"""
+    """列と行から、<!-- table: {"kind": "data"} --> で包んだ表の Markdown を作る。"""
     lines = [
         _TABLE_OPEN,
         "",

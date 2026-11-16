@@ -220,7 +220,7 @@ functions:
       - name: test_convert_when_body_has_markers
         case: 正常
         summary: 本文を書き換えない
-        condition: '本文に `<!-- table: data -->` の表と `[A](id:a#x)` を持つ項目'
+        condition: '本文に `<!-- table: {"kind": "data"} -->` の表と `[A](id:a#x)` を持つ項目'
         mock: なし
         expected: 本文が 1 字も違わずに含まれる
       - name: test_convert_when_extra_keys
@@ -228,7 +228,7 @@ functions:
         summary: 種類に固有のキーをセクションにする
         condition: '`arguments`（オブジェクトの配列）を持ち、スキーマの `properties.arguments.title` が `引数`'
         mock: なし
-        expected: '`## 引数` の下に `<!-- table: data -->` の表'
+        expected: '`## 引数` の下に `<!-- table: {"kind": "data"} -->` の表'
       - name: test_convert_when_no_title_in_schema
         case: 正常
         summary: title の無いキー
@@ -318,7 +318,7 @@ functions:
       1. 値の型で分ける
          - 文字列の場合、そのままの段落
          - 文字列の配列の場合、`- {要素}` の箇条書き
-         - オブジェクトの配列の場合、`<!-- table: data -->` と `<!-- /table -->` で囲んだ表。列は全ての要素のキーを現れた順に並べ、セルの `|` は `\|`、改行は `<br>` にする。無いセルは `-`
+         - オブジェクトの配列の場合、`<!-- table: {"kind": "data"} -->` と `<!-- /table -->` で囲んだ表。列は全ての要素のキーを現れた順に並べ、セルの `|` は `\|`、改行は `<br>` にする。無いセルは `-`
          - オブジェクトの場合、`- {キー}: {値}` の箇条書き
          - それ以外（数・真偽値）の場合、`str(値)` の段落
     unit_tests:
@@ -361,7 +361,7 @@ functions:
         description: '`word-list` の文書の `entries`'
     returns:
       type: str
-      description: '`<!-- table: data -->` と `<!-- /table -->` で囲んだ表'
+      description: '`<!-- table: {"kind": "data"} -->` と `<!-- /table -->` で囲んだ表'
     process: |-
       1. 列を `NG`・`OK` の 2 つにする（`pattern`・`allow`・`examples` は出さない）
       2. 行ごとに `ng` を NG の列に、`ok` を「・」でつないだ文字列を OK の列に配置する（slop-check の通知の表と同じ書式）

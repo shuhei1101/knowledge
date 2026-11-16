@@ -1,0 +1,112 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: run_only
+    detail: 画面で参照する文書の表のマーカーが JSON の記載になる。埋め込みのマーカーと流れは変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 全ての文書の検査で mdmark の点検が移した文書を点検する。前の記法を違反にしない場面と流れは変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: run_only
+    detail: 生成するテンプレートの表のマーカーが JSON の記載になる。流れは変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: run_only
+    detail: 公開文書を 1 枚の HTML にする経路が JSON の記載のマーカーを描く。流れは変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: run_only
+    detail: 書き込む文書の本文のマーカーの記載が変わる。流れは変わらない
+    depends_on: []
+docs:
+  - page: docs/rule
+    new: false
+    change: '規約の YAML の本文の行だけの `<!-- table: data -->` を JSON の記載にする'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
+  - page: docs/checksheet
+    new: false
+    change: チェックシートの本文のマーカーを JSON の記載へ移す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
+  - page: docs/decision-table
+    new: false
+    change: 判定表の本文のマーカーを JSON の記載へ移す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
+  - page: docs/flowchart
+    new: false
+    change: 判定フローチャートの本文のマーカーを JSON の記載へ移す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
+  - page: docs/word-list
+    new: false
+    change: 対応表の本文のマーカーを JSON の記載へ移す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
+  - page: docs/library/LIB-137-1.yaml
+    new: false
+    change: '本文の `<!-- table: data -->` は点検の結果を説明するインラインの言及で、マーカーではないため変えない'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
+  - page: docs/template
+    new: false
+    change: '生成元を持たないテンプレート 22 件の行だけの `<!-- table: data -->` を JSON の記載にし、生成元を持つテンプレート 25 件を scripts/build_templates.py で生成し直す'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:48:54.058029+00:00'
+  - page: docs/pr
+    new: false
+    change: 'マージ済みの PR ドキュメントの Markdown の行だけの `<!-- table: data -->` を JSON の記載にする（テスト結果の .log とインラインの言及は除く）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
+  - page: docs/README.md
+    new: false
+    change: AI Monitor の design_docs publish で生成し直し、表のマーカーを JSON の記載にする（手で直さない）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
+  - page: docs/interface/README.md
+    new: false
+    change: design_docs publish で生成し直す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
+  - page: docs/library/README.md
+    new: false
+    change: design_docs publish で生成し直す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
+  - page: docs/module/README.md
+    new: false
+    change: design_docs publish で生成し直す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
+  - page: docs/scenario/README.md
+    new: false
+    change: design_docs publish で生成し直す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T15:35:49.521596+00:00'
+scope_out:
+  - item: docs/pr/{番号}/テスト結果/ の .log に残る今の書き方のマーカー
+    reason: テストの実行時の出力の記録で、mdmark で描かず、書き換えると記録が実際の出力と合わなくなるため
+    plan: none
+  - item: mdmark の記法を含む .md の拡張子を .mark.md へ移す
+    reason: マーカーの記載の移行とは別の変更で、別の Issue がある
+    plan: '#331'
