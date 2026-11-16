@@ -8,39 +8,57 @@ docs:
   - page: docs/rule/dev-config-preset.yaml
     new: true
     change: '#417: 選択肢から選ぶ値をプリセット（階層・参照の書き方 3 つ・選べる所）とカスタムで持つ構造の規約を新設する（名前・配置はユーザーに確認する）'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:32.111940+00:00'
   - page: docs/rule/dev-yaml.yaml
     new: false
     change: '#417: 設定ファイルの決まり（group: 設定ファイル）から新設の規約を参照する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:32.111940+00:00'
   - page: schemas/design/module.schema.yaml
     new: false
     change: '#426: test_files を、実行環境の違う単体テストのファイル（Node とブラウザ）を 2 つ以上持てるようにする'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:32.111940+00:00'
   - page: docs/rule/dev-v-model.yaml
     new: false
     change: '#426: 対応表のモジュールの行の「test_files は 1 つ」を、実行環境ごとに単体テストのファイルを持てる約束へ直す'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:32.111940+00:00'
   - page: docs/template/template-module.yaml
     new: false
     change: '#426: module.schema.yaml から生成し直す'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:32.111940+00:00'
   - page: schemas/design/test_procedure.schema.yaml
     new: false
     change: '#430: lint 層の x-rules に、uses: の action の版が実在するかの検査を actionlint と並べて加える'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:32.111940+00:00'
   - page: docs/template/template-test-procedure.yaml
     new: false
     change: '#430: test_procedure.schema.yaml から生成し直す'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:32.111940+00:00'
   - page: docs/rule/dev-hook-ci-scope.yaml
     new: false
-    change: '#430: workflow を追加・修正した作業 PR は、作業ブランチでランナーで動いたことを確認し、実行の URL を PR ドキュメントに記録してからマージする決まりを加える（置く規約は設計で確定する）'
-    status: todo
+    change: '#430: workflow を追加・修正した作業 PR は、作業ブランチでランナーで動いたことを確認し、実行の URL を PR ドキュメントに記録してからマージする決まり（workflow-merge-01）を加える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:32.111940+00:00'
   - page: docs/test-procedure/TP-72-1.yaml
     new: false
     change: '#430: knowledge 自身の lint 層に action の版の実在の検査を加える（.github/workflows/ を持つため）'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-16T21:29:32.111940+00:00'
 scope_out:
   - item: ai-monitor の設計書の検証（validate.py の check_tests）の test_files の 2 件以上への対応
     reason: develop の check_tests は test_files を並びで読み、全てのファイルを確認しているため、追従は要らない。#426 の終わりの条件の確認として、要件.md に記録する
