@@ -1,11 +1,11 @@
 kind: rule
 id: dev-hook-ci-scope
 name: Git フックと CI で動かすもの
-description: Git フックと CI で動かすもの（生成・配布）と動かさないもの（lint・型検査・テスト・依存の監査）を定め、Git フックや CI のワークフローを作る・修正するときに参照する。
+description: Git フックと CI で動かすもの（生成・配布）と動かさないもの（lint・型検査・テスト・依存の監査）と、workflow を変えた作業 PR をランナーで動かしてからマージする手順を定め、Git フックや CI のワークフローを作る・修正するときに参照する。
 status: current
 visibility: internal
-rev: 2
-last_reviewed: '2026-11-14'
+rev: 3
+last_reviewed: '2026-11-17'
 items:
   - id: overview
     name: 概要
@@ -36,6 +36,19 @@ items:
     body: |-
       - Git フックは lefthook（言語を問わない）で動かす
       - 動かすものが無いリポジトリは lefthook を入れない
+  - id: workflow-merge-01
+    group: workflow の変更
+    name: ランナーで動いたことを確認してからマージする
+    body: |-
+      workflow のファイル（`.github/workflows/`）を追加・修正した作業 PR は、マージの前に作業ブランチでランナーを動かし、成功したことを確認する。
+
+      1. workflow の `on:` に、作業ブランチへの `push`（`branches: [{作業ブランチ}]`）を追加して push する
+      2. `gh run list --branch {作業ブランチ} --workflow {workflow のファイル}` で、起動した実行の ID を探す
+      3. `gh run watch {ID} --exit-status` で成功を確認する
+      4. 実行の URL を PR ドキュメントの計画書の `## テスト結果` に記録する
+      5. 追加した `push` を除外して push してから、マージする
+
+      `workflow_dispatch` だけをきっかけに持つ workflow も、同じ手順を実行する。
 tags:
   - name: scope:dev
   - name: topic:ci
