@@ -74,8 +74,18 @@ steps:
       ファイルごとに、修正した箇所・適用した規約・件数を出す。
       一覧が空なら「修正する箇所はありませんでした」を出す。
 refs:
-  - convention-writing-style#
-  - convention-keep-existing-text#
-  - convention-issue-presentation#
-  - doc-parts#
-  - claude-rule-writing#
+  - to: convention-writing-style
+    type: requires
+    when: 点検する観点を追加・変更するときに、convention-writing-style の決まりと突き合わせる。
+  - to: convention-keep-existing-text
+    type: requires
+    when: 点検する観点を追加・変更するときに、convention-keep-existing-text の決まりと突き合わせる。
+  - to: convention-issue-presentation
+    type: requires
+    when: 点検する観点を追加・変更するときに、convention-issue-presentation の決まりと突き合わせる。
+  - to: doc-parts
+    type: requires
+    when: 点検する観点を追加・変更するときに、doc-parts の決まりと突き合わせる。
+  - to: claude-rule-writing
+    type: requires
+    when: 点検する観点を追加・変更するときに、claude-rule-writing の決まりと突き合わせる。

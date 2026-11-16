@@ -157,6 +157,9 @@ flows:
       - step「ログを成果物に上げる」の結論が `success`
     test: test_error_when_setup_fails
 refs:
-  - TP-72-1#layers
+  - to: TP-72-1
+    item: layers
+    type: requires
+    when: "workflow の入力 `layer` と実行する層を変えるときに、TP-72-1 の「layers」と突き合わせる。"
 notes:
   確認方法: 結合テストは、規約『GitHub Actions の workflow のテスト』のとおり、検証用のブランチを push して `gh` で起動し、実行の結論・step ごとの結論・成果物で確認する

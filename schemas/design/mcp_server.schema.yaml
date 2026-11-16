@@ -283,14 +283,7 @@ properties:
           examples:
           - - dry_run
   refs:
-    type: array
-    title: 関連
-    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-    x-used-by:
-      - 生成で、関連する設計書へのリンクにする。
-      - レビューで、関連する設計書をたどって食い違いを確認する。
-    items:
-      $ref: common.schema.yaml#/$defs/ref
+    $ref: common.schema.yaml#/$defs/related
   decisions:
     type: array
     title: 検討事項
@@ -385,4 +378,6 @@ examples:
         source: call
         name: call_id
   refs:
-  - AG-1#
+  - to: AG-1
+    type: references
+    when: ツールを追加・削除するときに、ツールを使用するエージェントの段階を確認する。

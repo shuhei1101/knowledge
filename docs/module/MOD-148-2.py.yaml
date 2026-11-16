@@ -66,7 +66,10 @@ constants:
       - key: mindstella
         value: frozenset({"add", "batch", "update", "reply", "new_thread", "edit_option", "update_thread"})
     refs:
-      - IF-148-1#constraints[対象のツール]
+      - to: IF-148-1
+        item: "constraints[対象のツール]"
+        type: requires
+        when: "`MCP_TOOLS` を修正するときに、IF-148-1 の「対象のツール」の決まりと突き合わせる。"
   - name: EXCLUDED_KEYS
     title: 照合しない MCP の引数のキー
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
@@ -74,7 +77,10 @@ constants:
     summary: 識別子を持つキー。これに加えて `_id` で終わるキーも除く
     value: frozenset({"id", "ids", "path", "paths", "file_path", "url", "source", "kind", "op", "cwd", "worktree", "branch", "sender", "receiver", "labels"})
     refs:
-      - IF-148-1#constraints[取り出す中身]
+      - to: IF-148-1
+        item: "constraints[取り出す中身]"
+        type: requires
+        when: "`EXCLUDED_KEYS` を修正するときに、IF-148-1 の「取り出す中身」の決まりと突き合わせる。"
   - name: WORD_LIST_PATH
     title: 対応表のパス
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
@@ -82,7 +88,10 @@ constants:
     summary: 照合しない書き込む先（対応表の原本とコピー）に該当する正規表現
     value: re.compile(r"(?:^|/)docs/word-list/[^/]+\.ya?ml$|(?:^|/)hooks/post-tool-use/word-list-[^/]+\.json$")
     refs:
-      - IF-148-1#constraints[照合しない書き込む先]
+      - to: IF-148-1
+        item: "constraints[照合しない書き込む先]"
+        type: requires
+        when: "`WORD_LIST_PATH` を修正するときに、IF-148-1 の「照合しない書き込む先」の決まりと突き合わせる。"
   - name: NOTICE_HEAD
     title: 通知の文の前半
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
@@ -102,7 +111,10 @@ constants:
     summary: '`systemMessage` の先頭の文字列'
     value: '"AI slop を検知: "'
     refs:
-      - IF-148-1#response[stdout.systemMessage]
+      - to: IF-148-1
+        item: "response[stdout.systemMessage]"
+        type: requires
+        when: "`SYSTEM_MESSAGE_HEAD` を修正するときに、IF-148-1 の「stdout.systemMessage」の決まりと突き合わせる。"
 functions:
   - name: main
     title: 書き込んだ中身の照合の入口
@@ -179,7 +191,9 @@ functions:
         mock: ヒットした行の照合を `RuntimeError` を送出する関数に差し替える
         expected: '`0` を返却し、標準エラーに `Traceback` が出る'
     refs:
-      - IF-148-1#
+      - to: IF-148-1
+        type: requires
+        when: "`main` を修正するときに、IF-148-1 の決まりと突き合わせる。"
   - name: is_target
     title: 対象のツールの判定
     kind: 関数
@@ -530,7 +544,10 @@ functions:
         mock: なし
         expected: '`mindstella の reply`'
     refs:
-      - IF-148-1#constraints[書き込みの名前]
+      - to: IF-148-1
+        item: "constraints[書き込みの名前]"
+        type: requires
+        when: "`tool_label` を修正するときに、IF-148-1 の「書き込みの名前」の決まりと突き合わせる。"
   - name: build_system_message
     title: 利用者向けの 1 行の組み立て
     kind: 関数
@@ -561,6 +578,9 @@ functions:
         mock: なし
         expected: '`AI slop を検知: 直す・形（Write）`'
     refs:
-      - IF-148-1#response[stdout.systemMessage]
+      - to: IF-148-1
+        item: "response[stdout.systemMessage]"
+        type: requires
+        when: "`build_system_message` を修正するときに、IF-148-1 の「stdout.systemMessage」の決まりと突き合わせる。"
 notes:
   依存: Python の標準ライブラリだけ（`argparse`・`json`・`os`・`re`・`sys`・`traceback`・`dataclasses`・`pathlib`）。PEP 723 のメタデータは持たない。端末の `python3`（2026-11-03 に WSL2 で測った値は 3.12.3）を下限にし、3.13 以降の構文・API を使用しない

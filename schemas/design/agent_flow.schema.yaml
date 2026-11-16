@@ -226,14 +226,13 @@ properties:
   refs:
     type: array
     title: 関連
-    description: 参照する共通の手順・ノウハウへの参照。
+    description: 参照する共通の手順・ノウハウへの関連。
     x-used-by:
       - 生成で、関連する手順へのリンクにする。
       - レビューで、関連する手順をたどって食い違いを確認する。
+    maxItems: 8
     items:
-      $ref: '#/$defs/flow_ref'
-    examples:
-    - - shared/character-state#
+      $ref: '#/$defs/flow_related_item'
   decisions:
     type: array
     title: 検討事項
@@ -274,6 +273,43 @@ $defs:
     x-bad-examples:
     - value: brain/stream/on_event
       reason: '`_` でつないでいる'
+  flow_related_item:
+    type: object
+    title: 関連
+    description: 共通の手順・ノウハウへの関連 1 件。`to` にエージェントフローか文書の ID を持ち、他のキーは設計書の関連（`related_item`）と同じ。
+    x-used-by:
+      - 検査で、`to` のエージェントフロー・文書と `item` の項目が実在するかを確認する。
+      - 生成で、関連する手順へのリンクにする。
+      - レビューで、`when` の場面で関連する手順をたどって食い違いを確認する。
+    x-shape: attributes
+    additionalProperties: false
+    required:
+    - to
+    - type
+    - when
+    properties:
+      to:
+        type: string
+        title: 相手の ID
+        description: 関連先のエージェントフローか文書の ID。項目のパスは `item` に分ける。
+        x-used-by:
+          - 検査で、関連先が実在するかを確認する。
+        pattern: ^[^\s#]+$
+        examples:
+        - shared/character-state
+        - convention-writing-style
+      item:
+        $ref: common.schema.yaml#/$defs/related_item/properties/item
+      type:
+        $ref: common.schema.yaml#/$defs/related_item/properties/type
+      when:
+        $ref: common.schema.yaml#/$defs/related_item/properties/when
+      paths:
+        $ref: common.schema.yaml#/$defs/related_item/properties/paths
+    examples:
+    - to: shared/character-state
+      type: references
+      when: キャラクター情報を取得する工程を変えるときに、共通の手順と突き合わせる。
   flow_ref:
     type: string
     title: エージェントフローの参照

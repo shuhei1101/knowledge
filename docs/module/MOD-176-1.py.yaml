@@ -256,9 +256,16 @@ functions:
         expected: '`LintOutputError` で、メッセージに `textlint`・終了コード 2・標準エラーの行'
         exception: 終了コードが 0・1 でない
     refs:
-      - LIB-176-1#
-      - LIB-176-2#
-      - IF-72-3#constraints[lint の行]
+      - to: LIB-176-1
+        type: references
+        when: "`run_markdown_lints` の外部ライブラリの呼び出し方を修正するときに、LIB-176-1 の使用する部分を確認する。"
+      - to: LIB-176-2
+        type: references
+        when: "`run_markdown_lints` の外部ライブラリの呼び出し方を修正するときに、LIB-176-2 の使用する部分を確認する。"
+      - to: IF-72-3
+        item: "constraints[lint の行]"
+        type: requires
+        when: "`run_markdown_lints` を修正するときに、IF-72-3 の「lint の行」の決まりと突き合わせる。"
   - name: load_yamllint_config
     title: yamllint の設定の読み込み
     kind: 関数
@@ -296,7 +303,9 @@ functions:
         mock: なし（一時ディレクトリ）
         expected: '`brackets`・`braces` のルールが有効で、`indentation`・`comments` が無効'
     refs:
-      - LIB-176-3#
+      - to: LIB-176-3
+        type: references
+        when: "`load_yamllint_config` の外部ライブラリの呼び出し方を修正するときに、LIB-176-3 の使用する部分を確認する。"
   - name: run_yamllint
     title: yamllint の呼び出し
     kind: 関数
@@ -340,7 +349,9 @@ functions:
         mock: なし
         expected: 空
     refs:
-      - LIB-176-3#
+      - to: LIB-176-3
+        type: references
+        when: "`run_yamllint` の外部ライブラリの呼び出し方を修正するときに、LIB-176-3 の使用する部分を確認する。"
   - name: collect_map_sources
     title: map を含む項目の取り出し
     kind: 関数
@@ -391,7 +402,10 @@ functions:
       - MOD-72-2#functions[iter_strings]
       - MOD-72-2#functions[format_path]
     refs:
-      - IF-72-3#constraints[map の点検の範囲]
+      - to: IF-72-3
+        item: "constraints[map の点検の範囲]"
+        type: requires
+        when: "`collect_map_sources` を修正するときに、IF-72-3 の「map の点検の範囲」の決まりと突き合わせる。"
   - name: run_map_check
     title: map の点検の呼び出し
     kind: 関数
@@ -449,10 +463,21 @@ functions:
         expected: '`MdmarkCheckError` で、メッセージに終了コード 2'
         exception: 終了コードが 0・1 でない
     refs:
-      - LIB-137-1#
-      - IF-72-3#constraints[map の点検の呼び出し]
-      - IF-72-3#constraints[map の違反にするずれ]
-      - IF-72-3#constraints[map の違反の行]
+      - to: LIB-137-1
+        type: references
+        when: "`run_map_check` の外部ライブラリの呼び出し方を修正するときに、LIB-137-1 の使用する部分を確認する。"
+      - to: IF-72-3
+        item: "constraints[map の点検の呼び出し]"
+        type: requires
+        when: "`run_map_check` を修正するときに、IF-72-3 の「map の点検の呼び出し」の決まりと突き合わせる。"
+      - to: IF-72-3
+        item: "constraints[map の違反にするずれ]"
+        type: requires
+        when: "`run_map_check` を修正するときに、IF-72-3 の「map の違反にするずれ」の決まりと突き合わせる。"
+      - to: IF-72-3
+        item: "constraints[map の違反の行]"
+        type: requires
+        when: "`run_map_check` を修正するときに、IF-72-3 の「map の違反の行」の決まりと突き合わせる。"
   - name: extract_map_mermaid
     title: map の中の Mermaid の取り出し
     kind: 関数
@@ -486,6 +511,9 @@ functions:
         mock: なし
         expected: '`None`'
     refs:
-      - IF-72-3#constraints[workflow の突き合わせ]
+      - to: IF-72-3
+        item: "constraints[workflow の突き合わせ]"
+        type: requires
+        when: "`extract_map_mermaid` を修正するときに、IF-72-3 の「workflow の突き合わせ」の決まりと突き合わせる。"
 test_files:
   - tests/unit/scripts/test_lint.py

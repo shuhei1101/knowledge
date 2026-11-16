@@ -63,7 +63,9 @@ functions:
     callees:
       - MOD-72-2#functions[load_document]
     refs:
-      - IF-148-2#
+      - to: IF-148-2
+        type: requires
+        when: "`main` を修正するときに、IF-148-2 の決まりと突き合わせる。"
   - name: render_copy
     title: コピーの中身の作成
     kind: 関数
@@ -91,7 +93,10 @@ functions:
         mock: なし
         expected: '各行が `id`・`ng`・`ok`・（`pattern`）・（`allow`）・`note` の順で、`examples` を持たず、末尾が改行 1 つ'
     refs:
-      - IF-148-2#constraints[コピーの書式]
+      - to: IF-148-2
+        item: "constraints[コピーの書式]"
+        type: requires
+        when: "`render_copy` を修正するときに、IF-148-2 の「コピーの書式」の決まりと突き合わせる。"
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を記載し、`_common.py` を同じフォルダから import する。
 test_files:

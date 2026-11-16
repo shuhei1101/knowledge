@@ -267,14 +267,7 @@ properties:
           items:
             $ref: '#/$defs/function'
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -367,14 +360,7 @@ properties:
                 x-used-by:
                   - 実装で、メンバーを使用する前に満たす前提を、検証の処理か docstring にする。
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -483,14 +469,7 @@ properties:
                 x-used-by:
                   - 実装で、その実装を使用する条件にする。
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -584,14 +563,7 @@ properties:
                 x-used-by:
                   - 実装で、要素を使用する前に満たす前提を、検証の処理か docstring にする。
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -758,14 +730,7 @@ properties:
           x-key: target
           items: *id009
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -1150,14 +1115,7 @@ properties:
                 x-used-by:
                   - 単体テストで、ケースの準備（fixture・Mock）にする。
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -1266,14 +1224,7 @@ properties:
           items:
             $ref: '#/$defs/function'
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -1359,14 +1310,7 @@ properties:
                 x-used-by:
                   - 実装で、宣言が有効になる条件（親のクラス・メディアクエリ 等）にする。
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -1385,14 +1329,7 @@ properties:
         notes:
           $ref: common.schema.yaml#/$defs/notes
   refs:
-    type: array
-    title: 関連
-    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-    x-used-by:
-      - 生成で、関連する設計書へのリンクにする。
-      - レビューで、関連する設計書をたどって食い違いを確認する。
-    items:
-      $ref: common.schema.yaml#/$defs/ref
+    $ref: common.schema.yaml#/$defs/related
   decisions:
     type: array
     title: 検討事項
@@ -1701,14 +1638,7 @@ $defs:
         items:
           $ref: common.schema.yaml#/$defs/ref
       refs:
-        type: array
-        title: 関連
-        description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-        x-used-by:
-          - 生成で、関連する設計書へのリンクにする。
-          - レビューで、関連する設計書をたどって食い違いを確認する。
-        items:
-          $ref: common.schema.yaml#/$defs/ref
+        $ref: common.schema.yaml#/$defs/related
       decisions:
         type: array
         title: 検討事項

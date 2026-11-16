@@ -631,10 +631,18 @@ gitignore:
   - pattern: scripts/lint/node_modules/
     reason: npm の依存（ロックから再インストールできる）
 refs:
-  - ARCH-72-1#
-  - CMD-72-1#
-  - MOD-72-1#
-  - MOD-148-1#
+  - to: ARCH-72-1
+    type: references
+    when: サブシステムのフォルダを追加・移動するときに、アーキテクチャ図のサブシステムの分け方を確認する。
+  - to: CMD-72-1
+    type: references
+    when: フォルダのスクリプトを実行するコマンドを確認するとき。
+  - to: MOD-72-1
+    type: references
+    when: スクリプトのファイルを追加・移動するときに、MOD-72-1 の構成要素を確認する。
+  - to: MOD-148-1
+    type: references
+    when: スクリプトのファイルを追加・移動するときに、MOD-148-1 の構成要素を確認する。
 notes:
   プラグインの配置: |-
     プラグイン knowledge だけは、リポジトリの直下をプラグインにする（`marketplace.json` の `source` が `./`）。

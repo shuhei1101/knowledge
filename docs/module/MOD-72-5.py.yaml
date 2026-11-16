@@ -10,7 +10,10 @@ constants:
     summary: dev-docs の画面がメタデータとして出すキー
     value: frozenset({"id", "kind", "tags", "status", "visibility", "rev", "last_reviewed", "aliases", "inject_when"})
     refs:
-      - IF-72-2#constraints[出さないキー]
+      - to: IF-72-2
+        item: "constraints[出さないキー]"
+        type: requires
+        when: "`HIDDEN_KEYS` を修正するときに、IF-72-2 の「出さないキー」の決まりと突き合わせる。"
     reason: '`aliases` は project-index の検索の別名、`inject_when` は alias-inject の照合条件で、本文の読者に役立たない'
   - name: LAYOUT_KEYS
     title: 構成が決まっているキー
@@ -37,7 +40,10 @@ constants:
     summary: 前後の空白を除いた 1 行に `fullmatch` で適用し、`id` に文書の ID を取る。`/`・`#` を含む dev-docs のパスの記載方法には該当しない
     value: 're.compile(r"<!--\s*embed:\s*(?P<id>[^\s/#]+)\s*-->")'
     refs:
-      - IF-72-2#constraints[埋め込みのマーカー]
+      - to: IF-72-2
+        item: "constraints[埋め込みのマーカー]"
+        type: requires
+        when: "`EMBED_MARKER` を修正するときに、IF-72-2 の「埋め込みのマーカー」の決まりと突き合わせる。"
   - name: FENCE
     title: コードブロックの囲み
     container: scripts/knowledge_markdown.py
@@ -113,7 +119,9 @@ functions:
     callees:
       - MOD-72-2#functions[load_document]
     refs:
-      - IF-72-2#
+      - to: IF-72-2
+        type: requires
+        when: "`main` を修正するときに、IF-72-2 の決まりと突き合わせる。"
   - name: load_schema
     title: スキーマの読み込み
     kind: 関数
@@ -460,7 +468,10 @@ functions:
       - MOD-72-2#functions[list_row_files]
       - MOD-72-2#functions[load_document]
     refs:
-      - IF-72-2#flows[異常系（対応表が読み込めない・終了コード 1）]
+      - to: IF-72-2
+        item: "flows[異常系（対応表が読み込めない・終了コード 1）]"
+        type: requires
+        when: "`load_word_lists` を修正するときに、IF-72-2 の「異常系（対応表が読み込めない・終了コード 1）」の決まりと突き合わせる。"
   - name: expand_embeds
     title: 埋め込みの展開
     kind: 関数
@@ -515,7 +526,10 @@ functions:
     callees:
       - MOD-72-5#functions[render_word_list]
     refs:
-      - IF-72-2#constraints[埋め込みのマーカー]
+      - to: IF-72-2
+        item: "constraints[埋め込みのマーカー]"
+        type: requires
+        when: "`expand_embeds` を修正するときに、IF-72-2 の「埋め込みのマーカー」の決まりと突き合わせる。"
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を記載し、`_common.py` を同じフォルダから import する。
 test_files:

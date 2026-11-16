@@ -456,14 +456,7 @@ properties:
           x-used-by:
             - 実装で、送信先のインターフェースか遷移先の画面を決める。
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -531,14 +524,7 @@ properties:
           x-used-by:
             - 実装で、エラーを出す場所にする。
   refs:
-    type: array
-    title: 関連
-    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-    x-used-by:
-      - 生成で、関連する設計書へのリンクにする。
-      - レビューで、関連する設計書をたどって食い違いを確認する。
-    items:
-      $ref: common.schema.yaml#/$defs/ref
+    $ref: common.schema.yaml#/$defs/related
   decisions:
     type: array
     title: 検討事項
