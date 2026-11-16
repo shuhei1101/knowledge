@@ -62,6 +62,7 @@ properties:
       $ref: '#/$defs/evidence_item'
     x-rules:
       - 別の出典が同じことを述べていれば、出典ごとに要素を並べる。
+      - '`evidence[].source`・`cases[].source` が指す `sources[]` の要素には `id` を付ける。'
   confidence:
     title: 確信度
     description: '`evidence` から決めた技法の確からしさ。'
@@ -72,7 +73,7 @@ properties:
     x-rules:
       - '`high` は、実践者本人の言葉があり、別の出所でも同じことが述べられている技法に付ける。'
       - '`medium` は、実践者本人の言葉だけの技法か、別々の出所の第三者が同じことを述べている技法に付ける。'
-      - '`low` は、匿名の書き込みか、出所が 1 つの第三者のまとめだけの技法に付ける。'
+      - '`low` は、`high`・`medium` に当たらない技法に付ける。'
 required:
   - last_reviewed
   - sources
