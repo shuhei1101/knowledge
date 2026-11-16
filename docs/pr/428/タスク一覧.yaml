@@ -36,7 +36,7 @@ tasks:
     updated_at: '2026-11-16T12:24:17.763634+00:00'
   - process: 単一ユースケース設計
     status: skipped
-    note: SC-72-3・SC-72-6 の本文が今の書き方のマーカーを例に挙げている箇所を追随させる
+    note: SC-72-3・SC-72-6 は変えない（理由は reason）
     reason: 'SC-72-3 の <!-- embed: ... --> は knowledge の変換のスクリプトが展開する独自のマーカーで mdmark の記法（記法.mark.md の一覧）に無く、mdmark に届かないため変えない。SC-72-6 の <!-- table: data --> は全ての文書の検査が legacy_mark を違反にしないことを確かめる場面の条件で、移行の対象ではない'
     updated_by: planner
     updated_at: '2026-11-16T12:31:56.707907+00:00'
@@ -47,7 +47,7 @@ tasks:
     updated_at: '2026-11-16T12:24:17.763634+00:00'
   - process: インターフェース定義設計
     status: done
-    note: IF-72-2（変換の出力の表のマーカー・embed の行）・IF-201-1（テンプレートの表のマーカー）・IF-72-3（legacy_mark の例）
+    note: IF-72-2・IF-201-1 の出力の表のマーカーを JSON の記載にする。embed の行と IF-72-3 の legacy_mark の場面の条件は変えない
     updated_by: planner
     updated_at: '2026-11-16T12:37:11.673758+00:00'
   - process: 部品設計
@@ -62,7 +62,7 @@ tasks:
     updated_at: '2026-11-16T12:24:17.763634+00:00'
   - process: モジュール構成設計
     status: todo
-    note: MOD-72-5・MOD-201-1 の表のマーカーと embed の行の記載
+    note: MOD-72-5・MOD-201-1 の表のマーカーの記載を JSON の記載にする。embed の行は変えない
   - process: ドキュメント修正
     status: todo
     note: docs/ の YAML の本文（docs/pr を除く）・docs/pr の PR ドキュメントの Markdown へ mdmark upgrade を適用、docs/template を生成し直す、docs/*/README.md を design_docs publish で生成し直す
