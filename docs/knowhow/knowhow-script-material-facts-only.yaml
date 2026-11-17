@@ -1,0 +1,37 @@
+id: knowhow-script-material-facts-only
+kind: knowhow
+name: 台本の事実は素材から取り、素材にない事実を追加しない
+description: 記事などの素材から台本を作るときに、事実・意見・数字は全て素材から取って素材にない事実を追加せず、「記事によると」と言わずに話し手の言葉で話させる技法を記載し、素材から台本を生成するときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: PODBENCH
+    title: 'Xu ほか「PodBench: A Comprehensive Benchmark for Instruction-Aware Audio-Oriented Podcast Script Generation」'
+    url: https://arxiv.org/abs/2601.14903
+    note: 付録 C.1 のポッドキャストの台本の生成のプロンプト
+necessity: reference
+scenes:
+  fits:
+    - 記事・資料を素材に LLM で台本を生成するとき。
+  misfits:
+    - 補足情報を出典つきで追加する区切り。
+evidence:
+  - source: PODBENCH
+    speaker: third_party
+confidence: low
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      事実・意見・数字は全て素材から取り、素材にない知識や作り話を追加しない。
+      「記事によると」と素材を明示せず、話し手が自分の話として話す。
+      補足情報を追加するときは、その情報の出典を持つ。
+tags:
+  - name: topic:台本
+    main: true
+  - name: topic:素材
+  - name: topic:llm
+  - name: action:生成
+  - name: topic:ノウハウ

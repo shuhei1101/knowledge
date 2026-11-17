@@ -1,0 +1,40 @@
+id: knowhow-script-outline-first
+kind: knowhow
+name: LLM で台本を作るときは、本文の前に骨組み（つかみ・要所・締め）を作る段階を配置する
+description: LLM で台本や脚本を生成するときに、本文を生成する前に骨組み（つかみ・要所・締め）を作る段階を配置し、段階ごとに生成する技法を記載し、台本を生成する工程を組むときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: PODAGENT
+    title: 'Xiao ほか「PodAgent: A Comprehensive Framework for Podcast Generation」（Findings of ACL 2025）'
+    url: https://aclanthology.org/2025.findings-acl.1226
+    note: 表 2
+  - id: HOLLMWOOD
+    title: 'Chen ほか「HoLLMwood: Unleashing the Creativity of Large Language Models in Screenwriting via Role Playing」（Findings of EMNLP 2024）'
+    url: https://aclanthology.org/2024.findings-emnlp.474/
+    note: §2.1
+necessity: reference
+scenes:
+  fits:
+    - LLM に台本や脚本を生成させる工程を組むとき。
+evidence:
+  - source: PODAGENT
+    speaker: third_party
+  - source: HOLLMWOOD
+    speaker: third_party
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      本文を一度に生成させず、先に骨組みを作る段階を配置すると、生成した台本の質が上がる。
+      台本の軸の決め方とセリフ生成との分担は [台本は軸だけを決め、オチと言い回しはセリフ生成に任せる](id:knowhow-script-axis-only) に従う。
+tags:
+  - name: topic:台本
+    main: true
+  - name: topic:構成
+  - name: topic:llm
+  - name: action:生成
+  - name: topic:ノウハウ
