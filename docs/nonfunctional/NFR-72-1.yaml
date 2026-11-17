@@ -52,3 +52,4 @@ requirements:
     value: Linux（WSL2 の Ubuntu と ubuntu-latest）
     rationale: スクリプトを起動するのは project-index・手元のコマンド・CI だけで、どれも Linux で動く。スクリプトの仮想環境は uv のキャッシュ（Linux 側）に配置する（MOD-72-1）
     source: ARCH-72-1#subsystems[scripts]
+lead: 外部の制約から逆算した knowledge の決定値（検査と変換のスクリプトの処理時間・CI の所要時間など）を定め、これらの値を決める・変えるときに参照する。

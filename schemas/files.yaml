@@ -1,0 +1,182 @@
+# yaml-language-server: $schema=knowledge-files.schema.yaml
+files:
+  - path: changelog.schema.yaml
+    name: 変更履歴のスキーマ
+    description: 変更履歴の文書の構造（キー・必須・値の形）を定め、変更履歴の文書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ]
+  - path: checksheet.schema.yaml
+    name: チェックシートのスキーマ
+    description: チェックシートの文書の構造（キー・必須・値の形）を定め、チェックシートの文書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ]
+  - path: decision-table.schema.yaml
+    name: 判定表のスキーマ
+    description: 判定表の文書の構造（キー・必須・値の形）を定め、判定表の文書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ]
+  - path: flowchart.schema.yaml
+    name: 判定フローチャートのスキーマ
+    description: 判定フローチャートの文書の構造（キー・必須・値の形）を定め、判定フローチャートの文書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ]
+  - path: guide.schema.yaml
+    name: 手順のスキーマ
+    description: 使い方の文書の構造（キー・必須・値の形）を定め、使い方の文書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ]
+  - path: knowhow.schema.yaml
+    name: ノウハウのスキーマ
+    description: ノウハウの文書の構造（キー・必須・値の形）を定め、ノウハウの文書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ]
+  - path: knowledge-common.schema.yaml
+    name: 共通の型のスキーマ
+    description: 種類をまたいで使用する ID・タグ・関連・項目・メタデータの型を定め、各種類のスキーマが共通に持つ型を修正するときに参照する。
+    tags: [topic:スキーマ, topic:メタデータ]
+  - path: knowledge-files.schema.yaml
+    name: 管理用の YAMLのスキーマ
+    description: YAML でない文書のメタデータを 1 ファイル 1 行で持つ管理用の YAML の構造を定め、管理用の YAML の行のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:メタデータ]
+  - path: meta.schema.yaml
+    name: スキーマの記載方法のスキーマ
+    description: スキーマのファイルと各項目に持つキーの記載方法を定め、スキーマを作る・修正するときと全ての文書の検査がスキーマを検査する内容を変えるときに参照する。
+    tags: [topic:スキーマ, topic:検査]
+    related:
+      - to: dev-yaml
+        type: see_also
+  - path: prompt.schema.yaml
+    name: プロンプトのスキーマ
+    description: プロンプトの本文を部品の配列と変数の定義で記載する YAML の構造を定め、プロンプトのファイルのキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:プロンプト]
+    related:
+      - to: prompt-file
+        type: see_also
+  - path: rule.schema.yaml
+    name: 規約のスキーマ
+    description: 規約の文書の構造（キー・必須・値の形）を定め、規約の文書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ]
+  - path: template.schema.yaml
+    name: テンプレートのスキーマ
+    description: テンプレートの文書の構造（キー・必須・値の形）を定め、テンプレートの文書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ]
+  - path: terms.schema.yaml
+    name: 用語集のスキーマ
+    description: 用語集の文書の構造（キー・必須・値の形）を定め、用語集の文書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ]
+  - path: word-list.schema.yaml
+    name: 単語の対応表のスキーマ
+    description: 単語の対応表の文書の構造（キー・必須・値の形）を定め、単語の対応表の文書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ]
+  - path: design/agent.schema.yaml
+    name: 設計書『エージェントの定義』のスキーマ
+    description: エージェント 1 つのセッションの持ち方・モデル・きっかけ・実行する段階を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/agent_flow.schema.yaml
+    name: 設計書『エージェントフロー』のスキーマ
+    description: エージェントが順に進める工程と工程で呼ぶもの（スキルの SKILL.md の生成元を含む）を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+    related:
+      - to: SC-312-1
+        type: see_also
+  - path: design/architecture.schema.yaml
+    name: 設計書『アーキテクチャ図』のスキーマ
+    description: サブシステムの分け方と外部システムとの境界を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/common.schema.yaml
+    name: 設計書『共通の型』のスキーマ
+    description: 設計書の種類をまたいで使用する ID・参照・本文などの型を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/component.schema.yaml
+    name: 設計書『部品設計』のスキーマ
+    description: 画面の部品 1 つの引数・スロット・イベント・状態を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/config.schema.yaml
+    name: 設計書『設定』のスキーマ
+    description: サブシステム 1 つの設定値・環境変数の一覧を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/data.schema.yaml
+    name: 設計書『データ』のスキーマ
+    description: 利用者と決めるデータの構造を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/dataflow.schema.yaml
+    name: 設計書『データフロー』のスキーマ
+    description: 1 つのデータがシステムを流れる経路（DFD）を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/dev_command.schema.yaml
+    name: 設計書『開発コマンド』のスキーマ
+    description: 開発で使用するコマンドの分類ごとの前提・順序・確認した記録を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/er.schema.yaml
+    name: 設計書『ER 図』のスキーマ
+    description: データストアの構造（テーブル・カラム・制約）を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+    related:
+      - to: SC-201-1
+        type: see_also
+  - path: design/eval_case.schema.yaml
+    name: 設計書『精度評価のケース』のスキーマ
+    description: 精度評価のケース 1 つの場面・入力・採点する観点を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/eval_criterion.schema.yaml
+    name: 設計書『精度評価の観点』のスキーマ
+    description: 精度評価の観点 1 つの確認の方法・採点の基準を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/evaluation.schema.yaml
+    name: 設計書『精度評価のスイート』のスキーマ
+    description: 精度評価 1 つの評価の対象・つなぐ順番・再評価する変更を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/external_api.schema.yaml
+    name: 設計書『外部API』のスキーマ
+    description: 利用する外部 API 1 つのエンドポイントを記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/glossary.schema.yaml
+    name: 設計書『用語集』のスキーマ
+    description: リポジトリ固有の用語と使用しない言い方を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/index.schema.yaml
+    name: 設計書『目次』のスキーマ
+    description: フォルダ 1 つの直下の目次を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/interface.schema.yaml
+    name: 設計書『インターフェース定義』のスキーマ
+    description: 1 操作の入出力・制約・正常系と異常系のフローを記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/launch.schema.yaml
+    name: 設計書『起動の構成』のスキーマ
+    description: エージェント 1 つを起動するときに決める値を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/layout.schema.yaml
+    name: 設計書『フォルダ構成』のスキーマ
+    description: リポジトリの全てのフォルダとファイルの構成を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/library.schema.yaml
+    name: 設計書『外部ライブラリ』のスキーマ
+    description: 採用した外部ライブラリ 1 つの使用する部分を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/llm_call.schema.yaml
+    name: 設計書『LLM の呼び出し』のスキーマ
+    description: LLM を 1 回呼ぶ処理のモデル・プロンプト・入力・失敗の扱いを記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/mcp_server.schema.yaml
+    name: 設計書『MCP サーバーの定義』のスキーマ
+    description: MCP サーバー 1 つの接続の仕方・提供するツールを記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/module.schema.yaml
+    name: 設計書『モジュール構成』のスキーマ
+    description: 物理ファイル 1 つ分の構成要素を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/nonfunctional.schema.yaml
+    name: 設計書『非機能要件』のスキーマ
+    description: 外部の制約を踏まえてアプリとして守る値を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/scenario.schema.yaml
+    name: 設計書『シナリオ』のスキーマ
+    description: 単一・複合ユースケースの正常・異常シナリオを記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/screen.schema.yaml
+    name: 設計書『画面設計』のスキーマ
+    description: 1 画面の要素の仕様と入力チェックを記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/state_transition.schema.yaml
+    name: 設計書『状態遷移』のスキーマ
+    description: 1 エンティティの状態と許可された遷移を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]
+  - path: design/test_procedure.schema.yaml
+    name: 設計書『テスト実行方法』のスキーマ
+    description: テストの層ごとの実行コマンドと前提を記載する設計書の構造を定め、各プロジェクトが design-schemas のタグで指す設計書のキーを追加・修正するときに参照する。
+    tags: [topic:スキーマ, topic:設計書]

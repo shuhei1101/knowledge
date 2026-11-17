@@ -108,6 +108,10 @@ entries:
           command: CMD-72-1#categories[ビルド・生成]
           tracked: GitHub でフォルダを開いたときに表示する目次
       - type: file
+        name: files.yaml
+        contents: '`docs/` の目次の `README.md` の一覧（project-index の files の行。`pr/` は配信しない）'
+        content_types: [file_list]
+      - type: file
         name: changelog.yaml
         contents: knowledge のバージョンごとの変更履歴
         content_types: [knowledge_doc]
@@ -334,6 +338,10 @@ entries:
         content_types: [schema]
         naming: ['{kind}.schema.yaml']
         used_by: [IF-72-3#, IF-201-1#]
+      - type: file
+        name: files.yaml
+        contents: '`schemas/` のスキーマの一覧（project-index の files の行）'
+        content_types: [file_list]
   - type: folder
     name: scripts
     contents: project-index の validators・converters と、CI と手元の CLI の単一ファイルのスクリプト
@@ -495,6 +503,10 @@ entries:
             name: ruff.toml
             contents: slop-check のフックの ruff の設定
             content_types: [tool_config, slop_check]
+          - type: file
+            name: files.yaml
+            contents: '`plugins/slop-check/` のファイルの一覧（project-index の files の行）'
+            content_types: [file_list]
           - type: folder
             name: .claude-plugin
             contents: プラグイン slop-check の定義
@@ -581,6 +593,10 @@ entries:
             naming:
               - conftest.py
               - test_{workflow}_yml.py
+      - type: file
+        name: files.yaml
+        contents: '`tests/` のテストのファイルの一覧（project-index の files の行）'
+        content_types: [file_list]
   - type: folder
     name: _site
     contents: 公開の文書だけを 1 枚の HTML にまとめた Pages の成果物
@@ -592,6 +608,10 @@ entries:
     name: project-index.yaml
     contents: project-index の配信元の設定（文書の種類ごとのパス・スキーマ・検査と変換のスクリプト・dev-docs の画面のタブ）
     content_types: [tool_config]
+  - type: file
+    name: files.yaml
+    contents: リポジトリの直下・`.claude-plugin/`・`.github/` のファイルの一覧（project-index の files の行）
+    content_types: [file_list]
   - type: file
     name: ai-monitor-version.ini
     contents: '準拠している AI Monitor の配布物のバージョン'
