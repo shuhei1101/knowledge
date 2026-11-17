@@ -1,0 +1,124 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: 用語集
+description: |-
+  リポジトリ固有の用語と、使用しない言い方の一覧。1 リポジトリ 1 ファイル。
+  配信元の設定の文書の行が `alias_type: term`・`records: terms` で参照し、`terms` の要素を 1 件の用語にする。
+x-rules:
+  - 用語集へ登録するかは判定フローチャート『用語の登録』で決め、このリポジトリに登録すると判定した用語だけを記載する。
+x-kind: glossary
+x-folder: docs/glossary
+x-id-prefix: GLO
+type: object
+additionalProperties: false
+required:
+- id
+- title
+- terms
+properties:
+  id:
+    $ref: common.schema.yaml#/$defs/id
+    title: ID
+    description: 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。
+    x-rules:
+      - 設計書を作るときに振り、改名・移動でも変えない。
+  visibility:
+    $ref: common.schema.yaml#/$defs/doc_visibility
+    title: 公開範囲
+  title:
+    type: string
+    title: タイトル
+    description: '`用語集`。'
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - project-index の検索で、文書の名前にする。
+    examples:
+      - 用語集
+  lead:
+    $ref: common.schema.yaml#/$defs/markdown
+    title: 冒頭リード
+    description: 用語集の対象を 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - project-index の検索で、文書の概要文にする。
+  terms:
+    type: array
+    title: 用語
+    description: 用語の並び。1 要素が 1 件の用語。
+    x-used-by:
+      - project-index の検索で、要素ごとに 1 件の用語の文書にする。
+      - 生成で、用語の表にする。
+    x-heading: 用語
+    x-shape: table
+    x-key: id
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - name
+      - description
+      properties:
+        id:
+          type: string
+          title: 用語の ID
+          description: 用語集の中で一意な、英小文字とハイフンの識別子。
+          x-used-by:
+            - project-index の検索で、用語の文書の ID と、`aliases` の衝突の検査の照合の相手にする。
+          pattern: ^[a-z][a-z0-9-]*$
+          examples:
+            - read-record
+        name:
+          type: string
+          title: 用語
+          description: 文書・コードのコメントで使用する正式な単語。
+          x-used-by:
+            - project-index の検索で、用語の文書の名前と、本文の単語にヒットさせる単語にする。
+          minLength: 1
+          examples:
+            - 既読の記録
+        description:
+          type: string
+          title: 意味
+          description: 用語が指すものを 1 文で記載する。
+          x-used-by:
+            - project-index の検索で、用語の文書の概要文にする。
+          minLength: 1
+          examples:
+            - 参照したルールの場所と、参照した時点の本文のハッシュをセッションごとに持つ記録。
+        aliases:
+          type: array
+          title: 別名
+          description: 正式な単語と並べて使用してよい言い方。
+          x-used-by:
+            - project-index の検索で、本文の単語にヒットさせる単語にする。
+          items:
+            type: string
+            minLength: 1
+          examples:
+            - - ルール索引
+        avoid:
+          type: array
+          title: 使用しない言い方
+          description: やめた言い方。文書・コードのコメントに記載せず、正式な単語に置き換える。
+          x-used-by:
+            - レビューで、文書・コードのコメントに残っていないかを確認する。
+          items:
+            type: string
+            minLength: 1
+          examples:
+            - - 既読記録
+examples:
+- id: GLO-1
+  title: 用語集
+  terms:
+  - id: rule-index
+    name: 索引
+    description: 利用者が記載し、ルールと、ルールを適用するパス・ツール・引数を対応付ける YAML。
+    aliases:
+    - ルール索引
+  - id: read-record
+    name: 既読の記録
+    description: 参照したルールの場所と、参照した時点の本文のハッシュをセッションごとに持つ記録。
+    avoid:
+    - 既読記録
