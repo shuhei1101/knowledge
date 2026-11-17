@@ -857,3 +857,8 @@ rules:
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["dev-versioning"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/dev-docs-navigation.yaml
+    paths: ['**/project-index.yaml', '**/dev-docs.yaml']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["dev-docs-navigation"]}, "view": "full", "outside_scope": true}'
