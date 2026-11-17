@@ -11,7 +11,7 @@ inject_when:
     - tests/e2e/workflow
 status: current
 visibility: internal
-rev: 3
+rev: 4
 last_reviewed: '2026-11-17'
 related:
   - to: template-interface
@@ -42,7 +42,8 @@ items:
     body: |-
       1. フローの `setup` のブランチの行のとおり、検証用のブランチを用意して push する
       2. `gh workflow run {workflow のファイル} --ref {ブランチ} -f {入力}={値}` で起動し、出力の URL の末尾から実行の ID を取る
-      3. `gh api "repos/{owner}/{repo}/actions/runs/{ID}?exclude_pull_requests=true"` で実行を参照できるまで待ち、決めた回数で参照できなければ失敗で終える
+      3. `gh api "repos/{owner}/{repo}/actions/runs/{ID}?exclude_pull_requests=true"` で実行を参照できるまで待つ。
+         決めた回数で参照できなければ失敗で終える
       4. `gh run watch {ID} --exit-status` で終わるまで待つ
       5. `gh run view {ID} --json conclusion,jobs` で、実行の結論と step ごとの結論を取得する
       6. フローの図の step が図のとおりに通り、図に無い step が `skipped` かと、`expected` を確認する
