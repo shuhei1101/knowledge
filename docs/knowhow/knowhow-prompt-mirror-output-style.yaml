@@ -1,0 +1,34 @@
+id: knowhow-prompt-mirror-output-style
+kind: knowhow
+name: プロンプトの書式と文体を、欲しい出力に合わせる
+description: プロンプトの書式と文体が出力に移ることを利用し、Markdown の有無や口語の度合いを欲しい出力に合わせる技法を記載し、文章生成の出力の書式や口調を調えるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: AN
+    title: 'Anthropic: Prompting best practices'
+    url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+necessity: reference
+scenes:
+  fits:
+    - 文章生成で、出力の Markdown を減らしたいとき。
+    - 口語のキャラクターのセリフを生成させるとき。
+evidence:
+  - source: AN
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      プロンプトの書式と文体は出力に移る。
+      プロンプトから Markdown を削除すると、出力の Markdown も減る。
+      口語のキャラクターなら、設定の文も口語に合わせる（口調への効果は推測を含む）。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:llm
+  - name: topic:文章
+  - name: topic:ノウハウ

@@ -1,0 +1,38 @@
+id: knowhow-prompt-persona-scope
+kind: knowhow
+name: 役割は口調のためだけに指定し、課題に関係の無い設定を盛らない
+description: プロンプトの役割（persona）は口調・文体には有効だが正確さは上げず、課題に関係の無い設定は性能を下げることを記載し、プロンプトに役割やキャラクターの設定を入れるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: PS
+    title: 役割の指定と正答率の研究
+    url: https://arxiv.org/abs/2512.05858
+  - id: IP
+    title: 関係の無いペルソナ情報と性能の研究
+    url: https://arxiv.org/abs/2508.19764
+necessity: reference
+scenes:
+  fits:
+    - プロンプトに役割やキャラクターの設定を入れるとき。
+evidence:
+  - source: PS
+    speaker: practitioner
+  - source: IP
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      「専門家」の役割を指定しても正答率は上がらず、分野違い・初心者の役は正答率を下げる。
+      役割は口調・文体のためだけに指定する。
+      課題に関係の無い設定は、性能を最大約 30 ポイント下げるので、量で盛らない。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:llm
+  - name: topic:ロール
+  - name: topic:ノウハウ
