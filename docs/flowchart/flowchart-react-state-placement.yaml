@@ -23,7 +23,7 @@ tags:
   - name: action:計算
 status: current
 visibility: internal
-rev: 8
+rev: 9
 related: []
 sources:
   - title: Choosing the State Structure
@@ -51,88 +51,71 @@ items:
     group: React の状態の置き場所 判定フローチャート
     name: 判定フロー
     body: |-
-      <!-- flow -->
+      <!-- map: {"title": "React の状態の置き場所"} -->
 
-      ```json
-      {
-        "title": "React の状態の置き場所",
-        "scope": "React のフロントエンドで新しい値の配置先を決めるとき",
-        "updated": "2026-11-06",
-        "width": 1768,
-        "height": 2108,
-        "nodes": [
-          {"id": "start", "kind": "start", "x": 824, "y": 24, "w": 120, "h": 120, "name": "新しい値の配置先を決めたい"},
-          {"id": "q0", "kind": "question", "x": 744, "y": 200, "w": 280, "h": 164, "name": "props・既存の state から計算できるか"},
-          {"id": "r1", "kind": "result", "x": 1174, "y": 246, "w": 240, "h": 72, "name": "state にしない。描画中に計算する"},
-          {"id": "q1", "kind": "question", "x": 744, "y": 420, "w": 280, "h": 124, "name": "サーバーのデータか"},
-          {"id": "r2", "kind": "result", "x": 354, "y": 436, "w": 240, "h": 92, "name": "TanStack Query。ほかの store にコピーしない"},
-          {"id": "q2", "kind": "question", "x": 744, "y": 600, "w": 280, "h": 164, "name": "共有・ブックマークで同じ表示にしたい値か ※1"},
-          {"id": "r3", "kind": "result", "x": 1174, "y": 636, "w": 240, "h": 92, "name": "URL の状態。validateSearch + Zod"},
-          {"id": "q2-2", "kind": "question", "x": 744, "y": 820, "w": 280, "h": 164, "name": "画面を離れて戻ったとき・再読み込みの後に戻したい値か ※2"},
-          {"id": "r3-2", "kind": "result", "x": 1174, "y": 846, "w": 240, "h": 112, "name": "保持先を『画面の状態の保持先』で選ぶ。Storage に持つ値は Zustand の persist"},
-          {"id": "q3", "kind": "question", "x": 744, "y": 1040, "w": 280, "h": 124, "name": "フォームの入力中の値か"},
-          {"id": "q4", "kind": "question", "x": 334, "y": 1040, "w": 280, "h": 124, "name": "項目が多い、または検証が複雑か"},
-          {"id": "r4", "kind": "result", "x": 24, "y": 1066, "w": 240, "h": 72, "name": "React Hook Form + Zod"},
-          {"id": "r5", "kind": "result", "x": 354, "y": 1274, "w": 240, "h": 56, "name": "useState"},
-          {"id": "q5", "kind": "question", "x": 744, "y": 1220, "w": 280, "h": 164, "name": "使用するのは 1 コンポーネントだけか"},
-          {"id": "q6", "kind": "question", "x": 1154, "y": 1240, "w": 280, "h": 124, "name": "複数の値が連動するか"},
-          {"id": "r6", "kind": "result", "x": 1504, "y": 1274, "w": 240, "h": 56, "name": "useReducer"},
-          {"id": "r5-2", "kind": "result", "x": 1174, "y": 1512, "w": 240, "h": 56, "name": "useState"},
-          {"id": "q7", "kind": "question", "x": 704, "y": 1440, "w": 360, "h": 200, "name": "近い親に持ち上げて props か children で指定できるか"},
-          {"id": "r7", "kind": "result", "x": 354, "y": 1512, "w": 240, "h": 56, "name": "親へ持ち上げる"},
-          {"id": "q8", "kind": "question", "x": 684, "y": 1696, "w": 400, "h": 240, "name": "頻繁に更新される・一部だけ購読したい・React の外から参照する、のどれかか"},
-          {"id": "r8", "kind": "result", "x": 1174, "y": 1788, "w": 240, "h": 56, "name": "Zustand ※3"},
-          {"id": "r9", "kind": "result", "x": 764, "y": 1992, "w": 240, "h": 92, "name": "Context。必要なら useReducer と組み合わせる ※4"}
-        ],
-        "wires": [
-          {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[884, 144], [884, 200]]},
-          {"id": "j-q0-r1", "from": "q0", "to": "r1", "line": "flow", "points": [[1024, 282], [1174, 282]], "label": "YES", "labelAt": [1099, 282]},
-          {"id": "j-q0-q1", "from": "q0", "to": "q1", "line": "flow", "points": [[884, 364], [884, 420]], "label": "NO", "labelAt": [884, 392]},
-          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[884, 544], [884, 600]], "label": "NO", "labelAt": [884, 572]},
-          {"id": "j-q1-r2", "from": "q1", "to": "r2", "line": "flow", "points": [[744, 482], [594, 482]], "label": "YES", "labelAt": [669, 482]},
-          {"id": "j-q2-r3", "from": "q2", "to": "r3", "line": "flow", "points": [[1024, 682], [1174, 682]], "label": "YES", "labelAt": [1099, 682]},
-          {"id": "j-q2-q2-2", "from": "q2", "to": "q2-2", "line": "flow", "points": [[884, 764], [884, 820]], "label": "NO", "labelAt": [884, 792]},
-          {"id": "j-q2-2-r3-2", "from": "q2-2", "to": "r3-2", "line": "flow", "points": [[1024, 902], [1174, 902]], "label": "YES", "labelAt": [1099, 902]},
-          {"id": "j-q2-2-q3", "from": "q2-2", "to": "q3", "line": "flow", "points": [[884, 984], [884, 1040]], "label": "NO", "labelAt": [884, 1012]},
-          {"id": "j-q3-q4", "from": "q3", "to": "q4", "line": "flow", "points": [[744, 1102], [614, 1102]], "label": "YES", "labelAt": [679, 1102]},
-          {"id": "j-q3-q5", "from": "q3", "to": "q5", "line": "flow", "points": [[884, 1164], [884, 1220]], "label": "NO", "labelAt": [884, 1192]},
-          {"id": "j-q4-r4", "from": "q4", "to": "r4", "line": "flow", "points": [[334, 1102], [264, 1102]], "label": "YES", "labelAt": [299, 1102]},
-          {"id": "j-q4-r5", "from": "q4", "to": "r5", "line": "flow", "points": [[474, 1164], [474, 1274]], "label": "NO", "labelAt": [474, 1219]},
-          {"id": "j-q5-q6", "from": "q5", "to": "q6", "line": "flow", "points": [[1024, 1302], [1154, 1302]], "label": "YES", "labelAt": [1089, 1302]},
-          {"id": "j-q5-q7", "from": "q5", "to": "q7", "line": "flow", "points": [[884, 1384], [884, 1440]], "label": "NO", "labelAt": [884, 1412]},
-          {"id": "j-q6-r6", "from": "q6", "to": "r6", "line": "flow", "points": [[1434, 1302], [1504, 1302]], "label": "YES", "labelAt": [1469, 1302]},
-          {"id": "j-q6-r5-2", "from": "q6", "to": "r5-2", "line": "flow", "points": [[1294, 1364], [1294, 1512]], "label": "NO", "labelAt": [1294, 1438]},
-          {"id": "j-q7-q8", "from": "q7", "to": "q8", "line": "flow", "points": [[884, 1640], [884, 1696]], "label": "NO", "labelAt": [884, 1668]},
-          {"id": "j-q7-r7", "from": "q7", "to": "r7", "line": "flow", "points": [[704, 1540], [594, 1540]], "label": "YES", "labelAt": [649, 1540]},
-          {"id": "j-q8-r8", "from": "q8", "to": "r8", "line": "flow", "points": [[1084, 1816], [1174, 1816]], "label": "YES", "labelAt": [1129, 1816]},
-          {"id": "j-q8-r9", "from": "q8", "to": "r9", "line": "flow", "points": [[884, 1936], [884, 1992]], "label": "NO", "labelAt": [884, 1964]}
-        ]
-      }
+      ```mermaid
+      flowchart TB
+        start(("新しい値の配置先を決めたい"))
+        q0{"props・既存の state から計算できるか"}
+        r1(["state にしない。描画中に計算する"])
+        q1{"サーバーのデータか"}
+        r2(["TanStack Query。ほかの store にコピーしない"])
+        q2{"共有・ブックマークで同じ表示にしたい値か"}
+        r3(["URL の状態。validateSearch + Zod"])
+        q2_2{"画面を離れて戻ったとき・再読み込みの後に戻したい値か"}
+        r3_2(["保持先を『画面の状態の保持先』で選ぶ。Storage に持つ値は Zustand の persist"])
+        q3{"フォームの入力中の値か"}
+        q4{"項目が多い、または検証が複雑か"}
+        r4(["React Hook Form + Zod"])
+        r5(["useState"])
+        q5{"使用するのは 1 コンポーネントだけか"}
+        q6{"複数の値が連動するか"}
+        r6(["useReducer"])
+        r5_2(["useState"])
+        q7{"近い親に持ち上げて props か children で指定できるか"}
+        r7(["親へ持ち上げる"])
+        q8{"頻繁に更新される・一部だけ購読したい・React の外から参照する、のどれかか"}
+        r8(["Zustand"])
+        r9(["Context。必要なら useReducer と組み合わせる"])
+        start --> q0
+        q0 -->|YES| r1
+        q0 -->|NO| q1
+        q1 -->|NO| q2
+        q1 -->|YES| r2
+        q2 -->|YES| r3
+        q2 -->|NO| q2_2
+        q2_2 -->|YES| r3_2
+        q2_2 -->|NO| q3
+        q3 -->|YES| q4
+        q3 -->|NO| q5
+        q4 -->|YES| r4
+        q4 -->|NO| r5
+        q5 -->|YES| q6
+        q5 -->|NO| q7
+        q6 -->|YES| r6
+        q6 -->|NO| r5_2
+        q7 -->|NO| q8
+        q7 -->|YES| r7
+        q8 -->|YES| r8
+        q8 -->|NO| r9
       ```
 
-      <!-- /flow -->
-  - id: react-state-placement-flow-02
-    group: React の状態の置き場所 判定フローチャート
-    name: ※1 URL に配置する値
-    body: |-
-      - ※1 URL に配置する値: タブ・フィルタ・ソート・ページ・選択中の ID。
-        個人情報・フォームの入力中の値・読み込み中とエラーの表示・スクロール位置は、URL に出さない
-  - id: react-state-placement-flow-05
-    group: React の状態の置き場所 判定フローチャート
-    name: ※2 戻したい値
-    body: |-
-      - ※2 戻したい値: 戻る・別の画面からリンクで再度入る・再読み込みの後に戻したい値（スクロール位置・最後のタブや絞り込み・端末ごとの好み）。
-        スクロール位置は TanStack Router の `scrollRestoration` で戻す（[URL の状態](id:react-state-url-state#scroll-restoration-01)）
-  - id: react-state-placement-flow-03
-    group: React の状態の置き場所 判定フローチャート
-    name: ※3 Zustand の使用方法
-    body: |-
-      - ※3 Zustand の使用方法: store は公開せず、カスタム hook だけを export する。
-        selector で必要な値だけを購読し、actions は state と分ける。
-        永続化は `persist` を使用し、保存先（sessionStorage・localStorage）は [画面の状態の保持先](id:flowchart-screen-state-retention) の結果に合わせる。
-        サーバーのデータとフォームの値は入れない。
-        画面をまたぐ store は `shared/stores/` に配置する
-  - id: react-state-placement-flow-04
-    group: React の状態の置き場所 判定フローチャート
-    name: ※4 Context の使用方法
-    body: "- ※4 Context の使用方法: 1 つの Context は 1 つの責務にする。\n  Provider と同じファイルに `use{Name}` を export し、Provider の外で呼んだら throw する。\n  SPA ではルートの上に配置した Provider がページを移っても消えないので、ページをまたぐだけなら Context で足りる"
+      <!-- map-data: {"version": 1, "notes": {"q2": {"annotations": ["react-state-placement-n1"]}, "q2_2": {"annotations": ["react-state-placement-n2"]}, "r8": {"annotations": ["react-state-placement-n3"]}, "r9": {"annotations": ["react-state-placement-n4"]}}} -->
+
+      <!-- /map -->
+
+      ※[react-state-placement-n1]: URL に配置する値: タブ・フィルタ・ソート・ページ・選択中の ID。
+          個人情報・フォームの入力中の値・読み込み中とエラーの表示・スクロール位置は、URL に出さない。
+
+      ※[react-state-placement-n2]: 戻したい値: 戻る・別の画面からリンクで再度入る・再読み込みの後に戻したい値（スクロール位置・最後のタブや絞り込み・端末ごとの好み）。
+          スクロール位置は TanStack Router の `scrollRestoration` で戻す（[URL の状態](id:react-state-url-state#scroll-restoration-01)）。
+
+      ※[react-state-placement-n3]: Zustand の使用方法: store は公開せず、カスタム hook だけを export する。
+          selector で必要な値だけを購読し、actions は state と分ける。
+          永続化は `persist` を使用し、保存先（sessionStorage・localStorage）は [画面の状態の保持先](id:flowchart-screen-state-retention) の結果に合わせる。
+          サーバーのデータとフォームの値は入れない。
+          画面をまたぐ store は `shared/stores/` に配置する。
+
+      ※[react-state-placement-n4]: Context の使用方法: 1 つの Context は 1 つの責務にする。
+          Provider と同じファイルに `use{Name}` を export し、Provider の外で呼んだら throw する。
+          SPA ではルートの上に配置した Provider がページを移っても消えないので、ページをまたぐだけなら Context で足りる。
