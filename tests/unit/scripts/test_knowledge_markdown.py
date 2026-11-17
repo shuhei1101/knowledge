@@ -16,6 +16,7 @@ from knowledge_markdown import (
     render_items,
     render_value,
     render_word_list,
+    resolve_definition,
 )
 
 if TYPE_CHECKING:
@@ -439,7 +440,7 @@ def test_render_items_when_embed() -> None:
 def test_render_value_when_string() -> None:
     """文字列（正常系）。"""
     # 実行
-    result = render_value("段落")
+    result = render_value("段落", None, {})
     # 検証
     assert result == "段落"
 
@@ -447,7 +448,7 @@ def test_render_value_when_string() -> None:
 def test_render_value_when_string_list() -> None:
     """文字列の配列（正常系）。"""
     # 実行
-    result = render_value(["a", "b"])
+    result = render_value(["a", "b"], None, {})
     # 検証
     assert result == "- a\n- b"
 
@@ -455,7 +456,7 @@ def test_render_value_when_string_list() -> None:
 def test_render_value_when_object_list() -> None:
     """オブジェクトの配列（正常系）。"""
     # 実行
-    result = render_value([{"name": "x", "note": "a|b"}, {"name": "y"}])
+    result = render_value([{"name": "x", "note": "a|b"}, {"name": "y"}], None, {})
     # 検証
     assert result.startswith('<!-- table: {"kind": "data"} -->')
     assert result.endswith("<!-- /table -->")
@@ -467,9 +468,122 @@ def test_render_value_when_object_list() -> None:
 def test_render_value_when_object() -> None:
     """オブジェクト（正常系）。"""
     # 実行
-    result = render_value({"a": 1})
+    result = render_value({"a": 1}, None, {})
     # 検証
     assert result == "- a: 1"
+
+
+def test_render_value_when_object_list_titles() -> None:
+    """表の列名を要素の定義の title にする（正常系）。"""
+    # 準備: items が $defs の case を指す定義
+    schema = {"$defs": {"case": {"properties": {"work": {"title": "作品・場面"}}}}}
+    definition = {"items": {"$ref": "#/$defs/case"}}
+    # 実行
+    result = render_value([{"work": "w", "extra": "e"}], definition, schema)
+    # 検証
+    assert "| 作品・場面 | extra |" in result
+    assert "| w | e |" in result
+
+
+def test_render_value_when_list_in_object() -> None:
+    """オブジェクトの中の配列（正常系）。"""
+    # 準備
+    definition = {"properties": {"fits": {"title": "有効な場面"}}}
+    # 実行
+    result = render_value({"fits": ["a", "b"]}, definition, {})
+    # 検証
+    assert result == "- 有効な場面\n  - a\n  - b"
+
+
+def test_render_value_when_nested_cell() -> None:
+    """表のセルの配列とオブジェクト（正常系）。"""
+    # 実行
+    result = render_value([{"a": ["x", "y"], "b": {"c": 1}}], None, {})
+    # 検証
+    assert "| x<br>y | c: 1 |" in result
+
+
+def test_render_value_when_mixed_list() -> None:
+    """一部の要素だけがオブジェクトの配列（正常系）。"""
+    # 実行
+    result = render_value(["a", {"x": 1}], None, {})
+    # 検証
+    assert result == "- a\n-\n  - x: 1"
+
+
+def test_render_value_when_no_json() -> None:
+    """JSON の文字列を出さない（正常系）。"""
+    # 準備: オブジェクトの中にオブジェクトの配列と配列の配列
+    value = {"rows": [{"k": "v"}, {"k": "w"}], "grid": [["a", "b"], ["c"]]}
+    # 実行
+    result = render_value(value, None, {})
+    # 検証
+    assert '["' not in result
+    assert '{"' not in result
+    assert "- rows\n  -\n    - k: v" in result
+    assert "- grid\n  -\n    - a\n    - b" in result
+
+
+def test_resolve_definition() -> None:
+    """キーの定義（正常系）。"""
+    # 準備
+    definition = {"properties": {"scenes": {"title": "使用する場面"}}}
+    # 実行
+    result = resolve_definition({}, definition, "scenes")
+    # 検証
+    assert result == {"title": "使用する場面"}
+
+
+def test_resolve_definition_when_items_ref() -> None:
+    """配列の要素の $ref（正常系）。"""
+    # 準備
+    schema = {"$defs": {"case": {"title": "実例", "type": "object"}}}
+    definition = {"items": {"$ref": "#/$defs/case"}}
+    # 実行
+    result = resolve_definition(schema, definition, None)
+    # 検証
+    assert result == {"title": "実例", "type": "object"}
+
+
+def test_resolve_definition_when_ref_with_title() -> None:
+    """$ref と兄弟の title（正常系）。"""
+    # 準備
+    schema = {"$defs": {"id": {"title": "識別子", "type": "string"}}}
+    definition = {"properties": {"id": {"$ref": "#/$defs/id", "title": "ID"}}}
+    # 実行
+    result = resolve_definition(schema, definition, "id")
+    # 検証
+    assert result is not None
+    assert result["title"] == "ID"
+    assert result["type"] == "string"
+
+
+def test_resolve_definition_when_external_ref() -> None:
+    """別のファイルの $ref（正常系）。"""
+    # 準備
+    definition = {"properties": {"x": {"$ref": "common.schema.yaml#/$defs/x", "title": "X"}}}
+    # 実行
+    result = resolve_definition({}, definition, "x")
+    # 検証
+    assert result == {"title": "X"}
+
+
+def test_resolve_definition_when_ref_loop() -> None:
+    """循環する $ref（正常系）。"""
+    # 準備: a と b が互いを指す
+    schema = {"$defs": {"a": {"$ref": "#/$defs/b"}, "b": {"$ref": "#/$defs/a"}}}
+    definition = {"properties": {"k": {"$ref": "#/$defs/a"}}}
+    # 実行
+    result = resolve_definition(schema, definition, "k")
+    # 検証: 例外を送出せずに返る
+    assert result is not None
+
+
+def test_resolve_definition_when_missing() -> None:
+    """定義が無い（正常系）。"""
+    # 実行・検証
+    assert resolve_definition({}, {"properties": {}}, "missing") is None
+    assert resolve_definition({}, None, "missing") is None
 
 
 def test_render_word_list() -> None:
