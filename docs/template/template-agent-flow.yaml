@@ -65,7 +65,7 @@ items:
       | steps[].when | 条件 | string | - | - | - | この工程をする条件。記載しなければ毎回する。 | 生成で、Markdown の工程の頭に条件を出す。 | `細かい値や過去のことが要るとき` |
       | steps[].calls | 呼ぶもの | array | - | - | - | 工程で呼ぶもの。互いの結果を使用しないものだけを並べる。 | 生成で、Markdown の工程に呼ぶものを出す。 | - |
       | steps[].calls[].type | 種類 | string | 必須 | `mcp` / `tool` / `command` / `agent` / `skill` / `flow` | - | `mcp`（MCP のツール）/ `tool`（組み込みのツール）/ `command`（シェルのコマンド）/ `agent`（Agent ツールで起動するサブエージェント）/ `skill`（Skill ツールで呼ぶスキル）/ `flow`（別のエージェントフローを参照し、全ての工程を進める）。 | 検査で、種類ごとのキーの要否を確認する。<br>検査で、文書の `type` が `flow` なら、`agents` の起動の構成で使用できるか（`permissions.deny` に無いか）を確認する。 | - |
-      | steps[].calls[].server | MCP サーバー | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | `type` が `mcp` のときの『MCP サーバーの定義』への参照。 | 変換で、ツールの完全な名前（Claude Code では `mcp__{server}__{tool}`）を作る。 | `MCP-1#` |
+      | steps[].calls[].server | MCP サーバー | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[\]]\|\[(?:[^\[\]]\|\[[^\[\]]*\])*\])*$` | `type` が `mcp` のときの『MCP サーバーの定義』への参照。 | 変換で、ツールの完全な名前（Claude Code では `mcp__{server}__{tool}`）を作る。 | `MCP-1#` |
       | steps[].calls[].tool | ツール | string | - | - | - | `type` が `mcp`・`tool` のときのツールの名前。`mcp` は『MCP サーバーの定義』の `tools[].name`、`tool` は組み込みのツールの名前。 | 生成で、Markdown に呼ぶツールを出す。<br>検査で、`mcp` のツールがエージェントの `clients[].allow` にあるかを確認する。 | `search` |
       | steps[].calls[].args | 引数の制約 | object | - | - | - | `type` が `mcp`・`tool` のときの引数の制約。JSON Schema の `required`・`properties`・`additionalProperties` と、引数ごとの `const`・`enum`・`pattern` で記載する。 | 生成で、Markdown に引数の制約を出す。<br>検査で、`mcp` のツールの `inputSchema` に合うかを確認する。 | `{required: [character_id]}` |
       | steps[].calls[].command | コマンド | string | - | - | - | `type` が `command` のときに実行するコマンド。 | 生成で、Markdown にコマンドを出す。<br>検査で、文書の `type` が `skill` なら `skill.allowed_tools` にあるかを確認する。 | `mdmark export {file}` |
@@ -82,7 +82,7 @@ items:
       | steps[].calls[].skill | スキル | string | - | - | pattern: `^[^\s#]+#.*$` | `type` が `skill` のときに呼ぶ、`type` が `skill` のエージェントフローへの参照。 | 生成で、Markdown に呼ぶスキルを出す。 | `mindstella/setup#` |
       | refs | 関連 | array | - | - | maxItems: `8` | 参照する共通の手順・ノウハウへの関連。 | 生成で、関連する手順へのリンクにする。<br>レビューで、関連する手順をたどって食い違いを確認する。 | - |
       | refs[].to | 相手の ID | string | 必須 | - | pattern: `^[^\s#]+$` | 関連先のエージェントフローか文書の ID。項目のパスは `item` に分ける。 | 検査で、関連先が実在するかを確認する。 | `shared/character-state` / `convention-writing-style` |
-      | refs[].item | 項目のパス | string | - | - | pattern: `^(?:[^\s\[#]\|\[[^\]]*\])(?:[^\s\[]\|\[[^\]]*\])*$` | 関連先の項目のパス。設計書全体を指すときは記載しない。 | 検査で、`to` の設計書に項目が実在するかを確認する。<br>生成で、関連先の項目へのリンクにする。 | `flows[正常系]` / `functions[resolve_base].exceptions` |
+      | refs[].item | 項目のパス | string | - | - | pattern: `^(?:[^\s\[\]#]\|\[(?:[^\[\]]\|\[[^\[\]]*\])*\])(?:[^\s\[\]]\|\[(?:[^\[\]]\|\[[^\[\]]*\])*\])*$` | 関連先の項目のパス。設計書全体を指すときは記載しない。 | 検査で、`to` の設計書に項目が実在するかを確認する。<br>生成で、関連先の項目へのリンクにする。 | `flows[正常系]` / `functions[resolve_base].exceptions` |
       | refs[].type | 関係の種類 | string | 必須 | `requires` / `references` / `replaces` / `part_of` / `change_together` | - | 関係の種類で、`requires`（前提にする）/ `references`（参照する）/ `replaces`（置き換える）/ `part_of`（一部になる）/ `change_together`（同時に修正する）のどれか。 | レビューで、関連先の変更がこの設計書へ及ぶかを判断する。<br>project-index の `trace_related` で、たどった関連の影響の理由にする。 | - |
       | refs[].when | いつ参照するか | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 関連先をいつ参照するかの 1 文。 | 実装とレビューで、関連先を参照する場面を判断する。 | `例外の型を変えるときに、呼び出し側の異常系のフローを確認する。` |
       | refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
@@ -100,7 +100,7 @@ items:
       | agents | 記載しなければ、フォルダ構成で配置先のフォルダの `used_by` にあるエージェントにする。<br>配置先のフォルダの `used_by` と両方を記載したときは、食い違いを検査する。 | - | - |
       | skill.frontmatter | 上の項目で表せない理由があるときだけ記載する。 | - | - |
       | steps[].body | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
-      | steps[].calls[].server | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | steps[].calls[].server | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
       | steps[].calls[].args | 引数を自由にするときは記載しない。 | - | - |
       | steps[].calls[].tools | レビュアーのサブエージェントには `Agent` を許可しない。 | - | - |
       | refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
