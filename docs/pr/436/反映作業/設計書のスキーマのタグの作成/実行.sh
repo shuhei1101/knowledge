@@ -16,8 +16,14 @@ if ! git fetch -q origin develop; then
   exit 1
 fi
 if git ls-remote --tags --refs origin "$TAG" | grep -q .; then
-  echo "タグの作成: skipped"
-  exit 0
+  git fetch -q origin "refs/tags/$TAG:refs/tags/$TAG"
+  if git for-each-ref "refs/tags/$TAG" --format='%(contents:subject)' | grep -q '(#436)$'; then
+    echo "タグの作成: skipped"
+    exit 0
+  fi
+  echo "前提確認: failed"
+  echo "$TAG が別のメッセージで既にあります: $(git for-each-ref "refs/tags/$TAG" --format='%(contents:subject)')"
+  exit 1
 fi
 LATEST=$(git ls-remote --tags --refs origin 'design-schemas/*' | sed 's#.*refs/tags/##' | sort -V | tail -n 1)
 if [ "$LATEST" != "$PREV" ]; then
