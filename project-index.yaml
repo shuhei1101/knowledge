@@ -244,48 +244,129 @@ documents:
     body_file: path
 nav:
   tabs:
-    - title: 規約
+    - title: はじめに
       items:
-        - auto:
-            document: rule
-        - group: 単語の対応表
-          items:
-            - auto:
-                document: word-list
-    - title: ノウハウ
-      items:
-        - auto:
-            document: knowhow
-    - title: テンプレート
-      items:
-        - auto:
-            document: template
-    - title: 判定フローチャート
-      items:
-        - auto:
-            document: flowchart
-    - title: 判定表
-      items:
-        - auto:
-            document: decision-table
-    - title: チェックシート
-      items:
-        - auto:
-            document: checksheet
+        - page: changelog
     - title: 使い方
       items:
         - auto:
             document: guide
-        - page: changelog
-        - group: 用語集
+        - group: スキル
           items:
             - auto:
-                document: terms
-    - title: スキル
+                document: skill
+    - title: 設計書
       items:
-        - auto:
-            document: skill
-    - title: ファイル
+        - group: アーキテクチャ図
+          items:
+            - auto:
+                document: architecture
+        - group: 非機能要件
+          items:
+            - auto:
+                document: nonfunctional
+        - group: フォルダ構成
+          items:
+            - auto:
+                document: layout
+        - group: シナリオ
+          items:
+            - auto:
+                document: scenario
+        - group: インターフェース定義
+          items:
+            - auto:
+                document: interface
+        - group: モジュール構成
+          items:
+            - auto:
+                document: module
+        - group: 外部ライブラリ
+          items:
+            - auto:
+                document: library
+        - group: テスト実行方法
+          items:
+            - auto:
+                document: test_procedure
+        - group: 開発コマンド
+          items:
+            - auto:
+                document: dev_command
+    - title: 規約
+      items:
+        - group: 規約
+          items:
+            - group: 共通
+              items:
+                - auto:
+                    document: rule
+                    filter: {field: id, op: prefix, values: [convention-, doc-, markdown-, prompt-]}
+            - group: 開発
+              items:
+                - auto:
+                    document: rule
+                    filter: {field: id, op: prefix, values: [dev-, testing-, obs-]}
+            - group: UI
+              items:
+                - auto:
+                    document: rule
+                    filter: {field: id, op: prefix, values: [ui-]}
+            - group: React
+              items:
+                - auto:
+                    document: rule
+                    filter: {field: id, op: prefix, values: [react-]}
+            - group: Next.js
+              items:
+                - auto:
+                    document: rule
+                    filter: {field: id, op: prefix, values: [next-]}
+            - group: HTML
+              items:
+                - auto:
+                    document: rule
+                    filter: {field: id, op: prefix, values: [html-]}
+            - group: TypeScript
+              items:
+                - auto:
+                    document: rule
+                    filter: {field: id, op: prefix, values: [typescript-]}
+            - group: Python
+              items:
+                - auto:
+                    document: rule
+                    filter: {field: id, op: prefix, values: [python-]}
+            - group: Claude
+              items:
+                - auto:
+                    document: rule
+                    filter: {field: id, op: prefix, values: [claude-]}
+        - group: テンプレート
+          items:
+            - auto:
+                document: template
+        - group: 判定フローチャート
+          items:
+            - auto:
+                document: flowchart
+        - group: 判定表
+          items:
+            - auto:
+                document: decision-table
+        - group: チェックシート
+          items:
+            - auto:
+                document: checksheet
+        - group: 単語の対応表
+          items:
+            - auto:
+                document: word-list
+        - group: ノウハウ
+          items:
+            - auto:
+                document: knowhow
+    - title: コード
       items:
         - group: スキルの本体
           items:
@@ -295,3 +376,7 @@ nav:
           items:
             - auto:
                 document: scripts
+    - title: 用語集
+      items:
+        - auto:
+            document: terms
