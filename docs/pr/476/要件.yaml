@@ -1,0 +1,18 @@
+docs:
+  - page: docs/test-procedure/TP-72-1.yaml
+    new: false
+    change: TL-2・TL-3 の run_runner で、実行の ID を取った後に gh api で実行を参照できるまで 1 秒おきに最大 10 回待ち、参照できなければ標準エラーに出して終了コード 1 で終えてから gh run watch を呼ぶ
+    status: todo
+  - page: schemas/design/test_procedure.schema.yaml
+    new: false
+    change: run_runner の x-rules に、起動した実行を API で参照できるまで待ってから終わるまで待ち、参照できなければ失敗で終える決まりを追加し、examples の TL-1 の run_runner を TP-72-1 と同じコマンドに修正する
+    status: todo
+  - page: docs/template/template-test-procedure.yaml
+    new: false
+    change: スキーマの変更を scripts/build_templates.py で再生成して反映する
+    status: todo
+use_cases: []
+scope_out:
+  - item: 規約『GitHub Actions の workflow のテスト』の手順 2・3 と tests/e2e/workflow/conftest.py の _watch に、実行を API で参照できるまで待つ処理を入れる
+    reason: 要望はテスト実行方法の run_runner が対象で、規約と E2E のテストのコードは含まない。この作業 PR がマージされなくても同じ内容で成り立つ
+    plan: '#477'
