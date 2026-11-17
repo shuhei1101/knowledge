@@ -1,0 +1,49 @@
+id: knowhow-script-lines-as-floor
+kind: knowhow
+name: 台本の台詞は最低限の面白さとして最高案を書き、演者が超えるのに任せる
+description: 台本の台詞を番組の最低限の面白さとして最高案で書き、演者が台本を超えて話すことを前提に、台本を保険として扱う技法を記載し、演者が話す台本の台詞の水準を決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: MURAKAMI
+    title: 村上卓史「バラエティの"ネタ"はどこまで決めるのか 放送作家と出演者の「真剣勝負」」（PRESIDENT Online。『放送作家という生き方』の抜粋）
+    url: https://president.jp/articles/-/24266
+  - id: FUJII
+    title: 藤井青銅「台本は｢喋り言葉｣で書いてはいけない…」（PRESIDENT Online）
+    url: https://president.jp/articles/-/79644
+necessity: reference
+scenes:
+  fits:
+    - 演者が自分の言葉で話す台本を書くとき。
+    - 台本の台詞をどこまで作り込むかを決めるとき。
+  misfits:
+    - 一字一句を読み上げる告知の区切り。
+    - LLM のセリフ生成に渡す台本を書くとき。
+evidence:
+  - source: MURAKAMI
+    speaker: practitioner
+  - source: FUJII
+    speaker: practitioner
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      台本の台詞は、その回の最低限の面白さになる。
+      初期設定を高くして最高案を書くほど、演者の力が引き出され、想定以上の場面が生まれる。
+      演者が台本以上の言葉を狙うので、台本を保険として扱い、無視されてもよい。
+      人の演者が話す台本に適用する。
+      LLM のセリフ生成に渡す台本は、台詞を作り込まず [軸だけを決める台本](id:knowhow-script-axis-only) に従う。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 台詞の案は、思い付いた中で最も面白いものを書く
+      2. 演者が台本から外れたときに戻れる要点だけは残す
+tags:
+  - name: topic:台本
+    main: true
+  - name: topic:セリフ
+  - name: topic:書き方
+  - name: topic:ノウハウ
