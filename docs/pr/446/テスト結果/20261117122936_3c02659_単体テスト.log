@@ -1,0 +1,57 @@
+$ run_url=$(gh workflow run test.yml --ref docs/schemas/glossary-and-click-id-link -f layer=unit | grep -o ...) && gh run watch ... && gh run view "$run_id" --log
+run: https://github.com/shuhei1101/knowledge/actions/runs/44010334135（3c02659）
+test	層の全件を回す	﻿2026-11-17T03:27:39.3633419Z ##[group]Run set -o pipefail
+^[[36;1mset -o pipefail^[[0m
+^[[36;1mcase "$LAYER" in^[[0m
+^[[36;1m  unit)^[[0m
+^[[36;1m    (rc=0; uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit || rc=1; uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check || rc=1; exit $rc) 2>&1 | tee test.log^[[0m
+^[[36;1m    ;;^[[0m
+^[[36;1m  integration)^[[0m
+^[[36;1m    uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/integration 2>&1 | tee test.log^[[0m
+^[[36;1m    ;;^[[0m
+^[[36;1mesac^[[0m
+shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+env:
+  UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+  LAYER: unit
+##[endgroup]
+Downloading pygments (1.2MiB)
+ Downloaded pygments
+Installed 14 packages in 5ms
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/runner/work/knowledge/knowledge
+configfile: pytest.ini
+plugins: platformdirs-4.14.5, typeguard-4.4.4
+collected 284 items
+
+tests/unit/scripts/test_build_pages.py ...................               [  6%]
+tests/unit/scripts/test_build_skills.py .......................          [ 14%]
+tests/unit/scripts/test_build_templates.py ........................      [ 23%]
+tests/unit/scripts/test_build_word_list.py ...                           [ 24%]
+tests/unit/scripts/test_check_all.py ................................... [ 36%]
+...................                                                      [ 43%]
+tests/unit/scripts/test_common.py ....................                   [ 50%]
+tests/unit/scripts/test_knowledge_checks.py ..........................   [ 59%]
+tests/unit/scripts/test_knowledge_markdown.py .......................... [ 68%]
+........                                                                 [ 71%]
+tests/unit/scripts/test_lint.py .....................                    [ 78%]
+tests/unit/scripts/test_workflow.py .....................                [ 86%]
+tests/unit/slop-check/test_slop_check.py ............................... [ 97%]
+........                                                                 [100%]
+
+============================= 284 passed in 7.28s ==============================
+Downloading cpython-3.12.16-linux-x86_64-gnu (download) (33.1MiB)
+ Downloaded cpython-3.12.16-linux-x86_64-gnu (download)
+Installed 5 packages in 3ms
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/runner/work/knowledge/knowledge
+configfile: pytest.ini
+collected 39 items
+
+tests/unit/slop-check/test_slop_check.py ............................... [ 79%]
+........                                                                 [100%]
+
+============================== 39 passed in 0.05s ==============================
+exit=0
