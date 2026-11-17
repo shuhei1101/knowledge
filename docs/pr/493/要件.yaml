@@ -20,10 +20,10 @@ docs:
 scope_out:
   - item: 部品設計（component.schema.yaml）・画面設計（screen.schema.yaml）の test_file の ^tests/.+ を、規約『フォルダ構成』の test-01（結合テストと stories は対象の横）に合わせて広げること
     reason: 要望はモジュール構成の単体テストだけ。部品設計・画面設計の結合テストは規約『V字モデル』の対応表で tests/integration/{サブシステム名}/ と定めており、React の規約と食い違うかは V字モデル側の決まりの見直しを伴う。今回の変更がマージされなくても同じ内容で成り立つため、別の Issue に切り出すと判断した（判断が分かれるため、レビューで確定する）
-    plan: to_file
+    plan: '#495'
   - item: シナリオ（scenario.schema.yaml）の test_file の ^tests/.+ が、規約『フォルダ構成』の test-02 の frontend/tests/e2e/ に一致しないこと
     reason: 要望はモジュール構成の単体テストだけで、E2E の置き場所は規約『V字モデル』の tests/e2e/ との整合の判断を伴う。今回の変更がマージされなくても同じ内容で成り立つため、別の Issue に切り出すと判断した（判断が分かれるため、レビューで確定する）
-    plan: to_file
+    plan: '#494'
   - item: ai-monitor の設計書の検証（validate.py の check_tests）の追従
     reason: check_tests は test_files のパスを tests/ に限らずに読むため、追従は要らない
     plan: none
