@@ -4,7 +4,7 @@ name: セリフのプロンプトは場面と目的だけを指定し、文の�
 description: LLM にキャラクターのセリフを生成させるプロンプトで、場面と目的だけを指定してオチまで任せる技法（放牧プロンプト）を記載し、セリフ生成のプロンプトを作るときに参照する。
 status: current
 visibility: internal
-rev: 1
+rev: 2
 last_reviewed: '2026-11-17'
 sources:
   - id: P2
@@ -19,6 +19,9 @@ sources:
     title: 検討事項 D-128（禁止や悪い例で縛らないプロンプトの方針）
     url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
     note: '`### D-128` のセクション'
+  - id: P68
+    title: セリフ生成ノードの PoC の記録 A-68・A-69 の要点
+    url: https://github.com/shuhei1101/knowledge/issues/474#issuecomment-6944569038
 necessity: must
 scenes:
   fits:
@@ -29,12 +32,20 @@ cases:
   - work: 琴葉茜の「うちのおやつランキング」の 1 位を発表する 30 秒の場面
     content: 1 回目は文の数（7 個）・1 文の文字数・文ごとの役割・1 位の内容まで指定し、面白くならなかった。2 回目は場面と目的と「茜らしく、好きにしゃべらせて。オチも任せる。」だけを渡し、オチまで任せた 14 文になった。
     source: P2
+  - work: 琴葉葵と琴葉茜の 5 つのパッセージの漫才（節約のプロ）を 1 回で生成（A-68）
+    content: 流れを「道しるべで、逸れても構わない」として指定し、狙いのあるくだりだけにメモを付けた。流れは順に守られ、メモどおりの受けとオチが出たうえで、流れに無い小ボケと後のパッセージでの天丼の繰り返しをモデルが追加した。
+    source: P68
+  - work: 同じ漫才を起承転結の 5 つの段落に分けて並べて生成（A-69）
+    content: 段落ごとに山ができ、3 回目の天丼ではツッコミ役が型そのものに突っ込んだ。前の段落のセリフを指定しなかったため、段落の頭が前の段落と同じ言い出しになり、つなぎがぎこちなかった。
+    source: P68
 evidence:
   - source: P2
     speaker: practitioner
   - source: D543
     speaker: practitioner
   - source: D128
+    speaker: practitioner
+  - source: P68
     speaker: practitioner
 confidence: medium
 items:

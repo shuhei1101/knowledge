@@ -1,0 +1,51 @@
+id: knowhow-eval-rubric
+kind: knowhow
+name: LLM の採点は段階ごとの基準文と満点の参考例を指定し、理由を先に出させ、曖昧な観点は Yes/No に分ける
+description: LLM に出力を採点させるときに、段階ごとの基準文・満点の参考例・理由から点の順で人との相関を上げ、曖昧な観点を Yes/No に分け、観点ごとに別の採点にする技法を記載し、採点のプロンプトを作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: PR
+    title: Prometheus
+    url: https://arxiv.org/abs/2310.08491
+  - id: CK
+    title: CheckEval
+    url: https://arxiv.org/abs/2403.18771
+  - id: CS
+    title: CoSER
+    url: https://arxiv.org/abs/2502.09082
+necessity: reference
+scenes:
+  fits:
+    - LLM にセリフや文章を採点させるプロンプトを作るとき。
+evidence:
+  - source: PR
+    speaker: practitioner
+  - source: CK
+    speaker: practitioner
+  - source: CS
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      段階ごとの基準文と満点の参考例を指定し、理由→点の順に出力させると、人との相関が上がる。
+      曖昧な観点は Yes/No の質問に分解する。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 観点ごとに、段階ごとの基準文を記載する
+      2. 満点の参考例を添える
+      3. 理由を先に、点を後に出力させる
+      4. 曖昧な観点は Yes/No の質問に分解する
+      5. 欠点を挙げさせて減点し、観点ごとに別の採点にする（まとめて 1 回で採点すると、人との一致が約 77% から 65% に下がる）
+tags:
+  - name: topic:精度評価
+    main: true
+  - name: topic:観点
+  - name: topic:llm
+  - name: topic:プロンプト
+  - name: topic:ノウハウ

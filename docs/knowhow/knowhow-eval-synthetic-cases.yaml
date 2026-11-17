@@ -1,0 +1,34 @@
+id: knowhow-eval-synthetic-cases
+kind: knowhow
+name: 評価ケースを合成するときは、先に軸の値の組を作ってから LLM に文として作成させ、近すぎるケースを除外する
+description: LLM で評価ケースを合成するときに、先に軸の値の組を作ってから文として作成させ、埋め込みの類似度で近すぎるケースを除外する技法を記載し、評価ケースを合成するときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: HM
+    title: 'hamelsmu/evals-skills: generate-synthetic-data'
+    url: https://tessl.io/registry/skills/github/hamelsmu/evals-skills/generate-synthetic-data
+necessity: reference
+scenes:
+  fits:
+    - LLM に評価ケースの入力文を合成させるとき。
+evidence:
+  - source: HM
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      評価ケースを合成するときは、先に軸の値の組を作り、その組を LLM に文として作成させる。
+      近すぎるケースは、埋め込みの類似度で除外する。
+      軸の値の組の作り方は [ペアワイズのケース](id:knowhow-eval-case-pairwise) に従う。
+tags:
+  - name: topic:精度評価
+    main: true
+  - name: topic:llm
+  - name: topic:ケース
+  - name: action:生成
+  - name: topic:ノウハウ

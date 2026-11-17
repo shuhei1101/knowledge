@@ -1,0 +1,41 @@
+id: knowhow-prompt-effort-not-temperature
+kind: knowhow
+name: 出力の質は temperature ではなく、プロンプトと reasoning effort で修正する
+description: 最近のモデルでは temperature が質を修正する手段ではなくなったため、プロンプトと reasoning effort で修正し、モデルを変えたら effort を評価で再調整する技法を記載し、LLM の呼び出しの引数を決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: MG
+    title: 'Anthropic: Opus 5.5 migration guide'
+    url: https://platform.claude.com/docs/en/models/opus-5-5/migration-guide
+  - id: S55
+    title: 'Anthropic: Prompting Claude Sonnet 5.5'
+    url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5-5
+necessity: reference
+scenes:
+  fits:
+    - LLM の呼び出しの temperature や effort を決めるとき。
+    - ノードのモデルを変えるとき。
+evidence:
+  - source: MG
+    speaker: practitioner
+  - source: S55
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      最近のモデルは temperature を既定以外にできないか、無視する。
+      出力の質はプロンプトと reasoning effort で修正する。
+      effort はモデルごとに効果が変わるので、モデルを変えたら自分の評価で再調整する。
+      プロンプトの「考えすぎないで」は有効でなく、要求ごとに effort を変えるとプロンプトキャッシュが切れる。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:llm
+  - name: topic:推論
+  - name: topic:キャッシュ
+  - name: topic:ノウハウ

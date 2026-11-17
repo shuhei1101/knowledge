@@ -1,0 +1,45 @@
+id: knowhow-eval-judge-bias
+kind: knowhow
+name: LLM の採点器の順番・長さ・自分の系統への偏りを、順番の入れ替えと長さの罰点で打ち消す
+description: LLM の採点器が順番・長い出力・自分の系統のモデルを好み、お題と無関係な回答を甘く採点する偏りと、順番を入れ替えた 2 回の採点と長さの罰点で打ち消す技法を記載し、LLM で 2 案を比べるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: JB
+    title: LLM の採点器の偏りの研究
+    url: https://arxiv.org/abs/2411.15594
+  - id: LB
+    title: 長い出力を高く採点する偏りの研究
+    url: https://arxiv.org/abs/2406.12319
+  - id: OG
+    title: 大喜利の LLM と人の採点の研究
+    url: https://arxiv.org/abs/2511.09133
+necessity: reference
+scenes:
+  fits:
+    - LLM で 2 案を比べて採点するとき。
+  misfits:
+    - 絶対点の採点（順番の偏りは関係がない）。
+evidence:
+  - source: JB
+    speaker: practitioner
+  - source: LB
+    speaker: practitioner
+  - source: OG
+    speaker: practitioner
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      LLM の採点器は、順番・長い出力・自分の系統のモデルを好む。
+      お題と無関係な回答も甘く採点する。
+      2 案を比べるときは順番を入れ替えて 2 回採点し、長さに罰点を付ける。
+tags:
+  - name: topic:精度評価
+    main: true
+  - name: topic:llm
+  - name: action:比較
+  - name: topic:ノウハウ

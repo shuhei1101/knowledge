@@ -1,0 +1,44 @@
+id: knowhow-prompt-knowledge-boundary
+kind: knowhow
+name: キャラクターが知らないはずのことは、ナレーターの視点の補足と知識の範囲の検索で防ぐ
+description: キャラクターが設定上知らないはずのことを話す誤りを、ナレーターの視点の補足と、キャラクターごとの知識の範囲を検索で絞る方法で防ぐ技法を記載し、設定と質問が食い違うキャラクターの応答を作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: KB1
+    title: 知らないはずのことへの対処の研究
+    url: https://arxiv.org/abs/2409.16727
+  - id: KB2
+    title: キャラクターの知識の範囲を検索で絞る研究
+    url: https://aclanthology.org/2025.findings-emnlp.288/
+  - id: TC
+    title: TimeChara
+    url: https://arxiv.org/abs/2405.18027
+necessity: reference
+scenes:
+  fits:
+    - 設定と質問が食い違うとき。
+    - キャラクターの設定資料が多いとき。
+evidence:
+  - source: KB1
+    speaker: practitioner
+  - source: KB2
+    speaker: practitioner
+  - source: TC
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      キャラクターが知らないはずのことを話す誤りは、単に断らせるより、ナレーターの視点で補足を追加する方法が作り話を減らした。
+      設定資料が多いときは、キャラクターごとに知識の範囲を決め、検索で範囲外を除外する。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:セリフ
+  - name: topic:llm
+  - name: action:検索
+  - name: topic:ノウハウ

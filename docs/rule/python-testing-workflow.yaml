@@ -11,8 +11,8 @@ inject_when:
     - tests/e2e/workflow
 status: current
 visibility: internal
-rev: 2
-last_reviewed: '2026-11-14'
+rev: 4
+last_reviewed: '2026-11-17'
 related:
   - to: template-interface
     type: references
@@ -42,22 +42,24 @@ items:
     body: |-
       1. フローの `setup` のブランチの行のとおり、検証用のブランチを用意して push する
       2. `gh workflow run {workflow のファイル} --ref {ブランチ} -f {入力}={値}` で起動し、出力の URL の末尾から実行の ID を取る
-      3. `gh run watch {ID} --exit-status` で終わるまで待つ
-      4. `gh run view {ID} --json conclusion,jobs` で、実行の結論と step ごとの結論を取得する
-      5. フローの図の step が図のとおりに通り、図に無い step が `skipped` かと、`expected` を確認する
-      6. 成果物を確認するフローは、`gh run download {ID} -n {成果物} -D {一時フォルダ}` で取得して中身を確認する
-      7. 検証用のブランチを削除する
+      3. `gh api "repos/{owner}/{repo}/actions/runs/{ID}?exclude_pull_requests=true"` で実行を参照できるまで待つ。
+         決めた回数で参照できなければ失敗で終える
+      4. `gh run watch {ID} --exit-status` で終わるまで待つ
+      5. `gh run view {ID} --json conclusion,jobs` で、実行の結論と step ごとの結論を取得する
+      6. フローの図の step が図のとおりに通り、図に無い step が `skipped` かと、`expected` を確認する
+      7. 成果物を確認するフローは、`gh run download {ID} -n {成果物} -D {一時フォルダ}` で取得して中身を確認する
+      8. 検証用のブランチを削除する
   - id: steps-02
     group: 手順
     name: ブランチの用意と削除
     body: |-
-      - 手順 1 と 7 は fixture にまとめ、`yield` の後でブランチを削除して、テストが失敗しても削除する
+      - 手順 1 と 8 は fixture にまとめ、`yield` の後でブランチを削除して、テストが失敗しても削除する
       - ブランチ名にはテストの関数名と実行の時刻を含め、同時に回したテストと重ならないようにする
   - id: steps-03
     group: 手順
     name: 結論と step の突き合わせ
     body: |-
-      - 異常系のフローは `gh run watch` が 0 以外で終わるため、終了コードで失敗にせず、手順 4 の結論で確認する
+      - 異常系のフローは `gh run watch` が 0 以外で終わるため、終了コードで失敗にせず、手順 5 の結論で確認する
       - step は、図のノードの名前と `jobs[].steps[].name` で突き合わせる（図の step は workflow の step の `name` で記載されている）
       - 突き合わせる step は、workflow のファイルの step の `name` に絞る。
         GitHub が追加する step（`Set up job`・`Complete job`・`Post {step の名前}`）は確認しない

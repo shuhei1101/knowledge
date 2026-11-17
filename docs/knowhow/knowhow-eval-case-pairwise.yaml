@@ -1,0 +1,38 @@
+id: knowhow-eval-case-pairwise
+kind: knowhow
+name: 評価ケースは軸の値の組をペアワイズで作り、端のケースを加え、自動採点で数を多くする
+description: LLM の精度評価のケースを、軸の値の組をペアワイズで作り、無関係・不足・長すぎる・有害な入力の端のケースを加え、自動採点で数を多くする技法を記載し、評価ケースを作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: NI
+    title: 'NIST: Automated Combinatorial Testing for Software FAQ'
+    url: https://csrc.nist.gov/Projects/automated-combinatorial-testing-for-software/faqs
+  - id: AT
+    title: 'Anthropic: Develop tests'
+    url: https://platform.claude.com/docs/en/test-and-evaluate/develop-tests
+necessity: reference
+scenes:
+  fits:
+    - LLM のノードの評価ケースを作るとき。
+evidence:
+  - source: NI
+    speaker: practitioner
+  - source: AT
+    speaker: practitioner
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      障害のほとんどは 1〜2 要因の組で起き、6 を超える例は無いので、軸の値の組はペアワイズで作る。
+      無関係・不足・長すぎる・有害な入力の端のケースを加える。
+      少数を人が採点するより、自動採点で数を多くする。
+tags:
+  - name: topic:精度評価
+    main: true
+  - name: topic:llm
+  - name: topic:ケース
+  - name: topic:ノウハウ
