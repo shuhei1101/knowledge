@@ -1,0 +1,74 @@
+id: knowhow-prompt-few-shot
+kind: knowhow
+name: 例は 3〜5 件を場面を変えてばらつかせ、書式を統一してタグで囲む
+description: LLM のプロンプトに入れる例（few-shot）の数・選び方・並べ方と、例の丸写しを防ぐ方法を記載し、口調や書式を例で示すプロンプトを作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: AN2
+    title: 'Anthropic: Use examples (multishot prompting)'
+    url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/multishot-prompting
+  - id: OA
+    title: 'OpenAI: Reasoning best practices'
+    url: https://developers.openai.com/api/docs/guides/reasoning-best-practices
+  - id: FS1
+    title: few-shot の数を増やすと精度が下がる研究
+    url: https://arxiv.org/abs/2509.13196
+  - id: FS2
+    title: few-shot の並びと偏りの研究
+    url: https://arxiv.org/abs/2507.22887
+  - id: ST
+    title: 'SillyTavern: Character Design'
+    url: https://docs.sillytavern.app/usage/core-concepts/characterdesign/
+  - id: JP
+    title: 言語処理学会 2025 Q5-22（日本語のキャラクター付け）
+    url: https://www.anlp.jp/proceedings/annual_meeting/2025/pdf_dir/Q5-22.pdf
+necessity: reference
+scenes:
+  fits:
+    - 口調・書式・構造を例で示すとき。
+  misfits:
+    - 推論モデルの最初の試行（まず 0 件で試す）。
+evidence:
+  - source: AN2
+    speaker: practitioner
+  - source: OA
+    speaker: practitioner
+  - source: FS1
+    speaker: practitioner
+  - source: FS2
+    speaker: practitioner
+  - source: ST
+    speaker: third_party
+  - source: JP
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      書式・口調・構造は、ルールより例で示すと最も確実に伝わる。
+      例は 3〜5 件にし、増やしすぎると精度が下がる。
+      推論モデルはまず 0 件で試す。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 場面を変えた例を 3〜5 件用意する（似た例ばかりだと、意図しない癖も取り込む）
+      2. 例の書式（タグ・改行）を完全に統一し、偏りの無い並びにする（並べ替えで結果が約 ±15% 動く）
+      3. 例を `<example>` のタグで囲む
+      4. 例で分かるルールは本文から削除する
+      5. 例の丸写しが出るときは、「そのまま使用しない」と添え、繰り返しが出た発話を文脈から削除する
+      6. 推論を使用するときは、「問題・やり方・回答」の例にする
+  - id: notes-01
+    name: 日本語の口調
+    body: |-
+      日本語のキャラクターの口調は、プロンプトの中では few-shot が有効。
+      方言・語尾はプロンプトだけでは制御しきれない。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:llm
+  - name: topic:サンプル
+  - name: topic:ノウハウ

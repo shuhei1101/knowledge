@@ -1,0 +1,34 @@
+id: knowhow-prompt-reasoning-cot
+kind: knowhow
+name: 推論モデルには考える手順を指定せず、「よく考えて」とだけ指定する
+description: 推論モデルに CoT を出力させても精度の伸びはわずかで時間が増えるため、人が記載した手順より「よく考えて」と指定する技法を記載し、推論モデルのプロンプトを作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: CT
+    title: 推論モデルと CoT の研究
+    url: https://arxiv.org/abs/2506.07142
+necessity: reference
+scenes:
+  fits:
+    - 推論モデルに考える手順を指定したくなったとき。
+  misfits:
+    - thinking を切った非推論モデル（CoT の伸びは小さいが、有効な場合がある）。
+evidence:
+  - source: CT
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      推論モデルに CoT を出力させても精度の伸びはわずかで、時間が 20〜80% 増える。
+      人が記載した手順より、「よく考えて」と指定するほうがよい。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:llm
+  - name: topic:推論
+  - name: topic:ノウハウ
