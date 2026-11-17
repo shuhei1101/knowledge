@@ -1,0 +1,40 @@
+id: knowhow-prompt-keep-in-character
+kind: knowhow
+name: 長い会話では応答の頭にキャラクター名を先に入れ、よくある場面と望む返答を指定して役を保つ
+description: 長い会話でキャラクターへの忠実さが下がるため、system で役を決め、応答の頭にキャラクター名のタグを先に入れ（prefill）、よくある場面と望む返答を指定する技法を記載し、長時間の配信や会話でキャラクターを保つときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: KC
+    title: 'Anthropic: Keep Claude in character'
+    url: https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/keep-claude-in-character
+  - id: LD
+    title: 長い会話でのペルソナへの忠実さの研究
+    url: https://arxiv.org/abs/2512.12775
+necessity: reference
+scenes:
+  fits:
+    - 100 往復を超える長時間の配信や会話で、キャラクターを保つとき。
+  misfits:
+    - prefill に対応しない API（場面の一覧だけを使用する）。
+evidence:
+  - source: KC
+    speaker: practitioner
+  - source: LD
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      100 往復を超える会話では、ペルソナへの忠実さが下がる。
+      system で役を決め、応答の頭にキャラクター名のタグを先に入れ（prefill）、よくある場面と望む返答を指定する。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:セリフ
+  - name: topic:会話
+  - name: topic:llm
+  - name: topic:ノウハウ

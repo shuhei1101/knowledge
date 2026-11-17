@@ -1,0 +1,52 @@
+id: knowhow-prompt-json-think-first
+kind: knowhow
+name: JSON で回答させる推論の問題は、回答する前に考えさせ、長いスキーマを本文に記載しない
+description: 集計・ルールの適用・順位付けなどを JSON で回答させるときに、回答する前に考えさせ、構造化出力を使用して長いスキーマを本文に記載しない技法を記載し、JSON を返却するノードのプロンプトを作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: S55
+    title: 'Anthropic: Prompting Claude Sonnet 5.5'
+    url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5-5
+  - id: SO1
+    title: 出力の形式の制約と推論の品質の研究
+    url: https://arxiv.org/abs/2408.02442
+  - id: SO2
+    title: スキーマをプロンプトに記載したときの品質の研究
+    url: https://arxiv.org/abs/2606.09410
+necessity: reference
+scenes:
+  fits:
+    - 集計・ルールの適用・順位付けを JSON で回答させるとき。
+  misfits:
+    - 単純な抽出。
+evidence:
+  - source: S55
+    speaker: practitioner
+  - source: SO1
+    speaker: practitioner
+  - source: SO2
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      JSON で回答させると、effort が低いときに考えずに回答して精度が落ちる。
+      「回答する前に考える」をプロンプトの最後に記載するか、effort を上げる。
+      API の構造化出力での精度の低下は小さいが、長いスキーマをプロンプトの本文に記載すると精度が下がる。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. API の構造化出力を使用し、スキーマは本文に記載しない
+      2. thinking を切らず、「回答する前に考える」を最後に記載するか effort を上げる
+      3. max_tokens で止まった応答は失敗として扱う
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: tool:json
+  - name: topic:推論
+  - name: topic:llm
+  - name: topic:ノウハウ
