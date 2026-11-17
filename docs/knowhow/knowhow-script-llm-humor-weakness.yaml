@@ -1,0 +1,64 @@
+id: knowhow-script-llm-humor-weakness
+kind: knowhow
+name: LLM の笑いは平凡で視点が無いため、話し手の視点・体験・視聴者を指定し、オチと繰り返しを人が確認する
+description: LLM の生成する笑いが平凡で視点・体験・観客の文脈を持たず、少ないジョークを繰り返すことと、台本に話し手の視点・体験の細部・視聴者を指定し、オチ・繰り返し・攻撃的な笑いを人が確認する技法を記載し、LLM で台本やセリフの笑いを作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: MIROWSKI
+    title: 'A Robot Walks into a Bar: Can Language Models Serve as Creativity Support Tools for Comedy?（Mirowski ほか、FAccT 2024）'
+    url: https://arxiv.org/abs/2405.20956
+  - id: JENTZSCH
+    title: ChatGPT is fun, but it is not funny! Humor is still challenging Large Language Models（Jentzsch・Kersting、WASSA 2023）
+    url: https://aclanthology.org/2023.wassa-1.29
+  - id: HONG
+    title: 'Multi-Agent Comedy Club: Investigating Community Discussion Effects on LLM Humor Generation（Hong ほか、Findings of ACL 2026）'
+    url: https://arxiv.org/abs/2602.14770
+necessity: must
+scenes:
+  fits:
+    - LLM に台本やセリフの笑いを生成させるとき。
+    - LLM が生成した台本の笑いをレビューするとき。
+cases:
+  - work: 芸人 20 人との LLM の執筆の会（Mirowski ほか）
+    content: 芸人は、LLM は最初の下書きや前振り（フリ）には使えるがオチは自分で付けると述べた。出力は平凡・ありきたりで、視点が無いため冒険できず、芸人が拠り所にする自分の体験や、観客の土地による違いを持たない。
+    source: MIROWSKI
+  - work: ChatGPT に 1008 回ジョークを求めた実験（Jentzsch・Kersting）
+    content: 1008 回のうち 90% 超が同じ 25 個のジョークだった。
+    source: JENTZSCH
+  - work: 視聴者の反応を受けてユーモアを作り直す実験（Hong ほか）
+    content: 反応を受けた作り直しで出来は上がったが、攻撃的なユーモアが増えることがあった。
+    source: HONG
+evidence:
+  - source: MIROWSKI
+    speaker: practitioner
+  - source: JENTZSCH
+    speaker: practitioner
+  - source: HONG
+    speaker: practitioner
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      LLM の生成する笑いは平凡でありきたりになり、話し手の視点・体験・観客の文脈を持たず、少ないジョークを繰り返す。
+      構成と前振りは LLM に任せられるが、オチは弱い。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 台本に、話し手のキャラクターの視点・体験の細部・視聴者層を記載して LLM に指定する
+      2. 生成した笑いのオチが弱くないか、ありきたりでないかを人が確認する
+      3. 同じジョーク・同じ言い回しを、前の区切りや前の回から繰り返していないかを確認する
+      4. 反応を受けて面白く作り直した後は、攻撃的な笑いが増えていないかを確認する
+  - id: notes-01
+    name: 採点とレビューの出し方
+    body: LLM で笑いを採点するときの偏りと観点の分け方は、[LLM の採点器の偏り](id:knowhow-eval-judge-bias)・[LLM の採点の基準文](id:knowhow-eval-rubric)・[LLM の採点器の選び方](id:knowhow-eval-judge-human-label) に従う。
+tags:
+  - name: topic:台本
+    main: true
+  - name: topic:llm
+  - name: topic:笑い
+  - name: topic:セリフ
+  - name: topic:ノウハウ
