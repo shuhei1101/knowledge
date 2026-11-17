@@ -609,7 +609,7 @@ constraints:
   - item: map の点検の範囲
     constraint: '`documents[]` の YAML の文書の、値に `<!-- map -->` を含む文字列の項目（パスの末尾を問わない）。該当する項目が 0 件なら mdmark を呼ばない'
   - item: map の点検の呼び出し
-    constraint: 該当する全ての項目を、項目の間に空行 2 行を挟んで 1 つの Markdown につなぎ、`npx -y github:shuhei1101/mdmark#{タグ} check --text -` を一時のフォルダで 1 回呼び、標準入力へ書き込む。タグは「Pages の成果物の作成」と同じ値を使用する
+    constraint: 該当する全ての項目を、項目の間に空行 2 行を挟んで 1 つの Markdown につなぎ、`npx -y github:shuhei1101/mdmark#{参照} check --text -` を一時のフォルダで 1 回呼び、標準入力へ書き込む。参照は「Pages の成果物の作成」と同じ値を使用する
     decided_by: LIB-137-1#
   - item: map の違反にするずれ
     constraint: 'mdmark が出した `-:{行}: {種類}: {内容}` の行のうち、種類が `map_` で始まるものだけを違反にし、内容は `mdmark/{種類}: {内容}` で出す。`legacy_mark` など他の種類と、最後の `ずれ {件数} 件` の行は捨てる。終了コードが 0・1 以外か、標準出力の最後の行が `ずれ {件数} 件` でなければ点検の失敗とし、終了コード 2 の理由にする（終了コード 1 は、点検せずに標準エラーへ原因を出したときにも返る）'

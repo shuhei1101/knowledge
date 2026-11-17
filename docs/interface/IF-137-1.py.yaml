@@ -221,7 +221,7 @@ constraints:
     constraint: '`(id:{ID})`・`(id:{ID}#{項目})` を、参照先が公開の文書なら `./{ID}.md`（項目があれば `#{見出しの ID}`）、それ以外なら `https://github.com/shuhei1101/knowledge/blob/develop/{参照先の YAML のパス}` に書き換える'
     notes: 見出しの ID は、変換のスクリプトがその項目に出す見出しの文字から、mdmark と同じ GitHub の規則で作る
   - item: mdmark の呼び方
-    constraint: '`npx -y github:shuhei1101/mdmark#{タグ} build --config {一時フォルダの設定}`。タグは外部ライブラリ『mdmark』の採用バージョンに固定する'
+    constraint: '`npx -y github:shuhei1101/mdmark#{参照} build --config {一時フォルダの設定}`。参照は外部ライブラリ『mdmark』の採用バージョンで、既定は `develop`（mdmark の develop の最新）、固定するときはタグ（`v{MAJOR}.{MINOR}.{PATCH}`）か commit の SHA。一時フォルダの設定に `version` は記載しない（mdmark の `upgrade` だけが読み込む）'
   - item: 1 文書あたりの処理時間
     constraint: 20 秒。超えた変換は失敗として扱い、終了コード 1 で終える
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
