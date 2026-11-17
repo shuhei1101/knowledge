@@ -270,3 +270,6 @@ scope_out:
   - item: 規約『プロンプトファイル』の修正
     reason: R-47・R-48 と重なる技法は既存の規約を指すだけで、規約の記述は変えない
     plan: none
+  - item: 規約『GitHub Actions の workflow のテスト』（docs/rule/python-testing-workflow.yaml）の steps-01 の 3 の文の長さの違反
+    reason: 全ての文書の検査の textlint sentence-length（100 字）に対して 109 字で、#479 で入った base の違反。今回の要望に含まれない
+    plan: '#482'
