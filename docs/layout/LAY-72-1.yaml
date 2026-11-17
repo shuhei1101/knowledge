@@ -594,7 +594,7 @@ entries:
     content_types: [tool_config]
   - type: file
     name: ai-monitor-version.ini
-    contents: '`schemas/` 直下に取り込んだ AI Monitor の配布物のバージョン'
+    contents: '準拠している AI Monitor の配布物のバージョン'
   - type: file
     name: version.ini
     contents: knowledge のバージョン
@@ -622,6 +622,11 @@ entries:
     name: ruff.toml
     contents: ruff の設定
     content_types: [tool_config]
+  - type: file
+    name: mdmark.config.yaml
+    contents: mdmark の設定（AI Monitor が生成する図のノードと線の種類）
+    content_types:
+      - tool_config
 gitignore:
   - pattern: docs/generated/
     reason: AI Monitor が YAML の設計書から生成する Markdown（生成物）
