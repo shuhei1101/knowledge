@@ -248,6 +248,7 @@ documents:
   - id: plugin
     title: プラグイン slop-check
     paths: [plugins/slop-check/files.yaml]
+    exclude: ["plugins/slop-check/.ruff_cache/**"]
     schema: schemas/knowledge-files.schema.yaml
     records: files
     body_file: path
