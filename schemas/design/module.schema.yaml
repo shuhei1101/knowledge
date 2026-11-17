@@ -60,12 +60,17 @@ properties:
     type: array
     title: 対応テストファイル
     description: |-
-      属する物理ファイルごとの単体テストのファイル（1 物理ファイル = 1 テストファイル、規約『V字モデル』）。
+      属する物理ファイルの単体テストのファイル（実行環境ごとに 1 テストファイル、規約『V字モデル』）。
       テストを作ったときに記入する（設計の時点では空でよい）。
     x-used-by:
       - テストで、単体テストを作るファイルにする。
       - 検査で、テストのファイルと単体テストの関数があるかを確認する。
-    maxItems: 1
+    x-rules:
+      - 1 つの物理ファイルを複数の実行環境（Node とブラウザなど）でテストするときだけ、実行環境ごとのファイルを並べる。
+    uniqueItems: true
+    examples:
+      - - tests/unit/render/table.test.ts
+        - tests/unit/render/table.browser.test.ts
     items:
       type: string
       pattern: ^tests/.+
