@@ -18,6 +18,10 @@ _WATCH_SEC = 45 * 60
 # git・gh の 1 回の操作を待つ上限の秒数
 _COMMAND_SEC = 120
 
+# 起動した実行を API で参照できるまで試す回数と間隔の秒数。テスト実行方法の run_runner と同じ値
+_VISIBLE_TRIES = 10
+_VISIBLE_INTERVAL_SEC = 1
+
 # gh workflow run の出力の実行の URL
 _RUN_URL = re.compile(r"https://\S+/actions/runs/(\d+)")
 
@@ -77,6 +81,26 @@ def _dispatch(workflow: str, branch: str, inputs: Mapping[str, str]) -> str:
     return match[1]
 
 
+def _wait_visible(run_id: str) -> None:
+    """起動直後の実行を API で参照できるまで待ち、決めた回数で参照できなければテストを失敗にする。"""
+    for _ in range(_VISIBLE_TRIES):
+        result = _run(
+            [
+                "gh",
+                "api",
+                f"repos/{{owner}}/{{repo}}/actions/runs/{run_id}?exclude_pull_requests=true",
+            ],
+            REPO_ROOT,
+            check=False,
+        )
+        # 参照できた: gh run watch を呼べる
+        if result.returncode == 0:
+            return
+        # まだ参照できない: 間隔を空けてもう一度試す
+        time.sleep(_VISIBLE_INTERVAL_SEC)
+    pytest.fail(f"実行 {run_id} を {_VISIBLE_TRIES * _VISIBLE_INTERVAL_SEC} 秒参照できません")
+
+
 def _watch(run_id: str) -> tuple[str, dict[str, str]]:
     """実行が終わるまで待ち、実行の結論と step の名前ごとの結論を返却する。"""
     # 異常系のフローは 0 以外で終わるため、終了コードでは失敗にせず、結論で確認する
@@ -99,6 +123,7 @@ def workflow_runner() -> Callable[[str, str, Mapping[str, str]], tuple[str, str,
         workflow: str, branch: str, inputs: Mapping[str, str]
     ) -> tuple[str, str, dict[str, str]]:
         run_id = _dispatch(workflow, branch, inputs)
+        _wait_visible(run_id)
         conclusion, steps = _watch(run_id)
         return run_id, conclusion, steps
 
