@@ -1,0 +1,38 @@
+id: knowhow-prompt-no-emphasis
+kind: knowhow
+name: プロンプトで強い語気（CRITICAL・MUST）を使用せず、普通に記載する
+description: 最近のモデルは指示によく従うため、CRITICAL・MUST などの強調に過剰に反応することを記載し、プロンプトの指示の語気を決めるときと、以前のモデル向けのプロンプトを移すときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: AN
+    title: 'Anthropic: Prompting best practices'
+    url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+  - id: G5
+    title: 'OpenAI: GPT-5 prompting guide'
+    url: https://developers.openai.com/cookbook/examples/gpt-5/gpt-5_prompting_guide
+necessity: reference
+scenes:
+  fits:
+    - 以前のモデル向けのプロンプトを最近のモデルへ移すとき。
+    - 指示を強調したくなったとき。
+evidence:
+  - source: AN
+    speaker: practitioner
+  - source: G5
+    speaker: practitioner
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      最近のモデルは指示によく従うので、CRITICAL・MUST などで強調すると過剰に反応する。
+      指示は普通の語気で記載する。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:llm
+  - name: topic:文章
+  - name: topic:ノウハウ

@@ -1,0 +1,47 @@
+id: knowhow-prompt-length-control
+kind: knowhow
+name: 出力の長さはプロンプトで指定し、厳密に守らせるときは残りの字数の目印を入れる
+description: LLM の出力の長さをプロンプトで指定し、一定を超える長さでは残りの字数の目印で守らせる技法と、長さを指定しないとセリフが膨らむ実例を記載し、生成する文の長さを決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: LC1
+    title: 出力の長さの指示の守られ方の研究
+    url: https://arxiv.org/abs/2505.16234
+  - id: LC2
+    title: 残りの字数の目印で長さを守らせる研究
+    url: https://arxiv.org/abs/2508.13805
+  - id: P68
+    title: セリフ生成ノードの PoC の記録 A-68・A-69 の要点
+    url: https://github.com/shuhei1101/knowledge/issues/474#issuecomment-6944569038
+necessity: reference
+scenes:
+  fits:
+    - セリフや文章の長さに目安があるとき。
+cases:
+  - work: 5 つのパッセージの漫才のセリフ生成（A-68・A-69）
+    content: 長さを指定しないと 1 パッセージが 10〜20 要素に膨らみ、全体で音声合成の再生が 5〜6 分になった。段落ごとに分けても 1 段落が 400〜960 字に膨らんだ。
+    source: P68
+evidence:
+  - source: LC1
+    speaker: practitioner
+  - source: LC2
+    speaker: practitioner
+  - source: P68
+    speaker: practitioner
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      出力の長さはプロンプトで指定する。
+      短い目標は守られるが、一定を超えるとずれるので、厳密に守らせるときは残りの字数の目印を入れる（30% 未満から 95% 超に改善）。
+      reasoning effort を変えても長さは変わらない。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:llm
+  - name: topic:上限
+  - name: topic:ノウハウ
