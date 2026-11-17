@@ -194,6 +194,8 @@ properties:
           x-rules:
             - '`run_all`・`run_one` は手元で回すコマンドのまま残し、ランナーで回せないときに使用する。'
             - workflow は手動の起動（`workflow_dispatch`）だけで起動し、push・PR を契機にしない。
+            - 起動した実行を API で参照できるまで待ってから、終わるまで待つ。
+            - 決めた回数で実行を参照できなければ、失敗で終える。
             - 失敗したときもログを取得してから失敗で終える。
             - '`parallelism` を持つ層は、workflow の入力に `{並列数}` を指定するコマンドで記載する。'
             - 結合テストの層は、workflow の入力に `{結合テストのパス}` を指定するコマンドで記載し、入力を省いたときは全件を回す。
@@ -433,7 +435,7 @@ examples:
     location: runner
     run_runner: |-
       ```bash
-      run_url=$(gh workflow run test.yml --ref "$(git branch --show-current)" -f layer=unit | grep -o 'https://[^ ]*/actions/runs/[0-9]*') && run_id=${run_url##*/} && (rc=0; gh run watch "$run_id" --exit-status > /dev/null || rc=1; gh run view "$run_id" --log; exit $rc)
+      run_url=$(gh workflow run test.yml --ref "$(git branch --show-current)" -f layer=unit | grep -o 'https://[^ ]*/actions/runs/[0-9]*') && run_id=${run_url##*/} && (n=0; until gh api "repos/{owner}/{repo}/actions/runs/$run_id?exclude_pull_requests=true" > /dev/null 2>&1; do n=$((n+1)); if [ $n -ge 10 ]; then echo "実行 $run_id を 10 秒参照できません" >&2; exit 1; fi; sleep 1; done) && (rc=0; gh run watch "$run_id" --exit-status > /dev/null || rc=1; gh run view "$run_id" --log; exit $rc)
       ```
     parallel: true
   - id: TL-2
