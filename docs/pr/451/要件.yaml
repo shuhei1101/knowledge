@@ -70,8 +70,22 @@ docs:
     updated_at: '2026-11-17T06:33:55.066803+00:00'
   - page: rules.yaml
     new: false
-    change: docs/knowhow/ へ移した文書を指す行を修正する（ノウハウは注入の索引に登録しない）
-    status: todo
+    change: テンプレート『ノウハウ』の行を追加する（ノウハウの文書そのものは掲載しない。移した ui-site-genre は掲載されていなかった）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T07:32:41.157007+00:00'
+  - page: docs/knowhow/knowhow-design-site-genre.yaml
+    new: true
+    change: 規約『サイトのジャンル』をノウハウとして作り直す。出典を付け、出典の無い 2 行（音楽・レッスン、アウトドア）と裏付けられない要素を削る
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T07:32:41.157007+00:00'
+  - page: docs/rule/ui-site-genre.yaml
+    new: false
+    change: ノウハウへ移したので削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T07:32:41.157007+00:00'
 scope_out:
   - item: ノウハウの一覧 A-157 の 21 件の登録
     reason: 起点 Issue の後続。種類を配信できるようにした後に登録する
@@ -83,5 +97,8 @@ scope_out:
     reason: 起点 Issue の問い 3 で変えないと決定済み（D-582 の B）
     plan: none
   - item: 移した文書のパスを直接参照しているほかのリポジトリ（aituber-support・mindstella の rules.yaml など）の追従
-    reason: ほかのリポジトリの変更。移す文書を決めた後に調べ、移す前に追従の Issue を起票する
-    plan: to_file
+    reason: ほかのリポジトリの変更。`ui-site-genre` を参照しているのは ai-monitor のフェーズ『デザインスタイル選定』だけで、追従の Issue を shuhei1101/ai-monitor#3586 として起票した
+    plan: shuhei1101/ai-monitor#3586
+  - item: 文書の Markdown への変換で、種類に固有の入れ子のキー（ノウハウの scenes・cases・evidence）をスキーマの title で描く
+    reason: 変換のスクリプトの既存の挙動で、入れ子のキーを持つほかの種類にも当たる。今の変換でもノウハウの文書は画面に表示できる
+    plan: '#452'
