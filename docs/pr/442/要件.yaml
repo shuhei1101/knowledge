@@ -1,0 +1,31 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: run_only
+    detail: Pages の成果物を作るときに呼ぶ mdmark が、既定で develop の最新になる。流れは変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 全ての文書の検査で map を点検する mdmark が、既定で develop の最新になる。流れは変わらない
+    depends_on: []
+docs:
+  - page: docs/library/LIB-137-1.yaml
+    new: false
+    change: 採用バージョン（`#v0.13.0`）の記載を、既定は develop の最新・設定でタグか commit の SHA に固定できる参照へ改める（`version`・`install`・`docs_url`）
+    status: todo
+  - page: docs/dev-command/CMD-72-1.yaml
+    new: false
+    change: 前提の「`npx -y` が mdmark のタグの中身と依存を取る」を、既定の develop の最新と固定の設定に合わせる
+    status: todo
+  - page: docs/template/template-external-library.yaml
+    new: false
+    change: '`未確定`（要件.md）で案 B に決まったとき、`version.pinning` の説明に、自作のライブラリは既定で develop の最新を参照し、固定はタグか commit の SHA で行う決まりを追加する'
+    status: todo
+scope_out:
+  - item: '作業 PR #396 の PR ドキュメントから、`MDMARK_TAG` を mdmark#562 を含むタグへ上げる要件を取り消すこと'
+    reason: '#396 の要件で、取り消しは task-planner が #396 へ連絡して #396 の作業で行う'
+    plan: '#173'
+  - item: mdmark を参照する他のリポジトリの切り替え
+    reason: リポジトリごとに Issue が起票済み（shuhei1101/ai-monitor#3531・shuhei1101/dev-docs#236 など）で、それぞれの作業 PR で行う
+    plan: none
