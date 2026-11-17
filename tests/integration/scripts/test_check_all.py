@@ -528,7 +528,7 @@ def test_normal_when_maps_invalid(run_script: RunScript, repo_factory: RepoFacto
 def test_normal_when_workflows_differ_from_interfaces(
     run_script: RunScript, repo_factory: RepoFactory
 ) -> None:
-    """入口が trigger のインターフェース定義と workflow のファイルの食い違いを、食い違い 1 件ごとに違反として出す（正常系）。"""
+    """エントリーポイントが trigger のインターフェース定義と workflow のファイルの食い違いを、食い違い 1 件ごとに違反として出す（正常系）。"""
     # 準備
     workflow = (
         (_REPO / ".github/workflows/pages.yml")

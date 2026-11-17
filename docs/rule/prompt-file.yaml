@@ -137,10 +137,10 @@ items:
       ```yaml
       # yaml-language-server: $schema=https://raw.githubusercontent.com/shuhei1101/knowledge/{タグ}/schemas/prompt.schema.yaml
       id: new-file-guide
-      name: 新しいファイルの作り方
+      name: 新規ファイルの作り方
       kind: hook
       lang: ja
-      description: 新しいファイルを空で作ってから書く決まりを、セッションの始めに伝える
+      description: 新規ファイルを空で作ってから書く決まりを、セッションの始めに伝える
       vars:
         write_tool:
           type: string
@@ -160,7 +160,7 @@ items:
           texts:
             - lang: ja
               text: |
-                新しいファイルは、まず {{ write_tool }} で空の内容で作り、案内されたルールを参照してから中身を書いてください。
+                新規ファイルは、まず {{ write_tool }} で空の内容で作り、案内されたルールを参照してから中身を書いてください。
         - id: edit-tool
           when: "{{ edit_tool }}"
           texts:
@@ -259,7 +259,7 @@ items:
       構造はスキーマ `schemas/prompt.schema.yaml`（`## スキーマの指し方`）で検査し、スキーマで確認されない次を独自の検査で検査する。
   - id: inspection-02
     group: 検査
-    name: vars 外の変数の禁止
+    name: vars 以外の変数の禁止
     body: |-
       - `vars` に無い変数を本文で使用していない
   - id: inspection-03

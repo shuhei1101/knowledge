@@ -1,7 +1,7 @@
 id: MOD-376-1
 visibility: internal
 title: 検査と変換のスクリプト / scripts / _workflow.py
-lead: 全ての文書の検査で、入口が `trigger` の GitHub Actions の workflow のインターフェース定義と workflow のファイルの、起動の条件・リクエスト・排他・step・分岐を突き合わせる（IF-72-3）。
+lead: 全ての文書の検査で、エントリーポイントが `trigger` の GitHub Actions の workflow のインターフェース定義と workflow のファイルの、起動の条件・リクエスト・排他・step・分岐を突き合わせる（IF-72-3）。
 data_models:
   - name: Flowchart
     title: 読み取ったフローチャート
@@ -41,7 +41,7 @@ functions:
     usecase: 全ての文書の検査
     role: サービス
     scope: public
-    summary: 入口が `trigger` のインターフェース定義ごとに、`entry.value` が指す workflow のファイルと突き合わせ、食い違いを違反として返却する
+    summary: エントリーポイントが `trigger` のインターフェース定義ごとに、`entry.value` が指す workflow のファイルと突き合わせ、食い違いを違反として返却する
     args:
       - name: root
         title: リポジトリの直下
@@ -72,7 +72,7 @@ functions:
         expected: 空
       - name: test_check_workflows_when_not_trigger
         case: 正常
-        summary: 入口が trigger でない
+        summary: エントリーポイントが trigger でない
         condition: '`entry.kind` が `operation` のインターフェース定義'
         mock: なし
         expected: 空
@@ -114,7 +114,7 @@ functions:
     summary: '`entry.value` の最初のコードスパンが `WORKFLOWS_DIR` の `.yml`・`.yaml` を指すとき、そのパスを返却する'
     args:
       - name: value
-        title: 入口の値
+        title: エントリーポイントの値
         type: str
         required: true
         description: '`entry.value`'

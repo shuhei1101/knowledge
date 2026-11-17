@@ -58,11 +58,11 @@ constants:
     value: PurePosixPath("schemas/meta.schema.yaml")
 functions:
   - name: main
-    title: 全ての文書の検査の入口
+    title: 全ての文書の検査のエントリーポイント
     kind: 関数
     container: scripts/check_all.py
     usecase: 全ての文書の検査
-    role: 入口
+    role: エントリーポイント
     scope: public
     summary: 全ての文書を検査し、違反を 1 件 1 行で出して終了コードで合否を返却する
     args:
@@ -596,7 +596,7 @@ functions:
       - name: test_check_design_templates_when_ref_unresolvable
         case: 正常
         summary: $ref を解決できないスキーマ
-        condition: '`er.schema.yaml` のキーの `$ref` が無い `$defs` を指し、`template-er.yaml` は古い'
+        condition: '`er.schema.yaml` のキーの `$ref` が無い `$defs` を指し、`template-er.yaml` は更新前'
         mock: なし（一時ディレクトリ）
         expected: 空（設計書のスキーマの検査が違反にする）
     callees:

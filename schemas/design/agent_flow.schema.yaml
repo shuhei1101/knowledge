@@ -10,7 +10,7 @@ x-rules:
   - '`embed_only` の手順と `type` が `skill` の手順は、エージェントフローの索引に出さない。'
   - スキルにするのは、起動の仕組み（システムプロンプト・エージェントフローの索引）で指定できない理由があるときだけにする。
   - 工程の名前は進み具合の目印になるので、変えたときは変える前の進み具合を無効にする。
-  - 新しい手順をエージェントフロー・サブエージェント・スキルのどれで指定するかは、判定フローチャート『機能を呼ぶインターフェースの選び方』（`flowchart-interface-choice`）で決める。
+  - 新規の手順をエージェントフロー・サブエージェント・スキルのどれで指定するかは、判定フローチャート『機能を呼ぶインターフェースの選び方』（`flowchart-interface-choice`）で決める。
 x-kind: agent_flow
 type: object
 additionalProperties: false
@@ -508,7 +508,7 @@ $defs:
       session:
         type: string
         title: 起動の仕方
-        description: '`type` が `agent` のとき、`new`（新しいサブエージェントを起動する）か `reuse`（前回起動した同じサブエージェントに続けて依頼する）。記載しなければ `new`。'
+        description: '`type` が `agent` のとき、`new`（新規のサブエージェントを起動する）か `reuse`（前回起動した同じサブエージェントに続けて依頼する）。記載しなければ `new`。'
         x-used-by:
           - 生成で、Markdown に起動の仕方を出す。
           - 設計で、`reuse` なら呼ぶ側の起動の構成でメッセージを送信するツールを読み込む。
@@ -517,10 +517,10 @@ $defs:
         - reuse
       renew_when:
         type: string
-        title: 新しく起動する条件
-        description: '`session` が `reuse` のとき、前回のサブエージェントを使用せずに新しく起動する条件。'
+        title: 新規に起動する条件
+        description: '`session` が `reuse` のとき、前回のサブエージェントを使用せずに新規に起動する条件。'
         x-used-by:
-          - 生成で、Markdown に新しく起動する条件を出す。
+          - 生成で、Markdown に新規に起動する条件を出す。
         examples:
         - 成果物が別のものに変わったとき
       skill:

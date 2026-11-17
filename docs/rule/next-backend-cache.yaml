@@ -64,7 +64,7 @@ items:
     body: |-
       | API | 挙動 | 用途 |
       | --- | --- | --- |
-      | `revalidateTag(tag, profile)` | stale マーク → 次のリクエストは古いデータを見つつ背後で再生成 | 遅延 OK な更新（一覧・カタログ）。第 2 引数必須（Next.js 16） |
+      | `revalidateTag(tag, profile)` | stale マーク → 次のリクエストは更新前のデータを見つつ背後で再生成 | 遅延 OK な更新（一覧・カタログ）。第 2 引数必須（Next.js 16） |
       | `updateTag(tag)` | 即時 expire + 同リクエスト内で再フェッチ（read-your-writes） | フォーム保存・設定変更（Server Action 内のみ） |
       | `refresh()` | client router の RSC payload を更新（`router.refresh()` のサーバー用） | mutation 後に画面を最新化 |
   - id: invalidate-api-02
@@ -81,7 +81,7 @@ items:
     body: |-
       ```text
       ユーザーごとに違うデータ? → キャッシュしない
-      どれくらい古くていい? → 即時=なし / 数分=minutes / 数時間=hours / 1ヶ月+=max
+      どれくらい更新が遅れてよい? → 即時=なし / 数分=minutes / 数時間=hours / 1ヶ月+=max
       mutation 後に即時反映必要? → Yes: updateTag + refresh / No: revalidateTag(tag, "max")
       ```
   - id: decision-flow-02

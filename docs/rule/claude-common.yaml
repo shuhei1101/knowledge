@@ -57,7 +57,7 @@ items:
     group: スクリプトの配置場所
     name: スクリプト呼び出しの仲介
     body: |-
-      - スキルの決まった処理は、スキルのフォルダの `scripts/` に配置して `${CLAUDE_SKILL_DIR}/scripts/{スクリプト}` で呼ぶ。
+      - スキルの定型の処理は、スキルのフォルダの `scripts/` に配置して `${CLAUDE_SKILL_DIR}/scripts/{スクリプト}` で呼ぶ。
         フロントマターの `allowed-tools` で許可する。
         複数のスキルが使用する処理は、プラグインの `bin/` に配置する
       - MCP を仲介するのは、状態や並行を持つ処理か、rule-inject で止めたい操作だけ。

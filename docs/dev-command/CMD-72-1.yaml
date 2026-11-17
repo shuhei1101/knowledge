@@ -4,7 +4,7 @@ title: "開発コマンド"
 categories:
   - name: 環境構築（クローン直後）
     commands: |-
-      1. 入口のスクリプトごとに、ロックの依存を uv のキャッシュに入れる（初回の起動で依存の取得に 20 秒を超えないようにする）
+      1. エントリーポイントのスクリプトごとに、ロックの依存を uv のキャッシュに入れる（初回の起動で依存の取得に 20 秒を超えないようにする）
 
       ```bash
       uv sync --script scripts/knowledge_checks.py
@@ -27,7 +27,7 @@ categories:
       detail: 3 つのスクリプトの `uv sync --script` がロックの依存を入れた（2026-10-31）。worktree で `npm ci --prefix scripts/lint` を実行し、`scripts/lint/node_modules/.bin/` に `markdownlint-cli2`・`textlint` が入った（2026-11-05）。worktree で `uv sync --script scripts/build_templates.py` がロックの依存を入れた（2026-11-06）。worktree で `uv sync --script scripts/build_skills.py` がロックの依存を入れた（2026-11-14）
   - name: 取り込み後の追従（pull 後）
     commands: |-
-      1. ロック（`scripts/*.py.lock`）が変わったときは、入口のスクリプトごとに依存を再インストールする
+      1. ロック（`scripts/*.py.lock`）が変わったときは、エントリーポイントのスクリプトごとに依存を再インストールする
 
       ```bash
       uv sync --script scripts/knowledge_checks.py

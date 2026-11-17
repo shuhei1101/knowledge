@@ -72,7 +72,7 @@ items:
       | tables[].primary_key | 主キー | string | - | - | - | 複合キーは `(col_a, col_b)`。 | 実装で、主キーの制約にする。 | - |
       | tables[].scale | レコード規模 | string | - | - | - | 想定行数のオーダー（`～10 万`）。 | 実装で、インデックス・ページングの要否を決める。 | - |
       | tables[].growth | 増え方 | string | - | - | - | 行が増える速さ（1 日あたりの行数 等）。 | 実装で、保持期間とアーカイブの要否を決める。 | - |
-      | tables[].retention | 保持期間 | string | - | - | - | 行を残す期間。 | 実装で、古い行を削除する処理にする。 | - |
+      | tables[].retention | 保持期間 | string | - | - | - | 行を残す期間。 | 実装で、保持期間を過ぎた行を削除する処理にする。 | - |
       | tables[].deletion | 削除の方針 | string | - | - | - | 物理削除か論理削除か。 | 実装で、削除を物理削除か論理削除にする。 | - |
       | tables[].transaction | 同じトランザクションのテーブル | string | - | - | - | このテーブルと同じトランザクションで書き込むテーブルの物理名。 | 実装で、トランザクションの境界にする。 | `videos` |
       | tables[].access | アクセス方式 | string | - | - | - | JSON / YAML のとき、全件か キーで検索するか。 | 実装で、全件を取得するか、キーで検索するかを決める。 | - |
@@ -83,7 +83,7 @@ items:
       | tables[].columns[].source | 保存するキー | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | このカラムが保存する、データの設計書のキー（`{ID}#fields[{キー}]`）。JSON の列は、入れるキーの親。 | 検査で、指すデータの設計書とキーが実在するかを確認する。<br>レビューで、データの設計書のキーと型・必須・一意の範囲が合うかを確認する。 | `DATA-1#fields[segments[].artifacts[]]` |
       | tables[].columns[].type | 型 | string | 必須 | - | - | DB は DBMS のネイティブ型、JSON / YAML は `string` / `number` / `boolean` / `object` / `array`。 | 実装で、カラムの型にする。 | - |
       | tables[].columns[].length | 長さ・精度 | string | - | - | - | 長さ・精度・小数の桁。 | 実装で、型の長さ・精度にする。<br>テストで、境界の長さのケースにする。 | - |
-      | tables[].columns[].not_null | NOT NULL | boolean | - | - | - | NULL を許さないカラムなら `true`。 | 実装で、NOT NULL の制約にする。 | - |
+      | tables[].columns[].not_null | NOT NULL | boolean | - | - | - | NULL を許可しないカラムなら `true`。 | 実装で、NOT NULL の制約にする。 | - |
       | tables[].columns[].primary_key | 主キー | boolean | - | - | - | 主キーのカラムなら `true`。 | 実装で、主キーの制約にする。 | - |
       | tables[].columns[].unique | 一意 | boolean | - | - | - | 値が一意のカラムなら `true`。 | 実装で、一意の制約にする。 | - |
       | tables[].columns[].foreign_key | 外部キー | object | - | - | - | 参照先のテーブルとカラム。外部キーでないときは記載しない。 | 実装で、外部キーの制約にする。 | - |
@@ -111,7 +111,7 @@ items:
       | tables[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | tables[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | tables[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | tables[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | tables[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | tables[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | tables[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | refs | 関連 | array | - | - | maxItems: `8` | 関連する設計書の一覧。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |

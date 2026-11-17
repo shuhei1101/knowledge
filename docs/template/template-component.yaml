@@ -50,12 +50,12 @@ items:
       | args[].component | 受ける部品 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 型が `部品` のとき、受け取れる部品設計（部品設計の `{ID}#`）。 | 実装で、引数に受け取る部品の型にする。 | `CMP-2#` |
       | args[].enabled_when | 有効になる条件 | string | - | - | - | 他の引数の値によって意味を持つときの条件。 | 実装で、引数を使用する条件にする。<br>テストで、条件を満たす状態と満たさない状態のストーリーにする。 | `` `filterable` が `true` のとき `` |
       | args[].description | 説明 | string | 必須 | - | - | 引数に指定する値が何を表すか。 | 画面設計で、引数に何を指定するかを決める。 | `行の状態。色とアイコンを決める` |
-      | args[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | args[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | args[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | slots | スロット | array | - | - | - | 使用する側が中身を差し込む場所。スロット 1 つ = 1 要素。 | 実装で、使用する側が中身を差し込む場所にする。 | - |
       | slots[].name | 名前 | string | 必須 | - | pattern: `^[A-Za-z_][A-Za-z0-9_]*$` | 名前の無いスロットは `default`。 | 実装で、スロットの名前にする。 | `default` / `actions` |
       | slots[].description | 説明 | string | 必須 | - | - | スロットに差し込む中身。 | 画面設計で、スロットに何を差し込むかを決める。 | `見出しの右に並べる操作のボタン` |
-      | slots[].accepts | 差し込める部品 | array | - | - | - | 差し込める部品設計。どれでも差し込めるときは持たない。 | レビューで、差し込む部品が許されたものかを確認する。 | `[CMP-3#]` |
+      | slots[].accepts | 差し込める部品 | array | - | - | - | 差し込める部品設計。どれでも差し込めるときは持たない。 | レビューで、差し込む部品が許可されたものかを確認する。 | `[CMP-3#]` |
       | slots[].passes | スロットに渡る値 | string | - | - | - | 差し込んだ中身から使用できる値（Jinja2 の `caller()` の引数など）。 | 実装で、差し込んだ中身に指定する値にする。 | `` `caller(item)` の `item`（行 1 件） `` |
       | events | イベント | array | - | - | - | 部品が使用する側へ通知する操作。イベント 1 つ = 1 要素。 | 実装で、使用する側へ通知するイベントにする。 | - |
       | events[].name | イベント | string | 必須 | - | - | イベントの名前（`on{名前}` の props・`CustomEvent` の型名）。 | 実装で、イベントの名前にする。 | `並べ替え` / `詳細を開く` |
@@ -66,7 +66,7 @@ items:
       | css_properties[].name | 名前 | string | 必須 | - | pattern: `^--[a-z0-9-]+$` | CSS カスタムプロパティの名前（`--` で始める）。 | 実装で、CSS カスタムプロパティの名前にする。 | `--badge-bg` |
       | css_properties[].syntax | 値の書式 | string | - | - | - | 値の書式（`@property` の `syntax`。`<color>`・`<length>` 等）。 | 実装で、値の書式（`@property` の `syntax`）にする。 | `<color>` |
       | css_properties[].default | 既定値 | string | - | - | - | 値を指定しないときの既定値。 | 実装で、値の既定にする。 | `var(--bg-subtle)` |
-      | css_properties[].description | 説明 | string | 必須 | - | - | カスタムプロパティで変わる外観。 | 画面設計で、外観を変えるときに参照する。 | `バッジの地の色` |
+      | css_properties[].description | 説明 | string | 必須 | - | - | カスタムプロパティで変わる外観。 | 画面設計で、外観を変えるときに参照する。 | `バッジの背景色` |
       | states | 状態 | array | 必須 | - | minItems: `1` | 確認する状態（通常・無効・読み込み中・エラー・長文など）。状態 1 つ = Storybook のストーリー 1 つ。 | 実装で、状態ごとの Storybook のストーリーにする。<br>レビューで、状態ごとのスクリーンショットを照合する。 | - |
       | states[].name | ストーリー名 | string | 必須 | - | pattern: `^[A-Za-z][A-Za-z0-9]*$` | 英数字で記載する（日本語の名前は Storybook の id が食い違い、ストーリーが見つからなくなる）。 | 実装で、ストーリーの名前にする。 | `Todo` / `LongList` |
       | states[].description | 状態 | string | 必須 | - | - | その状態が何か。 | レビューで、ストーリーがその状態を描いているかを確認する。 | `未着手` / `` 幅を超える数の未解消の依存（`…` で省略し、全文を `title` に持たせる） `` |
@@ -86,7 +86,7 @@ items:
       | refs[].when | いつ参照するか | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 関連先をいつ参照するかの 1 文。 | 実装とレビューで、関連先を参照する場面を判断する。 | `例外の型を変えるときに、呼び出し側の異常系のフローを確認する。` |
       | refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
-      | status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>project-index の配信で、文書の公開範囲のメタデータにする。 | - |
       | tags | タグ | array | - | - | - | 設計書を検索で絞り込むタグで、`name` にタグの名前（`action:`・`topic:`・`tool:` などで始める）、最も分量の多い主題 1 つに `main: true` を記載する。<br>付け方は knowledge の規約『文書のタグと description の記載』に従う。 | project-index の検索で、文書をタグで絞り込む。 | `[{main: true, name: topic:タグ}, name: action:記載]` |
       | tags[].name | タグの名前 | string | 必須 | - | minLength: `1` | タグの名前。`action:`・`topic:`・`tool:` などで始める。 | 検索で、文書をタグで絞り込む値にする。 | - |

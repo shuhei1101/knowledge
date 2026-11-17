@@ -127,7 +127,7 @@ flows:
       - '`systemMessage` が `AI slop を検知: 直す（Edit）`'
     test: test_normal_when_edited_file_unreadable
   - name: 正常系（NotebookEdit）
-    summary: NotebookEdit はセルの新しい中身を照合する
+    summary: NotebookEdit はセルの変更後の中身を照合する
     setup:
       - name: Mock
         description: 差し替えない
@@ -351,7 +351,7 @@ request:
     type: str
     required: false
     location: body
-    description: NotebookEdit のセルの新しい中身
+    description: NotebookEdit のセルの変更後の中身
   - name: CLAUDE_PLUGIN_ROOT
     type: Path
     required: true

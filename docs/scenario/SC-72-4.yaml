@@ -7,7 +7,7 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: 作業場所
-        description: 'knowledge のクローンの外の作業場所（例: 別のリポジトリのクローン）'
+        description: 'knowledge のクローンの外部の作業場所（例: 別のリポジトリのクローン）'
       - name: 配信中の knowledge
         description: 用語集に別名を持つ用語がある（用語 `A.I.VOICE 2`、別名 `A.I.VOICE2`）
     flow: |-
@@ -47,7 +47,7 @@ scenarios:
       - name: 端末の設定
         description: knowledge の `scope.read` を knowledge のクローンだけに狭めた設定
       - name: 作業場所
-        description: knowledge のクローンの外の作業場所
+        description: knowledge のクローンの外部の作業場所
     flow: |-
       <!-- map -->
 
@@ -70,5 +70,5 @@ preconditions:
   - knowledge が project-index に登録され、配信中
   - エージェントの作業場所が knowledge の `scope.read` に入る
 success_guarantee: ヒットした文書の名前・説明・タグと、取得した本文が返る。
-minimal_guarantee: '`scope.read` の外の作業場所には knowledge の文書を返却しない。'
+minimal_guarantee: '`scope.read` の範囲外の作業場所には knowledge の文書を返却しない。'
 test_file: tests/e2e/単一ユースケース/test_エージェントがknowledgeの文書を検索・取得する.py

@@ -133,11 +133,11 @@ constants:
     value: '"uv run --frozen --script scripts/build_templates.py"'
 functions:
   - name: main
-    title: 設計書のテンプレートの生成の入口
+    title: 設計書のテンプレートの生成のエントリーポイント
     kind: 関数
     container: scripts/build_templates.py
     usecase: 設計書のテンプレートの生成
-    role: 入口
+    role: エントリーポイント
     scope: public
     summary: 全てのスキーマとテンプレートを読み込み、全件の items を組み立ててから、違うものだけ書き出す
     side_effects: '`TEMPLATES_DIR` の、組み立てた `items` が今の `items` と違うテンプレートの文書を書き換える'
@@ -163,8 +163,8 @@ functions:
     unit_tests:
       - name: test_main
         case: 正常
-        summary: items が古いテンプレートだけ書き換える
-        condition: '`er`・`config`・`common`・`index` のスキーマと、`items` の古い `template-er.yaml`、生成した状態の `template-config.yaml` を持つ一時フォルダを作業ディレクトリにする'
+        summary: items が更新前のテンプレートだけ書き換える
+        condition: '`er`・`config`・`common`・`index` のスキーマと、`items` が更新前の `template-er.yaml`、生成した状態の `template-config.yaml` を持つ一時フォルダを作業ディレクトリにする'
         mock: なし（一時ディレクトリ）
         expected: '`0` を返却し、標準出力が `docs/template/template-er.yaml` の 1 行で、`template-config.yaml` のバイト列が変わらない'
       - name: test_main_when_unchanged
@@ -520,7 +520,7 @@ functions:
       - name: test_replace_items
         case: 正常
         summary: items だけが変わる
-        condition: 先頭のコメントと `tags`・`rev` を持ち、`items` が古いテンプレート
+        condition: 先頭のコメントと `tags`・`rev` を持ち、`items` が更新前のテンプレート
         mock: なし（一時ディレクトリ）
         expected: '`True` を返却し、書き出したファイルの先頭のコメント・`items` 以外のキーの値と並びが変わらず、`items` が組み立てた items'
       - name: test_replace_items_when_same

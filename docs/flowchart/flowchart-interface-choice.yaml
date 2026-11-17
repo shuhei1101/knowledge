@@ -1,7 +1,7 @@
 id: flowchart-interface-choice
 kind: flowchart
 name: 機能を呼ぶインターフェースの選び方 判定フローチャート
-description: 機能を呼ぶインターフェース（フック・MCP ツール・API・CLI）と、エージェントに指定する新しい手順の指定方法（エージェントフロー・サブエージェント・スキル）を判定し、機能や手順をエージェント・人に提供する方法を決めるときに参照する。
+description: 機能を呼ぶインターフェース（フック・MCP ツール・API・CLI）と、エージェントに指定する新規の手順の指定方法（エージェントフロー・サブエージェント・スキル）を判定し、機能や手順をエージェント・人に提供する方法を決めるときに参照する。
 aliases:
   - 機能を呼ぶインターフェースの選び方
   - エージェントへの手順の指定方法
@@ -16,7 +16,7 @@ sources:
     note: API をそのまま包むツールを作らず、関連する操作を 1 本にまとめる
   - title: 'Anthropic: Equipping agents for the real world with Agent Skills'
     url: https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
-    note: 決まった結果が欲しい処理はコードにする
+    note: 毎回同じ結果が欲しい処理はコードにする
   - title: 'MCP 仕様: Tools'
     url: https://modelcontextprotocol.io/specification/2025-06-18/server/tools
     note: 入力の検証・権限はサーバー側が持つ
@@ -29,7 +29,7 @@ rev: 2
 items:
   - id: overview
     name: 概要
-    body: 機能を呼ぶインターフェース（フック・MCP ツール・API・CLI）と、エージェントに指定する新しい手順の指定方法（エージェントフロー・サブエージェント・スキル）を判定する。
+    body: 機能を呼ぶインターフェース（フック・MCP ツール・API・CLI）と、エージェントに指定する新規の手順の指定方法（エージェントフロー・サブエージェント・スキル）を判定する。
   - id: interface-choice-flow-01
     group: 機能を呼ぶインターフェースの選び方 判定フローチャート
     name: 判定フロー
@@ -45,7 +45,7 @@ items:
         qb{"レビュー（敵対的な検証）か"}
         rsub(["Agent ツールでサブエージェントを起動し、エージェントフローの ID か指示を指定する"])
         rflow(["エージェントフローにし、エージェントが MCP で参照する"])
-        q2{"決まったイベントで毎回必ず走らせるか"}
+        q2{"特定のイベントで毎回必ず走らせるか"}
         rhook(["フック"])
         q1{"エージェントがターンの途中で判断して呼ぶか"}
         q5{"ネットワーク越しに呼ぶか、常駐プロセスの状態を使用するか"}
@@ -100,7 +100,7 @@ items:
           SessionStart のフックで注入したときは、SessionStart（compact）で再度注入する。
           MCP にエージェントフローを掲載できない環境では、手順のファイルのパスを CLAUDE.md かシステムプロンプトで示し、Read で参照させる。
 
-      ※[interface-choice-n6]: 決まったイベント: ツールの実行の前後・セッションの開始など。
+      ※[interface-choice-n6]: 特定のイベント: ツールの実行の前後・セッションの開始など。
           必ず守らせたいことも、このイベントで走らせるフックにする。
           フックをセッションへ指定する方法は判定フローチャート [MCP・フックの渡し方](id:flowchart-mcp-hook-delivery) で決める。
 

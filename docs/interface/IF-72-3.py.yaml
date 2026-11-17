@@ -32,7 +32,7 @@ flows:
         end
         S->>S: 文書の Markdown の項目を 1 項目ずつ一時の .md に書き出す
         S->>S: markdownlint-cli2・textlint を 1 回ずつ呼び、yamllint を適用する
-        loop 入口が trigger のインターフェース定義
+        loop エントリーポイントが trigger のインターフェース定義
           S->>F: entry.value の workflow のファイルを読み込む
           S->>S: on・inputs・concurrency・step の name と if を設計書と比べる
         end
@@ -362,7 +362,7 @@ flows:
       - 標準出力に `legacy_mark` の行が出ない
     test: test_normal_when_maps_invalid
   - name: 正常系（workflow のファイルがインターフェース定義と食い違う・終了コード 1）
-    summary: 入口が `trigger` のインターフェース定義と workflow のファイルの食い違いを、食い違い 1 件ごとに違反として出す
+    summary: エントリーポイントが `trigger` のインターフェース定義と workflow のファイルの食い違いを、食い違い 1 件ごとに違反として出す
     setup:
       - name: Mock
         description: 差し替えない
@@ -378,7 +378,7 @@ flows:
         participant F as リポジトリ
         C->>S: リポジトリの直下で起動する
         S->>F: project-index.yaml の documents を読み込む
-        loop 入口が trigger のインターフェース定義
+        loop エントリーポイントが trigger のインターフェース定義
           S->>F: entry.value の workflow のファイルを読み込む
           S->>S: on・inputs・concurrency・step の name と if を設計書と比べる
         end
@@ -592,7 +592,7 @@ constraints:
   - item: lint の設定
     constraint: '設定は `--lint-dir` の `.markdownlint-cli2.jsonc`・`.textlintrc.json`・`.yamllint.yaml` を CLI に指定する。CLI が `warning` で返却した違反を警告、`error` で返却した違反を違反にする。`.yamllint.yaml` は `extends: default` に、`comments` を `level: error`、`document-start`・`line-length` を無効、`truthy` の `check-keys` を `false`（rule-inject の索引の `on` のキーを違反にしない）にする。`schemas/` のスキーマには `.yamllint.yaml` の代わりに `.yamllint-schemas.yaml` を適用し、`.yamllint-schemas.yaml` は `brackets`・`braces` の `forbid: non-empty` だけを持つ（`default` を継がない）'
   - item: 警告にするルール
-    constraint: '既定の設定（`scripts/lint/`）は警告にするルールを持たず、全てのルールを `error` にする。新しいルールを追加して既存の文書に違反が残るときだけ、そのルールを設定で `warning` にし、違反を修正した後に `error` へ戻す'
+    constraint: '既定の設定（`scripts/lint/`）は警告にするルールを持たず、全てのルールを `error` にする。新規のルールを追加して既存の文書に違反が残るときだけ、そのルールを設定で `warning` にし、違反を修正した後に `error` へ戻す'
   - item: 対応表のコピー
     constraint: '`docs/word-list/word-list-ai-slop.yaml` から「対応表のコピーの作成」と同じ書式で再作成したバイト列が、`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` と一致する。違えばコピーのパスで違反 1 件にする'
     decided_by: IF-148-2#constraints[コピーの書式]
@@ -623,7 +623,7 @@ constraints:
       起動の条件: `on` のイベント名と、イベントの下の `branches`・`branches-ignore`・`tags`・`paths`・`paths-ignore`・`types` の値と `schedule` の `cron` を、全て `entry.value` が含む。
       リクエスト: `request[].name` の並びが `on.workflow_dispatch.inputs` のキーの並びと同じで、名前ごとに `type`（workflow の `type`。無ければ `string`）・`required`（無ければ `false`）・`default`（文字列にして比べる）が一致する。
       排他: workflow が `concurrency` を持つとき、`exclusivity` が `group` の値と `cancel-in-progress: {値}` を含む。持たないとき、`exclusivity` に `cancel-in-progress` が無い。
-      step: `overall_flow` の `flowchart` の開始・終わり（`([...])`）を除くノードのラベルの集まりが、全てのジョブの step の `name` の集まりと同じで、`subgraph` の ID がジョブの ID で、`subgraph` の中のノードがそのジョブの step である。`flows[].flow` の開始・終わりを除くノードのラベルは、全て step の `name` にある。`name` の無い step は、`overall_flow` の行でジョブの ID と step の番号を出す違反 1 件にする。
+      step: `overall_flow` の `flowchart` の開始・終了（`([...])`）を除くノードのラベルの集まりが、全てのジョブの step の `name` の集まりと同じで、`subgraph` の ID がジョブの ID で、`subgraph` の中のノードがそのジョブの step である。`flows[].flow` の開始・終了を除くノードのラベルは、全て step の `name` にある。`name` の無い step は、`overall_flow` の行でジョブの ID と step の番号を出す違反 1 件にする。
       分岐: `if` を持つ step・ジョブは、`overall_flow` のその step（ジョブは `subgraph`）へ入る線のどれかのラベルが、`if` の式（式を囲む `${{`・`}}` を除外した文字列）を含む
     decided_by: IF-137-2#
   - item: SKILL.md

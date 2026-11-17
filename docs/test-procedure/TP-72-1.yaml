@@ -40,7 +40,7 @@ layers:
       ```
   - id: TL-3
     name: 結合テスト（バック）
-    description: pytest で `tests/integration/` を実行する。入口のスクリプトを project-index・CI と同じ `uv run --frozen --script` で子プロセスとして起動し、標準入力・標準出力・終了コードを確認する。slop-check のフックは `hooks.json` と同じく PATH の `python3` で起動する。
+    description: pytest で `tests/integration/` を実行する。エントリーポイントのスクリプトを project-index・CI と同じ `uv run --frozen --script` で子プロセスとして起動し、標準入力・標準出力・終了コードを確認する。slop-check のフックは `hooks.json` と同じく PATH の `python3` で起動する。
     prerequisites:
       - uv と Python 3.14 が入っている
       - 開発コマンドの環境構築（クローン直後）を実行してあり、`scripts/lint/node_modules/.bin/` に markdownlint-cli2・textlint がある
@@ -72,7 +72,7 @@ layers:
     run_all: 未確定
   - id: TL-6
     name: E2E テスト
-    description: pytest で `tests/e2e/workflow/` を実行する。入口が `trigger` の workflow のインターフェース定義のフローごとに、検証用のブランチを push して `gh` で本物の GitHub Actions に起動し、実行の結論・step ごとの結論・成果物を確認する。検証用のブランチ（`test-workflow/...`）はテストの後に削除する。
+    description: pytest で `tests/e2e/workflow/` を実行する。エントリーポイントが `trigger` の workflow のインターフェース定義のフローごとに、検証用のブランチを push して `gh` で本物の GitHub Actions に起動し、実行の結論・step ごとの結論・成果物を確認する。検証用のブランチ（`test-workflow/...`）はテストの後に削除する。
     prerequisites:
       - uv と Python 3.14 が入っている
       - '`git push` で knowledge の origin へ push できる'

@@ -29,7 +29,7 @@ items:
       - `embed_only` の手順と `type` が `skill` の手順は、エージェントフローの索引に出さない。
       - スキルにするのは、起動の仕組み（システムプロンプト・エージェントフローの索引）で指定できない理由があるときだけにする。
       - 工程の名前は進み具合の目印になるので、変えたときは変える前の進み具合を無効にする。
-      - 新しい手順をエージェントフロー・サブエージェント・スキルのどれで指定するかは、判定フローチャート『機能を呼ぶインターフェースの選び方』（`flowchart-interface-choice`）で決める。
+      - 新規の手順をエージェントフロー・サブエージェント・スキルのどれで指定するかは、判定フローチャート『機能を呼ぶインターフェースの選び方』（`flowchart-interface-choice`）で決める。
   - id: item-list-01
     name: 項目
     body: |-
@@ -77,8 +77,8 @@ items:
       | steps[].calls[].tools.allow | 許可 | array | - | - | - | 使用させるツール。 | 生成で、サブエージェントに許可するツールにする。 | - |
       | steps[].calls[].tools.deny | 拒否 | array | - | - | - | 使用させないツール。 | 生成で、サブエージェントに拒否するツールにする。 | `[Agent, Edit, Write]` |
       | steps[].calls[].wait | 完了を待つ | boolean | - | - | - | `type` が `agent` のとき、完了を待ってから次の工程へ進むか（記載しなければ `true`）。`false` ならバックグラウンドで起動し、完了の通知を受けてから結果を使用する。 | 生成で、Markdown に完了の待ち方を出す。 | - |
-      | steps[].calls[].session | 起動の仕方 | string | - | `new` / `reuse` | - | `type` が `agent` のとき、`new`（新しいサブエージェントを起動する）か `reuse`（前回起動した同じサブエージェントに続けて依頼する）。記載しなければ `new`。 | 生成で、Markdown に起動の仕方を出す。<br>設計で、`reuse` なら呼ぶ側の起動の構成でメッセージを送信するツールを読み込む。 | - |
-      | steps[].calls[].renew_when | 新しく起動する条件 | string | - | - | - | `session` が `reuse` のとき、前回のサブエージェントを使用せずに新しく起動する条件。 | 生成で、Markdown に新しく起動する条件を出す。 | `成果物が別のものに変わったとき` |
+      | steps[].calls[].session | 起動の仕方 | string | - | `new` / `reuse` | - | `type` が `agent` のとき、`new`（新規のサブエージェントを起動する）か `reuse`（前回起動した同じサブエージェントに続けて依頼する）。記載しなければ `new`。 | 生成で、Markdown に起動の仕方を出す。<br>設計で、`reuse` なら呼ぶ側の起動の構成でメッセージを送信するツールを読み込む。 | - |
+      | steps[].calls[].renew_when | 新規に起動する条件 | string | - | - | - | `session` が `reuse` のとき、前回のサブエージェントを使用せずに新規に起動する条件。 | 生成で、Markdown に新規に起動する条件を出す。 | `成果物が別のものに変わったとき` |
       | steps[].calls[].skill | スキル | string | - | - | pattern: `^[^\s#]+#.*$` | `type` が `skill` のときに呼ぶ、`type` が `skill` のエージェントフローへの参照。 | 生成で、Markdown に呼ぶスキルを出す。 | `mindstella/setup#` |
       | refs | 関連 | array | - | - | maxItems: `8` | 参照する共通の手順・ノウハウへの関連。 | 生成で、関連する手順へのリンクにする。<br>レビューで、関連する手順をたどって食い違いを確認する。 | - |
       | refs[].to | 相手の ID | string | 必須 | - | pattern: `^[^\s#]+$` | 関連先のエージェントフローか文書の ID。項目のパスは `item` に分ける。 | 検査で、関連先が実在するかを確認する。 | `shared/character-state` / `convention-writing-style` |

@@ -16,10 +16,10 @@ constants:
         when: "`HIDDEN_KEYS` を修正するときに、IF-72-2 の「出さないキー」の決まりと突き合わせる。"
     reason: '`aliases` は project-index の検索の別名、`inject_when` は alias-inject の照合条件で、本文の読者に役立たない'
   - name: LAYOUT_KEYS
-    title: 構成が決まっているキー
+    title: 構成が固定のキー
     container: scripts/knowledge_markdown.py
     usecase: 文書の Markdown への変換
-    summary: 出す場所が決まっていて、種類に固有のキーのセクションにしないキー
+    summary: 出す場所が固定で、種類に固有のキーのセクションにしないキー
     value: frozenset({"name", "description", "items", "related", "sources"})
   - name: WORD_LIST_KIND
     title: 対応表の種類
@@ -52,11 +52,11 @@ constants:
     value: 're.compile(r"^\s{0,3}(?P<mark>`{3,}|~{3,})")'
 functions:
   - name: main
-    title: 文書の Markdown への変換の入口
+    title: 文書の Markdown への変換のエントリーポイント
     kind: 関数
     container: scripts/knowledge_markdown.py
     usecase: 文書の Markdown への変換
-    role: 入口
+    role: エントリーポイント
     scope: public
     summary: 標準入力の文書を Markdown にして標準出力へ出す
     args:
@@ -215,7 +215,7 @@ functions:
     unit_tests:
       - name: test_convert
         case: 正常
-        summary: 規約を決まった並びにする
+        summary: 規約を所定の並びにする
         condition: '`overview`・`group` が `語の選び方` と `語の選び方 > 原則` の項目・`related` 1 行・`sources` 1 行を持つ rule の文書'
         mock: なし
         expected: '`# {name}`・`description`・`overview` の本文・`## 語の選び方`・`### 原則`・`## 関連`・`## 出典` の順で、`tags`・`rev` は出ない'
@@ -399,7 +399,7 @@ functions:
       type: bool
       description: マーカーの行があれば `True`
     process: |-
-      1. 項目の本文ごとに、コードブロックの外の行（本文の行の走査）に `EMBED_MARKER` が該当するかを調べ、1 つでも該当すれば `True` を返却する
+      1. 項目の本文ごとに、コードブロック以外の行（本文の行の走査）に `EMBED_MARKER` が該当するかを調べ、1 つでも該当すれば `True` を返却する
     unit_tests:
       - name: test_has_embed
         case: 正常
@@ -478,7 +478,7 @@ functions:
     container: scripts/knowledge_markdown.py
     usecase: 文書の Markdown への変換
     scope: public
-    summary: 本文のコードブロックの外の埋め込みのマーカーの行を、ID の対応表の NG・OK の表か注意書きに置き換える
+    summary: 本文のコードブロック以外の埋め込みのマーカーの行を、ID の対応表の NG・OK の表か注意書きに置き換える
     args:
       - name: body
         title: 本文

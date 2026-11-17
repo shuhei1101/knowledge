@@ -44,7 +44,7 @@ items:
     body: |-
       ```tree
       CPU バウンド？
-      ├── No (IO) → asyncio が第一候補。古い sync lib なら ThreadPoolExecutor
+      ├── No (IO) → asyncio が第一候補。旧来の sync lib なら ThreadPoolExecutor
       └── Yes
           ├── 1 タスク 100ms 未満 → 並列化しない or numpy / numba で内部高速化
           └── 1 タスク 100ms 以上 → ProcessPoolExecutor
@@ -58,7 +58,7 @@ items:
       | やりたいこと                | API                                                                        |
       | --------------------------- | -------------------------------------------------------------------------- |
       | 多数の HTTP 並列            | `asyncio` + httpx2.AsyncClient                                             |
-      | 同期 IO の並列（古い lib）  | `ThreadPoolExecutor`（GIL は IO 待ちで解放）                               |
+      | 同期 IO の並列（旧来の lib）  | `ThreadPoolExecutor`（GIL は IO 待ちで解放）                               |
       | 重い計算の並列              | `ProcessPoolExecutor()`（`max_workers` 省略で CPU 数）                      |
       | 既存 sync 関数を async から | `asyncio.to_thread`                                                        |
       | 外部コマンド                | `subprocess.run(check=True)` / async なら `asyncio.create_subprocess_exec` |

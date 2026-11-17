@@ -44,11 +44,11 @@ items:
     body: |-
       | 場面 | コマンド |
       | --- | --- |
-      | 新しいブランチで作業する | `git worktree add .claude/worktrees/{ブランチ名の / を - に置換} -b {ブランチ名} origin/{base ブランチ}` |
+      | 新規のブランチで作業する | `git worktree add .claude/worktrees/{ブランチ名の / を - に置換} -b {ブランチ名} origin/{base ブランチ}` |
       | 既存のブランチで作業する（worktree が無い） | `git worktree add .claude/worktrees/{ブランチ名の / を - に置換} {ブランチ名}` |
   - id: backup-01
     group: バックアップ・一時ファイル
-    name: リポジトリの外の配置先
+    name: リポジトリの外部の配置先
     body: |-
       - リポジトリの外に配置するときの配置先は次のとおり。
         設定ファイルの記録は `~/.config/{project}/bk/`、一時ファイルは `~/.cache/{project}/`（または OS の一時フォルダ）。

@@ -150,7 +150,7 @@ properties:
           title: 保持期間
           description: 行を残す期間。
           x-used-by:
-            - 実装で、古い行を削除する処理にする。
+            - 実装で、保持期間を過ぎた行を削除する処理にする。
         deletion:
           type: string
           title: 削除の方針
@@ -233,7 +233,7 @@ properties:
               not_null:
                 type: boolean
                 title: NOT NULL
-                description: NULL を許さないカラムなら `true`。
+                description: NULL を許可しないカラムなら `true`。
                 x-used-by:
                   - 実装で、NOT NULL の制約にする。
               primary_key:

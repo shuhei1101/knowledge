@@ -46,12 +46,12 @@ items:
       | entries | エントリ | array | 必須 | - | minItems: `1` | リポジトリの直下のフォルダとファイル。 | 実装で、リポジトリの直下のフォルダとファイルにする。<br>生成で、ファイルツリーにする。 | - |
       | entries[].type | 種別 | string | 必須 | `folder` / `file` | - | `folder` か `file`。 | 実装で、フォルダとファイルを分ける。 | - |
       | entries[].name | 名前 | string | 必須 | - | pattern: `^[^/]+$` | 親のフォルダからの名前。可変の部分は英語の `{名前}` で記載する。 | 実装で、フォルダ・ファイルの名前にする。 | `shared` / `{feature}` |
-      | entries[].contents | 配置するもの | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | このフォルダかファイルに配置するものを 1 行で記載する。 | 実装で、新しいファイルを配置するフォルダを決める。 | `全ての機能が参照する設定・ログ・例外` |
+      | entries[].contents | 配置するもの | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | このフォルダかファイルに配置するものを 1 行で記載する。 | 実装で、新規のファイルを配置するフォルダを決める。 | `全ての機能が参照する設定・ログ・例外` |
       | entries[].content_types | 中身の種類 | array | - | - | - | 中身の種類。最上位の `content_types[].name` の単語を選ぶ。 | レビューで、役割と機能の切り方がフォルダの中で混ざっていないかを確認する。 | `[agent_flow, brain]` |
-      | entries[].generated_from | 生成元 | object | - | - | - | 生成物・複製のエントリの生成元と、生成するコマンド。生成元がリポジトリの外にあるときは、`path` の代わりに `source` に外の元とバージョンを記載する。 | 実装で、生成物を手で書き換えず、生成元を修正してコマンドで再生成する。<br>実装で、元がリポジトリの外（`source`）の複製は手で書き換えず、`source` のバージョンを上げて取り直す。 | - |
+      | entries[].generated_from | 生成元 | object | - | - | - | 生成物・複製のエントリの生成元と、生成するコマンド。生成元がリポジトリの外にあるときは、`path` の代わりに `source` に外部の元とバージョンを記載する。 | 実装で、生成物を手で書き換えず、生成元を修正してコマンドで再生成する。<br>実装で、元がリポジトリの外（`source`）の複製は手で書き換えず、`source` のバージョンを上げて取り直す。 | - |
       | entries[].generated_from.path | 生成元のパス | string | - | - | - | 生成元のリポジトリの直下からのパス。 | 実装で、生成物を修正するときに書き換える生成元にする。 | `frontend/` |
       | entries[].generated_from.command | 生成するコマンド | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[]\|\[[^\]]*\])*$` | 生成するコマンドを持つ『開発コマンド』の分類への参照。 | 実装で、生成物を再生成するコマンドを実行する。 | `CMD-1#categories[ビルド・生成]` |
-      | entries[].generated_from.source | 外の生成元 | string | - | - | - | リポジトリの外にある生成元と、そのバージョン。 | 実装で、複製を取り直すときの取得元とバージョンにする。<br>レビューで、同梱した複製のバージョンが記載と一致するかを確認する。 | `npm:yaml@2.6.1` / `shuhei1101/ai-monitor@v1.2.0:docs/_theme/` |
+      | entries[].generated_from.source | 外部の生成元 | string | - | - | - | リポジトリの外にある生成元と、そのバージョン。 | 実装で、複製を取り直すときの取得元とバージョンにする。<br>レビューで、同梱した複製のバージョンが記載と一致するかを確認する。 | `npm:yaml@2.6.1` / `shuhei1101/ai-monitor@v1.2.0:docs/_theme/` |
       | entries[].generated_from.tracked | git で管理する理由 | string | - | - | - | 生成物・複製を `gitignore` に記載せず git で管理する理由。 | レビューで、`gitignore` に無い生成物・複製が、記載漏れか意図して管理しているかを見分ける。 | `hooks モジュールが実行時に import する` |
       | entries[].placeholders | 可変の部分 | array | - | - | - | `name`・`naming` の `{名前}` ごとの、値の語彙への参照。 | 実装で、`{名前}` に入れる値を候補から選ぶ。 | - |
       | entries[].placeholders[].name | 名前 | string | 必須 | - | - | `{名前}` の名前。 | 実装で、置き換える `{名前}` を決める。 | `stage` |
