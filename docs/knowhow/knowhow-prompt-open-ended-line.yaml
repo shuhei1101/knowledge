@@ -1,0 +1,61 @@
+id: knowhow-prompt-open-ended-line
+kind: knowhow
+name: セリフのプロンプトは場面と目的だけを指定し、文の数・役割・オチを指定しない
+description: LLM にキャラクターのセリフを生成させるプロンプトで、場面と目的だけを指定してオチまで任せる技法（放牧プロンプト）を記載し、セリフ生成のプロンプトを作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: P2
+    title: PoC（1 セグメントの動画の作成）の 2 回目の結果 A-156
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### A-156` のセクションのセリフ'
+  - id: D543
+    title: 検討事項 D-543（台本とセリフ生成の線引き）
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### D-543` のセクション'
+  - id: D128
+    title: 検討事項 D-128（禁止や悪い例で縛らないプロンプトの方針）
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### D-128` のセクション'
+necessity: must
+scenes:
+  fits:
+    - キャラクターの一人語りや掛け合いのセリフを LLM に生成させるとき。
+  misfits:
+    - 決め文句や固有名詞など、一字一句を変えずに言わせる文があるとき。
+cases:
+  - work: 琴葉茜の「うちのおやつランキング」の 1 位を発表する 30 秒の場面
+    content: 1 回目は文の数（7 個）・1 文の文字数・文ごとの役割・1 位の内容まで指定し、面白くならなかった。2 回目は場面と目的と「茜らしく、好きにしゃべらせて。オチも任せる。」だけを渡し、オチまで任せた 14 文になった。
+    source: P2
+evidence:
+  - source: P2
+    speaker: practitioner
+  - source: D543
+    speaker: practitioner
+  - source: D128
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      セリフを生成させるプロンプトには、話し手・場面・目的だけを指定し、文の数・文ごとの役割・オチ・言い回しを指定しない。
+      指定するほどモデルの決められる所が無くなる。
+      面白さは、モデルの違いより任せた範囲の違いで決まる。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 話し手（キャラクターの口調・一人称）と、尺の目安を記載する
+      2. 場面（どこで・何をする）と目的（この場面で起きること）を 1〜2 文で記載する
+      3. オチと言い回しは任せると記載する
+      4. 返却する構造（JSON のキー）だけを指定する
+      5. 返った文からト書きが混ざっていないかを確認し、混ざっていれば除く
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:セリフ
+  - name: topic:llm
+  - name: action:生成
+  - name: topic:ノウハウ

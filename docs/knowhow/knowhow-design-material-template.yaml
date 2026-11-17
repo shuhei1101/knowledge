@@ -1,0 +1,53 @@
+id: knowhow-design-material-template
+kind: knowhow
+name: 動画の素材はデザインを決めたテンプレートから作成し、回転・拡大の動きを付けない
+description: 動画に出す表・見出しなどの素材を、枠・余白・色・フォントを決めたテンプレートから作成し、素材そのものに動きを付けず、枠の外の余白を透明にする技法を記載し、動画の素材を作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: D538
+    title: 検討事項 D-538（素材のデザイン）
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### D-538` のセクション'
+  - id: P2
+    title: PoC（1 セグメントの動画の作成）の 2 回目の結果 A-156
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### A-156` のセクションの素材'
+necessity: must
+scenes:
+  fits:
+    - 解説動画に表・見出し・箇条書きの素材を出すとき。
+    - AI に動画の素材を作らせるとき。
+cases:
+  - work: ランキングの表の素材
+    content: 1 回目は文字が回転しながら大きくなる動き・枠からはみ出た黒や白の余白・既定のフォントで、パワーポイントのように見えた。2 回目は動きを除外し、枠の外を透明にし、フォントを Zen Maru Gothic と Dela Gothic One にして、枠の外の黒・白が無くなった。
+    source: P2
+evidence:
+  - source: D538
+    speaker: practitioner
+  - source: P2
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      素材は、種類（表・見出し・箇条書き）ごとに枠・余白・色・フォントを決めたテンプレートに文字と画像を入れて作成し、素材を作るたびにデザインを考えない。
+      回転・拡大の動き、枠の外の余白・切り取りの乱れ、既定のフォントは、素材を AI が作成したように見せる。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 素材の種類ごとに、枠・余白・色・フォントを決めたテンプレートを数件用意する
+      2. フォントはテンプレートごとに選び、既定のフォントのまま使用しない
+      3. 素材そのものには動きを付けず、出し方はフェードなどのエフェクトで選ぶ
+      4. 枠の外は透明にし、描画の側で枠を描かない
+tags:
+  - name: topic:素材
+    main: true
+  - name: topic:動画
+  - name: topic:テンプレート
+  - name: topic:フォント
+  - name: topic:デザイン
+  - name: topic:ノウハウ

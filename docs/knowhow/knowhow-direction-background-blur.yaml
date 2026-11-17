@@ -1,0 +1,52 @@
+id: knowhow-direction-background-blur
+kind: knowhow
+name: 背景をほんの少しだけぼかして立ち絵と素材をはっきり見せる
+description: 動画の背景にごく弱いぼかしを既定でかけ、立ち絵と素材をはっきり見せる技法と、PoC で確認したぼかしの強さを記載し、動画の背景の見せ方を決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: D542
+    title: 検討事項 D-542（背景のぼかし）
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### D-542` のセクション'
+  - id: P3
+    title: PoC（1 セグメントの動画の作成）の 3 回目の結果 A-161
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### A-161` のセクションの背景のぼかし'
+necessity: reference
+scenes:
+  fits:
+    - 背景の上に立ち絵や素材を重ねる解説動画を作るとき。
+  misfits:
+    - 背景そのものを見せる場面（風景の紹介など）。
+cases:
+  - work: 「テスト前日に、ついやってしまうこと」の紹介
+    content: 1920×1080 の背景に、半径 3 ピクセルほどのぼかしを既定でかけた。半径 6 ピクセルでは強すぎた。
+    source: P3
+evidence:
+  - source: D542
+    speaker: practitioner
+  - source: P3
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      背景をほんの少しだけぼかすと、立ち絵と素材がはっきり見える。
+      解説動画では既定で少しぼかし、背景を見せる区間だけ解除する。
+      手前の机などの背景のパーツにも同じぼかしをかけ、背景だけがぼけて机がはっきり見えるのを防ぐ。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 1920×1080 の背景なら半径 3 ピクセルほどから試す
+      2. ぼかした背景の絵は 1 回だけ作成して再利用する（フレームごとにぼかすと書き出しが遅くなる）
+tags:
+  - name: topic:背景
+    main: true
+  - name: topic:動画
+  - name: topic:エフェクト
+  - name: topic:立ち絵
+  - name: topic:ノウハウ

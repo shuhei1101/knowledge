@@ -1,0 +1,59 @@
+id: knowhow-script-axis-only
+kind: knowhow
+name: 台本は軸だけを決め、オチと言い回しはセリフ生成に任せる
+description: 台本で動画の軸（必ず伝えること・順・事実・素材）だけを決め、オチ・言い回し・ボケはセリフ生成に任せ、流れの案出しを別のモデルに任せる技法を記載し、台本とセリフ生成の分担を決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: D543
+    title: 検討事項 D-543（台本とセリフ生成の線引き）
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### D-543` のセクション'
+  - id: P2
+    title: PoC（1 セグメントの動画の作成）の 2 回目の結果 A-156
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### A-156` のセクションのセリフ'
+necessity: reference
+scenes:
+  fits:
+    - 台本を作る工程とセリフを生成する工程を分けて動画を作るとき。
+    - 台本の段階でどこまで決めるかに迷ったとき。
+  misfits:
+    - 一字一句を決めた原稿を読み上げる動画を作るとき。
+evidence:
+  - source: D543
+    speaker: practitioner
+  - source: P2
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      台本は軸と、区切りごとに「ここで何が起きるか」の 1〜2 文だけを持ち、オチ・言い回し・ボケとツッコミ・文の数はセリフ生成に任せる。
+      台本でオチまで決めると、どのモデルでもセリフが面白くなくなる。
+  - id: split-01
+    group: 分担
+    name: 台本とセリフ生成が持つもの
+    body: |-
+      | 工程 | 持つもの |
+      | --- | --- |
+      | 台本 | 軸（その動画で必ず伝えること・扱う順・事実と数字・使用する素材）と、区切りごとに起きることの 1〜2 文 |
+      | セリフ生成 | オチ・言い回し・ボケとツッコミ・文の数。受け取るのは場面と目的と軸だけ |
+      | 次の区切りの演出指示 | 前の区切りの実際のセリフを参照して記載し、セリフで決まったことを次に引き継ぐ |
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 台本の構成の前に、別のモデルに題材と尺だけを指定して流れの案を 2〜3 個出させる
+      2. 案を選んで軸にまとめる
+      3. 事実と数字は軸に記載し、セリフ生成には「軸の事実は変えない」だけを伝える
+tags:
+  - name: topic:台本
+    main: true
+  - name: topic:セリフ
+  - name: topic:llm
+  - name: topic:構成
+  - name: action:生成
+  - name: topic:ノウハウ
