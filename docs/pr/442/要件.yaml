@@ -24,8 +24,16 @@ docs:
     updated_at: '2026-11-17T02:10:31.801600+00:00'
   - page: docs/template/template-external-library.yaml
     new: false
-    change: '`未確定`（要件.md）で案 B に決まったとき、`version.pinning` の説明に、自作のライブラリは既定で develop の最新を参照し、固定はタグか commit の SHA で行う決まりを追加する'
-    status: todo
+    change: '`version.pinning` の説明に、同じ所有者が作るライブラリは既定で develop の最新を参照し、固定するときはタグか develop の配布物を作り直した commit の SHA で行う決まりを追加する（スキーマから生成）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T02:23:02.328169+00:00'
+  - page: schemas/design/library.schema.yaml
+    new: false
+    change: テンプレート『外部ライブラリ』の生成元。`version.pinning` の `description` に同じ決まりを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T02:23:03.678821+00:00'
 scope_out:
   - item: '作業 PR #396 の PR ドキュメントから、`MDMARK_TAG` を mdmark#562 を含むタグへ上げる要件を取り消すこと'
     reason: '#396 の要件で、取り消しは task-planner が #396 へ連絡して #396 の作業で行う'
