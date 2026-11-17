@@ -25,7 +25,7 @@ constraints:
     decided_by: NFR-72-1#requirements[スクリプトが動く OS]
   - item: 所要時間
     constraint: '`timeout-minutes: 40`'
-    notes: 判定フローチャート『タイムアウトの決め方』の ※5 で、層 TL-3 の手元の実測（約 4 分）の 10 倍
+    notes: 判定フローチャート『タイムアウトの決め方』の結果「実測の 10 倍か外側の作業の上限」で、層 TL-3 の手元の実測（約 4 分）の 10 倍
   - item: ジョブの構成
     constraint: "ジョブは `test` の 1 つ。`layer` が `integration` のときだけ step「Node を入れる」「lint の道具を入れる」を動かす（`if: inputs.layer == 'integration'`）"
   - item: 層の全件を回すコマンド
