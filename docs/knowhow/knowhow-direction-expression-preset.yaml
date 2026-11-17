@@ -1,0 +1,51 @@
+id: knowhow-direction-expression-preset
+kind: knowhow
+name: 立ち絵の表情は用意した型から選び、部位を自由に組み合わせない
+description: 立ち絵の表情を、目・眉・口などの部位の組を決めた型から選び、型が許可する部位だけを変える技法を記載し、動画や配信の立ち絵の表情を選ぶ仕組みを作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: D534
+    title: 検討事項 D-534（立ち絵の表情の型）
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### D-534` のセクション'
+  - id: P2
+    title: PoC（1 セグメントの動画の作成）の 2 回目の結果 A-156
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### A-156` のセクションの立ち絵の表情'
+necessity: must
+scenes:
+  fits:
+    - 部位ごとの画像を重ねる立ち絵の表情を、AI や意思決定モデルに選ばせるとき。
+cases:
+  - work: 琴葉茜の立ち絵
+    content: 1 回目は AI が口・目・眉を自由に組み合わせ、用意した表情に無い顔になった。2 回目は表情の型（上機嫌・怯える・全力ツッコミなど 10 件）から型を選び、型が選ばせる部位の状態だけを変え、8 件のキューで 6 つの型を使用した。
+    source: P2
+evidence:
+  - source: D534
+    speaker: practitioner
+  - source: P2
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      部位を自由に組み合わせると、立ち絵の作者が想定していない顔になる。
+      表情は、部位の組を決めた型（名前・説明・選べる部位）から選び、型が選ばせる部位（ポーズ・視線・汗など）の状態だけを変える。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 表情の型ごとに、固定する部位と、選べる部位の状態の一覧・既定の状態を決める
+      2. 選ぶ側は、型を選んでから、選べる部位の状態を選ぶ
+      3. 型に無い状態を選んだら不合格にする
+      4. 口とまばたきは選ばせず、音声とタイマーで動かす
+tags:
+  - name: topic:立ち絵
+    main: true
+  - name: topic:表情
+  - name: topic:プリセット
+  - name: action:選択
+  - name: topic:ノウハウ

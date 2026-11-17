@@ -1,0 +1,37 @@
+id: knowhow-direction-partial-effect
+kind: knowhow
+name: 背景の一部にだけ付与するエフェクトは範囲の指定が要り、難しい
+description: 窓の外だけの雨のように背景の一部にだけ付与するエフェクトは、背景ごとに範囲の指定が要るため難しく、背景の全体に付与するエフェクトから使用する判断を記載し、動画のエフェクトを選ぶときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: TH1071
+    title: 利用者のコメント TH-1071（PoC の 1 回目への指摘）
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### D-539・TH-1071` のセクション'
+  - id: D539
+    title: 検討事項 D-539（窓の外の雨）
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### D-539・TH-1071` のセクション'
+necessity: reference
+scenes:
+  fits:
+    - 天候や光などのエフェクトを背景に付与するとき。
+evidence:
+  - source: TH1071
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      窓の外だけの雨のように、背景の一部にだけ付与するエフェクトは、背景ごとに合わせた範囲（マスク）が要り、難しい。
+      屋外の背景の全体に雨を降らせるなど、背景の全体に付与する使い方から使用する。
+tags:
+  - name: topic:エフェクト
+    main: true
+  - name: topic:背景
+  - name: topic:動画
+  - name: topic:ノウハウ

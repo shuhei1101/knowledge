@@ -1,0 +1,72 @@
+docs:
+  - page: docs/knowhow/knowhow-prompt-open-ended-line.yaml
+    new: true
+    change: 'No 1: セリフのプロンプトは場面と目的だけを渡し、文の数・役割・オチを指定しない'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:51:34.467543+00:00'
+  - page: docs/knowhow/knowhow-script-axis-only.yaml
+    new: true
+    change: 'No 2: 台本は軸だけを決め、オチと言い回しはセリフ生成に任せる'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:51:34.467543+00:00'
+  - page: docs/knowhow/knowhow-design-material-template.yaml
+    new: true
+    change: 'No 3: 素材はデザインを決めたテンプレートから作成し、回転・拡大の動きを付けない'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:51:34.467543+00:00'
+  - page: docs/knowhow/knowhow-direction-layout-set.yaml
+    new: true
+    change: 'No 4: 立ち絵と素材を重ならない位置の組で配置する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:51:34.467543+00:00'
+  - page: docs/knowhow/knowhow-direction-face-inward.yaml
+    new: true
+    change: 'No 5: 立ち絵は画面の内側を向かせる'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:51:34.467543+00:00'
+  - page: docs/knowhow/knowhow-direction-expression-preset.yaml
+    new: true
+    change: 'No 6: 立ち絵の表情は型から選ぶ'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:51:34.467543+00:00'
+  - page: docs/knowhow/knowhow-direction-subtitle.yaml
+    new: true
+    change: 'No 7: 字幕の箱・表示の長さ・行の幅'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:51:34.467543+00:00'
+  - page: docs/knowhow/knowhow-direction-background-blur.yaml
+    new: true
+    change: 'No 8: 背景をほんの少しだけぼかす'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:51:34.467543+00:00'
+  - page: docs/knowhow/knowhow-direction-partial-effect.yaml
+    new: true
+    change: 'No 9: 背景の一部にだけ付与するエフェクトは範囲が要り難しい'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:51:34.467543+00:00'
+scope_out:
+  - item: 'No 13（A-20 データ構成書: ノウハウ）の登録'
+    reason: 'ノウハウの持ち方の設計で技法ではなく、持ち方は #418 のスキーマ・テンプレートで決まった'
+    plan: none
+  - item: No 21（プリセットとカスタム）の登録
+    reason: '#417 で規約『選択肢の値のプリセット』（dev-config-preset）として登録済み'
+    plan: none
+  - item: No 10〜12（台本の技法。R-3・R-33・A-71）の登録
+    reason: 約 100 の技法があり 1 件の Issue に収まらないため、分野ごとの後続の Issue に分ける（確認事項の決定）
+    plan: '#464'
+  - item: No 14〜17（動画の演出の技法。R-23・R-24・R-39・R-40）の登録
+    reason: 分野ごとの後続の Issue に分ける（確認事項の決定）
+    plan: '#465'
+  - item: No 18〜20（セリフの採点観点とプロンプトの技法。R-44・R-47・R-48・A-68・A-69）の登録
+    reason: 分野ごとの後続の Issue に分ける（確認事項の決定）
+    plan: '#466'
+use_cases: []

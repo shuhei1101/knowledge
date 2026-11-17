@@ -1,0 +1,61 @@
+id: knowhow-direction-subtitle
+kind: knowhow
+name: 字幕は背景に合わせて箱に入れ、文の後の間も表示し、2 行は幅を揃える
+description: 動画の字幕を、込み入った背景では箱に入れ、短い文は文の後の間まで表示し、2 行になる文は行の幅を揃えて改行する技法を記載し、動画の字幕の見た目と表示の長さを決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: D533
+    title: 検討事項 D-533（字幕の設定）
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### D-533` のセクション'
+  - id: P2
+    title: PoC（1 セグメントの動画の作成）の 2 回目の結果 A-156
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### A-156` のセクションの字幕'
+necessity: reference
+scenes:
+  fits:
+    - セリフの字幕を出す動画を作るとき。
+cases:
+  - work: 琴葉茜の一人語りの動画
+    content: 「箱に入れた文字」「縁取りの文字」「帯」の 3 種類を作り、既定を箱に入れた文字にし、発表とオチの文だけ帯に切り替えた。0.2 秒の文（「……ん？」）は、文の間だけ表示すると一瞬で消えたので、文の後の間の終わりまで表示した。
+    source: P2
+evidence:
+  - source: D533
+    speaker: practitioner
+  - source: P2
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      背景が込み入っているときは、字幕を箱（白い角丸の箱に黒い文字など）に入れて読みやすくする。
+      短い文は文の間だけ表示すると一瞬で消えるため、文の後の間の終わりまで表示する。
+      2 行になる文は行の幅を揃えて改行する。
+  - id: styles-01
+    group: 字幕の種類
+    name: 字幕の種類と向く場面
+    body: |-
+      | 種類 | 向く場面 |
+      | --- | --- |
+      | 箱に入れた文字 | 背景が込み入っているとき。既定に向く |
+      | 縁取りの文字 | 背景が単純なとき |
+      | 帯 | 発表・オチなど強調する短い文。長い文は前後に分けて表示することになる |
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 字幕の見た目（フォント・文字の色・縁取り・箱・位置・改行）を、名前と説明を付けたプリセットで複数用意する
+      2. キャラクターごとに既定の字幕を決める
+      3. 強調する文だけ、別の字幕に切り替える
+tags:
+  - name: topic:字幕
+    main: true
+  - name: topic:動画
+  - name: topic:プリセット
+  - name: topic:フォント
+  - name: action:表示
+  - name: topic:ノウハウ

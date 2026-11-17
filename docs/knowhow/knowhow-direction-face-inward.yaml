@@ -1,0 +1,58 @@
+id: knowhow-direction-face-inward
+kind: knowhow
+name: 立ち絵は画面の内側を向かせる
+description: 立ち絵を配置した位置から画面の内側を向くように、立ち絵の向きと配置で向かせる向きから左右の反転を決める技法と、反転できない立ち絵の扱いを記載し、動画の立ち絵の向きを決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: D535
+    title: 検討事項 D-535（立ち絵の向き）
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### D-535` のセクション'
+  - id: P2
+    title: PoC（1 セグメントの動画の作成）の 2 回目の結果 A-156
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### A-156` のセクションの立ち絵の向き'
+  - id: P3
+    title: PoC（1 セグメントの動画の作成）の 3 回目の結果 A-161
+    url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
+    note: '`### A-161` のセクションの向きの上書き'
+necessity: reference
+scenes:
+  fits:
+    - 立ち絵を画面の左右の端に配置するとき。
+  misfits:
+    - キャラクターがそっぽを向く・とぼけるなど、外側を向かせる演出をするとき。
+cases:
+  - work: 琴葉茜の立ち絵（画面で見て左を向く）
+    content: 右に配置するときはそのまま、左に配置するときは書き出しが自動で反転した。とぼける文では向きを上書きして、わざとそっぽを向かせた。
+    source: P3
+evidence:
+  - source: D535
+    speaker: practitioner
+  - source: P2
+    speaker: practitioner
+  - source: P3
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      立ち絵は、配置した位置から画面の内側を向かせる（右の位置は左向き、左の位置は右向き）。
+      髪飾りや服の文字が左右で違う立ち絵は反転できないため、反転してよいかを立ち絵ごとに持つ。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 画面で見た向き（左・右・正面）と反転してよいかをキャラクターごとに記録し、向きの違う立ち絵だけ上書きする
+      2. 配置の位置ごとに向かせる向きを決める（中央は決めない）
+      3. 立ち絵の向きと位置の向きが逆なら左右を反転する（正面向きと、反転できない立ち絵は反転しない）
+      4. 外側を向かせる演出だけ、向きを上書きする
+tags:
+  - name: topic:立ち絵
+    main: true
+  - name: topic:動画
+  - name: action:配置
+  - name: topic:ノウハウ
