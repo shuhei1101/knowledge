@@ -1,0 +1,13 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: run_only
+    detail: サイドバーのグループ「シナリオ」の並びが変わるため、シナリオの文書が画面から開け、並びが配信の設定と一致することを確かめる
+    depends_on: []
+scope_out:
+  - item: タブ「設計書」の他のグループ（インターフェース定義・モジュール構成など）の並び
+    reason: 要望はグループ「シナリオ」だけ。他のグループの設計書は利用者の手順の順を持たず、auto の並びのままにする
+    plan: none
+  - item: シナリオの目次 docs/scenario/index.yaml の items の並び
+    reason: 目次はタブとサイドバーに並べない（規約『開発ドキュメントのナビゲーション』の index-01）ため、サイドバーの並びに影響しない
+    plan: none
