@@ -431,7 +431,7 @@ functions:
     process: |-
       1. `sources` が空の場合、空を返却する（mdmark を呼ばない）
       2. `sources` の `text` を、間に空行 2 行（`\n\n\n`）を挟んでつなぐ。項目ごとに、つないだ中の開始行を控える
-      3. 一時フォルダを作業ディレクトリにして、`[npx, "-y", f"github:shuhei1101/mdmark#{MDMARK_TAG}", "check", "--text", "-"]` を、つないだ Markdown を標準入力にして呼ぶ
+      3. 一時フォルダを作業ディレクトリにして、`[npx, "-y", f"github:shuhei1101/mdmark#{MDMARK_REF}", "check", "--text", "-"]` を、つないだ Markdown を標準入力にして呼ぶ
          - 終了コードが 0・1 でないか、標準出力の最後の空でない行が `ずれ {件数} 件` でない場合、`MdmarkCheckError`（終了コードと標準エラー）を送出する
       4. 標準出力の `-:{行}: {種類}: {内容}` の行のうち、種類が `map_` で始まる行ごとに、行を含む項目の `LintSource` で `LintFinding` を作る。行は `start_line` + （mdmark の行 - その項目のつないだ中の開始行）。他の種類の行は捨てる
       5. 一時フォルダを削除して返却する
