@@ -454,7 +454,7 @@ entries:
               command: CMD-72-1#categories[環境構築（クローン直後）]
       - type: file
         name: _workflow.py
-        contents: 入口が trigger のインターフェース定義と GitHub Actions の workflow のファイルの突き合わせ
+        contents: エントリーポイントが trigger のインターフェース定義と GitHub Actions の workflow のファイルの突き合わせ
   - type: folder
     name: skills
     contents: プラグイン knowledge のスキルの本体
@@ -514,7 +514,7 @@ entries:
                 children:
                   - type: file
                     name: slop_check.py
-                    contents: 書き込んだ中身の照合（フックの入口と照合）
+                    contents: 書き込んだ中身の照合（フックのエントリーポイントと照合）
                   - type: file
                     name: word-list-ai-slop.json
                     contents: 対応表のコピー
@@ -570,7 +570,7 @@ entries:
               - test_{シナリオのタイトル}.py
           - type: folder
             name: workflow
-            contents: 入口が trigger の GitHub Actions の workflow の結合テスト。1 インターフェース定義 = 1 テストファイル
+            contents: エントリーポイントが trigger の GitHub Actions の workflow の結合テスト。1 インターフェース定義 = 1 テストファイル
             content_types:
               - test
             naming:

@@ -80,7 +80,7 @@ properties:
         title: 確認日
         description: '`YYYY-MM-DD`。'
         x-used-by:
-          - 保守で、確認の記録が古くなっていないかを判断する。
+          - 保守で、確認の記録が要更新になっていないかを判断する。
         pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
       detail:
         type: string
@@ -112,7 +112,7 @@ properties:
         title: 確認日
         description: バージョンの情報を確認した日（`YYYY-MM-DD`）。
         x-used-by:
-          - 保守で、バージョンの情報が古くなっていないかを判断する。
+          - 保守で、バージョンの情報が要更新になっていないかを判断する。
         pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
       sunset:
         type: string
@@ -492,7 +492,7 @@ properties:
                   - テストで、Mock の要求の値にする。
               nullable:
                 type: boolean
-                title: 空を許す
+                title: 空を許可
                 description: '`null` を送信してよいなら `true`。'
                 x-used-by:
                   - 実装で、`null` を送信してよいかを決める。

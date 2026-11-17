@@ -278,7 +278,7 @@ def test_main(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    """items が古いテンプレートだけ書き換える（正常系）。"""
+    """items が更新前のテンプレートだけ書き換える（正常系）。"""
     # 準備
     root = repo_factory(_REPO_FILES)
     monkeypatch.chdir(root)

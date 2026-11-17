@@ -128,7 +128,7 @@ def test_normal_when_edited_file_unreadable(
 
 
 def test_normal_when_notebook_edit(run_hook: RunHook, plugin_factory: PluginFactory) -> None:
-    """NotebookEdit はセルの新しい中身を照合する（正常系）。"""
+    """NotebookEdit はセルの変更後の中身を照合する（正常系）。"""
     # 準備
     root = plugin_factory(_ALL)
     stdin = _input("NotebookEdit", {"notebook_path": "/work/a.ipynb", "new_source": "# 版を出す"})

@@ -49,13 +49,13 @@ items:
       | requirements[].source | 出所 | string | - | - | - | 外部の制約を記載した設計書の参照・資料の URL・ユーザーの回答コメントの URL。<br>設計書の参照は `{ID}#{項目のパス}` で記載する。 | レビューで、外部の制約の出所をたどって値を確認する。 | - |
       | requirements[].value | 決定値 | string | 必須 | - | - | 実装とテストが参照する値。まだ決められないときは `未確定`。 | 実装で、上限・待ち・回数などの値にする。<br>テストで、境界の値にする。 | - |
       | requirements[].unit | 単位 | string | - | - | - | 値の単位（`ms`・`件/秒` 等）。 | 実装で、値の単位にする。 | - |
-      | requirements[].rationale | 根拠 | string | 必須 | - | - | 外部の制約そのままでない理由。未確定なら何が分かれば決まるか。 | レビューで、外部の制約そのままでない値の根拠を確認する。<br>設計で、値を変えるときに根拠が今も成り立つかを判断する。 | - |
+      | requirements[].rationale | 根拠 | string | 必須 | - | - | 外部の制約そのままでない理由。未確定なら何が分かれば決定するか。 | レビューで、外部の制約そのままでない値の根拠を確認する。<br>設計で、値を変えるときに根拠が今も成り立つかを判断する。 | - |
       | requirements[].measurement | 測り方 | string | - | - | - | 値を測る方法（測る場所・条件・回数）。 | テストで、値を測る方法にする。 | - |
       | requirements[].test_file | 対応テスト | string | - | - | pattern: `^tests/.+` | 非機能要件テストのファイル（`tests/nfr/test_{英語名}.py`）。測れない項目は持たない（規約『V字モデル』）。 | テストで、非機能要件のテストを作るファイルにする。<br>検査で、テストのファイルがあるかを確認する。 | - |
       | requirements[].verification | 確認の記録 | object | - | - | - | 確認した結果。 | レビューで、実機で確認した結果を確認する。 | `{date: '2026-10-05', device: Windows 11 の PC の Edge, result: 合格, version: Edge 140}` |
       | requirements[].verification.device | 端末 | string | 必須 | - | - | 確認した端末（OS・ブラウザなど）。 | 保守で、確認した端末と違う端末で再確認するかを判断する。 | - |
       | requirements[].verification.version | バージョン | string | 必須 | - | - | 確認した端末のバージョン（OS・ブラウザのバージョン）。 | 保守で、確認したバージョンと違うバージョンで再確認するかを判断する。 | - |
-      | requirements[].verification.date | 確認日 | string | 必須 | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | `YYYY-MM-DD`。 | 保守で、確認の記録が古くなっていないかを判断する。 | - |
+      | requirements[].verification.date | 確認日 | string | 必須 | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | `YYYY-MM-DD`。 | 保守で、確認の記録が要更新になっていないかを判断する。 | - |
       | requirements[].verification.result | 合否 | string | 必須 | `合格` / `不合格` | - | 確認した結果の合否。 | 実装で、不合格の要件を修正する対象にする。 | - |
       | requirements[].verification.detail | 確認内容 | string | - | - | - | 不合格のとき、起きた事象。 | 実装で、不合格の要件を修正するときに、起きた事象から原因を決める。 | - |
       | requirements[].overflow | 超過時の挙動 | string | - | - | - | 決定値を超えたときに何が起きるか（分割 / 待機 / リトライ / エラー）。 | 実装で、値を超えたときの処理（分割・待機・リトライ・エラー）にする。<br>テストで、値を超えたときのケースにする。 | - |
@@ -77,7 +77,7 @@ items:
       | requirements[].refs[].when | いつ参照するか | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 関連先をいつ参照するかの 1 文。 | 実装とレビューで、関連先を参照する場面を判断する。 | `例外の型を変えるときに、呼び出し側の異常系のフローを確認する。` |
       | requirements[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | requirements[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
-      | requirements[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | requirements[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | requirements[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | requirements[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | refs | 関連 | array | - | - | maxItems: `8` | 関連する設計書の一覧。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
@@ -99,8 +99,8 @@ items:
       | --- | --- | --- | --- |
       | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
       | lead | 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
-      | requirements | 決まっていない項目も同じ一覧に配置し、決定値を `未確定` にする。<br>未確定だった項目が決まったら同じ要素を書き換える。 | - | - |
-      | requirements[].id | 並びの順に `NFR-{番号}` を振る。<br>新しく追加する要素には、既にある番号の最大の次を振る。<br>並べ替えても変えない。 | - | - |
+      | requirements | 決定していない項目も同じ一覧に配置し、決定値を `未確定` にする。<br>未確定だった項目が決定したら同じ要素を書き換える。 | - | - |
+      | requirements[].id | 並びの順に `NFR-{番号}` を振る。<br>新規に追加する要素には、既にある番号の最大の次を振る。<br>並べ替えても変えない。 | - | - |
       | requirements[].overflow | 黙って切り捨てない。 | - | - |
       | requirements[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
       | requirements[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
@@ -134,7 +134,7 @@ items:
         test_file: tests/nfr/test_input_limit.py
         overflow: |-
           上限を超える入力は送信の前に分割する。
-          分割できない単一のメッセージが超えたときは古い履歴から切り詰め、それでも収まらなければエラーにして呼び出し元へ返却する。
+          分割できない単一のメッセージが超えたときは前の履歴から切り詰め、それでも収まらなければエラーにして呼び出し元へ返却する。
         breakdown:
         - part: 外部の上限
           value: 1,000,000
@@ -186,7 +186,7 @@ items:
         external_constraint: 未確定
         source_kind: 未確定
         value: 未確定
-        rationale: 想定利用者数が決まる Issue「利用者管理」の要件が確定してから決める
+        rationale: 想定利用者数が決定する Issue「利用者管理」の要件が確定してから決める
       - id: NFR-4
         name: 対応ブラウザ
         category: 動作環境
@@ -265,5 +265,5 @@ items:
         external_constraint: 未確定
         source_kind: 未確定
         value: 未確定
-        rationale: オンラインで遊ぶ機能を持つかが企画の工程で決まってから決める
+        rationale: オンラインで遊ぶ機能を持つかが企画の工程で決定してから決める
       ```

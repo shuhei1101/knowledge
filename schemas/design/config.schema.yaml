@@ -177,11 +177,11 @@ properties:
           - restart
         allowed:
           type: string
-          title: 許す値や範囲
-          description: 許す値の候補や数値の範囲。
+          title: 許可する値や範囲
+          description: 許可する値の候補や数値の範囲。
           x-used-by:
             - 実装で、値の検証の範囲にする。
-            - テストで、範囲の外の値のケースにする。
+            - テストで、範囲外の値のケースにする。
         refs:
           $ref: common.schema.yaml#/$defs/related
         decisions:

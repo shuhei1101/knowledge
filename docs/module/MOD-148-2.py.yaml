@@ -117,11 +117,11 @@ constants:
         when: "`SYSTEM_MESSAGE_HEAD` を修正するときに、IF-148-1 の「stdout.systemMessage」の決まりと突き合わせる。"
 functions:
   - name: main
-    title: 書き込んだ中身の照合の入口
+    title: 書き込んだ中身の照合のエントリーポイント
     kind: 関数
     container: plugins/slop-check/hooks/post-tool-use/slop_check.py
     usecase: 書き込んだ中身の照合
-    role: 入口
+    role: エントリーポイント
     scope: public
     summary: 標準入力の PostToolUse の入力を照合し、ヒットがあれば通知の文と利用者向けの 1 行の JSON を標準出力へ出す
     args:

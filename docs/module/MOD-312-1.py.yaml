@@ -54,11 +54,11 @@ constants:
     value: '"uv run --frozen --script scripts/build_skills.py"'
 functions:
   - name: main
-    title: SKILL.md の生成の入口
+    title: SKILL.md の生成のエントリーポイント
     kind: 関数
     container: scripts/build_skills.py
     usecase: SKILL.md の生成
-    role: 入口
+    role: エントリーポイント
     scope: public
     summary: 全ての SKILL.md を組み立ててから、中身が違うものだけを書き出す
     args:

@@ -17,11 +17,11 @@ constants:
     value: re.compile(r"^ {0,3}(`{3,})\s*(\S*)")
 functions:
   - name: main
-    title: 文書の違反の検査の入口
+    title: 文書の違反の検査のエントリーポイント
     kind: 関数
     container: scripts/knowledge_checks.py
     usecase: 文書の違反の検査
-    role: 入口
+    role: エントリーポイント
     scope: public
     summary: 標準入力の文書を検査し、違反の配列の JSON を標準出力へ出す
     args:

@@ -24,14 +24,14 @@ properties:
     type: string
     minLength: 1
     examples:
-      - 新しいファイルの作り方
+      - 新規ファイルの作り方
   description:
     title: 説明
     description: 何のための文かを 1 文で。
     type: string
     minLength: 1
     examples:
-      - 新しいファイルを空で作成してから記載する決まりを、セッションの始めに伝える
+      - 新規ファイルを空で作成してから記載する決まりを、セッションの始めに伝える
   kind:
     title: 種類
     description: 文の種類。`llm` は LLM の呼び出し、`hook` はフックの注入文、`instructions` は MCP のサーバーの instructions、`tool` はツールの description、`agent` は Claude Code のエージェントに `--append-system-prompt` で指定するシステムプロンプト。
@@ -57,7 +57,7 @@ properties:
       minLength: 1
     examples:
       - - sessionstart
-        - 新しいファイル
+        - 新規ファイル
   vars:
     title: 変数
     description: 本文で使用する変数。変数名 → 変数の定義。本文で使用する変数は全てここに配置する。

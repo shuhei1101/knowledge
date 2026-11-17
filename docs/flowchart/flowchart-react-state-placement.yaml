@@ -2,7 +2,7 @@
 id: flowchart-react-state-placement
 kind: flowchart
 name: React の状態の置き場所 判定フローチャート
-description: React のフロントエンドで新しい値（計算・TanStack Query・URL・フォーム・useState・useReducer・親・Zustand・Context）をどこに配置するかを判定し、状態の配置先を決めるときに参照する。
+description: React のフロントエンドで新規の値（計算・TanStack Query・URL・フォーム・useState・useReducer・親・Zustand・Context）をどこに配置するかを判定し、状態の配置先を決めるときに参照する。
 aliases:
   - 状態の置き場所
 tags:
@@ -45,8 +45,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      React のフロントエンドで、新しい値をどこに配置するかを判定する。
-      React の外のシステムと同期するときだけ `useEffect` を使用する（[useEffect](id:react-state-effect)）。
+      React のフロントエンドで、新規の値をどこに配置するかを判定する。
+      React の外部のシステムと同期するときだけ `useEffect` を使用する（[useEffect](id:react-state-effect)）。
   - id: react-state-placement-flow-01
     group: React の状態の置き場所 判定フローチャート
     name: 判定フロー
@@ -55,7 +55,7 @@ items:
 
       ```mermaid
       flowchart TB
-        start(("新しい値の配置先を決めたい"))
+        start(("新規の値の配置先を決めたい"))
         q0{"props・既存の state から計算できるか"}
         r1(["state にしない。描画中に計算する"])
         q1{"サーバーのデータか"}

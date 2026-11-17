@@ -39,11 +39,11 @@ items:
       | used_in | 使用箇所 | array | - | - | - | 呼び出す境界層のパス（リポジトリの直下から）。 | 保守で、API の仕様が変わったときに、修正する境界層のファイルを探す。 | - |
       | verification | 動作確認 | object | - | - | - | 動かして確認したか。 | 実装で、実装の前に API を動かして確認済みかを判断する。<br>レビューで、確認していない API に理由があるかを確認する。 | - |
       | verification.state | 状態 | string | 必須 | `済` / `未確認` | - | API を動かして確認したか（`済`・`未確認`）。 | 実装で、実装の前に動作確認が要るかを判断する。 | - |
-      | verification.date | 確認日 | string | - | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | `YYYY-MM-DD`。 | 保守で、確認の記録が古くなっていないかを判断する。 | - |
+      | verification.date | 確認日 | string | - | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | `YYYY-MM-DD`。 | 保守で、確認の記録が要更新になっていないかを判断する。 | - |
       | verification.detail | 確認内容 | string | - | - | - | 確認した内容か、確認できない理由。 | 実装で、確認していない API を使用してよいかを判断する。 | - |
       | version | 現在のバージョン情報 | object | 必須 | - | - | 採用している API のバージョンと、確認した日。 | 実装で、指定する API のバージョンにする。 | - |
       | version.api_version | API バージョン | string | 必須 | - | - | header 指定型か URL 埋め込み型かを添える。 | 実装で、ヘッダか URL に入れる API のバージョンにする。 | - |
-      | version.checked_on | 確認日 | string | 必須 | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | バージョンの情報を確認した日（`YYYY-MM-DD`）。 | 保守で、バージョンの情報が古くなっていないかを判断する。 | - |
+      | version.checked_on | 確認日 | string | 必須 | - | pattern: `^[0-9]{4}-[0-9]{2}-[0-9]{2}$` | バージョンの情報を確認した日（`YYYY-MM-DD`）。 | 保守で、バージョンの情報が要更新になっていないかを判断する。 | - |
       | version.sunset | 廃止予定日 | string | - | - | - | そのバージョンが廃止される予定の日（`YYYY-MM-DD`）。 | 計画で、廃止の前に移行する作業を計画する。 | - |
       | base_urls | ベース URL | array | - | - | minItems: `1` | 環境ごとの接続先。1 要素 = 1 環境。 | 実装で、環境ごとの接続先の設定にする。 | - |
       | base_urls[].env | 環境 | string | 必須 | - | - | 環境の名前（`本番`・`検証` 等）。 | 実装で、接続先を切り替える環境にする。 | - |
@@ -93,8 +93,8 @@ items:
       | endpoints[].request[].location | 配置場所 | string | - | `path` / `query` / `header` / `cookie` / `body` | - | パラメータを入れる場所。 | 実装で、パラメータを入れる場所（パス・クエリ・ヘッダ・本文）にする。 | - |
       | endpoints[].request[].format | 形式 | string | - | - | - | 文字列の形式（`date-time`・`uuid` 等）。 | 実装で、文字列の形式にする。 | - |
       | endpoints[].request[].example | 例 | string | - | - | - | 値の具体例。 | テストで、Mock の要求の値にする。 | - |
-      | endpoints[].request[].nullable | 空を許す | boolean | - | - | - | `null` を送信してよいなら `true`。 | 実装で、`null` を送信してよいかを決める。 | - |
-      | endpoints[].request[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | endpoints[].request[].nullable | 空を許可 | boolean | - | - | - | `null` を送信してよいなら `true`。 | 実装で、`null` を送信してよいかを決める。 | - |
+      | endpoints[].request[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | endpoints[].request[].verification_state | 確認の状態 | string | - | `verified` / `docs_only` / `unverified` | - | 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確認した方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。 | 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。<br>レビューで、`verified` でない値を確認せずに実装していないかを確認する。<br>生成で、表の確認の状態の列にする。 | - |
       | endpoints[].request[].verified_at | 確認日時 | string | - | - | format: `date-time` | `verification_state` を `verified` にした日時（ISO 8601、タイムゾーン付き）。 | 保守で、外部 API・外部ライブラリのバージョンが上がったときに、その後に再確認したかを判断する。<br>生成で、表の確認日時の列にする。 | `2026-11-14T10:00:00+09:00` |
       | endpoints[].request_example | リクエスト例 | string | - | - | - | JSON のコードブロック。body を持たないときはリクエストライン。 | テストで、Mock の要求の見本にする。 | - |
@@ -124,7 +124,7 @@ items:
       | endpoints[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | endpoints[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | endpoints[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | endpoints[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | endpoints[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | endpoints[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | endpoints[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | issues | 不具合一覧 | array | - | - | - | 仕様どおりに使用しても期待どおり動かない事象。 | 実装で、仕様どおりに動かない事象を回避する。<br>生成で、不具合一覧のセクションにする。 | - |

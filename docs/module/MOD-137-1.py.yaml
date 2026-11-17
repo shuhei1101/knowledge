@@ -52,11 +52,11 @@ constants:
     value: '"index.html"'
 functions:
   - name: main
-    title: Pages の成果物の作成の入口
+    title: Pages の成果物の作成のエントリーポイント
     kind: 関数
     container: scripts/build_pages.py
     usecase: Pages の成果物の作成
-    role: 入口
+    role: エントリーポイント
     scope: public
     summary: 公開の文書を 1 枚の HTML にして出力のフォルダに配置し、終了コードで合否を返却する
     args:
@@ -85,7 +85,7 @@ functions:
       - name: test_main
         case: 正常
         summary: 公開の文書だけをまとめる
-        condition: '`visibility: public` の文書 2 件と `internal` の文書 1 件を持つ一時フォルダ。出力のフォルダに古いファイルを 1 つ配置する'
+        condition: '`visibility: public` の文書 2 件と `internal` の文書 1 件を持つ一時フォルダ。出力のフォルダに前回のファイルを 1 つ配置する'
         mock: 文書 1 件の変換を「`# {id}`」を返却するものに、mdmark の build の呼び出しを設定の `build.out` に HTML を記載するものに差し替える
         expected: '`0` を返却し、出力のフォルダには `index.html` だけがある。mdmark に指定した `build.include` は公開の 2 件'
       - name: test_main_when_build_fails
@@ -313,7 +313,7 @@ functions:
       type: dict[str, str]
       description: 項目の `id` → 見出しの ID。見出しを見つけられない項目は入れない
     process: |-
-      1. コードブロック（`` ``` `` / `~~~` で囲んだ範囲）の外の ATX の見出しの行（`^#{1,6}(\s|$)`。mdmark が見出しにする行と同じ）を、上から順に見出しとして取得する
+      1. コードブロック（`` ``` `` / `~~~` で囲んだ範囲）以外の ATX の見出しの行（`^#{1,6}(\s|$)`。mdmark が見出しにする行と同じ）を、上から順に見出しとして取得する
       2. 見出しごとに ID を作り（見出しの ID の作成）、同じ ID の 2 つ目からは `-1`・`-2` を付ける
       3. `items` を順に、直前に対応づけた見出しより後で、文字が項目の `name` と同じで、`#` の数が項目の見出しの深さと同じ最初の見出しに対応づける（変換のスクリプトは項目を文書の並びで `name` の見出しにする。MOD-72-5）
     unit_tests:

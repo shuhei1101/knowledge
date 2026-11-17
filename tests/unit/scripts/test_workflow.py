@@ -63,7 +63,7 @@ def test_check_workflows(tmp_path: Path) -> None:
 
 
 def test_check_workflows_when_not_trigger(tmp_path: Path) -> None:
-    """入口が trigger でない（正常系）。"""
+    """エントリーポイントが trigger でない（正常系）。"""
     # 準備
     doc = load_document(
         'id: "IF-1"\ntitle: "検査"\nentry:\n  kind: operation\n'

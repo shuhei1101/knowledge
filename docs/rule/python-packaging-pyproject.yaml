@@ -2,7 +2,7 @@
 id: python-packaging-pyproject
 kind: rule
 name: pyproject.toml 標準テンプレート
-description: pyproject.toml の標準テンプレートと、Python バージョン・依存管理・配布・Git フックとタスクの入口の決まりを定め、Python プロジェクトのパッケージ設定や依存を作る・修正するときに参照する。
+description: pyproject.toml の標準テンプレートと、Python バージョン・依存管理・配布・Git フックとタスクのエントリーポイントの決まりを定め、Python プロジェクトのパッケージ設定や依存を作る・修正するときに参照する。
 aliases:
   - packaging/pyproject設定
 tags:
@@ -134,7 +134,7 @@ items:
       "starlette.middleware.base.BaseHTTPMiddleware".msg = "pure ASGI ミドルウェアにする"
 
       [tool.ruff.lint.per-file-ignores]
-      "tests/**" = ["S101", "PLR2004"]   # テストの assert と期待値の数値は許す
+      "tests/**" = ["S101", "PLR2004"]   # テストの assert と期待値の数値は許可する
       "**/server/error_handlers.py" = ["TID251"]   # HTTPException を HTTP への変換で使う
       "**/{tool,tools,script,scripts}/*.py" = ["T20"]   # スクリプトは print で出力する
 
@@ -208,15 +208,15 @@ items:
     body: |-
       - `.gitignore` には `.venv/` `.env` `__pycache__/` 各種キャッシュ `dist/` を入れる
   - id: git-hook-01
-    group: Git フックとタスクの入口
+    group: Git フックとタスクのエントリーポイント
     name: Git フック
     body: |-
       - Git フックは [Git フックと CI で動かすもの](id:dev-hook-ci-scope) に従う
   - id: git-hook-02
-    group: Git フックとタスクの入口
-    name: タスクの入口は npm scripts
+    group: Git フックとタスクのエントリーポイント
+    name: タスクのエントリーポイントは npm scripts
     body: |-
-      - タスクの入口はリポジトリ直下の `package.json` の npm scripts。
+      - タスクのエントリーポイントはリポジトリ直下の `package.json` の npm scripts。
         Python のコマンドは `uv run` で呼ぶ（例: `"lint": "uv run ruff check"`）
   - id: python-version-01
     group: Python バージョン方針
@@ -243,7 +243,7 @@ items:
     group: 新機能の採用判断
     name: 新機能の採用判断
     body: |-
-      新しいバージョンで入った機能は、そのバージョンの What's New で実験的な扱いでないことと、依存ライブラリが対応していることを確認してから採用する。
+      後のバージョンで入った機能は、そのバージョンの What's New で実験的な扱いでないことと、依存ライブラリが対応していることを確認してから採用する。
   - id: lower-baseline-01
     group: 最低ラインを下げる場合
     name: 最低ラインを下げる条件

@@ -2,7 +2,7 @@
 id: react-component-catalog
 kind: rule
 name: コンポーネントカタログ
-description: UI ライブラリの方針、shared/components/ の自前コンポーネントを用途別に一覧し、新しいコンポーネントを作る前の確認手順を定め、画面に使用するコンポーネントを選ぶ・新しく作るときに参照する。
+description: UI ライブラリの方針、shared/components/ の自前コンポーネントを用途別に一覧し、新規コンポーネントを作る前の確認手順を定め、画面に使用するコンポーネントを選ぶ・新規作成するときに参照する。
 inject_when:
   field: text
   op: contains
@@ -140,22 +140,22 @@ items:
 
       <!-- /table -->
   - id: before-new-component-01
-    group: 新しいコンポーネントを作る前
+    group: 新規コンポーネントを作る前
     name: カタログを確認する
     body: |-
       1. このカタログを確認する
   - id: before-new-component-02
-    group: 新しいコンポーネントを作る前
+    group: 新規コンポーネントを作る前
     name: shadcn の部品を確認する
     body: |-
       2. shadcn の部品を確認する（`shadcn add` で取れるか）
   - id: before-new-component-03
-    group: 新しいコンポーネントを作る前
+    group: 新規コンポーネントを作る前
     name: Base UI を直接使う
     body: |-
       3. Base UI を直接使う
   - id: before-new-component-04
-    group: 新しいコンポーネントを作る前
+    group: 新規コンポーネントを作る前
     name: 3 回目で共通化する
     body: |-
       4. 3 回目に同じものを記載しそうになったら `shared/components/` へ追加する

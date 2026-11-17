@@ -2,7 +2,7 @@
 id: python-architecture-layout
 kind: rule
 name: トップレベルレイアウト + feature 内構造
-description: トップレベルと feature 内のフォルダ構成、shared・integrations・server・ui・tests の配置方法を定め、Python プロジェクトのフォルダやファイルを新しく配置するときに参照する。
+description: トップレベルと feature 内のフォルダ構成、shared・integrations・server・ui・tests の配置方法を定め、Python プロジェクトのフォルダやファイルを新規に配置するときに参照する。
 aliases:
   - architecture/レイアウト
 inject_when:
@@ -52,10 +52,10 @@ items:
       ├── shared/                       # 横断インフラ（必須）
       ├── features/                     # ビジネス機能（任意）
       ├── integrations/                 # 外部サービス連携（任意）
-      ├── {command}/                    # 任意: python -m {pkg}.{command} で起動する入口（__main__.py だけ）
+      ├── {command}/                    # 任意: python -m {pkg}.{command} で起動するエントリーポイント（__main__.py だけ）
       ├── runtime/                      # 実行時インフラ（任意: queue / workflow / state）
       ├── server/                       # HTTP/WS サーバ（任意: FastAPI 使用時）
-      └── ui/                           # デスクトップの画面の入口（任意: GUI・トレイを持つとき）
+      └── ui/                           # デスクトップの画面のエントリーポイント（任意: GUI・トレイを持つとき）
       ```
   - id: top-level-02
     group: トップレベル構成

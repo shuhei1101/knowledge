@@ -37,7 +37,7 @@ scenarios:
           C->>M: 項目の Markdown の点検
           M-->>C: map の誤りの無い点検の結果
         end
-        loop 入口が trigger の workflow のインターフェース定義
+        loop エントリーポイントが trigger の workflow のインターフェース定義
           C->>C: 起動の条件・リクエスト・排他・step の name と if を workflow のファイルと比べる
         end
         loop スキルの設計書
@@ -234,7 +234,7 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: knowledge のクローン
-        description: 入口が `trigger` のインターフェース定義と、`concurrency` の `cancel-in-progress` と step の `name` 1 つがその設計書と違う workflow のファイルを含む
+        description: エントリーポイントが `trigger` のインターフェース定義と、`concurrency` の `cancel-in-progress` と step の `name` 1 つがその設計書と違う workflow のファイルを含む
     flow: |-
       <!-- map -->
 
@@ -243,7 +243,7 @@ scenarios:
         actor D as 開発者
         participant C as 全ての文書の検査
         D->>C: クローンの直下で起動する
-        loop 入口が trigger の workflow のインターフェース定義
+        loop エントリーポイントが trigger の workflow のインターフェース定義
           C->>C: 起動の条件・リクエスト・排他・step の name と if を workflow のファイルと比べる
         end
         C-->>D: 全ての食い違いを出して終了コード 1

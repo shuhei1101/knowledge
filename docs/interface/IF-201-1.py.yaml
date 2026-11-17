@@ -11,7 +11,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: '`schemas/design/` に `er.schema.yaml`・`config.schema.yaml`・`common.schema.yaml`・`index.schema.yaml` を、`docs/template/` に `template-er.yaml`・`template-config.yaml` を持つ一時フォルダ。`template-config.yaml` は今のスキーマから生成した状態で、`template-er.yaml` は `items` が古い'
+        description: '`schemas/design/` に `er.schema.yaml`・`config.schema.yaml`・`common.schema.yaml`・`index.schema.yaml` を、`docs/template/` に `template-er.yaml`・`template-config.yaml` を持つ一時フォルダ。`template-config.yaml` は今のスキーマから生成した状態で、`template-er.yaml` は `items` が更新前'
         notes: '`er.schema.yaml` はトップの `x-rules`、キーの `$ref`・`enum`・`x-rules`・`x-bad-examples`・`x-used-by`・入れ子の配列、トップの `examples` を 1 件持つ'
     flow: |-
       <!-- map -->
@@ -47,7 +47,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: 正常系の一時フォルダで、`config.schema.yaml` のキーの `$ref` を `common.schema.yaml#/$defs/無い型` にし、`template-er.yaml` の `items` が古いもの
+        description: 正常系の一時フォルダで、`config.schema.yaml` のキーの `$ref` を `common.schema.yaml#/$defs/無い型` にし、`template-er.yaml` の `items` が更新前のもの
     flow: |-
       <!-- map -->
 
@@ -75,7 +75,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: 正常系の一時フォルダで、`config.schema.yaml` を YAML として読み込めない中身（閉じていない引用符）にし、`template-er.yaml` の `items` が古いもの
+        description: 正常系の一時フォルダで、`config.schema.yaml` を YAML として読み込めない中身（閉じていない引用符）にし、`template-er.yaml` の `items` が更新前のもの
     flow: |-
       <!-- map -->
 
@@ -102,7 +102,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: 正常系の一時フォルダから `template-config.yaml` を削除し、`template-er.yaml` の `items` が古いもの
+        description: 正常系の一時フォルダから `template-config.yaml` を削除し、`template-er.yaml` の `items` が更新前のもの
     flow: |-
       <!-- map -->
 

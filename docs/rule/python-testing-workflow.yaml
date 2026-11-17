@@ -1,7 +1,7 @@
 id: python-testing-workflow
 kind: rule
 name: GitHub Actions の workflow のテスト
-description: 入口が trigger の GitHub Actions の workflow のインターフェース定義のフローを、pytest から gh で本物の GitHub Actions に起動して確認するテストの配置・実行場所・手順を定め、workflow のテストを作るときに参照する。
+description: エントリーポイントが trigger の GitHub Actions の workflow のインターフェース定義のフローを、pytest から gh で本物の GitHub Actions に起動して確認するテストの配置・実行場所・手順を定め、workflow のテストを作るときに参照する。
 inject_when:
   field: text
   op: contains
@@ -23,7 +23,7 @@ related:
 items:
   - id: overview
     name: 概要
-    body: 入口が `trigger` の workflow のインターフェース定義のフローを、pytest から `gh` で本物の GitHub Actions に起動して確認するテストの記載方法。
+    body: エントリーポイントが `trigger` の workflow のインターフェース定義のフローを、pytest から `gh` で本物の GitHub Actions に起動して確認するテストの記載方法。
   - id: placement-01
     group: 配置と実行場所
     name: フローとテストの関数の対応

@@ -23,11 +23,11 @@ constants:
     value: ("id", "ng", "ok", "pattern", "allow", "note")
 functions:
   - name: main
-    title: 対応表のコピーの作成の入口
+    title: 対応表のコピーの作成のエントリーポイント
     kind: 関数
     container: scripts/build_word_list.py
     usecase: 対応表のコピーの作成
-    role: 入口
+    role: エントリーポイント
     scope: public
     summary: 原本を読み込み、コピーを書き出して終了コードを返却する
     side_effects: '`COPY` のファイルを書き換える'

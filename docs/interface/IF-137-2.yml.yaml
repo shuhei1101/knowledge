@@ -105,7 +105,7 @@ constraints:
     constraint: 'ジョブごとに 5 分（`timeout-minutes: 5`）'
     decided_by: NFR-72-1#requirements[CI の 1 回の所要時間]
   - item: ジョブの構成
-    constraint: '成果物を作る `build` と、配信する `deploy`（`needs: build`、environment は `github-pages`。配信を許すブランチに `develop` を含める）の 2 つ。`build` が失敗したら `deploy` は動かない'
+    constraint: '成果物を作る `build` と、配信する `deploy`（`needs: build`、environment は `github-pages`。配信を許可するブランチに `develop` を含める）の 2 つ。`build` が失敗したら `deploy` は動かない'
   - item: YAML の検査
     constraint: 成果物を上げる前に、リポジトリの直下で `! find _site -type f \( -name '*.yaml' -o -name '*.yml' \) | grep .` を bash で実行する。該当したパスを 1 行ずつ標準出力へ出して終了コード 1、無ければ 0
   - item: 使用する Action

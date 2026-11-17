@@ -54,13 +54,13 @@ properties:
       - project-index の検索で、文書の名前にする。
   entry:
     type: object
-    title: 入口
-    description: 操作の入口。冒頭のメタ情報の行に出す。
+    title: エントリーポイント
+    description: 操作のエントリーポイント。冒頭のメタ情報の行に出す。
     x-used-by:
-      - 実装で、操作の入口（エンドポイント・MCP ツール・画面操作・周期の処理）を作る。
+      - 実装で、操作のエントリーポイント（エンドポイント・MCP ツール・画面操作・周期の処理）を作る。
       - 生成で、冒頭のメタ情報の行にする。
     x-rules:
-      - 入口が `trigger` の GitHub Actions の workflow は、`value` に workflow のファイルの `on` のイベントと、起動を絞る条件（`branches`・`paths`・`types`・`schedule` の `cron` 等）を記載する。
+      - エントリーポイントが `trigger` の GitHub Actions の workflow は、`value` に workflow のファイルの `on` のイベントと、起動を絞る条件（`branches`・`paths`・`types`・`schedule` の `cron` 等）を記載する。
     x-shape: attributes
     additionalProperties: false
     required:
@@ -72,7 +72,7 @@ properties:
         title: 種類
         description: '`endpoint`（HTTP を返却する。値はメソッド + パス）/ `mcp_tool`（MCP ツール名）/ `operation`（呼び出す識別子 + 境界の種別）/ `trigger`（起動契機 + 周期）/ `screen`（画面の実装ファイル）。'
         x-used-by:
-          - 実装で、入口の種類（HTTP・MCP・画面・周期・イベント）を決める。
+          - 実装で、エントリーポイントの種類（HTTP・MCP・画面・周期・イベント）を決める。
         enum:
         - endpoint
         - mcp_tool
@@ -111,7 +111,7 @@ properties:
   test_file:
     type: string
     title: 対応テストファイル
-    description: 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`、入口が `trigger` の GitHub Actions の workflow は `tests/e2e/workflow/…`。規約『V字モデル』）。
+    description: 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`、エントリーポイントが `trigger` の GitHub Actions の workflow は `tests/e2e/workflow/…`。規約『V字モデル』）。
     x-used-by:
       - テストで、結合テストを作るファイルにする。
       - 検査で、テストのファイルがあるかを確認する。
@@ -119,12 +119,12 @@ properties:
   impl_files:
     type: array
     title: 実装のファイル
-    description: この入口だけが使用する実装のファイルの、リポジトリの直下からのパス。
+    description: このエントリーポイントだけが使用する実装のファイルの、リポジトリの直下からのパス。
     x-used-by:
-      - 実行で、判定フローチャート『結合テストの実行範囲』の Q5 で、変更したファイルが 1 つの入口の実装のファイルかを決める。
+      - 実行で、判定フローチャート『結合テストの実行範囲』の Q5 で、変更したファイルが 1 つのエントリーポイントの実装のファイルかを決める。
       - レビューで、実行範囲の表の R4 の行がこの一覧のとおりかを確認する。
     x-rules:
-      - 複数の入口が使用するファイルは記載しない。
+      - 複数のエントリーポイントが使用するファイルは記載しない。
       - 実装を作った・移したときに記載する。
     x-shape: list
     items:
@@ -186,7 +186,7 @@ properties:
     x-used-by:
       - 実装で、同時に呼ばれたときのロック・キューにする。
     x-rules:
-      - 入口が `trigger` の GitHub Actions の workflow は、workflow のファイルの `concurrency` の `group` と `cancel-in-progress` を記載する。
+      - エントリーポイントが `trigger` の GitHub Actions の workflow は、workflow のファイルの `concurrency` の `group` と `cancel-in-progress` を記載する。
   request:
     type: array
     title: リクエスト
@@ -195,7 +195,7 @@ properties:
       - 実装で、引数の型と検証にする。
       - 生成で、リクエストの表にする。
     x-rules:
-      - 入口が `trigger` の GitHub Actions の workflow は、workflow のファイルの `on.workflow_dispatch.inputs` の名前・型・必須・既定値と一致させる。
+      - エントリーポイントが `trigger` の GitHub Actions の workflow は、workflow のファイルの `on.workflow_dispatch.inputs` の名前・型・必須・既定値と一致させる。
     x-heading: リクエスト
     x-shape: table
     x-key: name
@@ -273,7 +273,7 @@ properties:
             - テストで、要求の値にする。
         nullable:
           type: boolean
-          title: 空を許す
+          title: 空を許可
           description: '`null` を受け付けるなら `true`。'
           x-used-by:
             - 実装で、`null` を受け付けるかを決める。
@@ -488,7 +488,7 @@ properties:
   overall_flow:
     $ref: common.schema.yaml#/$defs/map
     title: 全体の流れ
-    description: 入口が `trigger` の GitHub Actions の workflow だけが持つ。全ての分岐と結末を描いた mdmark の map の図（Mermaid の `flowchart`）。
+    description: エントリーポイントが `trigger` の GitHub Actions の workflow だけが持つ。全ての分岐と結末を描いた mdmark の map の図（Mermaid の `flowchart`）。
     x-used-by:
       - レビューで、分岐ごとの結末にフローがあるかを確認する。
       - 生成で、フローの前の図にする。
@@ -586,7 +586,7 @@ properties:
             - 生成で、シーケンス図・フローチャートにする。
           x-rules:
             - '`<!-- map -->` から `<!-- /map -->` の範囲に、```mermaid のコードブロックを 1 つ記載する。'
-            - Mermaid は `sequenceDiagram` にする。入口が `trigger` の GitHub Actions の workflow は `flowchart` にする。
+            - Mermaid は `sequenceDiagram` にする。エントリーポイントが `trigger` の GitHub Actions の workflow は `flowchart` にする。
             - 登場人物は呼び出し元（バックエンドは `participant クライアント`、フロントエンドは `actor ユーザー`）・インターフェース・外部システムの境界だけにする。
             - 読み取りと応答は点線 `-->>`、書き込み・操作は実線 `->>` にする。
             - '`flowchart` は、そのフローで通る step だけを並べ、分岐でどちらへ進んだかを矢印のラベルに記載する。'
@@ -693,7 +693,7 @@ examples:
   lead: 指定された層のテストの全件をランナーで実行し、ログを成果物に上げる。
   test_file: tests/e2e/workflow/test_test_yml.py
   permissions: '`contents: read`'
-  exclusivity: '同じブランチ・同じ層の実行は、古い方を止める（`concurrency` の `group: test-${{ github.ref }}-${{ inputs.layer }}`・`cancel-in-progress: true`）'
+  exclusivity: '同じブランチ・同じ層の実行は、先に始めた方を止める（`concurrency` の `group: test-${{ github.ref }}-${{ inputs.layer }}`・`cancel-in-progress: true`）'
   request:
   - name: layer
     type: choice

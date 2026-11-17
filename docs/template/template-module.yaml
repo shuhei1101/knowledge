@@ -112,7 +112,7 @@ items:
       | data_models[].methods[].unit_tests[].case | 正常/異常 | string | 必須 | `正常` / `異常` | - | 正常系のケースか、異常系のケースか。 | 単体テストで、正常と異常のケースを分ける。 | - |
       | data_models[].methods[].unit_tests[].summary | 概要 | string | 必須 | - | - | テストで確認することの 1 行の要約。 | 単体テストで、関数の docstring の要約にする。 | - |
       | data_models[].methods[].unit_tests[].condition | 条件 | string | 必須 | - | - | テストの条件。Mock の応答の設定もここに記載する。 | 単体テストで、入力と Mock の応答の設定にする。 | - |
-      | data_models[].methods[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外の依存だけ。差し替えないときも `なし` と記載する。 | 単体テストで、差し替える依存にする。 | - |
+      | data_models[].methods[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外にある依存だけ。差し替えないときも `なし` と記載する。 | 単体テストで、差し替える依存にする。 | - |
       | data_models[].methods[].unit_tests[].expected | 期待値 | string | 必須 | - | - | 戻り値・送出する例外と、Mock に渡った引数・呼び出しの有無。 | 単体テストで、確認する戻り値・例外・Mock に渡った引数にする。 | - |
       | data_models[].methods[].unit_tests[].exception | 対応する例外 | string | - | - | - | 自関数で送出する例外を確認する行のとき、対応する例外の行の発生条件の要旨。 | レビューで、例外の行ごとにテストがあるかを確認する。 | - |
       | data_models[].methods[].unit_tests[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 単体テストで、ケースの準備（fixture・Mock）にする。 | - |
@@ -132,7 +132,7 @@ items:
       | data_models[].methods[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | data_models[].methods[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | data_models[].methods[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | data_models[].methods[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | data_models[].methods[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | data_models[].methods[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | data_models[].methods[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | data_models[].refs | 関連 | array | - | - | maxItems: `8` | 関連する設計書の一覧。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
@@ -143,7 +143,7 @@ items:
       | data_models[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | data_models[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | data_models[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | data_models[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | data_models[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | data_models[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | data_models[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | enums | Enum | array | - | - | - | 取りうる値の列挙。`Literal` の型エイリアスも含む。 | 実装で、Enum・`Literal` の型にする。<br>生成で、要素ごとのセクションにする。 | - |
@@ -168,7 +168,7 @@ items:
       | enums[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | enums[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | enums[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | enums[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | enums[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | enums[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | enums[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | classes | クラス | array | - | - | - | 振る舞いを持つクラス・抽象クラス・インタフェース。 | 実装で、振る舞いを持つクラス・インタフェースにする。<br>生成で、要素ごとのセクションにする。 | - |
@@ -234,7 +234,7 @@ items:
       | classes[].methods[].unit_tests[].case | 正常/異常 | string | 必須 | `正常` / `異常` | - | 正常系のケースか、異常系のケースか。 | 単体テストで、正常と異常のケースを分ける。 | - |
       | classes[].methods[].unit_tests[].summary | 概要 | string | 必須 | - | - | テストで確認することの 1 行の要約。 | 単体テストで、関数の docstring の要約にする。 | - |
       | classes[].methods[].unit_tests[].condition | 条件 | string | 必須 | - | - | テストの条件。Mock の応答の設定もここに記載する。 | 単体テストで、入力と Mock の応答の設定にする。 | - |
-      | classes[].methods[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外の依存だけ。差し替えないときも `なし` と記載する。 | 単体テストで、差し替える依存にする。 | - |
+      | classes[].methods[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外にある依存だけ。差し替えないときも `なし` と記載する。 | 単体テストで、差し替える依存にする。 | - |
       | classes[].methods[].unit_tests[].expected | 期待値 | string | 必須 | - | - | 戻り値・送出する例外と、Mock に渡った引数・呼び出しの有無。 | 単体テストで、確認する戻り値・例外・Mock に渡った引数にする。 | - |
       | classes[].methods[].unit_tests[].exception | 対応する例外 | string | - | - | - | 自関数で送出する例外を確認する行のとき、対応する例外の行の発生条件の要旨。 | レビューで、例外の行ごとにテストがあるかを確認する。 | - |
       | classes[].methods[].unit_tests[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 単体テストで、ケースの準備（fixture・Mock）にする。 | - |
@@ -254,7 +254,7 @@ items:
       | classes[].methods[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | classes[].methods[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | classes[].methods[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | classes[].methods[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | classes[].methods[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | classes[].methods[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | classes[].methods[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | classes[].implementations | 実装 | array | - | - | - | インタフェース・抽象クラスだけが持つ。この契約を満たすクラス。 | 実装で、契約を満たすクラスと、それを使用する条件にする。 | - |
@@ -268,7 +268,7 @@ items:
       | classes[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | classes[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | classes[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | classes[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | classes[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | classes[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | classes[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | constants | 定数 | array | - | - | - | 定数。 | 実装で、定数にする。<br>生成で、要素ごとのセクションにする。 | - |
@@ -293,7 +293,7 @@ items:
       | constants[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | constants[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | constants[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | constants[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | constants[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | constants[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | constants[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | functions | 関数 | array | - | - | - | 関数・フック。1 関数 = 1 要素で、`container` に所属ファイルを記載する。 | 実装で、関数・フックにする。<br>生成で、要素ごとのセクションにする。 | - |
@@ -340,7 +340,7 @@ items:
       | functions[].unit_tests[].case | 正常/異常 | string | 必須 | `正常` / `異常` | - | 正常系のケースか、異常系のケースか。 | 単体テストで、正常と異常のケースを分ける。 | - |
       | functions[].unit_tests[].summary | 概要 | string | 必須 | - | - | テストで確認することの 1 行の要約。 | 単体テストで、関数の docstring の要約にする。 | - |
       | functions[].unit_tests[].condition | 条件 | string | 必須 | - | - | テストの条件。Mock の応答の設定もここに記載する。 | 単体テストで、入力と Mock の応答の設定にする。 | - |
-      | functions[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外の依存だけ。差し替えないときも `なし` と記載する。 | 単体テストで、差し替える依存にする。 | - |
+      | functions[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外にある依存だけ。差し替えないときも `なし` と記載する。 | 単体テストで、差し替える依存にする。 | - |
       | functions[].unit_tests[].expected | 期待値 | string | 必須 | - | - | 戻り値・送出する例外と、Mock に渡った引数・呼び出しの有無。 | 単体テストで、確認する戻り値・例外・Mock に渡った引数にする。 | - |
       | functions[].unit_tests[].exception | 対応する例外 | string | - | - | - | 自関数で送出する例外を確認する行のとき、対応する例外の行の発生条件の要旨。 | レビューで、例外の行ごとにテストがあるかを確認する。 | - |
       | functions[].unit_tests[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 単体テストで、ケースの準備（fixture・Mock）にする。 | - |
@@ -360,7 +360,7 @@ items:
       | functions[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | functions[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | functions[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | functions[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | functions[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | functions[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | functions[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | function_types | 関数型 | array | - | - | - | 関数のシグネチャの型（DI・Mock の差し替え用）。処理・例外・単体テストは実装の側が持つ。 | 実装で、DI・Mock の差し替えに使用する関数のシグネチャの型にする。<br>生成で、要素ごとのセクションにする。 | - |
@@ -395,7 +395,7 @@ items:
       | function_types[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | function_types[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | function_types[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | function_types[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | function_types[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | function_types[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | function_types[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | components | 画面・コンポーネント | array | - | - | - | 画面とコンポーネント（1 定義 = 1 ファイル）。Custom Element は `props` の代わりに `attributes` / `properties` / `events` を持つ。 | 実装で、画面・コンポーネントにする。<br>生成で、要素ごとのセクションにする。 | - |
@@ -445,7 +445,7 @@ items:
       | components[].unit_tests[].case | 正常/異常 | string | 必須 | `正常` / `異常` | - | 正常系のケースか、異常系のケースか。 | 単体テストで、正常と異常のケースを分ける。 | - |
       | components[].unit_tests[].summary | 概要 | string | 必須 | - | - | テストで確認することの 1 行の要約。 | 単体テストで、関数の docstring の要約にする。 | - |
       | components[].unit_tests[].condition | 条件 | string | 必須 | - | - | テストの条件。Mock の応答の設定もここに記載する。 | 単体テストで、入力と Mock の応答の設定にする。 | - |
-      | components[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外の依存だけ。差し替えないときも `なし` と記載する。 | 単体テストで、差し替える依存にする。 | - |
+      | components[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外にある依存だけ。差し替えないときも `なし` と記載する。 | 単体テストで、差し替える依存にする。 | - |
       | components[].unit_tests[].expected | 期待値 | string | 必須 | - | - | 戻り値・送出する例外と、Mock に渡った引数・呼び出しの有無。 | 単体テストで、確認する戻り値・例外・Mock に渡った引数にする。 | - |
       | components[].unit_tests[].exception | 対応する例外 | string | - | - | - | 自関数で送出する例外を確認する行のとき、対応する例外の行の発生条件の要旨。 | レビューで、例外の行ごとにテストがあるかを確認する。 | - |
       | components[].unit_tests[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 単体テストで、ケースの準備（fixture・Mock）にする。 | - |
@@ -457,7 +457,7 @@ items:
       | components[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | components[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | components[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | components[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | components[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | components[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | components[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | stores | ストア | array | - | - | - | 状態管理のオブジェクト（Zustand / Redux 等）。 | 実装で、状態管理のストアにする。<br>生成で、要素ごとのセクションにする。 | - |
@@ -519,7 +519,7 @@ items:
       | stores[].actions[].unit_tests[].case | 正常/異常 | string | 必須 | `正常` / `異常` | - | 正常系のケースか、異常系のケースか。 | 単体テストで、正常と異常のケースを分ける。 | - |
       | stores[].actions[].unit_tests[].summary | 概要 | string | 必須 | - | - | テストで確認することの 1 行の要約。 | 単体テストで、関数の docstring の要約にする。 | - |
       | stores[].actions[].unit_tests[].condition | 条件 | string | 必須 | - | - | テストの条件。Mock の応答の設定もここに記載する。 | 単体テストで、入力と Mock の応答の設定にする。 | - |
-      | stores[].actions[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外の依存だけ。差し替えないときも `なし` と記載する。 | 単体テストで、差し替える依存にする。 | - |
+      | stores[].actions[].unit_tests[].mock | Mock | string | 必須 | - | - | 差し替えるファイル外・プロセス外にある依存だけ。差し替えないときも `なし` と記載する。 | 単体テストで、差し替える依存にする。 | - |
       | stores[].actions[].unit_tests[].expected | 期待値 | string | 必須 | - | - | 戻り値・送出する例外と、Mock に渡った引数・呼び出しの有無。 | 単体テストで、確認する戻り値・例外・Mock に渡った引数にする。 | - |
       | stores[].actions[].unit_tests[].exception | 対応する例外 | string | - | - | - | 自関数で送出する例外を確認する行のとき、対応する例外の行の発生条件の要旨。 | レビューで、例外の行ごとにテストがあるかを確認する。 | - |
       | stores[].actions[].unit_tests[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 単体テストで、ケースの準備（fixture・Mock）にする。 | - |
@@ -539,7 +539,7 @@ items:
       | stores[].actions[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | stores[].actions[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | stores[].actions[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | stores[].actions[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | stores[].actions[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | stores[].actions[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | stores[].actions[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | stores[].refs | 関連 | array | - | - | maxItems: `8` | 関連する設計書の一覧。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
@@ -550,7 +550,7 @@ items:
       | stores[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | stores[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | stores[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | stores[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | stores[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | stores[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | stores[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | styles | スタイル | array | - | - | - | CSS のクラス群 1 まとまり。 | 実装で、CSS のクラス群にする。<br>生成で、要素ごとのセクションにする。 | - |
@@ -574,7 +574,7 @@ items:
       | styles[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | styles[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | styles[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
-      | styles[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
+      | styles[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
       | styles[].visibility | 公開 | string | - | `user` / `developer` | - | Pages に出すか（`user` はユーザー向けで Pages に出し、`developer` は開発者向けで dev-docs の画面だけで出す）。記載しなければ親の値を引き継ぎ、最上位の既定は `developer`。 | 生成で、Pages に出すかを決める。 | - |
       | styles[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
       | refs | 関連 | array | - | - | maxItems: `8` | 関連する設計書の一覧。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |

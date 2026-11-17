@@ -203,7 +203,7 @@ def test_load_schema_when_no_kind(tmp_path: Path) -> None:
 
 
 def test_convert() -> None:
-    """規約を決まった並びにする（正常系）。"""
+    """規約を所定の並びにする（正常系）。"""
     # 準備
     doc = {
         "id": "a",
