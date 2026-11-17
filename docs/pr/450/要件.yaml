@@ -969,6 +969,6 @@ scope_out:
   - item: docs/pr/・docs/word-list/ のヒット
     reason: docs/pr/ は過去の作業 PR の記録で書き換えない。docs/word-list/ は対応表そのもので NG の単語を持つ
     plan: none
-  - item: AI Monitor のテンプレート『PRドキュメント/対象システム計画』の結合テストの実行範囲の表の列名「結合テストが無い入口」を、判定フローチャート『結合テストの実行範囲』の「エントリーポイント」へ揃える
-    reason: 別のリポジトリ（shuhei1101/ai-monitor）のテンプレートで、この作業 PR では変更できない。knowledge のフローチャートの用語がこの PR のマージ後に変わるため、それを前提に起票する
+  - item: 判定フローチャート『結合テストの実行範囲』の実行範囲の表の列名「結合テストが無い入口」を「結合テストが無いエントリーポイント」へ揃える。AI Monitor 側で完全一致で照合・出力している箇所（`src/ai_monitor/features/integration_scope/check.py` の `_HEADER`・`judge.py` の出力・IF-3483-1・IF-3483-2・MOD-3483-3・MOD-3483-4・PH-3038-39・SC-3038-91・テンプレート『PRドキュメント/対象システム計画』）を、移行の間は新旧の列名を両方受け付ける形で揃えてから、knowledge の列名を変える
+    reason: 列名は AI Monitor の `integration_scope check` が完全一致で照合しており、knowledge だけ先に変えると、フローチャートどおりに書いた計画書で `LookupError` になり reviewer の照合が止まる（規約『複数リポジトリのAPI契約』の後方互換）。この PR では列名を「結合テストが無い入口」のまま残す
     plan: to_file
