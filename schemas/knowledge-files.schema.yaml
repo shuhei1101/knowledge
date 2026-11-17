@@ -72,3 +72,12 @@ properties:
           type: string
           title: 状態
           description: '`deprecated` など、検索で除外したい状態だけを入れる。'
+        category:
+          type: string
+          title: 分類
+          description: '公開ドキュメントを開発ドキュメントのタブ・公開サイトの上タブに分ける分類。配信の設定の `nav` の `auto.filter` の `field: category` で絞る。'
+          minLength: 1
+          examples:
+            - はじめに
+            - 使い方
+            - リファレンス
