@@ -67,13 +67,15 @@ properties:
       - 検査で、テストのファイルと単体テストの関数があるかを確認する。
     x-rules:
       - 1 つの物理ファイルを複数の実行環境（Node とブラウザなど）でテストするときだけ、実行環境ごとのファイルを並べる。
+      - 規約『フォルダ構成』で対象の横に配置する React の単体テストは、対象の横のファイル（`*.test.ts`・`*.test.tsx`）を記載する。
     uniqueItems: true
     examples:
       - - tests/unit/render/table.test.ts
         - tests/unit/render/table.browser.test.ts
+      - - frontend/src/shared/lib/format.test.ts
     items:
       type: string
-      pattern: ^tests/.+
+      pattern: ^(?:tests/.+|.+\.test\.tsx?)$
   external_test_files:
     type: array
     title: 対応疎通テストファイル
