@@ -1,0 +1,9 @@
+$ uv run --frozen --script scripts/check_all.py
+docs/rule/python-testing-workflow.yaml:45: items[3].body: textlint/ja-technical-writing/sentence-length: Line 3 sentence length(109) exceeds the maximum sentence length of 100. Over 9 characters.
+452 件の文書を検査し、違反は 1 件、警告は 0 件でした
+
+# base（origin/develop 8ec57dc 時点）で同じコマンドを流した結果
+$ uv run --frozen --script scripts/check_all.py
+Installed 9 packages in 4ms
+docs/rule/python-testing-workflow.yaml:45: items[3].body: textlint/ja-technical-writing/sentence-length: Line 3 sentence length(109) exceeds the maximum sentence length of 100. Over 9 characters.
+409 件の文書を検査し、違反は 1 件、警告は 0 件でした
