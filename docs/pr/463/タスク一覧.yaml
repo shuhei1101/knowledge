@@ -1,0 +1,85 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存のリポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: 設計書が揃っているリポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めを依頼する Issue ではない
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: nav の group・page は project-index の既存の設定のキーで、未検証の技術機構に依存しない
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: 利用者の操作の流れは変わらない
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 画面を作らない（dev-docs の画面は配信の設定の並びだけが変わる。判定フローチャート『モック要否』で不要）
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面を作らない（判定フローチャート『モック要否』で不要）
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: 単一ユースケース設計
+    status: skipped
+    reason: SC-72-3 の期待値は「タブとサイドバーの並びが nav と一致する」で、並びの中身によらない
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: モック作成
+    status: skipped
+    reason: 画面を作らない（判定フローチャート『モック要否』で不要）
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: インターフェース定義設計
+    status: skipped
+    reason: 検査・変換・全ての文書の検査の入出力は変わらない
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: 部品設計
+    status: skipped
+    reason: 画面を作らない
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: 画面を作らない（判定フローチャート『画面設計要否』で不要）
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: モジュール構成設計
+    status: skipped
+    reason: スクリプトのコードを変えない
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: ドキュメント修正
+    status: skipped
+    reason: 更新するドキュメントのページが無い（変えるのは配信の設定 project-index.yaml だけで、実装の工程で修正する）
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: 単体テスト作成
+    status: skipped
+    reason: スクリプトのコードを変えない
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
+  - process: 実装
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T09:24:37.708163+00:00'
+  - process: 結合テスト作成
+    status: skipped
+    reason: 結合テストは nav を参照せず、テストを追加する対象が無い
+    updated_by: planner
+    updated_at: '2026-11-17T09:17:54.049868+00:00'
