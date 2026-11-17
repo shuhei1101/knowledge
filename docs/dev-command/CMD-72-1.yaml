@@ -94,7 +94,7 @@ categories:
         when: 「静的検査」のコマンドを実行・修正するときに、原本の TP-72-1 の「lint」を参照する。
   - name: ビルド・生成
     prerequisites:
-      - Node.js 24 以降（`npx -y` が mdmark のタグの中身と依存を呼ぶたびに取る。外部ライブラリ『mdmark』）
+      - Node.js 24 以降（`npx -y` が mdmark の参照（既定は develop の最新）の中身と依存を呼ぶたびに取る。外部ライブラリ『mdmark』）
       - 5 は AI Monitor のクローンがある（`uv` で AI Monitor の依存を入れてある）
     commands: |-
       1. 公開の文書だけを 1 枚の HTML にまとめた Pages の成果物を `_site` に作る（IF『Pages の成果物の作成』）
@@ -160,7 +160,7 @@ categories:
   - name: 取り込み前の検査
     prerequisites:
       - 環境構築（クローン直後）を実行してある
-      - Node.js 24 以降と、ネットワークへの接続（`npx -y` が mdmark のタグの中身と依存を呼ぶたびに取る。外部ライブラリ『mdmark』）
+      - Node.js 24 以降と、ネットワークへの接続（`npx -y` が mdmark の参照（既定は develop の最新）の中身と依存を呼ぶたびに取る。外部ライブラリ『mdmark』）
     commands: |-
       1. 全ての文書の検査を実行する（違反があれば終了コード 1 で、違反を 1 件 1 行で出す）
 

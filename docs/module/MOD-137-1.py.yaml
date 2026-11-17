@@ -403,7 +403,7 @@ functions:
       type: Path
       description: 記載した `mdmark.config.yaml` のパス
     process: |-
-      1. `version: MDMARK_TAG`、`build.include: names`、`build.entry: names[0]`、`build.out: OUTPUT_HTML` を `{workdir}/mdmark.config.yaml` に JSON で記載する（JSON は YAML として読み込める）
+      1. `build.include: names`、`build.entry: names[0]`、`build.out: OUTPUT_HTML` を `{workdir}/mdmark.config.yaml` に JSON で記載する（JSON は YAML として読み込める）
       2. パスを返却する
     unit_tests:
       - name: test_write_bundle_config
@@ -411,7 +411,7 @@ functions:
         summary: 並びのとおりの設定
         condition: '`["b.md", "a.md"]`'
         mock: なし（一時ディレクトリ）
-        expected: 読み込んだ設定の `build.include` が `["b.md", "a.md"]`、`build.entry` が `b.md`、`build.out` が `index.html`
+        expected: 読み込んだ設定の `build.include` が `["b.md", "a.md"]`、`build.entry` が `b.md`、`build.out` が `index.html` で、`version` のキーを持たない
   - name: run_mdmark
     title: mdmark の build の呼び出し
     kind: 関数
@@ -419,7 +419,7 @@ functions:
     usecase: Pages の成果物の作成
     role: サービス
     scope: public
-    summary: '`npx -y github:shuhei1101/mdmark#{MDMARK_TAG} build --config {設定}` を起動し、標準出力を返却する'
+    summary: '`npx -y github:shuhei1101/mdmark#{MDMARK_REF} build --config {設定}` を起動し、標準出力を返却する'
     args:
       - name: config
         title: mdmark の設定
@@ -430,7 +430,7 @@ functions:
       type: str
       description: 'mdmark の標準出力（`書き出した: index.html（文書 {件数} 件）`）'
     process: |-
-      1. `subprocess.run(["npx", "-y", f"github:shuhei1101/mdmark#{MDMARK_TAG}", "build", "--config", str(config)], cwd=config.parent, capture_output=True, encoding="utf-8")` で起動する（打ち切らない）
+      1. `subprocess.run(["npx", "-y", f"github:shuhei1101/mdmark#{MDMARK_REF}", "build", "--config", str(config)], cwd=config.parent, capture_output=True, encoding="utf-8")` で起動する（打ち切らない）
          - `npx` が無い場合、`npx が PATH にありません。Node 24 以降を入れてください` の作れない成果物を送出する
          - 終了コードが 0 でない場合、`mdmark の build が終了コード {コード} で失敗しました` の後に標準エラーを続けた作れない成果物を送出する
       2. 標準エラー（mdmark の警告）があれば標準エラーへそのまま出し、標準出力を返却する

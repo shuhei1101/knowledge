@@ -417,6 +417,7 @@ def test_write_bundle_config(tmp_path: Path) -> None:
     assert config["build"]["include"] == ["b.md", "a.md"]
     assert config["build"]["entry"] == "b.md"
     assert config["build"]["out"] == "index.html"
+    assert "version" not in config
 
 
 def test_run_mdmark_when_failed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
