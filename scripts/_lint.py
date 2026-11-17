@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Literal, cast
 from yamllint import linter  # pyright: ignore[reportMissingTypeStubs]
 from yamllint.config import YamlLintConfig  # pyright: ignore[reportMissingTypeStubs]
 
-from _common import MDMARK_TAG, DocumentError, format_path, iter_strings, load_document
+from _common import MDMARK_REF, DocumentError, format_path, iter_strings, load_document
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -200,7 +200,7 @@ def run_map_check(sources: Sequence[LintSource], npx: str) -> list[LintFinding]:
     with tempfile.TemporaryDirectory() as workdir:
         # 一時のフォルダで呼び、リポジトリの設定ファイルを読ませない
         result = subprocess.run(  # noqa: S603 - 引数は配列で渡し、シェルを通さない
-            [npx, "-y", f"github:shuhei1101/mdmark#{MDMARK_TAG}", "check", "--text", "-"],
+            [npx, "-y", f"github:shuhei1101/mdmark#{MDMARK_REF}", "check", "--text", "-"],
             cwd=workdir,
             input=joined,
             capture_output=True,
