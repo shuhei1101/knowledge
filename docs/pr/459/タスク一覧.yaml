@@ -1,0 +1,73 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存のリポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-17T08:24:00.151025+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: 設計書が揃っているリポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-17T08:24:00.151025+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めを依頼する Issue ではない
+    updated_by: planner
+    updated_at: '2026-11-17T08:24:00.151025+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: スキーマの title と入れ子の値を Markdown にする変更で、未検証の技術機構に依存しない
+    updated_by: planner
+    updated_at: '2026-11-17T08:24:00.151025+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: 利用者の操作の流れは変わらない（SC-72-3 は変換の結果の見え方に触れない）
+    updated_by: planner
+    updated_at: '2026-11-17T08:24:00.151025+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 画面を持たない（判定フローチャート『モック要否』で不要）
+    updated_by: planner
+    updated_at: '2026-11-17T08:24:00.151025+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面を持たない（判定フローチャート『モック要否』で不要）
+    updated_by: planner
+    updated_at: '2026-11-17T08:24:00.151025+00:00'
+  - process: 単一ユースケース設計
+    status: skipped
+    reason: SC-72-3・SC-137-1 の記述は変換した本文の書式によらず、変わらない
+    updated_by: planner
+    updated_at: '2026-11-17T08:24:00.151025+00:00'
+  - process: モック作成
+    status: skipped
+    reason: 画面を持たない（判定フローチャート『モック要否』で不要）
+    updated_by: planner
+    updated_at: '2026-11-17T08:24:00.151025+00:00'
+  - process: インターフェース定義設計
+    status: todo
+    note: IF-72-2 の制約『種類に固有のキー』と正常系（種類に固有のキーがある）の期待値を、入れ子のオブジェクトの中の配列・オブジェクトの配列の列名・列挙の値の出し方に合わせて修正する
+  - process: 部品設計
+    status: skipped
+    reason: 画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-17T08:24:00.151025+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: 画面を持たない（判定フローチャート『画面設計要否』で不要）
+    updated_by: planner
+    updated_at: '2026-11-17T08:24:00.151025+00:00'
+  - process: モジュール構成設計
+    status: todo
+    note: MOD-72-5 の render_value・_table・_inline と、スキーマの入れ子の定義（properties・items・$ref）から title を引く関数を修正する
+  - process: ドキュメント修正
+    status: skipped
+    reason: 更新するのは設計書（IF-72-2・MOD-72-5）だけで、設計の工程で修正する
+    updated_by: planner
+    updated_at: '2026-11-17T08:24:00.151025+00:00'
+  - process: 単体テスト作成
+    status: todo
+  - process: 実装
+    status: todo
+  - process: 結合テスト作成
+    status: todo
