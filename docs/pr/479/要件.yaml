@@ -1,0 +1,10 @@
+docs:
+  - page: docs/rule/python-testing-workflow.yaml
+    new: false
+    change: steps-01 の手順 2 と 3 の間に、gh api で実行を参照できるまで待ち、決めた回数で参照できなければ失敗で終える手順を入れ、手順の番号と steps-02・steps-03 の番号の参照を合わせる
+    status: todo
+scope_out:
+  - item: 規約『Git フックと CI で動かすもの』（dev-hook-ci-scope）の workflow-merge-01 の手順 3 の gh run watch の前の待ち
+    reason: 手順 2 で gh run list から実行の ID を探すため、ID を得た時点で実行は API で参照できており、404 は起きない
+    plan: none
+use_cases: []
