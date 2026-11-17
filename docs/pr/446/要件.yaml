@@ -2,15 +2,21 @@ docs:
   - page: schemas/design/glossary.schema.yaml
     new: true
     change: rule-inject の schemas/glossary.schema.yaml を元に、リポジトリ固有の用語集の設計書のスキーマを新設する。terms[] の要素に id・name・description・aliases・avoid を持たせる（種類・キーの名前はユーザーへ確認する）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T03:20:05.574369+00:00'
   - page: schemas/design/common.schema.yaml
     new: false
     change: 共通の型 flowchart の clicks[].href の description を id:{文書の ID}・id:{文書の ID}#{項目のパス} だけにし、examples から相対パスの例を除く
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T03:20:05.574369+00:00'
   - page: schemas/design/scenario.schema.yaml
     new: false
     change: flow の x-rules に、複合ユースケースのノードの click は単一ユースケースの設計書を click {ノード} "id:{ID}#{項目のパス}" で指す決まりを追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T03:20:05.574369+00:00'
   - page: docs/template/template-glossary.yaml
     new: true
     change: 用語集の設計書のテンプレートを新設し、scripts/build_templates.py で items を生成する
@@ -18,19 +24,27 @@ docs:
   - page: docs/template/template-architecture.yaml
     new: false
     change: scripts/build_templates.py で再生成し、clicks[].href の説明の変更を取り込む
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T03:20:05.574369+00:00'
   - page: docs/template/template-dataflow.yaml
     new: false
     change: scripts/build_templates.py で再生成し、clicks[].href の説明の変更を取り込む
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T03:20:05.574369+00:00'
   - page: docs/template/template-scenario.yaml
     new: false
     change: scripts/build_templates.py で再生成し、flow の x-rules の追加を取り込む
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T03:20:05.574369+00:00'
   - page: rules.yaml
     new: false
     change: '用語集の設計書（**/docs/glossary/*.yaml・kind: glossary）を記載するときに schemas/design/glossary.schema.yaml を参照させる行を追加する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T03:20:05.574369+00:00'
 scope_out:
   - item: rule-inject の schemas/glossary.schema.yaml を、追加する knowledge のスキーマへ移すこと
     reason: rule-inject のリポジトリが持つ変更で、要望は「移せる」という可能性の提示にとどまる
