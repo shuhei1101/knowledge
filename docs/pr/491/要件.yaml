@@ -1,0 +1,107 @@
+docs:
+  - page: schemas/design/common.schema.yaml
+    new: false
+    change: 共通の型 ref と related_item の item の pattern を、[...] の中の対応の取れた [ ] を値の一部として受け、対応の取れない [ ] を断る形にする。ref の x-rules と examples に、対応の取れた [ ] を値に含む書き方（#request[operations[].fields].description）を追加する
+    status: todo
+  - page: docs/template/template-agent-flow.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-agent.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-architecture.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-component.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-config.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-data.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-dataflow.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-dev-command.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-er.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-evaluation.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-external-api.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-external-library.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-interface.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-launch.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-layout.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-llm-call.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-mcp-server.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-module.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-nonfunctional.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-scenario.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-screen-design.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-state-transition.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+  - page: docs/template/template-test-procedure.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ref・refs[].item の pattern の変更を取り込む
+    status: todo
+scope_out:
+  - item: AI Monitor の schemas/phase.schema.yaml の参照の型の pattern の追随
+    reason: AI Monitor のリポジトリが持つ（起票済み）
+    plan: none
+  - item: dev-docs の ITEM_STEP の追随
+    reason: dev-docs のリポジトリが持つ（起票済み）
+    plan: none
+  - item: '[...] の中に [ ] を 2 段以上入れ子にした項目のパス（#a[b[c[d]]]）を pattern で受けること'
+    reason: JSON Schema の pattern（正規表現）は任意の深さの対応を数えられない。要望の書き方（operations[].fields）は 1 段の入れ子で足りる
+    plan: none
