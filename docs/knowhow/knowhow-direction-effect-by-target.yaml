@@ -1,0 +1,58 @@
+id: knowhow-direction-effect-by-target
+kind: knowhow
+name: エフェクトは掛ける対象（立ち絵・背景・画面全体）ごとに使いどころを決めて選ぶ
+description: 動画編集ソフトのエフェクトの分類が掛ける対象で分かれていないことを踏まえ、立ち絵・背景・画面全体の対象ごとに使いどころを決めてエフェクトを選ぶ技法を記載し、動画にエフェクトを入れるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: MB
+    title: ゆっくり MovieMaker4（作者の配布ページ）
+    url: https://manjubox.net/ymm4/
+  - id: YP
+    title: YukkuriMovieMaker4PluginSamples
+    url: https://github.com/manju-summoner/YukkuriMovieMaker4PluginSamples
+  - id: PL
+    title: YMM4 のプラグインの一覧
+    url: https://manjubox.net/ymm4plugins.yml
+necessity: reference
+scenes:
+  fits:
+    - 立ち絵を使用する劇場動画で、エフェクトを選ぶとき。
+evidence:
+  - source: MB
+    speaker: practitioner
+  - source: YP
+    speaker: practitioner
+  - source: PL
+    speaker: practitioner
+confidence: low
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      動画編集ソフトのエフェクトの分類は、描画・加工・装飾のような機能の種類で分かれ、掛ける対象では分かれていない。
+      対象（立ち絵・背景・画面全体）ごとに使いどころを決めた一覧を自分で持ち、そこから選ぶ。
+  - id: steps-01
+    name: 対象ごとの使いどころ
+    body: |-
+      | 対象 | エフェクト | 使いどころ |
+      | --- | --- | --- |
+      | 立ち絵 | 縁取り・内側の影・色調補正・セピアや単色化・切り抜き | 背景に馴染ませる・逆光・回想・シルエット |
+      | 背景 | ぼかし・敷き詰めて流す・色調補正・ノイズ | 奥行き・高速移動・時間帯・雨や霧 |
+      | 画面全体 | 放射ブラー・グリッチ（0.1 秒）・色反転・周辺を暗くする・画面揺れ・上下の黒帯 | 強調・ホラー・衝撃・夢や回想・ツッコミ |
+
+      背景のぼかしは [背景のぼかし](id:knowhow-direction-background-blur)、背景の一部だけに掛けるエフェクトは [部分的なエフェクト](id:knowhow-direction-partial-effect) に従う。
+  - id: notes-01
+    name: 平らな立ち絵に合わないもの
+    body: |-
+      注目カメラ・回り込みカメラは 3D の配置が前提で、平らな立ち絵には有効でない。
+      クロマキー（立ち絵は透過の素材）・モーショントラッキング・VR・3D カメラ・LUT のグレーディングは、立ち絵の劇場動画では使用しない。
+tags:
+  - name: topic:エフェクト
+    main: true
+  - name: topic:立ち絵
+  - name: topic:背景
+  - name: topic:動画
+  - name: topic:ノウハウ
