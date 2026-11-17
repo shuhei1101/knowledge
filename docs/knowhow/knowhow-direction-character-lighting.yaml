@@ -1,0 +1,34 @@
+id: knowhow-direction-character-lighting
+kind: knowhow
+name: 立ち絵に背景の光源に合わせた光と色を加え、背景に馴染ませる
+description: 立ち絵に背景の光源に合わせた光と色・縁取りを加え、背景から浮かずに馴染ませる技法を記載し、立ち絵と背景を合わせるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: LR
+    title: YMM4 のプラグイン LightRig（Bluemist）
+    url: https://github.com/bluemistel/YMM4-LightRig
+necessity: reference
+scenes:
+  fits:
+    - 立ち絵を屋外・夜・イラストの背景に重ねるとき。
+evidence:
+  - source: LR
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      立ち絵に、背景の光源に合わせた光と色を加える。
+      背景がイラストなら背景色の太い縁取りを付け、夜は青を加えて周辺を暗くする。
+      YMM4 では、背景から色を取得して立ち絵に乗せる処理をプラグイン LightRig が自動で行う。
+tags:
+  - name: topic:立ち絵
+    main: true
+  - name: topic:背景
+  - name: topic:エフェクト
+  - name: topic:動画
+  - name: topic:ノウハウ

@@ -1,0 +1,44 @@
+id: knowhow-prompt-long-context-order
+kind: knowhow
+name: 長い資料はプロンプトの先頭に配置して質問を最後にし、似た情報を削除して量を減らす
+description: LLM に長い資料を指定するプロンプトで、資料を先頭・質問と指示を最後に配置し、似て非なる情報を削除して入力の量を減らす技法を記載し、長い入力を持つプロンプトを作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: AN
+    title: 'Anthropic: Prompting best practices'
+    url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+  - id: GG
+    title: 'Google: Gemini API prompting strategies'
+    url: https://ai.google.dev/gemini-api/docs/prompting-strategies
+  - id: CR
+    title: 'Chroma: Context Rot'
+    url: https://www.trychroma.com/research/context-rot
+necessity: reference
+scenes:
+  fits:
+    - 2 万トークン以上の資料や、複数の資料を指定するとき。
+  misfits:
+    - 入力が短いプロンプト（並べ方の差が小さい）。
+evidence:
+  - source: AN
+    speaker: practitioner
+  - source: GG
+    speaker: practitioner
+  - source: CR
+    speaker: practitioner
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      長い資料はプロンプトの先頭に配置し、質問と指示を最後に配置する（Anthropic の試験で最大 30% の改善。Gemini も指示を最後に配置する）。
+      配置よりも、入力の長さ・似て非なる情報の多さ・質問と資料の不一致が精度を下げるので、量を減らし、似た情報を削除する。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:llm
+  - name: topic:コンテキスト
+  - name: topic:ノウハウ

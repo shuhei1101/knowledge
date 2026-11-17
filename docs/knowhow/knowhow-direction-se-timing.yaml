@@ -1,0 +1,63 @@
+id: knowhow-direction-se-timing
+kind: knowhow
+name: SE は画面効果を先に決めてから、音の頭をセリフ・画像・字幕・表情の変わる瞬間に合わせる
+description: 動画の SE を、画面効果を決めた後に追加し、音の頭をセリフの頭・画像や字幕の出る瞬間・表情の変わる瞬間に合わせる技法を記載し、動画に SE を入れるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: SS1
+    title: SS@ゆっくり編集効率化の note（SE の入れ方）
+    url: https://note.com/yukkuri_auto/n/nbe0ba5dc35ec
+  - id: SS2
+    title: SS@ゆっくり編集効率化の note（SE の入れる所）
+    url: https://note.com/yukkuri_auto/n/na38dbe3e4b5e
+  - id: HB
+    title: エンタメ動画の編集のコツ
+    url: https://hiroboonext.net/entertainment-video-editing-tips/
+  - id: BM1
+    title: Bluemist（あおもや）の note（画面効果と SE）
+    url: https://note.com/bluemist/n/nd8cf48ec75c5
+  - id: NP
+    title: npaka の note（SE の入れ方）
+    url: https://note.com/npaka/n/n9ac5c9d464f3
+necessity: must
+scenes:
+  fits:
+    - ゆっくり劇場などの掛け合いの動画で、セリフ・ツッコミ・場面の切り替わりに SE を入れるとき。
+  misfits:
+    - 芝居と BGM だけで伝わる場面。
+evidence:
+  - source: BM1
+    speaker: practitioner
+  - source: SS1
+    speaker: third_party
+  - source: SS2
+    speaker: third_party
+  - source: HB
+    speaker: third_party
+  - source: NP
+    speaker: third_party
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      SE は、ズーム・集中線・揺れ・フラッシュ・転換の画面効果を先に決め、その効果に合わせて後から追加する。
+      鳴らし始めは、セリフ開始・画像や字幕の表示開始・表情変化・動作開始に合わせる。
+      テロップとのずれは 0.1 秒でも面白さを落とす。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 区間ごとの画面効果を決める
+      2. SE の音の頭を、セリフの頭か画像・字幕が出る瞬間に合わせる
+      3. ツッコミの直後と場面の切り替わりにも SE を入れる
+      4. 滑ったボケだけは、約 1 秒黙ってから鳴らす
+      5. 芝居と BGM で伝わる場面は鳴らさない
+tags:
+  - name: topic:se
+    main: true
+  - name: topic:動画
+  - name: topic:タイミング
+  - name: topic:ノウハウ

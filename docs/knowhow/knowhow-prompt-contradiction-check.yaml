@@ -1,0 +1,33 @@
+id: knowhow-prompt-contradiction-check
+kind: knowhow
+name: プロンプトの中の矛盾した指示を探して解消する
+description: 推論モデルが矛盾した指示の調停に推論を費やすため、メタプロンプトでプロンプトの矛盾を探して解消する技法を記載し、プロンプトを点検するときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: G5
+    title: 'OpenAI: GPT-5 prompting guide'
+    url: https://developers.openai.com/cookbook/examples/gpt-5/gpt-5_prompting_guide
+necessity: reference
+scenes:
+  fits:
+    - 推論モデルのプロンプトを点検するとき。
+    - 点が低いノードのプロンプトを修正するとき。
+evidence:
+  - source: G5
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      推論モデルは、矛盾した指示の調停に推論を費やす。
+      メタプロンプト（プロンプトを点検させるプロンプト）で矛盾を探し、どちらかに決めて解消する。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:llm
+  - name: action:点検
+  - name: topic:ノウハウ

@@ -1,0 +1,40 @@
+id: knowhow-prompt-positive-with-reason
+kind: knowhow
+name: 指示は肯定形（「する」）で記載し、理由を添える
+description: プロンプトの指示を否定形ではなく肯定形で記載し、理由を添えて想定しなかった場面にも広げて従わせる技法を記載し、プロンプトに指示や禁止を記載するときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: AN
+    title: 'Anthropic: Prompting best practices'
+    url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+  - id: NG
+    title: 否定形の指示の研究
+    url: https://arxiv.org/abs/2601.08070
+necessity: reference
+scenes:
+  fits:
+    - 口調・形式などの指示や禁止をプロンプトに記載するとき。
+  misfits:
+    - 狭く具体的な禁止（否定形でも有効）。
+evidence:
+  - source: AN
+    speaker: practitioner
+  - source: NG
+    speaker: practitioner
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      指示は「しない」ではなく「する」で記載し、理由を添える。
+      理由があると、想定しなかった場面にも広げて従う。
+      禁止する単語を記載するとその単語を引き出し、広い禁止は有効すぎる。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:llm
+  - name: topic:文章
+  - name: topic:ノウハウ

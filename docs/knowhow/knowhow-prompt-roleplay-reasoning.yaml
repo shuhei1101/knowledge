@@ -1,0 +1,39 @@
+id: knowhow-prompt-roleplay-reasoning
+kind: knowhow
+name: キャラクターのセリフ生成では汎用の推論を切るか浅くし、比べてから決める
+description: 汎用の推論（CoT）がロールプレイの質を下げるため、セリフ生成では推論を切るか浅くして比べてから決める技法を記載し、セリフ生成に使用するモデルと推論の強さを決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: RP
+    title: 推論とロールプレイの研究
+    url: https://arxiv.org/abs/2502.16940
+  - id: RC
+    title: キャラクターの立場で考える推論の研究
+    url: https://arxiv.org/abs/2506.01748
+necessity: reference
+scenes:
+  fits:
+    - キャラクターのセリフを生成させるノードで、推論モデルを使用するかを決めるとき。
+evidence:
+  - source: RP
+    speaker: practitioner
+  - source: RC
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      汎用の推論（CoT）を使用すると、6 つ中 4 つのベンチマークでロールプレイの質が下がり、推論向けのモデルも向かない。
+      セリフ生成では推論を切るか浅くし、切った場合と比べてから決める（研究の所見から導いた推測を含む）。
+      推論もキャラクターの文体・自己像で行わせると質が戻るが、学習込みの手法で、プロンプトだけで再現できるかは分かっていない。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:セリフ
+  - name: topic:推論
+  - name: topic:llm
+  - name: topic:ノウハウ

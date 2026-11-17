@@ -1,0 +1,73 @@
+id: knowhow-eval-line-case-axes
+kind: knowhow
+name: セリフの評価ケースは、感情・ボケとツッコミの型・場面・キャラクターの知識と会話の長さを軸にする
+description: キャラクターのセリフ・つぶやきの評価ケースの軸として、感情の分類・ボケとツッコミの型・場面の区分・知らないはずの知識・会話の長さを使用する技法を記載し、セリフ生成の評価ケースの軸を決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: PL
+    title: Plutchik's Wheel of Emotion
+    url: https://www.simonwhatley.co.uk/writing/plutchik-wheel-of-emotion/
+  - id: WT
+    title: '笑いのテキスト: ボケとツッコミの種類'
+    url: https://waraitext.com/post-19/
+  - id: HZ
+    title: 'ひつじ草: ボケとツッコミ'
+    url: https://www.hituzi.co.jp/hituzigusa/2023/03/23/boke-to-tukkomi-02/
+  - id: CM
+    title: 'キャラマップ: 性格の分類'
+    url: https://charamap.chokogamev2.com/category/personality.html
+  - id: BP
+    title: BOOTH のボイスパック
+    url: https://booth.pm/ja/items/908464
+  - id: TC
+    title: TimeChara
+    url: https://arxiv.org/abs/2405.18027
+  - id: LD
+    title: 長い会話でのペルソナへの忠実さの研究
+    url: https://arxiv.org/abs/2512.12775
+necessity: reference
+scenes:
+  fits:
+    - キャラクターのセリフ・つぶやきの生成の評価ケースを作るとき。
+evidence:
+  - source: PL
+    speaker: third_party
+  - source: WT
+    speaker: third_party
+  - source: HZ
+    speaker: practitioner
+  - source: CM
+    speaker: third_party
+  - source: BP
+    speaker: practitioner
+  - source: TC
+    speaker: practitioner
+  - source: LD
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: セリフの評価ケースは、次の軸の値の組で作る。
+  - id: steps-01
+    name: 軸の候補
+    body: |-
+      | 軸 | 値 |
+      | --- | --- |
+      | 感情 | Plutchik の 8 つの感情と強さの段階 |
+      | ボケ・ツッコミの型 | ボケ 18 種・ツッコミ 12 種。研究ではツッコミは沈黙・否定・オウム返し・比喩の 4 型 |
+      | 場面 | ボイスパックの区分（時報・挨拶・応援・行事）。掛け合いの場面は別に作る |
+      | キャラクターの知識 | キャラクターが知らないはずのことを尋ねるケース |
+      | 会話の長さ | 100 往復を超える会話（キャラクターが崩れる） |
+
+      キャラクターの型（元気・クール・お姉さん・ツンデレ など）は、出典ごとに境界が揺れるので、軸にするときは型ごとの定義を自分で決める。
+tags:
+  - name: topic:精度評価
+    main: true
+  - name: topic:セリフ
+  - name: topic:ケース
+  - name: topic:ツッコミ
+  - name: topic:ノウハウ

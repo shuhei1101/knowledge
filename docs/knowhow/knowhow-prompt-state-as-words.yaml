@@ -1,0 +1,33 @@
+id: knowhow-prompt-state-as-words
+kind: knowhow
+name: 気分や疲れなどの状態は、数値ではなく段階の言葉で指定する
+description: キャラクターの気分や疲れなどの状態を数値で指定すると人とのずれが大きいため、「高い」などの段階の言葉に変換して指定する技法を記載し、状態を LLM に指定するときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: SW
+    title: 感情の数値と言葉のラベルの研究
+    url: https://arxiv.org/abs/2503.11881
+necessity: reference
+scenes:
+  fits:
+    - キャラクターの気分・疲れなどの状態をセリフ生成に指定するとき。
+evidence:
+  - source: SW
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      感情を数値で指定すると人とのずれが大きく、「高い」などのラベルに変換すると大きく改善した（単文の生成での結果）。
+      状態は内部では数値で持ち、プロンプトへ指定する直前で段階の言葉へ変換する（研究の所見から導いた推測を含む）。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:セリフ
+  - name: topic:llm
+  - name: action:変換
+  - name: topic:ノウハウ

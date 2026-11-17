@@ -1,0 +1,49 @@
+id: knowhow-direction-effect-by-target
+kind: knowhow
+name: 平らな立ち絵の劇場動画では、エフェクトを掛ける対象で選び、3D の配置が前提のカメラを使用しない
+description: 動画編集ソフトのエフェクトの分類が掛ける対象で分かれていないことと、平らな立ち絵には 3D の配置が前提のカメラや一部の加工が合わないことを記載し、立ち絵の動画に入れるエフェクトを選ぶときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: MB
+    title: ゆっくり MovieMaker4（作者の配布ページ）
+    url: https://manjubox.net/ymm4/
+  - id: YP
+    title: YukkuriMovieMaker4PluginSamples
+    url: https://github.com/manju-summoner/YukkuriMovieMaker4PluginSamples
+  - id: PL
+    title: YMM4 のプラグインの一覧
+    url: https://manjubox.net/ymm4plugins.yml
+necessity: reference
+scenes:
+  fits:
+    - 立ち絵を使用する劇場動画で、エフェクトを選ぶとき。
+evidence:
+  - source: MB
+    speaker: practitioner
+  - source: YP
+    speaker: practitioner
+  - source: PL
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      動画編集ソフトのエフェクトの分類は、描画・加工・装飾のような機能の種類で分かれ、掛ける対象（立ち絵・背景・画面全体）では分かれていない。
+      YMM4 では、エフェクトをアイテムへ付けるか、下のレイヤーへ掛けるエフェクトアイテムとするかで対象が決定する。
+      エフェクトは分類ではなく、掛ける対象で選ぶ（記録の結論から導いた推測を含む）。
+  - id: notes-01
+    name: 平らな立ち絵に合わないもの
+    body: |-
+      注目カメラ・回り込みカメラは 3D の配置が前提で、平らな立ち絵には有効でない。
+      クロマキー（立ち絵は透過の素材）・モーショントラッキング・VR・3D カメラ・LUT のグレーディングは、立ち絵の劇場動画では使用しない。
+tags:
+  - name: topic:エフェクト
+    main: true
+  - name: topic:立ち絵
+  - name: topic:背景
+  - name: topic:動画
+  - name: topic:ノウハウ

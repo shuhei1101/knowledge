@@ -1,0 +1,50 @@
+id: knowhow-direction-transition-weight
+kind: knowhow
+name: 場面転換の重さは経過した時間の大きさで変え、途中の転換に 3 秒を超えるものを使用しない
+description: 動画の場面転換を、経過した時間の大きさに応じて SE・フラッシュ・通常の転換・アイキャッチの順に重くする技法を記載し、場面転換の効果を選ぶときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: BMS
+    title: Bluemist（あおもや）の note の連載「よく見る演出や効果を YMM4 でやってみる」
+    url: https://note.com/bluemist/n/ne848990a66bd
+    note: '連載の他の記事: n/nd967428adc09・n/naae3e05480b4・n/n9e07fd2b018e・n/n8de1037f6acb'
+  - id: AM2
+    title: あおもやの動画（場面転換）
+    url: https://www.youtube.com/watch?v=5sPWcJy0oNY
+necessity: reference
+scenes:
+  fits:
+    - 劇場動画で、場面転換の効果を選ぶとき。
+  misfits:
+    - 同じ場所の続きの場面（カットだけにする）。
+evidence:
+  - source: BMS
+    speaker: practitioner
+  - source: AM2
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      場面転換は、経過した時間が大きいほど重い効果にする。
+      途中の転換に 3 秒を超える効果は使用せず、テンポを保つ。
+  - id: steps-01
+    name: 経過ごとの転換
+    body: |-
+      | 経過 | 転換 |
+      | --- | --- |
+      | 30 秒未満 | SE だけか、白フラッシュ 0.2〜0.3 秒・モザイクかぼかし 0.3〜0.4 秒 |
+      | 通常 | フェード・クロスフェード・ワイプ・扉・ズーム転換・押し出し・アイリス |
+      | 大きな経過 | アイキャッチ |
+
+      スピンの転換は視聴者が疲れやすい。
+tags:
+  - name: topic:場面転換
+    main: true
+  - name: topic:エフェクト
+  - name: topic:動画
+  - name: topic:ノウハウ

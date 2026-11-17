@@ -1,0 +1,48 @@
+id: knowhow-eval-error-analysis
+kind: knowhow
+name: プロンプトは実際の出力を参照して失敗の型にまとめ、多い型と上流の失敗から修正する
+description: LLM のノードの実際の出力を 100 件ほど参照して問題をメモし、失敗の型にまとめて多い型と上流の失敗から修正する誤り分析の技法を記載し、プロンプトやノードの修正する箇所を決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: HA
+    title: 'Hamel Husain: Why is error analysis so important in LLM evals'
+    url: https://hamel.dev/blog/posts/evals-faq/why-is-error-analysis-so-important-in-llm-evals-and-how-is-it-performed.html
+  - id: PT
+    title: 'Product Talk: Debugging AI products with Hamel Husain'
+    url: https://www.producttalk.org/debugging-ai-products-from-data-leakage-to-evals-with-hamel-husain/
+  - id: GE
+    title: GEPA
+    url: https://arxiv.org/abs/2507.19457
+necessity: must
+scenes:
+  fits:
+    - LLM のノードの出力の質が低く、修正する箇所を決めるとき。
+evidence:
+  - source: HA
+    speaker: practitioner
+  - source: PT
+    speaker: practitioner
+  - source: GE
+    speaker: practitioner
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: プロンプトを修正する前に、実際の出力を参照して失敗を分類し、多い型と上流の失敗から修正する。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 実際の出力を 100 件ほど参照し、問題をメモする
+      2. メモを失敗の型にまとめる
+      3. 上流の失敗と、多い型から修正する（修正案はモデルに出させてもよいが、人が確認する）
+      4. 評価セットと採点の仕組みがそろったら、実行の記録を言葉で振り返ってプロンプトを修正する自動の最適化（GEPA）も使用できる
+tags:
+  - name: topic:精度評価
+    main: true
+  - name: topic:プロンプト
+  - name: topic:llm
+  - name: action:分類
+  - name: topic:ノウハウ

@@ -1,0 +1,45 @@
+id: knowhow-direction-emotion-motion
+kind: knowhow
+name: 立ち絵の感情は移動・回転・拡大縮小の小さな動きで表す
+description: 立ち絵の震え・慌てる・怒り・待機などの感情と状態を、移動・回転・拡大縮小の小さな動きで表す技法を記載し、立ち絵に動きを付けるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: BMS
+    title: Bluemist（あおもや）の note の連載「よく見る演出や効果を YMM4 でやってみる」
+    url: https://note.com/bluemist/n/ne848990a66bd
+    note: '連載の他の記事: n/nd967428adc09・n/naae3e05480b4・n/n9e07fd2b018e・n/n8de1037f6acb'
+necessity: reference
+scenes:
+  fits:
+    - 表情の差分だけでは感情が伝わりにくい立ち絵に、動きを付けるとき。
+evidence:
+  - source: BMS
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      立ち絵の感情は、移動・回転・拡大縮小の小さな動きで表す。
+      表情の選び方は [表情の型](id:knowhow-direction-expression-preset) に従う。
+  - id: steps-01
+    name: 感情ごとの動き
+    body: |-
+      | 感情・状態 | 動き |
+      | --- | --- |
+      | 震え・恐怖 | 5〜10px のランダム移動を 1 フレームか 0.01 秒間隔 |
+      | 慌てる | ランダム回転 |
+      | 怒り・驚き | 移動と回転の組み合わせ |
+      | 話しかける | 跳ねる |
+      | オチ | 砕け散る・崩れ落ちる |
+      | 待機 | 反復移動か、6 秒周期で 100.3% の拡大縮小と −1.5px の移動（呼吸） |
+tags:
+  - name: topic:立ち絵
+    main: true
+  - name: topic:アニメーション
+  - name: topic:表情
+  - name: topic:動画
+  - name: topic:ノウハウ

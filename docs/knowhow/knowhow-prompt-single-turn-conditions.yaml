@@ -1,0 +1,35 @@
+id: knowhow-prompt-single-turn-conditions
+kind: knowhow
+name: 条件は複数のターンに分けず、全て 1 通に入れる
+description: LLM に指定する条件を複数のターンに分けると精度が下がるため、全ての条件を 1 通に入れる技法を記載し、チャットや多段の対話のプロンプトを作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: ML
+    title: LLMs Get Lost In Multi-Turn Conversation
+    url: https://arxiv.org/abs/2505.06120
+necessity: must
+scenes:
+  fits:
+    - チャットのノードや多段の対話で、条件を追加していくとき。
+  misfits:
+    - 1 回だけ呼ぶノード（関係がない）。
+evidence:
+  - source: ML
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      条件を複数のターンに分けて指定すると、精度が平均 39% 下がる。
+      モデルは早合点し、後から来た条件で戻らない。
+      条件は全て 1 通に入れる。
+tags:
+  - name: topic:プロンプト
+    main: true
+  - name: topic:llm
+  - name: topic:会話
+  - name: topic:ノウハウ
