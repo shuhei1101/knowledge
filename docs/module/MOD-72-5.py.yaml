@@ -194,7 +194,7 @@ functions:
         title: スキーマ
         type: Mapping[str, Any]
         required: true
-        description: 文書の `kind` のスキーマ。種類に固有のキーの見出しに `properties.{キー}.title` を使用する
+        description: 文書の `kind` のスキーマ。種類に固有のキーの見出しと値の組み立てに、定義の解決で求めたキーの定義を使用する
       - name: word_lists
         title: 対応表
         type: Mapping[str, Sequence[Mapping[str, Any]]]
@@ -207,7 +207,7 @@ functions:
       1. `# {name}` と、`description` の段落を配置する
       2. `id` が `overview` の項目があれば、その本文の埋め込みのマーカーを展開して（埋め込みの展開）、見出しを付けずに配置する
       3. 残りの項目を見出しつきで並べる（項目の見出しの組み立て）
-      4. `HIDDEN_KEYS`・`LAYOUT_KEYS` に無いキーを文書の並びで `## {スキーマの title（無ければキー）}` のセクションにする（値の組み立て）
+      4. `HIDDEN_KEYS`・`LAYOUT_KEYS` に無いキーを文書の並びで `## {スキーマの title（無ければキー）}` のセクションにする。キーの定義はスキーマ自身を起点に定義の解決で求め、値の組み立ての引数に指定する
          - `kind` が `WORD_LIST_KIND` の文書の `entries` の場合、対応表の組み立てを使用する
       5. `related` があれば `## 関連` に、各行を `- [{to}](id:{to})（{type}）: {when}` で並べる
       6. `sources` があれば `## 出典` に、各行を `- {id}: [{title}]({url})（{note}）` で並べる（`id`・`url`・`note` が無い行はその部分を省く）
@@ -319,16 +319,31 @@ functions:
         type: object
         required: true
         description: キーの値
+      - name: definition
+        title: 値の定義
+        type: Mapping[str, Any] | None
+        required: true
+        description: 値に該当するスキーマの定義（定義の解決の結果）。無ければ `None` で、`title` の代わりにキー名を使用する
+      - name: schema
+        title: スキーマ
+        type: Mapping[str, Any]
+        required: true
+        description: 文書の `kind` のスキーマ。入れ子の定義の解決に使用する
     returns:
       type: str
       description: Markdown のブロック
     process: |-
       1. 値の型で分ける
          - 文字列の場合、そのままの段落
-         - 文字列の配列の場合、`- {要素}` の箇条書き
-         - オブジェクトの配列の場合、`<!-- table: {"kind": "data"} -->` と `<!-- /table -->` で囲んだ表。列は全ての要素のキーを現れた順に並べ、セルの `|` は `\|`、改行は `<br>` にする。無いセルは `-`
-         - オブジェクトの場合、`- {キー}: {値}` の箇条書き
+         - 全ての要素がオブジェクトの配列の場合、`<!-- table: {"kind": "data"} -->` と `<!-- /table -->` で囲んだ表
+           - 列は全ての要素のキーを現れた順に並べ、列名は要素の定義（定義の解決で `items` を解決したもの）の各キーの `title`（無ければキー）にする
+           - セルは、文字列はそのまま、無いセルは `-`、数・真偽値は `str(値)`、配列は要素のセルの文字列を、オブジェクトは `{title}: {値のセルの文字列}` を `<br>` でつなぐ。`|` は `\|`、改行は `<br>` にする
+         - それ以外の配列とオブジェクトの場合、箇条書き（2）
          - それ以外（数・真偽値）の場合、`str(値)` の段落
+      2. 箇条書きは深さ 0 から組み立て、深さ 1 つごとに行頭へ空白 2 つを追加する
+         - オブジェクトの場合、キーごとに定義の解決でキーの定義を求め、値が文字列・数・真偽値なら `- {title}: {値}`、配列・オブジェクトなら `- {title}` の行と、その下に深さを 1 つ追加した値の行を出す
+         - 配列の場合、要素ごとに、文字列・数・真偽値なら `- {値}`、配列・オブジェクトなら、要素の定義に `title` があれば `- {title}`、無ければ `-` だけの行と、その下に深さを 1 つ追加した要素の行を出す
+      3. どの値も `json.dumps` で文字列にしない
     unit_tests:
       - name: test_render_value_when_string
         case: 正常
@@ -354,6 +369,36 @@ functions:
         condition: '`{"a": 1}`'
         mock: なし
         expected: '`- a: 1`'
+      - name: test_render_value_when_object_list_titles
+        case: 正常
+        summary: 表の列名を要素の定義の title にする
+        condition: '`[{"work": "w", "extra": "e"}]` と、`items` が `#/$defs/case`（`work` の `title` が `作品・場面`）を指す定義'
+        mock: なし
+        expected: 表の見出しの行が `| 作品・場面 | extra |`
+      - name: test_render_value_when_list_in_object
+        case: 正常
+        summary: オブジェクトの中の配列
+        condition: '`{"fits": ["a", "b"]}` と、`properties.fits.title` が `有効な場面` の定義'
+        mock: なし
+        expected: '`- 有効な場面\n  - a\n  - b`'
+      - name: test_render_value_when_nested_cell
+        case: 正常
+        summary: 表のセルの配列とオブジェクト
+        condition: '`[{"a": ["x", "y"], "b": {"c": 1}}]` と定義 `None`'
+        mock: なし
+        expected: 'セルが `x<br>y` と `c: 1`'
+      - name: test_render_value_when_mixed_list
+        case: 正常
+        summary: 一部の要素だけがオブジェクトの配列
+        condition: '`["a", {"x": 1}]` と定義 `None`'
+        mock: なし
+        expected: '`- a\n-\n  - x: 1`'
+      - name: test_render_value_when_no_json
+        case: 正常
+        summary: JSON の文字列を出さない
+        condition: オブジェクトの中にオブジェクトの配列と配列の配列を持つ値と定義 `None`
+        mock: なし
+        expected: どの行にも `["`・`{"` が無い
   - name: render_word_list
     title: 対応表の組み立て
     kind: 関数
@@ -530,6 +575,76 @@ functions:
         item: "constraints[埋め込みのマーカー]"
         type: requires
         when: "`expand_embeds` を修正するときに、IF-72-2 の「埋め込みのマーカー」の決まりと突き合わせる。"
+  - name: resolve_definition
+    title: 定義の解決
+    kind: 関数
+    container: scripts/knowledge_markdown.py
+    usecase: 文書の Markdown への変換
+    scope: public
+    summary: スキーマの定義から、キーか配列の要素の定義を、同じスキーマの中の `$ref` を解決して返却する
+    args:
+      - name: schema
+        title: スキーマ
+        type: Mapping[str, Any]
+        required: true
+        description: '`$ref` の参照先をたどる、文書の `kind` のスキーマ'
+      - name: definition
+        title: 親の定義
+        type: Mapping[str, Any] | None
+        required: true
+        description: 解決済みの親の定義。`None` なら `None` を返却する
+      - name: key
+        title: キー
+        type: str | None
+        required: true
+        description: '`properties` から求めるキー。`None` なら `items` を求める'
+    returns:
+      type: Mapping[str, Any] | None
+      description: 子の定義。見つからなければ `None`
+    process: |-
+      1. `definition` が `None` なら `None` を返却する
+      2. `key` が文字列なら `properties.{key}`、`None` なら `items` を取り出す。マッピングでなければ `None` を返却する
+      3. 取り出した定義が `#/` で始まる `$ref` を持つ場合、`/` で分けたパスを `schema` からたどった参照先に、`$ref` 以外の兄弟のキー（`title` など）を重ねた定義にする
+         - 参照先がさらに `$ref` を持つ場合も同じく解決し、同じ参照を 2 度たどったら止める
+         - たどれない参照と、`#/` で始まらない参照（別のファイル）の場合、`$ref` を解決せずに兄弟のキーだけの定義にする
+      4. 解決した定義を返却する
+    unit_tests:
+      - name: test_resolve_definition
+        case: 正常
+        summary: キーの定義
+        condition: '`properties.scenes` に `title` を持つ定義と `key="scenes"`'
+        mock: なし
+        expected: '`scenes` の定義が返る'
+      - name: test_resolve_definition_when_items_ref
+        case: 正常
+        summary: 配列の要素の $ref
+        condition: '`items` が `{"$ref": "#/$defs/case"}` の定義と `key=None`'
+        mock: なし
+        expected: '`$defs.case` の定義が返る'
+      - name: test_resolve_definition_when_ref_with_title
+        case: 正常
+        summary: $ref と兄弟の title
+        condition: '`properties.id` が `{"$ref": "#/$defs/id", "title": "ID"}` で、`$defs.id.title` が `識別子`'
+        mock: なし
+        expected: '`title` が `ID` の定義が返る'
+      - name: test_resolve_definition_when_external_ref
+        case: 正常
+        summary: 別のファイルの $ref
+        condition: '`properties.x` が `{"$ref": "common.schema.yaml#/$defs/x", "title": "X"}`'
+        mock: なし
+        expected: '`{"title": "X"}` が返る'
+      - name: test_resolve_definition_when_ref_loop
+        case: 正常
+        summary: 循環する $ref
+        condition: '`$defs.a` が `#/$defs/b`、`$defs.b` が `#/$defs/a` を指す'
+        mock: なし
+        expected: 例外を送出せずに返る
+      - name: test_resolve_definition_when_missing
+        case: 正常
+        summary: 定義が無い
+        condition: '`properties` に無いキーと、`definition=None`'
+        mock: なし
+        expected: どちらも `None`
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を記載し、`_common.py` を同じフォルダから import する。
 test_files:

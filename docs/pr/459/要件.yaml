@@ -1,0 +1,31 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: run_only
+    detail: 画面で開いた文書の、種類に固有の入れ子のキーの見え方が変わる。シナリオの記述は変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-137-1.yaml
+    impact: run_only
+    detail: 公開文書を同じ変換で HTML にするため、入れ子のキーを持つ公開文書の見え方が変わる。シナリオの記述は変わらない
+    depends_on: []
+docs:
+  - page: docs/interface/IF-72-2.py.yaml
+    new: false
+    change: 制約『種類に固有のキー』に、入れ子のオブジェクトの中の配列・オブジェクトの配列の列名（スキーマの title）・列挙の値の出し方を加え、正常系の期待値を合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:31:28.831490+00:00'
+  - page: docs/module/MOD-72-5.py.yaml
+    new: false
+    change: 値の描き分け（render_value・_table・_inline）と、スキーマの入れ子の定義から title を引く関数を修正・追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:40:25.165405+00:00'
+scope_out:
+  - item: 文書とスキーマ（schemas/knowhow.schema.yaml・docs/knowhow/）の変更
+    reason: 変わるのは Markdown の出力だけで、文書とスキーマは今のまま描ける
+    plan: none
+  - item: dev-docs の画面のサーバーが行うスキーマ駆動の変換（converters[] を指さない種類）
+    reason: dev-docs のリポジトリの処理で、knowledge の変換のスクリプトの対象ではない
+    plan: none

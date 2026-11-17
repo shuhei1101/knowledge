@@ -1,0 +1,13 @@
+# 結合テストの層は実行場所が runner だが、run_runner は層の全件を回し範囲を指定できないため、表の範囲を手元の個別実行（run_one）で回した。pytest の既定の一時フォルダの持ち主が違うため --basetemp を指定した
+
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/integration/scripts/test_knowledge_markdown.py --basetemp=/tmp/pr459/bt-int
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/shuhei2441/repo/knowledge/.claude/worktrees/bug-scripts-knowledge-markdown-nested-keys
+configfile: pytest.ini
+collected 8 items
+
+tests/integration/scripts/test_knowledge_markdown.py ........            [100%]
+
+============================== 8 passed in 0.65s ===============================
+exit=0
