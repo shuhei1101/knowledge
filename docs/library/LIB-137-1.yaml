@@ -3,11 +3,11 @@ visibility: internal
 title: "mdmark"
 kind: "CLI"
 version:
-  current: v0.13.0
+  current: develop
   latest: v0.13.0
-  checked_on: '2026-11-14'
-  source: Pages の成果物の作成と全ての文書の検査のスクリプトが呼ぶ `npx -y github:shuhei1101/mdmark#v0.13.0`
-  pinning: タグで固定する（npm に公開しておらず、ブランチ名では中身が変わる）
+  checked_on: '2026-11-17'
+  source: Pages の成果物の作成と全ての文書の検査のスクリプトが呼ぶ `npx -y github:shuhei1101/mdmark#{参照}`（参照は `scripts/_common.py` の `MDMARK_REF`）
+  pinning: 既定は `develop`（develop の最新の配布物）。固定するときは `MDMARK_REF` をタグ（`v{MAJOR}.{MINOR}.{PATCH}`）か、develop の配布物を再作成した commit（件名が `develop の配布物を再作成する（{元の短縮 SHA}）`）の SHA に書き換える。それ以外の commit の SHA は 1 つ前の配布物を呼ぶため使用しない
 catalogs:
   - name: コマンド
     version: v0.13.0
@@ -81,14 +81,14 @@ verification:
     2026-11-14 に `v0.13.0` で、同じ手順の `build` が `書き出した: index.html（文書 5 件）` と終了コード 0 で約 900 KB の 1 枚になった。`check --text -` の標準入力に、`<!-- table: data -->` の表と、閉じの無い `loop` と `:` の無いメッセージを持つ map を指定すると、`-:1: legacy_mark`・`-:9: map_invalid`・`-:13: map_invalid` の 3 行と `ずれ 3 件` を出して終了コード 1、誤りの無い map だけなら `ずれ 0 件` と終了コード 0 で終わった（`v0.12.0` も同じ出力）。knowledge の `docs/` の map を含む 107 項目をつないで 1 回呼ぶと、ずれは `legacy_mark` の 3 件だけで、1 回の呼び出しは約 4 秒だった'
 license: ライセンスの表記なし（knowledge と同じ所有者の公開リポジトリ）
 official_url: https://github.com/shuhei1101/mdmark
-docs_url: https://github.com/shuhei1101/mdmark/blob/v0.13.0/docs/guide/CLI.md
+docs_url: https://github.com/shuhei1101/mdmark/blob/develop/docs/guide/CLI.mark.md
 selection:
   candidates: '`npx github:shuhei1101/mdmark#{タグ}` で呼ぶ、mdmark をタグで checkout してコミット済みの `dist/cli.js` を node で呼ぶ'
   decision: '`dist/cli.js` は `yaml`・`esbuild` などの実行時の依存を同梱しておらず、checkout だけでは `ERR_MODULE_NOT_FOUND` で動かない。`npx` は依存ごと入れ、mdmark の使い方もこの呼び方で記載している'
 install: |-
-  入れる手順は無い。Node 24 以降で、呼ぶたびに `npx -y` がタグの中身と依存を取る
+  入れる手順は無い。Node 24 以降で、呼ぶたびに `npx -y` が参照の中身と依存を取る
 
   ```bash
-  npx -y github:shuhei1101/mdmark#v0.13.0 build --config {設定ファイル}
-  npx -y github:shuhei1101/mdmark#v0.13.0 check --text -
+  npx -y github:shuhei1101/mdmark#develop build --config {設定ファイル}
+  npx -y github:shuhei1101/mdmark#develop check --text -
   ```
