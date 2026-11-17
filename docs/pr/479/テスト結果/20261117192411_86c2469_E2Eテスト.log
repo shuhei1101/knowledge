@@ -1,0 +1,12 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 pytest tests/e2e/workflow/test_test_yml.py::test_normal -v --basetemp=/tmp/claude-1000/pytest479-m0K4
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0 -- /home/shuhei2441/.cache/uv/builds-v0/.tmpoCNLWm/bin/python
+cachedir: .pytest_cache
+rootdir: /home/shuhei2441/repo/knowledge/.claude/worktrees/fix-testing-workflow-wait-run-visible-before-watch
+configfile: pytest.ini
+collecting ... collected 1 item
+
+tests/e2e/workflow/test_test_yml.py::test_normal PASSED                  [100%]
+
+============================== 1 passed in 49.95s ==============================
+exit: 0
