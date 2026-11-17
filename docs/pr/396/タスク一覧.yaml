@@ -61,7 +61,7 @@ tasks:
     updated_at: '2026-11-14T15:53:28.780528+00:00'
   - process: モジュール構成設計
     status: skipped
-    reason: スクリプトの変更は定数 MDMARK_TAG の値だけで、モジュールの構成は変わらない
+    reason: スクリプトを変更しない
     updated_by: planner
     updated_at: '2026-11-14T15:53:28.780528+00:00'
   - process: ドキュメント修正
@@ -71,12 +71,15 @@ tasks:
     updated_at: '2026-11-14T16:33:05.437144+00:00'
   - process: 単体テスト作成
     status: skipped
-    reason: 定数 MDMARK_TAG の値の変更だけで、追加・変更する単体テストが無い
+    reason: スクリプトを変更せず、追加・変更する単体テストが無い
     updated_by: planner
     updated_at: '2026-11-14T15:53:28.780528+00:00'
   - process: 実装
-    status: todo
-    note: scripts/_common.py の MDMARK_TAG を mdmark#562 を含むタグへ上げる
+    status: skipped
+    note: ''
+    reason: '唯一の実装だった MDMARK_TAG の引き上げを #427 へ移したため、この PR で変えるコードが無い'
+    updated_by: planner
+    updated_at: '2026-11-17T02:50:51.571043+00:00'
   - process: 結合テスト作成
     status: skipped
     reason: 追加・変更する結合テストが無い。文書の検査は全ての文書の検査（scripts/check_all.py）で確認する
