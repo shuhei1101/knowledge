@@ -1,0 +1,71 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: none
+    detail: 画面のタブとサイドバーにノウハウが加わる。シナリオの記述は種類によらず変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: none
+    detail: エージェントが種類 knowhow で知見を検索できる。シナリオの記述は種類によらず変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: none
+    detail: ノウハウの文書もスキーマと検査で書き込める。シナリオの記述は種類によらず変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: none
+    detail: 全ての文書の検査がノウハウの文書も検査する。シナリオの記述は種類によらず変わらない
+    depends_on: []
+docs:
+  - page: project-index.yaml
+    new: false
+    change: documents[] に種類 knowhow（docs/knowhow/*.yaml、schemas/knowhow.schema.yaml）の行を追加し、description・instructions・when に創作の知見（台本・演出・ゲーム）とノウハウを追加する
+    status: todo
+  - page: docs/rule/dev-document-management.yaml
+    new: false
+    change: 規約とノウハウの分け方（守らないと不具合・不統一になるものは規約、知っていると質が上がるものはノウハウ）と、knowledge と各プロジェクトのリポジトリへの知見の配置先を追加する
+    status: todo
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: docs/knowhow/ のフォルダと命名 knowhow-{scope}-{topic}.yaml を追加する
+    status: todo
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: サブシステム「文書」の role にノウハウを追加する
+    status: todo
+  - page: docs/template/template-knowhow.yaml
+    new: true
+    change: ノウハウの文書の書式（配置先・命名・キーの書き方）のテンプレートを新設する
+    status: todo
+  - page: docs/index.yaml
+    new: false
+    change: 目次に knowhow/ の行を追加する
+    status: todo
+  - page: docs/README.md
+    new: false
+    change: 種類の表に knowhow（ノウハウ）の行を追加する
+    status: todo
+  - page: CLAUDE.md
+    new: false
+    change: 種類の列挙とリポジトリの説明にノウハウ（knowhow）と創作の知見を追加する
+    status: todo
+  - page: rules.yaml
+    new: false
+    change: docs/knowhow/ へ移した文書を指す行を修正する（ノウハウは注入の索引に登録しない）
+    status: todo
+scope_out:
+  - item: ノウハウの一覧 A-157 の 21 件の登録
+    reason: 起点 Issue の後続。種類を配信できるようにした後に登録する
+    plan: to_file
+  - item: 取り込みのスキル craft-intake（~/.claude-dev/skills/craft-intake/SKILL.md）の取り込み先の修正
+    reason: knowledge のリポジトリの外（Git 管理外の利用者の設定）にあり、この作業 PR で変更できない。反映作業にするかはレビューで確定する
+    plan: to_file
+  - item: ほかのリポジトリ（ai-monitor・claude-balancer など）の docs/rule/ の変更
+    reason: 起点 Issue の問い 3 で変えないと決定済み（D-582 の B）
+    plan: none
+  - item: 移した文書のパスを直接参照しているほかのリポジトリ（aituber-support・mindstella の rules.yaml など）の追従
+    reason: ほかのリポジトリの変更。移す文書を決めた後に調べ、移す前に追従の Issue を起票する
+    plan: to_file
