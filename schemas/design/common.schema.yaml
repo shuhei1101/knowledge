@@ -49,16 +49,18 @@ $defs:
       - 辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。
       - 同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。
       - 同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。
+      - '`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。'
     x-bad-examples:
       - value: IF-12#flows[0]
         reason: リストの項目を番号で指している
-    pattern: "^(?:[A-Z]+-\\d+(?:-\\d+)?)?#(?:[^\\s\\[]|\\[[^\\]]*\\])*$"
+    pattern: "^(?:[A-Z]+-\\d+(?:-\\d+)?)?#(?:[^\\s\\[\\]]|\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\])*$"
     examples:
       - "IF-12#flows[正常系]"
       - "#functions[resolve_base].exceptions"
       - "CFG-3#"
       - "#notes[main.py の補足]"
       - "#functions[main#3]"
+      - "IF-6#request[operations[].fields].description"
   related_item:
     type: object
     title: 関連
@@ -94,7 +96,7 @@ $defs:
           - 生成で、関連先の項目へのリンクにする。
         x-rules:
           - 記載方法は参照（`ref`）の `#` より後と同じにする。
-        pattern: "^(?:[^\\s\\[#]|\\[[^\\]]*\\])(?:[^\\s\\[]|\\[[^\\]]*\\])*$"
+        pattern: "^(?:[^\\s\\[\\]#]|\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\])(?:[^\\s\\[\\]]|\\[(?:[^\\[\\]]|\\[[^\\[\\]]*\\])*\\])*$"
         examples:
           - "flows[正常系]"
           - "functions[resolve_base].exceptions"

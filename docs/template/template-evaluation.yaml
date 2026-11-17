@@ -48,7 +48,7 @@ items:
       | rerun_on | 再評価する変更 | array | 必須 | - | minItems: `1` | 再評価する変更（`model`・`prompt`・`inputs`・`criteria`・`cases`）。 | 実行で、対象の設計書と観点・ケースの差分から再評価を起票する。 | `[model, prompt, criteria]` |
       | refs | 関連 | array | - | - | maxItems: `8` | 関連する設計書の一覧。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | refs[].to | 相手の ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 関連先の設計書の最上位の `id`。項目のパスは `item` に分ける。 | 検査で、関連先の設計書が実在するかを確認する。<br>project-index の `trace_related` で、文書の ID と一致させて関連をたどる。 | `IF-12` / `IF-3038-1` |
-      | refs[].item | 項目のパス | string | - | - | pattern: `^(?:[^\s\[#]\|\[[^\]]*\])(?:[^\s\[]\|\[[^\]]*\])*$` | 関連先の項目のパス。設計書全体を指すときは記載しない。 | 検査で、`to` の設計書に項目が実在するかを確認する。<br>生成で、関連先の項目へのリンクにする。 | `flows[正常系]` / `functions[resolve_base].exceptions` |
+      | refs[].item | 項目のパス | string | - | - | pattern: `^(?:[^\s\[\]#]\|\[(?:[^\[\]]\|\[[^\[\]]*\])*\])(?:[^\s\[\]]\|\[(?:[^\[\]]\|\[[^\[\]]*\])*\])*$` | 関連先の項目のパス。設計書全体を指すときは記載しない。 | 検査で、`to` の設計書に項目が実在するかを確認する。<br>生成で、関連先の項目へのリンクにする。 | `flows[正常系]` / `functions[resolve_base].exceptions` |
       | refs[].type | 関係の種類 | string | 必須 | `requires` / `references` / `replaces` / `part_of` / `change_together` | - | 関係の種類で、`requires`（前提にする）/ `references`（参照する）/ `replaces`（置き換える）/ `part_of`（一部になる）/ `change_together`（同時に修正する）のどれか。 | レビューで、関連先の変更がこの設計書へ及ぶかを判断する。<br>project-index の `trace_related` で、たどった関連の影響の理由にする。 | - |
       | refs[].when | いつ参照するか | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 関連先をいつ参照するかの 1 文。 | 実装とレビューで、関連先を参照する場面を判断する。 | `例外の型を変えるときに、呼び出し側の異常系のフローを確認する。` |
       | refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
