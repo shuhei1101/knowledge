@@ -1,0 +1,9 @@
+前提確認: ok
+メッセージに (#493) を持つタグ: missing
+--- /dev/null
++++ shuhei1101/ai-monitor#3607 のコメント
++knowledge の [shuhei1101/knowledge#492](https://github.com/shuhei1101/knowledge/issues/492)（作業 PR [#493](https://github.com/shuhei1101/knowledge/pull/493)）で、`schemas/design/module.schema.yaml` の `test_files` に、規約『フォルダ構成』のとおり対象の横に配置した単体テストのファイル（`*.test.ts`・`*.test.tsx`）を記載できるようになりました（`pattern` を `^(?:tests/.+|.+\.test\.tsx?)$` に変更）。
++
++- タグ: `design-schemas/v{作成したタグ}`
++- 設計書のスキーマの参照をこのタグへ上げれば、記載せずに進めた画面のフロントエンドのモジュール構成の `test_files` に `frontend/src/...test.ts(x)` を記載できます
+ai-monitor#3607 へのコメント: changed
