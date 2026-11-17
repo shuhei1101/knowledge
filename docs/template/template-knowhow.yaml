@@ -1,0 +1,137 @@
+id: template-knowhow
+kind: template
+name: 'テンプレート: ノウハウ'
+description: 台本・演出・ゲーム作りなどの規約でない知見を 1 技法 1 文書で記載するノウハウの書式（配置先・命名・使用する場面・実例・裏付け・確信度の記載方法）を定め、ノウハウを作るときに参照する。
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      ノウハウを作るときの書式定義。
+
+      配置先は `docs/knowhow/knowhow-{scope}-{topic}.yaml`（ファイル名は `id`）。
+      `{scope}` は分野（`script`・`direction`・`video`・`game` など英語の 1 単語）、`{topic}` は技法の英語のスラッグにする。
+      規約とノウハウの分け方は規約 [ドキュメント管理](id:dev-document-management#knowhow-01) に従う。
+  - id: section-list-01
+    name: セクション一覧
+    body: |-
+      <!-- table: {"kind": "data"} -->
+
+      | セクション | サブセクション | 必須or条件 |
+      | --- | --- | --- |
+      | タイトル（メタデータ `name`・`description`） | - | 必須 |
+      | `necessity` | - | 必須 |
+      | `scenes` | `fits`・`misfits` | 必須（`misfits` は有効でない場面がある場合のみ） |
+      | `cases` | - | 技法を使用した例がある場合のみ |
+      | `evidence`・`confidence` | - | 必須 |
+      | `items` | `overview` | 必須 |
+
+      <!-- /table -->
+  - id: title-01
+    name: '`タイトル`'
+    body: |-
+      ### 記述例
+
+      ```yaml
+      id: knowhow-script-cold-open
+      kind: knowhow
+      name: 冒頭で本編の山場を先に見せる
+      description: 配信の冒頭で本編の山場を短く先に見せて視聴者を引き留める技法を記載し、台本の冒頭を作るときに参照する。
+      visibility: internal
+      last_reviewed: '{YYYY-MM-DD}'
+      sources:
+        - id: A
+          title: "{出典のタイトル}"
+          url: "{URL}"
+      ```
+
+      ### 補足
+
+      - `name` は技法を 1 行で表す
+      - `visibility` は `internal` にし、公開するものだけを `public` にする
+      - `evidence`・`cases` が指す `sources[]` の要素には `id` を付ける
+  - id: necessity-01
+    name: '`necessity`'
+    body: |-
+      ### 記述例
+
+      ```yaml
+      necessity: reference
+      ```
+
+      ### 補足
+
+      - 守らないと質が崩れる技法は `must`、知っていると質が上がる技法は `reference` にする
+  - id: scenes-01
+    name: '`scenes`'
+    body: |-
+      ### 記述例
+
+      ```yaml
+      scenes:
+        fits:
+          - 配信の冒頭で視聴者の注意を集めるとき
+        misfits:
+          - 視聴者の質問に回答している途中
+      ```
+
+      ### 補足
+
+      - 1 件を 1 文にする
+  - id: cases-01
+    name: '`cases`'
+    body: |-
+      ### 記述例
+
+      ```yaml
+      cases:
+        - work: "『{作品名}』第 1 話の冒頭"
+          content: "{その場面で技法をどう使用しているか}"
+          source: A
+      ```
+  - id: evidence-01
+    name: '`evidence`・`confidence`'
+    body: |-
+      ### 記述例
+
+      ```yaml
+      evidence:
+        - source: A
+          speaker: practitioner
+        - source: B
+          speaker: third_party
+      confidence: high
+      ```
+
+      ### 補足
+
+      - 同じことを述べている出典が複数あれば、出典ごとに要素を並べる
+      - `confidence` はスキーマの `confidence` の `x-rules` で `evidence` から決める
+  - id: items-01
+    name: '`items`'
+    body: |-
+      ### 記述例
+
+      ```yaml
+      items:
+        - id: overview
+          name: 概要
+          body: |-
+            {技法の中身を 1〜3 行}
+        - id: steps-01
+          name: 使用方法
+          body: |-
+            1. {手順}
+      ```
+
+      ### 補足
+
+      - 調べた記録そのものは記載せず、結論と確認した記録の要点だけを記載する
+tags:
+  - name: scope:テンプレート
+  - name: topic:テンプレート
+  - name: topic:ノウハウ
+    main: true
+  - name: topic:ファイル

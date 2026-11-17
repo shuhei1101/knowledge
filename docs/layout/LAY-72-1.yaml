@@ -121,6 +121,11 @@ entries:
         content_types: [knowledge_doc]
         naming: ['{scope}-{topic}.yaml']
       - type: folder
+        name: knowhow
+        contents: ノウハウ（台本・演出・ゲーム作りなどの規約でない知見。1 技法 1 文書）
+        content_types: [knowledge_doc]
+        naming: ['knowhow-{scope}-{topic}.yaml']
+      - type: folder
         name: template
         contents: テンプレート。設計書の種類のテンプレートの `items` だけを `schemas/design/` から生成し、ほかのキーとほかのテンプレートは手で記載する
         content_types: [knowledge_doc]

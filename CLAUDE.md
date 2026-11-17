@@ -1,11 +1,11 @@
 # Knowledge
 
-どのプロジェクトでも共通で使用するコーディング規約・テンプレートを配置するリポジトリ。
+どのプロジェクトでも共通で使用するコーディング規約・テンプレートと、台本・演出・ゲーム作りなどの創作の知見（ノウハウ）を配置するリポジトリ。
 
 ## ドキュメント
 
 実体は [docs/](./docs/) の YAML にある。
-種類（rule・template・flowchart・decision-table・checksheet・guide・skill・word-list）ごとのフォルダに 1 トピック 1 ファイルで配置し、スキーマは [schemas/](./schemas/) にある。
+種類（rule・knowhow・template・flowchart・decision-table・checksheet・guide・skill・word-list）ごとのフォルダに 1 トピック 1 ファイルで配置し、スキーマは [schemas/](./schemas/) にある。
 設計書のスキーマの原本は [schemas/design/](./schemas/design/) にあり、各プロジェクトは `design-schemas/v{メジャー}.{マイナー}.{パッチ}` のタグで指す。
 スキーマを変える PR は、develop へマージした後にタグを上げる反映作業を持つ。
 既存の設計書が検査を通らなくなる変更はメジャー、通ったままの変更はマイナー、検査の結果を変えない変更はパッチを上げる。

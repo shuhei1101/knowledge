@@ -18,6 +18,7 @@ knowledge の文書全体の目次
 | [layout](./layout/) | リポジトリのフォルダとファイルの構成 |
 | [library](./library/) | 使う外部ライブラリ・ CLI |
 | [rule](./rule/) | 規約 |
+| [knowhow](./knowhow/) | ノウハウ |
 | [template](./template/) | テンプレート |
 | [flowchart](./flowchart/) | 判定フローチャート |
 | [decision-table](./decision-table/) | 判定表 |
