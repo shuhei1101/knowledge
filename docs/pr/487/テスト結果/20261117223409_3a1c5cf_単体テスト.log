@@ -1,0 +1,34 @@
+$ TMPDIR=/tmp/pi487/tmp (rc=0; uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit || rc=1; uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check || rc=1; exit $rc)
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/shuhei2441/repo/knowledge/.claude/worktrees/chore-project-index-align-search-scope-and-metadata
+configfile: pytest.ini
+collected 295 items
+
+tests/unit/scripts/test_build_pages.py ...................               [  6%]
+tests/unit/scripts/test_build_skills.py .......................          [ 14%]
+tests/unit/scripts/test_build_templates.py ........................      [ 22%]
+tests/unit/scripts/test_build_word_list.py ...                           [ 23%]
+tests/unit/scripts/test_check_all.py ................................... [ 35%]
+...................                                                      [ 41%]
+tests/unit/scripts/test_common.py ....................                   [ 48%]
+tests/unit/scripts/test_knowledge_checks.py ..........................   [ 57%]
+tests/unit/scripts/test_knowledge_markdown.py .......................... [ 66%]
+...................                                                      [ 72%]
+tests/unit/scripts/test_lint.py .....................                    [ 79%]
+tests/unit/scripts/test_workflow.py .....................                [ 86%]
+tests/unit/slop-check/test_slop_check.py ............................... [ 97%]
+........                                                                 [100%]
+
+============================= 295 passed in 5.84s ==============================
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/shuhei2441/repo/knowledge/.claude/worktrees/chore-project-index-align-search-scope-and-metadata
+configfile: pytest.ini
+collected 39 items
+
+tests/unit/slop-check/test_slop_check.py ............................... [ 79%]
+........                                                                 [100%]
+
+============================== 39 passed in 0.04s ==============================
+exit=0

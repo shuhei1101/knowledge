@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schemas/knowledge-files.schema.yaml
+files:
+  - path: .claude-plugin/plugin.json
+    name: プラグイン slop-check の定義
+    description: プラグイン slop-check の名前・説明・作者を受け持ち、プラグインの名前や説明を変えるときに参照する。
+    tags: [topic:プラグイン, tool:claude-code]
+    related:
+      - to: claude-plugin
+        type: see_also
+  - path: hooks/hooks.json
+    name: slop-check のフックの登録
+    description: 書き込むツールの後に照合のスクリプトを起動する PostToolUse のフックの登録を受け持ち、フックの対象のツールや起動のしかたを変えるときに参照する。
+    tags: [topic:フック, tool:claude-code]
+    related:
+      - to: IF-148-1
+        type: implements
+      - to: claude-hook
+        type: see_also
+  - path: hooks/post-tool-use/slop_check.py
+    name: 書き込んだ中身の照合のフック
+    description: 書き込むツールの中身を AI slop の単語の対応表で照合し、ヒットした単語と置き換え先の通知を返す。照合の範囲や通知の文を変えるときに参照する。
+    tags: [topic:対応表, topic:フック, tool:claude-code]
+    related:
+      - to: MOD-148-2
+        type: implements
+      - to: IF-148-1
+        type: implements
+  - path: hooks/post-tool-use/word-list-ai-slop.json
+    name: AI slop の単語の対応表のコピー
+    description: 原本の対応表 docs/word-list/word-list-ai-slop.yaml から書き出した、フックが読む NG と OK の単語のコピーを受け持ち、照合で使う単語の中身を確認するときに参照する。
+    tags: [topic:対応表]
+    related:
+      - to: IF-148-2
+        type: see_also
+      - to: word-list-ai-slop
+        type: see_also
+  - path: ruff.toml
+    name: slop-check の ruff の設定
+    description: フックを Python 3.12 の構文に合わせる ruff の設定と、print を許すファイルを受け持ち、フックの lint の設定を変えるときに参照する。
+    tags: [topic:lint, tool:ruff]
+    related:
+      - to: MOD-148-1
+        type: see_also
+checkpoint:
+  commit: a6daa0b87e00312027423c7d1f28280d5caa5f74
+  reviewed: []

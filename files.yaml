@@ -1,0 +1,106 @@
+# yaml-language-server: $schema=schemas/knowledge-files.schema.yaml
+files:
+  - path: .claude-plugin/marketplace.json
+    name: knowledge のマーケットプレイスの定義
+    description: プラグイン knowledge と slop-check を載せるマーケットプレイスの名前・説明・各プラグインの配置先を受け持ち、配るプラグインを追加・修正するときに参照する。
+    tags: [topic:プラグイン, topic:マーケットプレイス, tool:claude-code]
+    related:
+      - to: claude-plugin
+        type: see_also
+  - path: .claude-plugin/plugin.json
+    name: プラグイン knowledge の定義
+    description: リポジトリの直下をプラグイン knowledge にする名前・説明・作者を受け持ち、プラグイン knowledge の名前や説明を変えるときに参照する。
+    tags: [topic:プラグイン, topic:スキル, tool:claude-code]
+    related:
+      - to: claude-plugin
+        type: see_also
+  - path: .github/workflows/pages.yml
+    name: 公開文書の配信のワークフロー
+    description: develop への push で公開の文書だけを 1 枚の HTML にして GitHub Pages へ配信するワークフローを受け持ち、配信の手順や起動の条件を変えるときに参照する。
+    tags: [topic:ci, topic:配信, tool:github-actions]
+    related:
+      - to: IF-137-2
+        type: implements
+  - path: .github/workflows/test.yml
+    name: テストの全件実行のワークフロー
+    description: 選んだ層のテストの全件を GitHub Actions のランナーで回してログを成果物に上げるワークフローを受け持ち、ランナーでのテストの実行を変えるときに参照する。
+    tags: [topic:ci, topic:テスト, tool:github-actions]
+    related:
+      - to: IF-352-1
+        type: implements
+  - path: .gitignore
+    name: Git の追跡から除外するファイルの一覧
+    description: 生成した Markdown・Pages の成果物・キャッシュ・npm の依存を Git の追跡から除外する設定を受け持ち、追跡しないファイルを追加・修正するときに参照する。
+    tags: [topic:gitignore, tool:git]
+    related:
+      - to: LAY-72-1
+        type: see_also
+  - path: CLAUDE.md
+    name: Claude Code へのリポジトリの案内
+    description: Claude Code のセッションに参照させる knowledge の概要・文書の置き場所・着手前に引く規約を受け持ち、エージェントへの案内を修正するときに参照する。
+    tags: [topic:エージェント, tool:claude-code]
+    related:
+      - to: LAY-72-1
+        type: see_also
+  - path: README.md
+    name: knowledge の紹介と使い方
+    description: knowledge の目的・文書の使い方・文書の検査の実行方法を利用者へ案内し、リポジトリの入口の説明を修正するときに参照する。
+    tags: [topic:使い方]
+    related:
+      - to: guide-setup-docs-mcp
+        type: see_also
+  - path: ai-monitor-version.ini
+    name: 追従している AI Monitor の版
+    description: このリポジトリが追従している AI Monitor の配布物の版を受け持ち、AI Monitor の版上げに追従するときに参照する。
+    tags: [topic:バージョン, tool:ai-monitor]
+  - path: mdmark.config.yaml
+    name: mdmark の設定
+    description: 文書の map の図で使用するノードの種類（ラベル・アイコン・形・色）と線の書き方を受け持ち、図のノードの種類や見た目を追加・修正するときに参照する。
+    tags: [topic:図, tool:mdmark]
+  - path: project-index.yaml
+    name: 配信元 knowledge の配信の設定
+    description: knowledge の文書の種類ごとの行・検査と変換のスクリプト・画面のタブとサイドバーの構成を受け持ち、配信する文書の範囲や画面の構成を変えるときに参照する。
+    tags: [topic:配信, topic:設定, tool:project-index]
+    related:
+      - to: dev-docs-navigation
+        type: see_also
+      - to: guide-setup-docs-mcp
+        type: see_also
+  - path: pyrightconfig.json
+    name: pyright の設定
+    description: scripts・tests・slop-check のフックに当てる pyright の厳しさ・Python のバージョン・import のパスを受け持ち、型検査の対象や設定を変えるときに参照する。
+    tags: [topic:型検査, tool:pyright]
+    related:
+      - to: TP-72-1
+        type: see_also
+  - path: pytest.ini
+    name: pytest の設定
+    description: テストのフォルダ・import のパス・警告をエラーにする設定を受け持ち、テストの実行の設定を変えるときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: TP-72-1
+        type: see_also
+  - path: ruff.toml
+    name: ruff の設定
+    description: scripts・tests・plugins に当てる ruff の行長・Python のバージョン・lint のルールの選択と除外を受け持ち、lint のルールや書式の設定を変えるときに参照する。
+    tags: [topic:lint, tool:ruff]
+    related:
+      - to: TP-72-1
+        type: see_also
+  - path: rules.yaml
+    name: knowledge のルール索引
+    description: rule-inject が操作の前に案内する規約・テンプレートと、当てるファイルの glob・参照のツールの対応を受け持ち、規約を当てるファイルを追加・修正するときに参照する。
+    tags: [topic:索引, topic:ルール, tool:rule-inject]
+    related:
+      - to: dev-rule-index-registration
+        type: see_also
+  - path: version.ini
+    name: knowledge のリリースの版
+    description: knowledge の今のリリースの版を受け持ち、release でタグを打つときに参照する。
+    tags: [topic:バージョン]
+    related:
+      - to: changelog
+        type: see_also
+checkpoint:
+  commit: a6daa0b87e00312027423c7d1f28280d5caa5f74
+  reviewed: []

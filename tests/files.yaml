@@ -1,0 +1,164 @@
+# yaml-language-server: $schema=../schemas/knowledge-files.schema.yaml
+files:
+  - path: e2e/workflow/conftest.py
+    name: workflow の E2E テストの共通の fixture
+    description: 検証用のブランチの push・gh での workflow の起動・結果の取得を workflow の E2E テストへ提供し、workflow の起動や結果の取り方を変えるときに参照する。
+    tags: [topic:テスト, topic:ci, tool:pytest]
+    related:
+      - to: IF-352-1
+        type: see_also
+  - path: e2e/workflow/test_test_yml.py
+    name: テストの全件実行のワークフローの E2E テスト
+    description: 本物の GitHub Actions で .github/workflows/test.yml を起動し、層の全件の実行とログの成果物を確認する。ワークフローの振る舞いを変えたときに参照する。
+    tags: [topic:テスト, topic:ci, tool:pytest]
+    related:
+      - to: .github/workflows/test.yml
+        type: tests
+  - path: integration/scripts/conftest.py
+    name: スクリプトの結合テストの共通の fixture
+    description: 入口のスクリプトを子プロセスとして起動する処理を scripts の結合テストへ提供し、スクリプトの起動のしかたを変えるときに参照する。
+    tags: [topic:テスト, tool:pytest]
+  - path: integration/scripts/test_build_pages.py
+    name: Pages の成果物の作成の結合テスト
+    description: scripts/build_pages.py を子プロセスで起動し、Pages の成果物の作成の入出力をインターフェース定義のとおりか確認する。Pages の成果物の作成の振る舞いを変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/build_pages.py
+        type: tests
+  - path: integration/scripts/test_build_skills.py
+    name: SKILL.md の生成の結合テスト
+    description: scripts/build_skills.py を子プロセスで起動し、SKILL.md の生成の入出力をインターフェース定義のとおりか確認する。SKILL.md の生成の振る舞いを変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/build_skills.py
+        type: tests
+  - path: integration/scripts/test_build_templates.py
+    name: 設計書のテンプレートの生成の結合テスト
+    description: scripts/build_templates.py を子プロセスで起動し、設計書のテンプレートの生成の入出力をインターフェース定義のとおりか確認する。設計書のテンプレートの生成の振る舞いを変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/build_templates.py
+        type: tests
+  - path: integration/scripts/test_build_word_list.py
+    name: 対応表のコピーの作成の結合テスト
+    description: scripts/build_word_list.py を子プロセスで起動し、対応表のコピーの作成の入出力をインターフェース定義のとおりか確認する。対応表のコピーの作成の振る舞いを変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/build_word_list.py
+        type: tests
+  - path: integration/scripts/test_check_all.py
+    name: 全ての文書の検査の結合テスト
+    description: scripts/check_all.py を子プロセスで起動し、全ての文書の検査の入出力をインターフェース定義のとおりか確認する。全ての文書の検査の振る舞いを変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/check_all.py
+        type: tests
+  - path: integration/scripts/test_knowledge_checks.py
+    name: 文書の違反の検査の結合テスト
+    description: scripts/knowledge_checks.py を子プロセスで起動し、文書の違反の検査の入出力をインターフェース定義のとおりか確認する。文書の違反の検査の振る舞いを変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/knowledge_checks.py
+        type: tests
+  - path: integration/scripts/test_knowledge_markdown.py
+    name: 文書の Markdown への変換の結合テスト
+    description: scripts/knowledge_markdown.py を子プロセスで起動し、文書の Markdown への変換の入出力をインターフェース定義のとおりか確認する。文書の Markdown への変換の振る舞いを変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/knowledge_markdown.py
+        type: tests
+  - path: integration/slop-check/conftest.py
+    name: slop-check の結合テストの共通の fixture
+    description: フックのスクリプトを子プロセスとして起動する処理を slop-check の結合テストへ提供し、フックの起動のしかたを変えるときに参照する。
+    tags: [topic:テスト, tool:pytest]
+  - path: integration/slop-check/test_slop_check.py
+    name: 書き込んだ中身の照合の結合テスト
+    description: slop-check のフックを子プロセスで起動し、PostToolUse の入力から通知の出力までをインターフェース定義のとおりか確認する。照合の振る舞いを変えたときに参照する。
+    tags: [topic:テスト, topic:対応表, tool:pytest]
+    related:
+      - to: plugins/slop-check/hooks/post-tool-use/slop_check.py
+        type: tests
+  - path: unit/scripts/conftest.py
+    name: スクリプトの単体テストの共通の fixture
+    description: scripts の単体テストで共通に使う fixture を提供し、単体テストの準備を変えるときに参照する。
+    tags: [topic:テスト, tool:pytest]
+  - path: unit/scripts/test_build_pages.py
+    name: Pages の成果物の作成の単体テスト
+    description: scripts/build_pages.py の関数をモジュール構成のとおりか確認する。Pages の成果物の作成の実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/build_pages.py
+        type: tests
+  - path: unit/scripts/test_build_skills.py
+    name: SKILL.md の生成の単体テスト
+    description: scripts/build_skills.py の関数をモジュール構成のとおりか確認する。SKILL.md の生成の実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/build_skills.py
+        type: tests
+  - path: unit/scripts/test_build_templates.py
+    name: 設計書のテンプレートの生成の単体テスト
+    description: scripts/build_templates.py の関数をモジュール構成のとおりか確認する。設計書のテンプレートの生成の実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/build_templates.py
+        type: tests
+  - path: unit/scripts/test_build_word_list.py
+    name: 対応表のコピーの作成の単体テスト
+    description: scripts/build_word_list.py の関数をモジュール構成のとおりか確認する。対応表のコピーの作成の実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/build_word_list.py
+        type: tests
+  - path: unit/scripts/test_check_all.py
+    name: 全ての文書の検査の単体テスト
+    description: scripts/check_all.py の関数をモジュール構成のとおりか確認する。全ての文書の検査の実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/check_all.py
+        type: tests
+  - path: unit/scripts/test_common.py
+    name: 文書の読み込みの共通処理の単体テスト
+    description: scripts/_common.py の関数をモジュール構成のとおりか確認する。文書の読み込みの共通処理の実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/_common.py
+        type: tests
+  - path: unit/scripts/test_knowledge_checks.py
+    name: 文書の違反の検査の単体テスト
+    description: scripts/knowledge_checks.py の関数をモジュール構成のとおりか確認する。文書の違反の検査の実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/knowledge_checks.py
+        type: tests
+  - path: unit/scripts/test_knowledge_markdown.py
+    name: 文書の Markdown への変換の単体テスト
+    description: scripts/knowledge_markdown.py の関数をモジュール構成のとおりか確認する。文書の Markdown への変換の実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/knowledge_markdown.py
+        type: tests
+  - path: unit/scripts/test_lint.py
+    name: 全ての文書の検査の lint の呼び出しの単体テスト
+    description: scripts/_lint.py の関数をモジュール構成のとおりか確認する。全ての文書の検査の lint の呼び出しの実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/_lint.py
+        type: tests
+  - path: unit/scripts/test_workflow.py
+    name: workflow のファイルとインターフェース定義の照合の単体テスト
+    description: scripts/_workflow.py の関数をモジュール構成のとおりか確認する。workflow のファイルとインターフェース定義の照合の実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/_workflow.py
+        type: tests
+  - path: unit/slop-check/test_slop_check.py
+    name: 書き込んだ中身の照合の単体テスト
+    description: slop-check のフックの関数をモジュール構成のとおりか確認する。照合の実装を変えたときに参照する。
+    tags: [topic:テスト, topic:対応表, tool:pytest]
+    related:
+      - to: plugins/slop-check/hooks/post-tool-use/slop_check.py
+        type: tests
+checkpoint:
+  commit: a6daa0b87e00312027423c7d1f28280d5caa5f74
+  reviewed: []

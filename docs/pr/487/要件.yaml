@@ -1,0 +1,55 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-2.yaml
+    impact: run_only
+    detail: 利用者が knowledge を登録するときの点検の対象に、新しい管理用の YAML の行が加わる。流れは変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: run_only
+    detail: エージェントが検索・取得できる文書に、README・CLAUDE.md・スキーマ・テスト・プラグインのファイルが加わる。流れは変わらない
+    depends_on: []
+docs:
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: 新しく置く管理用の YAML（フォルダごとの files.yaml）を、置くフォルダのエントリに加える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T13:32:24.949280+00:00'
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: サブシステム『文書』の役割の「YAML でないファイルを記載する files.yaml」を、検索の対象を広げた後の範囲に合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T13:32:24.949280+00:00'
+  - page: docs/guide/guide-setup-docs-mcp.yaml
+    new: false
+    change: 検索できる文書の範囲と、ファイルを足したときの管理用の YAML の行の追加の記述を、見直した後の範囲に合わせる（記述が無ければ変えない）。files.yaml・管理用の YAML の記述が無く、変えていない
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T13:32:24.949280+00:00'
+  - page: docs/nonfunctional/NFR-72-1.yaml
+    new: false
+    change: check_project の索引の同期で metadata の列（description ← lead）が欠けていたため、lead を記載する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T13:32:28.537441+00:00'
+  - page: docs/test-procedure/TP-72-1.yaml
+    new: false
+    change: 'check_project の違反（description が必須）を解消するため、lead を記載し、project-index.yaml の行に description: lead を対応付ける'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T13:32:28.537441+00:00'
+  - page: docs/dev-command/CMD-72-1.yaml
+    new: false
+    change: 'check_project の違反（description が必須）を解消するため、lead を記載し、project-index.yaml の行に description: lead を対応付ける'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T13:32:28.537441+00:00'
+scope_out:
+  - item: PR の資料（docs/pr/）を検索の対象に入れる
+    reason: 1174 件あり、マージ後の作業 PR の計画で規約・テンプレートの検索を埋もれさせる。参考の shuhei1101/project-index#132 も入れていない。入れないと判断し、レビューで確定する
+    plan: none
+  - item: 既存の YAML の文書（docs/ の種類の行の文書）のメタデータの見直し
+    reason: Issue の対象は検索の対象外のファイルと管理用の YAML の行で、種類の行の文書はスキーマが持つメタデータで既に配信している
+    plan: none
