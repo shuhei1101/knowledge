@@ -1,0 +1,14 @@
+docs:
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: 直下のファイルに mdmark.config.yaml（mdmark の設定）の行を追加し、ai-monitor-version.ini の中身を AI Monitor の配布物への準拠バージョンに修正する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:00:36.886994+00:00'
+scope_out:
+  - item: 直下の mdmark.config.yaml への check.suggestMarkExtension の記載
+    reason: 同じファイルの別のキーで、別の Issue の要望
+    plan: '#331'
+  - item: サイトのレイアウト（docs/_theme/・ai-monitor-theme.yaml）の取り込み
+    reason: knowledge は AI Monitor のサイトのレイアウトを使用しない
+    plan: none
