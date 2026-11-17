@@ -1,0 +1,1 @@
+# 配信元 knowledge の検索の対象とメタデータを project-index の setup の推奨の範囲と付け方に合わせる
