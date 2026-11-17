@@ -1,0 +1,67 @@
+id: knowhow-eval-judge-human-label
+kind: knowhow
+name: LLM の採点器は人の正解ラベルとの一致率で選び、低い観点は採点に使用しない
+description: LLM の採点が面白さやロールプレイで人に届かず、採点器の点を目標にすると質を上げず点だけが上がるため、人の正解ラベルとの一致率で採点器を選び、人の確認を挟む技法を記載し、LLM の採点を精度評価に使用するときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: RJ
+    title: ロールプレイの LLM の採点の研究
+    url: https://arxiv.org/abs/2508.10014
+  - id: SH
+    title: 採点基準は出力を確認すると変わる（Who Validates the Validators?）
+    url: https://arxiv.org/abs/2404.12272
+  - id: RH
+    title: 採点器への過剰適合の研究
+    url: https://arxiv.org/abs/2505.15795
+  - id: OG
+    title: 大喜利の LLM と人の採点の研究
+    url: https://arxiv.org/abs/2511.09133
+  - id: CE
+    title: CharacterEval
+    url: https://arxiv.org/abs/2401.01275
+necessity: must
+scenes:
+  fits:
+    - LLM の採点を精度評価やプロンプトの自動の修正に使用するとき。
+evidence:
+  - source: RJ
+    speaker: practitioner
+  - source: SH
+    speaker: practitioner
+  - source: RH
+    speaker: practitioner
+  - source: OG
+    speaker: practitioner
+  - source: CE
+    speaker: practitioner
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      LLM の採点は、セリフの面白さやロールプレイで人に届かない。
+      採点器は人の正解ラベルとの一致率で選び、一致率の低い観点は採点に使用しない。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 人が出力の一部に正解ラベルを付ける。点を付けていくうちに基準が変わるので、基準はラベルを付けながら固める
+      2. 観点ごとに採点器と人の一致率を測り、一致率の高い採点器を選ぶ
+      3. 一致率の低い観点は採点に使用せず、人が確認する
+      4. 採点器の点を目標に自動で修正するときは、人の確認を挟む（質を上げず点だけが上がるのを防ぐ）
+  - id: notes-01
+    name: 人に届かない例
+    body: |-
+      | 観点 | LLM と人 |
+      | --- | --- |
+      | 大喜利の全体の面白さ | 相関 0.17〜0.27。人は共感、LLM は新規性を重視する |
+      | 誰が話しているか | 最良の LLM で約 69%、人は 90.8% |
+      | キャラクターの会話の質（CharacterEval） | GPT-4 の採点と人の相関は約 0.37 |
+tags:
+  - name: topic:精度評価
+    main: true
+  - name: topic:llm
+  - name: action:検証
+  - name: topic:ノウハウ

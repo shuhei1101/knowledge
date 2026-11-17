@@ -1,0 +1,53 @@
+id: knowhow-eval-line-criteria
+kind: knowhow
+name: キャラクターのセリフの採点観点は、会話力・一貫性・魅力・性格の再現の軸で立て、毎回出る観点と条件で出る観点を分ける
+description: キャラクターのセリフ・つぶやきの採点観点を、既存の評価の軸（会話力・一貫性・魅力・性格の再現）で立て、毎回出る観点と条件で出る観点に分ける技法を記載し、セリフ生成の精度評価の観点を決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: CE
+    title: CharacterEval
+    url: https://arxiv.org/abs/2401.01275
+  - id: FED
+    title: FED
+    url: https://arxiv.org/abs/2006.12719
+  - id: CB
+    title: CharacterBench
+    url: https://arxiv.org/abs/2412.11912
+  - id: CN
+    title: 'コムニコ: キャラクターアカウントの運用'
+    url: https://www.comnico.jp/we-love-social/character-account
+necessity: reference
+scenes:
+  fits:
+    - キャラクターのセリフ・つぶやきの生成の精度評価で、採点観点を決めるとき。
+evidence:
+  - source: CE
+    speaker: practitioner
+  - source: FED
+    speaker: practitioner
+  - source: CB
+    speaker: practitioner
+  - source: CN
+    speaker: third_party
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      セリフの採点観点は、会話力・一貫性・魅力（人間らしさ・表現の幅・共感）・性格の再現の軸で立てる（CharacterEval の 13 指標をまとめた 4 軸）。
+      観点は、毎回出るものと条件がそろったときだけ出るものに分け、後者は引き出す質問を作る。
+  - id: steps-01
+    name: 観点の候補
+    body: |-
+      - 興味深さ・引き込み・好感・多様さ（FED）
+      - SNS で共有されやすいのは強い感情、特にポジティブなもの。キャラクターのアカウントは一方的な告知ではなく、双方向と日常の物語で評価する
+tags:
+  - name: topic:精度評価
+    main: true
+  - name: topic:観点
+  - name: topic:セリフ
+  - name: topic:llm
+  - name: topic:ノウハウ
