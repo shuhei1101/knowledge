@@ -1,0 +1,18 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: run_only
+    detail: タブとサイドバーの並びが変わるため、全ての種類の文書が画面から開け、並びが配信の設定と一致することを確かめる
+    depends_on: []
+docs:
+  - page: docs/guide/guide-setup-docs-mcp.yaml
+    new: false
+    change: 画面の確認の手順の「種類のタブとサイドバーから文書を選ぶ」を、タブが種類ごとでなくなるのに合わせて修正する
+    status: todo
+scope_out:
+  - item: knowledge 以外の配信元のタブとサイドバーの定義
+    reason: 要望は knowledge の配信元の設定に限る
+    plan: '#441'
+  - item: タブ「はじめに」の概要・コアコンセプトのページの新設
+    reason: 要望はナビゲーションの並びの修正で、文書の新設を含まない
+    plan: none
