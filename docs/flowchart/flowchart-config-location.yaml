@@ -30,7 +30,7 @@ tags:
   - name: action:秘匿
 status: current
 visibility: internal
-rev: 8
+rev: 9
 sources:
   - title: "The Twelve-Factor App: Config"
     url: https://12factor.net/config
@@ -61,101 +61,76 @@ items:
     group: 設定値の置き場所 判定フローチャート
     name: 判定フロー
     body: |-
-      <!-- flow -->
+      <!-- map: {"title": "設定値の置き場所"} -->
 
-      ```json
-      {
-        "title": "設定値の置き場所",
-        "scope": "設定値・秘匿値・定数の配置先を決めるとき",
-        "updated": "2026-11-02",
-        "width": 1648,
-        "height": 1676,
-        "nodes": [
-          {"id": "start", "kind": "start", "x": 764, "y": 24, "w": 120, "h": 120, "name": "配置先を決めたい値がある"},
-          {"id": "q0", "kind": "question", "x": 684, "y": 202, "w": 280, "h": 120, "name": "秘匿値か ※1"},
-          {"id": "q1", "kind": "question", "x": 1034, "y": 200, "w": 280, "h": 124, "name": "本番・共有の環境で使用するか"},
-          {"id": "r1", "kind": "result", "x": 1384, "y": 226, "w": 240, "h": 72, "name": "secret manager"},
-          {"id": "q2", "kind": "question", "x": 1034, "y": 380, "w": 280, "h": 164, "name": "実装のフレームワークが .env.local を読み込むか"},
-          {"id": "r3", "kind": "result", "x": 1384, "y": 434, "w": 240, "h": 56, "name": ".env.local"},
-          {"id": "r2", "kind": "result", "x": 1054, "y": 654, "w": 240, "h": 56, "name": "ホーム配下の秘匿ファイル"},
-          {"id": "q3", "kind": "question", "x": 684, "y": 400, "w": 280, "h": 124, "name": "実行中に書き換わる状態か"},
-          {"id": "r4", "kind": "result", "x": 354, "y": 416, "w": 240, "h": 92, "name": "データ（data/ 履歴・キャッシュ。git の外）"},
-          {"id": "q4", "kind": "question", "x": 684, "y": 600, "w": 280, "h": 164, "name": "人・マシン・環境ごとに変わる値か ※2"},
-          {"id": "q5", "kind": "question", "x": 334, "y": 600, "w": 280, "h": 164, "name": "この checkout だけ値を変えたいか ※3"},
-          {"id": "r6", "kind": "result", "x": 24, "y": 646, "w": 240, "h": 72, "name": "checkout の上書き"},
-          {"id": "r5", "kind": "result", "x": 354, "y": 874, "w": 240, "h": 56, "name": "ホームの設定"},
-          {"id": "q6", "kind": "question", "x": 684, "y": 820, "w": 280, "h": 164, "name": "ブランチでコードとバージョンを一致させたい値か ※4"},
-          {"id": "r7", "kind": "result", "x": 1054, "y": 874, "w": 240, "h": 56, "name": "コミットする既定値"},
-          {"id": "q7", "kind": "question", "x": 684, "y": 1040, "w": 280, "h": 124, "name": "言語をまたいで使用するか"},
-          {"id": "r8", "kind": "result", "x": 354, "y": 1066, "w": 240, "h": 72, "name": "コミットする定数の YAML ※5"},
-          {"id": "q8", "kind": "question", "x": 684, "y": 1220, "w": 280, "h": 124, "name": "同じ言語の複数のファイルで使用するか"},
-          {"id": "r9", "kind": "result", "x": 1054, "y": 1254, "w": 240, "h": 56, "name": "定数モジュール"},
-          {"id": "q9", "kind": "question", "x": 684, "y": 1400, "w": 280, "h": 124, "name": "同じファイルの複数箇所で使用するか"},
-          {"id": "r10", "kind": "result", "x": 354, "y": 1434, "w": 240, "h": 56, "name": "ファイル先頭の定数"},
-          {"id": "r11", "kind": "result", "x": 704, "y": 1580, "w": 240, "h": 72, "name": "その場の名前付き変数 ※6"}
-        ],
-        "wires": [
-          {"id": "j-start-q0", "from": "start", "to": "q0", "line": "flow", "points": [[824, 144], [824, 202]]},
-          {"id": "j-q0-q1", "from": "q0", "to": "q1", "line": "flow", "points": [[964, 262], [1034, 262]], "label": "YES", "labelAt": [999, 262]},
-          {"id": "j-q0-q3", "from": "q0", "to": "q3", "line": "flow", "points": [[824, 322], [824, 400]], "label": "NO", "labelAt": [824, 361]},
-          {"id": "j-q1-r1", "from": "q1", "to": "r1", "line": "flow", "points": [[1314, 262], [1384, 262]], "label": "YES", "labelAt": [1349, 262]},
-          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[1174, 324], [1174, 380]], "label": "NO", "labelAt": [1174, 352]},
-          {"id": "j-q2-r3", "from": "q2", "to": "r3", "line": "flow", "points": [[1314, 462], [1384, 462]], "label": "YES", "labelAt": [1349, 462]},
-          {"id": "j-q2-r2", "from": "q2", "to": "r2", "line": "flow", "points": [[1174, 544], [1174, 654]], "label": "NO", "labelAt": [1174, 599]},
-          {"id": "j-q3-r4", "from": "q3", "to": "r4", "line": "flow", "points": [[684, 462], [594, 462]], "label": "YES", "labelAt": [639, 462]},
-          {"id": "j-q3-q4", "from": "q3", "to": "q4", "line": "flow", "points": [[824, 524], [824, 600]], "label": "NO", "labelAt": [824, 562]},
-          {"id": "j-q4-q5", "from": "q4", "to": "q5", "line": "flow", "points": [[684, 682], [614, 682]], "label": "YES", "labelAt": [649, 682]},
-          {"id": "j-q4-q6", "from": "q4", "to": "q6", "line": "flow", "points": [[824, 764], [824, 820]], "label": "NO", "labelAt": [824, 792]},
-          {"id": "j-q5-r6", "from": "q5", "to": "r6", "line": "flow", "points": [[334, 682], [264, 682]], "label": "YES", "labelAt": [299, 682]},
-          {"id": "j-q5-r5", "from": "q5", "to": "r5", "line": "flow", "points": [[474, 764], [474, 874]], "label": "NO", "labelAt": [474, 819]},
-          {"id": "j-q6-q7", "from": "q6", "to": "q7", "line": "flow", "points": [[824, 984], [824, 1040]], "label": "NO", "labelAt": [824, 1012]},
-          {"id": "j-q6-r7", "from": "q6", "to": "r7", "line": "flow", "points": [[964, 902], [1054, 902]], "label": "YES", "labelAt": [1009, 902]},
-          {"id": "j-q7-r8", "from": "q7", "to": "r8", "line": "flow", "points": [[684, 1102], [594, 1102]], "label": "YES", "labelAt": [639, 1102]},
-          {"id": "j-q7-q8", "from": "q7", "to": "q8", "line": "flow", "points": [[824, 1164], [824, 1220]], "label": "NO", "labelAt": [824, 1192]},
-          {"id": "j-q8-q9", "from": "q8", "to": "q9", "line": "flow", "points": [[824, 1344], [824, 1400]], "label": "NO", "labelAt": [824, 1372]},
-          {"id": "j-q8-r9", "from": "q8", "to": "r9", "line": "flow", "points": [[964, 1282], [1054, 1282]], "label": "YES", "labelAt": [1009, 1282]},
-          {"id": "j-q9-r10", "from": "q9", "to": "r10", "line": "flow", "points": [[684, 1462], [594, 1462]], "label": "YES", "labelAt": [639, 1462]},
-          {"id": "j-q9-r11", "from": "q9", "to": "r11", "line": "flow", "points": [[824, 1524], [824, 1580]], "label": "NO", "labelAt": [824, 1552]}
-        ]
-      }
+      ```mermaid
+      flowchart TB
+        start(("配置先を決めたい値がある"))
+        q0{"秘匿値か"}
+        q1{"本番・共有の環境で使用するか"}
+        r1(["secret manager"])
+        q2{"実装のフレームワークが .env.local を読み込むか"}
+        r3([".env.local"])
+        r2(["ホーム配下の秘匿ファイル"])
+        q3{"実行中に書き換わる状態か"}
+        r4(["データ（data/ 履歴・キャッシュ。git の外）"])
+        q4{"人・マシン・環境ごとに変わる値か"}
+        q5{"この checkout だけ値を変えたいか"}
+        r6(["checkout の上書き"])
+        r5(["ホームの設定"])
+        q6{"ブランチでコードとバージョンを一致させたい値か"}
+        r7(["コミットする既定値"])
+        q7{"言語をまたいで使用するか"}
+        r8(["コミットする定数の YAML"])
+        q8{"同じ言語の複数のファイルで使用するか"}
+        r9(["定数モジュール"])
+        q9{"同じファイルの複数箇所で使用するか"}
+        r10(["ファイル先頭の定数"])
+        r11(["その場の名前付き変数"])
+        start --> q0
+        q0 -->|YES| q1
+        q0 -->|NO| q3
+        q1 -->|YES| r1
+        q1 -->|NO| q2
+        q2 -->|YES| r3
+        q2 -->|NO| r2
+        q3 -->|YES| r4
+        q3 -->|NO| q4
+        q4 -->|YES| q5
+        q4 -->|NO| q6
+        q5 -->|YES| r6
+        q5 -->|NO| r5
+        q6 -->|NO| q7
+        q6 -->|YES| r7
+        q7 -->|YES| r8
+        q7 -->|NO| q8
+        q8 -->|NO| q9
+        q8 -->|YES| r9
+        q9 -->|YES| r10
+        q9 -->|NO| r11
       ```
 
-      <!-- /flow -->
-  - id: config-location-flow-02
-    group: 設定値の置き場所 判定フローチャート
-    name: ※1 秘匿値
-    body: |-
-      - ※1 秘匿値: API キー・パスワード・トークン・秘密鍵など、漏れると悪用される値。
-        git の管理下とログのどちらにも配置しない
-  - id: config-location-flow-03
-    group: 設定値の置き場所 判定フローチャート
-    name: ※2 環境の値
-    body: |-
-      - ※2 環境の値: 接続先・費用の上限・マシンごとのパスなど、構造はほぼ変わらず値だけが人・マシン・環境で変わる値
-  - id: config-location-flow-04
-    group: 設定値の置き場所 判定フローチャート
-    name: ※3 checkout の上書き
-    body: |-
-      - ※3 checkout の上書き: ブランチで試したい値など、その clone だけで変える値。
-        リポジトリ直下の `settings.local.yaml`（git の外）に記載する
-  - id: config-location-flow-05
-    group: 設定値の置き場所 判定フローチャート
-    name: ※4 既定値
-    body: |-
-      - ※4 既定値: 項目の一覧・辞書と既定値（retry・timeout・機能フラグなど、コードを変えずに調整する値。最大長のようにコードの前提になる値は含めない）。
-        項目の構造の原本で、ブランチのコードと同じバージョンで読み込めるようリポジトリにコミットする
-  - id: config-location-flow-06
-    group: 設定値の置き場所 判定フローチャート
-    name: ※5 定数の YAML
-    body: |-
-      - ※5 定数の YAML: ラベル名のように、コードと文書が言語をまたいで共有する定数の原本（`config/constants.yaml` 等）。
-        設定の 3 レイヤーに入れず、環境の値や checkout の上書きで上書きされない
-  - id: config-location-flow-07
-    group: 設定値の置き場所 判定フローチャート
-    name: ※6 その場の名前付き変数
-    body: |-
-      - ※6 その場の名前付き変数: 使用する 1 か所の近くで値に名前を付ける。
-        値だけでは意味が読み取れないときも、その場で名前を付ける
+      <!-- map-data: {"version": 1, "notes": {"q0": {"annotations": ["config-location-n1"]}, "q4": {"annotations": ["config-location-n2"]}, "q5": {"annotations": ["config-location-n3"]}, "q6": {"annotations": ["config-location-n4"]}, "r8": {"annotations": ["config-location-n5"]}, "r11": {"annotations": ["config-location-n6"]}}} -->
+
+      <!-- /map -->
+
+      ※[config-location-n1]: 秘匿値: API キー・パスワード・トークン・秘密鍵など、漏れると悪用される値。
+          git の管理下とログのどちらにも配置しない。
+
+      ※[config-location-n2]: 環境の値: 接続先・費用の上限・マシンごとのパスなど、構造はほぼ変わらず値だけが人・マシン・環境で変わる値。
+
+      ※[config-location-n3]: checkout の上書き: ブランチで試したい値など、その clone だけで変える値。
+          リポジトリ直下の `settings.local.yaml`（git の外）に記載する。
+
+      ※[config-location-n4]: 既定値: 項目の一覧・辞書と既定値（retry・timeout・機能フラグなど、コードを変えずに調整する値）。
+          最大長のようにコードの前提になる値は含めない。
+          項目の構造の原本で、ブランチのコードと同じバージョンで読み込めるようリポジトリにコミットする。
+
+      ※[config-location-n5]: 定数の YAML: ラベル名のように、コードと文書が言語をまたいで共有する定数の原本（`config/constants.yaml` 等）。
+          設定の 3 レイヤーに入れず、環境の値や checkout の上書きで上書きされない。
+
+      ※[config-location-n6]: その場の名前付き変数: 使用する 1 か所の近くで値に名前を付ける。
+          値だけでは意味が読み取れないときも、その場で名前を付ける。
   - id: three-layers-01
     group: 設定の 3 レイヤー
     name: 3 レイヤーの案内

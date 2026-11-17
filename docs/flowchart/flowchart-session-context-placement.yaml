@@ -30,7 +30,7 @@ sources:
     note: compact で SessionStart が再実行される
 status: current
 visibility: internal
-rev: 2
+rev: 3
 items:
   - id: overview
     name: 概要
@@ -41,52 +41,35 @@ items:
     group: エージェントに渡す文・処理の置き場所 判定フローチャート
     name: 判定フロー
     body: |-
-      <!-- flow -->
+      <!-- map: {"title": "エージェントに渡す文・処理の置き場所"} -->
 
-      ```json
-      {
-        "title": "エージェントに渡す文・処理の置き場所",
-        "scope": "プラグインや MCP サーバーがセッションに指定するものを決めるとき",
-        "updated": "2026-11-03",
-        "width": 948,
-        "height": 912,
-        "nodes": [
-          {"id": "start", "kind": "start", "x": 414, "y": 24, "w": 120, "h": 120, "name": "エージェントに指定する文・処理がある"},
-          {"id": "q1", "kind": "question", "x": 334, "y": 200, "w": 280, "h": 120, "name": "処理を実行するか ※1"},
-          {"id": "r1", "kind": "result", "x": 684, "y": 232, "w": 240, "h": 56, "name": "SessionStart のフック"},
-          {"id": "q2", "kind": "question", "x": 334, "y": 376, "w": 280, "h": 164, "name": "セッションごとに変わる事実か ※2"},
-          {"id": "r2", "kind": "result", "x": 24, "y": 422, "w": 240, "h": 72, "name": "ツールで取得させる（SessionStart で注入しない）"},
-          {"id": "q3", "kind": "question", "x": 334, "y": 596, "w": 280, "h": 164, "name": "そのプラグインが MCP を持つか"},
-          {"id": "r3", "kind": "result", "x": 684, "y": 650, "w": 240, "h": 56, "name": "MCP の instructions"},
-          {"id": "r4", "kind": "result", "x": 354, "y": 816, "w": 240, "h": 72, "name": "SessionStart で注入する ※3"}
-        ],
-        "wires": [
-          {"id": "j-start-q1", "from": "start", "to": "q1", "line": "flow", "points": [[474, 144], [474, 200]]},
-          {"id": "j-q1-r1", "from": "q1", "to": "r1", "line": "flow", "points": [[614, 260], [684, 260]], "label": "YES", "labelAt": [649, 260]},
-          {"id": "j-q1-q2", "from": "q1", "to": "q2", "line": "flow", "points": [[474, 320], [474, 376]], "label": "NO", "labelAt": [474, 348]},
-          {"id": "j-q2-r2", "from": "q2", "to": "r2", "line": "flow", "points": [[334, 458], [264, 458]], "label": "YES", "labelAt": [299, 458]},
-          {"id": "j-q2-q3", "from": "q2", "to": "q3", "line": "flow", "points": [[474, 540], [474, 596]], "label": "NO", "labelAt": [474, 568]},
-          {"id": "j-q3-r3", "from": "q3", "to": "r3", "line": "flow", "points": [[614, 678], [684, 678]], "label": "YES", "labelAt": [649, 678]},
-          {"id": "j-q3-r4", "from": "q3", "to": "r4", "line": "flow", "points": [[474, 760], [474, 816]], "label": "NO", "labelAt": [474, 788]}
-        ]
-      }
+      ```mermaid
+      flowchart TB
+        start(("エージェントに指定する文・処理がある"))
+        q1{"処理を実行するか"}
+        r1(["SessionStart のフック"])
+        q2{"セッションごとに変わる事実か"}
+        r2(["ツールで取得させる（SessionStart で注入しない）"])
+        q3{"そのプラグインが MCP を持つか"}
+        r3(["MCP の instructions"])
+        r4(["SessionStart で注入する"])
+        start --> q1
+        q1 -->|YES| r1
+        q1 -->|NO| q2
+        q2 -->|YES| r2
+        q2 -->|NO| q3
+        q3 -->|YES| r3
+        q3 -->|NO| r4
       ```
 
-      <!-- /flow -->
-  - id: session-context-placement-flow-02
-    group: エージェントに渡す文・処理の置き場所 判定フローチャート
-    name: ※1 処理
-    body: |-
-      - ※1 処理: 常駐のサーバーの起動・環境変数の設定・記録の後片付けなど、文を指定するのではなく実行するもの。
-        instructions は文を指定するだけで、処理を実行できない
-  - id: session-context-placement-flow-03
-    group: エージェントに渡す文・処理の置き場所 判定フローチャート
-    name: ※2 セッションごとに変わる事実
-    body: |-
-      - ※2 セッションごとに変わる事実: 作業場所から使用できる配信元など、起動した場所や時点で変わるもの
-  - id: session-context-placement-flow-04
-    group: エージェントに渡す文・処理の置き場所 判定フローチャート
-    name: ※3 SessionStart で注入するもの
-    body: |-
-      - ※3 SessionStart で注入するもの: MCP を持たないプラグインの常に守る決まり。
-        instructions を記載するサーバーが無い
+      <!-- map-data: {"version": 1, "notes": {"q1": {"annotations": ["session-context-placement-n1"]}, "q2": {"annotations": ["session-context-placement-n2"]}, "r4": {"annotations": ["session-context-placement-n3"]}}} -->
+
+      <!-- /map -->
+
+      ※[session-context-placement-n1]: 処理: 常駐のサーバーの起動・環境変数の設定・記録の後片付けなど、文を指定するのではなく実行するもの。
+          instructions は文を指定するだけで、処理を実行できない。
+
+      ※[session-context-placement-n2]: セッションごとに変わる事実: 作業場所から使用できる配信元など、起動した場所や時点で変わるもの。
+
+      ※[session-context-placement-n3]: SessionStart で注入するもの: MCP を持たないプラグインの常に守る決まり。
+          instructions を記載するサーバーが無い。
