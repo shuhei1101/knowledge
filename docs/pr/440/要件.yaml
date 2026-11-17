@@ -1,0 +1,15 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 修正した判定フローチャートを全ての文書の検査にかけ、スキーマと map の点検が通るかを見る
+    depends_on: []
+docs:
+  - page: docs/flowchart/flowchart-integration-test-parallelism.yaml
+    new: false
+    change: q1 のスワップの空きの条件を、要件で選んだ案のとおり修正し、※2・updated・rev を合わせる
+    status: todo
+scope_out:
+  - item: 判定フローチャートの ※n を mdmark の注記の記法へ書き換える
+    reason: '#173（作業 PR #396）の範囲。この作業 PR は着手のときの develop の記法で記載し、#173 が後に入る場合は PR #396 へこのファイルを範囲に含めるよう連絡する'
+    plan: '#173'
