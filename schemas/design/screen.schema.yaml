@@ -70,7 +70,12 @@ properties:
     x-used-by:
       - テストで、画面を開いて確認する結合テストを作るファイルにする。
       - 検査で、テストのファイルがあるかを確認する。
-    pattern: ^tests/.+
+    x-rules:
+      - 規約『フォルダ構成』で対象の横に配置する React の結合テストは、対象の横のファイル（`*.test.ts`・`*.test.tsx`）を記載する。
+    pattern: ^(?:tests/.+|.+\.test\.tsx?)$
+    examples:
+    - "tests/integration/task/test_タスク作成画面.py"
+    - "frontend/src/features/plan/plan-list/plan-list-screen.test.tsx"
   impl_files:
     type: array
     title: 実装のファイル

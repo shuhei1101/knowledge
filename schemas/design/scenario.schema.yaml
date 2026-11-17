@@ -55,12 +55,15 @@ properties:
     type: string
     title: 対応テストファイル
     description: |-
-      `tests/e2e/{単一ユースケース,複合ユースケース}/…`（規約『V字モデル』）。
+      `tests/e2e/{単一ユースケース,複合ユースケース}/…`。React のフロントエンドは `frontend/tests/e2e/{単一ユースケース,複合ユースケース}/…`（規約『V字モデル』）。
     x-used-by:
       - テストで、E2E テストを作るファイルにする。
       - 検査で、テストのファイルがあるかを確認する。
       - 計画で、作業 PR の影響するユースケースから E2E の対象を集める。
-    pattern: ^tests/.+
+    pattern: ^(?:tests/.+|frontend/tests/e2e/.+)$
+    examples:
+    - "tests/e2e/単一ユースケース/test_profile_edit.py"
+    - "frontend/tests/e2e/単一ユースケース/プロフィールを編集する.spec.ts"
   primary_actor:
     type: string
     title: 主アクター
