@@ -136,8 +136,30 @@ def test_normal_when_kind_specific_keys(run_script: RunScript, tmp_path: Path) -
     """種類に固有のキーを、スキーマの title を見出しにした節で出す（正常系）。"""
     # 準備: 固有のキーの title を持つ種類のスキーマを、配信元の schemas/ に配置する
     (tmp_path / "schemas").mkdir()
+    # arguments の要素は $defs を $ref で指し、scenes は中のキーの title を持つ
     (tmp_path / "schemas" / "sample.schema.yaml").write_text(
-        "properties:\n  arguments:\n    title: 引数\n  preconditions:\n    title: 事前条件\n",
+        "properties:\n"
+        "  arguments:\n"
+        "    title: 引数\n"
+        "    items:\n"
+        "      $ref: '#/$defs/argument'\n"
+        "  preconditions:\n"
+        "    title: 事前条件\n"
+        "  scenes:\n"
+        "    title: 使用する場面\n"
+        "    properties:\n"
+        "      fits:\n"
+        "        title: 有効な場面\n"
+        "  level:\n"
+        "    title: 確信度\n"
+        "    enum: [high, low]\n"
+        "$defs:\n"
+        "  argument:\n"
+        "    properties:\n"
+        "      name:\n"
+        "        title: 引数名\n"
+        "      description:\n"
+        "        title: 説明\n",
         encoding="utf-8",
     )
     shutil.copy(_ROOT / "project-index.yaml", tmp_path / "project-index.yaml")
@@ -152,6 +174,11 @@ def test_normal_when_kind_specific_keys(run_script: RunScript, tmp_path: Path) -
         "preconditions:\n"
         "  - 作業ツリーがある\n"
         "  - 規約を読める\n"
+        "scenes:\n"
+        "  fits:\n"
+        "    - 配信の冒頭\n"
+        "    - 話題の切り替え\n"
+        "level: low\n"
         "items:\n"
         "  - id: overview\n"
         "    name: 概要\n"
@@ -164,6 +191,15 @@ def test_normal_when_kind_specific_keys(run_script: RunScript, tmp_path: Path) -
     assert '## 引数\n\n<!-- table: {"kind": "data"} -->\n\n' in result.stdout
     assert "| target | 点検する範囲 |" in result.stdout
     assert "## 事前条件\n\n- 作業ツリーがある\n- 規約を読める\n" in result.stdout
+    # 表の列名は $defs の要素のスキーマの title
+    assert "| 引数名 | 説明 |" in result.stdout
+    # オブジェクトの中の配列は、キーの title の行と 1 段下げた要素の箇条書き
+    assert "## 使用する場面\n\n- 有効な場面\n  - 配信の冒頭\n  - 話題の切り替え\n" in result.stdout
+    # 列挙は値のまま
+    assert "## 確信度\n\nlow\n" in result.stdout
+    # JSON の文字列の値が出ない
+    assert '["' not in result.stdout
+    assert '{"' not in result.stdout.replace('<!-- table: {"kind": "data"} -->', "")
 
 
 def test_normal_when_knowhow(run_script: RunScript) -> None:
