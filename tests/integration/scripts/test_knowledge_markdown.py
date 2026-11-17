@@ -166,6 +166,27 @@ def test_normal_when_kind_specific_keys(run_script: RunScript, tmp_path: Path) -
     assert "## 事前条件\n\n- 作業ツリーがある\n- 規約を読める\n" in result.stdout
 
 
+def test_normal_when_knowhow(run_script: RunScript) -> None:
+    """ノウハウの文書を、ノウハウのスキーマの title を見出しにしたセクションで出す（正常系）。"""
+    # 準備: リポジトリの project-index.yaml と schemas/knowhow.schema.yaml で変換する
+    stdin = (_ROOT / "docs" / "knowhow" / "knowhow-design-site-genre.yaml").read_text(
+        encoding="utf-8"
+    )
+    # 実行
+    result = run_script("knowledge_markdown", _ROOT, stdin)
+    # 検証
+    assert result.exit_code == 0
+    assert result.stdout.startswith("# サイトのジャンルの雰囲気からデザインの候補を出し分ける\n")
+    assert "\n## 従う必要\n\nreference\n" in result.stdout
+    assert "\n## 使用する場面\n" in result.stdout
+    assert "\n## 実例\n" in result.stdout
+    assert "\n## 裏付け\n" in result.stdout
+    assert "\n## 確信度\n\nlow\n" in result.stdout
+    assert (
+        "| 地域・行政 | 装飾を配置せず、高いコントラストと太いフォーカス枠 | GOV |" in result.stdout
+    )
+
+
 def test_error_when_schema_missing(run_script: RunScript) -> None:
     """kind のスキーマが無ければ変換せずに終わる（異常系）。"""
     # 準備

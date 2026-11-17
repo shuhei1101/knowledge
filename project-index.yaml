@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/shuhei1101/dev-docs/3fa52c474176b95140f6e05ec4a78869e1dd401c/schemas/dev-docs.schema.json
 version: "3"
 name: knowledge
-description: どのプロジェクトでも共通で使用するコーディング規約・テンプレート・判定フローチャート・判定表・チェックシート・使い方
+description: どのプロジェクトでも共通で使用するコーディング規約・テンプレート・判定フローチャート・判定表・チェックシート・使い方と、台本・演出・ゲーム作りなどの創作の知見（ノウハウ）
 instructions: |-
-  規約（rule）・テンプレート（template）・判定フローチャート（flowchart）・判定表（decision-table）・チェックシート（checksheet）・使い方（guide）・変更履歴（changelog）・単語の対応表（word-list）・用語集（terms）は `docs/` の YAML が原本で、種類ごとの行に分かれる。
+  規約（rule）・ノウハウ（knowhow）・テンプレート（template）・判定フローチャート（flowchart）・判定表（decision-table）・チェックシート（checksheet）・使い方（guide）・変更履歴（changelog）・単語の対応表（word-list）・用語集（terms）は `docs/` の YAML が原本で、種類ごとの行に分かれる。
   スキル（skill）は `docs/skill/` の YAML が原本で、書式は `schemas/design/agent_flow.schema.yaml` の `type: skill` で、`steps[]` が工程を持つ。
   本文は `items[]` の各項目が持ち、`[名前](id:{文書の ID}#{項目の ID})` で他の文書・項目を指す。`related[].when` がその文書を読むときを表す。
   `skills/`・`scripts/` のファイルは、各フォルダの `files.yaml` が名前・概要文・タグを持つ。
@@ -13,6 +13,7 @@ when:
   - コードを作成・レビューする前に、言語やフレームワークの規約を確認するとき
   - 設計書・文書を作成する前に、テンプレートと記載方法の規約を確認するとき
   - 設定の置き場所・表し方・命名などの判断に迷ったときに、判定フローチャートを参照するとき
+  - 台本・演出・ゲーム作りなどの創作で、使える技法（ノウハウ）を探すとき
 related:
   types: [references, requires, replaces, part_of, change_together, see_also, implements, tests]
 github:
@@ -30,6 +31,16 @@ documents:
     title: 規約
     paths: ["docs/rule/*.yaml"]
     schema: schemas/rule.schema.yaml
+    validators: [knowledge-checks]
+    converter: knowledge-markdown
+    alias_type: doc
+    metadata:
+      tags: tags[].name
+      main_tags: tags[main].name
+  - id: knowhow
+    title: ノウハウ
+    paths: ["docs/knowhow/*.yaml"]
+    schema: schemas/knowhow.schema.yaml
     validators: [knowledge-checks]
     converter: knowledge-markdown
     alias_type: doc
@@ -241,6 +252,10 @@ nav:
           items:
             - auto:
                 document: word-list
+    - title: ノウハウ
+      items:
+        - auto:
+            document: knowhow
     - title: テンプレート
       items:
         - auto:

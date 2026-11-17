@@ -36,10 +36,11 @@ tags:
   - name: action:配信
   - name: action:開発
   - name: tool:project-index
+  - name: topic:ノウハウ
 status: current
 visibility: internal
-rev: 13
-last_reviewed: '2026-11-07'
+rev: 14
+last_reviewed: '2026-11-17'
 sources:
   - title: "Anthropic: Effective context engineering for AI agents"
     url: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
@@ -335,3 +336,28 @@ items:
     body: |-
       - プロジェクトが独自のテンプレートを持つのは、knowledge に無い固有の設計書の種類が要るときだけにする
       - knowledge の既存の種類を拡張したいときは、プロジェクトで持たずに knowledge へ追加する
+  - id: knowhow-01
+    group: 規約とノウハウ
+    name: 規約とノウハウの分け方
+    body: |-
+      - 守らないと不具合・不統一になるものは規約（`rule`）、守らなくても成り立つが知っていると質が上がる知見はノウハウ（`knowhow`）にする
+      - ノウハウは 1 つの技法を 1 文書にし、台本・演出・ゲーム作りなどの創作の知見も配置する
+      - ノウハウは rules.yaml に掲載せず、手順の文書・スキルの工程から ID かタグで指す
+  - id: knowhow-02
+    group: 規約とノウハウ
+    name: 知見の配置先
+    body: |-
+      <!-- table: {"kind": "data"} -->
+
+      | 知見 | 配置先 |
+      | --- | --- |
+      | 複数のプロジェクトで使用できる技法 | knowledge |
+      | 実行時のノードが毎回従う内容（進め方・プロンプト） | そのプロジェクトのリポジトリ。元になった技法が knowledge にあれば ID で指す |
+      | 1 つのプロジェクトだけで使用する知見 | そのプロジェクトのリポジトリ |
+      | 調べた結果そのもの（調査・PoC の記録） | 話し合いのワークスペース。ノウハウには結論・出典と確認した記録の要点だけを持たせる |
+
+      <!-- /table -->
+  - id: knowhow-03
+    group: 規約とノウハウ
+    name: ノウハウの公開範囲
+    body: '- ノウハウの `visibility` の既定は `internal` にし、公開するものだけを 1 件ずつ `public` にする'

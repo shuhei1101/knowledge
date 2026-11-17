@@ -1,0 +1,86 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存のリポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: 設計書が揃っているリポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めを依頼する Issue ではない
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: 種類の行の追加は既存の種類（word-list・guide 等）と同じ仕組みで、未検証の技術機構に依存しない
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: 利用者・エージェントの操作の流れは変わらない（SC-72-3・SC-72-4・SC-72-5 は種類によらない記述）
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 画面を持たない（判定フローチャート『モック要否』で不要）
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面を持たない（判定フローチャート『モック要否』で不要）
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: 単一ユースケース設計
+    status: skipped
+    reason: シナリオの記述は種類によらず、種類の追加で変わらない
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: モック作成
+    status: skipped
+    reason: 画面を持たない（判定フローチャート『モック要否』で不要）
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: インターフェース定義設計
+    status: skipped
+    reason: 検査（IF-72-1）・変換（IF-72-2）・全ての文書の検査（IF-72-3）は project-index.yaml の行とスキーマで動き、入出力は変わらない
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: 部品設計
+    status: skipped
+    reason: 画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: 画面を持たない（判定フローチャート『画面設計要否』で不要）
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: モジュール構成設計
+    status: skipped
+    reason: スクリプトは種類を列挙せず、スキーマの title で種類に固有のキーを変換するため、モジュールの構成は変わらない
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: ドキュメント修正
+    status: done
+    note: アーキテクチャ図・フォルダ構成の設計書・規約『ドキュメント管理』・目次・README・CLAUDE.md・テンプレートの追加と、docs/rule/ の全件の調査と知見に該当する文書の移動
+    updated_by: planner
+    updated_at: '2026-11-17T07:32:47.627482+00:00'
+  - process: 単体テスト作成
+    status: skipped
+    reason: スクリプトのコードを変えない
+    updated_by: planner
+    updated_at: '2026-11-17T06:22:04.177008+00:00'
+  - process: 実装
+    status: done
+    note: project-index.yaml の knowhow の行と rules.yaml のテンプレートの行を追加した（fdd8c20・173d0d9）
+    updated_by: planner
+    updated_at: '2026-11-17T07:33:13.414386+00:00'
+  - process: 結合テスト作成
+    status: done
+    note: knowhow の文書が検査・変換・全ての文書の検査を通ることを確かめるテスト
+    updated_by: planner
+    updated_at: '2026-11-17T07:43:29.757869+00:00'

@@ -1,0 +1,225 @@
+id: knowhow-design-site-genre
+kind: knowhow
+name: サイトのジャンルの雰囲気からデザインの候補を出し分ける
+description: サイトのジャンルごとの雰囲気・モチーフ・色・UI の味付けの例から、デザインの候補を出し分ける技法を記載し、デザインの方向を探って候補を出し分けるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: ATD
+    title: 'ATD: 5 Marketing Design Techniques for Standout E-Learning'
+    url: https://www.td.org/insights/5-marketing-design-techniques-for-standout-e-learning
+  - id: THE
+    title: 'Times Higher Education: A simple way to improve navigation in online learning'
+    url: https://www.timeshighereducation.com/campus/simple-way-improve-navigation-online-learning
+  - id: SM
+    title: 'Smashing Magazine: Designing Websites For Kids: Trends And Best Practices'
+    url: https://shop.smashingmagazine.com/2009/11/designing-websites-for-kids-trends-and-best-practices/
+  - id: UXM
+    title: 'UXmatters: Effective Use of Color and Graphics in Applications for Children'
+    url: https://www.uxmatters.com/mt/archives/2011/10/effective-use-of-color-and-graphics-in-applications-for-children-part-i-toddlers-and-preschoolers.php
+  - id: SH
+    title: 'Seahawk Media: Top Design Trends for Modern Gardening Websites'
+    url: https://seahawkmedia.com/wordpress/top-design-trends-for-modern-gardening-websites/
+  - id: MGS
+    title: 'Muffin Group: Sports Website Design Examples'
+    url: https://muffingroup.com/blog/sports-website-design/
+  - id: DUS
+    title: 'daisyUI trends: Sports Brutalism'
+    url: https://trends.daisyui.com/trend/sports-brutalism/
+  - id: KB
+    title: 'Kombai: Heritage Bakehouse'
+    url: https://kombai.com/gallery/inspirations/heritage-bakehouse/
+  - id: DRB
+    title: 'Dribbble: 27 stamp designs to inspire your travels'
+    url: https://dribbble.com/stories/2019/06/14/27-stamp-designs-to-inspire-your-travels
+  - id: OR
+    title: 'Orshot: Vintage postcard template'
+    url: https://orshot.com/templates/1970
+  - id: MGD
+    title: 'Made Good Designs: Pet Brand Design'
+    url: https://madegooddesigns.com/pet-brand-design/
+  - id: NP
+    title: 'Nicepage: Modern Bookstore Website Design'
+    url: https://nicepage.com/sd/6666296/modern-bookstore-website-design
+  - id: INS
+    title: 'INSIDEA: Inkhallow concept'
+    url: https://insidea.com/customers/websites/inkhallow-concept
+  - id: WPM
+    title: 'Wikipedia: Manga iconography'
+    url: https://en.wikipedia.org/wiki/Manga_iconography
+  - id: DUH
+    title: 'daisyUI trends: Halftone Comic Book'
+    url: https://trends.daisyui.com/trend/halftone-comic-book/
+  - id: MGG
+    title: 'Muffin Group: Gaming Website Design Examples'
+    url: https://muffingroup.com/blog/gaming-website-design/
+  - id: DRG
+    title: 'DesignRush: God of War website'
+    url: https://www.designrush.com/best-designs/websites/god-of-war
+  - id: DUP
+    title: 'daisyUI trends: Pixel Art'
+    url: https://trends.daisyui.com/trend/pixel-art/
+  - id: CO
+    title: 'Codrops: Cinematic Presence'
+    url: https://tympanus.net/codrops/2026/02/20/cinematic-presence-the-directors-cut-of-the-jason-bergh-experience/
+  - id: WF
+    title: 'Webflow: A deep dive into movie poster design'
+    url: https://webflow.com/blog/movie-poster-design
+  - id: PX
+    title: 'Pixpa: Best Photography Portfolio Websites'
+    url: https://www.pixpa.com/blog/best-photography-portfolio-websites
+  - id: UT
+    title: 'Utsubo: Japanese Web Design: Style, Aesthetics & Examples'
+    url: https://www.utsubo.com/blog/japanese-web-design-style-guide
+  - id: WG
+    title: 'Wagara: Japanese pattern'
+    url: https://sites.google.com/view/wagara-japanese-pattern/English
+  - id: MW
+    title: The Monospace Web
+    url: https://gwern.net/doc/www/owickstrom.github.io/abb00592013666d65dc50b5f37ca262fd1cd679f.html
+  - id: PR
+    title: 'Progress: Healthcare Color Palette'
+    url: https://www.progress.com/blogs/using-color-psychology-healthcare-web-design
+  - id: PS
+    title: 'PaperStreet: Modern vs. Traditional Design Style for Your Law Firm'
+    url: https://www.paperstreet.com/blog/modern-vs-traditional-finding-the-right-design-style-for-your-law-firm/
+  - id: LD
+    title: 'Lake Design: Best Fonts and Color Combinations for Law Firm Websites'
+    url: https://lakedesign.co/bold-and-professional-best-fonts-and-color-combinations-for-law-firm-websites/
+  - id: MHM
+    title: 'MustHaveMenus: Chalk Cafe Menu'
+    url: https://musthavemenus.com/menu-template/chalk-cafe-menu.html
+  - id: MGL
+    title: 'Muffin Group: Luxury Website Design Examples'
+    url: https://muffingroup.com/blog/luxury-websites
+  - id: GOV
+    title: 'GOV.UK Design System: Understanding focus state styles'
+    url: https://design-system.service.gov.uk/get-started/focus-states
+necessity: reference
+scenes:
+  fits:
+    - デザインスタイル選定で、サイトのジャンルに合う方向の候補を複数出し分けるとき
+    - デザイン方針のワンポイントの題材を探すとき
+  misfits:
+    - 業務系・管理画面のデザインを選ぶとき（規約『デザインスタイル』の業務系のスタイルを参照する）
+    - 例をそのまま組み合わせて採用を確定するとき
+cases:
+  - work: 地域・行政
+    content: 装飾を配置せず、高いコントラストと太いフォーカス枠
+    source: GOV
+  - work: アニメ・漫画
+    content: コマ割り、集中線、網点、吹き出し
+    source: WPM
+  - work: 子ども・子育て
+    content: 原色、大きな角丸、丸い文字、押すと弾む動き
+    source: SM
+evidence:
+  - source: ATD
+    speaker: third_party
+  - source: THE
+    speaker: third_party
+  - source: SM
+    speaker: third_party
+  - source: UXM
+    speaker: third_party
+  - source: SH
+    speaker: third_party
+  - source: MGS
+    speaker: third_party
+  - source: DUS
+    speaker: third_party
+  - source: KB
+    speaker: third_party
+  - source: DRB
+    speaker: third_party
+  - source: OR
+    speaker: third_party
+  - source: MGD
+    speaker: third_party
+  - source: NP
+    speaker: third_party
+  - source: INS
+    speaker: third_party
+  - source: WPM
+    speaker: third_party
+  - source: DUH
+    speaker: third_party
+  - source: MGG
+    speaker: third_party
+  - source: DRG
+    speaker: third_party
+  - source: DUP
+    speaker: third_party
+  - source: CO
+    speaker: third_party
+  - source: WF
+    speaker: third_party
+  - source: PX
+    speaker: third_party
+  - source: UT
+    speaker: third_party
+  - source: WG
+    speaker: third_party
+  - source: MW
+    speaker: third_party
+  - source: PR
+    speaker: third_party
+  - source: PS
+    speaker: third_party
+  - source: LD
+    speaker: third_party
+  - source: MHM
+    speaker: third_party
+  - source: MGL
+    speaker: third_party
+  - source: GOV
+    speaker: practitioner
+confidence: low
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      対象は共通（単体 HTML・React）。
+      サイトのジャンルごとの雰囲気・モチーフ・色・UI の味付けの例から、デザインの方向の候補を出し分ける。
+
+      例は方向を探るためのもので、採用を決めるものではない。
+      候補の出し分けに使用し、例をそのまま組み合わせて確定しない。
+  - id: site-genre-01
+    group: サイトのジャンル
+    name: ジャンル別の雰囲気の例
+    body: |-
+      <!-- table: {"kind": "data"} -->
+
+      | 分類 | ジャンル | 雰囲気のことば | モチーフ・装飾の例 | 色・文字の例 | UI 要素の味付けの例 |
+      | --- | --- | --- | --- | --- | --- |
+      | 学び | オンライン講座 | 前向き・明快 | 手書きのアイコン | 明るい背景に強い差し色 1 つ | 要点を差し色で目立たせる |
+      | 学び | 子ども・子育て | 元気・安心・やわらか | - | 原色、丸ゴシック | 大きな角丸、押すと弾む動き |
+      | 趣味 | 園芸・菜園 | 素朴・季節・育つ | 植物の線画 | セージ・生成り・テラコッタ | - |
+      | 趣味 | スポーツ | 躍動・勝負・速さ | 斜めの線 | 高いコントラスト、斜体の太字 | 大きな数字 |
+      | 趣味 | 料理・レシピ | おいしそう・家庭的 | 布巾のチェック柄（ギンガム） | 生成りの背景に暖色、手書き風の見出し | ギンガムの区切り線 |
+      | 趣味 | 旅行 | 遠く・発見・記録 | 切手・消印・航空便の意匠 | - | 写真に切手風の枠 |
+      | 趣味 | ペット | 愛らしい・のんびり | 肉球・骨のモチーフは使用しない | 暖かいパステル、丸ゴシック | - |
+      | 文化 | 本・書評 | 静か・知的・紙 | 紙の背景 | 生成りの背景に墨色、本文は明朝 | 広い余白 |
+      | 文化 | アニメ・漫画 | 作品の世界観しだい | コマ割り、集中線、網点、吹き出し | 作品の色 | 吹き出し形のツールチップ、コマ枠のカード |
+      | 文化 | ゲーム紹介 | 没入・壮大・期待 | 世界観の背景画 | 暗い背景に差し色 | メニュー画面風のナビ |
+      | 文化 | 2D ゲーム風 | 懐かしい・遊び心 | ドット絵 | 見出しだけドット文字 | 太枠のウィンドウ、会話窓風の通知、体力ゲージ風の進み具合 |
+      | 文化 | 映画・音楽（作品） | 大胆・夜・余韻 | フィルムのノイズ、ポスター風の文字組み | 黒地に 1 色 | - |
+      | 文化 | 写真・作品集 | 静けさ・余白 | 装飾を配置しない | 広い余白 | 写真を主役にする |
+      | 文化 | 和・伝統 | 静謐・季節・余白 | 青海波・麻の葉などの文様 | 藍・朱、縦書きの見出し | - |
+      | 技術 | プログラミング | 理知的・手元の道具 | プロンプト記号 | 暗い灰か白、等幅を混ぜる | - |
+      | 暮らし | 医療・健康 | 清潔・穏やか・安心 | - | 青・緑、広い余白 | - |
+      | 暮らし | 金融・士業 | 堅実・信頼 | 控えめな装飾 | 紺・灰・白、明朝の見出し | - |
+      | 暮らし | 飲食店・カフェ | 店の空気しだい | 黒板、手書きのメニュー | - | 黒板風の見出し |
+      | 暮らし | ファッション・美容 | 洗練・余白 | 装飾は極少 | 白黒と 1 色、細いセリフ体 | - |
+      | 暮らし | 地域・行政 | 誰でも・明快 | 装飾を配置しない | 高いコントラスト | 太めのフォーカス枠 |
+      | 仕事 | 業務・SaaS | [デザインスタイル](id:convention-design-style) の業務系のスタイルを参照 | - | - | - |
+
+      <!-- /table -->
+tags:
+  - name: scope:ui
+  - name: topic:サイト
+    main: true
+  - name: topic:デザイン
+  - name: topic:ノウハウ

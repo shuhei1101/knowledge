@@ -1,0 +1,104 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: none
+    detail: 画面のタブとサイドバーにノウハウが加わる。シナリオの記述は種類によらず変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: none
+    detail: エージェントが種類 knowhow で知見を検索できる。シナリオの記述は種類によらず変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: none
+    detail: ノウハウの文書もスキーマと検査で書き込める。シナリオの記述は種類によらず変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: none
+    detail: 全ての文書の検査がノウハウの文書も検査する。シナリオの記述は種類によらず変わらない
+    depends_on: []
+docs:
+  - page: project-index.yaml
+    new: false
+    change: documents[] に種類 knowhow（docs/knowhow/*.yaml、schemas/knowhow.schema.yaml）の行を追加し、description・instructions・when に創作の知見（台本・演出・ゲーム）とノウハウを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T06:33:55.066803+00:00'
+  - page: docs/rule/dev-document-management.yaml
+    new: false
+    change: 規約とノウハウの分け方（守らないと不具合・不統一になるものは規約、知っていると質が上がるものはノウハウ）と、knowledge と各プロジェクトのリポジトリへの知見の配置先を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T06:33:55.066803+00:00'
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: docs/knowhow/ のフォルダと命名 knowhow-{scope}-{topic}.yaml を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T06:33:55.066803+00:00'
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: サブシステム「文書」の role にノウハウを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T06:33:55.066803+00:00'
+  - page: docs/template/template-knowhow.yaml
+    new: true
+    change: ノウハウの文書の書式（配置先・命名・キーの書き方）のテンプレートを新設する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T06:33:55.066803+00:00'
+  - page: docs/index.yaml
+    new: false
+    change: 目次に knowhow/ の行を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T06:33:55.066803+00:00'
+  - page: docs/README.md
+    new: false
+    change: 種類の表に knowhow（ノウハウ）の行を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T06:33:55.066803+00:00'
+  - page: CLAUDE.md
+    new: false
+    change: 種類の列挙とリポジトリの説明にノウハウ（knowhow）と創作の知見を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T06:33:55.066803+00:00'
+  - page: rules.yaml
+    new: false
+    change: テンプレート『ノウハウ』の行を追加する（ノウハウの文書そのものは掲載しない。移した ui-site-genre は掲載されていなかった）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T07:32:41.157007+00:00'
+  - page: docs/knowhow/knowhow-design-site-genre.yaml
+    new: true
+    change: 規約『サイトのジャンル』をノウハウとして作り直す。出典を付け、出典の無い 2 行（音楽・レッスン、アウトドア）と裏付けられない要素を削る
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T07:32:41.157007+00:00'
+  - page: docs/rule/ui-site-genre.yaml
+    new: false
+    change: ノウハウへ移したので削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T07:32:41.157007+00:00'
+scope_out:
+  - item: ノウハウの一覧 A-157 の 21 件の登録
+    reason: 起点 Issue の後続。種類を配信できるようにした後に登録する
+    plan: '#453'
+  - item: 取り込みのスキル craft-intake（~/.claude-dev/skills/craft-intake/SKILL.md）の取り込み先の修正
+    reason: knowledge のリポジトリの外部（Git 管理外の利用者の設定）にあり、この作業 PR で変更できない
+    plan: '#454'
+  - item: ほかのリポジトリ（ai-monitor・claude-balancer など）の docs/rule/ の変更
+    reason: 起点 Issue の問い 3 で変えないと決定済み（D-582 の B）
+    plan: none
+  - item: 移した文書のパスを直接参照しているほかのリポジトリ（aituber-support・mindstella の rules.yaml など）の追従
+    reason: ほかのリポジトリの変更。`ui-site-genre` を参照しているのは ai-monitor のフェーズ『デザインスタイル選定』だけで、追従の Issue を shuhei1101/ai-monitor#3586 として起票した
+    plan: shuhei1101/ai-monitor#3586
+  - item: 文書の Markdown への変換で、種類に固有の入れ子のキー（ノウハウの scenes・cases・evidence）をスキーマの title で描く
+    reason: 変換のスクリプトの既存の挙動で、入れ子のキーを持つほかの種類にも当たる。今の変換でもノウハウの文書は画面に表示できる
+    plan: '#452'
