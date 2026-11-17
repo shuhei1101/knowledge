@@ -75,10 +75,12 @@ used_in:
 upstream: shuhei1101/mdmark
 verification:
   state: 済
-  date: '2026-11-14'
+  date: '2026-11-17'
   detail: 'WSL2 の Ubuntu（Node 24.14.0）で `npx -y github:shuhei1101/mdmark#v0.8.0` を呼び、依存ごと入って約 8 秒で起動した。develop の `visibility: public` の 5 文書を変換のスクリプトで Markdown にし、`(id:{ID})` を `./{ID}.md` に書き換えて `build`（`include` に 5 文書、`out: out/index.html`）を呼ぶと、`書き出した: out/index.html（文書 5 件）` と終了コード 0 で、警告なしに約 500 KB の 1 枚になった。checkout した `dist/cli.js` を node で直に呼ぶと `ERR_MODULE_NOT_FOUND`（`yaml`）で動かなかった。
 
-    2026-11-14 に `v0.13.0` で、同じ手順の `build` が `書き出した: index.html（文書 5 件）` と終了コード 0 で約 900 KB の 1 枚になった。`check --text -` の標準入力に、`<!-- table: data -->` の表と、閉じの無い `loop` と `:` の無いメッセージを持つ map を指定すると、`-:1: legacy_mark`・`-:9: map_invalid`・`-:13: map_invalid` の 3 行と `ずれ 3 件` を出して終了コード 1、誤りの無い map だけなら `ずれ 0 件` と終了コード 0 で終わった（`v0.12.0` も同じ出力）。knowledge の `docs/` の map を含む 107 項目をつないで 1 回呼ぶと、ずれは `legacy_mark` の 3 件だけで、1 回の呼び出しは約 4 秒だった'
+    2026-11-14 に `v0.13.0` で、同じ手順の `build` が `書き出した: index.html（文書 5 件）` と終了コード 0 で約 900 KB の 1 枚になった。`check --text -` の標準入力に、`<!-- table: data -->` の表と、閉じの無い `loop` と `:` の無いメッセージを持つ map を指定すると、`-:1: legacy_mark`・`-:9: map_invalid`・`-:13: map_invalid` の 3 行と `ずれ 3 件` を出して終了コード 1、誤りの無い map だけなら `ずれ 0 件` と終了コード 0 で終わった（`v0.12.0` も同じ出力）。knowledge の `docs/` の map を含む 107 項目をつないで 1 回呼ぶと、ずれは `legacy_mark` の 3 件だけで、1 回の呼び出しは約 4 秒だった。
+
+    2026-11-17 に `develop`（`--version` が `v0.13.0+develop.4737928`）で、全ての文書の検査（389 件）が違反 0 件で終わり、Pages の成果物の作成が `version` を持たない設定の `build` で `書き出した: index.html（文書 5 件）` と終了コード 0 の約 900 KB の 1 枚を作った。`check --text -` に mermaid のコードブロックの無い map を指定すると `-:1: map_invalid: ...` と `ずれ 1 件` を出して終了コード 1 で終わり、`v0.13.0` と同じ出力の形式だった'
 license: ライセンスの表記なし（knowledge と同じ所有者の公開リポジトリ）
 official_url: https://github.com/shuhei1101/mdmark
 docs_url: https://github.com/shuhei1101/mdmark/blob/develop/docs/guide/CLI.mark.md
