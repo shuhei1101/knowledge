@@ -57,6 +57,7 @@ TEMPLATE_IDS = {
     "eval_criterion": "template-eval-criterion",
     "evaluation": "template-evaluation",
     "external_api": "template-external-api",
+    "glossary": "template-glossary",
     "interface": "template-interface",
     "launch": "template-launch",
     "layout": "template-layout",

@@ -414,11 +414,10 @@ $defs:
             href:
               type: string
               title: リンク先
-              description: 押したときに開く先。相対パス + アンカーか、同じ配信元の設計書を指す `id:{文書の ID}`・`id:{文書の ID}#{項目のパス}` を記載する。
+              description: 押したときに開く先。同じ配信元の設計書を指す `id:{文書の ID}`・`id:{文書の ID}#{項目のパス}` を記載する。
               x-used-by:
                 - 生成で、リンク先にする。
               examples:
-                - ../interface/IF-72-3.py.yaml#flows
                 - id:IF-72-3
                 - id:IF-72-3#flows[正常系]
   flowchart_node:
