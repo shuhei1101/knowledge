@@ -53,7 +53,7 @@ items:
 
       ※[repo-location-n1]: Windows の上で実行する: Windows の Python・Windows のタスクスケジューラーが、リポジトリのコード・スクリプトを起動する。
           Windows 専用の依存（`sys_platform == "win32"` の依存・`pywinauto`・`pywin32`・`pycaw`）を使用するコードを含む。
-          人がファイルを開いて編集するアプリは含めず、※4 の質問で判定する。
+          人がファイルを開いて編集するアプリは含めず、Q3（Windows のアプリでリポジトリのファイルを日常的に開くか）で判定する。
 
       ※[repo-location-n2]: 書き換えのたびに読み込む: WSL 側で編集・生成したファイルを、commit を挟まずに Windows の上で読み込んで実行する。
           Windows 側で動かす前に最新の commit を取得すれば足りるものは含めない。
