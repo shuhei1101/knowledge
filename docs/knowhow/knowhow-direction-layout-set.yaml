@@ -1,0 +1,60 @@
+id: knowhow-direction-layout-set
+kind: knowhow
+name: 立ち絵と素材は重ならない位置の組（画面の構成）から選んで配置する
+description: 立ち絵の枠と素材の枠を重ならない組として名前を付けた画面の構成を用意し、区間ごとに構成を 1 つ選んで配置する技法を記載し、動画の立ち絵と素材の配置を決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: D536
+    title: 検討事項 D-536（立ち絵と素材の重なり）
+    url: file:///mnt/c/Users/shuhe/repo/tmp/%E4%BD%95%E3%81%A7%E3%82%82%E4%BC%9A%E8%A9%B1/.mindstella/docs/D-536.md
+  - id: P2
+    title: PoC（1 セグメントの動画の作成）の 2 回目の結果 A-156
+    url: file:///mnt/c/Users/shuhe/repo/tmp/%E4%BD%95%E3%81%A7%E3%82%82%E4%BC%9A%E8%A9%B1/.mindstella/docs/A-156.md
+    note: '`## 指摘と対応` の No 6'
+  - id: P3
+    title: PoC（1 セグメントの動画の作成）の 3 回目の結果 A-161
+    url: file:///mnt/c/Users/shuhe/repo/tmp/%E4%BD%95%E3%81%A7%E3%82%82%E4%BC%9A%E8%A9%B1/.mindstella/docs/A-161.md
+    note: '`## 使用したスキーマ` の No 3・4、`## 分かったこと` の No 4'
+necessity: reference
+scenes:
+  fits:
+    - 立ち絵の演者と、表や画像の素材を同じ画面に出す動画を作るとき。
+  misfits:
+    - 素材を出さず、立ち絵だけの区間。
+cases:
+  - work: 「テスト前日に、ついやってしまうこと」の紹介
+    content: 文 1 で「1 人が中央」、素材を出す文 4 で「素材が左で、1 人が右」、文 18 で「1 人が中央」に切り替え、素材のキューに配置を 1 件も記載せずに位置を決定できた。
+    source: P3
+evidence:
+  - source: D536
+    speaker: practitioner
+  - source: P2
+    speaker: practitioner
+  - source: P3
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      立ち絵の配置・素材の配置・レイヤーを 1 件ずつ別に選ぶと、立ち絵と素材が重なり、奥と手前が入れ替わる。
+      「1 人が中央」「素材が左で、1 人が右」のように、重ならない枠の組に名前を付けた画面の構成を用意し、区間ごとに 1 つ選ぶ。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 立ち絵の枠と素材の枠を重ならないように定義した構成を用意する（枠は立ち絵を向かせる向きも持つ）
+      2. 素材を出す間は、立ち絵を端の枠へ移す構成を選ぶ
+      3. 素材が無い区間は、立ち絵が中央の構成へ戻す
+      4. 構成の値を変えたときに備え、同じ時刻に立ち絵の枠と素材の枠が重なったら警告を出す
+tags:
+  - name: topic:立ち絵
+    main: true
+  - name: topic:素材
+  - name: topic:動画
+  - name: topic:レイアウト
+  - name: topic:プリセット
+  - name: action:配置
+  - name: topic:ノウハウ
