@@ -12,8 +12,9 @@ if [ -z "$TAG" ]; then
   echo "メッセージに (#493) を持つタグ: failed（タグがありません）"
   exit 1
 fi
-BODIES=$(gh api repos/shuhei1101/ai-monitor/issues/3607/comments --paginate --jq '.[].body')
-if printf '%s\n' "$BODIES" | grep -qF "$TAG" && printf '%s\n' "$BODIES" | grep -qF 'test_files'; then
+COUNT=$(gh api repos/shuhei1101/ai-monitor/issues/3607/comments --paginate \
+  --jq "[.[] | select((.body | contains(\"$TAG\")) and (.body | contains(\"test_files\")))] | length" | awk '{ s += $1 } END { print s + 0 }')
+if [ "$COUNT" -gt 0 ]; then
   echo "ai-monitor#3607 のコメント: ok（$TAG）"
 else
   echo "ai-monitor#3607 のコメント: failed"
