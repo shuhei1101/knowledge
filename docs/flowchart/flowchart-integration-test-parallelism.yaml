@@ -6,7 +6,7 @@ aliases:
   - 結合テストの並列数
 status: current
 visibility: internal
-rev: 1
+rev: 2
 items:
   - id: overview
     name: 概要
@@ -25,13 +25,13 @@ items:
       {
         "title": "結合テストの並列数",
         "scope": "結合テストを実行するコマンドの並列数を決めるとき",
-        "updated": "2026-11-15",
+        "updated": "2026-11-17",
         "width": 1378,
         "height": 912,
         "nodes": [
           {"id": "start", "kind": "start", "x": 414, "y": 24, "w": 120, "h": 120, "name": "結合テストを実行する直前"},
           {"id": "q0", "kind": "question", "x": 334, "y": 200, "w": 280, "h": 120, "name": "ランナーで実行する層か ※1"},
-          {"id": "q1", "kind": "question", "x": 334, "y": 376, "w": 280, "h": 164, "name": "メモリから求めた数が 1 以上で、スワップの空きが半分以上か ※2"},
+          {"id": "q1", "kind": "question", "x": 334, "y": 376, "w": 280, "h": 164, "name": "メモリから求めた数が 1 以上か ※2"},
           {"id": "q3", "kind": "question", "x": 764, "y": 376, "w": 280, "h": 164, "name": "層の中で並列にできるか ※3"},
           {"id": "r2", "kind": "result", "x": 1114, "y": 430, "w": 240, "h": 56, "name": "並列数 1 で実行する"},
           {"id": "q2", "kind": "question", "x": 334, "y": 596, "w": 280, "h": 164, "name": "メモリが空くのを待った時間が上限を超えたか ※4"},
