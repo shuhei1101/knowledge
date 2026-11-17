@@ -1,0 +1,1 @@
+# 用語集の設計書のスキーマを追加し、flowchart の clicks[].href の説明を id: のリンクに限る
