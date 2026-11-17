@@ -107,7 +107,7 @@ subsystems:
     runs_on: project-index が起動する子プロセス・手元のコマンド・CI
   - name: CI
     scope: ci
-    role: develop への push で公開の文書だけを HTML にして GitHub Pages へ配信する
+    role: develop への push で公開の文書だけを HTML にして GitHub Pages へ配信する。手動の起動で、テスト実行方法の `location` が `runner` の層の全件を回してログを成果物に上げる
     runtime: GitHub Actions のワークフロー
     runs_on: GitHub Actions
   - name: slop-check
@@ -132,11 +132,11 @@ external_systems:
     notes:
       事前確認: 不要。knowledge から dev-docs を呼ばない
   - name: GitHub Actions
-    purpose: develop への push で公開文書の配信のワークフローを動かす
+    purpose: develop への push で公開文書の配信のワークフローを、手動の起動でテストの全件実行のワークフローを動かす
     direction: 受信のみ
     protocol: ワークフローの YAML
     notes:
-      事前確認: 要。ワークフローの最初のステップで、成果物の作成に要るランタイム（Node 24・uv）を入れ、入らなければ配信せずに失敗させる
+      事前確認: 要。ワークフローの最初のステップで、成果物の作成・テストの実行に要るランタイム（Node 24・uv）を入れ、入らなければ配信・テストの実行をせずに失敗させる
   - name: mdmark
     purpose: 公開の文書の Markdown を 1 枚の HTML にまとめる（`build`）。全ての文書の検査で、文書の map を点検する（`check --text`）
     direction: 双方向

@@ -1,0 +1,63 @@
+# 入力 layer で選んだテスト実行方法の層の全件をランナーで回し、ログを成果物 test-log に上げる
+name: test
+
+on:
+  workflow_dispatch:
+    inputs:
+      layer:
+        description: 全件を回す層（unit はテスト実行方法の TL-2、integration は TL-3）
+        type: choice
+        required: true
+        options:
+          - unit
+          - integration
+
+permissions:
+  contents: read
+
+# 同じブランチ・同じ層の実行は、先に起動した実行を取り消す
+concurrency:
+  group: test-${{ github.ref }}-${{ inputs.layer }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: ブランチを取得する
+        uses: actions/checkout@v4
+      # Python 3.14・3.12 と依存は、テスト実行方法のコマンドの uv run が入れる
+      - name: uv を入れる
+        uses: astral-sh/setup-uv@v6
+      - name: Node を入れる
+        if: inputs.layer == 'integration'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      # 全ての文書の検査が呼ぶ markdownlint-cli2・textlint
+      - name: lint の道具を入れる
+        if: inputs.layer == 'integration'
+        run: npm ci --prefix scripts/lint
+      # コマンドはテスト実行方法の層の run_all と同じにする
+      - name: 層の全件を回す
+        shell: bash
+        env:
+          LAYER: ${{ inputs.layer }}
+        run: |
+          set -o pipefail
+          case "$LAYER" in
+            unit)
+              (rc=0; uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit || rc=1; uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check || rc=1; exit $rc) 2>&1 | tee test.log
+              ;;
+            integration)
+              uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/integration 2>&1 | tee test.log
+              ;;
+          esac
+      - name: ログを成果物に上げる
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-log
+          path: test.log
+          if-no-files-found: ignore

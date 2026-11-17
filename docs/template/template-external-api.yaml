@@ -24,7 +24,7 @@ items:
   - id: item-list-01
     name: 項目
     body: |-
-      <!-- table: data -->
+      <!-- table: {"kind": "data"} -->
 
       | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
       | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -116,7 +116,12 @@ items:
       | endpoints[].status_codes[].code | ステータスコード | string | 必須 | - | - | HTTP のステータスコード。 | 実装で、分岐するステータスコードにする。 | - |
       | endpoints[].status_codes[].condition | 発生条件 | string | 必須 | - | - | そのコードが返る条件。 | 実装で、コードごとの分岐の条件と、再試行するかを決める。 | - |
       | endpoints[].status_codes[].notes | 補足 | string | - | - | - | 再試行の方針など。 | 実装で、再試行の方針にする。 | - |
-      | endpoints[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | endpoints[].refs | 関連 | array | - | - | maxItems: `8` | 関連する設計書の一覧。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | endpoints[].refs[].to | 相手の ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 関連先の設計書の最上位の `id`。項目のパスは `item` に分ける。 | 検査で、関連先の設計書が実在するかを確認する。<br>project-index の `trace_related` で、文書の ID と一致させて関連をたどる。 | `IF-12` / `IF-3038-1` |
+      | endpoints[].refs[].item | 項目のパス | string | - | - | pattern: `^(?:[^\s\[#]\|\[[^\]]*\])(?:[^\s\[]\|\[[^\]]*\])*$` | 関連先の項目のパス。設計書全体を指すときは記載しない。 | 検査で、`to` の設計書に項目が実在するかを確認する。<br>生成で、関連先の項目へのリンクにする。 | `flows[正常系]` / `functions[resolve_base].exceptions` |
+      | endpoints[].refs[].type | 関係の種類 | string | 必須 | `requires` / `references` / `replaces` / `part_of` / `change_together` | - | 関係の種類で、`requires`（前提にする）/ `references`（参照する）/ `replaces`（置き換える）/ `part_of`（一部になる）/ `change_together`（同時に修正する）のどれか。 | レビューで、関連先の変更がこの設計書へ及ぶかを判断する。<br>project-index の `trace_related` で、たどった関連の影響の理由にする。 | - |
+      | endpoints[].refs[].when | いつ参照するか | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 関連先をいつ参照するかの 1 文。 | 実装とレビューで、関連先を参照する場面を判断する。 | `例外の型を変えるときに、呼び出し側の異常系のフローを確認する。` |
+      | endpoints[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | endpoints[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | endpoints[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
       | endpoints[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新しく使用しない。<br>生成で、状態の表示にする。 | - |
@@ -135,10 +140,20 @@ items:
       | issues[].workarounds[].recommended | 推奨 | boolean | - | - | - | 最初に試す 1 案だけ。 | 実装で、最初に試す回避策にする。 | - |
       | issues[].upstream_issue | 上流の Issue | string | - | - | - | 上流の Issue の URL。 | 保守で、上流で解消したかを確認する先にする。 | - |
       | issues[].fixed_in | 解消版 | string | - | - | - | 解消したバージョン。達したら回避策を削除する候補になる。 | 保守で、解消したバージョンへ上げた後に回避策を削除する。 | - |
-      | issues[].refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | issues[].refs | 関連 | array | - | - | maxItems: `8` | 関連する設計書の一覧。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | issues[].refs[].to | 相手の ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 関連先の設計書の最上位の `id`。項目のパスは `item` に分ける。 | 検査で、関連先の設計書が実在するかを確認する。<br>project-index の `trace_related` で、文書の ID と一致させて関連をたどる。 | `IF-12` / `IF-3038-1` |
+      | issues[].refs[].item | 項目のパス | string | - | - | pattern: `^(?:[^\s\[#]\|\[[^\]]*\])(?:[^\s\[]\|\[[^\]]*\])*$` | 関連先の項目のパス。設計書全体を指すときは記載しない。 | 検査で、`to` の設計書に項目が実在するかを確認する。<br>生成で、関連先の項目へのリンクにする。 | `flows[正常系]` / `functions[resolve_base].exceptions` |
+      | issues[].refs[].type | 関係の種類 | string | 必須 | `requires` / `references` / `replaces` / `part_of` / `change_together` | - | 関係の種類で、`requires`（前提にする）/ `references`（参照する）/ `replaces`（置き換える）/ `part_of`（一部になる）/ `change_together`（同時に修正する）のどれか。 | レビューで、関連先の変更がこの設計書へ及ぶかを判断する。<br>project-index の `trace_related` で、たどった関連の影響の理由にする。 | - |
+      | issues[].refs[].when | いつ参照するか | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 関連先をいつ参照するかの 1 文。 | 実装とレビューで、関連先を参照する場面を判断する。 | `例外の型を変えるときに、呼び出し側の異常系のフローを確認する。` |
+      | issues[].refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | issues[].decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | issues[].notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
-      | refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | refs | 関連 | array | - | - | maxItems: `8` | 関連する設計書の一覧。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | refs[].to | 相手の ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 関連先の設計書の最上位の `id`。項目のパスは `item` に分ける。 | 検査で、関連先の設計書が実在するかを確認する。<br>project-index の `trace_related` で、文書の ID と一致させて関連をたどる。 | `IF-12` / `IF-3038-1` |
+      | refs[].item | 項目のパス | string | - | - | pattern: `^(?:[^\s\[#]\|\[[^\]]*\])(?:[^\s\[]\|\[[^\]]*\])*$` | 関連先の項目のパス。設計書全体を指すときは記載しない。 | 検査で、`to` の設計書に項目が実在するかを確認する。<br>生成で、関連先の項目へのリンクにする。 | `flows[正常系]` / `functions[resolve_base].exceptions` |
+      | refs[].type | 関係の種類 | string | 必須 | `requires` / `references` / `replaces` / `part_of` / `change_together` | - | 関係の種類で、`requires`（前提にする）/ `references`（参照する）/ `replaces`（置き換える）/ `part_of`（一部になる）/ `change_together`（同時に修正する）のどれか。 | レビューで、関連先の変更がこの設計書へ及ぶかを判断する。<br>project-index の `trace_related` で、たどった関連の影響の理由にする。 | - |
+      | refs[].when | いつ参照するか | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 関連先をいつ参照するかの 1 文。 | 実装とレビューで、関連先を参照する場面を判断する。 | `例外の型を変えるときに、呼び出し側の異常系のフローを確認する。` |
+      | refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
       | notes | 補足 | object | - | - | - | 項目に分けられない残り。セクションの名前 → 本文。 | 実装で、項目に分けられない前提・制約を参照する。<br>生成で、セクションの名前を見出しにしたセクションにする。 | - |
 
@@ -146,26 +161,35 @@ items:
   - id: key-rules-01
     name: キーごとの決まり
     body: |-
-      <!-- table: data -->
+      <!-- table: {"kind": "data"} -->
 
       | 名前 | 決まり | 悪い例 | 理由 |
       | --- | --- | --- | --- |
       | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
       | lead | 自プロジェクトでの用途は記載しない。<br>初回に記載した内容のまま保ち、後から情報を追加しない。 | - | - |
-      | auth.steps | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | auth.usage | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | retry | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | auth.steps | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | auth.usage | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | retry | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | pricing_url | 課金単価を記載するときは必ず持つ。 | - | - |
-      | error_format | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | pagination | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | endpoints[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | endpoints[].request_example | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | endpoints[].response_example | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
-      | endpoints[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | error_format | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | pagination | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | endpoints[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | endpoints[].request_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | endpoints[].response_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | endpoints[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | endpoints[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | endpoints[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
+      | endpoints[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | endpoints[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | issues | こちらの使用方法の誤りだったものは記載しない。<br>解消を確認したら削除する。 | - | - |
-      | issues[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | issues[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | issues[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | issues[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | issues[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | issues[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
+      | refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
 
       <!-- /table -->

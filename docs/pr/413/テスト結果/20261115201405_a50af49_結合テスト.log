@@ -1,0 +1,17 @@
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 pytest tests/e2e/workflow
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /mnt/c/Users/shuhe/repo/knowledge/.claude/worktrees/chore-test-actionlint-workflow-e2e
+configfile: pytest.ini
+collected 4 items
+
+tests/e2e/workflow/test_test_yml.py ....                                 [100%]
+
+======================== 4 passed in 241.93s (0:04:01) =========================
+exit code: 0
+
+# 起動した実行（gh run list --workflow test.yml）
+- test_normal: https://github.com/shuhei1101/knowledge/actions/runs/43707937943 (success)
+- test_normal_when_integration: https://github.com/shuhei1101/knowledge/actions/runs/43708012476 (success)
+- test_error_when_tests_fail: https://github.com/shuhei1101/knowledge/actions/runs/43708127310 (failure を期待)
+- test_error_when_setup_fails: https://github.com/shuhei1101/knowledge/actions/runs/43708191131 (failure を期待)

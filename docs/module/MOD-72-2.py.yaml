@@ -21,7 +21,10 @@ data_models:
         type: str
         description: 修正の仕方の 1 文
     refs:
-      - IF-72-1#response[stdout]
+      - to: IF-72-1
+        item: "response[stdout]"
+        type: requires
+        when: "`Violation` を修正するときに、IF-72-1 の「stdout」の決まりと突き合わせる。"
   - name: DocumentError
     title: 読み込めない文書
     container: scripts/_common.py
@@ -55,7 +58,10 @@ constants:
     summary: スクリプトの起動から終わりまでの上限（秒）
     value: '20.0'
     refs:
-      - NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
+      - to: NFR-72-1
+        item: "requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]"
+        type: requires
+        when: "`LIMIT_SEC` の値を変えるときに、NFR-72-1 の「検査と変換のスクリプトの 1 文書あたりの処理時間」の守る値と突き合わせる。"
   - name: READ_WORKERS
     title: 読み込みのスレッドの数
     container: scripts/_common.py
@@ -69,12 +75,12 @@ constants:
     usecase: 共通
     summary: リポジトリの直下の project-index の配信の設定
     value: '"project-index.yaml"'
-  - name: MDMARK_TAG
-    title: mdmark のタグ
+  - name: MDMARK_REF
+    title: mdmark の参照
     container: scripts/_common.py
     usecase: 共通
-    summary: 「Pages の成果物の作成」と「全ての文書の検査」が `npx` で呼ぶ mdmark のバージョン。外部ライブラリ『mdmark』の採用バージョン（LIB-137-1）と統一する
-    value: '"v0.13.0"'
+    summary: 「Pages の成果物の作成」と「全ての文書の検査」が `npx` で呼ぶ mdmark の参照。外部ライブラリ『mdmark』の採用バージョン（LIB-137-1）と統一する。既定は develop の最新で、固定するときはタグか、develop の配布物を再作成した commit の SHA に書き換える
+    value: '"develop"'
 functions:
   - name: load_document
     title: 文書の読み込み

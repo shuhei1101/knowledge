@@ -31,7 +31,7 @@ items:
   - id: item-list-01
     name: 項目
     body: |-
-      <!-- table: data -->
+      <!-- table: {"kind": "data"} -->
 
       | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
       | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -46,19 +46,27 @@ items:
       | targets | 評価の対象 | array | 必須 | - | minItems: `1` | 評価の対象（『エージェントの定義』か『LLM の呼び出し』）への参照。並びの順につなぐ。 | 実行で、対象を並びの順に実行し、途中の出力は後処理まで実行して最後の出力だけを採点する。<br>設計で、対象の設計書から精度評価を逆引きする。 | `[LLM-3#, LLM-1#]` |
       | extra_criteria | 追加の観点のフォルダ | array | - | - | - | 同じフォルダの `criteria/` と共通の観点のほかに使用する観点のフォルダの、リポジトリの直下からのパス。 | 実行で、使用できる観点の一覧に加える。 | `[content/evals/to_document/criteria/]` |
       | rerun_on | 再評価する変更 | array | 必須 | - | minItems: `1` | 再評価する変更（`model`・`prompt`・`inputs`・`criteria`・`cases`）。 | 実行で、対象の設計書と観点・ケースの差分から再評価を起票する。 | `[model, prompt, criteria]` |
-      | refs | 関連 | array | - | - | - | 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | refs | 関連 | array | - | - | maxItems: `8` | 関連する設計書の一覧。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
+      | refs[].to | 相手の ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 関連先の設計書の最上位の `id`。項目のパスは `item` に分ける。 | 検査で、関連先の設計書が実在するかを確認する。<br>project-index の `trace_related` で、文書の ID と一致させて関連をたどる。 | `IF-12` / `IF-3038-1` |
+      | refs[].item | 項目のパス | string | - | - | pattern: `^(?:[^\s\[#]\|\[[^\]]*\])(?:[^\s\[]\|\[[^\]]*\])*$` | 関連先の項目のパス。設計書全体を指すときは記載しない。 | 検査で、`to` の設計書に項目が実在するかを確認する。<br>生成で、関連先の項目へのリンクにする。 | `flows[正常系]` / `functions[resolve_base].exceptions` |
+      | refs[].type | 関係の種類 | string | 必須 | `requires` / `references` / `replaces` / `part_of` / `change_together` | - | 関係の種類で、`requires`（前提にする）/ `references`（参照する）/ `replaces`（置き換える）/ `part_of`（一部になる）/ `change_together`（同時に修正する）のどれか。 | レビューで、関連先の変更がこの設計書へ及ぶかを判断する。<br>project-index の `trace_related` で、たどった関連の影響の理由にする。 | - |
+      | refs[].when | いつ参照するか | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 関連先をいつ参照するかの 1 文。 | 実装とレビューで、関連先を参照する場面を判断する。 | `例外の型を変えるときに、呼び出し側の異常系のフローを確認する。` |
+      | refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
 
       <!-- /table -->
   - id: key-rules-01
     name: キーごとの決まり
     body: |-
-      <!-- table: data -->
+      <!-- table: {"kind": "data"} -->
 
       | 名前 | 決まり | 悪い例 | 理由 |
       | --- | --- | --- | --- |
       | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
       | lead | 初回に記載した内容のまま保ち、後から情報を追加しない。 | - | - |
+      | refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | refs[].when | `when` を記載できない関連は張らない。 | - | - |
 
       <!-- /table -->
   - id: example-sample-01
@@ -76,5 +84,7 @@ items:
       - prompt
       - criteria
       refs:
-      - LLM-1#
+      - to: LLM-1
+        type: requires
+        when: 評価の対象の呼び出しのプロンプトやモデルを変えたときに、再評価の要否を確認する。
       ```

@@ -115,7 +115,10 @@ constants:
       - key: test_procedure
         value: template-test-procedure
     refs:
-      - IF-201-1#constraints[テンプレートの対応表]
+      - to: IF-201-1
+        item: "constraints[テンプレートの対応表]"
+        type: requires
+        when: "`TEMPLATE_IDS` を修正するときに、IF-201-1 の「テンプレートの対応表」の決まりと突き合わせる。"
   - name: CONSTRAINT_KEYS
     title: 制約の列に出すキー
     container: scripts/build_templates.py
@@ -188,7 +191,9 @@ functions:
       - MOD-201-1#functions[replace_items]
       - MOD-72-2#functions[load_document]
     refs:
-      - IF-201-1#
+      - to: IF-201-1
+        type: requires
+        when: "`main` を修正するときに、IF-201-1 の決まりと突き合わせる。"
   - name: load_schemas
     title: 設計書のスキーマの読み込み
     kind: 関数
@@ -252,7 +257,10 @@ functions:
     callees:
       - MOD-72-2#functions[load_safe]
     refs:
-      - IF-201-1#constraints[書き出しの順序]
+      - to: IF-201-1
+        item: "constraints[書き出しの順序]"
+        type: requires
+        when: "`load_schemas` を修正するときに、IF-201-1 の「書き出しの順序」の決まりと突き合わせる。"
   - name: build_items
     title: items の組み立て
     kind: 関数
@@ -320,7 +328,10 @@ functions:
       - MOD-201-1#functions[_render_key_table]
       - MOD-201-1#functions[_render_key_rules]
     refs:
-      - IF-201-1#constraints[組み立てる items]
+      - to: IF-201-1
+        item: "constraints[組み立てる items]"
+        type: requires
+        when: "`build_items` を修正するときに、IF-201-1 の「組み立てる items」の決まりと突き合わせる。"
   - name: _iter_keys
     title: キーの列挙
     kind: 関数
@@ -379,7 +390,7 @@ functions:
     container: scripts/build_templates.py
     usecase: 共通
     scope: internal
-    summary: 'キーの行から、`<!-- table: data -->` で包んだキーの表の Markdown を作る'
+    summary: 'キーの行から、`<!-- table: {"kind": "data"} -->` で包んだキーの表の Markdown を作る'
     args:
       - name: rows
         title: キーの行
@@ -401,7 +412,10 @@ functions:
         mock: なし
         expected: '型が `string / null` と `anyOf` の要素の型を ` / ` でつないだ値、制約が `` pattern: `…`, minLength: `…` `` の順、`選択肢`・`examples` が要素ごとのインラインコードの行。`使用先` が 2 件を `<br>` でつないだ値と `-`'
     refs:
-      - IF-201-1#constraints[キーの表]
+      - to: IF-201-1
+        item: "constraints[キーの表]"
+        type: requires
+        when: "`_render_key_table` を修正するときに、IF-201-1 の「キーの表」の決まりと突き合わせる。"
   - name: _render_key_rules
     title: キーごとの決まりの表の作成
     kind: 関数
@@ -436,7 +450,10 @@ functions:
         mock: なし
         expected: '`None`'
     refs:
-      - IF-201-1#constraints[キーごとの決まりの表]
+      - to: IF-201-1
+        item: "constraints[キーごとの決まりの表]"
+        type: requires
+        when: "`_render_key_rules` を修正するときに、IF-201-1 の「キーごとの決まりの表」の決まりと突き合わせる。"
   - name: _format_cell
     title: セルの記載方法
     kind: 関数
@@ -465,7 +482,10 @@ functions:
         mock: なし
         expected: '`-`・`a\|b<br>c`・`` `{k: 1}` ``・`` `true` ``'
     refs:
-      - IF-201-1#constraints[表のセルの記載方法]
+      - to: IF-201-1
+        item: "constraints[表のセルの記載方法]"
+        type: requires
+        when: "`_format_cell` を修正するときに、IF-201-1 の「表のセルの記載方法」の決まりと突き合わせる。"
   - name: replace_items
     title: items の置き換え
     kind: 関数
@@ -510,7 +530,10 @@ functions:
         mock: なし（一時ディレクトリ）
         expected: '`False` を返却し、ファイルの更新日時とバイト列が変わらない'
     refs:
-      - IF-201-1#constraints[書き出し]
+      - to: IF-201-1
+        item: "constraints[書き出し]"
+        type: requires
+        when: "`replace_items` を修正するときに、IF-201-1 の「書き出し」の決まりと突き合わせる。"
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）・`referencing`（`check_all.py` と同じバージョン）を記載し、`_common.py` を同じフォルダから import する。
   「全ての文書の検査」との共有: '`check_all.py` は `load_schemas`（`check_refs=False`）と `build_items` を import し、生成と同じ組み立てでずれを検査する（`check_all.py` の `check_design_templates`）。'

@@ -42,7 +42,10 @@ constants:
     summary: frontmatter の後ろに配置する 1 行。`{source}` に設計書のパスを入れる
     value: '"<!-- {source} から生成した。このファイルを修正せず、設計書を修正して再生成する -->"'
     refs:
-      - IF-312-1#constraints[組み立てる本文]
+      - to: IF-312-1
+        item: "constraints[組み立てる本文]"
+        type: requires
+        when: "`GENERATED_NOTE` を修正するときに、IF-312-1 の「組み立てる本文」の決まりと突き合わせる。"
   - name: COMMAND
     title: 生成のコマンド
     container: scripts/build_skills.py
@@ -97,7 +100,9 @@ functions:
         expected: '`1` を返却し、標準エラーに `Traceback` が出る'
         exception: 想定していない例外
     refs:
-      - IF-312-1#
+      - to: IF-312-1
+        type: requires
+        when: "`main` を修正するときに、IF-312-1 の決まりと突き合わせる。"
   - name: plan_skills
     title: 書き出す SKILL.md の組み立て
     kind: 関数
@@ -218,7 +223,10 @@ functions:
         expected: '`BuildError` を送出する'
         exception: 戻る `ref`
     refs:
-      - IF-312-1#constraints[工程の埋め込み]
+      - to: IF-312-1
+        item: "constraints[工程の埋め込み]"
+        type: requires
+        when: "`resolve_steps` を修正するときに、IF-312-1 の「工程の埋め込み」の決まりと突き合わせる。"
   - name: render_skill
     title: SKILL.md の組み立て
     kind: 関数
@@ -262,7 +270,10 @@ functions:
         mock: なし
         expected: '`## 引数` が無い'
     refs:
-      - IF-312-1#constraints[組み立てる本文]
+      - to: IF-312-1
+        item: "constraints[組み立てる本文]"
+        type: requires
+        when: "`render_skill` を修正するときに、IF-312-1 の「組み立てる本文」の決まりと突き合わせる。"
   - name: render_frontmatter
     title: frontmatter の組み立て
     kind: 関数
@@ -296,7 +307,10 @@ functions:
         mock: なし
         expected: キーが `name`・`description` だけ
     refs:
-      - IF-312-1#constraints[組み立てる frontmatter]
+      - to: IF-312-1
+        item: "constraints[組み立てる frontmatter]"
+        type: requires
+        when: "`render_frontmatter` を修正するときに、IF-312-1 の「組み立てる frontmatter」の決まりと突き合わせる。"
   - name: render_step
     title: 工程のセクションの組み立て
     kind: 関数
@@ -328,7 +342,10 @@ functions:
         mock: なし
         expected: '`### {name}` と `body` だけ'
     refs:
-      - IF-312-1#constraints[工程のセクション]
+      - to: IF-312-1
+        item: "constraints[工程のセクション]"
+        type: requires
+        when: "`render_step` を修正するときに、IF-312-1 の「工程のセクション」の決まりと突き合わせる。"
   - name: render_call
     title: 呼ぶものの行の組み立て
     kind: 関数
@@ -356,7 +373,10 @@ functions:
         mock: なし
         expected: それぞれ IF-312-1 の書式の行で、`agent` は `general-purpose`、`mcp` の行の後ろに `args` のインラインコード
     refs:
-      - IF-312-1#constraints[工程のセクション]
+      - to: IF-312-1
+        item: "constraints[工程のセクション]"
+        type: requires
+        when: "`render_call` を修正するときに、IF-312-1 の「工程のセクション」の決まりと突き合わせる。"
   - name: write_skill
     title: SKILL.md の書き出し
     kind: 関数

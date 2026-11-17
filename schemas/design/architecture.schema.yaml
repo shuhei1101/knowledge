@@ -176,14 +176,7 @@ properties:
           x-used-by:
             - 実装で、動く場所の制約（プロセス・端末・クラウド）に合う方式を選ぶ。
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -275,14 +268,7 @@ properties:
           x-used-by:
             - 実行で、テスト・動作確認の前に、料金と副作用からユーザーの確認が要るかを判断する。
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -320,14 +306,7 @@ properties:
       - 実装で、サブシステムをまたぐ処理（ログ・エラー・認証 等）の方式を統一する。
     x-heading: 横断の方針
   refs:
-    type: array
-    title: 関連
-    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-    x-used-by:
-      - 生成で、関連する設計書へのリンクにする。
-      - レビューで、関連する設計書をたどって食い違いを確認する。
-    items:
-      $ref: common.schema.yaml#/$defs/ref
+    $ref: common.schema.yaml#/$defs/related
   decisions:
     type: array
     title: 検討事項

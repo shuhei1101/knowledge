@@ -32,7 +32,7 @@ from ruamel.yaml.error import YAMLError
 from _common import (
     CONFIG,
     LIMIT_SEC,
-    MDMARK_TAG,
+    MDMARK_REF,
     ConfigError,
     DocumentError,
     as_list,
@@ -343,10 +343,7 @@ def rewrite_references(
 
 def write_bundle_config(workdir: Path, names: Sequence[str]) -> Path:
     """一時フォルダに、公開の文書を並びのとおりまとめる mdmark の設定を書く。"""
-    config = {
-        "version": MDMARK_TAG,
-        "build": {"include": list(names), "entry": names[0], "out": OUTPUT_HTML},
-    }
+    config = {"build": {"include": list(names), "entry": names[0], "out": OUTPUT_HTML}}
     path = workdir / _BUNDLE_CONFIG
     # JSON は YAML として読める
     path.write_text(json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -360,7 +357,7 @@ def run_mdmark(config: Path) -> str:
             [  # noqa: S607 - npx は Node のインストールで PATH から引く
                 "npx",
                 "-y",
-                f"github:shuhei1101/mdmark#{MDMARK_TAG}",
+                f"github:shuhei1101/mdmark#{MDMARK_REF}",
                 "build",
                 "--config",
                 str(config),

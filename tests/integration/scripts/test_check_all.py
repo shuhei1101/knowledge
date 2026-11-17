@@ -384,7 +384,7 @@ def test_normal_when_templates_out_of_date(
         "  - id: item-list-01\n"
         "    name: 項目\n"
         "    body: |-\n"
-        "      <!-- table: data -->\n"
+        '      <!-- table: {"kind": "data"} -->\n'
         "\n"
         "      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |\n"
         "      | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n"

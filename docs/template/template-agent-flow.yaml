@@ -33,7 +33,7 @@ items:
   - id: item-list-01
     name: 項目
     body: |-
-      <!-- table: data -->
+      <!-- table: {"kind": "data"} -->
 
       | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
       | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -80,24 +80,32 @@ items:
       | steps[].calls[].session | 起動の仕方 | string | - | `new` / `reuse` | - | `type` が `agent` のとき、`new`（新しいサブエージェントを起動する）か `reuse`（前回起動した同じサブエージェントに続けて依頼する）。記載しなければ `new`。 | 生成で、Markdown に起動の仕方を出す。<br>設計で、`reuse` なら呼ぶ側の起動の構成でメッセージを送信するツールを読み込む。 | - |
       | steps[].calls[].renew_when | 新しく起動する条件 | string | - | - | - | `session` が `reuse` のとき、前回のサブエージェントを使用せずに新しく起動する条件。 | 生成で、Markdown に新しく起動する条件を出す。 | `成果物が別のものに変わったとき` |
       | steps[].calls[].skill | スキル | string | - | - | pattern: `^[^\s#]+#.*$` | `type` が `skill` のときに呼ぶ、`type` が `skill` のエージェントフローへの参照。 | 生成で、Markdown に呼ぶスキルを出す。 | `mindstella/setup#` |
-      | refs | 関連 | array | - | - | - | 参照する共通の手順・ノウハウへの参照。 | 生成で、関連する手順へのリンクにする。<br>レビューで、関連する手順をたどって食い違いを確認する。 | `[shared/character-state#]` |
+      | refs | 関連 | array | - | - | maxItems: `8` | 参照する共通の手順・ノウハウへの関連。 | 生成で、関連する手順へのリンクにする。<br>レビューで、関連する手順をたどって食い違いを確認する。 | - |
+      | refs[].to | 相手の ID | string | 必須 | - | pattern: `^[^\s#]+$` | 関連先のエージェントフローか文書の ID。項目のパスは `item` に分ける。 | 検査で、関連先が実在するかを確認する。 | `shared/character-state` / `convention-writing-style` |
+      | refs[].item | 項目のパス | string | - | - | pattern: `^(?:[^\s\[#]\|\[[^\]]*\])(?:[^\s\[]\|\[[^\]]*\])*$` | 関連先の項目のパス。設計書全体を指すときは記載しない。 | 検査で、`to` の設計書に項目が実在するかを確認する。<br>生成で、関連先の項目へのリンクにする。 | `flows[正常系]` / `functions[resolve_base].exceptions` |
+      | refs[].type | 関係の種類 | string | 必須 | `requires` / `references` / `replaces` / `part_of` / `change_together` | - | 関係の種類で、`requires`（前提にする）/ `references`（参照する）/ `replaces`（置き換える）/ `part_of`（一部になる）/ `change_together`（同時に修正する）のどれか。 | レビューで、関連先の変更がこの設計書へ及ぶかを判断する。<br>project-index の `trace_related` で、たどった関連の影響の理由にする。 | - |
+      | refs[].when | いつ参照するか | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 関連先をいつ参照するかの 1 文。 | 実装とレビューで、関連先を参照する場面を判断する。 | `例外の型を変えるときに、呼び出し側の異常系のフローを確認する。` |
+      | refs[].paths | 対象のパス | array | - | - | - | 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。 | 検査で、該当するファイルを変えたときに関連先を確認させる。 | `[scripts/*.py]` |
       | decisions | 検討事項 | array | - | - | - | 根拠になった話し合いの記録の検討事項の ID。 | 生成で、話し合いの記録の検討事項へのリンクにする。<br>レビューで、根拠の検討事項の結論と食い違わないかを確認する。 | - |
 
       <!-- /table -->
   - id: key-rules-01
     name: キーごとの決まり
     body: |-
-      <!-- table: data -->
+      <!-- table: {"kind": "data"} -->
 
       | 名前 | 決まり | 悪い例 | 理由 |
       | --- | --- | --- | --- |
       | id | - | brain/stream/on_event | `_` でつないでいる |
       | agents | 記載しなければ、フォルダ構成で配置先のフォルダの `used_by` にあるエージェントにする。<br>配置先のフォルダの `used_by` と両方を記載したときは、食い違いを検査する。 | - | - |
       | skill.frontmatter | 上の項目で表せない理由があるときだけ記載する。 | - | - |
-      | steps[].body | 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。 | - | - |
+      | steps[].body | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | steps[].calls[].server | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。 | IF-12#flows[0] | リストの項目を番号で指している |
       | steps[].calls[].args | 引数を自由にするときは記載しない。 | - | - |
       | steps[].calls[].tools | レビュアーのサブエージェントには `Agent` を許可しない。 | - | - |
+      | refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
+      | refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
+      | refs[].when | `when` を記載できない関連は張らない。 | - | - |
 
       <!-- /table -->
   - id: example-sample-01

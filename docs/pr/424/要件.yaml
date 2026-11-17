@@ -1,0 +1,21 @@
+docs:
+  - page: docs/flowchart/flowchart-repo-location.yaml
+    new: true
+    change: 判定フローチャート『リポジトリの置き場所』を新規作成する（Windows のドライブと Linux 側のどちらに配置するかと、Windows の上で動かすものを持つリポジトリの扱い）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T17:44:16.464853+00:00'
+scope_out:
+  - item: 配置先を移した後に書き換えるリポジトリの外部の設定（監視・文書の配信元・systemd・Claude Code の env）の一覧と移す手順
+    reason: AI Monitor の仕組みに固有の手順で、ai-monitor の作業 PR が行う
+    plan: shuhei1101/ai-monitor#3512
+  - item: AI Monitor の監視対象を加える手順・リポジトリを新規作成する手順からの参照
+    reason: ai-monitor の文書の変更で、ai-monitor の作業 PR が行う
+    plan: shuhei1101/ai-monitor#3512
+  - item: 新規作成する 1 件を rules.yaml の索引に登録するか
+    reason: リポジトリの配置先はファイルのパスに対応せず、判定フローチャート『テストの実行場所』と同じく索引に登録しない判断。レビューで確定する
+    plan: none
+  - item: 判定フローチャート『テストの実行場所』から新規作成する 1 件への関連
+    reason: テストの実行場所の判定はリポジトリの配置先を前提にしないため、新規作成する側からだけ張る判断。レビューで確定する
+    plan: none
+use_cases: []

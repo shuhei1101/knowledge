@@ -71,6 +71,22 @@ properties:
       - テストで、画面を開いて確認する結合テストを作るファイルにする。
       - 検査で、テストのファイルがあるかを確認する。
     pattern: ^tests/.+
+  impl_files:
+    type: array
+    title: 実装のファイル
+    description: '`screen` のほかに、この画面だけが使用する実装のファイル（画面の中の部品・スクリプト・スタイル）の、リポジトリの直下からのパス。'
+    x-used-by:
+      - 実行で、判定フローチャート『結合テストの実行範囲』の Q5 で、変更したファイルが 1 つの画面の実装のファイルかを決める。
+      - レビューで、実行範囲の表の R4 の行が `screen` とこの一覧のとおりかを確認する。
+    x-rules:
+      - 複数の画面が使用する共通の部品は記載しない。
+      - 実装を作った・移したときに記載する。
+    x-shape: list
+    items:
+      type: string
+      pattern: ^(?!tests/).+
+    examples:
+      - - app/(authenticated)/tasks/new/_components/task-create-form.tsx
   elements:
     type: array
     title: 要素一覧
@@ -440,14 +456,7 @@ properties:
           x-used-by:
             - 実装で、送信先のインターフェースか遷移先の画面を決める。
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -515,14 +524,7 @@ properties:
           x-used-by:
             - 実装で、エラーを出す場所にする。
   refs:
-    type: array
-    title: 関連
-    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-    x-used-by:
-      - 生成で、関連する設計書へのリンクにする。
-      - レビューで、関連する設計書をたどって食い違いを確認する。
-    items:
-      $ref: common.schema.yaml#/$defs/ref
+    $ref: common.schema.yaml#/$defs/related
   decisions:
     type: array
     title: 検討事項
@@ -543,6 +545,8 @@ examples:
   mock: docs/mock/pages/タスク作成/12/a-plan/
   lead: タスクの新規作成フォーム画面。タスク名・優先度を入力して登録する。
   test_file: tests/integration/task/test_タスク作成画面.py
+  impl_files:
+  - app/(authenticated)/tasks/new/_components/task-create-form.tsx
   elements:
   - name: タスク名入力欄
     kind: input

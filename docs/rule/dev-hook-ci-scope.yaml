@@ -1,11 +1,11 @@
 kind: rule
 id: dev-hook-ci-scope
 name: Git フックと CI で動かすもの
-description: Git フックと CI で動かすもの（生成・配布）と動かさないもの（lint・型検査・テスト・依存の監査）を定め、Git フックや CI のワークフローを作る・修正するときに参照する。
+description: Git フックと CI で動かすもの（生成・配布）と動かさないもの（lint・型検査・テスト・依存の監査）と、workflow を変えた作業 PR をランナーで動かしてからマージする手順を定め、Git フックや CI のワークフローを作る・修正するときに参照する。
 status: current
 visibility: internal
-rev: 2
-last_reviewed: '2026-11-14'
+rev: 3
+last_reviewed: '2026-11-17'
 items:
   - id: overview
     name: 概要
@@ -16,7 +16,7 @@ items:
     group: 動かすもの
     name: 動かすものと動かさないもの
     body: |-
-      <!-- table: data -->
+      <!-- table: {"kind": "data"} -->
 
       | 種類 | Git フック・push と PR で起動する CI | 例 |
       | --- | --- | --- |
@@ -36,6 +36,26 @@ items:
     body: |-
       - Git フックは lefthook（言語を問わない）で動かす
       - 動かすものが無いリポジトリは lefthook を入れない
+  - id: workflow-merge-01
+    group: workflow の変更
+    name: ランナーで動いたことを確認してからマージする
+    body: |-
+      workflow のファイル（`.github/workflows/`）を追加・修正した作業 PR は、マージの前に作業ブランチでランナーを動かし、成功したことを確認する。
+
+      1. 次の表の方法で、作業ブランチの workflow を起動する
+      2. `gh run list --branch {作業ブランチ} --workflow {workflow のファイル}` で、起動した実行の ID を探す
+      3. `gh run watch {ID} --exit-status` で成功を確認する
+      4. 実行の URL を PR ドキュメントの計画書の `## テスト結果` に記録する
+      5. 手順 1 で `push` を追加した場合は、除外して push してから、マージする
+
+      | workflow | 起動の方法 |
+      | --- | --- |
+      | 既定のブランチにあり、`workflow_dispatch` を持つ | `gh workflow run {workflow のファイル} --ref {作業ブランチ} -f {入力}={値}` で、入力の値ごとに起動する |
+      | それ以外（新規の workflow・`workflow_dispatch` を持たない workflow） | `on:` に、作業ブランチへの `push`（`branches: [{作業ブランチ}]`）を追加して push する |
+
+      配信・公開するジョブ（GitHub Pages への配信・拡張機能の公開）は、配信してよいブランチだけで動かす。
+      条件は `if: github.ref == 'refs/heads/develop'` のようにジョブに記載する。
+      作業ブランチでの実行は、配信の前までのジョブの成功を確認する。
 tags:
   - name: scope:dev
   - name: topic:ci

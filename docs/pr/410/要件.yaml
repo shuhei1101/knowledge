@@ -1,0 +1,18 @@
+docs:
+  - page: schemas/design/interface.schema.yaml
+    new: false
+    change: overall_flow の x-rules に、subgraph の ID をジョブの ID にしてジョブごとに 1 つ配置する決まりと、ノードと subgraph の中のノードの決まり（範囲と文言はユーザーへ確認する）を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T06:50:50.559033+00:00'
+  - page: docs/template/template-interface.yaml
+    new: false
+    change: 生成元のスキーマから生成し直し、決まりの表の overall_flow の行をスキーマの x-rules と一致させる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-15T06:50:50.559033+00:00'
+scope_out:
+  - item: _compare_overall の if を持つ step・ジョブへ入る線のラベルに式を持つ決まりの x-rules への追加
+    reason: 既存の x-rules の「分岐の判定は、workflow のファイルの if の条件と、step の成否で記載する」が同じ内容を持つ
+    plan: none
+use_cases: []

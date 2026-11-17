@@ -1,0 +1,32 @@
+$ uv run --frozen --script scripts/check_all.py
+382 件の文書を検査し、違反は 0 件、警告は 0 件でした
+(終了コード 0)
+
+# 記載例 IF-2 を、記載例どおりの workflow（ジョブ test、入力 layer: choice、step 4 つ、ログの step は if: always()）と _workflow.py の check_trigger・check_request・check_exclusivity・check_steps で突き合わせた結果
+$ uv run --script /tmp/v406/v.py {worktree}
+check_trigger []
+check_request []
+check_exclusivity []
+check_steps []
+
+# 修正前（base の記載例）の同じ突き合わせ
+check_request [(691, 'request[layer].type', 'choice')]
+check_steps [(698, 'overall_flow', '全ての step が成功したか'), (698, 'overall_flow', 'ジョブ test の subgraph がありません')]
+
+# 突き合わせに使ったスクリプト /tmp/v406/v.py
+# /// script
+# requires-python = ">=3.14"
+# dependencies = ["ruamel.yaml==0.19.1", "yamllint==1.38.0", "jsonschema>=4.26.0"]
+# ///
+import sys
+sys.path.insert(0, sys.argv[1] + "/scripts")
+from ruamel.yaml import YAML
+import _workflow as w
+y = YAML()
+schema = y.load(open(sys.argv[1] + "/schemas/design/interface.schema.yaml", encoding="utf-8"))
+doc = next(e for e in schema["examples"] if e["id"] == "IF-2")
+wf = {"on": {"workflow_dispatch": {"inputs": {"layer": {"type": "choice", "required": True, "options": ["unit", "integration"]}}}},
+      "concurrency": {"group": "test-${{ github.ref }}-${{ inputs.layer }}", "cancel-in-progress": True},
+      "jobs": {"test": {"steps": [{"name": "ブランチを取得する"}, {"name": "Python と uv を入れる"}, {"name": "層の全件を回す"}, {"name": "ログを成果物に上げる", "if": "${{ always() }}"}]}}}
+for f in (w.check_trigger, w.check_request, w.check_exclusivity, w.check_steps):
+    print(f.__name__, f(doc, wf))

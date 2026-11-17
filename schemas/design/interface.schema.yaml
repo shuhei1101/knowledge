@@ -111,11 +111,27 @@ properties:
   test_file:
     type: string
     title: 対応テストファイル
-    description: 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`。入口が `trigger` の GitHub Actions の workflow は `tests/e2e/workflow/…`。規約『V字モデル』）。
+    description: 対応する結合テストのファイル（`tests/integration/{サブシステム名}/…`、入口が `trigger` の GitHub Actions の workflow は `tests/e2e/workflow/…`。規約『V字モデル』）。
     x-used-by:
       - テストで、結合テストを作るファイルにする。
       - 検査で、テストのファイルがあるかを確認する。
     pattern: ^tests/.+
+  impl_files:
+    type: array
+    title: 実装のファイル
+    description: この入口だけが使用する実装のファイルの、リポジトリの直下からのパス。
+    x-used-by:
+      - 実行で、判定フローチャート『結合テストの実行範囲』の Q5 で、変更したファイルが 1 つの入口の実装のファイルかを決める。
+      - レビューで、実行範囲の表の R4 の行がこの一覧のとおりかを確認する。
+    x-rules:
+      - 複数の入口が使用するファイルは記載しない。
+      - 実装を作った・移したときに記載する。
+    x-shape: list
+    items:
+      type: string
+      pattern: ^(?!tests/).+
+    examples:
+      - - src/task/service/create_task.py
   identifier:
     type: string
     title: 識別子
@@ -479,6 +495,10 @@ properties:
     x-rules:
       - step は、workflow のファイルの step の `name` で記載する。
       - 分岐の判定は、workflow のファイルの `if` の条件と、step の成否で記載する。
+      - '`subgraph` は workflow のファイルのジョブごとに 1 つ配置し、ID をジョブの ID にする。'
+      - '`subgraph` の中には、そのジョブの step のノードだけを配置する。'
+      - 開始と終わり（`([...])`）のほかには、全てのジョブの step のノードを 1 つずつ配置する。
+      - 判定のノードは配置せず、分岐は線のラベルで記載する。
     x-heading: 全体の流れ
   flows:
     type: array
@@ -588,14 +608,7 @@ properties:
           description: 対応する結合テストの関数（`正常系` → `test_normal` / `正常系（{条件}）` → `test_normal_when_{条件}` / `異常系（{条件}）` → `test_error_when_{条件}`。`{条件}` は英訳）。
           x-test-function: true
         refs:
-          type: array
-          title: 関連
-          description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-          x-used-by:
-            - 生成で、関連する設計書へのリンクにする。
-            - レビューで、関連する設計書をたどって食い違いを確認する。
-          items:
-            $ref: common.schema.yaml#/$defs/ref
+          $ref: common.schema.yaml#/$defs/related
         decisions:
           type: array
           title: 検討事項
@@ -608,14 +621,7 @@ properties:
         notes:
           $ref: common.schema.yaml#/$defs/notes
   refs:
-    type: array
-    title: 関連
-    description: 関連する設計書の項目を `{ID}#{項目のパス}` で記載する。
-    x-used-by:
-      - 生成で、関連する設計書へのリンクにする。
-      - レビューで、関連する設計書をたどって食い違いを確認する。
-    items:
-      $ref: common.schema.yaml#/$defs/ref
+    $ref: common.schema.yaml#/$defs/related
   decisions:
     type: array
     title: 検討事項
@@ -637,6 +643,8 @@ examples:
     value: '`create_task`（サービス層の公開関数）'
   lead: タイトルとサブタスクを受け取ってタスクを永続化し、採番済みのタスクを返却する。
   test_file: tests/integration/task/test_create_task.py
+  impl_files:
+  - src/task/service/create_task.py
   request:
   - name: title
     type: str
@@ -688,10 +696,10 @@ examples:
   exclusivity: '同じブランチ・同じ層の実行は、古い方を止める（`concurrency` の `group: test-${{ github.ref }}-${{ inputs.layer }}`・`cancel-in-progress: true`）'
   request:
   - name: layer
-    type: unit / integration
+    type: choice
     required: true
     location: argument
-    description: 全件を回す層
+    description: 全件を回す層。選択肢は `unit` と `integration`
   constraints:
   - item: ランナー
     constraint: '`ubuntu-latest`'
@@ -700,15 +708,17 @@ examples:
 
     ```mermaid
     flowchart TD
-      s([workflow_dispatch で起動]) --> a[ブランチを取得する]
-      a -- 成功 --> b[Python と uv を入れる]
-      a -->|"失敗（if: always()）"| d[ログを成果物に上げる]
-      b -- 成功 --> c[層の全件を回す]
-      b -->|"失敗（if: always()）"| d
-      c -->|"成功・失敗（if: always()）"| d
-      d --> q{全ての step が成功したか}
-      q -- YES --> ok([成功])
-      q -- NO --> ng([失敗])
+      s([workflow_dispatch で起動])
+      subgraph test
+        a[ブランチを取得する] -- 成功 --> b[Python と uv を入れる]
+        a -->|"失敗（if: always()）"| d[ログを成果物に上げる]
+        b -- 成功 --> c[層の全件を回す]
+        b -->|"失敗（if: always()）"| d
+        c -->|"成功・失敗（if: always()）"| d
+      end
+      s --> a
+      d -->|"全ての step が成功"| ok([成功])
+      d -->|"どれかの step が失敗"| ng([失敗])
     ```
 
     <!-- /map -->

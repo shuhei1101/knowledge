@@ -10,7 +10,7 @@ $defs:
     description: Markdown で記載する本文。定数は `!{名前}` で埋め込める。
     contentMediaType: text/markdown
     x-rules:
-      - 他の設計書を指すときは説明文の中にリンクを記載せず、参照は `refs`（`ref` の配列）に持つ。
+      - 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。
   summary:
     type: string
     title: 概要
@@ -59,6 +59,102 @@ $defs:
       - "CFG-3#"
       - "#notes[main.py の補足]"
       - "#functions[main#3]"
+  related_item:
+    type: object
+    title: 関連
+    description: 別の設計書への関連 1 件。関連先の設計書の ID・項目のパス・関係の種類・いつ参照するかを持つ。
+    x-used-by:
+      - 検査で、`to` の設計書と `item` の項目が実在するかを確認する。
+      - 生成で、関連する設計書の項目へのリンクにする。
+      - レビューで、`when` の場面で関連する設計書をたどって食い違いを確認する。
+    x-shape: attributes
+    additionalProperties: false
+    required:
+    - to
+    - type
+    - when
+    properties:
+      to:
+        type: string
+        title: 相手の ID
+        description: 関連先の設計書の最上位の `id`。項目のパスは `item` に分ける。
+        x-used-by:
+          - 検査で、関連先の設計書が実在するかを確認する。
+          - project-index の `trace_related` で、文書の ID と一致させて関連をたどる。
+        pattern: "^[A-Z]+-\\d+(-\\d+)?$"
+        examples:
+          - "IF-12"
+          - "IF-3038-1"
+      item:
+        type: string
+        title: 項目のパス
+        description: 関連先の項目のパス。設計書全体を指すときは記載しない。
+        x-used-by:
+          - 検査で、`to` の設計書に項目が実在するかを確認する。
+          - 生成で、関連先の項目へのリンクにする。
+        x-rules:
+          - 記載方法は参照（`ref`）の `#` より後と同じにする。
+        pattern: "^(?:[^\\s\\[#]|\\[[^\\]]*\\])(?:[^\\s\\[]|\\[[^\\]]*\\])*$"
+        examples:
+          - "flows[正常系]"
+          - "functions[resolve_base].exceptions"
+      type:
+        type: string
+        title: 関係の種類
+        description: '関係の種類で、`requires`（前提にする）/ `references`（参照する）/ `replaces`（置き換える）/ `part_of`（一部になる）/ `change_together`（同時に修正する）のどれか。'
+        x-used-by:
+          - レビューで、関連先の変更がこの設計書へ及ぶかを判断する。
+          - project-index の `trace_related` で、たどった関連の影響の理由にする。
+        x-rules:
+          - 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。
+          - '`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。'
+        enum:
+        - requires
+        - references
+        - replaces
+        - part_of
+        - change_together
+      when:
+        type: string
+        title: いつ参照するか
+        description: 関連先をいつ参照するかの 1 文。
+        x-used-by:
+          - 実装とレビューで、関連先を参照する場面を判断する。
+        x-rules:
+          - '`when` を記載できない関連は張らない。'
+        minLength: 1
+        pattern: "^[^\\n]+$"
+        examples:
+          - "例外の型を変えるときに、呼び出し側の異常系のフローを確認する。"
+      paths:
+        type: array
+        title: 対象のパス
+        description: 機械で判定できるときだけ、関連が該当するファイルの glob を並べる。
+        x-used-by:
+          - 検査で、該当するファイルを変えたときに関連先を確認させる。
+        items:
+          type: string
+          minLength: 1
+        examples:
+          - - "scripts/*.py"
+    examples:
+      - to: "IF-12"
+        item: "flows[正常系]"
+        type: requires
+        when: "入出力を変えるときに、インターフェース定義の正常系のフローと突き合わせる。"
+      - to: "CFG-3"
+        type: references
+        when: "設定値の既定値を確認するとき。"
+  related:
+    type: array
+    title: 関連
+    description: 関連する設計書の一覧。
+    x-used-by:
+      - 生成で、関連する設計書へのリンクにする。
+      - レビューで、関連する設計書をたどって食い違いを確認する。
+    maxItems: 8
+    items:
+      $ref: "#/$defs/related_item"
   reason:
     $ref: "#/$defs/markdown"
     title: 理由
@@ -318,9 +414,13 @@ $defs:
             href:
               type: string
               title: リンク先
-              description: 押したときに開く先（相対パス + アンカー）。
+              description: 押したときに開く先。相対パス + アンカーか、同じ配信元の設計書を指す `id:{文書の ID}`・`id:{文書の ID}#{項目のパス}` を記載する。
               x-used-by:
                 - 生成で、リンク先にする。
+              examples:
+                - ../interface/IF-72-3.py.yaml#flows
+                - id:IF-72-3
+                - id:IF-72-3#flows[正常系]
   flowchart_node:
     type: object
     title: ノード
