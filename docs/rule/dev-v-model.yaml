@@ -38,11 +38,11 @@ items:
       | --- | --- | --- | --- | --- |
       | システム | 非機能要件 | `tests/nfr/` / `tests/external/` | `requirements` の 1 要素 = 1 ファイル、その `tests` の 1 要素 = テスト関数 1 つ | `requirements[].test_file` |
       | システム | アーキテクチャ図 | `tests/external/` | `external_systems` の 1 要素 = 1 ファイル | `external_systems[].test_file` |
-      | 業務フロー | シナリオ（複合ユースケース） | `tests/e2e/複合ユースケース/` | `scenarios` の 1 要素（`正常 / 異常シナリオ（{条件}）`）= テスト関数 1 つ | シナリオの `test_file` と `scenarios[].test` |
-      | ユーザー操作 | シナリオ（単一ユースケース） | `tests/e2e/単一ユースケース/` | 同上 | シナリオの `test_file` と `scenarios[].test` |
+      | 業務フロー | シナリオ（複合ユースケース） | `tests/e2e/複合ユースケース/`。React のフロントエンドは `frontend/tests/e2e/複合ユースケース/`（[フォルダ構成](id:react-core-folder-structure#test-02)） | `scenarios` の 1 要素（`正常 / 異常シナリオ（{条件}）`）= テスト関数 1 つ | シナリオの `test_file` と `scenarios[].test` |
+      | ユーザー操作 | シナリオ（単一ユースケース） | `tests/e2e/単一ユースケース/`。React のフロントエンドは `frontend/tests/e2e/単一ユースケース/`（[フォルダ構成](id:react-core-folder-structure#test-02)） | 同上 | シナリオの `test_file` と `scenarios[].test` |
       | サブシステムの境界 | インターフェース定義 | `tests/integration/{サブシステム名}/` | `flows` の 1 要素（`正常 / 異常系（{条件}）`）= テスト関数 1 つ | インターフェース定義の `test_file` と `flows[].test` |
-      | サブシステムの境界 | 画面設計 | `tests/integration/{サブシステム名}/` | `elements` の 1 要素の確認項目（値を持つ `label` / `placeholder` / `visible_when` / `enabled_when` / `constraints` / `initial_value` / `action`）1 つ = テスト関数 1 つ、`input_checks` の 1 要素 = テスト関数 1 つ。`source` / `target` の先を差し替えて画面だけをブラウザで動かして確認する | 画面設計の `test_file` |
-      | サブシステムの境界 | 部品設計 | `tests/integration/{サブシステム名}/` | `states` の 1 要素（Storybook のストーリー 1 つ）= テスト関数 1 つ。画面設計の行のうち部品の中で完結する確認を、ストーリーを Playwright で開いて確認する | 部品設計の `test_file` |
+      | サブシステムの境界 | 画面設計 | `tests/integration/{サブシステム名}/`。React のフロントエンドは対象の横（[フォルダ構成](id:react-core-folder-structure#test-01)） | `elements` の 1 要素の確認項目（値を持つ `label` / `placeholder` / `visible_when` / `enabled_when` / `constraints` / `initial_value` / `action`）1 つ = テスト関数 1 つ、`input_checks` の 1 要素 = テスト関数 1 つ。`source` / `target` の先を差し替えて画面だけをブラウザで動かして確認する | 画面設計の `test_file` |
+      | サブシステムの境界 | 部品設計 | `tests/integration/{サブシステム名}/`。React のフロントエンドは対象の横（[フォルダ構成](id:react-core-folder-structure#test-01)） | `states` の 1 要素（Storybook のストーリー 1 つ）= テスト関数 1 つ。画面設計の行のうち部品の中で完結する確認を、ストーリーを Playwright で開いて確認する | 部品設計の `test_file` |
       | モジュール | モジュール構成 | `tests/unit/{パッケージのパス}/`。React のフロントエンドは対象の横（[フォルダ構成](id:react-core-folder-structure#test-01)） | 設計書 1 つ = 物理ファイル 1 つ = 単体テストのファイルは実行環境（Node・ブラウザなど）ごとに 1 つ（`test_files` は実行環境の数だけ並べる）、関数・メソッドの `unit_tests` の 1 要素 = テスト関数 1 つ（`unit_tests[].name`） | モジュール構成の `test_files` |
 
       <!-- /table -->

@@ -1,0 +1,54 @@
+docs:
+  - page: schemas/design/component.schema.yaml
+    new: false
+    change: test_file の pattern を、tests/ の下に加えて対象の横に配置した React の結合テストのファイルも一致する形にし、x-rules と examples に対象の横のファイルを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T18:43:24.745603+00:00'
+  - page: schemas/design/screen.schema.yaml
+    new: false
+    change: test_file の pattern を、tests/ の下に加えて .test.ts・.test.tsx で終わる対象の横のファイルも一致する形にし、x-rules と examples に対象の横のファイルを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T18:43:24.745603+00:00'
+  - page: schemas/design/scenario.schema.yaml
+    new: false
+    change: test_file の pattern を、tests/ の下に加えて frontend/tests/e2e/ の下も一致する形にし、description・examples に React のフロントエンドの E2E を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T18:43:24.745603+00:00'
+  - page: docs/rule/dev-v-model.yaml
+    new: false
+    change: 対応表の画面設計・部品設計の行に React のフロントエンドは対象の横（規約『フォルダ構成』の test-01）、シナリオの 2 行に frontend/tests/e2e/（同 test-02）を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T18:43:24.745603+00:00'
+  - page: docs/template/template-component.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、test_file の変更を取り込む
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T18:43:24.745603+00:00'
+  - page: docs/template/template-screen-design.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、test_file の変更を取り込む
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T18:43:24.745603+00:00'
+  - page: docs/template/template-scenario.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、test_file の変更を取り込む
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T18:43:24.745603+00:00'
+scope_out:
+  - item: 規約『フォルダ構成』のテストの置き場所を tests/integration/・tests/e2e/ へ変えること（#494・#495 の案 B）
+    reason: モジュール構成（#493）は案 A で対象の横の単体テストを記録できるようにしており、React の規約の置き場所を保ったまま設計書のスキーマを合わせる方針と揃える
+    plan: none
+  - item: ai-monitor の設計書の検証（validate.py の check_tests）の追従
+    reason: check_tests は test_file のパスを tests/ に限らずに読むため、追従は要らない
+    plan: none
+  - item: インターフェース定義（interface.schema.yaml）の test_file の ^tests/.+
+    reason: 規約『フォルダ構成』は React のフロントエンドにインターフェース定義の結合テストの置き場所を定めておらず、今の pattern と食い違わない
+    plan: none
+use_cases: []

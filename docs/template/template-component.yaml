@@ -40,7 +40,7 @@ items:
       | lead | 冒頭リード | string | - | - | - | 部品が何を出すかを 1〜3 行で説明する。<br>初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。 | 生成で、ページの冒頭の説明にする。<br>project-index の検索で、文書の概要文にする。 | - |
       | implementation | 実装 | string | 必須 | - | pattern: `^[^#\s]+(#\S+)?$` | 部品の実装の場所。リポジトリの直下からのファイルのパスに、`#` と部品の名前（マクロ・コンポーネント）を続ける。 | 実装で、部品を修正するファイルとシンボルを決める。<br>レビューで、部品設計と実装の差分を突き合わせる。 | `src/app/components/macros.html#header_controls` |
       | story | Storybook | string | 必須 | - | pattern: `^[A-Za-z][A-Za-z0-9]*(/[A-Za-z][A-Za-z0-9]*)+$` | Storybook のストーリーのタイトル。 | 実装で、Storybook のストーリーのタイトルにする。<br>結合テストで、開くストーリーを決める。 | `Plan/StatusBadge` / `Common/Topbar` |
-      | test_file | 対応テストファイル | string | - | - | pattern: `^tests/.+` | ストーリーを開いて確認する結合テストのファイル（規約『V字モデル』）。 | テストで、ストーリーを開いて確認する結合テストを作るファイルにする。<br>検査で、テストのファイルがあるかを確認する。 | `tests/integration/storybook/test_計画画面の部品.py` |
+      | test_file | 対応テストファイル | string | - | - | pattern: `^(?:tests/.+\|.+\.test\.tsx?)$` | ストーリーを開いて確認する結合テストのファイル（規約『V字モデル』）。 | テストで、ストーリーを開いて確認する結合テストを作るファイルにする。<br>検査で、テストのファイルがあるかを確認する。 | `tests/integration/storybook/test_計画画面の部品.py` / `frontend/src/features/plan/shared/components/status-badge.test.tsx` |
       | args | 引数 | array | - | - | - | 部品が受け取る値。引数 1 つ = 1 要素。 | 実装で、部品の引数とストーリーの `args` にする。<br>画面設計で、部品へ指定する値を決める。<br>生成で、引数の表にする。 | - |
       | args[].name | 名前 | string | 必須 | - | pattern: `^[A-Za-z_][A-Za-z0-9_]*(\[\])?(\.[A-Za-z_][A-Za-z0-9_]*(\[\])?)*$` | 実装の引数の名前。 | 実装で、引数の名前にする。<br>設計で、状態の `args` から引数を指す。 | `status` / `dep.unresolved` / `items[].label` |
       | args[].type | 型 | string | 必須 | - | - | `文字列` / `整数` / `数値` / `真偽値` / `列挙` / `オブジェクト` / `配列` / `オブジェクトの配列` / `部品`。 | 実装で、引数の型にする。 | `列挙` / `オブジェクトの配列` |
@@ -105,6 +105,7 @@ items:
       | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
       | lead | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | story | 日本語の名前は `title` から追加する。 | - | - |
+      | test_file | 規約『フォルダ構成』で対象の横に配置する React の結合テストは、対象の横のファイル（`*.test.ts`・`*.test.tsx`）を記載する。 | - | - |
       | args | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 要素に展開する。 | - | - |
       | args[].component | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
       | args[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
