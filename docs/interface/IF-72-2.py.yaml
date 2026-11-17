@@ -40,7 +40,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: 標準入力
-        description: '`arguments`（オブジェクトの配列）と `preconditions`（文字列の配列）を持つ文書。配信元の `schemas/` に、その `kind` のスキーマ（`arguments`・`preconditions` の `title` を持つ）を配置する'
+        description: '`arguments`（オブジェクトの配列）・`preconditions`（文字列の配列）・`scenes`（文字列の配列を持つオブジェクト）・`level`（列挙）を持つ文書。配信元の `schemas/` に、その `kind` のスキーマ（各キーの `title`、`$defs` を `$ref` で指す `arguments` の要素のキーの `title`、`scenes` の中のキーの `title` を持つ）を配置する'
     flow: |-
       <!-- map -->
 
@@ -60,6 +60,10 @@ flows:
       - 終了コードが 0
       - '`arguments` が `## {arguments の title}` の下の `<!-- table: {"kind": "data"} -->` の表になる'
       - '`preconditions` が `## {preconditions の title}` の下の箇条書きになる'
+      - '`arguments` の表の列名が、`$defs` の要素のスキーマの `title` になる'
+      - '`scenes` が `## {scenes の title}` の下で、キーごとの `- {キーの title}` の行と、その下に 1 段下げた要素の箇条書きになる'
+      - '`level` が `## {level の title}` の下に値のまま出る'
+      - 標準出力に、`[` か `{` で始まる JSON の文字列の値が出ない
     test: test_normal_when_kind_specific_keys
   - name: 正常系（埋め込みのマーカーがある）
     summary: 項目の本文の埋め込みのマーカーを、ID の対応表の NG・OK の表に置き換える
@@ -217,7 +221,7 @@ request:
     type: Path
     required: true
     location: argument
-    description: knowledge の配信元の直下。`schemas/{kind}.schema.yaml` を読み込み、種類に固有のキーの見出しにスキーマの `title` を使用する。埋め込みのマーカーがあるときは `project-index.yaml` の `documents[]` の `word-list` の行の `paths` に該当する対応表を読み込む
+    description: knowledge の配信元の直下。`schemas/{kind}.schema.yaml` を読み込み、種類に固有のキーの見出し・入れ子のキーの名前・表の列名にスキーマの `title` を使用する。埋め込みのマーカーがあるときは `project-index.yaml` の `documents[]` の `word-list` の行の `paths` に該当する対応表を読み込む
     notes: 子プロセスの作業ディレクトリとして受け取る
 response:
   - name: stdout
@@ -270,5 +274,5 @@ constraints:
   - item: 出さないキー
     constraint: '`id`・`kind`・`tags`・`status`・`visibility`・`rev`・`last_reviewed`・`aliases` は本文に出さない（dev-docs の画面がメタデータとして出す）。alias-inject の照合条件の `inject_when` も本文に出さない'
   - item: 種類に固有のキー
-    constraint: '共通のメタデータ以外のキー（スキルの `arguments` など）は `## {スキーマの title}` のセクションにし、文字列は段落、文字列の配列は箇条書き、オブジェクトの配列は `<!-- table: {"kind": "data"} -->` の表で出す'
+    constraint: '共通のメタデータ以外のキー（スキルの `arguments` など）は `## {スキーマの title}` のセクションにし、文字列は段落、文字列の配列は箇条書き、オブジェクトの配列は `<!-- table: {"kind": "data"} -->` の表で出す。オブジェクトは、キーごとに `- {title}` の行を出し、値が文字列・数・真偽値ならその行の `: ` の後に、配列・オブジェクトならその行の下に 1 段下げた箇条書きで出す。表の列名は要素のスキーマの `title` にし、セルの値が配列なら要素を、オブジェクトなら `{title}: {値}` を `<br>` でつなぐ。`title` はスキーマの `properties`（オブジェクト）・`items`（配列）・同じスキーマの中を指す `$ref`（`#/` で始まるもの）をたどって参照し、`title` が無いキーはキー名のまま出す。列挙の値は値のまま出す。どの値も JSON の文字列にしない'
 test_file: tests/integration/scripts/test_knowledge_markdown.py
