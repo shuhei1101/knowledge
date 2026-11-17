@@ -1,0 +1,264 @@
+$ run_url=$(gh workflow run test.yml --ref "$(git branch --show-current)" -f layer=unit | grep -o 'https://[^ ]*/actions/runs/[0-9]*') && run_id=${run_url##*/} && (rc=0; gh run watch "$run_id" --exit-status > /dev/null || rc=1; gh run view "$run_id" --log; exit $rc)
+
+2026-11-17T02:30:19.5801571Z Current runner version: '2.338.2'
+2026-11-17T02:30:19.5823243Z ##[group]Runner Image Provisioner
+2026-11-17T02:30:19.5823906Z Hosted Compute Agent
+2026-11-17T02:30:19.5824333Z Version: 20261103.629
+2026-11-17T02:30:19.5824730Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-17T02:30:19.5825167Z Build Date: 2026-11-03T17:26:59Z
+2026-11-17T02:30:19.5825728Z Worker ID: {d1e2b151-de18-4726-9dcd-84ed308a232d}
+2026-11-17T02:30:19.5826164Z Region: centralus
+2026-11-17T02:30:19.5826573Z Cloud: Azure
+2026-11-17T02:30:19.5826920Z ##[endgroup]
+2026-11-17T02:30:19.5827743Z ##[group]Operating System
+2026-11-17T02:30:19.5828445Z Ubuntu
+2026-11-17T02:30:19.5828785Z 26.04.1
+2026-11-17T02:30:19.5829131Z LTS
+2026-11-17T02:30:19.5829466Z ##[endgroup]
+2026-11-17T02:30:19.5829811Z ##[group]Runner Image
+2026-11-17T02:30:19.5830251Z Image: ubuntu-26.04
+2026-11-17T02:30:19.5830620Z Version: 20261111.196.1
+2026-11-17T02:30:19.5831422Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261111.196/images/ubuntu/Ubuntu2604-Readme.md
+2026-11-17T02:30:19.5832514Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261111.196
+2026-11-17T02:30:19.5833157Z ##[endgroup]
+2026-11-17T02:30:19.5833872Z ##[group]GITHUB_TOKEN Permissions
+2026-11-17T02:30:19.5835598Z Contents: read
+2026-11-17T02:30:19.5836027Z Metadata: read
+2026-11-17T02:30:19.5836416Z ##[endgroup]
+2026-11-17T02:30:19.5837994Z Secret source: Actions
+2026-11-17T02:30:19.5838881Z Cache mode: write
+2026-11-17T02:30:19.5839373Z Prepare workflow directory
+2026-11-17T02:30:19.6110340Z Prepare all required actions
+2026-11-17T02:30:19.6146066Z Getting action download info
+2026-11-17T02:30:19.8466125Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-17T02:30:19.9487808Z Download action repository 'astral-sh/setup-uv@v6' (SHA:d0cc045d04ccac9d8b7881df0226f9e82c39688e)
+2026-11-17T02:30:20.4429156Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-11-17T02:30:20.5374171Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-11-17T02:30:20.7324712Z Complete job name: test
+﻿2026-11-17T02:30:20.7901029Z ##[group]Run actions/checkout@v4
+2026-11-17T02:30:20.7901755Z with:
+2026-11-17T02:30:20.7902019Z   repository: shuhei1101/knowledge
+2026-11-17T02:30:20.7904156Z   token: ***
+2026-11-17T02:30:20.7904401Z   ssh-strict: true
+2026-11-17T02:30:20.7904655Z   ssh-user: git
+2026-11-17T02:30:20.7904906Z   persist-credentials: true
+2026-11-17T02:30:20.7905184Z   clean: true
+2026-11-17T02:30:20.7905441Z   sparse-checkout-cone-mode: true
+2026-11-17T02:30:20.7905740Z   fetch-depth: 1
+2026-11-17T02:30:20.7905984Z   fetch-tags: false
+2026-11-17T02:30:20.7906234Z   show-progress: true
+2026-11-17T02:30:20.7906490Z   lfs: false
+2026-11-17T02:30:20.7906725Z   submodules: false
+2026-11-17T02:30:20.7906982Z   set-safe-directory: true
+2026-11-17T02:30:20.7907270Z   allow-unsafe-pr-checkout: false
+2026-11-17T02:30:20.7907660Z ##[endgroup]
+2026-11-17T02:30:21.0503657Z Syncing repository: shuhei1101/knowledge
+2026-11-17T02:30:21.0505019Z ##[group]Getting Git version info
+2026-11-17T02:30:21.0505458Z Working directory is '/home/runner/work/knowledge/knowledge'
+2026-11-17T02:30:21.0506612Z [command]/usr/bin/git version
+2026-11-17T02:30:21.0513709Z git version 2.56.1
+2026-11-17T02:30:21.0525690Z ##[endgroup]
+2026-11-17T02:30:21.0536117Z Temporarily overriding HOME='/home/runner/work/_temp/e43b32f5-6be6-4f2b-be41-ddaf28c9cfa2' before making global git config changes
+2026-11-17T02:30:21.0539898Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T02:30:21.0540755Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/knowledge/knowledge
+2026-11-17T02:30:21.0600588Z Deleting the contents of '/home/runner/work/knowledge/knowledge'
+2026-11-17T02:30:21.0603613Z ##[group]Initializing the repository
+2026-11-17T02:30:21.0607334Z [command]/usr/bin/git init /home/runner/work/knowledge/knowledge
+2026-11-17T02:30:21.0700853Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-17T02:30:21.0701731Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-17T02:30:21.0702346Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-17T02:30:21.0702851Z hint: call:
+2026-11-17T02:30:21.0703123Z hint:
+2026-11-17T02:30:21.0703486Z hint: 	git config --global init.defaultBranch <name>
+2026-11-17T02:30:21.0703860Z hint:
+2026-11-17T02:30:21.0704213Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-17T02:30:21.0704866Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-17T02:30:21.0705341Z hint:
+2026-11-17T02:30:21.0705603Z hint: 	git branch -m <name>
+2026-11-17T02:30:21.0705895Z hint:
+2026-11-17T02:30:21.0706295Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-17T02:30:21.0711057Z Initialized empty Git repository in /home/runner/work/knowledge/knowledge/.git/
+2026-11-17T02:30:21.0720945Z [command]/usr/bin/git remote add origin https://github.com/shuhei1101/knowledge
+2026-11-17T02:30:21.0769862Z ##[endgroup]
+2026-11-17T02:30:21.0770474Z ##[group]Disabling automatic garbage collection
+2026-11-17T02:30:21.0772917Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-17T02:30:21.0802197Z ##[endgroup]
+2026-11-17T02:30:21.0802670Z ##[group]Setting up auth
+2026-11-17T02:30:21.0807513Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T02:30:21.0836096Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T02:30:21.1279421Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T02:30:21.1307488Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T02:30:21.1555653Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T02:30:21.1590363Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T02:30:21.1837885Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-17T02:30:21.1876762Z ##[endgroup]
+2026-11-17T02:30:21.1877477Z ##[group]Fetching the repository
+2026-11-17T02:30:21.1886355Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +075599618ae571983d01fdac17ecd729be4903a7:refs/remotes/origin/chore/scripts/mdmark-develop-ref
+2026-11-17T02:30:21.9362494Z From https://github.com/shuhei1101/knowledge
+2026-11-17T02:30:21.9364088Z  * [new ref]         075599618ae571983d01fdac17ecd729be4903a7 -> origin/chore/scripts/mdmark-develop-ref
+2026-11-17T02:30:21.9367404Z ##[endgroup]
+2026-11-17T02:30:21.9368780Z ##[group]Determining the checkout info
+2026-11-17T02:30:21.9369876Z ##[endgroup]
+2026-11-17T02:30:21.9372267Z [command]/usr/bin/git sparse-checkout disable
+2026-11-17T02:30:21.9424401Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-17T02:30:21.9458644Z ##[group]Checking out the ref
+2026-11-17T02:30:21.9463922Z [command]/usr/bin/git checkout --progress --force -B chore/scripts/mdmark-develop-ref refs/remotes/origin/chore/scripts/mdmark-develop-ref
+2026-11-17T02:30:22.0290598Z Switched to a new branch 'chore/scripts/mdmark-develop-ref'
+2026-11-17T02:30:22.0293542Z branch 'chore/scripts/mdmark-develop-ref' set up to track 'origin/chore/scripts/mdmark-develop-ref'.
+2026-11-17T02:30:22.0303374Z ##[endgroup]
+2026-11-17T02:30:22.0353769Z [command]/usr/bin/git log -1 --format=%H
+2026-11-17T02:30:22.0381183Z 075599618ae571983d01fdac17ecd729be4903a7
+﻿2026-11-17T02:30:22.0783596Z ##[group]Run astral-sh/setup-uv@v6
+2026-11-17T02:30:22.0784369Z with:
+2026-11-17T02:30:22.0784935Z   activate-environment: false
+2026-11-17T02:30:22.0785780Z   working-directory: /home/runner/work/knowledge/knowledge
+2026-11-17T02:30:22.0786717Z   server-url: https://github.com
+2026-11-17T02:30:22.0792264Z   github-token: ***
+2026-11-17T02:30:22.0792869Z   enable-cache: auto
+2026-11-17T02:30:22.0794314Z   cache-dependency-glob: **/*requirements*.txt
+**/*requirements*.in
+**/*constraints*.txt
+**/*constraints*.in
+**/pyproject.toml
+**/uv.lock
+**/*.py.lock
+
+2026-11-17T02:30:22.0795904Z   restore-cache: true
+2026-11-17T02:30:22.0796504Z   save-cache: true
+2026-11-17T02:30:22.0797083Z   prune-cache: true
+2026-11-17T02:30:22.0797716Z   ignore-nothing-to-cache: false
+2026-11-17T02:30:22.0798500Z   ignore-empty-workdir: false
+2026-11-17T02:30:22.0799197Z   add-problem-matchers: true
+2026-11-17T02:30:22.0799852Z ##[endgroup]
+2026-11-17T02:30:22.2284097Z (node:2176) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-17T02:30:22.2287118Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-17T02:30:22.2357170Z Trying to find version for uv in: /home/runner/work/knowledge/knowledge/uv.toml
+2026-11-17T02:30:22.2358802Z Could not find file: /home/runner/work/knowledge/knowledge/uv.toml
+2026-11-17T02:30:22.2360139Z Trying to find version for uv in: /home/runner/work/knowledge/knowledge/pyproject.toml
+2026-11-17T02:30:22.2361726Z Could not find file: /home/runner/work/knowledge/knowledge/pyproject.toml
+2026-11-17T02:30:22.2363086Z Could not determine uv version from uv.toml or pyproject.toml. Falling back to latest.
+2026-11-17T02:30:22.2364995Z Getting latest version from GitHub API...
+2026-11-17T02:30:22.5233356Z manifest-file not provided, reading from local file.
+2026-11-17T02:30:22.5252747Z manifest-file does not contain version 0.13.8, arch x86_64, platform unknown-linux-gnu. Falling back to GitHub releases.
+2026-11-17T02:30:22.5254145Z Downloading uv from "https://github.com/astral-sh/uv/releases/download/0.13.8/uv-x86_64-unknown-linux-gnu.tar.gz" ...
+2026-11-17T02:30:22.8397812Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/c0547118-5b2e-42b6-9bb8-a1f51f61a14d -f /home/runner/work/_temp/724b7a1f-bcde-4cfc-a1f3-6ea8ebff4940
+2026-11-17T02:30:23.1190461Z Added /home/runner/.local/bin to the path
+2026-11-17T02:30:23.1191973Z Added /opt/hostedtoolcache/uv/0.13.8/x86_64 to the path
+2026-11-17T02:30:23.1216511Z Set UV_CACHE_DIR to /home/runner/work/_temp/setup-uv-cache
+2026-11-17T02:30:23.1216833Z Successfully installed uv version 0.13.8
+2026-11-17T02:30:23.1217860Z Searching files using cache dependency glob: /home/runner/work/knowledge/knowledge/**/*requirements*.txt,/home/runner/work/knowledge/knowledge/**/*requirements*.in,/home/runner/work/knowledge/knowledge/**/*constraints*.txt,/home/runner/work/knowledge/knowledge/**/*constraints*.in,/home/runner/work/knowledge/knowledge/**/pyproject.toml,/home/runner/work/knowledge/knowledge/**/uv.lock,/home/runner/work/knowledge/knowledge/**/*.py.lock
+2026-11-17T02:30:23.2621136Z /home/runner/work/knowledge/knowledge/scripts/build_pages.py.lock
+2026-11-17T02:30:23.2636900Z /home/runner/work/knowledge/knowledge/scripts/build_skills.py.lock
+2026-11-17T02:30:23.2644926Z /home/runner/work/knowledge/knowledge/scripts/build_templates.py.lock
+2026-11-17T02:30:23.2657835Z /home/runner/work/knowledge/knowledge/scripts/build_word_list.py.lock
+2026-11-17T02:30:23.2658980Z /home/runner/work/knowledge/knowledge/scripts/check_all.py.lock
+2026-11-17T02:30:23.2662478Z /home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py.lock
+2026-11-17T02:30:23.2667651Z /home/runner/work/knowledge/knowledge/scripts/knowledge_markdown.py.lock
+2026-11-17T02:30:23.2705938Z Found 7 files to hash.
+2026-11-17T02:30:23.3389035Z Trying to restore uv cache from GitHub Actions cache with key: setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-d0abc58ea00ba726b722b223875ee6fbe07bca33f6455c515a50265972af724b
+2026-11-17T02:30:23.4747414Z Cache hit for: setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-d0abc58ea00ba726b722b223875ee6fbe07bca33f6455c515a50265972af724b
+2026-11-17T02:30:23.4822106Z (node:2176) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-17T02:30:23.6610642Z Received 2333 of 2333 (100.0%), 0.1 MBs/sec
+2026-11-17T02:30:23.6611096Z Cache Size: ~0 MB (2333 B)
+2026-11-17T02:30:23.6625117Z [command]/usr/bin/tar -xf /home/runner/work/_temp/e2668fd0-1e62-4ff6-a7d2-564f49d2362e/cache.tzst -P -C /home/runner/work/knowledge/knowledge --use-compress-program unzstd
+2026-11-17T02:30:23.6693473Z Cache restored successfully
+2026-11-17T02:30:23.6697439Z uv cache restored from GitHub Actions cache with key: setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-d0abc58ea00ba726b722b223875ee6fbe07bca33f6455c515a50265972af724b
+﻿2026-11-17T02:30:23.6877976Z ##[group]Run set -o pipefail
+2026-11-17T02:30:23.6878467Z ^[[36;1mset -o pipefail^[[0m
+2026-11-17T02:30:23.6878618Z ^[[36;1mcase "$LAYER" in^[[0m
+2026-11-17T02:30:23.6878757Z ^[[36;1m  unit)^[[0m
+2026-11-17T02:30:23.6879332Z ^[[36;1m    (rc=0; uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit || rc=1; uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check || rc=1; exit $rc) 2>&1 | tee test.log^[[0m
+2026-11-17T02:30:23.6880983Z ^[[36;1m    ;;^[[0m
+2026-11-17T02:30:23.6881117Z ^[[36;1m  integration)^[[0m
+2026-11-17T02:30:23.6881488Z ^[[36;1m    uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/integration 2>&1 | tee test.log^[[0m
+2026-11-17T02:30:23.6881869Z ^[[36;1m    ;;^[[0m
+2026-11-17T02:30:23.6881990Z ^[[36;1mesac^[[0m
+2026-11-17T02:30:23.6929446Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-17T02:30:23.6929740Z env:
+2026-11-17T02:30:23.6929907Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-11-17T02:30:23.6930088Z   LAYER: unit
+2026-11-17T02:30:23.6930216Z ##[endgroup]
+2026-11-17T02:30:24.0212520Z Downloading pygments (1.2MiB)
+2026-11-17T02:30:24.0807113Z  Downloaded pygments
+2026-11-17T02:30:24.0913254Z Installed 14 packages in 10ms
+2026-11-17T02:30:25.3326101Z ============================= test session starts ==============================
+2026-11-17T02:30:25.3326633Z platform linux -- Python 3.14.4, pytest-9.2.0, pluggy-1.7.0
+2026-11-17T02:30:25.3327004Z rootdir: /home/runner/work/knowledge/knowledge
+2026-11-17T02:30:25.3327311Z configfile: pytest.ini
+2026-11-17T02:30:25.3327561Z plugins: platformdirs-4.14.5, typeguard-4.4.4
+2026-11-17T02:30:25.3327839Z collected 284 items
+2026-11-17T02:30:25.3327965Z 
+2026-11-17T02:30:25.3992914Z tests/unit/scripts/test_build_pages.py ...................               [  6%]
+2026-11-17T02:30:27.9797938Z tests/unit/scripts/test_build_skills.py .......................          [ 14%]
+2026-11-17T02:30:28.0630109Z tests/unit/scripts/test_build_templates.py ........................      [ 23%]
+2026-11-17T02:30:28.0682371Z tests/unit/scripts/test_build_word_list.py ...                           [ 24%]
+2026-11-17T02:30:30.7577228Z tests/unit/scripts/test_check_all.py ................................... [ 36%]
+2026-11-17T02:30:31.1711562Z ...................                                                      [ 43%]
+2026-11-17T02:30:31.2020319Z tests/unit/scripts/test_common.py ....................                   [ 50%]
+2026-11-17T02:30:31.2345425Z tests/unit/scripts/test_knowledge_checks.py ..........................   [ 59%]
+2026-11-17T02:30:31.2529947Z tests/unit/scripts/test_knowledge_markdown.py .......................... [ 68%]
+2026-11-17T02:30:31.2595650Z ........                                                                 [ 71%]
+2026-11-17T02:30:31.4061849Z tests/unit/scripts/test_lint.py .....................                    [ 78%]
+2026-11-17T02:30:31.5343286Z tests/unit/scripts/test_workflow.py .....................                [ 86%]
+2026-11-17T02:30:31.5505184Z tests/unit/slop-check/test_slop_check.py ............................... [ 97%]
+2026-11-17T02:30:31.6380672Z ........                                                                 [100%]
+2026-11-17T02:30:31.6381005Z 
+2026-11-17T02:30:31.6381162Z ============================= 284 passed in 6.63s ==============================
+2026-11-17T02:30:31.8813404Z Downloading cpython-3.12.16-linux-x86_64-gnu (download) (33.1MiB)
+2026-11-17T02:30:32.4263054Z  Downloaded cpython-3.12.16-linux-x86_64-gnu (download)
+2026-11-17T02:30:32.5400833Z Installed 5 packages in 7ms
+2026-11-17T02:30:33.2146085Z ============================= test session starts ==============================
+2026-11-17T02:30:33.2146492Z platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0
+2026-11-17T02:30:33.2146726Z rootdir: /home/runner/work/knowledge/knowledge
+2026-11-17T02:30:33.2147044Z configfile: pytest.ini
+2026-11-17T02:30:33.2147517Z collected 39 items
+2026-11-17T02:30:33.2147598Z 
+2026-11-17T02:30:33.2323353Z tests/unit/slop-check/test_slop_check.py ............................... [ 79%]
+2026-11-17T02:30:33.2595373Z ........                                                                 [100%]
+2026-11-17T02:30:33.2595605Z 
+2026-11-17T02:30:33.2595744Z ============================== 39 passed in 0.05s ==============================
+﻿2026-11-17T02:30:33.3049396Z ##[group]Run actions/upload-artifact@v4
+2026-11-17T02:30:33.3049590Z with:
+2026-11-17T02:30:33.3049711Z   name: test-log
+2026-11-17T02:30:33.3049836Z   path: test.log
+2026-11-17T02:30:33.3049968Z   if-no-files-found: ignore
+2026-11-17T02:30:33.3050119Z   compression-level: 6
+2026-11-17T02:30:33.3050253Z   overwrite: false
+2026-11-17T02:30:33.3050388Z   include-hidden-files: false
+2026-11-17T02:30:33.3050538Z env:
+2026-11-17T02:30:33.3050682Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-11-17T02:30:33.3050904Z ##[endgroup]
+2026-11-17T02:30:33.4295797Z (node:2326) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-17T02:30:33.4296366Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-17T02:30:33.4331392Z With the provided path, there will be 1 file uploaded
+2026-11-17T02:30:33.4334909Z Artifact name is valid!
+2026-11-17T02:30:33.4335385Z Root directory input is valid!
+2026-11-17T02:30:33.7085977Z Beginning upload of artifact content to blob storage
+2026-11-17T02:30:33.7248758Z (node:2326) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-17T02:30:33.8884637Z Uploaded bytes 659
+2026-11-17T02:30:33.9297049Z Finished uploading artifact content to blob storage!
+2026-11-17T02:30:33.9297693Z SHA256 digest of uploaded artifact zip is ded3a0668aea2fc4c83a29cf1285595f518a642c2ac59032263ea9924947cebd
+2026-11-17T02:30:33.9301080Z Finalizing artifact upload
+2026-11-17T02:30:34.2727695Z Artifact test-log.zip successfully finalized. Artifact ID 14293391572
+2026-11-17T02:30:34.2728444Z Artifact test-log has been successfully uploaded! Final size is 659 bytes. Artifact ID is 14293391572
+2026-11-17T02:30:34.2733203Z Artifact download URL: https://github.com/shuhei1101/knowledge/actions/runs/44003461107/artifacts/14293391572
+﻿2026-11-17T02:30:34.2904087Z Post job cleanup.
+2026-11-17T02:30:34.3837135Z (node:2338) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-17T02:30:34.3837875Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-17T02:30:34.3839390Z Cache hit occurred on key setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-d0abc58ea00ba726b722b223875ee6fbe07bca33f6455c515a50265972af724b, not saving cache.
+﻿2026-11-17T02:30:34.3951366Z Post job cleanup.
+2026-11-17T02:30:34.4547881Z [command]/usr/bin/git version
+2026-11-17T02:30:34.4580812Z git version 2.56.1
+2026-11-17T02:30:34.4603931Z Temporarily overriding HOME='/home/runner/work/_temp/3ef9016b-2c3e-4898-9cd3-890434bc137c' before making global git config changes
+2026-11-17T02:30:34.4604629Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T02:30:34.4607028Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/knowledge/knowledge
+2026-11-17T02:30:34.5037376Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T02:30:34.5075716Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T02:30:34.5344838Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T02:30:34.5372273Z http.https://github.com/.extraheader
+2026-11-17T02:30:34.5382469Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-11-17T02:30:34.5477358Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T02:30:34.5759182Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T02:30:34.5801468Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+﻿2026-11-17T02:30:34.6235779Z Cleaning up orphan processes
+2026-11-17T02:30:34.6545171Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4, astral-sh/setup-uv@v6. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
