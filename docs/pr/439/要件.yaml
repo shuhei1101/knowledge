@@ -1,0 +1,25 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: none
+    detail: '利用者が画面のタブとサイドバーから knowledge の文書を開く流れは、この PR では変えない（knowledge のタブの並びの修正は #422）'
+    depends_on: []
+docs:
+  - page: docs/rule/dev-docs-navigation.yaml
+    new: true
+    change: 'dev-docs のタブの並び・サイドバーのグループ・目次を並べない決まりの規約を新設する（配置場所と名前は要件.md の未確定の決着に従う。案 B に決まったら、この行を docs/rule/dev-document-management.yaml の group: 配信 への項目の追加に書き換える）'
+    status: todo
+  - page: rules.yaml
+    new: false
+    change: 新しい規約を、project-index.yaml・dev-docs.yaml を触るときに注入する行を追加する
+    status: todo
+scope_out:
+  - item: knowledge の配信の設定（project-index.yaml の nav）と、今のタブを前提にした SC-72-3・guide-setup-docs-mcp の記載を、決まりに従って修正する
+    reason: この PR は決まりの登録だけで、配信元ごとの設定の修正は後続
+    plan: '#422'
+  - item: knowledge 以外の配信元（ai-monitor・dev-docs など 13 件）の配信の設定を、決まりに従って修正する
+    reason: 各リポジトリの作業で、この PR の決まりを前提にする後続
+    plan: to_file
+  - item: 種類「ノウハウ」（docs/knowhow）への配置
+    reason: '#418 は develop に入っておらず、各プロジェクトが従う決まりなので規約（docs/rule）に置く'
+    plan: none
