@@ -1,0 +1,38 @@
+id: knowhow-direction-camera-easing
+kind: knowhow
+name: カメラの移動は距離で減速の強さを変え、前後のショットで動きの向きを統一する
+description: 動画のカメラの移動に、距離と場面に応じた減速の緩急を付け、前後のショットで動きの向きを統一する技法を記載し、カメラの移動の速さを決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+sources:
+  - id: AM1
+    title: あおもやの動画「カメラ制御って必要？」
+    url: https://www.youtube.com/watch?v=52Xsgw79K-o
+necessity: reference
+scenes:
+  fits:
+    - 劇場動画で、カメラを移動させるとき。
+evidence:
+  - source: AM1
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: カメラの移動には距離と場面で緩急を付け、前後のショットで動きの向きを統一する。
+  - id: steps-01
+    name: 緩急の付け方
+    body: |-
+      | 移動 | 緩急 |
+      | --- | --- |
+      | 長い移動 | 緩やかに減速する |
+      | 短い移動 | 強く減速する（はっと気づく場面） |
+      | コミカルな場面 | 0.5 秒前後の戻る動きを付ける |
+tags:
+  - name: topic:カメラ
+    main: true
+  - name: topic:アニメーション
+  - name: topic:動画
+  - name: topic:ノウハウ
