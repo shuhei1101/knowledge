@@ -186,7 +186,7 @@ properties:
       pinning:
         type: string
         title: バージョンの固定方法
-        description: バージョンの固定方法（完全一致・範囲 等）。
+        description: バージョンの固定方法（完全一致・範囲 等）。同じ所有者が作るライブラリは、既定で develop の最新を参照し、固定するときはタグか、develop の配布物を作り直した commit の SHA で行う。
         x-used-by:
           - 保守で、依存を上げるときのバージョンの指定の記載方法にする。
       support_until:
