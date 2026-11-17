@@ -1,0 +1,39 @@
+use_cases: []
+docs:
+  - page: docs/decision-table/decision-table-alias-exclusion.yaml
+    new: false
+    change: 表のセルの ※1〜※6 を ※[alias-exclusion-n{N}] の参照にし、注記だけの項目 alias-exclusion-table-02〜07 を削除して定義を判定表の表の下へ移す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:26:37.345655+00:00'
+  - page: docs/decision-table/decision-table-poc.yaml
+    new: false
+    change: 表のセルの ※1〜※5 を ※[poc-n{N}] の参照にし、注記だけの項目 poc-table-02〜06 を削除して定義を判定表の表の下へ移す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:26:37.345655+00:00'
+  - page: docs/template/template-decision-table.yaml
+    new: false
+    change: 記述例の ※1 と項目 term-01 を、テンプレート『判定フローチャート』と同じ注記の記法と ID の付け方にし、セクション一覧の「※n の注記の項目」の行を削除する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:26:37.345655+00:00'
+  - page: schemas/design/screen.schema.yaml
+    new: false
+    change: elements[].args[].value の examples の ※2 の参照をやめる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:26:37.345655+00:00'
+  - page: docs/template/template-screen-design.yaml
+    new: false
+    change: screen.schema.yaml から再生成する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-17T08:26:37.345655+00:00'
+scope_out:
+  - item: テンプレート『画面設計』と screen.schema.yaml の ※必須 / ※任意
+    reason: 画面に出す必須・任意の表示の文言で、注記ではない
+    plan: none
+  - item: docs/interface/IF-352-1.yml.yaml の notes に残る判定フローチャート『タイムアウトの決め方』の旧番号 ※5 の参照
+    reason: '#396 で注記が ※[timeout-n5] に移った後も旧番号で参照していて、テンプレート『判定フローチャート』の注記の記法から外れている。今回の要望（判定表とテンプレートの表のセル）に含まれない'
+    plan: '#461'
