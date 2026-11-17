@@ -862,3 +862,12 @@ rules:
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["dev-docs-navigation"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/glossary.schema.yaml
+    paths: ['**/docs/glossary/*.yaml']
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [glossary]
+    on: [write, mcp]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__describe
+      args: '{"kind": "glossary"}'

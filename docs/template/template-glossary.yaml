@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=../../schemas/template.schema.yaml
+id: template-glossary
+kind: template
+name: "テンプレート: 用語集"
+description: リポジトリ固有の用語と使用しない言い方を 1 リポジトリ 1 ファイルで並べる用語集の書式を定め、リポジトリの用語集を作る・用語を追加するときに参照する。
+tags:
+  - name: scope:テンプレート
+  - name: topic:テンプレート
+  - name: topic:用語集
+    main: true
+  - name: topic:用語
+  - name: topic:エイリアス
+  - name: action:登録
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      リポジトリ固有の用語と、使用しない言い方の一覧。
+      1 リポジトリ 1 ファイル。
+      配信元の設定の文書の行が `alias_type: term`・`records: terms` で参照し、`terms` の要素を 1 件の用語にする。
+  - id: rules-01
+    name: 決まり
+    body: |-
+      - 用語集へ登録するかは判定フローチャート『用語の登録』で決め、このリポジトリに登録すると判定した用語だけを記載する。
+  - id: item-list-01
+    name: 項目
+    body: |-
+      <!-- table: {"kind": "data"} -->
+
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 設計書の変わらない ID。他の設計書からは `{ID}#{項目のパス}` で指す。 | 検査で、ほかの設計書の参照（`{ID}#{項目のパス}`）の解決先にする。<br>生成で、ページの名前と、ほかの設計書からのリンク先にする。 | `IF-12` / `IF-3038-1` |
+      | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>project-index の配信で、文書の公開範囲のメタデータにする。 | - |
+      | title | タイトル | string | 必須 | - | - | `用語集`。 | 生成で、ページの見出しにする。<br>project-index の検索で、文書の名前にする。 | `用語集` |
+      | lead | 冒頭リード | string | - | - | - | 用語集の対象を 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>project-index の検索で、文書の概要文にする。 | - |
+      | terms | 用語 | array | 必須 | - | minItems: `1` | 用語の並び。1 要素が 1 件の用語。 | project-index の検索で、要素ごとに 1 件の用語の文書にする。<br>生成で、用語の表にする。 | - |
+      | terms[].id | 用語の ID | string | 必須 | - | pattern: `^[a-z][a-z0-9-]*$` | 用語集の中で一意な、英小文字とハイフンの識別子。 | project-index の検索で、用語の文書の ID と、`aliases` の衝突の検査の照合の相手にする。 | `read-record` |
+      | terms[].name | 用語 | string | 必須 | - | minLength: `1` | 文書・コードのコメントで使用する正式な単語。 | project-index の検索で、用語の文書の名前と、本文の単語にヒットさせる単語にする。 | `既読の記録` |
+      | terms[].description | 意味 | string | 必須 | - | minLength: `1` | 用語が指すものを 1 文で記載する。 | project-index の検索で、用語の文書の概要文にする。 | `参照したルールの場所と、参照した時点の本文のハッシュをセッションごとに持つ記録。` |
+      | terms[].aliases | 別名 | array | - | - | - | 正式な単語と並べて使用してよい言い方。 | project-index の検索で、本文の単語にヒットさせる単語にする。 | `[ルール索引]` |
+      | terms[].avoid | 使用しない言い方 | array | - | - | - | やめた言い方。文書・コードのコメントに記載せず、正式な単語に置き換える。 | レビューで、文書・コードのコメントに残っていないかを確認する。 | `[既読記録]` |
+
+      <!-- /table -->
+  - id: key-rules-01
+    name: キーごとの決まり
+    body: |-
+      <!-- table: {"kind": "data"} -->
+
+      | 名前 | 決まり | 悪い例 | 理由 |
+      | --- | --- | --- | --- |
+      | id | 設計書を作るときに振り、改名・移動でも変えない。 | - | - |
+      | lead | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+
+      <!-- /table -->
+  - id: example-sample-01
+    name: 記載例
+    body: |-
+      ```yaml
+      id: GLO-1
+      title: 用語集
+      terms:
+      - id: rule-index
+        name: 索引
+        description: 利用者が記載し、ルールと、ルールを適用するパス・ツール・引数を対応付ける YAML。
+        aliases:
+        - ルール索引
+      - id: read-record
+        name: 既読の記録
+        description: 参照したルールの場所と、参照した時点の本文のハッシュをセッションごとに持つ記録。
+        avoid:
+        - 既読記録
+      ```

@@ -1,0 +1,28 @@
+設計書のスキーマのタグの作成:
+  説明: 作業 PR を develop へマージした後に、`design-schemas/v*` の最新のタグのマイナーを上げたタグを、メッセージに `(#446)` を入れて develop の squash commit へ作成して push する（設計書のスキーマ `glossary` の追加で、既存の設計書の検査の結果を変えないため、マイナーを上げる）。切り戻しは、メッセージに `(#446)` を持つタグだけを削除する
+  タグ: [タグ, スキーマ]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: 設計書のスキーマのタグの作成/疎通確認.sh
+  実行: 設計書のスキーマのタグの作成/実行.sh
+  確認: 設計書のスキーマのタグの作成/確認.sh
+  切り戻し: 設計書のスキーマのタグの作成/切り戻し.sh
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグの commit に `schemas/design/glossary.schema.yaml` があり、`schemas/design/common.schema.yaml` の `clicks[].href` の `examples` に `../interface/IF-72-3.py.yaml#flows` が無い"
+  状態: "-"
+claude-balancer の作業 PR への連絡:
+  説明: タグを作成した後に、shuhei1101/claude-balancer#329 の会話欄で knowledge#444 の完了を待っているコメント（https://github.com/shuhei1101/claude-balancer/pull/329#issuecomment-6936475721）へ、作成したタグの名前を添えて用語集のスキーマが入った旨を返信し、shuhei1101/claude-balancer#329 に `確認:planner` を付ける（起点 Issue #444 の依頼元）
+  タグ: [連絡, ラベル]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: shuhei1101/claude-balancer#329 の会話欄の上記のコメントの最後のブロックに、作成した `design-schemas/v*` のタグの名前が含まれ、shuhei1101/claude-balancer#329 に `確認:planner` が付いている
+  状態: "-"
