@@ -1,0 +1,12 @@
+docs:
+  - page: docs/knowhow/knowhow-prompt-open-ended-line.yaml
+    new: false
+    change: '#466: A-68・A-69 の PoC の結論を cases に加える'
+    status: todo
+scope_out:
+  - item: R-39 の調べた結果の一覧と、A-68・A-69 の PoC の記録そのものの登録
+    reason: 調べた結果そのものは knowledge に配置しない（規約『ドキュメント管理』の knowhow-02）。技法にできる結論だけを登録する
+    plan: none
+  - item: 規約『プロンプトファイル』の修正
+    reason: R-47・R-48 と重なる技法は既存の規約を指すだけで、規約の記述は変えない
+    plan: none
