@@ -1,0 +1,169 @@
+# yaml-language-server: $schema=../../schemas/rule.schema.yaml
+id: dev-config-preset
+kind: rule
+name: 選択肢の値のプリセット
+description: 設定・スキーマで選択肢から選ぶ値を、プリセット（階層・参照の書き方・選べる所）とカスタムで持つ構造と、既定と上書き・カスタムを使用する人・検査の決まりを定め、選択肢から選ぶ値を持つ設定やスキーマを設計するときに参照する。
+aliases:
+  - プリセットとカスタム
+tags:
+  - name: scope:dev
+  - name: topic:プリセット
+    main: true
+  - name: topic:設定
+  - name: topic:スキーマ
+  - name: topic:階層
+  - name: topic:構造
+  - name: topic:キー
+  - name: action:選択
+  - name: action:上書き
+  - name: action:検査
+  - name: action:設計
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-17'
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      設定・スキーマで、選択肢から選ぶ値を持つときの構造の決まり。
+      値を設定の箇所に直接持たず、名前を付けたプリセットを選ぶ構造にし、選択肢に無い値はカスタムで指定する。
+  - id: preset-01
+    group: プリセット
+    name: プリセットの持ち方
+    body: |-
+      - プリセットは、値と ID・名前・説明・タグの組にし、選ぶだけで値が定まるものにする
+      - 選ぶ側（人・LLM）は、数値を参照せず、名前と説明で選ぶ
+      - プリセットは種類ごとの一覧（テーブル）に持ち、後から追加できるようにする
+  - id: hierarchy-01
+    group: プリセット
+    name: 階層
+    body: |-
+      小さいプリセットを、大きいプリセットが参照する。
+
+      | 階層 | 内容 | 例 |
+      | --- | --- | --- |
+      | 値のプリセット | 数値 1 つに名前と説明を付けたもの | 文字の大きさ（小さい・普通・大きい） |
+      | 部品のプリセット | 複数の値を 1 つの部品にまとめたもの | カード（余白・文字の大きさ・枠線） |
+      | まとめのプリセット | 下の階層のプリセットの組 | テーマ（カード・見出しの組） |
+  - id: reference-01
+    group: 参照の書き方
+    name: 3 つの書き方
+    body: |-
+      プリセットを指定する箇所は、どの階層でも次の 3 つのどれかで記載する。
+      プリセットの定義の中で下の階層を指定する箇所も、同じ書き方にする。
+
+      | 書き方 | 意味 |
+      | --- | --- |
+      | `{preset: ID}` | プリセットをそのまま適用する |
+      | `{preset: ID, options: [...]}` | プリセットを適用し、そのプリセットが選ばせる所だけを選択肢かカスタムで変える |
+      | `{custom: {値}}` | プリセットを使用せず、値を直接指定する。値のキーは、そのプリセットの種類の値のキーと同じにする |
+
+      ```yaml
+      # プリセットをそのまま適用する
+      card: {preset: compact}
+      ---
+      # プリセットが選ばせる所を、選択肢から選ぶ
+      theme:
+        preset: standard
+        options:
+          - option: {id: card-size}
+            choice: {id: large}
+      ---
+      # 選ばせる所に、選択肢に無い値を直接指定する（その所がカスタムを許可するとき）
+      theme:
+        preset: standard
+        options:
+          - option: {id: card-size}
+            custom:
+              value: {custom: {padding: 20, font_size: 18}}
+      ---
+      # プリセットを使用せず、値を直接指定する
+      card:
+        custom: {padding: 12, font_size: 14}
+      ```
+  - id: option-01
+    group: 選べる所
+    name: プリセットが持つ選べる所
+    body: |-
+      - プリセットは全ての値を固定しなくてよい
+      - プリセットは、選ぶ側が変えられる所（`options`）と、その選択肢を持てる
+      - 1 つの選べる所は、プリセットの中の 1 つの場所（`key`）だけを変える
+      - 2 つ以上の場所を同時に変えたいときは、別のプリセットにする
+      - 選べる所を持てるのは、部品のプリセットとまとめのプリセットだけにする
+
+      | キー | 型 | 必須 | 説明 | 例 |
+      | --- | --- | --- | --- | --- |
+      | `{種類}[].options` | object[] | - | 適用するときに選ぶ側が変えられる所。省略は全ての値が固定 | - |
+      | `{種類}[].options[].id` | string | ✓ | 識別子。プリセットの中で一意 | `card-size` |
+      | `{種類}[].options[].name` | string | ✓ | 表示する名前 | `カードの大きさ` |
+      | `{種類}[].options[].description` | string | - | 何を変える所か | `一覧のカードの余白と文字の大きさ` |
+      | `{種類}[].options[].key` | string | ✓ | この所が変える場所。キーを `.` でつなぎ、配列は `[番号]` で指す | `card` |
+      | `{種類}[].options[].choices` | object[] | ✓ | 選択肢。1 件以上 | - |
+      | `{種類}[].options[].choices[].id` | string | ✓ | 識別子。この所の中で一意 | `large` |
+      | `{種類}[].options[].choices[].name` | string | ✓ | 表示する名前 | `大きい` |
+      | `{種類}[].options[].choices[].description` | string | ✓ | 選ぶときの手がかり | `文字の多いカード` |
+      | `{種類}[].options[].choices[].value` | any | - | 選んだときに変える場所に入れる値。型はその場所の型と同じ。下の階層を指す場所は参照の書き方で記載する。省略はプリセットの値のまま | `{preset: roomy}` |
+      | `{種類}[].options[].default.id` | ref | ✓ | 選ばなかったときの選択肢。`choices[].id` を指す | `normal` |
+      | `{種類}[].options[].custom.allowed` | bool | - | `true` は選択肢に無い値を `custom.value` で直接指定できる。省略はカスタムを許可しない | `true` |
+
+      ```yaml
+      # まとめのプリセット（themes の 1 件）
+      id: standard
+      name: 標準
+      description: 一覧と詳細を見せる画面
+      card: {preset: compact}
+      heading: {preset: plain}
+      options:
+        - id: card-size
+          name: カードの大きさ
+          key: card
+          choices:
+            - {id: normal, name: 普通, description: 短い項目のカード, value: {preset: compact}}
+            - {id: large, name: 大きい, description: 文字の多いカード, value: {preset: roomy}}
+          default: {id: normal}
+          custom: {allowed: true}
+      ```
+  - id: option-02
+    group: 選べる所
+    name: 適用する側の options
+    body: |-
+      プリセットを適用する側は、`options` に既定から変える所だけを記載する。
+
+      | キー | 型 | 必須 | 説明 | 例 |
+      | --- | --- | --- | --- | --- |
+      | `options` | object[] | - | 既定から変える所。1 つの所に 1 件まで | - |
+      | `options[].option.id` | ref | ✓ | そのプリセットの `options[].id` | `card-size` |
+      | `options[].choice.id` | ref | - | 選んだ選択肢。`custom` とどちらか 1 つ | `large` |
+      | `options[].custom.value` | any | - | 直接指定する値。その所が `custom.allowed: true` のときだけ記載できる。型は `choices[].value` と同じ | `{custom: {padding: 20, font_size: 18}}` |
+  - id: default-01
+    group: 既定と上書き
+    name: 既定と調べる順
+    body: |-
+      - 指定しないときは、既定のプリセットと、選べる所の既定の選択肢にする
+      - カスタムを 1 件も使用しなくても動く構造にする
+      - 広い範囲の設定（まとめのプリセット）を選び、狭い範囲（個別の設定・1 件の調整）で変える所だけを上書きする
+      - 値を調べる順（狭い範囲 → 広い範囲 → 既定）は、対象ごとの表にして設計書へ記載する
+  - id: custom-01
+    group: カスタム
+    name: カスタムを使用する人
+    body: |-
+      - カスタムを使用するのは人（設定と指示）にする
+      - LLM は、プリセットと選べる所の選択肢だけから選び、人が指示したときだけカスタムを使用する
+  - id: custom-02
+    group: カスタム
+    name: 繰り返し使用する値
+    body: |-
+      - 繰り返し使用する値は、カスタムのままにせず、プリセットか選べる所の選択肢に追加する
+      - カスタムを使用した箇所を記録し、同じ値の繰り返しをレビューで指摘する
+  - id: custom-03
+    group: カスタム
+    name: カスタムを設けない箇所
+    body: |-
+      - 組み合わせを制限したい箇所（型に無い組み合わせを使用させたくない部位の組など）は、カスタムを設けず、選べる所の選択肢だけにする
+  - id: check-01
+    group: 検査
+    name: 登録と指定のときの検査
+    body: |-
+      - プリセットを登録するときに、ID の重複・参照先の実在・選択肢の値の型・既定の選択肢の実在を検査する
+      - カスタムの値にも、プリセットと同じ検査（値の範囲・重なり）を適用する
