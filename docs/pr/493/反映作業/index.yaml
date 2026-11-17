@@ -1,0 +1,28 @@
+設計書のスキーマのタグの作成:
+  説明: 作業 PR を develop へマージした後に、`design-schemas/v*` の最新のタグのマイナーを上げたタグを、メッセージに `(#493)` を入れて develop の squash commit へ作成して push する（`test_files` の `pattern` を広げるだけで、今の設計書はそのまま検査を通るため、マイナーを上げる）。切り戻しは、メッセージに `(#493)` を持つタグだけを削除する
+  タグ: [タグ, スキーマ]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグの commit の `schemas/design/module.schema.yaml` の `test_files` の `items.pattern` が `tests/` の下に加えて `.test.ts`・`.test.tsx` で終わるパスに一致する"
+  状態: "-"
+ai-monitor への連絡:
+  説明: タグを作成した後に、shuhei1101/ai-monitor#3607 へ、作成したタグで `test_files` に対象の横に配置した単体テストのファイル（`frontend/src/**/*.test.ts(x)`）を記載できるようになった旨と、このタグを指せば記載せずに進めた `test_files` を記載できる旨をコメントする
+  タグ: [連絡]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: shuhei1101/ai-monitor#3607 の会話欄に、作成した `design-schemas/v*` のタグと `test_files` を含むコメントがある
+  状態: "-"
