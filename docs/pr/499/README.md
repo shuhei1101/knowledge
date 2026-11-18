@@ -1,0 +1,1 @@
+# rules.yaml の Schema のエントリの read_tool を、案内のとおり呼べば Schema の本文が返る形にする
