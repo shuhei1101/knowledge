@@ -1,0 +1,10 @@
+$ uv run --frozen --script scripts/check_all.py
+docs/rule/dev-rule-index-registration.yaml:69: items[4].body: textlint/ja-technical-writing/sentence-length: Line 4 sentence length(115) exceeds the maximum sentence length of 100. Over 15 characters.
+497 件の文書を検査し、違反は 1 件、警告は 0 件でした
+(終了コード 1)
+
+# base ブランチ（develop 34c6731）で同じコマンドを実行した結果
+$ uv run --frozen --script scripts/check_all.py
+docs/rule/dev-rule-index-registration.yaml:69: items[4].body: textlint/ja-technical-writing/sentence-length: Line 4 sentence length(115) exceeds the maximum sentence length of 100. Over 15 characters.
+495 件の文書を検査し、違反は 1 件、警告は 0 件でした
+(終了コード 1)
