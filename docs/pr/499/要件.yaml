@@ -1,0 +1,13 @@
+docs:
+  - page: rules.yaml
+    new: false
+    change: 設計書の Schema（schemas/design/）を指すエントリの read_tool を、案内のとおり呼べば Schema の本文が返る記載へ揃えて修正する
+    status: todo
+  - page: docs/rule/dev-rule-index-registration.yaml
+    new: false
+    change: 項目『read_tool の記載』の、設計書のスキーマを指すエントリの tool・args の記載を、rules.yaml の修正と同じ記載へ修正する
+    status: todo
+scope_out:
+  - item: project-index の describe が source を省いたときに作業場所の配信元を補う変更、または rule-inject の read_tool が引数の値を作業場所ごとに差し替える変更
+    reason: 要件.md の推奨案 A（knowledge の search_docs で Schema の文書を読む）は knowledge の中で完結し、他のリポジトリの変更が要らない。案 B を採るときはレビューで確定し、起票する
+    plan: none
