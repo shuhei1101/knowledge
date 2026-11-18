@@ -73,8 +73,8 @@ rules:
         - scenario
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "scenario"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/scenario.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/interface.schema.yaml
     paths:
       - "**/docs/interface/*.yaml"
@@ -85,8 +85,8 @@ rules:
         - interface
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "interface"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/interface.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/module.schema.yaml
     paths:
       - "**/docs/module/*.yaml"
@@ -97,8 +97,8 @@ rules:
         - module
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "module"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/module.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/architecture.schema.yaml
     paths:
       - "**/docs/architecture/*.yaml"
@@ -109,8 +109,8 @@ rules:
         - architecture
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "architecture"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/architecture.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/nonfunctional.schema.yaml
     paths:
       - "**/docs/nonfunctional/*.yaml"
@@ -121,8 +121,8 @@ rules:
         - nonfunctional
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "nonfunctional"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/nonfunctional.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/config.schema.yaml
     paths:
       - "**/docs/config/*.yaml"
@@ -133,8 +133,8 @@ rules:
         - config
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "config"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/config.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/er.schema.yaml
     paths:
       - "**/docs/er/*.yaml"
@@ -145,8 +145,8 @@ rules:
         - er
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "er"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/er.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/data.schema.yaml
     paths:
       - "**/docs/data/*.yaml"
@@ -157,8 +157,8 @@ rules:
         - data
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "data"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/data.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/state_transition.schema.yaml
     paths:
       - "**/docs/state-transition/*.yaml"
@@ -169,8 +169,8 @@ rules:
         - state_transition
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "state_transition"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/state_transition.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/screen.schema.yaml
     paths:
       - "**/docs/screen/*.yaml"
@@ -181,8 +181,8 @@ rules:
         - screen
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "screen"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/screen.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/dataflow.schema.yaml
     paths:
       - "**/docs/dataflow/*.yaml"
@@ -193,8 +193,8 @@ rules:
         - dataflow
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "dataflow"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/dataflow.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/external_api.schema.yaml
     paths:
       - "**/docs/external-api/*.yaml"
@@ -205,8 +205,8 @@ rules:
         - external_api
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "external_api"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/external_api.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/library.schema.yaml
     paths:
       - "**/docs/library/*.yaml"
@@ -217,8 +217,8 @@ rules:
         - library
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "library"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/library.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/test_procedure.schema.yaml
     paths:
       - "**/docs/test-procedure/*.yaml"
@@ -229,8 +229,8 @@ rules:
         - test_procedure
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "test_procedure"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/test_procedure.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/dev_command.schema.yaml
     paths:
       - "**/docs/dev-command/*.yaml"
@@ -241,8 +241,8 @@ rules:
         - dev_command
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "dev_command"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/dev_command.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/component.schema.yaml
     paths:
       - "**/docs/component/**/*.yaml"
@@ -255,8 +255,8 @@ rules:
         - component
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "component"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/component.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/agent_flow.schema.yaml
     paths:
       - "**/docs/skill/*.yaml"
@@ -267,8 +267,8 @@ rules:
         - skill
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "skill"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/agent_flow.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: schemas/design/index.schema.yaml
     paths:
       - "**/docs/**/index.yaml"
@@ -280,8 +280,8 @@ rules:
         - index
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "index"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/index.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: docs/rule/convention-writing-style.yaml
     paths:
       - "**/docs/**/*.{md,yaml}"
@@ -869,8 +869,8 @@ rules:
       operations.kind: [glossary]
     on: [write, mcp]
     read_tool:
-      tool: mcp__plugin_project-index_project-index__describe
-      args: '{"kind": "glossary"}'
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/glossary.schema.yaml"]}, "view": "full", "outside_scope": true}'
   - rule: docs/template/template-knowhow.yaml
     paths: ['**/docs/knowhow/*.yaml']
     tools: [mcp__*__write_docs]
