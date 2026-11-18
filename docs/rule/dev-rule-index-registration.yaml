@@ -66,7 +66,8 @@ items:
       - project-index の配信元の文書を指すエントリは、`read_tool` を次のとおり記載する
         - `tool`: `mcp__plugin_project-index_project-index__search_docs`
         - `args`: `source`・文書の ID で絞る `filter`・`view: full`・`outside_scope: true`
-      - 設計書のスキーマ（`schemas/design/`）を指すエントリも同じく記載し、`filter` の文書の ID はスキーマのファイルのリポジトリの直下からのパス（`schemas/design/{種類}.schema.yaml`）にする
+      - 設計書のスキーマ（`schemas/design/`）を指すエントリも同じく記載する。
+        `filter` の文書の ID はスキーマのファイルのリポジトリの直下からのパス（`schemas/design/{種類}.schema.yaml`）にする
   - id: index-writing-09
     group: 記載するときの記載方法
     name: 複数の索引がある場合
