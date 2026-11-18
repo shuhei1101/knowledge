@@ -1,11 +1,11 @@
 id: knowhow-design-material-template
 kind: knowhow
 name: 動画の素材はデザインを決めたテンプレートから作成し、回転・拡大の動きを付けない
-description: 動画に出す表・見出しなどの素材を、枠・余白・色・フォントを決めたテンプレートから作成し、素材そのものに動きを付けず、枠の外の余白を透明にする技法を記載し、動画の素材を作るときに参照する。
+description: 動画に出す表・見出しなどの素材を、枠・余白・色・フォントを決めたテンプレートから作成し、素材の動きを説明に合わせた控えめなものに絞り、枠の外の余白を透明にする技法を記載し、動画の素材を作るときに参照する。
 status: current
 visibility: internal
-rev: 1
-last_reviewed: '2026-11-17'
+rev: 2
+last_reviewed: '2026-11-19'
 sources:
   - id: D538
     title: 検討事項 D-538（素材のデザイン）
@@ -15,6 +15,10 @@ sources:
     title: PoC（1 セグメントの動画の作成）の 2 回目の結果 A-156
     url: https://github.com/shuhei1101/knowledge/issues/453#issuecomment-6943839878
     note: '`### A-156` のセクションの素材'
+  - id: U
+    title: 利用者のコメント（素材の動き）TH-1071・TH-1261・TH-1263
+    url: https://github.com/shuhei1101/knowledge/issues/500#issuecomment-6983733438
+    note: '`### 利用者のコメント（TH-1071・TH-1261・TH-1263）` のセクション'
 necessity: must
 scenes:
   fits:
@@ -29,6 +33,8 @@ evidence:
     speaker: practitioner
   - source: P2
     speaker: practitioner
+  - source: U
+    speaker: practitioner
 confidence: medium
 items:
   - id: overview
@@ -41,8 +47,11 @@ items:
     body: |-
       1. 素材の種類ごとに、枠・余白・色・フォントを決めたテンプレートを数件用意する
       2. フォントはテンプレートごとに選び、既定のフォントのまま使用しない
-      3. 素材そのものには動きを付けず、出し方はフェードなどのエフェクトで選ぶ
+      3. 素材の動きは控えめにし、説明に合わせて 1 行ずつ出す・グラフが伸びる程度にとどめる。
+         全ての要素を動かさず、なめらかに大きさを変える・回転する動きは付けない。
+         出し方はフェードなどのエフェクトで選ぶ
       4. 枠の外は透明にし、描画の側で枠を描かない
+      5. 動きを付けた素材を動画に書き出すときは、[動きを付けた素材は、ページの時計を差し替えて 1 フレームずつ進めて書き出す](id:knowhow-video-material-frame-clock) に従う
 tags:
   - name: topic:素材
     main: true

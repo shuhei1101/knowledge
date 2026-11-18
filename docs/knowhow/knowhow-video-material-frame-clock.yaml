@@ -1,0 +1,80 @@
+id: knowhow-video-material-frame-clock
+kind: knowhow
+name: 動きを付けた素材は、ページの時計を差し替えて 1 フレームずつ進めて書き出す
+description: GSAP・Chart.js・three.js・CSS・SVG で動きを付けた素材のページを、時計を差し替えて 1 フレームずつ進めて動画の絵に書き出す技法と、書き出せないページの作りを記載し、動画の素材に動きを付けるライブラリを選ぶときと素材のページを作成するときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-19'
+sources:
+  - id: P
+    title: 'PoC: 素材のテンプレートの書き出し A-189'
+    url: https://github.com/shuhei1101/knowledge/issues/500#issuecomment-6983733438
+    note: '`### A-189` のセクション'
+  - id: T
+    title: 素材のテンプレートのページの決まり A-188
+    url: https://github.com/shuhei1101/knowledge/issues/500#issuecomment-6983733438
+    note: '`### A-188` のセクション'
+  - id: R
+    title: 書き出しの方式の技術調査 R-16
+    url: https://github.com/shuhei1101/knowledge/issues/500#issuecomment-6983733438
+    note: '`### R-16` のセクションの注意'
+  - id: HF
+    title: 'HyperFrames: Determinism'
+    url: https://hyperframes.heygen.com/concepts/determinism
+necessity: must
+scenes:
+  fits:
+    - 動画の素材（コード・グラフ・カード・立体）にブラウザーのページで動きを付け、動画の絵に書き出すとき。
+    - 動きを付けるライブラリを、動画に書き出せるかで選ぶとき。
+  misfits:
+    - 配信の画面のように、実際の時刻で動かして見せるだけのとき。
+cases:
+  - work: 素材のテンプレート 5 件の書き出し
+    content: GSAP のタイムラインでコードを 1 行ずつ出す素材・Chart.js で棒が伸びるグラフ・three.js で回る立体・CSS のアニメーションだけのカード・SVG の要素のアニメーションの輪を、同じ書き出しで透明の絵の連なりにできた。canvas・WebGL・SVG・GSAP の素材は、同じ入力で 6 回書き出した全てのフレームが一致した。
+    source: P
+  - work: Playwright の時計の機能での書き出し
+    content: '`page.clock` では、ページを開いた直後の時刻がぶれて、立体のフレームがほぼ全て一致しなかった。時計を自前で差し替える方式に変えて一致した。'
+    source: P
+evidence:
+  - source: P
+    speaker: practitioner
+  - source: R
+    speaker: practitioner
+  - source: HF
+    speaker: third_party
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      素材のページの時計（`Date.now`・`performance.now`・タイマー・`requestAnimationFrame`）を、ページのスクリプトより先に差し替える。
+      書き出す側が時計を 1 フレーム分ずつ進めて、絵を取り出す。
+      時計で動くライブラリ（GSAP・Chart.js・three.js）は、素材のページを通常のアニメーションとして記載したまま書き出せる。
+      CSS と SVG の要素のアニメーションは時計では進まないため、止めてから時刻を直接指定する。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. ライブラリは、ブラウザーがそのまま読み込める形式（まとめた形式）のファイルを、素材のページと同じ所に配置する。
+         モジュールの形式のファイルは、別のパッケージを名前で読み込むため読み込めないことがある
+      2. 画像・フォント・ライブラリの読み込みを終えたことをページから書き出す側へ伝え、動きは時刻 0 から始める。
+         読み込みを終えるまでタイマーを待たない
+      3. 説明に合わせて出す動きは、名前を付けた時刻（マーク）で記載する
+      4. CSS のアニメーションは時刻 0 に始まるものだけを使用し、途中から始める動きは `animation-delay` に時刻を入れる。
+         CSS のトランジションと、途中でクラスを追加して始めるアニメーションは使用しない
+      5. SVG の要素のアニメーションは、書き出す側が `setCurrentTime` で時刻を指定する
+      6. 外部のネットワークからの読み込み・引数の無い `new Date()`・`video` と `audio` の要素・Web Worker の中のタイマーは使用しない。
+         乱数は種を固定したものにする
+      7. 時刻を進めた後は画面の更新を待ち、続けて 2 回同じ絵になるまで取り出す
+      8. 同じ絵になるかの確認は、完全な一致ではなく差の大きさを基準に判定する（CSS のアニメーションは、まれに 1 フレームに見た目に現れない差が出る）
+tags:
+  - name: topic:アニメーション
+    main: true
+  - name: topic:素材
+  - name: topic:動画
+  - name: topic:ライブラリ
+  - name: topic:時刻
+  - name: action:エクスポート
+  - name: tool:css
+  - name: tool:svg
+  - name: topic:ノウハウ

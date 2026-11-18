@@ -1,0 +1,86 @@
+id: knowhow-video-export-browser-frames
+kind: knowhow
+name: 動画の映像はブラウザーで時刻を指定して 1 フレームずつ撮り、音声は ffmpeg で別に合成する
+description: 画面の描画を再利用して動画を書き出すときに、映像をヘッドレスのブラウザーで時刻を指定して 1 フレームずつ撮り、音声・連結・BGM を ffmpeg で合成する技法と、他の書き出しの方式を選ばない理由を記載し、動画の書き出しの方式を選ぶときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-19'
+sources:
+  - id: R16
+    title: 書き出しの方式の技術調査 R-16
+    url: https://github.com/shuhei1101/knowledge/issues/500#issuecomment-6983733438
+    note: '`### R-16` のセクション'
+  - id: R43
+    title: 掛け合い動画を mp4 に書き出す手段の比較 R-43
+    url: https://github.com/shuhei1101/knowledge/issues/500#issuecomment-6983733438
+    note: '`### R-43` のセクション'
+  - id: PW
+    title: 'Playwright: Clock'
+    url: https://playwright.dev/docs/api/class-clock
+  - id: MB
+    title: 'Mediabunny: Introduction'
+    url: https://mediabunny.dev/guide/introduction
+  - id: HF
+    title: HyperFrames
+    url: https://github.com/heygen-com/hyperframes
+  - id: RV
+    title: Revideo
+    url: https://github.com/midrender/revideo
+necessity: reference
+scenes:
+  fits:
+    - 配信の画面と同じ描画（DOM・CSS・canvas）で動画を書き出すとき。
+    - 書き出しを待てるジョブとして実行できるとき。
+  misfits:
+    - 実時間より速い書き出しが要るとき（描画を canvas で再実装してブラウザーの中で動画にする方式を検討する）。
+cases:
+  - work: 掛け合い動画の 1 セグメントの書き出しの調査
+    content: Playwright のスクリーンショットの自作は、依存を追加せず DOM と CSS をそのまま撮れ、1080p で実時間の 2〜4 倍の所要時間で書き出せた。Mediabunny は最も速いが DOM を取り込めず、HyperFrames は更新が非常に速く要の API が追加されて間もなく、Revideo は保守が止まっていた。
+    source: R16
+evidence:
+  - source: R16
+    speaker: practitioner
+  - source: R43
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      映像と音声を分ける。
+      映像はヘッドレスの Chromium で、画面と同じ描画を時刻を指定して 1 フレームずつ描いて撮る。
+      音声の配置・SE・セグメントの連結・BGM の重ねとフェードは、ffmpeg を直接呼んで合成する。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 描画は、実時間のループではなく「時刻を指定すると、その時刻の絵を描く」構造にし、画面は同じ描画を実時間のループから呼ぶ
+      2. 前のフレームの状態に依存するエフェクト（粒子の位置を前のフレームから動かす雨など）は、時刻から位置を計算する構造にする
+      3. 書き出しは実時間の待ちや再生の終了のイベントを使用せず、先に作成した時刻表と時刻だけで進める
+      4. Playwright の `page.clock` は 30 fps の刻みに使用せず、取りこぼしたタイマーを止める用途だけにする
+      5. 動画の素材は、事前に VP9 か B フレームなしの H.264 に変換し、フレームごとに再生位置を指定して待つ
+      6. 起動のモードと Chromium のバージョンを固定する。
+         GPU の無い端末では WebGL をソフトウェアの描画で動かす
+  - id: alternatives-01
+    name: 選ばない方式
+    body: |-
+      <!-- table: {"kind": "data"} -->
+
+      | 方式 | 選ばない理由 |
+      | --- | --- |
+      | ブラウザーの中で canvas を WebCodecs で動画にする（Mediabunny） | DOM を取り込めず、字幕・立ち絵・素材の配置を canvas の描画として再実装する。撮る方式が遅すぎると分かったときの切り替え先にする |
+      | HTML を撮る出来合いのツール（HyperFrames） | 更新が非常に速く、要の API が追加されて間もない。時刻から描く構造にしておけば後から置き換えられる |
+      | canvas のフレームワーク（Revideo） | 保守が止まっていて、音声の不具合が残っている |
+      | React のフレームワーク（Remotion） | React が前提で、無料で使用できる利用者に制限がある |
+      | 全てを ffmpeg のフィルターで合成する | 画面の描画を再利用できず、見た目を二重に実装する |
+
+      <!-- /table -->
+tags:
+  - name: action:エクスポート
+    main: true
+  - name: topic:動画
+  - name: topic:ブラウザ
+  - name: tool:playwright
+  - name: action:描画
+  - name: topic:時刻
+  - name: topic:ノウハウ
