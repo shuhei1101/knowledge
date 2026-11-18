@@ -2,15 +2,21 @@ docs:
   - page: docs/knowhow/knowhow-video-material-frame-clock.yaml
     new: true
     change: 動きを付けた素材は、ページの時計を差し替えて 1 フレームずつ進めて書き出す。書き出せたライブラリ（GSAP・Chart.js・three.js・CSS・SVG）と書き出しの注意。ID と切り分けは文書.md の案で、ドキュメント修正のレビューで確定する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-18T15:59:47.903541+00:00'
   - page: docs/knowhow/knowhow-video-export-browser-frames.yaml
     new: true
     change: 映像はブラウザーで時刻を指定して 1 フレームずつ撮り、音声は ffmpeg で別に合成する。書き出しの方式の比較の結論。ID と切り分けは文書.md の案で、ドキュメント修正のレビューで確定する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-18T15:59:47.903541+00:00'
   - page: docs/knowhow/knowhow-design-material-template.yaml
     new: false
     change: 使用方法の「素材そのものには動きを付けず」を、動きの付け方の好み（説明に合わせて 1 行ずつ出す・グラフが伸びる動きは付けてよい・なめらかに大きさを変える・回転する動きは付けない）に合わせて改訂し、出典に利用者のコメントを追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-18T15:59:47.903541+00:00'
 scope_out:
   - item: 試していないライブラリ（anime.js・Motion・Lottie・Rive・D3・ECharts・p5.js・PixiJS）の書き出しの可否の登録
     reason: PoC で試していない。ノウハウには確認した記録の結論だけを記載する。話し合いで試した結果が出た時点で、その結果を起点に起票される
@@ -21,4 +27,7 @@ scope_out:
   - item: 書き出しの方式の比較表・測定値そのものの記載
     reason: 調べた結果そのものは話し合いのワークスペースに残す（規約『ドキュメント管理』の knowhow-02）
     plan: none
+  - item: '`docs/rule/dev-rule-index-registration.yaml` の index-writing-14 の文の長さの違反（textlint の sentence-length）'
+    reason: 規約『文章の書き方』が lint で守らせる文の長さの上限から外れているが、base ブランチからある違反で、今回の要望に含まれない
+    plan: '#502'
 use_cases: []
