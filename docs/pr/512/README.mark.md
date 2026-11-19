@@ -1,0 +1,1 @@
+# mdmark の記法を含む生成物の README の拡張子を .mark.md へ移す
