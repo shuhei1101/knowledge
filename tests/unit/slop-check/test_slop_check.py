@@ -56,6 +56,7 @@ def test_main(
         monkeypatch,
         '{"tool_name": "Write", "tool_input": {"file_path": "/r/a.md", "content": "設定を直す。"}}',
     )
+    monkeypatch.setenv("SLOP_CHECK_SHOW_ADDED", "1")
     # 実行
     code = slop_check.main([], word_list=word_list)
     # 検証
@@ -64,6 +65,27 @@ def test_main(
     assert output["hookSpecificOutput"]["hookEventName"] == "PostToolUse"
     assert "| 直す | 修正 |" in output["hookSpecificOutput"]["additionalContext"]
     assert output["systemMessage"] == "AI slop を検知: 直す（Write）"
+
+
+def test_main_when_display_not_set(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """画面への表示を設定しない（正常系）。"""
+    # 準備
+    word_list = tmp_path / "word-list-ai-slop.json"
+    word_list.write_text(_NAOSU_COPY, encoding="utf-8")
+    _set_stdin(
+        monkeypatch,
+        '{"tool_name": "Write", "tool_input": {"file_path": "/r/a.md", "content": "設定を直す。"}}',
+    )
+    monkeypatch.delenv("SLOP_CHECK_SHOW_ADDED", raising=False)
+    # 実行
+    code = slop_check.main([], word_list=word_list)
+    # 検証
+    assert code == 0
+    output = json.loads(capsys.readouterr().out)
+    assert "| 直す | 修正 |" in output["hookSpecificOutput"]["additionalContext"]
+    assert "systemMessage" not in output
 
 
 def test_main_when_no_hit(
@@ -504,3 +526,41 @@ def test_build_system_message() -> None:
     result = build_system_message(hits, "Write")
     # 検証
     assert result == "AI slop を検知: 直す・形（Write）"
+
+
+def test_shows_added() -> None:
+    """値が 1（正常系）。"""
+    # 準備
+    environ = {"SLOP_CHECK_SHOW_ADDED": "1"}
+    # 実行
+    result = slop_check.shows_added(environ)
+    # 検証
+    assert result is True
+
+
+def test_shows_added_when_not_set() -> None:
+    """環境変数が無い（正常系）。"""
+    # 準備
+    environ: dict[str, str] = {}
+    # 実行
+    result = slop_check.shows_added(environ)
+    # 検証
+    assert result is False
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        pytest.param("true", id="true"),
+        pytest.param("0", id="zero"),
+        pytest.param("", id="empty"),
+    ],
+)
+def test_shows_added_when_other_value(value: str) -> None:
+    """値が 1 以外（正常系）。"""
+    # 準備
+    environ = {"SLOP_CHECK_SHOW_ADDED": value}
+    # 実行
+    result = slop_check.shows_added(environ)
+    # 検証
+    assert result is False
