@@ -1,0 +1,14 @@
+画面への表示の設定:
+  説明: 利用者の端末で slop-check を有効にしている Claude Code のユーザースコープの `settings.json`（`~/.claude*/settings.json`）の `env` に `SLOP_CHECK_SHOW_ADDED` を `"1"` で記載し、既定を表示しないにした後も今の表示を続ける。書き換える前に同じ場所へ `settings.json.bak-{YYYYMMDD-HHMMSS}` を取り、書き換えた設定の一覧を `${XDG_STATE_HOME:-~/.local/state}/slop-check/pr505-show-added.json` に記録する。切り戻しは、この記録に載った設定だけからキーを削除する（実行の前から利用者が記載していた値は残す）
+  タグ: [設定]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: 画面への表示の設定/疎通確認.py
+  実行: 画面への表示の設定/実行.py
+  確認: 画面への表示の設定/確認.py
+  切り戻し: 画面への表示の設定/切り戻し.py
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返却する
+  確認方法: slop-check を有効にしている各 `settings.json` の `env.SLOP_CHECK_SHOW_ADDED` が `"1"`
+  状態: skipped

@@ -22,6 +22,9 @@ HOOK = (
 # 子プロセスを待つ上限の秒数
 _WAIT_SEC = 30
 
+# 画面への表示を切り替える環境変数（端末の値を子プロセスへ持ち込まないよう、起動のたびに決める）
+_SHOW_ADDED_ENV = "SLOP_CHECK_SHOW_ADDED"
+
 
 @dataclass(frozen=True)
 class Completed:
@@ -32,16 +35,20 @@ class Completed:
     stderr: str
 
 
-type RunHook = Callable[[str, Path], Completed]
+type RunHook = Callable[..., Completed]
 type PluginFactory = Callable[[Sequence[Mapping[str, object]]], Path]
 
 
 @pytest.fixture
 def run_hook() -> RunHook:
-    """標準入力と CLAUDE_PLUGIN_ROOT を指定してフックを起動する関数を返す。"""
+    """標準入力・CLAUDE_PLUGIN_ROOT・SLOP_CHECK_SHOW_ADDED の値を指定してフックを起動する関数を返却する。"""
 
-    def _start(stdin: str, plugin_root: Path) -> Completed:
-        env = {**os.environ, "CLAUDE_PLUGIN_ROOT": str(plugin_root)}
+    def _start(stdin: str, plugin_root: Path, show_added: str | None = None) -> Completed:
+        env = {k: v for k, v in os.environ.items() if k != _SHOW_ADDED_ENV}
+        env["CLAUDE_PLUGIN_ROOT"] = str(plugin_root)
+        # 値を指定したときだけ子プロセスへ指定する（None は環境変数が無い端末として起動する）
+        if show_added is not None:
+            env[_SHOW_ADDED_ENV] = show_added
         result = subprocess.run(  # noqa: S603 - 引数は配列で渡し、シェルを通さない
             ["python3", str(HOOK)],  # noqa: S607 - hooks.json と同じく PATH の python3 で起動する
             input=stdin.encode("utf-8"),

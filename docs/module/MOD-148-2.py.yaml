@@ -1,7 +1,7 @@
 id: "MOD-148-2"
 visibility: internal
 title: "slop-check / hooks / slop_check.py"
-lead: プラグイン slop-check の PostToolUse のフック。書き込んだ中身を対応表のコピーで照合し、ヒットした行の通知の文を `additionalContext` で、検知した単語の 1 行を `systemMessage` で返却する（IF-148-1）。
+lead: プラグイン slop-check の PostToolUse のフック。書き込んだ中身を対応表のコピーで照合し、ヒットした行の通知の文を `additionalContext` で、画面への表示を有効にした端末では検知した単語の 1 行を `systemMessage` で返却する（IF-148-1）。
 test_files:
   - tests/unit/slop-check/test_slop_check.py
 data_models:
@@ -115,6 +115,28 @@ constants:
         item: "response[stdout.systemMessage]"
         type: requires
         when: "`SYSTEM_MESSAGE_HEAD` を修正するときに、IF-148-1 の「stdout.systemMessage」の決まりと突き合わせる。"
+  - name: SHOW_ADDED_ENV
+    title: 画面への表示の環境変数
+    container: plugins/slop-check/hooks/post-tool-use/slop_check.py
+    usecase: 書き込んだ中身の照合
+    summary: 値が `SHOW_ADDED_VALUE` のときだけ `systemMessage` を出す環境変数の名前
+    value: '"SLOP_CHECK_SHOW_ADDED"'
+    refs:
+      - to: IF-148-1
+        item: constraints[画面への表示の設定]
+        type: requires
+        when: '`SHOW_ADDED_ENV` を修正するときに、IF-148-1 の「画面への表示の設定」の決まりと突き合わせる。'
+  - name: SHOW_ADDED_VALUE
+    title: 画面へ表示する値
+    container: plugins/slop-check/hooks/post-tool-use/slop_check.py
+    usecase: 書き込んだ中身の照合
+    summary: '`SHOW_ADDED_ENV` がこの値と一致するときだけ表示する'
+    value: '"1"'
+    refs:
+      - to: IF-148-1
+        item: constraints[画面への表示の設定]
+        type: requires
+        when: '`SHOW_ADDED_VALUE` を修正するときに、IF-148-1 の「画面への表示の設定」の決まりと突き合わせる。'
 functions:
   - name: main
     title: 書き込んだ中身の照合のエントリーポイント
@@ -123,7 +145,7 @@ functions:
     usecase: 書き込んだ中身の照合
     role: エントリーポイント
     scope: public
-    summary: 標準入力の PostToolUse の入力を照合し、ヒットがあれば通知の文と利用者向けの 1 行の JSON を標準出力へ出す
+    summary: 標準入力の PostToolUse の入力を照合し、ヒットがあれば通知の文と、画面への表示を有効にしたときは利用者向けの 1 行の JSON を標準出力へ出す
     args:
       - name: argv
         title: 引数
@@ -150,7 +172,7 @@ functions:
       5. 中身を取り出す（中身の取り出し）。空なら `0` を返却する
       6. 対応表を読み込む（対応表の読み込み）
          - `OSError`・`ValueError` の場合、標準エラーへ `対応表を読めません: {パス}: {理由}` を出し `0` を返却する
-      7. ヒットした行を求め（ヒットした行の照合）、1 行以上なら `{"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": 通知の文}, "systemMessage": 利用者向けの 1 行}` を `ensure_ascii=False` で標準出力へ出す（通知の文の組み立て・利用者向けの 1 行の組み立て）
+      7. ヒットした行を求め（ヒットした行の照合）、1 行以上なら `{"hookSpecificOutput": {"hookEventName": "PostToolUse", "additionalContext": 通知の文}}` を作り（通知の文の組み立て）、画面への表示の判定が `True` のときだけ `"systemMessage": 利用者向けの 1 行` を加えて（利用者向けの 1 行の組み立て）、`ensure_ascii=False` で標準出力へ出す
       8. `0` を返却する
          - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `0` を返却する
     unit_tests:
@@ -158,7 +180,7 @@ functions:
         case: 正常
         summary: ヒットを通知する
         condition: '標準入力に `tool_name: Write`・`content: 設定を直す。`。`word_list` に `直す` の 1 行のコピー'
-        mock: 標準入出力を `io.StringIO` に差し替える
+        mock: 標準入出力を `io.StringIO` に差し替え、`monkeypatch.setenv` で `SLOP_CHECK_SHOW_ADDED` を `1` にする
         expected: '`0` を返却し、標準出力の JSON の `additionalContext` に `| 直す | 修正 |` があり、`systemMessage` が `AI slop を検知: 直す（Write）`'
       - name: test_main_when_no_hit
         case: 正常
@@ -190,6 +212,12 @@ functions:
         condition: ヒットした行の照合が `RuntimeError` を送出する
         mock: ヒットした行の照合を `RuntimeError` を送出する関数に差し替える
         expected: '`0` を返却し、標準エラーに `Traceback` が出る'
+      - name: test_main_when_display_not_set
+        case: 正常
+        summary: 画面への表示を設定しない
+        condition: '`test_main` と同じ入力で、`SLOP_CHECK_SHOW_ADDED` が無い'
+        mock: 標準入出力を差し替え、`monkeypatch.delenv` で環境変数を削除する
+        expected: '`0` を返却し、標準出力の JSON の `additionalContext` に `| 直す | 修正 |` があり、`systemMessage` のキーが無い'
     refs:
       - to: IF-148-1
         type: requires
@@ -582,5 +610,47 @@ functions:
         item: "response[stdout.systemMessage]"
         type: requires
         when: "`build_system_message` を修正するときに、IF-148-1 の「stdout.systemMessage」の決まりと突き合わせる。"
+  - name: shows_added
+    title: 画面への表示の判定
+    kind: 関数
+    container: plugins/slop-check/hooks/post-tool-use/slop_check.py
+    usecase: 書き込んだ中身の照合
+    scope: public
+    summary: 利用者の画面へ 1 行を出すかを、環境変数から返却する
+    args:
+      - name: environ
+        title: 環境変数
+        type: Mapping[str, str] | None
+        required: false
+        default: None
+        description: '`None` は `os.environ`。単体テストが差し替える'
+    returns:
+      type: bool
+      description: 表示するなら `True`
+    process: 1. `SHOW_ADDED_ENV` の値が `SHOW_ADDED_VALUE` と一致すれば `True`、無いとき・他の値のときは `False` を返却する（前後の空白はそのまま比べる）
+    unit_tests:
+      - name: test_shows_added
+        case: 正常
+        summary: 値が 1
+        condition: '`{"SLOP_CHECK_SHOW_ADDED": "1"}`'
+        mock: なし
+        expected: '`True`'
+      - name: test_shows_added_when_not_set
+        case: 正常
+        summary: 環境変数が無い
+        condition: '`{}`'
+        mock: なし
+        expected: '`False`'
+      - name: test_shows_added_when_other_value
+        case: 正常
+        summary: 値が 1 以外
+        condition: '`{"SLOP_CHECK_SHOW_ADDED": "true"}`・`{"SLOP_CHECK_SHOW_ADDED": "0"}`・`{"SLOP_CHECK_SHOW_ADDED": ""}`'
+        mock: なし
+        expected: 全て `False`
+    refs:
+      - to: IF-148-1
+        item: constraints[画面への表示の設定]
+        type: requires
+        when: '`shows_added` を修正するときに、IF-148-1 の「画面への表示の設定」の決まりと突き合わせる。'
 notes:
   依存: Python の標準ライブラリだけ（`argparse`・`json`・`os`・`re`・`sys`・`traceback`・`dataclasses`・`pathlib`）。PEP 723 のメタデータは持たない。端末の `python3`（2026-11-03 に WSL2 で測った値は 3.12.3）を下限にし、3.13 以降の構文・API を使用しない

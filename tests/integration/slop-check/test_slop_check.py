@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 # conftest の fixture の型。子プロセスの結果は conftest の Completed
-type RunHook = Callable[[str, Path], Any]
+type RunHook = Callable[..., Any]
 type PluginFactory = Callable[[Sequence[Mapping[str, object]]], Path]
 
 # 対応表の行
@@ -60,7 +60,7 @@ def test_normal(run_hook: RunHook, plugin_factory: PluginFactory) -> None:
     root = plugin_factory([_NAOSU, _KATACHI, _BAN])
     stdin = _input("Write", {"file_path": "/work/a.md", "content": "この形で直す。もう一度直す。"})
     # 実行
-    result = run_hook(stdin, root)
+    result = run_hook(stdin, root, show_added="1")
     # 検証
     assert result.exit_code == 0
     output = json.loads(result.stdout)
@@ -98,7 +98,7 @@ def test_normal_when_edit(run_hook: RunHook, plugin_factory: PluginFactory, tmp_
         {"file_path": str(edited), "old_string": "設定", "new_string": "設定を修正する。"},
     )
     # 実行
-    result = run_hook(stdin, root)
+    result = run_hook(stdin, root, show_added="1")
     # 検証
     assert result.exit_code == 0
     assert _rows(result.stdout) == ["| 版 | バージョン |"]
@@ -120,7 +120,7 @@ def test_normal_when_edited_file_unreadable(
         },
     )
     # 実行
-    result = run_hook(stdin, root)
+    result = run_hook(stdin, root, show_added="1")
     # 検証
     assert result.exit_code == 0
     assert _rows(result.stdout) == ["| 直す | 修正 |"]
@@ -133,7 +133,7 @@ def test_normal_when_notebook_edit(run_hook: RunHook, plugin_factory: PluginFact
     root = plugin_factory(_ALL)
     stdin = _input("NotebookEdit", {"notebook_path": "/work/a.ipynb", "new_source": "# 版を出す"})
     # 実行
-    result = run_hook(stdin, root)
+    result = run_hook(stdin, root, show_added="1")
     # 検証
     assert result.exit_code == 0
     assert _rows(result.stdout) == ["| 版 | バージョン |"]
@@ -149,7 +149,7 @@ def test_normal_when_mcp_tool(run_hook: RunHook, plugin_factory: PluginFactory) 
         {"operations": [{"op": "update", "id": "直す", "set": {"body": "設定を足す。"}}]},
     )
     # 実行
-    result = run_hook(stdin, root)
+    result = run_hook(stdin, root, show_added="1")
     # 検証
     assert result.exit_code == 0
     assert _rows(result.stdout) == ["| 足す | 追加 |"]
@@ -221,7 +221,7 @@ def test_normal_when_dev_docs_mcp_tool(run_hook: RunHook, plugin_factory: Plugin
         {"operations": [{"op": "update", "id": "a", "set": {"body": "設定を足す。"}}]},
     )
     # 実行
-    result = run_hook(stdin, root)
+    result = run_hook(stdin, root, show_added="1")
     # 検証
     assert result.exit_code == 0
     assert _rows(result.stdout) == ["| 足す | 追加 |"]
@@ -229,3 +229,43 @@ def test_normal_when_dev_docs_mcp_tool(run_hook: RunHook, plugin_factory: Plugin
         json.loads(result.stdout)["systemMessage"]
         == "AI slop を検知: 足す（dev-docs の write_docs）"
     )
+
+
+def test_normal_when_display_not_set(run_hook: RunHook, plugin_factory: PluginFactory) -> None:
+    """環境変数が無ければ、画面への 1 行を出さずに通知の文だけを返却する（正常系）。"""
+    # 準備
+    root = plugin_factory([_NAOSU, _KATACHI, _BAN])
+    stdin = _input("Write", {"file_path": "/work/a.md", "content": "この形で直す。もう一度直す。"})
+    # 実行
+    result = run_hook(stdin, root)
+    # 検証
+    assert result.exit_code == 0
+    output = json.loads(result.stdout)
+    assert output["hookSpecificOutput"]["hookEventName"] == "PostToolUse"
+    assert _rows(result.stdout) == [
+        "| 直す | 修正 |",
+        "| 形 | スキーマ・構造（形状の意味なら「形状」） |",
+    ]
+    assert "decision" not in output
+    assert "systemMessage" not in output
+
+
+def test_normal_when_display_value_not_one(
+    run_hook: RunHook, plugin_factory: PluginFactory
+) -> None:
+    """環境変数が 1 以外の値なら、画面への 1 行を出さずに通知の文だけを返却する（正常系）。"""
+    # 準備
+    root = plugin_factory([_NAOSU, _KATACHI, _BAN])
+    stdin = _input("Write", {"file_path": "/work/a.md", "content": "この形で直す。もう一度直す。"})
+    # 実行
+    result = run_hook(stdin, root, show_added="true")
+    # 検証
+    assert result.exit_code == 0
+    output = json.loads(result.stdout)
+    assert output["hookSpecificOutput"]["hookEventName"] == "PostToolUse"
+    assert _rows(result.stdout) == [
+        "| 直す | 修正 |",
+        "| 形 | スキーマ・構造（形状の意味なら「形状」） |",
+    ]
+    assert "decision" not in output
+    assert "systemMessage" not in output
