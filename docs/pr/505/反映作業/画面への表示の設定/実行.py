@@ -95,7 +95,11 @@ def main() -> int:
 
     # 適用: 一時ファイルへ記載 → 検証 → 退避 → 置き換え
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    changed: list[dict[str, str]] = []
+    # 前の回の記録に追記する（やり直しても前の回に書き換えた設定を切り戻しの対象に残す）
+    records: list[dict[str, str]] = (
+        json.loads(RECORD.read_text(encoding="utf-8")) if RECORD.is_file() else []
+    )
+    RECORD.parent.mkdir(parents=True, exist_ok=True)
     for path, new in plans:
         fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=".settings.", suffix=".json")
         with os.fdopen(fd, "w", encoding="utf-8") as f:
@@ -115,13 +119,11 @@ def main() -> int:
         shutil.copy2(path, backup)
         shutil.copymode(path, tmp)
         os.replace(tmp, path)
-        changed.append({"path": str(path), "backup": str(backup)})
         print(f"{path}: changed")
-
-    # 書き換えた設定の一覧を記録する
-    RECORD.parent.mkdir(parents=True, exist_ok=True)
-    RECORD.write_text(json.dumps(changed, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"{RECORD}: changed")
+        # 1 件書き換えるごとに記録する（途中で止まっても書き換えた分を切り戻しの対象に残す）
+        records.append({"path": str(path), "backup": str(backup)})
+        RECORD.write_text(json.dumps(records, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        print(f"{RECORD}: changed")
     return 0
 
 

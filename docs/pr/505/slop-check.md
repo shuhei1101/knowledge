@@ -31,4 +31,25 @@
 
 ## テスト結果
 
-未実施。
+### 単体
+
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| [tests/unit/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/9267868/tests/unit/slop-check/test_slop_check.py) | 全実行 | 変更 | ✅ | Python 3.14 で `tests/unit` 301 テスト pass、Python 3.12 で `tests/unit/slop-check` 45 テスト pass（ランナー）<br>`テスト結果/20261119155848_9267868_単体テスト.log`。Red は `テスト結果/20261119155559_5f3dc3c_単体テスト.log`（`test_main` は、画面への 1 行を常に出す振る舞いが `slop_check.py` の `main` に [c5a8bf7](https://github.com/shuhei1101/knowledge/commit/c5a8bf7)（#338）からあるため実装の前から pass） |
+
+### 結合テストの実行範囲
+
+| 変更したファイル | 結果 | 実行する結合テスト | 結合テストが無いエントリーポイント |
+| --- | --- | --- | --- |
+| `plugins/slop-check/hooks/post-tool-use/slop_check.py` | R7（一覧・対応表に無い。フックを子プロセスで起動する結合テストが参照する） | `tests/integration/slop-check/test_slop_check.py` | - |
+| `plugins/slop-check/hooks/hooks.json` | R7（`_description` だけの変更。フックの起動のしかたを読む結合テストは上と同じ） | `tests/integration/slop-check/test_slop_check.py` | - |
+| `tests/unit/slop-check/test_slop_check.py` | R7（単体テストで、結合テストから参照されない） | - | - |
+| `docs/architecture/ARCH-72-1.yaml`・`docs/guide/guide-setup-install-plugin.yaml`・`docs/interface/IF-148-1.py.yaml`・`docs/module/MOD-148-2.py.yaml`・`docs/scenario/SC-148-1.yaml` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
+| `docs/interface/index.yaml`・`docs/interface/README.md`・`docs/module/index.yaml`・`docs/module/README.md`・`docs/scenario/index.yaml`・`docs/scenario/README.md` | R7（同上） | - | - |
+| `docs/pr/505/` の全てのファイル（README.md・slop-check.md・文書.md・要件.md・要件.yaml・確認ログ.yaml・タスク一覧.yaml・テスト結果/・反映作業/） | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+
+実行する結合テストは `tests/integration/slop-check/test_slop_check.py` だけ。結合テスト作成の工程で、IF-148-1 の追加した流れ（`test_normal_when_display_not_set`・`test_normal_when_display_value_not_one`）を足し、`systemMessage` を期待する流れは子プロセスの環境に `SLOP_CHECK_SHOW_ADDED=1` を入れ、表示しない流れは子プロセスの環境から `SLOP_CHECK_SHOW_ADDED` を除いて起動する。
+
+### 結合
+
+結合テスト作成の工程で実施する。
