@@ -56,6 +56,8 @@
 | `docs/pr/505/テスト結果/20261119155639_5f3dc3c_lint.log` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
 | `docs/pr/505/テスト結果/20261119155848_9267868_単体テスト.log` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
 | `docs/pr/505/テスト結果/20261119155905_9267868_lint.log` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/テスト結果/20261119160745_5f238e6_結合テスト.log` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/テスト結果/20261119160802_5f238e6_lint.log` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
 | `docs/pr/505/反映作業/index.yaml` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
 | `docs/pr/505/反映作業/画面への表示の設定/dry-run.log` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
 | `docs/pr/505/反映作業/画面への表示の設定/切り戻し.py` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
@@ -72,6 +74,8 @@
 | `plugins/slop-check/hooks/hooks.json` | R7（`_description` だけの変更。フックの起動のしかたを読む結合テストは上と同じ） | `tests/integration/slop-check/test_slop_check.py` | - |
 | `plugins/slop-check/hooks/post-tool-use/slop_check.py` | R7（一覧・対応表に無い。フックを子プロセスで起動する結合テストが参照する） | `tests/integration/slop-check/test_slop_check.py` | - |
 | `tests/unit/slop-check/test_slop_check.py` | R7（単体テストで、結合テストから参照されない） | - | - |
+| `tests/integration/slop-check/conftest.py` | R7（結合テストの fixture。同じフォルダの結合テストが使用する） | `tests/integration/slop-check/test_slop_check.py` | - |
+| `tests/integration/slop-check/test_slop_check.py` | R2（結合テストのファイル） | `tests/integration/slop-check/test_slop_check.py` | - |
 
 実行する結合テストは `tests/integration/slop-check/test_slop_check.py` だけ。結合テスト作成の工程で、IF-148-1 の追加した流れ（`test_normal_when_display_not_set`・`test_normal_when_display_value_not_one`）を足し、`systemMessage` を期待する流れは子プロセスの環境に `SLOP_CHECK_SHOW_ADDED=1` を入れ、表示しない流れは子プロセスの環境から `SLOP_CHECK_SHOW_ADDED` を除いて起動する。
 
