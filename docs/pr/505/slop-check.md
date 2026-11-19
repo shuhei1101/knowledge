@@ -41,12 +41,37 @@
 
 | 変更したファイル | 結果 | 実行する結合テスト | 結合テストが無いエントリーポイント |
 | --- | --- | --- | --- |
-| `plugins/slop-check/hooks/post-tool-use/slop_check.py` | R7（一覧・対応表に無い。フックを子プロセスで起動する結合テストが参照する） | `tests/integration/slop-check/test_slop_check.py` | - |
+| `docs/architecture/ARCH-72-1.yaml` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
+| `docs/guide/guide-setup-install-plugin.yaml` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
+| `docs/interface/IF-148-1.py.yaml` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
+| `docs/interface/README.md` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
+| `docs/interface/index.yaml` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
+| `docs/module/MOD-148-2.py.yaml` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
+| `docs/module/README.md` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
+| `docs/module/index.yaml` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
+| `docs/pr/505/README.md` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/slop-check.md` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/タスク一覧.yaml` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/テスト結果/20261119155559_5f3dc3c_単体テスト.log` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/テスト結果/20261119155639_5f3dc3c_lint.log` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/テスト結果/20261119155848_9267868_単体テスト.log` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/テスト結果/20261119155905_9267868_lint.log` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/反映作業/index.yaml` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/反映作業/画面への表示の設定/dry-run.log` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/反映作業/画面への表示の設定/切り戻し.py` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/反映作業/画面への表示の設定/実行.py` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/反映作業/画面への表示の設定/疎通確認.py` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/反映作業/画面への表示の設定/確認.py` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/文書.md` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/確認ログ.yaml` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/要件.md` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/pr/505/要件.yaml` | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
+| `docs/scenario/README.md` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
+| `docs/scenario/SC-148-1.yaml` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
+| `docs/scenario/index.yaml` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
 | `plugins/slop-check/hooks/hooks.json` | R7（`_description` だけの変更。フックの起動のしかたを読む結合テストは上と同じ） | `tests/integration/slop-check/test_slop_check.py` | - |
+| `plugins/slop-check/hooks/post-tool-use/slop_check.py` | R7（一覧・対応表に無い。フックを子プロセスで起動する結合テストが参照する） | `tests/integration/slop-check/test_slop_check.py` | - |
 | `tests/unit/slop-check/test_slop_check.py` | R7（単体テストで、結合テストから参照されない） | - | - |
-| `docs/architecture/ARCH-72-1.yaml`・`docs/guide/guide-setup-install-plugin.yaml`・`docs/interface/IF-148-1.py.yaml`・`docs/module/MOD-148-2.py.yaml`・`docs/scenario/SC-148-1.yaml` | R7（`tests/integration/scripts/` は `repo_factory` の一時のリポジトリで検査・変換を起動し、このリポジトリの文書を読まない） | - | - |
-| `docs/interface/index.yaml`・`docs/interface/README.md`・`docs/module/index.yaml`・`docs/module/README.md`・`docs/scenario/index.yaml`・`docs/scenario/README.md` | R7（同上） | - | - |
-| `docs/pr/505/` の全てのファイル（README.md・slop-check.md・文書.md・要件.md・要件.yaml・確認ログ.yaml・タスク一覧.yaml・テスト結果/・反映作業/） | R7（PR ドキュメントは配信せず、結合テストから参照されない） | - | - |
 
 実行する結合テストは `tests/integration/slop-check/test_slop_check.py` だけ。結合テスト作成の工程で、IF-148-1 の追加した流れ（`test_normal_when_display_not_set`・`test_normal_when_display_value_not_one`）を足し、`systemMessage` を期待する流れは子プロセスの環境に `SLOP_CHECK_SHOW_ADDED=1` を入れ、表示しない流れは子プロセスの環境から `SLOP_CHECK_SHOW_ADDED` を除いて起動する。
 
