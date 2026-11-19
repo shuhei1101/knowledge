@@ -132,6 +132,11 @@ constants:
     usecase: 書き込んだ中身の照合
     summary: '`SHOW_ADDED_ENV` がこの値と一致するときだけ表示する'
     value: '"1"'
+    refs:
+      - to: IF-148-1
+        item: constraints[画面への表示の設定]
+        type: requires
+        when: '`SHOW_ADDED_VALUE` を修正するときに、IF-148-1 の「画面への表示の設定」の決まりと突き合わせる。'
 functions:
   - name: main
     title: 書き込んだ中身の照合のエントリーポイント

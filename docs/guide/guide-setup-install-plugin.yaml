@@ -29,7 +29,7 @@ items:
     name: 概要
     body: |-
       knowledge のスキル（文章を点検して修正する `/knowledge:text-review`）を Claude Code で使用したいときに実行する。
-      プラグイン slop-check を入れると、書き込むツールの実行の後に、書き込んだ中身にある AI slop の単語と置き換え先が Claude へ通知され、検知した単語が画面に 1 行で出る。
+      プラグイン slop-check を入れると、書き込むツールの実行の後に、書き込んだ中身にある AI slop の単語と置き換え先が Claude へ通知される。画面への表示を有効にした端末では、検知した単語が画面に 1 行で出る。
   - id: prerequisite-01
     group: 前提
     name: "前提: Claude Code の導入"
@@ -64,6 +64,19 @@ items:
 
       フックは端末の `python3`（3.12 以上）で起動する。
       `python3` が PATH に無いと、書き込むたびにフックが失敗し、通知が出ない。
+
+      検知した単語を画面にも 1 行で表示するときは、ユーザースコープの `~/.claude/settings.json` の `env` に `SLOP_CHECK_SHOW_ADDED` を `"1"` で記載する。
+
+      ```json
+      {
+        "env": {
+          "SLOP_CHECK_SHOW_ADDED": "1"
+        }
+      }
+      ```
+
+      表示するのは値が `"1"` のときだけで、`"true"` など他の値では表示しない。
+      記載しなければ画面には出ず、Claude への通知だけが出る。
   - id: reflection-01
     group: 反映
     name: 反映は reload
@@ -88,7 +101,8 @@ items:
     name: 単語の通知の確認
     body: |-
       Claude Code のセッションで、一時ファイルに「設定を直す。」と書き込むよう Claude に頼む。
-      書き込みの後に、画面に `AI slop を検知: 直す（Write）` の 1 行が出る。
+      書き込みの後に、Claude が `直す` を `修正` へ置き換えるよう通知を受けたと回答する。
+      `SLOP_CHECK_SHOW_ADDED` を `"1"` にした端末では、画面に `AI slop を検知: 直す（Write）` の 1 行も出る。
   - id: rollback-01
     group: 元に戻す
     name: 元に戻す

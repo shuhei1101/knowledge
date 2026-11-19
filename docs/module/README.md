@@ -8,7 +8,7 @@
 
 | ページ | 概要 |
 | --- | --- |
-| [slop-check / hooks / slop_check.py](./MOD-148-2.py.yaml) | プラグイン slop-check の PostToolUse のフック。書き込んだ中身を対応表のコピーで照合し、ヒットした行の通知の文を `additionalContext` で、検知した単語の 1 行を `systemMessage` で返却する（IF-148-1）。 |
+| [slop-check / hooks / slop_check.py](./MOD-148-2.py.yaml) | プラグイン slop-check の PostToolUse のフック。書き込んだ中身を対応表のコピーで照合し、ヒットした行の通知の文を `additionalContext` で、画面への表示を有効にした端末では検知した単語の 1 行を `systemMessage` で返却する（IF-148-1）。 |
 | [検査と変換のスクリプト / scripts / _common.py](./MOD-72-2.py.yaml) | 文書の読み込み・項目のパスと行の対応・違反の型・並列の読み込み |
 | [検査と変換のスクリプト / scripts / _lint.py](./MOD-176-1.py.yaml) | markdownlint-cli2・textlint・yamllint の在りかの確認と呼び出しと違反の行の対応 |
 | [検査と変換のスクリプト / scripts / _workflow.py](./MOD-376-1.py.yaml) | エントリーポイントが trigger のインターフェース定義と GitHub Actions の workflow のファイルの突き合わせ |
