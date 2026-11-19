@@ -101,7 +101,7 @@ items:
     name: 毎回変わる末尾を書き込みから除外する
     body: |-
       - 自動の区切り（Anthropic のリクエスト直下の `cache_control`・OpenAI の後の世代の `implicit`）は毎回変わる末尾まで書き込み、読み出されない書き込みの費用がかかる
-      - 変わらない部分の最後に明示のブレイクポイントを指定する。後ろは通常の入力の単価になる
+      - 変わらない部分の最後に明示のブレイクポイントを指定し、後ろを通常の入力の単価にする
   - id: prompt-cache-05
     group: プロンプトキャッシュの設計（最重要）
     name: 1 回きりの用途では有効にならない
@@ -113,7 +113,18 @@ items:
   - id: prompt-cache-06
     group: プロンプトキャッシュの設計（最重要）
     name: キャッシュ使用量の確認
-    body: '- 使用量は読み出しと書き込みのトークンをログ。Anthropic は `cache_read_input_tokens`・`cache_creation_input_tokens`、OpenAI は Chat Completions が `prompt_tokens_details.cached_tokens`、Responses API が `input_tokens_details.cached_tokens`・`input_tokens_details.cache_write_tokens`'
+    body: '- 使用量は読み出しと書き込みのトークンをログ
+
+
+      | API | 読み出し | 書き込み |
+
+      | --- | --- | --- |
+
+      | Anthropic | `cache_read_input_tokens` | `cache_creation_input_tokens` |
+
+      | OpenAI の Responses API | `input_tokens_details.cached_tokens` | `input_tokens_details.cache_write_tokens` |
+
+      | OpenAI の Chat Completions | `prompt_tokens_details.cached_tokens` | 公式ドキュメント |'
   - id: prompt-cache-09
     group: プロンプトキャッシュの設計（最重要）
     name: エイリアスのモデルは実測する
