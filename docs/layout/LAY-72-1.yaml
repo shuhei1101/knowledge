@@ -23,7 +23,7 @@ content_types:
     summary: 作業 PR ごとの計画書・テスト結果・反映作業
   - name: index
     group: role
-    summary: フォルダの目次の原本と、そこから生成した README.md
+    summary: フォルダの目次の原本と、そこから生成した README.mark.md
   - name: schema
     group: role
     summary: 文書を検査する JSON Schema
@@ -100,16 +100,16 @@ entries:
         contents: '`docs/` の目次の原本'
         content_types: [index]
       - type: file
-        name: README.md
+        name: README.mark.md
         contents: '`index.yaml` から生成した `docs/` の目次'
         content_types: [index]
         generated_from:
           path: docs/index.yaml
           command: CMD-72-1#categories[ビルド・生成]
-          tracked: GitHub でフォルダを開いたときに表示する目次
+          tracked: dev-docs の画面でフォルダを開いたときに表示する目次
       - type: file
         name: files.yaml
-        contents: '`docs/` の目次の `README.md` の一覧（project-index の files の行。`pr/` は配信しない）'
+        contents: '`docs/` の目次の `README.mark.md` の一覧（project-index の files の行。`pr/` は配信しない）'
         content_types: [file_list]
       - type: file
         name: changelog.yaml
@@ -177,13 +177,13 @@ entries:
         naming: ['ARCH-{issue}-{n}.yaml', index.yaml]
         children:
           - type: file
-            name: README.md
+            name: README.mark.md
             contents: '`index.yaml` から生成した `docs/architecture/` の目次'
             content_types: [index]
             generated_from:
               path: docs/architecture/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
-              tracked: GitHub でフォルダを開いたときに表示する目次
+              tracked: dev-docs の画面でフォルダを開いたときに表示する目次
       - type: folder
         name: nonfunctional
         contents: 非機能要件
@@ -191,13 +191,13 @@ entries:
         naming: ['NFR-{issue}-{n}.yaml', index.yaml]
         children:
           - type: file
-            name: README.md
+            name: README.mark.md
             contents: '`index.yaml` から生成した `docs/nonfunctional/` の目次'
             content_types: [index]
             generated_from:
               path: docs/nonfunctional/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
-              tracked: GitHub でフォルダを開いたときに表示する目次
+              tracked: dev-docs の画面でフォルダを開いたときに表示する目次
       - type: folder
         name: scenario
         contents: 複合・単一ユースケースのシナリオ
@@ -205,13 +205,13 @@ entries:
         naming: ['SC-{issue}-{n}.yaml', index.yaml]
         children:
           - type: file
-            name: README.md
+            name: README.mark.md
             contents: '`index.yaml` から生成した `docs/scenario/` の目次'
             content_types: [index]
             generated_from:
               path: docs/scenario/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
-              tracked: GitHub でフォルダを開いたときに表示する目次
+              tracked: dev-docs の画面でフォルダを開いたときに表示する目次
       - type: folder
         name: interface
         contents: インターフェース定義
@@ -219,13 +219,13 @@ entries:
         naming: ['IF-{issue}-{n}.{lang}.yaml', index.yaml]
         children:
           - type: file
-            name: README.md
+            name: README.mark.md
             contents: '`index.yaml` から生成した `docs/interface/` の目次'
             content_types: [index]
             generated_from:
               path: docs/interface/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
-              tracked: GitHub でフォルダを開いたときに表示する目次
+              tracked: dev-docs の画面でフォルダを開いたときに表示する目次
       - type: folder
         name: module
         contents: モジュール構成と、分類ごとのまとめの設計書
@@ -233,13 +233,13 @@ entries:
         naming: ['MOD-{issue}-{n}.yaml', 'MOD-{issue}-{n}.{lang}.yaml', index.yaml]
         children:
           - type: file
-            name: README.md
+            name: README.mark.md
             contents: '`index.yaml` から生成した `docs/module/` の目次'
             content_types: [index]
             generated_from:
               path: docs/module/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
-              tracked: GitHub でフォルダを開いたときに表示する目次
+              tracked: dev-docs の画面でフォルダを開いたときに表示する目次
       - type: folder
         name: library
         contents: 外部ライブラリ・CLI
@@ -247,13 +247,13 @@ entries:
         naming: ['LIB-{issue}-{n}.yaml', index.yaml]
         children:
           - type: file
-            name: README.md
+            name: README.mark.md
             contents: '`index.yaml` から生成した `docs/library/` の目次'
             content_types: [index]
             generated_from:
               path: docs/library/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
-              tracked: GitHub でフォルダを開いたときに表示する目次
+              tracked: dev-docs の画面でフォルダを開いたときに表示する目次
       - type: folder
         name: test-procedure
         contents: テスト実行方法
@@ -261,13 +261,13 @@ entries:
         naming: ['TP-{issue}-{n}.yaml', index.yaml]
         children:
           - type: file
-            name: README.md
+            name: README.mark.md
             contents: '`index.yaml` から生成した `docs/test-procedure/` の目次'
             content_types: [index]
             generated_from:
               path: docs/test-procedure/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
-              tracked: GitHub でフォルダを開いたときに表示する目次
+              tracked: dev-docs の画面でフォルダを開いたときに表示する目次
       - type: folder
         name: dev-command
         contents: 開発コマンド
@@ -275,13 +275,13 @@ entries:
         naming: ['CMD-{issue}-{n}.yaml', index.yaml]
         children:
           - type: file
-            name: README.md
+            name: README.mark.md
             contents: '`index.yaml` から生成した `docs/dev-command/` の目次'
             content_types: [index]
             generated_from:
               path: docs/dev-command/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
-              tracked: GitHub でフォルダを開いたときに表示する目次
+              tracked: dev-docs の画面でフォルダを開いたときに表示する目次
       - type: folder
         name: layout
         contents: フォルダ構成
@@ -289,13 +289,13 @@ entries:
         naming: ['LAY-{issue}-{n}.yaml', index.yaml]
         children:
           - type: file
-            name: README.md
+            name: README.mark.md
             contents: '`index.yaml` から生成した `docs/layout/` の目次'
             content_types: [index]
             generated_from:
               path: docs/layout/index.yaml
               command: CMD-72-1#categories[ビルド・生成]
-              tracked: GitHub でフォルダを開いたときに表示する目次
+              tracked: dev-docs の画面でフォルダを開いたときに表示する目次
       - type: folder
         name: pr
         contents: 作業 PR ごとの計画書と記録
@@ -305,7 +305,7 @@ entries:
             name: '{pr}'
             contents: 1 つの作業 PR の計画書と記録
             content_types: [pr_doc]
-            naming: [README.md, 要件.md, 要件.yaml, タスク一覧.yaml, 確認ログ.yaml, '{subsystem}.md']
+            naming: [README.mark.md, 要件.mark.md, 要件.yaml, タスク一覧.yaml, 確認ログ.yaml, '{subsystem}.mark.md', README.md, 要件.md, '{subsystem}.md']
             children:
               - type: folder
                 name: テスト結果
