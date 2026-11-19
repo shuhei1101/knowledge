@@ -35,15 +35,15 @@ tags:
   - name: action:設計
 status: current
 visibility: internal
-rev: 4
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-11-19'
 sources:
-  - title: "Anthropic: Prompt caching"
+  - title: 'Anthropic: Prompt caching'
     url: https://platform.claude.com/docs/en/build-with-claude/prompt-caching
-    note: 最小長・割引率・保持時間
-  - title: "OpenAI: Prompt caching"
-    url: https://platform.openai.com/docs/guides/prompt-caching
-    note: 最小長・割引率・保持時間
+    note: 最小長・割引率・保持時間・書き込みの費用・ブレイクポイント
+  - title: 'OpenAI: Prompt caching'
+    url: https://developers.openai.com/api/docs/guides/prompt-caching
+    note: 最小長・割引率・保持時間・書き込みの費用・ブレイクポイント・世代の境のモデル
 items:
   - id: token-cost-01
     group: トークン管理とコスト最適化
@@ -83,13 +83,11 @@ items:
   - id: prompt-cache-02
     group: プロンプトキャッシュの設計（最重要）
     name: system に動的値を入れない
-    body: |-
-      - system に timestamp 等の動的値を埋め込まない（1 文字の差で以降全部ミス）
+    body: '- system に timestamp 等の動的値を埋め込まない（1 文字の差で以降全部ミス）'
   - id: prompt-cache-03
     group: プロンプトキャッシュの設計（最重要）
     name: messages の順序を保つ
-    body: |-
-      - messages は前の履歴ほど上、順序を入れ替えない
+    body: '- messages は前の履歴ほど上、順序を入れ替えない'
   - id: prompt-cache-04
     group: プロンプトキャッシュの設計（最重要）
     name: プロバイダ別のキャッシュ表
@@ -97,29 +95,50 @@ items:
       | Provider  | 仕組み                                                 | 条件（最小長・割引率・保持時間）                                                                  |
       | --------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
       | Anthropic | `cache_control: {"type": "ephemeral"}` を指定（リクエスト直下なら自動、ブロック単位でも可） | 公式ドキュメント          |
-      | OpenAI    | 自動（同一プレフィックスで有効になる、コード変更不要）       | 公式ドキュメント                        |
+      | OpenAI    | モデルの世代で分かれる。前の世代は自動（同一プレフィックスで有効になる、コード変更不要）。後の世代は書き込みに費用がかかり、`prompt_cache_breakpoint`・`prompt_cache_options.mode` で明示のブレイクポイントを指定できる（Responses API） | 公式ドキュメント（世代の境のモデルを含む） |
+  - id: prompt-cache-07
+    group: プロンプトキャッシュの設計（最重要）
+    name: 毎回変わる末尾を書き込みから除外する
+    body: |-
+      - 自動の区切り（Anthropic のリクエスト直下の `cache_control`・OpenAI の後の世代の `implicit`）は、末尾まで書き込む
+      - 末尾が呼び出しごとに入れ替わり、次の呼び出しの接頭辞にならない構成（タイムスタンプ・リクエストごとの文脈）では、末尾の書き込みが読み出されず、費用だけがかかる
+      - この構成では、変わらない部分の最後に明示のブレイクポイントを指定し、後ろを通常の入力の単価にする
   - id: prompt-cache-05
     group: プロンプトキャッシュの設計（最重要）
     name: 1 回きりの用途では有効にならない
-    body: |-
-      - 1 回しか呼ばない用途では有効にならない（Anthropic はキャッシュの書き込みが通常の入力より割高）
+    body: '- 1 回しか呼ばない用途では有効にならない（Anthropic と OpenAI の後の世代はキャッシュの書き込みが通常の入力より割高）'
+  - id: prompt-cache-08
+    group: プロンプトキャッシュの設計（最重要）
+    name: 呼び出しの間隔と保持の時間を比べる
+    body: '- 呼び出しの間隔が保持の時間（プロバイダー・モデル・指定で変わる。公式ドキュメント）より長い用途では、キャッシュを前提にしない（読み出されず、書き込みの費用だけがかかる）'
   - id: prompt-cache-06
     group: プロンプトキャッシュの設計（最重要）
     name: キャッシュ使用量の確認
-    body: |-
-      - 使用量は `cache_read_input_tokens`（Anthropic）/ `prompt_tokens_details.cached_tokens`（OpenAI）をログ
+    body: '- 使用量は読み出しと書き込みのトークンをログ
+
+
+      | API | 読み出し | 書き込み |
+
+      | --- | --- | --- |
+
+      | Anthropic | `cache_read_input_tokens` | `cache_creation_input_tokens` |
+
+      | OpenAI の Responses API | `input_tokens_details.cached_tokens` | `input_tokens_details.cache_write_tokens` |
+
+      | OpenAI の Chat Completions | `prompt_tokens_details.cached_tokens` | 公式ドキュメント |'
+  - id: prompt-cache-09
+    group: プロンプトキャッシュの設計（最重要）
+    name: エイリアスのモデルは実測する
+    body: '- 中身のモデルが入れ替わるエイリアスのモデルは、入れ替わるとキャッシュの決まり（書き込みの費用・ブレイクポイント）も変わりうるので、使用量のログで書き込みと読み出しを実測する'
   - id: other-practices-01
     group: その他の定石
     name: モデルは小さい方から選ぶ
-    body: |-
-      - モデル選定: 最小モデルで合格できないか試してから上げる（分類 → 小さいモデル、複雑な推論 → 上位モデル）
+    body: '- モデル選定: 最小モデルで合格できないか試してから上げる（分類 → 小さいモデル、複雑な推論 → 上位モデル）'
   - id: other-practices-02
     group: その他の定石
     name: Batch API
-    body: |-
-      - Batch API: リアルタイム不要な大量処理は割り引かれる（割引率と処理期限は各社の公式ドキュメント）
+    body: '- Batch API: リアルタイム不要な大量処理は割り引かれる（割引率と処理期限は各社の公式ドキュメント）'
   - id: other-practices-03
     group: その他の定石
     name: 履歴の刈り取り
-    body: |-
-      - 履歴の刈り取り: 直近 N 件 + それより前の履歴は要約（要約は小さいモデルで）
+    body: '- 履歴の刈り取り: 直近 N 件 + それより前の履歴は要約（要約は小さいモデルで）'
