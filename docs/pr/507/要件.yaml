@@ -2,7 +2,9 @@ docs:
   - page: docs/rule/ui-input-wording.yaml
     new: false
     change: 項目『エラーと通知の決まり』の表に、操作の結果は文字の通知を追加する前にアイコンの変化だけで伝えられないかを検討し、一般的な操作の成功はアイコンをチェックに替えるだけにし、失敗は理由を文字で出してよいとする行を追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-19T12:48:55.043006+00:00'
 scope_out:
   - item: 規約『ボタンのラベル』（docs/rule/ui-button-label.yaml）への追記
     reason: 要望は操作の後に通知を出すかの決まりで、ボタンのラベルの決まりではない。追加先は規約『入力と文言』の 1 か所にする
@@ -10,4 +12,7 @@ scope_out:
   - item: React の規約『ミューテーション』（react-data-mutation）・『Server Action をクライアントから呼ぶ』（next-frontend-use-action-state）・『編集・新規画面』（react-screen-edit）の成功時の toast の記載
     reason: '判断が分かれるためレビューで確定する。その時点の判断: サーバーのデータを書き換える保存・新規の成功の toast は、ボタンのアイコンの変化だけでは伝わらない操作（画面の遷移・フォームのリセットを伴う）で、要望の対象の『コピーのような一般的な操作』に当たらないため変えない'
     plan: none
+  - item: docs/guide/guide-setup-install-plugin.yaml の items[0].body の 1 行に 2 文がある textlint の one-sentence-per-line の違反
+    reason: textlint の one-sentence-per-line（1 行に 1 文）から外れているが、今回の要望に含まれない（base の e68403f でも出る違反）
+    plan: '#508'
 use_cases: []
