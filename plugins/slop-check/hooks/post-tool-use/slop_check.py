@@ -1,7 +1,8 @@
 """書き込むツールの中身を AI slop の単語の対応表で照合し、ヒットした単語の通知を返す PostToolUse のフック。
 
 標準入力の PostToolUse の入力から書き込んだ中身を取り出し、ヒットした行があれば NG と OK の表を持つ通知の文を
-`hookSpecificOutput.additionalContext` で、検知した単語の 1 行を `systemMessage` で標準出力へ出す。
+`hookSpecificOutput.additionalContext` で、環境変数 `SLOP_CHECK_SHOW_ADDED` が `1` のときは検知した単語の 1 行を
+`systemMessage` で標準出力へ出す。
 書き込みは止めず、終了コードは常に 0。
 Python の標準ライブラリだけで書き、端末の python3（3.12 以上）で起動する。
 
@@ -109,6 +110,10 @@ NOTICE_TAIL = (
 # 利用者の画面に出す 1 行の先頭
 SYSTEM_MESSAGE_HEAD = "AI slop を検知: "
 
+# 値が SHOW_ADDED_VALUE のときだけ利用者の画面に 1 行を出す環境変数
+SHOW_ADDED_ENV = "SLOP_CHECK_SHOW_ADDED"
+SHOW_ADDED_VALUE = "1"
+
 # MCP ツールの名前の接頭辞と、サーバーの部分とツール名の区切り
 _MCP_PREFIX = "mcp__"
 _MCP_SEPARATOR = "__"
@@ -195,13 +200,15 @@ def main(argv: Sequence[str] | None = None, *, word_list: Path | None = None) ->
 
         hits = find_hits(text, entries)
         if hits:
-            output = {
+            output: dict[str, object] = {
                 "hookSpecificOutput": {
                     "hookEventName": "PostToolUse",
                     "additionalContext": build_notice(hits),
                 },
-                "systemMessage": build_system_message(hits, tool_name),
             }
+            # 画面への表示を有効にした端末だけ、利用者の画面に 1 行を出す
+            if shows_added():
+                output["systemMessage"] = build_system_message(hits, tool_name)
             print(json.dumps(output, ensure_ascii=False))
     except Exception:  # noqa: BLE001 - 想定していない例外も書き込みの結果を変えずに traceback だけ出す
         traceback.print_exc()
@@ -396,6 +403,13 @@ def build_system_message(hits: Sequence[Entry], tool_name: str) -> str:
     """ヒットした行とツール名から、利用者の画面に出す 1 行を作る。"""
     words = "・".join(entry.ng for entry in hits)
     return f"{SYSTEM_MESSAGE_HEAD}{words}（{tool_label(tool_name)}）"
+
+
+def shows_added(environ: Mapping[str, str] | None = None) -> bool:
+    """利用者の画面へ 1 行を出すかを、環境変数から返却する。"""
+    values = os.environ if environ is None else environ
+    # 値が SHOW_ADDED_VALUE と一致するときだけ表示する（無いとき・他の値のときは表示しない）
+    return values.get(SHOW_ADDED_ENV) == SHOW_ADDED_VALUE
 
 
 if __name__ == "__main__":
