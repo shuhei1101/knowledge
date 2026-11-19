@@ -457,7 +457,7 @@ request:
     type: Path
     required: false
     location: argument
-    description: 設定ファイルのパス。無いときは `${XDG_CONFIG_HOME:-~/.config}/slop-check/settings.json` を読み込む
+    description: 設定ファイルのパス。先頭の `~` はホームに展開する。無いときは `${XDG_CONFIG_HOME:-~/.config}/slop-check/settings.json` を読み込む。指すファイルが無いときは、設定が無いときと同じく `systemMessage` を出さない
     notes: 環境変数で受け取る。Claude Code の `settings.json` の `env` で指定できる
   - name: settings.global.show_added
     type: bool
@@ -520,5 +520,5 @@ constraints:
     notes: '`mcp__plugin_mindstella_mindstella__reply` は `mindstella の reply`、`mcp__plugin_ai-monitor_ai-monitor-tools__comment` は `ai-monitor の comment`'
   - item: 画面への表示の設定
     constraint: 設定ファイルは `SLOP_CHECK_CONFIG` のパス、無ければ `${XDG_CONFIG_HOME:-~/.config}/slop-check/settings.json`。`global.show_added` が `true` のときだけ `systemMessage` を出す。設定ファイルは照合でヒットがあったときだけ読み込み、JSON として読み込めなければ標準エラーにパスを出して `systemMessage` を出さない
-    notes: '`additionalContext` は設定に関係なく出す。キーの名前と既定は alias-inject の `global.show_added` に合わせる'
+    notes: '`additionalContext` は設定に関係なく出す。キーの名前と既定は alias-inject の `global.show_added` に合わせる。実値を入れないサンプル `settings.sample.json`（`version` と `global.show_added` を持つ）をプラグインの直下に配置する。フックは `version` を参照しない。規約『Claude プラグインルール』の `settings-file-01`・`settings-file-03`（本体を YAML の `settings.yaml` にする）・`settings-file-04`（サンプルを `settings.sample.yaml` にする）・`settings-file-05`（`projects` を持つ）から逸脱する。フックが Python の標準ライブラリだけで動き（MOD-148-1）、YAML を読み込めないため、JSON の `global` だけを持つ'
 test_file: tests/integration/slop-check/test_slop_check.py
