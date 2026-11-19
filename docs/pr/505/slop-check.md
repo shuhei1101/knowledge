@@ -14,7 +14,7 @@
 
 | 対象 | 方針 | 補足 |
 | --- | --- | --- |
-| 表示の設定 | 画面への 1 行の表示を切り替える設定を 1 つ追加し、値が無いときは表示しない | 配置先と名前は `未確定`（[要件](./要件.md)） |
+| 表示の設定 | 端末の設定ファイル `${XDG_CONFIG_HOME:-~/.config}/slop-check/settings.json`（`SLOP_CHECK_CONFIG` で変更可）の `global.show_added` を追加し、`true` のときだけ表示する | 案 B。ユーザー確認で決める（[要件](./要件.md)） |
 | 通知の出力 | ヒットがあれば `additionalContext` は今のまま出し、`systemMessage` は設定が表示するときだけ出す | 設定の値を解釈できないときは表示しない |
 | テスト | 単体は設定の取得と出力の分岐、結合は設定の有無ごとにフックを子プロセスで起動して出力を確認する | `tests/unit/slop-check/`・`tests/integration/slop-check/` |
 
