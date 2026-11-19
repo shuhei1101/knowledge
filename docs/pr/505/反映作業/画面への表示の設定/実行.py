@@ -26,6 +26,11 @@ TARGETS = [
 PLUGIN = "slop-check@knowledge"
 KEY = "SLOP_CHECK_SHOW_ADDED"
 VALUE = "1"
+# 実行で書き換えた settings.json の一覧。切り戻しはここに載った設定だけを戻す
+RECORD = (
+    Path(os.environ.get("XDG_STATE_HOME", str(HOME / ".local/state")))
+    / "slop-check/pr505-show-added.json"
+)
 
 
 def render(data: dict[str, object]) -> str:
@@ -41,8 +46,7 @@ def main() -> int:
         print(f"受け付けない引数: {args}", file=sys.stderr)
         return 1
     dry_run = bool(args)
-    missing = [str(p) for p in TARGETS if not p.is_file()]
-    if len(missing) == len(TARGETS):
+    if not any(p.is_file() for p in TARGETS):
         print("前提確認: failed")
         print("対象の settings.json が 1 件も無い", file=sys.stderr)
         return 1
@@ -51,28 +55,28 @@ def main() -> int:
     # 計画: 対象ごとに書き換え後の内容を作る（--dry-run もここを通る）
     plans: list[tuple[Path, str]] = []
     for path in TARGETS:
-        label = f"{path}"
         # ファイルが無い端末の設定は対象にしない
         if not path.is_file():
-            print(f"{label}: skipped")
+            print(f"{path}: skipped")
             continue
         current = path.read_text(encoding="utf-8")
         data = json.loads(current)
         plugins = data.get("enabledPlugins", {})
         # slop-check を有効にしていない設定は書き換えない
         if not isinstance(plugins, dict) or plugins.get(PLUGIN) is not True:
-            print(f"{label}: skipped")
+            print(f"{path}: skipped")
             continue
-        env = data.setdefault("env", {})
+        env = data.get("env", {})
         if not isinstance(env, dict):
-            print(f"{label}: failed")
+            print(f"{path}: failed")
             print(f"env がオブジェクトでない: {type(env).__name__}", file=sys.stderr)
             return 1
-        # 既に表示する値なら何もしない
+        # 既に表示する値なら何もしない（利用者が記載した値は記録せず、切り戻しの対象にもしない）
         if env.get(KEY) == VALUE:
-            print(f"{label}: skipped")
+            print(f"{path}: skipped")
             continue
-        env[KEY] = VALUE
+        # キーを env の先頭に配置し、差分を追加の 1 行だけにする
+        data["env"] = {KEY: VALUE, **{k: v for k, v in env.items() if k != KEY}}
         new = render(data)
         sys.stdout.writelines(
             difflib.unified_diff(
@@ -80,16 +84,18 @@ def main() -> int:
                 new.splitlines(keepends=True),
                 fromfile=str(path),
                 tofile=str(path),
+                n=0,
             )
         )
         plans.append((path, new))
         if dry_run:
-            print(f"{label}: changed")
-    if dry_run:
+            print(f"{path}: changed")
+    if dry_run or not plans:
         return 0
 
     # 適用: 一時ファイルへ記載 → 検証 → 退避 → 置き換え
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    changed: list[dict[str, str]] = []
     for path, new in plans:
         fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=".settings.", suffix=".json")
         with os.fdopen(fd, "w", encoding="utf-8") as f:
@@ -100,10 +106,22 @@ def main() -> int:
             os.unlink(tmp)
             print(f"{path} の検証: failed")
             return 1
-        shutil.copy2(path, path.with_name(f"{path.name}.bak-{stamp}"))
+        backup = path.with_name(f"{path.name}.bak-{stamp}")
+        # 同じ名前のバックアップがあれば上書きせずに止める
+        if backup.exists():
+            os.unlink(tmp)
+            print(f"{backup}: failed")
+            return 1
+        shutil.copy2(path, backup)
         shutil.copymode(path, tmp)
         os.replace(tmp, path)
+        changed.append({"path": str(path), "backup": str(backup)})
         print(f"{path}: changed")
+
+    # 書き換えた設定の一覧を記録する
+    RECORD.parent.mkdir(parents=True, exist_ok=True)
+    RECORD.write_text(json.dumps(changed, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"{RECORD}: changed")
     return 0
 
 
