@@ -77,4 +77,10 @@
 
 ### 結合
 
-結合テスト作成の工程で実施する。
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| [tests/integration/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/5f238e6/tests/integration/slop-check/test_slop_check.py) | `test_normal_when_display_not_set`・`test_normal_when_display_value_not_one` | 新規 | ✅ | IF-148-1 の追加した流れ |
+| [tests/integration/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/5f238e6/tests/integration/slop-check/test_slop_check.py) | `test_normal`・`test_normal_when_edit`・`test_normal_when_edited_file_unreadable`・`test_normal_when_notebook_edit`・`test_normal_when_mcp_tool`・`test_normal_when_dev_docs_mcp_tool` | 変更 | ✅ | `systemMessage` を期待する流れを `show_added="1"` で起動するようにした |
+| [tests/integration/slop-check/conftest.py](https://github.com/shuhei1101/knowledge/blob/5f238e6/tests/integration/slop-check/conftest.py) | `run_hook` | 変更 | ✅ | 子プロセスの環境から `SLOP_CHECK_SHOW_ADDED` を除き、`show_added` を指定したときだけ入れる |
+
+ファイル全体で 13 passed（`テスト結果/20261119160745_5f238e6_結合テスト.log`。lint は `テスト結果/20261119160802_5f238e6_lint.log`）。親の環境に `SLOP_CHECK_SHOW_ADDED=1` を入れても 13 passed。TL-3 の `run_runner` は層の全件だけを回すため、表の範囲を `run_one` で手元で回した。
