@@ -1,0 +1,516 @@
+$ run_url=$(gh workflow run test.yml --ref design/slop-check/system-message-toggle -f layer=unit | ...) && gh run watch "$run_id" --exit-status && gh run view "$run_id" --log
+# 実行: https://github.com/shuhei1101/knowledge/actions/runs/44475684366
+# Red（実装の前）。fail は shows_added が無いこと・systemMessage を常に出すことによるものだけ。
+# test_main は実装の前から pass する: 画面への 1 行を常に出す振る舞いが plugins/slop-check/hooks/post-tool-use/slop_check.py の main（203 行目）にあり、c5a8bf7（#338）で入った
+
+test	Set up job	﻿2026-11-19T06:55:22.9770806Z Current runner version: '2.338.2'
+test	Set up job	2026-11-19T06:55:22.9792361Z ##[group]Runner Image Provisioner
+test	Set up job	2026-11-19T06:55:22.9793109Z Hosted Compute Agent
+test	Set up job	2026-11-19T06:55:22.9793726Z Version: 20261103.629
+test	Set up job	2026-11-19T06:55:22.9794255Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+test	Set up job	2026-11-19T06:55:22.9794869Z Build Date: 2026-11-03T17:26:59Z
+test	Set up job	2026-11-19T06:55:22.9795474Z Worker ID: {95d13794-ac31-495b-94af-a336858f6c81}
+test	Set up job	2026-11-19T06:55:22.9796057Z Region: westus2
+test	Set up job	2026-11-19T06:55:22.9796540Z Cloud: Azure
+test	Set up job	2026-11-19T06:55:22.9797027Z ##[endgroup]
+test	Set up job	2026-11-19T06:55:22.9798094Z ##[group]Operating System
+test	Set up job	2026-11-19T06:55:22.9798664Z Ubuntu
+test	Set up job	2026-11-19T06:55:22.9799101Z 26.04.1
+test	Set up job	2026-11-19T06:55:22.9799514Z LTS
+test	Set up job	2026-11-19T06:55:22.9800062Z ##[endgroup]
+test	Set up job	2026-11-19T06:55:22.9800521Z ##[group]Runner Image
+test	Set up job	2026-11-19T06:55:22.9801047Z Image: ubuntu-26.04
+test	Set up job	2026-11-19T06:55:22.9801736Z Version: 20261111.196.1
+test	Set up job	2026-11-19T06:55:22.9802586Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261111.196/images/ubuntu/Ubuntu2604-Readme.md
+test	Set up job	2026-11-19T06:55:22.9804076Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261111.196
+test	Set up job	2026-11-19T06:55:22.9804889Z ##[endgroup]
+test	Set up job	2026-11-19T06:55:22.9805772Z ##[group]GITHUB_TOKEN Permissions
+test	Set up job	2026-11-19T06:55:22.9807679Z Contents: read
+test	Set up job	2026-11-19T06:55:22.9808289Z Metadata: read
+test	Set up job	2026-11-19T06:55:22.9808749Z ##[endgroup]
+test	Set up job	2026-11-19T06:55:22.9810487Z Secret source: Actions
+test	Set up job	2026-11-19T06:55:22.9811520Z Cache mode: write
+test	Set up job	2026-11-19T06:55:22.9812140Z Prepare workflow directory
+test	Set up job	2026-11-19T06:55:23.0068859Z Prepare all required actions
+test	Set up job	2026-11-19T06:55:23.0107291Z Getting action download info
+test	Set up job	2026-11-19T06:55:23.3688478Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+test	Set up job	2026-11-19T06:55:23.5165654Z Download action repository 'astral-sh/setup-uv@v6' (SHA:d0cc045d04ccac9d8b7881df0226f9e82c39688e)
+test	Set up job	2026-11-19T06:55:23.8020573Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+test	Set up job	2026-11-19T06:55:23.8708237Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+test	Set up job	2026-11-19T06:55:24.0580008Z Complete job name: test
+test	ブランチを取得する	﻿2026-11-19T06:55:24.1282896Z ##[group]Run actions/checkout@v4
+test	ブランチを取得する	2026-11-19T06:55:24.1283655Z with:
+test	ブランチを取得する	2026-11-19T06:55:24.1284058Z   repository: shuhei1101/knowledge
+test	ブランチを取得する	2026-11-19T06:55:24.1287734Z   token: ***
+test	ブランチを取得する	2026-11-19T06:55:24.1288122Z   ssh-strict: true
+test	ブランチを取得する	2026-11-19T06:55:24.1288509Z   ssh-user: git
+test	ブランチを取得する	2026-11-19T06:55:24.1288896Z   persist-credentials: true
+test	ブランチを取得する	2026-11-19T06:55:24.1289333Z   clean: true
+test	ブランチを取得する	2026-11-19T06:55:24.1289723Z   sparse-checkout-cone-mode: true
+test	ブランチを取得する	2026-11-19T06:55:24.1290178Z   fetch-depth: 1
+test	ブランチを取得する	2026-11-19T06:55:24.1290563Z   fetch-tags: false
+test	ブランチを取得する	2026-11-19T06:55:24.1290946Z   show-progress: true
+test	ブランチを取得する	2026-11-19T06:55:24.1291479Z   lfs: false
+test	ブランチを取得する	2026-11-19T06:55:24.1291859Z   submodules: false
+test	ブランチを取得する	2026-11-19T06:55:24.1292260Z   set-safe-directory: true
+test	ブランチを取得する	2026-11-19T06:55:24.1292701Z   allow-unsafe-pr-checkout: false
+test	ブランチを取得する	2026-11-19T06:55:24.1293567Z ##[endgroup]
+test	ブランチを取得する	2026-11-19T06:55:24.7405836Z Syncing repository: shuhei1101/knowledge
+test	ブランチを取得する	2026-11-19T06:55:24.7408231Z ##[group]Getting Git version info
+test	ブランチを取得する	2026-11-19T06:55:24.7409428Z Working directory is '/home/runner/work/knowledge/knowledge'
+test	ブランチを取得する	2026-11-19T06:55:24.7411089Z [command]/usr/bin/git version
+test	ブランチを取得する	2026-11-19T06:55:24.7416655Z git version 2.56.1
+test	ブランチを取得する	2026-11-19T06:55:24.7431776Z ##[endgroup]
+test	ブランチを取得する	2026-11-19T06:55:24.7442955Z Temporarily overriding HOME='/home/runner/work/_temp/dc95f16c-7449-4fab-a9af-868e080f238d' before making global git config changes
+test	ブランチを取得する	2026-11-19T06:55:24.7446098Z Adding repository directory to the temporary git global config as a safe directory
+test	ブランチを取得する	2026-11-19T06:55:24.7448130Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/knowledge/knowledge
+test	ブランチを取得する	2026-11-19T06:55:24.7650527Z Deleting the contents of '/home/runner/work/knowledge/knowledge'
+test	ブランチを取得する	2026-11-19T06:55:24.7653712Z ##[group]Initializing the repository
+test	ブランチを取得する	2026-11-19T06:55:24.7656981Z [command]/usr/bin/git init /home/runner/work/knowledge/knowledge
+test	ブランチを取得する	2026-11-19T06:55:24.7856656Z hint: Using 'master' as the name for the initial branch. This default branch name
+test	ブランチを取得する	2026-11-19T06:55:24.7858842Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+test	ブランチを取得する	2026-11-19T06:55:24.7860936Z hint: to use in all of your new repositories, which will suppress this warning,
+test	ブランチを取得する	2026-11-19T06:55:24.7862845Z hint: call:
+test	ブランチを取得する	2026-11-19T06:55:24.7863988Z hint:
+test	ブランチを取得する	2026-11-19T06:55:24.7865280Z hint: 	git config --global init.defaultBranch <name>
+test	ブランチを取得する	2026-11-19T06:55:24.7866760Z hint:
+test	ブランチを取得する	2026-11-19T06:55:24.7868378Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+test	ブランチを取得する	2026-11-19T06:55:24.7870557Z hint: 'development'. The just-created branch can be renamed via this command:
+test	ブランチを取得する	2026-11-19T06:55:24.7872542Z hint:
+test	ブランチを取得する	2026-11-19T06:55:24.7873707Z hint: 	git branch -m <name>
+test	ブランチを取得する	2026-11-19T06:55:24.7874995Z hint:
+test	ブランチを取得する	2026-11-19T06:55:24.7876605Z hint: Disable this message with "git config set advice.defaultBranchName false"
+test	ブランチを取得する	2026-11-19T06:55:24.8092763Z Initialized empty Git repository in /home/runner/work/knowledge/knowledge/.git/
+test	ブランチを取得する	2026-11-19T06:55:24.8103096Z [command]/usr/bin/git remote add origin https://github.com/shuhei1101/knowledge
+test	ブランチを取得する	2026-11-19T06:55:24.8172601Z ##[endgroup]
+test	ブランチを取得する	2026-11-19T06:55:24.8174429Z ##[group]Disabling automatic garbage collection
+test	ブランチを取得する	2026-11-19T06:55:24.8175836Z [command]/usr/bin/git config --local gc.auto 0
+test	ブランチを取得する	2026-11-19T06:55:24.8202794Z ##[endgroup]
+test	ブランチを取得する	2026-11-19T06:55:24.8204341Z ##[group]Setting up auth
+test	ブランチを取得する	2026-11-19T06:55:24.8207408Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test	ブランチを取得する	2026-11-19T06:55:24.8235329Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test	ブランチを取得する	2026-11-19T06:55:24.8717314Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test	ブランチを取得する	2026-11-19T06:55:24.8749382Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test	ブランチを取得する	2026-11-19T06:55:24.8982390Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test	ブランチを取得する	2026-11-19T06:55:24.9011986Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test	ブランチを取得する	2026-11-19T06:55:24.9237045Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+test	ブランチを取得する	2026-11-19T06:55:24.9269322Z ##[endgroup]
+test	ブランチを取得する	2026-11-19T06:55:24.9270984Z ##[group]Fetching the repository
+test	ブランチを取得する	2026-11-19T06:55:24.9280765Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +5f3dc3c582f0001d8ef3d937147cea44a4d376ec:refs/remotes/origin/design/slop-check/system-message-toggle
+test	ブランチを取得する	2026-11-19T06:55:25.7796748Z From https://github.com/shuhei1101/knowledge
+test	ブランチを取得する	2026-11-19T06:55:25.7798620Z  * [new ref]         5f3dc3c582f0001d8ef3d937147cea44a4d376ec -> origin/design/slop-check/system-message-toggle
+test	ブランチを取得する	2026-11-19T06:55:25.7802231Z ##[endgroup]
+test	ブランチを取得する	2026-11-19T06:55:25.7803877Z ##[group]Determining the checkout info
+test	ブランチを取得する	2026-11-19T06:55:25.7805554Z ##[endgroup]
+test	ブランチを取得する	2026-11-19T06:55:25.7808982Z [command]/usr/bin/git sparse-checkout disable
+test	ブランチを取得する	2026-11-19T06:55:25.7855646Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+test	ブランチを取得する	2026-11-19T06:55:25.7882368Z ##[group]Checking out the ref
+test	ブランチを取得する	2026-11-19T06:55:25.7890868Z [command]/usr/bin/git checkout --progress --force -B design/slop-check/system-message-toggle refs/remotes/origin/design/slop-check/system-message-toggle
+test	ブランチを取得する	2026-11-19T06:55:25.8902078Z Switched to a new branch 'design/slop-check/system-message-toggle'
+test	ブランチを取得する	2026-11-19T06:55:25.8905926Z branch 'design/slop-check/system-message-toggle' set up to track 'origin/design/slop-check/system-message-toggle'.
+test	ブランチを取得する	2026-11-19T06:55:25.8915881Z ##[endgroup]
+test	ブランチを取得する	2026-11-19T06:55:25.9078332Z [command]/usr/bin/git log -1 --format=%H
+test	ブランチを取得する	2026-11-19T06:55:25.9099855Z 5f3dc3c582f0001d8ef3d937147cea44a4d376ec
+test	uv を入れる	﻿2026-11-19T06:55:25.9610979Z ##[group]Run astral-sh/setup-uv@v6
+test	uv を入れる	2026-11-19T06:55:25.9611937Z with:
+test	uv を入れる	2026-11-19T06:55:25.9612575Z   activate-environment: false
+test	uv を入れる	2026-11-19T06:55:25.9613335Z   working-directory: /home/runner/work/knowledge/knowledge
+test	uv を入れる	2026-11-19T06:55:25.9614130Z   server-url: https://github.com
+test	uv を入れる	2026-11-19T06:55:25.9617025Z   github-token: ***
+test	uv を入れる	2026-11-19T06:55:25.9617681Z   enable-cache: auto
+test	uv を入れる	2026-11-19T06:55:25.9618683Z   cache-dependency-glob: **/*requirements*.txt
+test	uv を入れる	**/*requirements*.in
+test	uv を入れる	**/*constraints*.txt
+test	uv を入れる	**/*constraints*.in
+test	uv を入れる	**/pyproject.toml
+test	uv を入れる	**/uv.lock
+test	uv を入れる	**/*.py.lock
+test	uv を入れる	
+test	uv を入れる	2026-11-19T06:55:25.9619724Z   restore-cache: true
+test	uv を入れる	2026-11-19T06:55:25.9620369Z   save-cache: true
+test	uv を入れる	2026-11-19T06:55:25.9620992Z   prune-cache: true
+test	uv を入れる	2026-11-19T06:55:25.9621807Z   ignore-nothing-to-cache: false
+test	uv を入れる	2026-11-19T06:55:25.9622509Z   ignore-empty-workdir: false
+test	uv を入れる	2026-11-19T06:55:25.9623199Z   add-problem-matchers: true
+test	uv を入れる	2026-11-19T06:55:25.9623859Z ##[endgroup]
+test	uv を入れる	2026-11-19T06:55:26.1242735Z (node:2199) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test	uv を入れる	2026-11-19T06:55:26.1243949Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test	uv を入れる	2026-11-19T06:55:26.1324035Z Trying to find version for uv in: /home/runner/work/knowledge/knowledge/uv.toml
+test	uv を入れる	2026-11-19T06:55:26.1324860Z Could not find file: /home/runner/work/knowledge/knowledge/uv.toml
+test	uv を入れる	2026-11-19T06:55:26.1325612Z Trying to find version for uv in: /home/runner/work/knowledge/knowledge/pyproject.toml
+test	uv を入れる	2026-11-19T06:55:26.1326395Z Could not find file: /home/runner/work/knowledge/knowledge/pyproject.toml
+test	uv を入れる	2026-11-19T06:55:26.1327154Z Could not determine uv version from uv.toml or pyproject.toml. Falling back to latest.
+test	uv を入れる	2026-11-19T06:55:26.1328242Z Getting latest version from GitHub API...
+test	uv を入れる	2026-11-19T06:55:26.3925364Z manifest-file not provided, reading from local file.
+test	uv を入れる	2026-11-19T06:55:26.3954507Z manifest-file does not contain version 0.13.9, arch x86_64, platform unknown-linux-gnu. Falling back to GitHub releases.
+test	uv を入れる	2026-11-19T06:55:26.3955737Z Downloading uv from "https://github.com/astral-sh/uv/releases/download/0.13.9/uv-x86_64-unknown-linux-gnu.tar.gz" ...
+test	uv を入れる	2026-11-19T06:55:26.6495532Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/1e49589a-64cf-469d-972e-da09abca1dd3 -f /home/runner/work/_temp/bc590010-f95b-49f4-85d7-8223e8644a4a
+test	uv を入れる	2026-11-19T06:55:27.0267958Z Added /home/runner/.local/bin to the path
+test	uv を入れる	2026-11-19T06:55:27.0270325Z Added /opt/hostedtoolcache/uv/0.13.9/x86_64 to the path
+test	uv を入れる	2026-11-19T06:55:27.0288270Z Set UV_CACHE_DIR to /home/runner/work/_temp/setup-uv-cache
+test	uv を入れる	2026-11-19T06:55:27.0288618Z Successfully installed uv version 0.13.9
+test	uv を入れる	2026-11-19T06:55:27.0289962Z Searching files using cache dependency glob: /home/runner/work/knowledge/knowledge/**/*requirements*.txt,/home/runner/work/knowledge/knowledge/**/*requirements*.in,/home/runner/work/knowledge/knowledge/**/*constraints*.txt,/home/runner/work/knowledge/knowledge/**/*constraints*.in,/home/runner/work/knowledge/knowledge/**/pyproject.toml,/home/runner/work/knowledge/knowledge/**/uv.lock,/home/runner/work/knowledge/knowledge/**/*.py.lock
+test	uv を入れる	2026-11-19T06:55:27.2240579Z /home/runner/work/knowledge/knowledge/scripts/build_pages.py.lock
+test	uv を入れる	2026-11-19T06:55:27.2254584Z /home/runner/work/knowledge/knowledge/scripts/build_skills.py.lock
+test	uv を入れる	2026-11-19T06:55:27.2261621Z /home/runner/work/knowledge/knowledge/scripts/build_templates.py.lock
+test	uv を入れる	2026-11-19T06:55:27.2267895Z /home/runner/work/knowledge/knowledge/scripts/build_word_list.py.lock
+test	uv を入れる	2026-11-19T06:55:27.2274428Z /home/runner/work/knowledge/knowledge/scripts/check_all.py.lock
+test	uv を入れる	2026-11-19T06:55:27.2280232Z /home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py.lock
+test	uv を入れる	2026-11-19T06:55:27.2285481Z /home/runner/work/knowledge/knowledge/scripts/knowledge_markdown.py.lock
+test	uv を入れる	2026-11-19T06:55:27.2344398Z Found 7 files to hash.
+test	uv を入れる	2026-11-19T06:55:27.2944487Z Trying to restore uv cache from GitHub Actions cache with key: setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-d0abc58ea00ba726b722b223875ee6fbe07bca33f6455c515a50265972af724b
+test	uv を入れる	2026-11-19T06:55:27.5175097Z Cache hit for: setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-d0abc58ea00ba726b722b223875ee6fbe07bca33f6455c515a50265972af724b
+test	uv を入れる	2026-11-19T06:55:27.5257470Z (node:2199) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+test	uv を入れる	2026-11-19T06:55:27.8777140Z Received 2333 of 2333 (100.0%), 0.0 MBs/sec
+test	uv を入れる	2026-11-19T06:55:27.8777655Z Cache Size: ~0 MB (2333 B)
+test	uv を入れる	2026-11-19T06:55:27.8795064Z [command]/usr/bin/tar -xf /home/runner/work/_temp/14e1cfd8-ce95-4118-9310-d94cd541312f/cache.tzst -P -C /home/runner/work/knowledge/knowledge --use-compress-program unzstd
+test	uv を入れる	2026-11-19T06:55:27.8853432Z Cache restored successfully
+test	uv を入れる	2026-11-19T06:55:27.8856863Z uv cache restored from GitHub Actions cache with key: setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-d0abc58ea00ba726b722b223875ee6fbe07bca33f6455c515a50265972af724b
+test	層の全件を回す	﻿2026-11-19T06:55:27.9041143Z ##[group]Run set -o pipefail
+test	層の全件を回す	2026-11-19T06:55:27.9041624Z ^[[36;1mset -o pipefail^[[0m
+test	層の全件を回す	2026-11-19T06:55:27.9041840Z ^[[36;1mcase "$LAYER" in^[[0m
+test	層の全件を回す	2026-11-19T06:55:27.9042041Z ^[[36;1m  unit)^[[0m
+test	層の全件を回す	2026-11-19T06:55:27.9042850Z ^[[36;1m    (rc=0; uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit || rc=1; uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check || rc=1; exit $rc) 2>&1 | tee test.log^[[0m
+test	層の全件を回す	2026-11-19T06:55:27.9043729Z ^[[36;1m    ;;^[[0m
+test	層の全件を回す	2026-11-19T06:55:27.9043910Z ^[[36;1m  integration)^[[0m
+test	層の全件を回す	2026-11-19T06:55:27.9044447Z ^[[36;1m    uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/integration 2>&1 | tee test.log^[[0m
+test	層の全件を回す	2026-11-19T06:55:27.9044999Z ^[[36;1m    ;;^[[0m
+test	層の全件を回す	2026-11-19T06:55:27.9045178Z ^[[36;1mesac^[[0m
+test	層の全件を回す	2026-11-19T06:55:27.9094178Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+test	層の全件を回す	2026-11-19T06:55:27.9094529Z env:
+test	層の全件を回す	2026-11-19T06:55:27.9094753Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+test	層の全件を回す	2026-11-19T06:55:27.9095021Z   LAYER: unit
+test	層の全件を回す	2026-11-19T06:55:27.9095199Z ##[endgroup]
+test	層の全件を回す	2026-11-19T06:55:28.1799329Z Downloading pygments (1.2MiB)
+test	層の全件を回す	2026-11-19T06:55:28.3117420Z  Downloaded pygments
+test	層の全件を回す	2026-11-19T06:55:28.4864855Z Installed 14 packages in 170ms
+test	層の全件を回す	2026-11-19T06:55:30.6479507Z ============================= test session starts ==============================
+test	層の全件を回す	2026-11-19T06:55:30.6480122Z platform linux -- Python 3.14.4, pytest-9.2.0, pluggy-1.7.0
+test	層の全件を回す	2026-11-19T06:55:30.6480455Z rootdir: /home/runner/work/knowledge/knowledge
+test	層の全件を回す	2026-11-19T06:55:30.6480731Z configfile: pytest.ini
+test	層の全件を回す	2026-11-19T06:55:30.6480949Z plugins: platformdirs-4.14.5, typeguard-4.4.4
+test	層の全件を回す	2026-11-19T06:55:30.6481359Z collected 301 items
+test	層の全件を回す	2026-11-19T06:55:30.6481519Z 
+test	層の全件を回す	2026-11-19T06:55:30.7184714Z tests/unit/scripts/test_build_pages.py ...................               [  6%]
+test	層の全件を回す	2026-11-19T06:55:33.5334025Z tests/unit/scripts/test_build_skills.py .......................          [ 13%]
+test	層の全件を回す	2026-11-19T06:55:33.6162718Z tests/unit/scripts/test_build_templates.py ........................      [ 21%]
+test	層の全件を回す	2026-11-19T06:55:33.6216802Z tests/unit/scripts/test_build_word_list.py ...                           [ 22%]
+test	層の全件を回す	2026-11-19T06:55:36.3748446Z tests/unit/scripts/test_check_all.py ................................... [ 34%]
+test	層の全件を回す	2026-11-19T06:55:36.8060415Z ...................                                                      [ 40%]
+test	層の全件を回す	2026-11-19T06:55:36.9566907Z tests/unit/scripts/test_common.py ....................                   [ 47%]
+test	層の全件を回す	2026-11-19T06:55:36.9952990Z tests/unit/scripts/test_knowledge_checks.py ..........................   [ 56%]
+test	層の全件を回す	2026-11-19T06:55:37.0166051Z tests/unit/scripts/test_knowledge_markdown.py .......................... [ 64%]
+test	層の全件を回す	2026-11-19T06:55:37.0272223Z ...................                                                      [ 71%]
+test	層の全件を回す	2026-11-19T06:55:37.1782768Z tests/unit/scripts/test_lint.py .....................                    [ 78%]
+test	層の全件を回す	2026-11-19T06:55:37.3284177Z tests/unit/scripts/test_workflow.py .....................                [ 85%]
+test	層の全件を回す	2026-11-19T06:55:37.3651727Z tests/unit/slop-check/test_slop_check.py .F............................. [ 95%]
+test	層の全件を回す	2026-11-19T06:55:37.4205524Z .........FFFFF                                                           [100%]
+test	層の全件を回す	2026-11-19T06:55:37.4205931Z 
+test	層の全件を回す	2026-11-19T06:55:37.4206119Z =================================== FAILURES ===================================
+test	層の全件を回す	2026-11-19T06:55:37.4206787Z ________________________ test_main_when_display_not_set ________________________
+test	層の全件を回す	2026-11-19T06:55:37.4207155Z 
+test	層の全件を回す	2026-11-19T06:55:37.4207480Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_main_when_display_not_set0')
+test	層の全件を回す	2026-11-19T06:55:37.4208188Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x78dccd4a17f0>
+test	層の全件を回す	2026-11-19T06:55:37.4208818Z capsys = <_pytest.capture.CaptureFixture object at 0x78dcccf96cd0>
+test	層の全件を回す	2026-11-19T06:55:37.4209251Z 
+test	層の全件を回す	2026-11-19T06:55:37.4209389Z     def test_main_when_display_not_set(
+test	層の全件を回す	2026-11-19T06:55:37.4210276Z         tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+test	層の全件を回す	2026-11-19T06:55:37.4210847Z     ) -> None:
+test	層の全件を回す	2026-11-19T06:55:37.4211562Z         """画面への表示を設定しない（正常系）。"""
+test	層の全件を回す	2026-11-19T06:55:37.4211896Z         # 準備
+test	層の全件を回す	2026-11-19T06:55:37.4212211Z         word_list = tmp_path / "word-list-ai-slop.json"
+test	層の全件を回す	2026-11-19T06:55:37.4212659Z         word_list.write_text(_NAOSU_COPY, encoding="utf-8")
+test	層の全件を回す	2026-11-19T06:55:37.4213050Z         _set_stdin(
+test	層の全件を回す	2026-11-19T06:55:37.4213314Z             monkeypatch,
+test	層の全件を回す	2026-11-19T06:55:37.4213809Z             '{"tool_name": "Write", "tool_input": {"file_path": "/r/a.md", "content": "設定を直す。"}}',
+test	層の全件を回す	2026-11-19T06:55:37.4214140Z         )
+test	層の全件を回す	2026-11-19T06:55:37.4214369Z         monkeypatch.delenv("SLOP_CHECK_SHOW_ADDED", raising=False)
+test	層の全件を回す	2026-11-19T06:55:37.4214673Z         # 実行
+test	層の全件を回す	2026-11-19T06:55:37.4214885Z         code = slop_check.main([], word_list=word_list)
+test	層の全件を回す	2026-11-19T06:55:37.4215162Z         # 検証
+test	層の全件を回す	2026-11-19T06:55:37.4215336Z         assert code == 0
+test	層の全件を回す	2026-11-19T06:55:37.4215577Z         output = json.loads(capsys.readouterr().out)
+test	層の全件を回す	2026-11-19T06:55:37.4215988Z         assert "| 直す | 修正 |" in output["hookSpecificOutput"]["additionalContext"]
+test	層の全件を回す	2026-11-19T06:55:37.4216329Z >       assert "systemMessage" not in output
+test	層の全件を回す	2026-11-19T06:55:37.4217483Z E       assert 'systemMessage' not in {'hookSpecificOutput': {'hookEventName': 'PostToolUse', 'additionalContext': 'AI がよく使う単語（AI slop）が入っています。OK の単語に置き換えてく..."field": "id", "op": "eq", "values": ["ui-input-wording"]}, view: "full"）'}, 'systemMessage': 'AI slop を検知: 直す（Write）'}
+test	層の全件を回す	2026-11-19T06:55:37.4218205Z 
+test	層の全件を回す	2026-11-19T06:55:37.4218353Z tests/unit/slop-check/test_slop_check.py:88: AssertionError
+test	層の全件を回す	2026-11-19T06:55:37.4218705Z _______________________________ test_shows_added _______________________________
+test	層の全件を回す	2026-11-19T06:55:37.4218929Z 
+test	層の全件を回す	2026-11-19T06:55:37.4219019Z     def test_shows_added() -> None:
+test	層の全件を回す	2026-11-19T06:55:37.4219290Z         """値が 1（正常系）。"""
+test	層の全件を回す	2026-11-19T06:55:37.4219502Z         # 準備
+test	層の全件を回す	2026-11-19T06:55:37.4219705Z         environ = {"SLOP_CHECK_SHOW_ADDED": "1"}
+test	層の全件を回す	2026-11-19T06:55:37.4219962Z         # 実行
+test	層の全件を回す	2026-11-19T06:55:37.4220225Z >       result = slop_check.shows_added(environ)
+test	層の全件を回す	2026-11-19T06:55:37.4220470Z                  ^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-19T06:55:37.4220771Z E       AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:37.4221008Z 
+test	層の全件を回す	2026-11-19T06:55:37.4221143Z tests/unit/slop-check/test_slop_check.py:536: AttributeError
+test	層の全件を回す	2026-11-19T06:55:37.4221749Z ________________________ test_shows_added_when_not_set _________________________
+test	層の全件を回す	2026-11-19T06:55:37.4221975Z 
+test	層の全件を回す	2026-11-19T06:55:37.4222078Z     def test_shows_added_when_not_set() -> None:
+test	層の全件を回す	2026-11-19T06:55:37.4222357Z         """環境変数が無い（正常系）。"""
+test	層の全件を回す	2026-11-19T06:55:37.4222567Z         # 準備
+test	層の全件を回す	2026-11-19T06:55:37.4222749Z         environ: dict[str, str] = {}
+test	層の全件を回す	2026-11-19T06:55:37.4222972Z         # 実行
+test	層の全件を回す	2026-11-19T06:55:37.4223333Z >       result = slop_check.shows_added(environ)
+test	層の全件を回す	2026-11-19T06:55:37.4223567Z                  ^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-19T06:55:37.4223873Z E       AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:37.4224100Z 
+test	層の全件を回す	2026-11-19T06:55:37.4224237Z tests/unit/slop-check/test_slop_check.py:546: AttributeError
+test	層の全件を回す	2026-11-19T06:55:37.4224592Z ___________________ test_shows_added_when_other_value[true] ____________________
+test	層の全件を回す	2026-11-19T06:55:37.4224825Z 
+test	層の全件を回す	2026-11-19T06:55:37.4224893Z value = 'true'
+test	層の全件を回す	2026-11-19T06:55:37.4224996Z 
+test	層の全件を回す	2026-11-19T06:55:37.4225092Z     @pytest.mark.parametrize(
+test	層の全件を回す	2026-11-19T06:55:37.4225300Z         "value",
+test	層の全件を回す	2026-11-19T06:55:37.4225462Z         [
+test	層の全件を回す	2026-11-19T06:55:37.4225644Z             pytest.param("true", id="true"),
+test	層の全件を回す	2026-11-19T06:55:37.4225890Z             pytest.param("0", id="zero"),
+test	層の全件を回す	2026-11-19T06:55:37.4226120Z             pytest.param("", id="empty"),
+test	層の全件を回す	2026-11-19T06:55:37.4226328Z         ],
+test	層の全件を回す	2026-11-19T06:55:37.4226485Z     )
+test	層の全件を回す	2026-11-19T06:55:37.4226723Z     def test_shows_added_when_other_value(value: str) -> None:
+test	層の全件を回す	2026-11-19T06:55:37.4227040Z         """値が 1 以外（正常系）。"""
+test	層の全件を回す	2026-11-19T06:55:37.4227390Z         # 準備
+test	層の全件を回す	2026-11-19T06:55:37.4227586Z         environ = {"SLOP_CHECK_SHOW_ADDED": value}
+test	層の全件を回す	2026-11-19T06:55:37.4227841Z         # 実行
+test	層の全件を回す	2026-11-19T06:55:37.4228039Z >       result = slop_check.shows_added(environ)
+test	層の全件を回す	2026-11-19T06:55:37.4228283Z                  ^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-19T06:55:37.4228577Z E       AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:37.4228813Z 
+test	層の全件を回す	2026-11-19T06:55:37.4228955Z tests/unit/slop-check/test_slop_check.py:564: AttributeError
+test	層の全件を回す	2026-11-19T06:55:37.4229316Z ___________________ test_shows_added_when_other_value[zero] ____________________
+test	層の全件を回す	2026-11-19T06:55:37.4229544Z 
+test	層の全件を回す	2026-11-19T06:55:37.4229622Z value = '0'
+test	層の全件を回す	2026-11-19T06:55:37.4229719Z 
+test	層の全件を回す	2026-11-19T06:55:37.4229803Z     @pytest.mark.parametrize(
+test	層の全件を回す	2026-11-19T06:55:37.4230011Z         "value",
+test	層の全件を回す	2026-11-19T06:55:37.4230176Z         [
+test	層の全件を回す	2026-11-19T06:55:37.4230362Z             pytest.param("true", id="true"),
+test	層の全件を回す	2026-11-19T06:55:37.4230595Z             pytest.param("0", id="zero"),
+test	層の全件を回す	2026-11-19T06:55:37.4230835Z             pytest.param("", id="empty"),
+test	層の全件を回す	2026-11-19T06:55:37.4231043Z         ],
+test	層の全件を回す	2026-11-19T06:55:37.4231342Z     )
+test	層の全件を回す	2026-11-19T06:55:37.4231595Z     def test_shows_added_when_other_value(value: str) -> None:
+test	層の全件を回す	2026-11-19T06:55:37.4231905Z         """値が 1 以外（正常系）。"""
+test	層の全件を回す	2026-11-19T06:55:37.4232116Z         # 準備
+test	層の全件を回す	2026-11-19T06:55:37.4232303Z         environ = {"SLOP_CHECK_SHOW_ADDED": value}
+test	層の全件を回す	2026-11-19T06:55:37.4232543Z         # 実行
+test	層の全件を回す	2026-11-19T06:55:37.4232720Z >       result = slop_check.shows_added(environ)
+test	層の全件を回す	2026-11-19T06:55:37.4232955Z                  ^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-19T06:55:37.4233234Z E       AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:37.4233455Z 
+test	層の全件を回す	2026-11-19T06:55:37.4233587Z tests/unit/slop-check/test_slop_check.py:564: AttributeError
+test	層の全件を回す	2026-11-19T06:55:37.4233921Z ___________________ test_shows_added_when_other_value[empty] ___________________
+test	層の全件を回す	2026-11-19T06:55:37.4234150Z 
+test	層の全件を回す	2026-11-19T06:55:37.4234230Z value = ''
+test	層の全件を回す	2026-11-19T06:55:37.4234318Z 
+test	層の全件を回す	2026-11-19T06:55:37.4234410Z     @pytest.mark.parametrize(
+test	層の全件を回す	2026-11-19T06:55:37.4234607Z         "value",
+test	層の全件を回す	2026-11-19T06:55:37.4234773Z         [
+test	層の全件を回す	2026-11-19T06:55:37.4234967Z             pytest.param("true", id="true"),
+test	層の全件を回す	2026-11-19T06:55:37.4235199Z             pytest.param("0", id="zero"),
+test	層の全件を回す	2026-11-19T06:55:37.4235422Z             pytest.param("", id="empty"),
+test	層の全件を回す	2026-11-19T06:55:37.4235631Z         ],
+test	層の全件を回す	2026-11-19T06:55:37.4235785Z     )
+test	層の全件を回す	2026-11-19T06:55:37.4236002Z     def test_shows_added_when_other_value(value: str) -> None:
+test	層の全件を回す	2026-11-19T06:55:37.4236318Z         """値が 1 以外（正常系）。"""
+test	層の全件を回す	2026-11-19T06:55:37.4236519Z         # 準備
+test	層の全件を回す	2026-11-19T06:55:37.4236704Z         environ = {"SLOP_CHECK_SHOW_ADDED": value}
+test	層の全件を回す	2026-11-19T06:55:37.4236950Z         # 実行
+test	層の全件を回す	2026-11-19T06:55:37.4237131Z >       result = slop_check.shows_added(environ)
+test	層の全件を回す	2026-11-19T06:55:37.4237371Z                  ^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-19T06:55:37.4237783Z E       AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:37.4238024Z 
+test	層の全件を回す	2026-11-19T06:55:37.4238166Z tests/unit/slop-check/test_slop_check.py:564: AttributeError
+test	層の全件を回す	2026-11-19T06:55:37.4238488Z =========================== short test summary info ============================
+test	層の全件を回す	2026-11-19T06:55:37.4239779Z FAILED tests/unit/slop-check/test_slop_check.py::test_main_when_display_not_set - assert 'systemMessage' not in {'hookSpecificOutput': {'hookEventName': 'PostToolUse', 'additionalContext': 'AI がよく使う単語（AI slop）が入っています。OK の単語に置き換えてく..."field": "id", "op": "eq", "values": ["ui-input-wording"]}, view: "full"）'}, 'systemMessage': 'AI slop を検知: 直す（Write）'}
+test	層の全件を回す	2026-11-19T06:55:37.4240933Z FAILED tests/unit/slop-check/test_slop_check.py::test_shows_added - AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:37.4241780Z FAILED tests/unit/slop-check/test_slop_check.py::test_shows_added_when_not_set - AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:37.4242554Z FAILED tests/unit/slop-check/test_slop_check.py::test_shows_added_when_other_value[true] - AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:37.4243427Z FAILED tests/unit/slop-check/test_slop_check.py::test_shows_added_when_other_value[zero] - AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:37.4244190Z FAILED tests/unit/slop-check/test_slop_check.py::test_shows_added_when_other_value[empty] - AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:37.4244739Z ======================== 6 failed, 295 passed in 7.18s =========================
+test	層の全件を回す	2026-11-19T06:55:37.6061770Z Downloading cpython-3.12.16-linux-x86_64-gnu (download) (33.1MiB)
+test	層の全件を回す	2026-11-19T06:55:38.1065173Z  Downloaded cpython-3.12.16-linux-x86_64-gnu (download)
+test	層の全件を回す	2026-11-19T06:55:38.2251064Z Installed 5 packages in 7ms
+test	層の全件を回す	2026-11-19T06:55:38.9089708Z ============================= test session starts ==============================
+test	層の全件を回す	2026-11-19T06:55:38.9090407Z platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0
+test	層の全件を回す	2026-11-19T06:55:38.9090915Z rootdir: /home/runner/work/knowledge/knowledge
+test	層の全件を回す	2026-11-19T06:55:38.9091454Z configfile: pytest.ini
+test	層の全件を回す	2026-11-19T06:55:38.9091750Z collected 45 items
+test	層の全件を回す	2026-11-19T06:55:38.9091905Z 
+test	層の全件を回す	2026-11-19T06:55:38.9424628Z tests/unit/slop-check/test_slop_check.py .F............................. [ 68%]
+test	層の全件を回す	2026-11-19T06:55:38.9852802Z .........FFFFF                                                           [100%]
+test	層の全件を回す	2026-11-19T06:55:38.9853196Z 
+test	層の全件を回す	2026-11-19T06:55:38.9853397Z =================================== FAILURES ===================================
+test	層の全件を回す	2026-11-19T06:55:38.9853893Z ________________________ test_main_when_display_not_set ________________________
+test	層の全件を回す	2026-11-19T06:55:38.9854228Z 
+test	層の全件を回す	2026-11-19T06:55:38.9854520Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-1/test_main_when_display_not_set0')
+test	層の全件を回す	2026-11-19T06:55:38.9855165Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e20537b3aa0>
+test	層の全件を回す	2026-11-19T06:55:38.9855806Z capsys = <_pytest.capture.CaptureFixture object at 0x7e20537b3a40>
+test	層の全件を回す	2026-11-19T06:55:38.9856174Z 
+test	層の全件を回す	2026-11-19T06:55:38.9856312Z     def test_main_when_display_not_set(
+test	層の全件を回す	2026-11-19T06:55:38.9856871Z         tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+test	層の全件を回す	2026-11-19T06:55:38.9857417Z     ) -> None:
+test	層の全件を回す	2026-11-19T06:55:38.9857998Z         """画面への表示を設定しない（正常系）。"""
+test	層の全件を回す	2026-11-19T06:55:38.9858338Z         # 準備
+test	層の全件を回す	2026-11-19T06:55:38.9858662Z         word_list = tmp_path / "word-list-ai-slop.json"
+test	層の全件を回す	2026-11-19T06:55:38.9859124Z         word_list.write_text(_NAOSU_COPY, encoding="utf-8")
+test	層の全件を回す	2026-11-19T06:55:38.9859518Z         _set_stdin(
+test	層の全件を回す	2026-11-19T06:55:38.9859791Z             monkeypatch,
+test	層の全件を回す	2026-11-19T06:55:38.9860365Z             '{"tool_name": "Write", "tool_input": {"file_path": "/r/a.md", "content": "設定を直す。"}}',
+test	層の全件を回す	2026-11-19T06:55:38.9860877Z         )
+test	層の全件を回す	2026-11-19T06:55:38.9861404Z         monkeypatch.delenv("SLOP_CHECK_SHOW_ADDED", raising=False)
+test	層の全件を回す	2026-11-19T06:55:38.9862179Z         # 実行
+test	層の全件を回す	2026-11-19T06:55:38.9862490Z         code = slop_check.main([], word_list=word_list)
+test	層の全件を回す	2026-11-19T06:55:38.9862906Z         # 検証
+test	層の全件を回す	2026-11-19T06:55:38.9863143Z         assert code == 0
+test	層の全件を回す	2026-11-19T06:55:38.9863470Z         output = json.loads(capsys.readouterr().out)
+test	層の全件を回す	2026-11-19T06:55:38.9864037Z         assert "| 直す | 修正 |" in output["hookSpecificOutput"]["additionalContext"]
+test	層の全件を回す	2026-11-19T06:55:38.9864538Z >       assert "systemMessage" not in output
+test	層の全件を回す	2026-11-19T06:55:38.9866009Z E       assert 'systemMessage' not in {'hookSpecificOutput': {'hookEventName': 'PostToolUse', 'additionalContext': 'AI がよく使う単語（AI slop）が入っています。OK の単語に置き換えてく..."field": "id", "op": "eq", "values": ["ui-input-wording"]}, view: "full"）'}, 'systemMessage': 'AI slop を検知: 直す（Write）'}
+test	層の全件を回す	2026-11-19T06:55:38.9867114Z 
+test	層の全件を回す	2026-11-19T06:55:38.9867312Z tests/unit/slop-check/test_slop_check.py:88: AssertionError
+test	層の全件を回す	2026-11-19T06:55:38.9867821Z _______________________________ test_shows_added _______________________________
+test	層の全件を回す	2026-11-19T06:55:38.9868154Z 
+test	層の全件を回す	2026-11-19T06:55:38.9868285Z     def test_shows_added() -> None:
+test	層の全件を回す	2026-11-19T06:55:38.9868840Z         """値が 1（正常系）。"""
+test	層の全件を回す	2026-11-19T06:55:38.9869139Z         # 準備
+test	層の全件を回す	2026-11-19T06:55:38.9869420Z         environ = {"SLOP_CHECK_SHOW_ADDED": "1"}
+test	層の全件を回す	2026-11-19T06:55:38.9869834Z         # 実行
+test	層の全件を回す	2026-11-19T06:55:38.9870101Z >       result = slop_check.shows_added(environ)
+test	層の全件を回す	2026-11-19T06:55:38.9870474Z                  ^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-19T06:55:38.9870937Z E       AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:38.9871431Z 
+test	層の全件を回す	2026-11-19T06:55:38.9871648Z tests/unit/slop-check/test_slop_check.py:536: AttributeError
+test	層の全件を回す	2026-11-19T06:55:38.9872185Z ________________________ test_shows_added_when_not_set _________________________
+test	層の全件を回す	2026-11-19T06:55:38.9872560Z 
+test	層の全件を回す	2026-11-19T06:55:38.9872720Z     def test_shows_added_when_not_set() -> None:
+test	層の全件を回す	2026-11-19T06:55:38.9873156Z         """環境変数が無い（正常系）。"""
+test	層の全件を回す	2026-11-19T06:55:38.9873464Z         # 準備
+test	層の全件を回す	2026-11-19T06:55:38.9873738Z         environ: dict[str, str] = {}
+test	層の全件を回す	2026-11-19T06:55:38.9874096Z         # 実行
+test	層の全件を回す	2026-11-19T06:55:38.9874382Z >       result = slop_check.shows_added(environ)
+test	層の全件を回す	2026-11-19T06:55:38.9874740Z                  ^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-19T06:55:38.9875199Z E       AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:38.9875577Z 
+test	層の全件を回す	2026-11-19T06:55:38.9875795Z tests/unit/slop-check/test_slop_check.py:546: AttributeError
+test	層の全件を回す	2026-11-19T06:55:38.9876354Z ___________________ test_shows_added_when_other_value[true] ____________________
+test	層の全件を回す	2026-11-19T06:55:38.9876732Z 
+test	層の全件を回す	2026-11-19T06:55:38.9876834Z value = 'true'
+test	層の全件を回す	2026-11-19T06:55:38.9876991Z 
+test	層の全件を回す	2026-11-19T06:55:38.9877119Z     @pytest.mark.parametrize(
+test	層の全件を回す	2026-11-19T06:55:38.9877446Z         "value",
+test	層の全件を回す	2026-11-19T06:55:38.9877692Z         [
+test	層の全件を回す	2026-11-19T06:55:38.9877963Z             pytest.param("true", id="true"),
+test	層の全件を回す	2026-11-19T06:55:38.9878331Z             pytest.param("0", id="zero"),
+test	層の全件を回す	2026-11-19T06:55:38.9878684Z             pytest.param("", id="empty"),
+test	層の全件を回す	2026-11-19T06:55:38.9879010Z         ],
+test	層の全件を回す	2026-11-19T06:55:38.9879231Z     )
+test	層の全件を回す	2026-11-19T06:55:38.9879559Z     def test_shows_added_when_other_value(value: str) -> None:
+test	層の全件を回す	2026-11-19T06:55:38.9880030Z         """値が 1 以外（正常系）。"""
+test	層の全件を回す	2026-11-19T06:55:38.9880328Z         # 準備
+test	層の全件を回す	2026-11-19T06:55:38.9880607Z         environ = {"SLOP_CHECK_SHOW_ADDED": value}
+test	層の全件を回す	2026-11-19T06:55:38.9880981Z         # 実行
+test	層の全件を回す	2026-11-19T06:55:38.9881363Z >       result = slop_check.shows_added(environ)
+test	層の全件を回す	2026-11-19T06:55:38.9881727Z                  ^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-19T06:55:38.9882152Z E       AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:38.9882506Z 
+test	層の全件を回す	2026-11-19T06:55:38.9882707Z tests/unit/slop-check/test_slop_check.py:564: AttributeError
+test	層の全件を回す	2026-11-19T06:55:38.9883230Z ___________________ test_shows_added_when_other_value[zero] ____________________
+test	層の全件を回す	2026-11-19T06:55:38.9883582Z 
+test	層の全件を回す	2026-11-19T06:55:38.9883690Z value = '0'
+test	層の全件を回す	2026-11-19T06:55:38.9883828Z 
+test	層の全件を回す	2026-11-19T06:55:38.9884139Z     @pytest.mark.parametrize(
+test	層の全件を回す	2026-11-19T06:55:38.9884443Z         "value",
+test	層の全件を回す	2026-11-19T06:55:38.9884691Z         [
+test	層の全件を回す	2026-11-19T06:55:38.9884958Z             pytest.param("true", id="true"),
+test	層の全件を回す	2026-11-19T06:55:38.9885313Z             pytest.param("0", id="zero"),
+test	層の全件を回す	2026-11-19T06:55:38.9885653Z             pytest.param("", id="empty"),
+test	層の全件を回す	2026-11-19T06:55:38.9885958Z         ],
+test	層の全件を回す	2026-11-19T06:55:38.9886180Z     )
+test	層の全件を回す	2026-11-19T06:55:38.9886482Z     def test_shows_added_when_other_value(value: str) -> None:
+test	層の全件を回す	2026-11-19T06:55:38.9886940Z         """値が 1 以外（正常系）。"""
+test	層の全件を回す	2026-11-19T06:55:38.9887224Z         # 準備
+test	層の全件を回す	2026-11-19T06:55:38.9887491Z         environ = {"SLOP_CHECK_SHOW_ADDED": value}
+test	層の全件を回す	2026-11-19T06:55:38.9887845Z         # 実行
+test	層の全件を回す	2026-11-19T06:55:38.9888098Z >       result = slop_check.shows_added(environ)
+test	層の全件を回す	2026-11-19T06:55:38.9888428Z                  ^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-19T06:55:38.9888842Z E       AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:38.9889197Z 
+test	層の全件を回す	2026-11-19T06:55:38.9889416Z tests/unit/slop-check/test_slop_check.py:564: AttributeError
+test	層の全件を回す	2026-11-19T06:55:38.9889946Z ___________________ test_shows_added_when_other_value[empty] ___________________
+test	層の全件を回す	2026-11-19T06:55:38.9890567Z 
+test	層の全件を回す	2026-11-19T06:55:38.9890663Z value = ''
+test	層の全件を回す	2026-11-19T06:55:38.9890791Z 
+test	層の全件を回す	2026-11-19T06:55:38.9890910Z     @pytest.mark.parametrize(
+test	層の全件を回す	2026-11-19T06:55:38.9891370Z         "value",
+test	層の全件を回す	2026-11-19T06:55:38.9891599Z         [
+test	層の全件を回す	2026-11-19T06:55:38.9891843Z             pytest.param("true", id="true"),
+test	層の全件を回す	2026-11-19T06:55:38.9892196Z             pytest.param("0", id="zero"),
+test	層の全件を回す	2026-11-19T06:55:38.9892510Z             pytest.param("", id="empty"),
+test	層の全件を回す	2026-11-19T06:55:38.9892791Z         ],
+test	層の全件を回す	2026-11-19T06:55:38.9892989Z     )
+test	層の全件を回す	2026-11-19T06:55:38.9893272Z     def test_shows_added_when_other_value(value: str) -> None:
+test	層の全件を回す	2026-11-19T06:55:38.9893677Z         """値が 1 以外（正常系）。"""
+test	層の全件を回す	2026-11-19T06:55:38.9893939Z         # 準備
+test	層の全件を回す	2026-11-19T06:55:38.9894178Z         environ = {"SLOP_CHECK_SHOW_ADDED": value}
+test	層の全件を回す	2026-11-19T06:55:38.9894501Z         # 実行
+test	層の全件を回す	2026-11-19T06:55:38.9894736Z >       result = slop_check.shows_added(environ)
+test	層の全件を回す	2026-11-19T06:55:38.9895042Z                  ^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-19T06:55:38.9895405Z E       AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:38.9895715Z 
+test	層の全件を回す	2026-11-19T06:55:38.9895891Z tests/unit/slop-check/test_slop_check.py:564: AttributeError
+test	層の全件を回す	2026-11-19T06:55:38.9896306Z =========================== short test summary info ============================
+test	層の全件を回す	2026-11-19T06:55:38.9898395Z FAILED tests/unit/slop-check/test_slop_check.py::test_main_when_display_not_set - assert 'systemMessage' not in {'hookSpecificOutput': {'hookEventName': 'PostToolUse', 'additionalContext': 'AI がよく使う単語（AI slop）が入っています。OK の単語に置き換えてく..."field": "id", "op": "eq", "values": ["ui-input-wording"]}, view: "full"）'}, 'systemMessage': 'AI slop を検知: 直す（Write）'}
+test	層の全件を回す	2026-11-19T06:55:38.9900331Z FAILED tests/unit/slop-check/test_slop_check.py::test_shows_added - AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:38.9901675Z FAILED tests/unit/slop-check/test_slop_check.py::test_shows_added_when_not_set - AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:38.9902950Z FAILED tests/unit/slop-check/test_slop_check.py::test_shows_added_when_other_value[true] - AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:38.9904231Z FAILED tests/unit/slop-check/test_slop_check.py::test_shows_added_when_other_value[zero] - AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:38.9905530Z FAILED tests/unit/slop-check/test_slop_check.py::test_shows_added_when_other_value[empty] - AttributeError: module 'slop_check' has no attribute 'shows_added'
+test	層の全件を回す	2026-11-19T06:55:38.9906437Z ========================= 6 failed, 39 passed in 0.09s =========================
+test	層の全件を回す	2026-11-19T06:55:39.0131984Z ##[error]Process completed with exit code 1.
+test	ログを成果物に上げる	﻿2026-11-19T06:55:39.0198325Z ##[group]Run actions/upload-artifact@v4
+test	ログを成果物に上げる	2026-11-19T06:55:39.0198718Z with:
+test	ログを成果物に上げる	2026-11-19T06:55:39.0198879Z   name: test-log
+test	ログを成果物に上げる	2026-11-19T06:55:39.0199047Z   path: test.log
+test	ログを成果物に上げる	2026-11-19T06:55:39.0199235Z   if-no-files-found: ignore
+test	ログを成果物に上げる	2026-11-19T06:55:39.0199438Z   compression-level: 6
+test	ログを成果物に上げる	2026-11-19T06:55:39.0199625Z   overwrite: false
+test	ログを成果物に上げる	2026-11-19T06:55:39.0199812Z   include-hidden-files: false
+test	ログを成果物に上げる	2026-11-19T06:55:39.0200010Z env:
+test	ログを成果物に上げる	2026-11-19T06:55:39.0200207Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+test	ログを成果物に上げる	2026-11-19T06:55:39.0200520Z ##[endgroup]
+test	ログを成果物に上げる	2026-11-19T06:55:39.1527342Z (node:2352) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test	ログを成果物に上げる	2026-11-19T06:55:39.1528094Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test	ログを成果物に上げる	2026-11-19T06:55:39.1563854Z With the provided path, there will be 1 file uploaded
+test	ログを成果物に上げる	2026-11-19T06:55:39.1567295Z Artifact name is valid!
+test	ログを成果物に上げる	2026-11-19T06:55:39.1568848Z Root directory input is valid!
+test	ログを成果物に上げる	2026-11-19T06:55:39.5298455Z Beginning upload of artifact content to blob storage
+test	ログを成果物に上げる	2026-11-19T06:55:39.5461753Z (node:2352) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+test	ログを成果物に上げる	2026-11-19T06:55:39.8284376Z Uploaded bytes 2076
+test	ログを成果物に上げる	2026-11-19T06:55:39.9053856Z Finished uploading artifact content to blob storage!
+test	ログを成果物に上げる	2026-11-19T06:55:39.9054524Z SHA256 digest of uploaded artifact zip is b5db2df6301d241a5b9d49eafc8567acc8693ae122baaecaac614efc8a7bb63a
+test	ログを成果物に上げる	2026-11-19T06:55:39.9055619Z Finalizing artifact upload
+test	ログを成果物に上げる	2026-11-19T06:55:40.2987709Z Artifact test-log.zip successfully finalized. Artifact ID 14505994049
+test	ログを成果物に上げる	2026-11-19T06:55:40.2988392Z Artifact test-log has been successfully uploaded! Final size is 2076 bytes. Artifact ID is 14505994049
+test	ログを成果物に上げる	2026-11-19T06:55:40.2993497Z Artifact download URL: https://github.com/shuhei1101/knowledge/actions/runs/44475684366/artifacts/14505994049
+test	Post ブランチを取得する	﻿2026-11-19T06:55:40.3168692Z Post job cleanup.
+test	Post ブランチを取得する	2026-11-19T06:55:40.3823744Z [command]/usr/bin/git version
+test	Post ブランチを取得する	2026-11-19T06:55:40.3855594Z git version 2.56.1
+test	Post ブランチを取得する	2026-11-19T06:55:40.3881716Z Temporarily overriding HOME='/home/runner/work/_temp/1845e5d8-5938-463b-9c8b-5e1cb737c944' before making global git config changes
+test	Post ブランチを取得する	2026-11-19T06:55:40.3882746Z Adding repository directory to the temporary git global config as a safe directory
+test	Post ブランチを取得する	2026-11-19T06:55:40.3885327Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/knowledge/knowledge
+test	Post ブランチを取得する	2026-11-19T06:55:40.3914583Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test	Post ブランチを取得する	2026-11-19T06:55:40.3944212Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test	Post ブランチを取得する	2026-11-19T06:55:40.4183366Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test	Post ブランチを取得する	2026-11-19T06:55:40.4203385Z http.https://github.com/.extraheader
+test	Post ブランチを取得する	2026-11-19T06:55:40.4211721Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+test	Post ブランチを取得する	2026-11-19T06:55:40.4238417Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test	Post ブランチを取得する	2026-11-19T06:55:40.4466381Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test	Post ブランチを取得する	2026-11-19T06:55:40.4492388Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test	Complete job	﻿2026-11-19T06:55:40.4838715Z Cleaning up orphan processes
+test	Complete job	2026-11-19T06:55:40.5183218Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4, astral-sh/setup-uv@v6. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
