@@ -1,0 +1,22 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-148-1.yaml
+    impact: changed
+    detail: 検知した単語の画面への 1 行の表示を、設定で表示すると決めた端末だけにする。エージェントへの NG と OK の単語の通知は設定に関係なく今のまま出す
+    depends_on: []
+docs:
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: サブシステム slop-check の role の「利用者の画面に出す検知した単語の 1 行を返却する」を、設定で表示するときだけ返却する記述にする
+    status: todo
+  - page: docs/guide/guide-setup-install-plugin.yaml
+    new: false
+    change: 検知した単語が画面に 1 行で出る説明と確認の手順を、既定は表示しないことと、表示する設定の方法に合わせる
+    status: todo
+scope_out:
+  - item: モデルへの通知（additionalContext）を設定で止める切り替え
+    reason: 要望が設定に関係なく今のまま出すと定めている
+    plan: none
+  - item: alias-inject の global.show_added の既定の変更
+    reason: 別のリポジトリの変更で、shuhei1101/alias-inject#140 が扱う
+    plan: none
