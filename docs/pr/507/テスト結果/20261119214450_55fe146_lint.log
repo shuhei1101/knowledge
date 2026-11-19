@@ -1,0 +1,10 @@
+$ uv run --frozen --script scripts/check_all.py
+docs/guide/guide-setup-install-plugin.yaml:31: items[0].body: textlint/one-sentence-per-line: More than one sentence per line
+497 件の文書を検査し、違反は 1 件、警告は 0 件でした
+exit_code: 1
+
+# base（origin/develop e68403f）で同じコマンドを回した結果
+$ uv run --frozen --script scripts/check_all.py
+docs/guide/guide-setup-install-plugin.yaml:31: items[0].body: textlint/one-sentence-per-line: More than one sentence per line
+497 件の文書を検査し、違反は 1 件、警告は 0 件でした
+exit_code: 1
