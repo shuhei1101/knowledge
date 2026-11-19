@@ -15,8 +15,8 @@ flows:
       - name: 標準入力
         description: '`tool_name` が `Write`、`tool_input.content` が対応表の単語を 2 つと同じ単語の 2 回目を含む文'
         notes: '`tool_input.content` に「この形で直す。もう一度直す。」'
-      - name: 設定ファイル
-        description: '`global.show_added` が `true`'
+      - name: 環境変数
+        description: '`SLOP_CHECK_SHOW_ADDED` が `1`'
         notes: '`{"global": {"show_added": true}}`'
     flow: |-
       <!-- map -->
@@ -25,14 +25,12 @@ flows:
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
-        participant S as 設定ファイル
         participant L as 対応表のコピー
         C->>H: 標準入力に PostToolUse の入力
         H->>L: 対応表を読み込む
         L-->>H: 対応表の行
         H->>H: tool_input.content を各行で照合する
-        H->>S: 設定ファイルを読み込む
-        S-->>H: global.show_added が true
+        H->>H: 環境変数 SLOP_CHECK_SHOW_ADDED が 1
         H-->>C: 終了コード 0 と additionalContext に通知の文、systemMessage に 1 行
       ```
 
@@ -83,8 +81,8 @@ flows:
         description: 「新しい版を出す。」と「設定を修正する。」の行を持つ一時ファイル
       - name: 標準入力
         description: '`tool_name` が `Edit`、`tool_input.file_path` が書き込んだファイル、`tool_input.new_string` が「設定を修正する。」'
-      - name: 設定ファイル
-        description: '`global.show_added` が `true`'
+      - name: 環境変数
+        description: '`SLOP_CHECK_SHOW_ADDED` が `1`'
     flow: |-
       <!-- map -->
 
@@ -113,8 +111,8 @@ flows:
         description: 差し替えない
       - name: 標準入力
         description: '`tool_name` が `Edit`、`tool_input.file_path` が存在しないパス、`tool_input.new_string` が「設定を直す。」'
-      - name: 設定ファイル
-        description: '`global.show_added` が `true`'
+      - name: 環境変数
+        description: '`SLOP_CHECK_SHOW_ADDED` が `1`'
     flow: |-
       <!-- map -->
 
@@ -143,8 +141,8 @@ flows:
         description: 差し替えない
       - name: 標準入力
         description: '`tool_name` が `NotebookEdit`、`tool_input.new_source` が「# 版を出す」'
-      - name: 設定ファイル
-        description: '`global.show_added` が `true`'
+      - name: 環境変数
+        description: '`SLOP_CHECK_SHOW_ADDED` が `1`'
     flow: |-
       <!-- map -->
 
@@ -171,8 +169,8 @@ flows:
       - name: 標準入力
         description: '`tool_name` が `mcp__plugin_project-index_project-index__write_docs`。`tool_input.operations[0].set.body` が「設定を足す。」、`tool_input.operations[0].id` が「直す」'
         notes: 除くキーの値に対応表の単語を入れ、通知に出ないことを確認する
-      - name: 設定ファイル
-        description: '`global.show_added` が `true`'
+      - name: 環境変数
+        description: '`SLOP_CHECK_SHOW_ADDED` が `1`'
     flow: |-
       <!-- map -->
 
@@ -299,8 +297,8 @@ flows:
         description: 差し替えない
       - name: 標準入力
         description: '`tool_name` が `mcp__plugin_dev-docs_dev-docs__write_docs`、`tool_input.operations[0].set.body` が「設定を足す。」'
-      - name: 設定ファイル
-        description: '`global.show_added` が `true`'
+      - name: 環境変数
+        description: '`SLOP_CHECK_SHOW_ADDED` が `1`'
     flow: |-
       <!-- map -->
 
@@ -320,12 +318,12 @@ flows:
       - '`systemMessage` が `AI slop を検知: 足す（dev-docs の write_docs）`'
     test: test_normal_when_dev_docs_mcp_tool
   - name: 正常系（画面への表示を設定しない）
-    summary: 設定ファイルが無ければ、画面への 1 行を出さずに通知の文だけを返却する
+    summary: 環境変数が無ければ、画面への 1 行を出さずに通知の文だけを返却する
     setup:
       - name: Mock
         description: 差し替えない
-      - name: 設定ファイル
-        description: 無い
+      - name: 環境変数
+        description: '`SLOP_CHECK_SHOW_ADDED` が無い'
       - name: 対応表
         description: '`直す`（`ok: [修正]`）・`形`（`ok: [スキーマ, 構造]`・`note: 形状の意味なら「形状」`）・`版`（`ok: [バージョン]`）の 3 行を、この並びで持つ対応表のコピー'
       - name: 標準入力
@@ -338,14 +336,12 @@ flows:
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
-        participant S as 設定ファイル
         participant L as 対応表のコピー
         C->>H: 標準入力に PostToolUse の入力
         H->>L: 対応表を読み込む
         L-->>H: 対応表の行
         H->>H: tool_input.content を各行で照合する
-        H->>S: 設定ファイルを読み込む
-        S-->>H: ファイルが無い
+        H->>H: 環境変数 SLOP_CHECK_SHOW_ADDED が無い
         H-->>C: 終了コード 0 と additionalContext に通知の文
       ```
 
@@ -357,14 +353,14 @@ flows:
       - 標準出力の JSON に `decision` が無い
       - 標準出力の JSON に `systemMessage` が無い
     test: test_normal_when_display_not_set
-  - name: 正常系（設定ファイルが読み込めない）
-    summary: 設定ファイルが JSON として読み込めなければ、画面への 1 行を出さずに通知の文を返却し、理由を標準エラーへ出す
+  - name: 正常系（環境変数が 1 以外）
+    summary: 環境変数が `1` 以外の値なら、画面への 1 行を出さずに通知の文だけを返却する
     setup:
       - name: Mock
         description: 差し替えない
-      - name: 設定ファイル
-        description: JSON として読み込めない
-        notes: '`{"global":`'
+      - name: 環境変数
+        description: '`SLOP_CHECK_SHOW_ADDED` が `1` 以外の値'
+        notes: '`true`'
       - name: 対応表
         description: '`直す`（`ok: [修正]`）・`形`（`ok: [スキーマ, 構造]`・`note: 形状の意味なら「形状」`）・`版`（`ok: [バージョン]`）の 3 行を、この並びで持つ対応表のコピー'
       - name: 標準入力
@@ -377,15 +373,13 @@ flows:
       sequenceDiagram
         participant C as Claude Code
         participant H as 書き込んだ中身の照合
-        participant S as 設定ファイル
         participant L as 対応表のコピー
         C->>H: 標準入力に PostToolUse の入力
         H->>L: 対応表を読み込む
         L-->>H: 対応表の行
         H->>H: tool_input.content を各行で照合する
-        H->>S: 設定ファイルを読み込む
-        S-->>H: JSON として読み込めない
-        H-->>C: 終了コード 0 と additionalContext に通知の文、標準エラーの理由
+        H->>H: 環境変数 SLOP_CHECK_SHOW_ADDED が 1 以外
+        H-->>C: 終了コード 0 と additionalContext に通知の文
       ```
 
       <!-- /map -->
@@ -395,8 +389,7 @@ flows:
       - '`hookSpecificOutput.additionalContext` の表が `| 直す | 修正 |`・`| 形 | スキーマ・構造（形状の意味なら「形状」） |` の 2 行で、この順に並ぶ'
       - 標準出力の JSON に `decision` が無い
       - 標準出力の JSON に `systemMessage` が無い
-      - 標準エラーに、読み込めなかった設定ファイルのパスが出る
-    test: test_normal_when_settings_unreadable
+    test: test_normal_when_display_value_not_one
 lead: 書き込むツールの実行の後に、Claude Code から受け取った PostToolUse の入力から書き込んだ中身を取り出して対応表で照合し、ヒットした単語があれば NG と OK の表を持つ通知の文を `additionalContext` で返却し、画面への表示を有効にした端末では検知した単語と書き込みの名前の 1 行を `systemMessage` で利用者の画面へ出す。書き込みは止めない。
 identifier: slop-check
 idempotent: true
@@ -453,18 +446,12 @@ request:
     location: argument
     description: プラグイン slop-check のフォルダ。対応表のコピー `hooks/post-tool-use/word-list-ai-slop.json` をここから読み込む
     notes: 環境変数で受け取る
-  - name: SLOP_CHECK_CONFIG
-    type: Path
+  - name: SLOP_CHECK_SHOW_ADDED
+    type: str
     required: false
     location: argument
-    description: 設定ファイルのパス。先頭の `~` はホームに展開する。無いときは `${XDG_CONFIG_HOME:-~/.config}/slop-check/settings.json` を読み込む。指すファイルが無いときは、設定が無いときと同じく `systemMessage` を出さない
-    notes: 環境変数で受け取る。Claude Code の `settings.json` の `env` で指定できる
-  - name: settings.global.show_added
-    type: bool
-    required: false
-    location: argument
-    description: '`true` のとき `systemMessage` を出す。設定ファイルが無いとき・キーが無いとき・`true` 以外の値のときは出さない'
-    notes: 設定ファイルの JSON で受け取る。既定は `false`
+    description: '`1` のとき `systemMessage` を出す。無いとき・`1` 以外の値のときは出さない'
+    notes: 環境変数で受け取る。利用者は Claude Code のユーザースコープの `settings.json` の `env` に記載する
 response:
   - name: stdout
     type: dict
@@ -477,11 +464,11 @@ response:
     description: 通知の文。要件の要望 3 の文のとおりで、表にはヒットした行だけを対応表の並びの順に 1 行ずつ出す。OK は「・」でつなぎ、`note` があれば OK の後ろに括弧で添える。規約を参照する案内には、project-index と dev-docs の `search_docs` の完全名を並べる
   - name: stdout.systemMessage
     type: str
-    description: '利用者の画面に出す 1 行。設定 `global.show_added` が `true` のときだけ出す。`AI slop を検知: {NG の単語}（{書き込みの名前}）`。NG の単語は `additionalContext` の表の行と同じ順に「・」でつなぎ、置き換え先は出さない'
+    description: '利用者の画面に出す 1 行。環境変数 `SLOP_CHECK_SHOW_ADDED` が `1` のときだけ出す。`AI slop を検知: {NG の単語}（{書き込みの名前}）`。NG の単語は `additionalContext` の表の行と同じ順に「・」でつなぎ、置き換え先は出さない'
     example: 'AI slop を検知: 直す・形（Write）'
   - name: stderr
     type: str
-    description: 対応表・入力・設定ファイルが読み込めないときの理由（1 行）
+    description: 対応表・入力が読み込めないときの理由（1 行）
   - name: exit_code
     type: Literal[0]
     description: 常に 0。書き込みの結果を変えない
@@ -519,6 +506,6 @@ constraints:
     constraint: '`systemMessage` の括弧の中。組み込みのツールは `tool_name` のまま。MCP ツールは、サーバーの部分が `plugin_` で始まれば `plugin_` の後ろから最初の `_` までを、始まらなければサーバーの部分を名前にして `{名前} の {ツール名}` にする'
     notes: '`mcp__plugin_mindstella_mindstella__reply` は `mindstella の reply`、`mcp__plugin_ai-monitor_ai-monitor-tools__comment` は `ai-monitor の comment`'
   - item: 画面への表示の設定
-    constraint: 設定ファイルは `SLOP_CHECK_CONFIG` のパス、無ければ `${XDG_CONFIG_HOME:-~/.config}/slop-check/settings.json`。`global.show_added` が `true` のときだけ `systemMessage` を出す。設定ファイルは照合でヒットがあったときだけ読み込み、JSON として読み込めなければ標準エラーにパスを出して `systemMessage` を出さない
-    notes: '`additionalContext` は設定に関係なく出す。キーの名前と既定は alias-inject の `global.show_added` に合わせる。実値を入れないサンプル `settings.sample.json`（`version` と `global.show_added` を持つ）をプラグインの直下に配置する。フックは `version` を参照しない。規約『Claude プラグインルール』の `settings-file-01`・`settings-file-03`（本体を YAML の `settings.yaml` にする）・`settings-file-04`（サンプルを `settings.sample.yaml` にする）・`settings-file-05`（`projects` を持つ）から逸脱する。フックが Python の標準ライブラリだけで動き（MOD-148-1）、YAML を読み込めないため、JSON の `global` だけを持つ'
+    constraint: 環境変数 `SLOP_CHECK_SHOW_ADDED` が `1` のときだけ `systemMessage` を出す。無いとき・`1` 以外の値のときは出さず、標準エラーにも何も出さない
+    notes: '`additionalContext` は設定に関係なく出す。規約『Claude プラグインルール』の `settings-file-02`（`env` に記載するのは `{ツール名}_CONFIG` のパスだけ）から逸脱する。常駐のサーバーが無く、フックの子プロセスに `env` が渡るため、利用者が決めた（PR #505 の確認ログ）'
 test_file: tests/integration/slop-check/test_slop_check.py
