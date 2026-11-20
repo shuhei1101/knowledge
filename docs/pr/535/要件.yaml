@@ -1,0 +1,22 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-312-1.yaml
+    impact: run_only
+    detail: スキルの設計書から SKILL.md を生成する流れは変わらないが、呼ぶものの行の出し方が変わりうる
+    depends_on: []
+docs:
+  - page: schemas/design/agent_flow.schema.yaml
+    new: false
+    change: steps[].calls[].server の x-used-by を SKILL.md の生成の振る舞いと一致させる
+    status: todo
+  - page: docs/template/template-agent-flow.yaml
+    new: false
+    change: キーの表の steps[].calls[].server の行をスキーマに合わせる
+    status: todo
+scope_out:
+  - item: 設計書『エージェントの定義』の progress.server の「変換で、ツールの完全な名前を作る」
+    reason: SKILL.md の生成は agent の設計書を読まず、各プロジェクトの変換が完全な名前を作る前提のまま食い違いが無い
+    plan: none
+  - item: '既存のスキル（text-review・meme-register・meme-research）の MCP のツールを type: mcp へ書き換えること'
+    reason: '要望に含まれない。type: tool の記載はどちらの直し方でも有効'
+    plan: none
