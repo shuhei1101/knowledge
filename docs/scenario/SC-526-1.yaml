@@ -14,7 +14,7 @@ preconditions:
   - ネットミームの配信元（`knowledge-memes`）が配信中で、セッションの作業場所が端末の設定の `sources[].direct_commit.scope` に該当する
   - セッションで WebSearch・WebFetch とサブエージェントの起動を使用できる
 success_guarantee: 利用者が登録すると回答した作品と用語だけが、検査に合格して develop のコミットとしてリモートへプッシュされ、ネットミームの配信元の検索で返る。
-minimal_guarantee: 利用者が確認していない候補と、登録しないと回答した候補は書き込まない。検査で断られた作品・用語はコミットせず、断られた理由を利用者に伝える。
+minimal_guarantee: 利用者が確認していない候補と、登録しないと回答した候補は書き込まない。検査で断られた書き込みはコミットせず、断られた理由を利用者に伝える。プッシュの後の CI が失敗しても、打ち消しのコミットは利用者が回答するまで作らない。
 scenarios:
   - name: 正常シナリオ
     setup:
@@ -42,14 +42,14 @@ scenarios:
         A->>U: 作品の確認の表と、登録する用語の確認の表
         U-->>A: 知名度と、登録する用語の No
         A->>P: 作品を直コミットで書き込む
-        A->>P: 用語を直コミットで書き込む
+        A->>P: その作品の用語をまとめて 1 回の直コミットで書き込む
         A-->>U: 登録した作品と用語の数・コミット・登録しなかった候補
       ```
 
       <!-- /map -->
     expected:
       - ネットミームの配信元に、作品 1 件と、利用者が登録すると回答した用語だけが状態 `active` で増える
-      - 作品と用語の書き込みが、1 つの作品ごとに 1 回のコミットで develop へプッシュされる
+      - リモートの develop に、作品だけを追加するコミットと、その作品の用語だけを追加するコミットの 2 つがこの順に増える
       - 利用者への結果に、登録した数・コミット・登録しなかった候補が出る
   - name: 正常シナリオ（作品を指定しない）
     setup:
@@ -80,7 +80,98 @@ scenarios:
     expected:
       - 利用者に示す作品の名前に、登録済みの作品が含まれない
       - 利用者が選んだ作品だけが調査と登録の対象になる
-  - name: 正常シナリオ（旬が過ぎたと指示した）
+  - name: 正常シナリオ（登録済みの作品に放送を追加する）
+    setup:
+      - name: Mock
+        description: なし（Web とリモートは実物）
+      - name: 登録済みの作品
+        description: 放送のシーズンを 1 つ持つアニメの作品が登録されている
+        notes: '`type: anime`・`airings` が 1 件'
+      - name: 引数
+        description: その作品の続編（新しいシーズンの放送）を指定する
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor U as 利用者
+        participant A as スキルを実行するエージェント
+        participant P as project-index の文書の MCP
+        participant R as リサーチャー
+        U->>A: /knowledge:meme-register に続編の作品を指定する
+        A->>P: 登録済みの作品とネットミームを検索する
+        A->>R: 作品・登録済みの言葉・調べる日で調査を依頼する
+        R-->>A: 作品の情報（新しい放送のシーズン）と用語の候補
+        A->>U: 状態が登録済みの作品の確認の表（追加する放送）と、登録する用語の確認の表
+        U-->>A: 放送の追加と、登録する用語の No
+        A->>P: 作品の airings だけを修正して直コミットで書き込む
+        A->>P: その作品の用語をまとめて 1 回の直コミットで書き込む
+        A-->>U: 修正した作品と登録した用語の数・コミット
+      ```
+
+      <!-- /map -->
+    expected:
+      - 作品の件数は変わらず、その作品の `airings` が 1 シーズン増えて、ほかのキーは変わらない
+      - 登録すると回答した用語だけが、その作品を指して状態 `active` で増える
+  - name: 正常シナリオ（作品を持たない言葉を登録する）
+    setup:
+      - name: Mock
+        description: なし（Web とリモートは実物）
+      - name: 引数
+        description: 作品を持たないネットの用語だけを指定する
+        notes: '`sources: ドカ食い気絶部`'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor U as 利用者
+        participant A as スキルを実行するエージェント
+        participant P as project-index の文書の MCP
+        participant R as リサーチャー
+        U->>A: /knowledge:meme-register に言葉だけを指定する
+        A->>P: 登録済みの作品とネットミームを検索する
+        A->>R: 作品を省略して、言葉と調べる日で調査を依頼する
+        R-->>A: in_work が false の用語の候補（種別と知名度の推奨）
+        A->>U: 登録する用語の確認の表（知名度の列を含む）
+        U-->>A: 登録する用語の No と知名度
+        A->>P: 作品を指さない用語を直コミットで書き込む
+        A-->>U: 登録した用語の数・コミット
+      ```
+
+      <!-- /map -->
+    expected:
+      - 作品は増えず、`work` を持たない用語が `type` と `popularity` を持って状態 `active` で増える
+      - リモートの develop に、用語だけを追加するコミットが 1 つ増える
+  - name: 正常シナリオ（登録しないと回答した）
+    setup:
+      - name: Mock
+        description: なし（Web は実物）
+      - name: 引数
+        description: 利用者が作品を 1 件指定する
+      - name: 確認の回答
+        description: 作品と全ての用語の候補を登録しないと回答する
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor U as 利用者
+        participant A as スキルを実行するエージェント
+        participant R as リサーチャー
+        U->>A: /knowledge:meme-register に作品を指定する
+        A->>R: 調査を依頼する
+        R-->>A: 作品の情報と用語の候補
+        A->>U: 作品の確認の表と、登録する用語の確認の表
+        U-->>A: 登録しない
+        A-->>U: 登録しなかった候補
+      ```
+
+      <!-- /map -->
+    expected:
+      - ネットミームの配信元に何も書き込まず、リモートの develop にコミットが増えない
+      - 利用者への結果に、登録しなかった候補だけが出る
+  - name: 正常シナリオ（用語を旬が過ぎたと指示した）
     setup:
       - name: Mock
         description: なし（リモートは実物）
@@ -102,7 +193,28 @@ scenarios:
       <!-- /map -->
     expected:
       - 指示した用語の状態が `inactive` になり、ほかのキーは変わらない
-      - 作品・話題を指示したときは、作品の 1 件だけの状態が変わる
+  - name: 正常シナリオ（作品を旬が過ぎたと指示した）
+    setup:
+      - name: Mock
+        description: なし（リモートは実物）
+      - name: 登録済みの作品
+        description: 状態 `active` の作品と、その作品を指す状態 `active` の用語がある
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor U as 利用者
+        participant A as スキルを実行するエージェント
+        participant P as project-index の文書の MCP
+        U->>A: 登録済みの作品を、旬が過ぎたと指示する
+        A->>P: 作品の状態を inactive にして直コミットで書き込む
+        A-->>U: 状態を変えた作品とコミット
+      ```
+
+      <!-- /map -->
+    expected:
+      - 作品の `state` だけが `inactive` になり、その作品の用語のファイルは変わらない
   - name: 異常シナリオ（作品を特定できない）
     setup:
       - name: Mock
@@ -133,7 +245,7 @@ scenarios:
       - name: Mock
         description: なし（リモートは実物）
       - name: 確認の回答
-        description: 利用者が登録すると回答した用語のタグが、内容の分類のタグを持たない
+        description: 利用者が登録すると回答した用語のうち 1 件のタグが、内容の分類のタグを持たない
     flow: |-
       <!-- map -->
 
@@ -142,15 +254,40 @@ scenarios:
         actor U as 利用者
         participant A as スキルを実行するエージェント
         participant P as project-index の文書の MCP
-        A->>P: 用語を直コミットで書き込む
+        A->>P: 作品を直コミットで書き込む
+        P-->>A: 書き込んだ作品とコミット
+        A->>P: その作品の用語をまとめて 1 回の直コミットで書き込む
         P-->>A: isError と違反の一覧
-        A-->>U: 断られた用語と違反の内容
+        A-->>U: 登録した作品とコミット、断られた用語と違反の内容
       ```
 
       <!-- /map -->
     expected:
-      - 断られた用語はコミットされず、リモートの develop に増えない
-      - 利用者に、断られた用語と違反の内容が出る
+      - 作品のコミットはリモートの develop に残り、用語は同じ呼び出しの全てがコミットされない
+      - 利用者に、登録した作品と、断られた用語と違反の内容が出る
+  - name: 異常シナリオ（プッシュの後の CI が失敗した）
+    setup:
+      - name: Mock
+        description: なし（リモートと GitHub Actions は実物）
+      - name: CI の結果
+        description: 登録のコミットのプッシュで動いた develop のワークフローが失敗する
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor U as 利用者
+        participant A as スキルを実行するエージェント
+        participant G as GitHub Actions
+        A->>G: 登録のコミットで動いたワークフローの結果を取得する
+        G-->>A: 失敗
+        A-->>U: 登録した作品と用語・失敗したワークフローと、打ち消しのコミットの提案
+      ```
+
+      <!-- /map -->
+    expected:
+      - 利用者に、失敗したワークフローと、打ち消す登録のコミットの提案が出る
+      - 利用者が回答するまで、リモートの develop に打ち消しのコミットは増えない
 refs:
   - to: SC-514-1
     type: requires
