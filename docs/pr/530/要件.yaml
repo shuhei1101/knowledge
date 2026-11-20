@@ -87,3 +87,6 @@ scope_out:
   - item: 規約の配信元（knowledge）の用語集・ノウハウ・対応表の行への直コミットの許可
     reason: MindStella の資料 A-243 では候補に挙げているが、この Issue の要望はネットミームの種類だけ。規約の配信元はレビューを経る書き込みのままにする
     plan: none
+  - item: '`schemas/design/glossary.schema.yaml` の最上位の `description` が 3 文あり、結合テスト `test_normal_when_repository_schemas` が fail する'
+    reason: 結合テストが確認する「設計書のスキーマの description は 2 文以内」から外れている。#446 で入った develop の不具合で、この PR はファイルを変更しておらず、今回の要望に含まれない
+    plan: '#531'

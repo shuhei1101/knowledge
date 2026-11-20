@@ -1,0 +1,49 @@
+# 結合テスト（TL-3）表の範囲の個別実行（run_one・並列数 1）
+# run_runner は層の全件だけを回し範囲を指定できないため、手元の run_one で回した
+# 1 件の fail（test_normal_when_repository_schemas）は develop と同じ schemas/design/glossary.schema.yaml の description が 3 文あることによるもので、この PR の変更と関係しない（スコープ外 #531）
+
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/integration/scripts/test_meme_checks.py tests/integration/scripts/test_check_all.py
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source
+configfile: pytest.ini
+collected 21 items
+
+tests/integration/scripts/test_meme_checks.py ....                       [ 19%]
+tests/integration/scripts/test_check_all.py ..F..............            [100%]
+
+=================================== FAILURES ===================================
+_____________________ test_normal_when_repository_schemas ______________________
+
+run_script = <function run_script.<locals>._start at 0x7d1363803270>
+tmp_path = PosixPath('/home/shuhei2441/.cache/pytest-tmp-530/pytest-of-shuhei2441/pytest-9/test_normal_when_repository_sc0')
+
+    def test_normal_when_repository_schemas(run_script: RunScript, tmp_path: Path) -> None:
+        """リポジトリの全てのスキーマと設計書のテンプレートが違反なしで通り、description が全て 2 文以内になっている（正常系）。"""
+        # 準備
+        root = tmp_path / "repo"
+        root.mkdir()
+        shutil.copytree(_REPO / "schemas", root / "schemas")
+        shutil.copytree(_REPO / "docs" / "template", root / "docs" / "template")
+        (root / "project-index.yaml").write_text("documents: []\n", encoding="utf-8")
+        # 実行
+        result = run_script("check_all", root)
+        # 検証
+        assert result.exit_code == 0
+        assert result.stdout.splitlines() == ["0 件の文書を検査し、違反は 0 件、警告は 0 件でした"]
+        too_long = [
+            (path.name, text)
+            for path in sorted((_REPO / "schemas/design").glob("*.schema.yaml"))
+            for text in _descriptions(YAML(typ="safe").load(path.read_text(encoding="utf-8")))
+            if text.count("。") > _MAX_SENTENCES
+        ]
+>       assert too_long == []
+E       AssertionError: assert [('glossary.s... 1 件の用語にする。')] == []
+E         
+E         Left contains one more item: ('glossary.schema.yaml', 'リポジトリ固有の用語と、使用しない言い方の一覧。\n1 リポジトリ 1 ファイル。\n配信元の設定の文書の行が `alias_type: term`・`records: terms` で参照し、`terms` の要素を 1 件の用語にする。')
+E         Use -v to get more diff
+
+tests/integration/scripts/test_check_all.py:179: AssertionError
+=========================== short test summary info ============================
+FAILED tests/integration/scripts/test_check_all.py::test_normal_when_repository_schemas
+=================== 1 failed, 20 passed in 84.75s (0:01:24) ====================
