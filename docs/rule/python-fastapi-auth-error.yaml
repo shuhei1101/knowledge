@@ -34,7 +34,7 @@ tags:
   - name: tool:mcp
 status: current
 visibility: internal
-rev: 8
+rev: 9
 last_reviewed: '2026-11-20'
 sources:
   - title: "RFC 9457: Problem Details for HTTP APIs"
@@ -122,12 +122,14 @@ items:
     name: MCP のツールと同じ構造のレスポンス
     body: |-
       MCP のツールと同じデータを返却する API（[fastapi/スキーマ](id:python-fastapi-schema#mcp-shared-01)）は、MCP のツールがエラーで返却する JSON と同じ構造を `application/json` で返却する。
-      ステータスコードは例外ハンドラの対応表に従い、`RequestValidationError` も同じ構造に変換する。
+      ステータスコードは例外ハンドラの対応表に従わず、エラーの構造と同じプロジェクトの設計書で、エラーの種類ごとに決める。
+      `RequestValidationError` も同じ構造に変換し、その設計書のエラーの種類とステータスコードで返却する。
 
       RFC 9457 の Problem Details で返却する API が、MCP のツールのエラーの内容を返却するときは、次のメンバーに入れる。
 
       | MCP のツールのエラー | RFC 9457 のメンバー |
       | --- | --- |
       | 例外の名前 | 拡張メンバー `code` |
+      | 例外の種類 | 拡張メンバー `category` |
       | メッセージ | `detail` |
-      | 該当した箇所 | 拡張メンバー `details` |
+      | 例外ごとの内容 | 拡張メンバー `details` |
