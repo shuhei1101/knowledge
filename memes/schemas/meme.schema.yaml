@@ -1,0 +1,188 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: ネットミーム
+description: 動画のセリフに入れるネットミーム 1 件（言葉・セリフ・タイトルや名前・口癖）。
+x-rules:
+  - 1 ファイル = 1 件のネットミームにし、ファイル名は `{id}.yaml` にする。
+  - '`term` のセリフは 1 文までにし、表記の揺れは持たずに代表の 1 つを記載する。'
+  - 例文は持たない。
+type: object
+additionalProperties: false
+required:
+  - id
+  - term
+  - context
+  - use_when
+  - styles
+  - tags
+  - state
+properties:
+  id:
+    type: string
+    title: ネットミーム ID
+    description: 英小文字・数字・ハイフンの鍵。
+    pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+  term:
+    type: string
+    title: 表記
+    description: 用語。
+    minLength: 1
+  work:
+    type: string
+    title: 作品
+    description: 元になる作品の ID。アニメ・漫画・ゲームのネタは指定する。
+    pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+  type:
+    type: string
+    title: 種別
+    description: netslang（掲示板・SNS で生まれた用語）/ phrase（入れ替える所がある定番の構文）/ general（一般の話題・流行語・ネットでの呼び名）/ tech（IT・AI の話題）。`work` が無いときだけ持つ。
+    enum:
+      - netslang
+      - phrase
+      - general
+      - tech
+  popularity:
+    type: integer
+    title: 知名度
+    description: 1〜5。`work` が無いときだけ持つ。
+    minimum: 1
+    maximum: 5
+  context:
+    type: string
+    title: 文脈
+    description: どういう文脈で使われている言葉か。元の場面と、どこが面白くてネタにされているか。
+    minLength: 1
+  origin:
+    type: string
+    title: 元の説明
+    description: 元の話数・発言・記事など（分かるときだけ）。
+  use_when:
+    type: string
+    title: 使う場面
+    description: どんな話の流れで使用するか。
+    minLength: 1
+  styles:
+    type: array
+    title: 使い方
+    description: セリフへの入れ方。1 件以上。
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          title: 使い方の種類
+          description: verbatim（そのまま言う）/ parody（型を残して単語を入れ替える）/ topic（題材の単語として触れる）/ catchphrase（口癖をまねる）。
+          enum:
+            - verbatim
+            - parody
+            - topic
+            - catchphrase
+        patterns:
+          type: array
+          title: 型
+          description: 入れ替える所を `〇〇` にした型。`type` が parody のときだけ持ち、1 件以上。
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+      allOf:
+        - if:
+            properties:
+              type:
+                const: parody
+            required:
+              - type
+          then:
+            required:
+              - patterns
+          else:
+            not:
+              required:
+                - patterns
+  note:
+    type: string
+    title: 使うときの補足
+    description: 入れ方の注意（単品で使う・伏せ字にする・名前を言わない など）。
+  refs:
+    type: array
+    title: 出典
+    description: 確認した情報源。
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          title: URL
+          format: uri
+        description:
+          type: string
+          title: 説明
+  tags:
+    type: array
+    title: タグ
+    description: 検索に使用するタグ。作品・話題のタグ・内容の分類のタグ 1 つ・場面のタグを持つ。
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          title: タグ名
+          minLength: 1
+  state:
+    type: string
+    title: 状態
+    description: active（使用できる）/ inactive（使用しない。既定の検索から除く）。
+    enum:
+      - active
+      - inactive
+allOf:
+  - if:
+      not:
+        required:
+          - work
+    then:
+      required:
+        - type
+        - popularity
+    else:
+      not:
+        anyOf:
+          - required:
+              - type
+          - required:
+              - popularity
+x-bad-examples:
+  - value:
+      id: kusuriya-title
+      term: 薬屋のひとりごと
+      work: kusuriya
+      context: 作品のタイトル
+      use_when: 独り言を締めるとき
+      styles:
+        - type: parody
+      tags:
+        - name: topic:薬屋
+        - name: topic:タイトル
+      state: active
+    reason: '`styles[].type` が parody なのに `patterns` が無い'
+  - value:
+      id: dokagui-kizetsubu
+      term: ドカ食い気絶部
+      context: 大量に食べて眠り込むことを部活動のように呼ぶ
+      use_when: 食べすぎた話
+      styles:
+        - type: verbatim
+      tags:
+        - name: topic:用語
+      state: active
+    reason: '`work` が無いのに `type`・`popularity` が無い'

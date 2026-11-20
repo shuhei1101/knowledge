@@ -19,6 +19,7 @@ uv run --frozen --script scripts/check_all.py [--lint-dir {フォルダ}]
 """
 
 import argparse
+import importlib.util
 import io
 import re
 import shutil
@@ -49,6 +50,7 @@ from referencing.jsonschema import DRAFT202012
 from ruamel.yaml.error import YAMLError
 
 from _common import (
+    CONFIG,
     ConfigError,
     DocumentError,
     as_mapping,
@@ -91,10 +93,16 @@ if TYPE_CHECKING:
 CHECKS_ID = "knowledge-checks"
 
 # documents[] に無く、yamllint を当てるリポジトリの直下のファイル
-YAMLLINT_EXTRA = ("project-index.yaml", "rules.yaml")
+YAMLLINT_EXTRA = ("project-index.yaml", "rules.yaml", "memes/project-index.yaml")
 
 # 設計書のスキーマ（knowledge の正本）を置くフォルダ
 DESIGN_SCHEMAS_DIR = PurePosixPath("schemas/design")
+
+# ネットミームの配信元の validators のネットミームの検査の id
+MEME_CHECKS_ID = "meme-checks"
+
+# ネットミームの配信元（project-index.yaml・schemas/・scripts/meme_checks.py を持つ）のフォルダ
+MEMES_DIR = PurePosixPath("memes")
 
 # JSON Schema 2020-12 のメタスキーマに x-rules・x-bad-examples の形を足したメタスキーマ
 META_SCHEMA_PATH = PurePosixPath("schemas/meta.schema.yaml")
@@ -147,6 +155,8 @@ class Target:
     schema: str
     # 行の validators に knowledge-checks を持つか
     checks: bool
+    # 行の validators に meme-checks を持つか（ネットミームの配信元のネットミームの行）
+    meme_checks: bool = False
 
 
 def _use_utf8(stream: object) -> None:
@@ -260,7 +270,38 @@ def list_targets(root: Path, rows: Sequence[Mapping[str, Any]]) -> list[Target]:
         checks = CHECKS_ID in strings(row.get("validators"))
         for relative in list_row_files(root, row):
             targets.setdefault(relative, Target(path=relative, schema=schema, checks=checks))
+    # ネットミームの配信元の行は、パスと schema を MEMES_DIR を基準に解く
+    memes_root = root / MEMES_DIR
+    if (memes_root / CONFIG).is_file():
+        for row in load_config(memes_root):
+            schema = row.get("schema")
+            if row.get("enabled") is False or not isinstance(schema, str) or not schema:
+                continue
+            meme_checks = MEME_CHECKS_ID in strings(row.get("validators"))
+            for relative in list_row_files(memes_root, row):
+                path = MEMES_DIR / relative
+                targets.setdefault(
+                    path,
+                    Target(
+                        path=path,
+                        schema=str(MEMES_DIR / schema),
+                        checks=False,
+                        meme_checks=meme_checks,
+                    ),
+                )
     return sorted(targets.values(), key=lambda target: target.path)
+
+
+def _load_check_meme(root: Path) -> Any:
+    """ネットミームの配信元の scripts/meme_checks.py を読み込み、ネットミームの検査の関数を返す。"""
+    path = root / MEMES_DIR / "scripts" / "meme_checks.py"
+    spec = importlib.util.spec_from_file_location("meme_checks", path)
+    if spec is None or spec.loader is None:
+        message = f"{path} を読み込めません"
+        raise ImportError(message)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.check_meme
 
 
 def build_validators(
@@ -345,6 +386,12 @@ def check_target(
         for violation in check_document(text, root, index=index, names=names):
             line, rule = _split_line(violation["rule"])
             results.append((line, violation["path"], rule))
+    # ネットミームの検査は、validators に meme-checks を持つ行の文書だけに当てる
+    if target.meme_checks:
+        check_meme = _load_check_meme(root)
+        for violation in check_meme(text, root / MEMES_DIR):
+            line, rule = _split_line(violation["rule"])
+            results.append((line, violation["path"], rule))
     return results
 
 
@@ -385,7 +432,13 @@ def check_lints(
 
 def _read_schema_texts(root: Path) -> list[tuple[PurePosixPath, str]]:
     """schemas/ の直下と schemas/design/ のスキーマを、パスの順に読む。"""
-    paths = sorted([*root.glob(_SCHEMAS_GLOB), *(root / DESIGN_SCHEMAS_DIR).glob("*.schema.yaml")])
+    paths = sorted(
+        [
+            *root.glob(_SCHEMAS_GLOB),
+            *(root / DESIGN_SCHEMAS_DIR).glob("*.schema.yaml"),
+            *(root / MEMES_DIR).glob(_SCHEMAS_GLOB),
+        ]
+    )
     texts: list[tuple[PurePosixPath, str]] = []
     for path in paths:
         try:
@@ -415,12 +468,15 @@ def check_document_schemas(
     root: Path, meta: Draft202012Validator
 ) -> list[tuple[str, int, str, str]]:
     """schemas/*.schema.yaml に、拡張したメタスキーマの検査を当てる。"""
-    docs, results = _read_schemas(root, PurePosixPath("schemas"))
-    for name, doc in docs.items():
-        relative = str(PurePosixPath("schemas") / name)
-        results.extend(
-            (relative, line, path, message) for line, path, message in _check_meta(doc, meta)
-        )
+    results: list[tuple[str, int, str, str]] = []
+    for folder in (PurePosixPath("schemas"), MEMES_DIR / "schemas"):
+        docs, unreadable = _read_schemas(root, folder)
+        results.extend(unreadable)
+        for name, doc in docs.items():
+            relative = str(folder / name)
+            results.extend(
+                (relative, line, path, message) for line, path, message in _check_meta(doc, meta)
+            )
     return sorted(results, key=lambda result: (result[0], result[1]))
 
 
