@@ -25,13 +25,13 @@ docs:
     updated_at: '2026-11-20T04:41:09.374642+00:00'
   - page: schemas/design/external_api.schema.yaml
     new: false
-    change: 要求のパラメータの required の隣に condition を追加する
+    change: 要求のパラメータの required の隣と、endpoints[].response[] の type の隣に condition を追加し、response[].name の説明で返らない条件の記載先を condition にする
     status: done
     updated_by: planner
     updated_at: '2026-11-20T04:41:09.374642+00:00'
   - page: schemas/design/library.schema.yaml
     new: false
-    change: 引数の required の隣に condition を追加する
+    change: 引数の required の隣と、returns[] の type の隣に condition を追加し、returns[].name の説明で返らない条件の記載先を condition にする
     status: done
     updated_by: planner
     updated_at: '2026-11-20T04:41:09.374642+00:00'
