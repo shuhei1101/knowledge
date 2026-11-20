@@ -1,0 +1,17 @@
+docs:
+  - page: docs/checksheet/checksheet-review-interface-module.yaml
+    new: false
+    change: 件数に比例して繰り返す処理（ループの中の画面の読み書き・通信・ファイルの読み込み、要求ごとの全件の読み込み）をフローに追加する設計に、想定する最大の件数とその件数での上限（時間か回数）が非機能要件にあることを求める観点を追加する
+    status: todo
+  - page: docs/checksheet/checksheet-review-code-test.yaml
+    new: false
+    change: 件数に比例して繰り返す処理を追加する差分に、非機能要件の最大の件数で上限を確かめるテストがあることを求める観点を追加する
+    status: todo
+scope_out:
+  - item: mdmark#725・dev-docs#301・mindstella#547 の各不具合の修正
+    reason: 各リポジトリで起票済みで、この Issue はレビューの確認観点の追加だけを扱う
+    plan: none
+  - item: 言語ごとのテストの規約（`python-testing-layers` 等）への、件数で上限を確かめるテストの書き方の追加
+    reason: 要望はレビューの確認観点で、テストの書き方は既存の非機能要件のテストの節で足りるかを設計で確かめる。足りないと分かった場合はスコープに戻すかをレビューで確定する
+    plan: none
+use_cases: []
