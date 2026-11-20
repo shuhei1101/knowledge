@@ -30,7 +30,7 @@ scenarios:
         E->>M: search_docs に term A.I.VOICE2
         M-->>E: 用語集の用語
         E->>M: search_docs に source knowledge-memes と種類 meme
-        M-->>E: ネットミームの名前・説明・タグと関連の作品
+        M-->>E: ネットミームの名前・説明・タグ
       ```
 
       <!-- /map -->
@@ -44,7 +44,7 @@ scenarios:
       - '`list_match_words` が用語集（`docs/terms.yaml`）の用語の `name`・`aliases` を、文書の名前・別名と並べて返却する'
       - '`search_docs` の `term` に `A.I.VOICE2` を指定すると、用語 `A.I.VOICE 2` がヒットする'
       - '`source: knowledge` の検索・`group_by: tags` の集計・`list_match_words` に、ネットミームの配信元の作品とネットミームが出ない'
-      - '`search_docs` に `source: knowledge-memes` と種類 `meme` を指定すると、`name` が `term` の値、`related` が作品 `kusuriya` のネットミームがヒットする'
+      - '`search_docs` に `source: knowledge-memes` と種類 `meme` を指定すると、`name` が `term` の値、`description` が `context` の値のネットミームがヒットする'
     test: test_normal
   - name: 異常シナリオ（作業場所が scope.read の外）
     setup:
