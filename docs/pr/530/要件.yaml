@@ -67,8 +67,10 @@ docs:
     updated_at: '2026-11-20T13:57:03.756579+00:00'
   - page: files.yaml
     new: false
-    change: '`memes/` を規約の配信元の範囲から除外し、ネットミームの配信元のフォルダの行を追加する'
-    status: todo
+    change: '`memes/` は規約の配信元の直下のファイルの行（`project-index.yaml` の `root` の `exclude`）から除外したため、files.yaml に行を追加しない'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T14:13:29.221060+00:00'
   - page: docs/terms.yaml
     new: false
     change: 用語『ネットミーム』を追加する。『作品』は一般語で、『直コミット』は project-index の用語集にあるため登録しない
