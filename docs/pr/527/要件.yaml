@@ -1,0 +1,16 @@
+docs:
+  - page: schemas/terms.schema.yaml
+    new: false
+    change: $defs.term の avoid の後に、用語を説明するページ（表示名とリンク先の組）の並びを持つ任意のキーを追加する
+    status: todo
+scope_out:
+  - item: 設計書『用語集』のスキーマ（schemas/design/glossary.schema.yaml）とテンプレート『用語集』に、同じキーを追加する
+    reason: 要望は knowledge 共通の用語集のスキーマで、リポジトリ固有の用語集（設計書）にリンクを記載したい利用側は今無い。同じ構造の用語を持つため、揃えるかはレビューで確定する
+    plan: none
+  - item: knowledge の用語集（docs/terms.yaml）の用語に、説明するページのリンクを記載する
+    reason: キーは任意で、knowledge の用語集の表示にリンクの列を使用する利用側が今無い
+    plan: none
+  - item: リンク先の相対パスの実在を文書の違反の検査（knowledge_checks.py）で確認する
+    reason: リンク先は利用側のリポジトリのページ（mdmark のガイド）で、knowledge の検査は利用側のファイルを読めない
+    plan: none
+use_cases: []
