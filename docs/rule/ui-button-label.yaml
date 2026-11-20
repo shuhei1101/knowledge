@@ -21,6 +21,7 @@ tags:
   - name: topic:アイコン
   - name: topic:ツールチップ
   - name: topic:文言
+  - name: topic:カーソル
   - name: action:表示
   - name: action:統一
 status: current
@@ -73,6 +74,11 @@ items:
     name: アイコンだけのボタンのツールチップ
     body: |-
       - アイコンだけのボタンにはツールチップを付け、ホバーとフォーカスで出す（HIG）。
+  - id: tooltip-02
+    group: ツールチップ
+    name: ツールチップを出す要素のカーソル
+    body: |-
+      - 説明のツールチップを出す要素（ボタンでない情報のアイコン・略語を含む）でも、マウスのカーソルを `help` にしない。
   - id: icon-01
     group: アイコン
     name: 同じ操作は同じアイコン
