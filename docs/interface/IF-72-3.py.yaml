@@ -154,7 +154,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: スキーマに合わない文書（`description` が無い）と、項目の ID が重複した文書を 1 つずつ持ち、`schemas/meta.schema.yaml` を持つ一時フォルダ
+        description: スキーマに合わない文書（`description` が無い）と、項目の ID が重複した文書と、`memes/memes/` の下で無い作品を `work` で指すネットミームを 1 つずつ持ち、`memes/project-index.yaml` と `schemas/meta.schema.yaml` を持つ一時フォルダ
     flow: |-
       <!-- map -->
 
@@ -174,7 +174,7 @@ flows:
       <!-- /map -->
     expected:
       - 終了コードが 1
-      - 標準出力に 2 つの文書の違反が、ファイルのパス・行・項目のパス・内容つきで 1 行ずつ出る
+      - 標準出力に 3 つの文書の違反（ネットミームは `work` の違反）が、ファイルのパス・行・項目のパス・内容つきで 1 行ずつ出る
     test: test_normal_when_violations
   - name: 正常系（対応表のコピーが原本と違う・終了コード 1）
     summary: 対応表のコピーが原本から再作成したものと違えば、違反として出す
@@ -561,7 +561,7 @@ exceptions:
     condition: markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`npx` が `PATH` に無いか、`project-index.yaml` が無い・YAML として読み込めないか、`schemas/meta.schema.yaml` が無い・YAML として読み込めない・それ自身が JSON Schema 2020-12 のメタスキーマに合わない。mdmark の点検が失敗したとき（終了コードが 0・1 以外か、標準出力の最後の行が `ずれ {件数} 件` でない）も、他の検査を終えてから標準エラーに mdmark の標準エラーを出して終了コード 2 で終わる
 constraints:
   - item: 検査の範囲
-    constraint: '`project-index.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も適用する。
+    constraint: '`project-index.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も適用する。ネットミームの配信元の `memes/project-index.yaml` の `documents[]` の全ての行も、`memes/` を基準に同じく検査し、`validators[]` に `meme-checks` を持つ行は「ネットミームの検査」（IF-514-1）も適用する。
 
       行の `schema` の `$ref` は、そのスキーマと同じフォルダの `*.schema.yaml` をファイル名で登録して解く（`schemas/design/` の設計書のスキーマが指す `common.schema.yaml` は `schemas/design/common.schema.yaml`）'
   - item: 設計書のスキーマの検査の範囲
