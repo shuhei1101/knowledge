@@ -13,13 +13,7 @@ if TYPE_CHECKING:
     import pytest
 
 # タグ topic:薬屋 を持つ作品
-_WORK_KUSURIYA = (
-    "id: kusuriya\n"
-    "title: 薬屋のひとりごと\n"
-    "type: anime\n"
-    "tags:\n"
-    "  - name: topic:薬屋\n"
-)
+_WORK_KUSURIYA = "id: kusuriya\ntitle: 薬屋のひとりごと\ntype: anime\ntags:\n  - name: topic:薬屋\n"
 
 
 def test_main(
@@ -50,7 +44,8 @@ def test_main_when_unexpected_error(
 
     # 準備
     def _raise(*_args: object) -> list[dict[str, str]]:
-        raise RuntimeError("壊れた")
+        msg = "壊れた"
+        raise RuntimeError(msg)
 
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(meme_checks, "check_meme", _raise)
