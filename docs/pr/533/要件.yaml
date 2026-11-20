@@ -1,0 +1,74 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-526-1.yaml
+    impact: new
+    detail: 利用者がスキルでネットミームの登録を指示し、作品・話題ごとにリサーチャーが集めた候補を確認して、登録すると回答した作品と用語だけがネットミームの配信元へ直コミットで登録される
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-514-1.yaml
+    impact: following
+    detail: 登録のスキルの登録の工程が、この書き込みを呼ぶ側になる。書き込みの流れは変わらない
+    depends_on:
+      - docs/scenario/SC-526-1.yaml
+  - kind: single
+    scenario: docs/scenario/SC-312-1.yaml
+    impact: run_only
+    detail: 登録のスキルの設計書から SKILL.md を書き出す。生成の流れは変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 追加するエージェントフロー・判定表・SKILL.md と、最初に登録する作品とネットミームが、全ての文書の検査に合格する。検査の流れは変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: none
+    detail: ネットミームの配信元を検索すると、登録した作品とネットミームが返る。検索の流れは変わらない
+    depends_on: []
+docs:
+  - page: docs/skill/meme-register.yaml
+    new: true
+    change: 'ネットミームの登録のスキル（A-241 の meme/register）を type: skill のエージェントフローとして追加する。候補の選別と利用者への確認の方法の表を持つ'
+    status: todo
+  - page: docs/skill/meme-research.yaml
+    new: true
+    change: 'ネットミームのリサーチャーのエージェントフロー（A-238 の research/meme）を type: flow で追加する。集める言葉・依頼に指定する情報・返却する情報を持つ'
+    status: todo
+  - page: docs/decision-table/decision-table-meme-popularity.yaml
+    new: true
+    change: ネットミームの知名度の判定表（A-242）を追加する
+    status: todo
+  - page: skills/meme-register/SKILL.md
+    new: true
+    change: docs/skill/meme-register.yaml から生成のコマンドで書き出す
+    status: todo
+  - page: skills/files.yaml
+    new: false
+    change: skills/meme-register/SKILL.md の行を追加する
+    status: todo
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: skills/meme-register/ と、登録する作品・ネットミームのファイルの配置を追加する
+    status: todo
+  - page: docs/guide/guide-setup-install-plugin.yaml
+    new: false
+    change: knowledge のプラグインのスキルに、ネットミームの登録（/knowledge:meme-register）を追加する
+    status: todo
+  - page: .claude-plugin/plugin.json
+    new: false
+    change: プラグインの説明に、ネットミームを登録するスキルを渡すことを追加する
+    status: todo
+  - page: .claude-plugin/marketplace.json
+    new: false
+    change: knowledge のプラグインの行の説明を plugin.json に合わせる
+    status: todo
+scope_out:
+  - item: 台本作成ノード・動画作成ノードのエージェントフローに、このスキルを呼ぶ工程を追加する
+    reason: A-241 の「追加が要る資料」の aituber 側の行。A-264 ではこの Issue（No 21）の範囲に含まれない
+    plan: none
+  - item: ノードからスキルを実行するためのセットアップ手順（A-233。knowledge のプラグインの登録と、直コミットを呼べる作業場所の設定）
+    reason: aituber のセットアップ手順で、A-264 ではこの Issue の範囲に含まれない
+    plan: none
+  - item: 登録しない候補 85 件（A-245）
+    reason: 利用者が登録しないと決定した（A-244）
+    plan: none
