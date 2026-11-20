@@ -227,6 +227,8 @@ properties:
           x-used-by:
             - 実装で、無いときにエラーにするかを決める。
             - テストで、引数を省いたときのケースにする。
+        condition:
+          $ref: common.schema.yaml#/$defs/key_condition
         default:
           type: string
           title: デフォルト
@@ -322,6 +324,8 @@ properties:
           description: 実装言語の型名。取りうる値が限られるときはリテラルの列挙。
           x-used-by:
             - 実装で、フィールドの型にする。
+        condition:
+          $ref: common.schema.yaml#/$defs/key_condition
         description:
           type: string
           title: 説明

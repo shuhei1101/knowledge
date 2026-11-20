@@ -68,6 +68,7 @@ items:
       | request[].name | パラメータ | string | 必須 | - | - | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 フィールド = 1 要素に展開する。 | 実装で、引数・フィールドの名前にする。 | - |
       | request[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙。 | 実装で、引数の型にする。 | - |
       | request[].required | 必須 | boolean | 必須 | - | - | 省けない引数なら `true`。 | 実装で、無いときにエラーにするかを決める。<br>テストで、引数を省いたときのケースにする。 | - |
+      | request[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | request[].default | デフォルト | string | - | - | - | 省略時の値。省略できて既定の値が無いときは `なし（{省略時の挙動}）`。 | 実装で、引数を省いたときの値にする。 | - |
       | request[].location | 配置場所 | string | - | `path` / `query` / `header` / `cookie` / `body` / `argument` | - | HTTP のパラメータの配置場所。MCP ツール・関数の引数は `argument`。 | 実装で、値を取り出す場所（パス・クエリ・ヘッダ・本文・引数）にする。 | - |
       | request[].description | 説明 | string | 必須 | - | - | 引数が何を表すか。 | 呼び出し元の実装で、指定する値を決める。 | - |
@@ -81,6 +82,7 @@ items:
       | response | レスポンス | array | - | - | - | 返却する値のフィールド。1 要素 = 1 フィールド。 | 実装で、戻り値の型にする。<br>呼び出し元の実装で、受け取る値を決める。<br>生成で、レスポンスの表にする。 | - |
       | response[].name | フィールド | string | 必須 | - | - | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 フィールド = 1 要素に展開する。 | 実装で、戻り値のフィールドの名前にする。 | - |
       | response[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙。 | 実装で、フィールドの型にする。 | - |
+      | response[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | response[].description | 説明 | string | 必須 | - | - | フィールドの値が何を表すか。 | 呼び出し元の実装で、値で分岐する条件を決める。 | - |
       | response[].constraints | 制限 | string | - | - | - | そのフィールド単体にかかる上限・形式。 | テストで、戻り値の上限・形式を確認する。 | - |
       | response[].format | 形式 | string | - | - | - | 文字列の形式（`date-time` / `uri` 等）。 | 実装で、文字列の形式にする。 | - |
@@ -145,7 +147,9 @@ items:
       | side_effects | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | exclusivity | エントリーポイントが `trigger` の GitHub Actions の workflow は、workflow のファイルの `concurrency` の `group` と `cancel-in-progress` を記載する。 | - | - |
       | request | エントリーポイントが `trigger` の GitHub Actions の workflow は、workflow のファイルの `on.workflow_dispatch.inputs` の名前・型・必須・既定値と一致させる。 | - | - |
+      | request[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | request_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | response[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | response_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | response_notes | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | status_codes | 異常の行は異常系のフローと 1:1 にする。 | - | - |

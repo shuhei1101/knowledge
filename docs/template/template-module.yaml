@@ -87,6 +87,7 @@ items:
       | data_models[].methods[].args[].title | 論理名 | string | - | - | - | 日本語で表した名前。 | 生成で、表の論理名にする。 | - |
       | data_models[].methods[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で記載する。 | 実装で、型にする。 | - |
       | data_models[].methods[].args[].required | 必須 | boolean | - | - | - | 省けない項目なら `true`。 | 実装で、省けるかを決める。 | - |
+      | data_models[].methods[].args[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | data_models[].methods[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には記載しない。 | 実装で、省いたときの値にする。 | - |
       | data_models[].methods[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで指定するかを決める。 | - |
       | data_models[].methods[].args[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、入れる値を決め、docstring・コメントの説明にする。 | - |
@@ -209,6 +210,7 @@ items:
       | classes[].methods[].args[].title | 論理名 | string | - | - | - | 日本語で表した名前。 | 生成で、表の論理名にする。 | - |
       | classes[].methods[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で記載する。 | 実装で、型にする。 | - |
       | classes[].methods[].args[].required | 必須 | boolean | - | - | - | 省けない項目なら `true`。 | 実装で、省けるかを決める。 | - |
+      | classes[].methods[].args[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | classes[].methods[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には記載しない。 | 実装で、省いたときの値にする。 | - |
       | classes[].methods[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで指定するかを決める。 | - |
       | classes[].methods[].args[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、入れる値を決め、docstring・コメントの説明にする。 | - |
@@ -315,6 +317,7 @@ items:
       | functions[].args[].title | 論理名 | string | - | - | - | 日本語で表した名前。 | 生成で、表の論理名にする。 | - |
       | functions[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で記載する。 | 実装で、型にする。 | - |
       | functions[].args[].required | 必須 | boolean | - | - | - | 省けない項目なら `true`。 | 実装で、省けるかを決める。 | - |
+      | functions[].args[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | functions[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には記載しない。 | 実装で、省いたときの値にする。 | - |
       | functions[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで指定するかを決める。 | - |
       | functions[].args[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、入れる値を決め、docstring・コメントの説明にする。 | - |
@@ -376,6 +379,7 @@ items:
       | function_types[].args[].title | 論理名 | string | - | - | - | 日本語で表した名前。 | 生成で、表の論理名にする。 | - |
       | function_types[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で記載する。 | 実装で、型にする。 | - |
       | function_types[].args[].required | 必須 | boolean | - | - | - | 省けない項目なら `true`。 | 実装で、省けるかを決める。 | - |
+      | function_types[].args[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | function_types[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には記載しない。 | 実装で、省いたときの値にする。 | - |
       | function_types[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで指定するかを決める。 | - |
       | function_types[].args[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、入れる値を決め、docstring・コメントの説明にする。 | - |
@@ -412,6 +416,7 @@ items:
       | components[].props[].title | 論理名 | string | - | - | - | 日本語で表した名前。 | 生成で、表の論理名にする。 | - |
       | components[].props[].type | 型 | string | 必須 | - | - | 言語の型の表記。 | 実装で、型にする。 | - |
       | components[].props[].required | 必須 | boolean | - | - | - | 省けない項目なら `true`。 | 実装で、省けるかを決める。 | - |
+      | components[].props[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | components[].props[].default | デフォルト | string | - | - | - | 省いたときの値。 | 実装で、省いたときの値にする。 | - |
       | components[].props[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、入れる値を決め、docstring・コメントの説明にする。 | - |
       | components[].props[].notes | 補足 | string | - | - | - | 説明に収まらない前提・制約。 | 実装で、満たす前提を検証の処理か docstring にする。 | - |
@@ -494,6 +499,7 @@ items:
       | stores[].actions[].args[].title | 論理名 | string | - | - | - | 日本語で表した名前。 | 生成で、表の論理名にする。 | - |
       | stores[].actions[].args[].type | 型 | string | 必須 | - | - | 実装言語の型名。取りうる値が限られるときはリテラルの列挙で記載する。 | 実装で、型にする。 | - |
       | stores[].actions[].args[].required | 必須 | boolean | - | - | - | 省けない項目なら `true`。 | 実装で、省けるかを決める。 | - |
+      | stores[].actions[].args[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | stores[].actions[].args[].default | デフォルト | string | - | - | - | 省略時の値。必須の引数には記載しない。 | 実装で、省いたときの値にする。 | - |
       | stores[].actions[].args[].passing | 指定方法 | string | - | `positional` / `keyword` / `injected` | - | `positional`（位置）/ `keyword`（キーワード引数）/ `injected`（依存の注入）。 | 実装で、位置・キーワード・依存の注入のどれで指定するかを決める。 | - |
       | stores[].actions[].args[].description | 説明 | string | 必須 | - | - | 値が何を表すか（意味・単位・取りうる範囲）。 | 実装で、入れる値を決め、docstring・コメントの説明にする。 | - |
@@ -602,6 +608,7 @@ items:
       | data_models[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | data_models[].methods[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | data_models[].methods[].side_effects | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | data_models[].methods[].args[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | data_models[].methods[].args_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | data_models[].methods[].returns_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | data_models[].methods[].process | 呼び出す関数は文末の括弧内に論理名で添える。<br>択一の分岐は 1 つの番号の下に `- {条件}の場合、{内容}` で並べる。<br>ログは配下に `- `[{レベル}]` {出力する事実}（{値}）` で記載する。 | - | - |
@@ -627,6 +634,7 @@ items:
       | classes[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | classes[].methods[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | classes[].methods[].side_effects | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | classes[].methods[].args[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | classes[].methods[].args_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | classes[].methods[].returns_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | classes[].methods[].process | 呼び出す関数は文末の括弧内に論理名で添える。<br>択一の分岐は 1 つの番号の下に `- {条件}の場合、{内容}` で並べる。<br>ログは配下に `- `[{レベル}]` {出力する事実}（{値}）` で記載する。 | - | - |
@@ -652,6 +660,7 @@ items:
       | constants[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | functions[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | functions[].side_effects | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | functions[].args[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | functions[].args_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | functions[].returns_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | functions[].process | 呼び出す関数は文末の括弧内に論理名で添える。<br>択一の分岐は 1 つの番号の下に `- {条件}の場合、{内容}` で並べる。<br>ログは配下に `- `[{レベル}]` {出力する事実}（{値}）` で記載する。 | - | - |
@@ -664,12 +673,14 @@ items:
       | functions[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | functions[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | function_types[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | function_types[].args[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | function_types[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
       | function_types[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
       | function_types[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
       | function_types[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | function_types[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | components[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | components[].props[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | components[].unit_tests[].name | `test_{関数の物理名}_when_{条件}`（条件分岐の無い唯一のケースは `test_{関数の物理名}`）にする。<br>期待値は名前に入れない。<br>先頭が `_` の関数は `_` を除外する。 | test_main_returns_1 | 期待値が名前に入っている |
       | components[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
       | components[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
@@ -679,6 +690,7 @@ items:
       | stores[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | stores[].actions[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | stores[].actions[].side_effects | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | stores[].actions[].args[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | stores[].actions[].args_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | stores[].actions[].returns_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | stores[].actions[].process | 呼び出す関数は文末の括弧内に論理名で添える。<br>択一の分岐は 1 つの番号の下に `- {条件}の場合、{内容}` で並べる。<br>ログは配下に `- `[{レベル}]` {出力する事実}（{値}）` で記載する。 | - | - |
