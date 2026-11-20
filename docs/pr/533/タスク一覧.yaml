@@ -1,0 +1,89 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存のリポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: 既存の設計書があり、棚卸しは要らない
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めを依頼する Issue ではない
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: スキルの配布（text-review）・サブエージェントの起動・直コミット（#530 で配信元に許可済み）は実績があり、未検証の技術機構に依存しない
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: 利用者がネットミームを登録する流れは 1 回のスキルの実行で完結し、単一ユースケースの連鎖にならない。台本作成ノード・動画作成ノードからスキルを呼ぶ流れは aituber が持つ
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 画面を作らない（判定フローチャート『モック要否』）
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面を作らない（判定フローチャート『モック要否』）
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: 単一ユースケース設計
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T16:30:57.927437+00:00'
+  - process: モック作成
+    status: skipped
+    reason: 画面を作らない（判定フローチャート『モック要否』）
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: データ設計
+    status: skipped
+    reason: '作品とネットミームのキーは #530 でスキーマ（memes/schemas/）として確定済みで、この PR はキーを変えない'
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: インターフェース定義設計
+    status: skipped
+    reason: コードの操作を追加しない。スキルとリサーチャーの工程・入出力は、エージェントフローの設計書（docs/skill/ の種類 skill）が原本で、ドキュメント修正で作る
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: 部品設計
+    status: skipped
+    reason: 画面の部品を作らない
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: 画面を作らない（判定フローチャート『画面設計要否』）
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: モジュール構成設計
+    status: skipped
+    reason: スクリプトを追加・変更しない。SKILL.md は既存の生成のコマンド（SC-312-1）で書き出し、配置はフォルダ構成の設計書で記載する
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: ドキュメント修正
+    status: done
+    note: エージェントフロー 2 件・判定表・フォルダ構成・使い方・プラグインの説明。要件.yaml の docs の行
+    updated_by: planner
+    updated_at: '2026-11-20T17:00:54.234099+00:00'
+  - process: 単体テスト作成
+    status: skipped
+    reason: コードを追加・変更しない。文書とデータは全ての文書の検査（SC-72-6）とネットミームの検査で確かめる
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'
+  - process: 実装
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T17:15:16.714648+00:00'
+  - process: 結合テスト作成
+    status: skipped
+    reason: コードを追加・変更しない。既存の全ての文書の検査を実装の工程で実行して確かめる
+    updated_by: planner
+    updated_at: '2026-11-20T16:22:06.021633+00:00'

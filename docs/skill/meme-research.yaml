@@ -1,0 +1,165 @@
+id: meme-research
+type: flow
+title: ネットミームの調査
+summary: 指定した作品・話題について、作品の情報と用語の候補を Web で集め、文脈・使う場面・使い方と気になる点を出典と一緒に返却する
+condition: ネットミームの登録のスキル（meme-register）から、サブエージェントとしてネットミームの調査の依頼を受けたとき
+tags:
+  - topic:ネットミーム
+  - topic:作品
+  - topic:調査
+  - topic:サブエージェント
+  - action:調査
+  - action:収集
+steps:
+  - name: 依頼を確認する
+    body: |-
+      依頼の項目を確認する。
+      調べる日は依頼の `searched_on` を使用し、自分の知識の日付を使用しない。
+
+      <!-- table: {"kind": "data"} -->
+
+      | キー | 型 | 必須 | 説明 | 例 |
+      | --- | --- | --- | --- | --- |
+      | `work` | object | - | 調べる作品・話題。作品を持たない言葉（ネットの用語・構文）を調べるときは省略する | - |
+      | `work.title` | string | ✓ | 作品・話題の名前（利用者の発言のまま） | `"FX戦士くるみちゃん"` |
+      | `work.type` | enum | - | 作品の種別（ネットミームの配信元の作品の `type`）。分かるときだけ | `"anime"` |
+      | `work.popularity` | int | - | 利用者が示した知名度。返却する知名度にそのまま使用する | `4` |
+      | `terms` | string[] | - | 利用者が示した言葉。必ず調べて返却する | `["破産 RTA"]` |
+      | `known_terms` | string[] | - | 登録済みの言葉。候補から除く | `["強制ロスカット"]` |
+      | `searched_on` | date | ✓ | 調べる日 | `"2026-11-20"` |
+
+      <!-- /table -->
+
+      ```json
+      {
+        "work": {"title": "FX戦士くるみちゃん", "type": "anime"},
+        "terms": ["破産 RTA"],
+        "known_terms": [],
+        "searched_on": "2026-11-20"
+      }
+      ```
+  - name: 作品・話題の情報を確認する
+    when: 依頼に `work` があるとき
+    body: |-
+      次の項目を確認する。
+
+      - 正式なタイトル・種別・作品の説明の案
+      - 放送のシーズン（アニメだけ。前のシーズンも含めて、`searched_on` までに始まったもの全て）
+      - 知名度の推奨の値の根拠（発行部数・シリーズの期数・ランキングの順位・ネットで話題になった記事）
+
+      音声入力の名前は文脈から補って特定する。
+      特定できなければ推測で埋めず、`work.title` を空の文字列にして `work.unverified` に `title` を入れる。
+      作品の説明の書き方とキーは、ネットミームの配信元の作品のスキーマ（`describe` の `source: knowledge-memes`・`kind: meme_work`）に従う。
+      知名度の推奨の値は、判定表『ネットミームの知名度』（`decision-table-meme-popularity`） で決める。
+      依頼に `work.popularity` があれば、その値にする。
+    calls:
+      - type: tool
+        tool: WebSearch
+      - type: tool
+        tool: WebFetch
+      - type: tool
+        tool: mcp__plugin_project-index_project-index__describe
+      - type: tool
+        tool: mcp__plugin_project-index_project-index__search_docs
+  - name: 用語を集める
+    body: |-
+      公式サイト・百科事典・解説と感想の記事・名言の一覧・実況のまとめ（「{タイトル} 名言」「{タイトル} ネタ」「{タイトル} ミーム」の検索）から、次の表に該当する言葉を集められるだけ集める。
+      利用者が示した言葉（`terms`）は必ず調べる。
+      登録済みの言葉（`known_terms`）は除く。
+      候補から除く基準は持たない（選別は呼び出し元が行う）。
+
+      <!-- table: {"kind": "data"} -->
+
+      | 集める言葉 | 補足 |
+      | --- | --- |
+      | 短くて特徴のあるセリフ・単語 | - |
+      | タイトルや名前の型 | 入れ替えて、もじれるもの |
+      | キャラクターの名前 | 主人公のほかのキャラクターも集める |
+      | 口癖 | - |
+      | ネットでの呼び名 | 公式の名前より優先する |
+      | 下ネタ・不衛生・過激な言葉 | 除かずに集める |
+
+      <!-- /table -->
+    calls:
+      - type: tool
+        tool: WebSearch
+      - type: tool
+        tool: WebFetch
+  - name: セリフの言い回しを照合する
+    body: |-
+      セリフは情報源 2 件以上で言い回しを照合する。
+      一致しないときは、その候補の `unverified` に `term` を入れる。
+    calls:
+      - type: tool
+        tool: WebFetch
+  - name: 候補を返却する
+    body: |-
+      次の表のキーの JSON で返却する。
+      キーの定義は、ネットミームの配信元の同じ名前のキー（`describe` の `source: knowledge-memes`）に従う。
+      `id`・`state` とタグの確定は、登録のときに呼び出し元が付ける。
+
+      - 確認できなかったキーは値を省き、`unverified` にキーの名前を並べる（推測で埋めない）
+      - 使い方の種類と型は、ネットミームのスキーマの `styles` の説明で付ける
+      - 例文は作成しない
+      - 利用者が判断する材料（成人向けの作品が出所・実在の人が元・人種や性別の差別に当たる など）は `concerns` に記載する
+
+      <!-- table: {"kind": "data"} -->
+
+      | キー | 型 | 必須 | 条件 | 説明 | 例 |
+      | --- | --- | --- | --- | --- | --- |
+      | `work` | object | ✓ | 依頼に `work` あり | 作品・話題の情報 | - |
+      | `work.title` | string | ✓ | - | 正式なタイトル。特定できなければ空の文字列 | `"FX戦士くるみちゃん"` |
+      | `work.type` | enum | ✓ | - | 種別 | `"anime"` |
+      | `work.description` | string | ✓ | - | 作品の説明の案 | - |
+      | `work.airings` | object[] | ✓ | `work.type: anime` | 放送のシーズン（`year`・`season`）。`searched_on` までに始まったもの全て | `[{"year": 2026, "season": "fall"}]` |
+      | `work.popularity` | int | ✓ | - | 知名度の推奨の値（利用者が示したときはその値） | `3` |
+      | `work.popularity_basis` | string | ✓ | - | 判定表の該当した行の結果と、確認した値 | `"1 期目。第 1 話と第 7 話が、記事とまとめになった"` |
+      | `work.unverified` | string[] | ✓ | - | `work` のうち確認できなかったキーの名前（値は空の文字列か空の配列にし、`popularity` は 1）。無ければ空 | `["airings"]` |
+      | `candidates` | object[] | ✓ | - | 用語の候補。無ければ空 | - |
+      | `candidates[].term` | string | ✓ | - | 表記 | `"強制ロスカット"` |
+      | `candidates[].in_work` | boolean | ✓ | - | その作品・話題のネタか。作品のものでない言葉と、依頼に `work` が無いときは `false` | `true` |
+      | `candidates[].type` | enum | ✓ | `candidates[].in_work: false` | 種別（`netslang`・`phrase`・`general`・`tech`） | `"netslang"` |
+      | `candidates[].popularity` | int | ✓ | `candidates[].in_work: false` | 知名度の推奨の値 | `3` |
+      | `candidates[].context` | string | ✓ | - | 文脈（元の場面と、どこが面白くてネタにされているか） | - |
+      | `candidates[].origin` | string | - | - | 元の話数・発言・記事 | `"第 7 話のサブタイトル"` |
+      | `candidates[].use_when` | string | ✓ | - | 使う場面 | - |
+      | `candidates[].styles` | object[] | ✓ | - | 使い方（`type` と、`parody` のときの `patterns`） | `[{"type": "verbatim"}]` |
+      | `candidates[].note` | string | - | - | 使うときの補足 | - |
+      | `candidates[].refs` | object[] | ✓ | - | 出典（`url`・`description`）。確認できた情報源が無ければ空にして `unverified` に `refs` を入れる | - |
+      | `candidates[].tags` | object[] | ✓ | - | タグの案（作品のタグ・内容の分類のタグ 1 つ・場面のタグ） | `[{"name": "topic:用語"}]` |
+      | `candidates[].concerns` | string | - | - | 利用者が判断する材料。無ければ省略する | - |
+      | `candidates[].unverified` | string[] | ✓ | - | 確認できなかったキーの名前。無ければ空 | `["term"]` |
+      | `not_fetched` | object[] | ✓ | - | 取得できなかった情報源（`source`・`reason`・`description`）。無ければ空 | `[{"source": "https://dic.pixiv.net/a/FX戦士くるみちゃん", "reason": "403"}]` |
+
+      <!-- /table -->
+
+      ```json
+      {
+        "work": {
+          "title": "FX戦士くるみちゃん", "type": "anime",
+          "description": "2026 年秋のアニメ。大学生のくるみが、母が FX で失った 2,000 万円を取り返そうと、FX にのめり込む",
+          "airings": [{"year": 2026, "season": "fall"}],
+          "popularity": 3,
+          "popularity_basis": "1 期目。第 1 話と第 7 話が、記事とまとめになった",
+          "unverified": []
+        },
+        "candidates": [
+          {
+            "term": "強制ロスカット",
+            "in_work": true,
+            "context": "証拠金が基準を割ると、自動で決済される。第 7 話で、登場人物が強制ロスカットされる場面が話題になった",
+            "origin": "第 7 話のサブタイトル「強制ロスカットなんてヤダもん……」",
+            "use_when": "限界が来て、強制的に終わった、という話",
+            "styles": [{"type": "verbatim"}, {"type": "topic"}],
+            "refs": [{"url": "https://ja.wikipedia.org/wiki/FX戦士くるみちゃん", "description": "Wikipedia。各話のサブタイトル"}],
+            "tags": [{"name": "topic:FX戦士"}, {"name": "topic:用語"}, {"name": "topic:お金"}],
+            "unverified": []
+          }
+        ],
+        "not_fetched": []
+      }
+      ```
+refs:
+  - to: decision-table-meme-popularity
+    type: requires
+    when: 知名度の推奨の値の決め方を変えるときに、判定表と突き合わせる。
