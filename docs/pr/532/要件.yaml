@@ -1,0 +1,20 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 全ての文書の検査で、用語集のスキーマの説明が 2 文以内の決まりに合格するようになる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: run_only
+    detail: 用語集のスキーマから用語集のテンプレートを書き出し直す
+    depends_on: []
+docs:
+  - page: schemas/design/glossary.schema.yaml
+    new: false
+    change: 最上位の description を 2 文にし、「1 リポジトリ 1 ファイル」を x-rules へ移す（フォルダ構成のスキーマと同じ持ち方）
+    status: todo
+  - page: docs/template/template-glossary.yaml
+    new: false
+    change: スキーマから生成し直して description の変更に追随する
+    status: todo
