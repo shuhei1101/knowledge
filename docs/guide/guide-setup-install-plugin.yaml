@@ -28,7 +28,8 @@ items:
   - id: overview
     name: 概要
     body: |-
-      knowledge のスキル（文章を点検して修正する `/knowledge:text-review`）を Claude Code で使用したいときに実行する。
+      knowledge のスキルを Claude Code で使用したいときに実行する。
+      入るスキルは、文章を点検して修正する `/knowledge:text-review` と、ネットミームを登録する `/knowledge:meme-register`。
       プラグイン slop-check を入れると、書き込むツールの実行の後に、書き込んだ中身にある AI slop の単語と置き換え先が Claude へ通知される。
       画面への表示を有効にした端末では、検知した単語が画面に 1 行で出る。
   - id: prerequisite-01
@@ -97,6 +98,8 @@ items:
     name: スキルを呼べることを確認
     body: |-
       Claude Code のセッションで `/knowledge:text-review` と入力すると、スキルが候補に出る。
+      `/knowledge:meme-register` も同じく候補に出る。
+      ネットミームの登録は、端末の設定にネットミームの配信元を登録し、直コミットを呼べる作業場所にした端末でだけ書き込める（[knowledge を project-index の配信元に登録する](id:guide-setup-docs-mcp)）。
   - id: check-slop-check-01
     group: 確認 > AI slop の単語が通知される
     name: 単語の通知の確認

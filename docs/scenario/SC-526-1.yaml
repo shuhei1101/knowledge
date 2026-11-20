@@ -13,6 +13,7 @@ preconditions:
   - knowledge のプラグインが入っていて、スキル `/knowledge:meme-register` を呼べる
   - ネットミームの配信元（`knowledge-memes`）が配信中で、セッションの作業場所が端末の設定の `sources[].direct_commit.scope` に該当する
   - セッションで WebSearch・WebFetch とサブエージェントの起動を使用できる
+  - セッションで `gh` を使用でき、GitHub に認証済みである（登録のコミットで動いた develop のワークフローの結果を `gh run list` で取得する）
 success_guarantee: 利用者が登録すると回答した作品と用語だけが、検査に合格して develop のコミットとしてリモートへプッシュされ、ネットミームの配信元の検索で返る。
 minimal_guarantee: 利用者が確認していない候補と、登録しないと回答した候補は書き込まない。検査で断られた書き込みはコミットせず、断られた理由を利用者に伝える。プッシュの後の CI が失敗しても、打ち消しのコミットは利用者が回答するまで作らない。
 scenarios:
