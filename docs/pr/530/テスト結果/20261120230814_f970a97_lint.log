@@ -1,0 +1,24 @@
+$ uvx ruff@0.17.3 check tests/unit/scripts/test_meme_checks.py tests/unit/scripts/test_check_all.py
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+All checks passed!
+$ uvx ruff@0.17.3 format --check tests/unit/scripts/test_meme_checks.py tests/unit/scripts/test_check_all.py
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+2 files already formatted
+$ uv run --no-project --python 3.14 --with pyright==1.1.414 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pyright tests/unit/scripts/test_meme_checks.py tests/unit/scripts/test_check_all.py
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source/tests/unit/scripts/test_check_all.py:409:28 - warning: Type of "iter_errors" is partially unknown
+    Type of "iter_errors" is "Overload[(instance: str | int | float | bool | Mapping[str, _JsonParameter] | Sequence[_JsonParameter] | None) -> Generator[Any, None, None], (instance: Unknown, _schema: bool | Mapping[str, Any] | None) -> Generator[Any, None, None]]" (reportUnknownMemberType)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source/tests/unit/scripts/test_check_all.py:1287:62 - warning: Type of "iter_errors" is partially unknown
+    Type of "iter_errors" is "Overload[(instance: str | int | float | bool | Mapping[str, _JsonParameter] | Sequence[_JsonParameter] | None) -> Generator[Any, None, None], (instance: Unknown, _schema: bool | Mapping[str, Any] | None) -> Generator[Any, None, None]]" (reportUnknownMemberType)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source/tests/unit/scripts/test_check_all.py:1295:17 - warning: Type of "iter_errors" is partially unknown
+    Type of "iter_errors" is "Overload[(instance: str | int | float | bool | Mapping[str, _JsonParameter] | Sequence[_JsonParameter] | None) -> Generator[Any, None, None], (instance: Unknown, _schema: bool | Mapping[str, Any] | None) -> Generator[Any, None, None]]" (reportUnknownMemberType)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source/tests/unit/scripts/test_check_all.py:1479:32 - warning: Type of "iter_errors" is partially unknown
+    Type of "iter_errors" is "Overload[(instance: str | int | float | bool | Mapping[str, _JsonParameter] | Sequence[_JsonParameter] | None) -> Generator[Any, None, None], (instance: Unknown, _schema: bool | Mapping[str, Any] | None) -> Generator[Any, None, None]]" (reportUnknownMemberType)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source/tests/unit/scripts/test_check_all.py:1565:13 - error: No parameter named "meme_checks" (reportCallIssue)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source/tests/unit/scripts/test_check_all.py:1591:9 - error: No parameter named "meme_checks" (reportCallIssue)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source/tests/unit/scripts/test_meme_checks.py:6:8 - error: Import "meme_checks" could not be resolved (reportMissingImports)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source/tests/unit/scripts/test_meme_checks.py:7:6 - error: Import "meme_checks" could not be resolved (reportMissingImports)
+4 errors, 22 warnings, 0 informations
+
+pyright の error 4 件は、実装（memes/scripts/meme_checks.py・Target.meme_checks）がまだ無いことによるもの（単体テスト作成の工程で残してよい違反）
