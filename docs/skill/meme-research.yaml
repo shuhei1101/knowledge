@@ -50,7 +50,7 @@ steps:
       音声入力の名前は文脈から補って特定する。
       特定できなければ推測で埋めず、`work.title` を空の文字列にして `work.unverified` に `title` を入れる。
       作品の説明の書き方とキーは、ネットミームの配信元の作品のスキーマ（`describe` の `source: knowledge-memes`・`kind: meme_work`）に従う。
-      知名度の推奨の値は、判定表 [ネットミームの知名度](id:decision-table-meme-popularity) で決める。
+      知名度の推奨の値は、判定表『ネットミームの知名度』（`decision-table-meme-popularity`） で決める。
       依頼に `work.popularity` があれば、その値にする。
     calls:
       - type: tool
