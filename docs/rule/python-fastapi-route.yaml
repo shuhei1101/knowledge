@@ -49,8 +49,8 @@ tags:
   - name: action:配置
 status: current
 visibility: internal
-rev: 6
-last_reviewed: '2026-10-30'
+rev: 7
+last_reviewed: '2026-11-20'
 items:
   - id: overview
     name: 概要
@@ -109,7 +109,8 @@ items:
     body: |-
       - レスポンススキーマは戻り値の型注釈で指定する（返却する型と合わないときだけ `response_model=`。[fastapi/スキーマ](id:python-fastapi-schema)）。
         作成系は `status_code=201` を明示する。
-        エラーレスポンスは 422 を含めて `ProblemDetail` モデルを `APIRouter(responses=...)` で一括宣言し、OpenAPI に反映する（[fastapi/認証とエラー](id:python-fastapi-auth-error)）
+        エラーレスポンスは 422 を含めて `ProblemDetail` モデルを `APIRouter(responses=...)` で一括宣言し、OpenAPI に反映する（[fastapi/認証とエラー](id:python-fastapi-auth-error)）。
+        MCP のツールと同じデータを返却する API は、`ProblemDetail` に代えて MCP のツールと同じ構造のモデルを宣言する（[fastapi/認証とエラー](id:python-fastapi-auth-error#exception-handler-05)）
   - id: writing-05
     group: 記載方法
     name: SSE のストリーミング

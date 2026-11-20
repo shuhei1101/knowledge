@@ -1,0 +1,26 @@
+docs:
+  - page: docs/rule/python-fastapi-schema.yaml
+    new: false
+    change: camelCase の決まりに、MCP のツールと同じデータを返却する API はキーを snake_case のまま返却してよい例外と、判定の条件（または判定フローチャートの参照）を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T08:46:57.033379+00:00'
+  - page: docs/rule/python-fastapi-auth-error.yaml
+    new: false
+    change: RFC 9457 の決まりに、MCP のツールと同じデータを返却する API は MCP のツールと同じ構造のエラーを対応表のステータスコードで返却してよい例外と、RFC 9457 で返却する場合の拡張のメンバーとの対応を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T08:46:57.033379+00:00'
+  - page: docs/rule/python-fastapi-route.yaml
+    new: false
+    change: エラーレスポンスの ProblemDetail の一括宣言に、MCP のツールと同じデータを返却する API は MCP のツールと同じ構造のモデルを宣言する例外を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T08:46:57.033379+00:00'
+scope_out:
+  - item: MCP のツールのエラーの構造（例外の名前・種類・メッセージ・details）を knowledge の規約『MCP サーバー作成ルール』に定めること
+    reason: 要望は FastAPI の規約で MCP のツールに合わせてよいとする扱いで、MCP のツールのエラーの構造はプロジェクトの設計書が持つ。規約に定めるかはレビューで確定する
+    plan: none
+  - item: aituber の管理画面の API の設計書・実装の修正
+    reason: aituber の側は既に MCP のツールに合わせてあり、この Issue は規約の側に扱いを追加するだけで足りる
+    plan: none
