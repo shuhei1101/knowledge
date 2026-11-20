@@ -128,12 +128,13 @@ def run_script() -> RunScript:
         *,
         args: Sequence[str] = (),
         path_prefix: Path | None = None,
+        script_dir: Path = SCRIPTS,
     ) -> Completed:
         path = os.environ.get("PATH", "")
         # 差し替えのコマンドを置いたフォルダは PATH の先頭に置く
         if path_prefix is not None:
             path = os.pathsep.join([str(path_prefix), path])
-        command = ["uv", "run", "--frozen", "--script", str(SCRIPTS / f"{name}.py"), *args]
+        command = ["uv", "run", "--frozen", "--script", str(script_dir / f"{name}.py"), *args]
         return _run(command, cwd, stdin, path)
 
     return _start
