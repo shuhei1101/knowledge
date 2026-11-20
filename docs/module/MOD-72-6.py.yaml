@@ -184,6 +184,12 @@ functions:
         condition: '`description` の無い文書を持つリポジトリ'
         mock: lint の CLI の在りかの確認を差し替える。lint の検査を markdownlint の違反 1 件を返却する関数に、map の点検の呼び出しを `MdmarkCheckError` を送出する関数に差し替える
         expected: '`2` を返却し、標準出力にスキーマの違反の行と `markdownlint/` の行、標準エラーに `mdmark の点検が失敗しました` が出る'
+      - name: test_main_when_memes_config_missing
+        case: 正常
+        summary: ネットミームの配信元が無い
+        condition: 違反の無い文書だけを持ち、`memes/project-index.yaml` を持たない一時フォルダ
+        mock: lint の CLI の呼び出しと mdmark の点検を、違反 0 件を返却する関数に差し替える
+        expected: ネットミームの配信元を飛ばして他の検査を続け、`0` を返却する
     callees:
       - '#functions[load_meta_validator]'
       - MOD-176-1#functions[find_lint_clis]
@@ -378,6 +384,12 @@ functions:
         condition: 括弧の閉じていない `schemas/rule.schema.yaml`
         mock: なし（一時ディレクトリ）
         expected: '`$` の 1 件で、内容が `YAML として読めません: ` で始まる'
+      - name: test_check_document_schemas_when_memes
+        case: 正常
+        summary: ネットミームの配信元のスキーマも検査する
+        condition: '`memes/schemas/meme.schema.yaml` に、`type` が配列でない誤った値（`type: 1`）を持つ一時フォルダ'
+        mock: なし（一時ディレクトリ）
+        expected: 'パスが `memes/schemas/meme.schema.yaml` で、内容が `metaschema: ` で始まる誤りを含む'
     callees:
       - MOD-72-2#functions[load_document]
       - MOD-72-2#functions[line_of]
@@ -662,6 +674,12 @@ functions:
         condition: '`exclude: ["index.yaml"]` の行に `index.yaml` と文書 1 件、`enabled: false` の行に文書 1 件'
         mock: なし（一時ディレクトリ）
         expected: 文書 1 件だけ
+      - name: test_list_targets_when_memes
+        case: 正常
+        summary: ネットミームの配信元の行を memes/ を基準に解く
+        condition: '`memes/project-index.yaml` の `documents[]` に `paths: ["memes/*.yaml"]`・`schema: schemas/meme.schema.yaml`・`validators: [meme-checks]` の行と、`memes/memes/a.yaml` を持つ一時フォルダ'
+        mock: なし（一時ディレクトリ）
+        expected: '`Target(path=memes/memes/a.yaml, schema=memes/schemas/meme.schema.yaml, checks=False, meme_checks=True)` を含む'
     callees:
       - MOD-72-2#functions[list_row_files]
   - name: build_validators
@@ -781,6 +799,12 @@ functions:
         condition: 括弧の閉じていない YAML
         mock: なし
         expected: '`$` の 1 件で、行が読み込めなかった行'
+      - name: test_check_target_when_meme_checks
+        case: 正常
+        summary: ネットミームの検査の違反を加える
+        condition: '`memes/works/` が空で、`memes/scripts/meme_checks.py` を持つ一時フォルダ。`work: missing-work`・タグ `topic:セリフ` のネットミームの `Target`（`meme_checks` が真、`checks` が偽）と、合格する検査器'
+        mock: なし（一時ディレクトリ）
+        expected: 1 件で、行が `work` の行、項目のパスが `work`、内容に `missing-work`
     callees:
       - MOD-72-2#functions[load_document]
       - MOD-72-2#functions[line_of]
