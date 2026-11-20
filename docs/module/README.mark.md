@@ -18,6 +18,7 @@
 | [検査と変換のスクリプト / scripts / build_word_list.py](./MOD-148-3.py.yaml) | 手元から呼ぶ対応表のコピーの作成 |
 | [検査と変換のスクリプト / scripts / check_all.py](./MOD-72-6.py.yaml) | 手元から呼ぶ全ての文書の検査 |
 | [検査と変換のスクリプト / scripts / knowledge_checks.py](./MOD-72-4.py.yaml) | validators の knowledge-checks |
+| [検査と変換のスクリプト / memes/scripts / meme_checks.py](./MOD-514-1.py.yaml) | ネットミームの配信元の validators の meme-checks |
 | [検査と変換のスクリプト / scripts / knowledge_markdown.py](./MOD-72-5.py.yaml) | converters の knowledge-markdown |
 | [検査と変換のスクリプト / scripts](./MOD-72-1.yaml) | 検査と変換のスクリプトの構成・起動の方式・テストの配置先 |
 | [slop-check / hooks](./MOD-148-1.yaml) | プラグイン slop-check のフックの構成・起動の方式・照合の共有 |

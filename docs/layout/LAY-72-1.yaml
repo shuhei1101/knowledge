@@ -60,6 +60,9 @@ content_types:
   - name: pages
     group: feature
     summary: 公開の文書の GitHub Pages への配信
+  - name: memes
+    group: feature
+    summary: ネットミームの配信元（作品とネットミームの文書・スキーマ・検査。直コミットで登録する）
 entries:
   - type: folder
     name: .claude-plugin
@@ -647,6 +650,44 @@ entries:
     contents: mdmark の設定（AI Monitor が生成する図のノードと線の種類）
     content_types:
       - tool_config
+  - type: folder
+    name: memes
+    contents: ネットミームの配信元。規約の配信元とは別の `project-index.yaml` を持ち、スキーマと検査のスクリプトもこの中に配置する（project-index は配信元のフォルダの外部のスキーマを参照しない）
+    content_types:
+      - memes
+    children:
+      - type: file
+        name: project-index.yaml
+        contents: ネットミームの配信元の設定（作品とネットミームの種類・検査・直コミット）
+        content_types:
+          - tool_config
+          - memes
+      - type: folder
+        name: works
+        contents: 作品の文書（1 件 1 ファイル）
+        content_types:
+          - knowledge_doc
+          - memes
+      - type: folder
+        name: memes
+        contents: ネットミームの文書（1 件 1 ファイル）
+        content_types:
+          - knowledge_doc
+          - memes
+      - type: folder
+        name: schemas
+        contents: 作品とネットミームのスキーマ
+        content_types:
+          - schema
+          - memes
+      - type: folder
+        name: scripts
+        contents: ネットミームの検査のスクリプトと、その依存のロック
+        content_types:
+          - script
+          - memes
+        used_by:
+          - IF-514-1#
 gitignore:
   - pattern: docs/generated/
     reason: AI Monitor が YAML の設計書から生成する Markdown（生成物）
