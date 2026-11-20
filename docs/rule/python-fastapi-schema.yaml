@@ -21,10 +21,11 @@ tags:
   - name: action:分離
   - name: action:変換
   - name: action:配置
+  - name: tool:mcp
 status: current
 visibility: internal
-rev: 5
-last_reviewed: '2026-10-30'
+rev: 6
+last_reviewed: '2026-11-20'
 items:
   - id: io-pydantic-schema-01
     group: 入出力 Pydantic スキーマ
@@ -55,9 +56,21 @@ items:
     body: |-
       - API のスキーマの基底クラスに `ConfigDict(...)` を配置し、JSON のキーを camelCase にする。
         引数は `alias_generator=to_camel, validate_by_name=True, serialize_by_alias=True`
+      - MCP のツールと同じデータを返却する API（[対象の判定](id:python-fastapi-schema#mcp-shared-01)）は、基底クラスに `ConfigDict(...)` を配置せず、キーを MCP のツールと同じ snake_case のまま返却する
   - id: response-model-01
     group: response_model
     name: レスポンスは戻り値の型注釈
     body: |-
       レスポンススキーマは戻り値の型注釈（`-> Response`）で指定する。
       `from_domain` で明示変換して返却するのを基本にし、返却する型と宣言したい型が合わないときだけ `response_model=` を使用する。
+  - id: mcp-shared-01
+    group: MCP のツールと同じデータを返却する API
+    name: 対象の判定
+    body: |-
+      API のスキーマのデータを、同じスキーマのまま MCP のツールでも返却するかで、JSON のキーとエラーの応答の書式を決める。
+      MCP のツールのスキーマから項目を追加・削除した、または項目の名前を変えたスキーマは、同じスキーマとして扱わない。
+
+      | 同じスキーマのデータを MCP のツールでも返却するか | JSON のキー | エラーの応答 |
+      | --- | --- | --- |
+      | YES | MCP のツールと同じ snake_case | MCP のツールと同じ構造（[fastapi/認証とエラー](id:python-fastapi-auth-error#exception-handler-05)） |
+      | NO | camelCase（[camelCase の扱い](id:python-fastapi-schema#camelcase-01)） | RFC 9457（[fastapi/認証とエラー](id:python-fastapi-auth-error#exception-handler-03)） |
