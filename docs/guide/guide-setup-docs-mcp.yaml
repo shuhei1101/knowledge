@@ -122,6 +122,31 @@ items:
       `write_docs`・`delete_docs` は、knowledge のクローンか worktree の中の作業場所から呼ぶ。
       それ以外の作業場所から呼ぶと、書き込まずに断られる。
       スキーマと検査のスクリプト（`scripts/`）に合格しない内容は、書き込まずに `isError` で返る。
+  - id: step-memes-01
+    group: 手順 > ネットミームの配信元を登録する
+    name: memes/ の setup の実行
+    body: |-
+      ```text
+      /project-index:setup {knowledge のクローンの絶対パス}/memes
+      ```
+
+      作品とネットミームは、規約とは別の配信元 `knowledge-memes`（`memes/project-index.yaml`）で配信する。
+      `scope.read`・`scope.write` は knowledge の行と同じに回答する。
+      登録しないと、`source: knowledge-memes` の検索と書き込みが断られる。
+  - id: step-memes-02
+    group: 手順 > ネットミームの配信元を登録する
+    name: 直コミットを呼べる作業場所の記載
+    body: |-
+      端末の設定の `knowledge-memes` の行に `direct_commit.scope` を追加し、管理の MCP の `reload` を呼ぶ。
+
+      ```yaml
+      sources:
+        - config: {knowledge のクローンの絶対パス}/memes/project-index.yaml
+          direct_commit:
+            scope: ["{直コミットを呼ぶ作業場所を配置するフォルダ}/**"]
+      ```
+
+      記載しないと、`write_docs` に `commit` を指定した呼び出しが `DirectCommitNotPermittedError` で断られる。
   - id: reflection-01
     group: 反映
     name: 反映のタイミング
@@ -143,6 +168,13 @@ items:
       knowledge のクローンの外部の作業場所で Claude Code を起動し、`search_docs` に `source: knowledge` を指定する。
 
       knowledge の規約が、名前・説明・タグつきで返る。
+  - id: check-memes-01
+    group: 確認 > ネットミームの配信元へ直コミットできる
+    name: 直コミットできる種類の確認
+    body: |-
+      `direct_commit.scope` にヒットする作業場所で Claude Code を起動し、引数なしの `describe` を呼ぶ。
+
+      `knowledge-memes` の行の直コミットの列に、作品とネットミームの種類が出る。
   - id: rollback-01
     group: 元に戻す
     name: 元に戻す

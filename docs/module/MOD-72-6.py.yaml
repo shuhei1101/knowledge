@@ -20,6 +20,9 @@ data_models:
       - name: checks
         type: bool
         description: 行の `validators` に `knowledge-checks` を持つか
+      - name: meme_checks
+        type: bool
+        description: 行の `validators` に `meme-checks` を持つか（ネットミームの配信元のネットミームの行）
   - name: MetaSchemaError
     title: 使用できない拡張したメタスキーマ
     container: scripts/check_all.py
@@ -43,7 +46,7 @@ constants:
     container: scripts/check_all.py
     usecase: 全ての文書の検査
     summary: '`documents[]` に無く、yamllint を適用するリポジトリの直下のファイル'
-    value: ("project-index.yaml", "rules.yaml")
+    value: ("project-index.yaml", "rules.yaml", "memes/project-index.yaml")
   - name: DESIGN_SCHEMAS_DIR
     title: 設計書のスキーマのフォルダ
     container: scripts/check_all.py
@@ -56,6 +59,18 @@ constants:
     usecase: 全ての文書の検査
     summary: 'JSON Schema 2020-12 のメタスキーマに `x-rules`・`x-bad-examples` の形式を追加した、拡張したメタスキーマの、リポジトリの直下からのパス。ファイルは `$dynamicAnchor: meta` と絶対 URI の `$id`（`urn:knowledge:schemas:meta`）を持つ。`$id` が無いと `$dynamicRef` が拡張したメタスキーマへ戻らず、深い位置のキーを検査しない'
     value: PurePosixPath("schemas/meta.schema.yaml")
+  - name: MEME_CHECKS_ID
+    title: ネットミームの検査の ID
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    summary: ネットミームの配信元の `validators[]` のネットミームの検査の `id`
+    value: '"meme-checks"'
+  - name: MEMES_DIR
+    title: ネットミームの配信元のフォルダ
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    summary: ネットミームの配信元（`project-index.yaml`・`schemas/`・`scripts/meme_checks.py` を持つ）の、リポジトリの直下からのパス
+    value: PurePosixPath("memes")
 functions:
   - name: main
     title: 全ての文書の検査のエントリーポイント
@@ -79,7 +94,7 @@ functions:
       1. argparse で引数を読み込み、標準出力を UTF-8 にする
       2. lint の CLI の在りかを確認し（lint の CLI の在りかの確認）、`shutil.which("npx")` で npx を探す
          - 見つからない CLI がある場合、見つからない CLI ごとに標準エラーへ `{CLI} がありません。開発コマンドの『環境構築（クローン直後）』で入れてください` を出し `2` を返却する
-      3. 作業ディレクトリの `project-index.yaml` の `documents[]` を読み込む（project-index.yaml の読み込み）
+      3. 作業ディレクトリの `project-index.yaml` と、`MEMES_DIR` の `project-index.yaml`（あるとき）の `documents[]` を読み込む（project-index.yaml の読み込み）
          - 読み込めない project-index.yaml の場合、標準エラーへ理由を出し `2` を返却する
       4. 拡張したメタスキーマの検査器を作る（拡張したメタスキーマの読み込み）
          - 使用できない拡張したメタスキーマの場合、標準エラーへ理由を出し `2` を返却する
@@ -169,6 +184,12 @@ functions:
         condition: '`description` の無い文書を持つリポジトリ'
         mock: lint の CLI の在りかの確認を差し替える。lint の検査を markdownlint の違反 1 件を返却する関数に、map の点検の呼び出しを `MdmarkCheckError` を送出する関数に差し替える
         expected: '`2` を返却し、標準出力にスキーマの違反の行と `markdownlint/` の行、標準エラーに `mdmark の点検が失敗しました` が出る'
+      - name: test_main_when_memes_config_missing
+        case: 正常
+        summary: ネットミームの配信元が無い
+        condition: 違反の無い文書だけを持ち、`memes/project-index.yaml` を持たない一時フォルダ
+        mock: lint の CLI の呼び出しと mdmark の点検を、違反 0 件を返却する関数に差し替える
+        expected: ネットミームの配信元を飛ばして他の検査を続け、`0` を返却する
     callees:
       - '#functions[load_meta_validator]'
       - MOD-176-1#functions[find_lint_clis]
@@ -224,7 +245,7 @@ functions:
     process: |-
       1. 中身の読み込めた文書ごとに Markdown を取り出し（lint を適用する Markdown の取り出し）、まとめて Markdown の lint を呼ぶ（Markdown の lint の呼び出し）
       2. yamllint の設定を読み込み（yamllint の設定の読み込み）、拡張子が `.yaml`・`.yml` の文書と、`YAMLLINT_EXTRA` のうち在るファイルに yamllint を適用する（yamllint の呼び出し）
-      3. `YAMLLINT_SCHEMAS_CONFIG` の設定を読み込み（yamllint の設定の読み込み）、`schemas/*.schema.yaml` と `DESIGN_SCHEMAS_DIR` の `*.schema.yaml` をパスの順に UTF-8 で読み込んで yamllint を適用する（yamllint の呼び出し）。UTF-8 で読み込めないファイルは、違反を設計書のスキーマの検査と文書の種類のスキーマの検査が出すため、yamllint を適用せずに飛ばす
+      3. `YAMLLINT_SCHEMAS_CONFIG` の設定を読み込み（yamllint の設定の読み込み）、`schemas/*.schema.yaml` と `DESIGN_SCHEMAS_DIR` の `*.schema.yaml` と `MEMES_DIR` の `schemas/*.schema.yaml` をパスの順に UTF-8 で読み込んで yamllint を適用する（yamllint の呼び出し）。UTF-8 で読み込めないファイルは、違反を設計書のスキーマの検査と文書の種類のスキーマの検査が出すため、yamllint を適用せずに飛ばす
       4. パスと行の順に並べて返却する
     unit_tests:
       - name: test_check_lints
@@ -341,7 +362,7 @@ functions:
       type: list[tuple[str, int, str, str]]
       description: （ファイルのパス、行、項目のパス、内容）。ファイルのパスの順。誤りが無ければ空
     process: |-
-      1. `schemas/*.schema.yaml` を、ファイル名の順に、設計書のスキーマの検査の 2 と同じ扱いで読み込む
+      1. `schemas/*.schema.yaml` と `MEMES_DIR` の `schemas/*.schema.yaml` を、ファイル名の順に、設計書のスキーマの検査の 2 と同じ扱いで読み込む
       2. ファイルごとに `meta` の `iter_errors` の誤りを `(パス, 行, 項目のパス, "metaschema: {message}")` にする
       3. ファイルのパス・行の順に並べて返却する
     unit_tests:
@@ -363,6 +384,12 @@ functions:
         condition: 括弧の閉じていない `schemas/rule.schema.yaml`
         mock: なし（一時ディレクトリ）
         expected: '`$` の 1 件で、内容が `YAML として読めません: ` で始まる'
+      - name: test_check_document_schemas_when_memes
+        case: 正常
+        summary: ネットミームの配信元のスキーマも検査する
+        condition: '`memes/schemas/meme.schema.yaml` に、`type` が配列でない誤った値（`type: 1`）を持つ一時フォルダ'
+        mock: なし（一時ディレクトリ）
+        expected: 'パスが `memes/schemas/meme.schema.yaml` で、内容が `metaschema: ` で始まる誤りを含む'
     callees:
       - MOD-72-2#functions[load_document]
       - MOD-72-2#functions[line_of]
@@ -632,7 +659,7 @@ functions:
     process: |-
       1. `enabled` が `false` の行と、`schema` を持たない行を飛ばす
       2. 行のファイルを列挙する（documents の行のファイルの列挙）
-      3. `validators` に `CHECKS_ID` を持つ行の文書は、文書の違反の検査も適用する
+      3. `validators` に `CHECKS_ID` を持つ行の文書は、文書の違反の検査も適用する。`MEMES_DIR` の `documents[]` の行は、パスと `schema` を `MEMES_DIR` を基準に解き、`validators` に `MEME_CHECKS_ID` を持つ行の文書は `meme_checks` を真にする
       4. パスの順に並べて返却する
     unit_tests:
       - name: test_list_targets
@@ -647,6 +674,12 @@ functions:
         condition: '`exclude: ["index.yaml"]` の行に `index.yaml` と文書 1 件、`enabled: false` の行に文書 1 件'
         mock: なし（一時ディレクトリ）
         expected: 文書 1 件だけ
+      - name: test_list_targets_when_memes
+        case: 正常
+        summary: ネットミームの配信元の行を memes/ を基準に解く
+        condition: '`memes/project-index.yaml` の `documents[]` に `paths: ["memes/*.yaml"]`・`schema: schemas/meme.schema.yaml`・`validators: [meme-checks]` の行と、`memes/memes/a.yaml` を持つ一時フォルダ'
+        mock: なし（一時ディレクトリ）
+        expected: '`Target(path=memes/memes/a.yaml, schema=memes/schemas/meme.schema.yaml, checks=False, meme_checks=True)` を含む'
     callees:
       - MOD-72-2#functions[list_row_files]
   - name: build_validators
@@ -740,7 +773,7 @@ functions:
       2. 文書として読み込む（文書の読み込み）
          - 読み込めない文書の場合、`({行}, "$", "YAML として読めません: {理由}")` だけを返却する
       3. `validator` が文字列の場合、`(1, "$", "スキーマ {schema} を使えません: {理由}")` を加える。検査器の場合、`iter_errors` の誤りごとに `(行, 項目のパス, "schema: {message}")` を加える（項目の行の引き当て・項目のパスの組み立て）
-      4. `target.checks` なら、文書の違反を検査し（文書の検査。`index` と `names` を指定する）、各違反の `rule` の先頭の `{行} 行目: ` を行に、残りを内容にして加える
+      4. `target.checks` なら、文書の違反を検査し（文書の検査。`index` と `names` を指定する）、各違反の `rule` の先頭の `{行} 行目: ` を行に、残りを内容にして加える。`target.meme_checks` なら、`MEMES_DIR` の `scripts/meme_checks.py` を `importlib.util.spec_from_file_location` で読み込んだネットミームの検査（MOD-514-1 の `check_meme`。`root` は `MEMES_DIR`）を適用し、同じく加える
     unit_tests:
       - name: test_check_target
         case: 正常
@@ -766,6 +799,12 @@ functions:
         condition: 括弧の閉じていない YAML
         mock: なし
         expected: '`$` の 1 件で、行が読み込めなかった行'
+      - name: test_check_target_when_meme_checks
+        case: 正常
+        summary: ネットミームの検査の違反を加える
+        condition: '`memes/works/` が空で、`memes/scripts/meme_checks.py` を持つ一時フォルダ。`work: missing-work`・タグ `topic:セリフ` のネットミームの `Target`（`meme_checks` が真、`checks` が偽）と、合格する検査器'
+        mock: なし（一時ディレクトリ）
+        expected: 1 件で、行が `work` の行、項目のパスが `work`、内容に `missing-work`
     callees:
       - MOD-72-2#functions[load_document]
       - MOD-72-2#functions[line_of]

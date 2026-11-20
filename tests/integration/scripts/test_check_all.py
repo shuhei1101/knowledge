@@ -30,6 +30,17 @@ def _descriptions(node: object) -> Iterator[str]:
             yield from _descriptions(value)
 
 
+def _memes_source() -> dict[str, str]:
+    """リポジトリのネットミームの配信元の設定・スキーマ・検査のスクリプトを返す。"""
+    files = (
+        "memes/project-index.yaml",
+        "memes/schemas/meme.schema.yaml",
+        "memes/schemas/meme-work.schema.yaml",
+        "memes/scripts/meme_checks.py",
+    )
+    return {name: (_REPO / name).read_text(encoding="utf-8") for name in files}
+
+
 def test_normal(run_script: RunScript, repo_factory: RepoFactory) -> None:
     """違反の無い文書だけなら終了コード 0 で終わる（正常系）。"""
     # 準備
@@ -175,6 +186,20 @@ def test_normal_when_violations(run_script: RunScript, repo_factory: RepoFactory
         {
             "docs/rule/a.yaml": "id: a\nkind: rule\nname: A\nitems:\n  - id: x\n    body: 本文。\n",
             "docs/rule/b.yaml": "id: b\nkind: rule\nname: B\ndescription: B の文書\nitems:\n  - id: y\n    body: 本文。\n  - id: y\n    body: 本文。\n",
+            **_memes_source(),
+            # 3 行目の work が無い作品を指し、7 行目の parody の使い方が patterns を持たない
+            "memes/memes/bad.yaml": (
+                "id: bad\n"
+                "term: あ\n"
+                "work: missing-work\n"
+                "context: 文脈\n"
+                "use_when: 場面\n"
+                "styles:\n"
+                "  - type: parody\n"
+                "tags:\n"
+                "  - name: topic:セリフ\n"
+                "state: active\n"
+            ),
         }
     )
     # 実行
@@ -185,7 +210,11 @@ def test_normal_when_violations(run_script: RunScript, repo_factory: RepoFactory
     assert lines[0].startswith("docs/rule/a.yaml:1: $: ")
     assert "description" in lines[0]
     assert lines[1].startswith("docs/rule/b.yaml:8: items[1].id: ")
-    assert lines[-1] == "2 件の文書を検査し、違反は 2 件、警告は 0 件でした"
+    assert lines[2].startswith("memes/memes/bad.yaml:7: styles[0]: ")
+    assert "patterns" in lines[2]
+    assert lines[3].startswith("memes/memes/bad.yaml:3: work: ")
+    assert "missing-work" in lines[3]
+    assert lines[-1] == "3 件の文書を検査し、違反は 4 件、警告は 0 件でした"
 
 
 def test_normal_when_lint_violations(run_script: RunScript, repo_factory: RepoFactory) -> None:

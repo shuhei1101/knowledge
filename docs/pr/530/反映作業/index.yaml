@@ -1,0 +1,14 @@
+ネットミームの配信元の登録:
+  説明: 端末の設定（~/.config/project-index/settings.yaml）の sources[] に、ネットミームの配信元の行（config・scope・direct_commit.scope に /home/shuhei2441/**）を追加し、project-index の端末の設定の API（POST /settings/sources）で追加して再読み込みする。書き換える前に同じフォルダへバックアップを取る
+  タグ: [設定, 再読み込み]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: ネットミームの配信元の登録/疎通確認.py
+  実行: ネットミームの配信元の登録/実行.py
+  確認: ネットミームの配信元の登録/確認.py
+  切り戻し: ネットミームの配信元の登録/切り戻し.py
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: 端末の設定の API（GET /settings/sources）で knowledge-memes の行の状態が serving で、端末の設定のファイルの knowledge-memes の行の direct_commit.scope が /home/shuhei2441/** になっている
+  状態: skipped

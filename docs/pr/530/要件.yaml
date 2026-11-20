@@ -1,0 +1,92 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-2.yaml
+    impact: changed
+    detail: knowledge のクローンに、規約とは別のネットミームの配信元が加わり、利用者がそれも端末の設定に登録する（直コミットを呼べる作業場所を含む）
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: changed
+    detail: エージェントがネットミームの配信元を指定して、作品とネットミームを検索・取得できる。規約の検索の結果には混ざらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: none
+    detail: 規約の配信元への書き込みは変わらない。作品とネットミームの書き込みは SC-514-1 が持つ
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: changed
+    detail: 全ての文書の検査が、ネットミームの配信元の作品とネットミームも検査する
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-1.yaml
+    impact: none
+    detail: 導入の流れは SC-72-2 の登録をそのまま使用し、記述は変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: none
+    detail: 規約の配信元の画面のタブとサイドバーは変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-514-1.yaml
+    impact: new
+    detail: エージェントが作品とネットミームを直コミットでネットミームの配信元へ書き込み、検査に合格したものだけが develop へプッシュされる
+    depends_on: []
+docs:
+  - page: docs/guide/guide-setup-docs-mcp.yaml
+    new: false
+    change: ネットミームの配信元を端末の設定に登録する手順と、直コミットを呼べる作業場所（`sources[].direct_commit`）の記載を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T13:57:03.756579+00:00'
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: knowledge が規約の配信元と別に、直コミットを許可するネットミームの配信元を持つことを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T13:57:03.756579+00:00'
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: ネットミームの配信元のフォルダ（配信元の設定・作品とネットミームの文書）と、追加するスキーマの配置を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T13:47:42.963791+00:00'
+  - page: README.md
+    new: false
+    change: ネットミームの配信元があることと、登録の手順への参照を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T13:57:03.756579+00:00'
+  - page: CLAUDE.md
+    new: false
+    change: ネットミームの配信元（設定のファイル・配信元の ID）を `## ドキュメント` に追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T13:57:03.756579+00:00'
+  - page: files.yaml
+    new: false
+    change: '`memes/` は規約の配信元の直下のファイルの行（`project-index.yaml` の `root` の `exclude`）から除外したため、files.yaml に行を追加しない'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T14:13:29.221060+00:00'
+  - page: docs/terms.yaml
+    new: false
+    change: 用語『ネットミーム』を追加する。『作品』は一般語で、『直コミット』は project-index の用語集にあるため登録しない
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-20T13:57:03.756579+00:00'
+scope_out:
+  - item: 登録のスキル・リサーチャーのエージェントフロー・知名度の判定表と、最初の作品 19 件と用語 73 件の登録
+    reason: 'Issue の本文で #526 の範囲とされている'
+    plan: '#526'
+  - item: 優先度の順の検索（`search_memes`）と使用の記録
+    reason: aituber が持つため、knowledge の対象にしない（Issue の追記）
+    plan: none
+  - item: 規約の配信元（knowledge）の用語集・ノウハウ・対応表の行への直コミットの許可
+    reason: MindStella の資料 A-243 では候補に挙げているが、この Issue の要望はネットミームの種類だけ。規約の配信元はレビューを経る書き込みのままにする
+    plan: none
+  - item: '`schemas/design/glossary.schema.yaml` の最上位の `description` が 3 文あり、結合テスト `test_normal_when_repository_schemas` が fail する'
+    reason: 結合テストが確認する「設計書のスキーマの description は 2 文以内」から外れている。#446 で入った develop の不具合で、この PR はファイルを変更しておらず、今回の要望に含まれない
+    plan: '#531'

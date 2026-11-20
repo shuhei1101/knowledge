@@ -1,0 +1,119 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: 作品
+description: ネットミームの元になる作品か話題 1 件。ネットミームが `work` で ID を指す。
+x-rules:
+  - 1 ファイル = 1 件の作品にし、ファイル名は `{id}.yaml` にする。
+  - '`description` は 1〜2 文で、いつの作品か・主な登場人物・どんな話かを記載する。時期は今から見た言い方（放送中 など）にしない。'
+type: object
+additionalProperties: false
+required:
+  - id
+  - title
+  - type
+  - description
+  - popularity
+  - tags
+  - state
+properties:
+  id:
+    type: string
+    title: 作品 ID
+    description: 英小文字・数字・ハイフンの鍵。
+    pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+  title:
+    type: string
+    title: タイトル
+    description: 正式なタイトル（期の番号を除く）。話題は、話題の名前。
+    minLength: 1
+  type:
+    type: string
+    title: 種別
+    description: anime（アニメ）/ manga（漫画）/ game（ゲーム）/ tech（IT・AI の話題）/ general（一般の話題・ニュース）。
+    enum:
+      - anime
+      - manga
+      - game
+      - tech
+      - general
+  description:
+    type: string
+    title: 説明
+    description: セリフ生成に、そのまま指定する作品の概要。
+    minLength: 1
+  airings:
+    type: array
+    title: 放送
+    description: 放送するシーズンごとに 1 件。`type` が anime のときだけ持ち、1 件以上。
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - year
+        - season
+      properties:
+        year:
+          type: integer
+          title: 年
+        season:
+          type: string
+          title: シーズン
+          description: winter（1〜3 月）/ spring（4〜6 月）/ summer（7〜9 月）/ fall（10〜12 月）。
+          enum:
+            - winter
+            - spring
+            - summer
+            - fall
+  popularity:
+    type: integer
+    title: 知名度
+    description: 1〜5（5 が、ほとんどの人が知っている）。
+    minimum: 1
+    maximum: 5
+  tags:
+    type: array
+    title: タグ
+    description: 検索に使用するタグ。作品・話題のタグ（topic:{短い名前}）を持つ。
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          title: タグ名
+          minLength: 1
+  state:
+    type: string
+    title: 状態
+    description: active（使用できる）/ inactive（使用しない。この作品のネットミームも既定の検索から除く）。
+    enum:
+      - active
+      - inactive
+allOf:
+  - if:
+      properties:
+        type:
+          const: anime
+      required:
+        - type
+    then:
+      required:
+        - airings
+    else:
+      not:
+        required:
+          - airings
+x-bad-examples:
+  - value:
+      id: kusuriya
+      title: 薬屋のひとりごと
+      type: anime
+      description: 2026 年秋のアニメ。薬師の少女・猫猫が、薬と毒の知識で、宮中の事件を解く
+      popularity: 5
+      tags:
+        - name: topic:薬屋
+      state: active
+    reason: '`type` が anime なのに `airings` が無い'

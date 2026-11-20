@@ -1,0 +1,165 @@
+id: MOD-514-1
+visibility: internal
+title: 検査と変換のスクリプト / memes/scripts / meme_checks.py
+lead: ネットミームの配信元の validators の `meme-checks`。標準入力のネットミーム 1 件に、指す作品の実在・内容の分類のタグ・作品のタグの一致を適用し、違反の配列を返却する（IF-514-1）。
+constants:
+  - name: CONTENT_TAGS
+    title: 内容の分類のタグ
+    container: memes/scripts/meme_checks.py
+    usecase: ネットミームの検査
+    summary: ネットミームがちょうど 1 つ持つ内容の分類のタグの並び
+    value: ("topic:セリフ", "topic:タイトル", "topic:キャラクター", "topic:用語", "topic:題材", "topic:口癖", "topic:呼び名")
+  - name: WORKS_DIR
+    title: 作品のフォルダ
+    container: memes/scripts/meme_checks.py
+    usecase: ネットミームの検査
+    summary: 配信元の直下からの作品のフォルダ
+    value: Path("works")
+functions:
+  - name: main
+    title: ネットミームの検査のエントリーポイント
+    kind: 関数
+    container: memes/scripts/meme_checks.py
+    usecase: ネットミームの検査
+    role: エントリーポイント
+    scope: public
+    summary: 標準入力のネットミームを検査し、違反の配列の JSON を標準出力へ出す
+    args:
+      - name: argv
+        title: 引数
+        type: Sequence[str] | None
+        required: false
+        default: None
+        description: コマンドの引数。`None` は `sys.argv[1:]`。引数は取らない（`--help` だけ）
+    returns:
+      type: int
+      description: 終了コード。`0` = 検査を終えた（違反の有無に依らない）、`1` = 想定していない例外
+    process: |-
+      1. argparse で引数を読み込む
+      2. 標準入出力を UTF-8 にする
+      3. 標準入力を読み込み、作業ディレクトリを配信元の直下にして検査する（ネットミームの検査）
+      4. 違反の配列を `json.dumps(..., ensure_ascii=False)` で標準出力へ出し、`0` を返却する
+         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返却する
+    unit_tests:
+      - name: test_main
+        case: 正常
+        summary: 違反の無いネットミーム
+        condition: 標準入力に `work` を持たず、タグ `topic:用語` を持つネットミーム。作業ディレクトリは空の `works/` を持つ一時フォルダ
+        mock: なし
+        expected: '`0` を返却し、標準出力が `[]`'
+      - name: test_main_when_unexpected_error
+        case: 正常
+        summary: 想定していない例外
+        condition: ネットミームの検査が `RuntimeError` を送出する
+        mock: ネットミームの検査を `RuntimeError` を送出する関数に差し替える
+        expected: '`1` を返却し、標準エラーに `Traceback` が出る'
+    callees:
+      - '#functions[check_meme]'
+    refs:
+      - to: IF-514-1
+        type: requires
+        when: '`main` を修正するときに、IF-514-1 の決まりと突き合わせる。'
+  - name: check_meme
+    title: ネットミームの検査
+    kind: 関数
+    container: memes/scripts/meme_checks.py
+    usecase: ネットミームの検査
+    role: サービス
+    scope: public
+    summary: ネットミーム 1 件に全ての検査を適用し、違反を並べて返却する
+    args:
+      - name: text
+        title: ネットミームの YAML
+        type: str
+        required: true
+        description: 検査するネットミーム 1 件
+      - name: root
+        title: 配信元の直下
+        type: Path
+        required: true
+        description: '`works/*.yaml` を読み込むネットミームの配信元の直下'
+    returns:
+      type: list[dict[str, str]]
+      description: 指す作品の実在 → 内容の分類のタグ → 作品のタグの一致の順の違反（`path`・`rule`・`fix`）
+    process: |-
+      1. ネットミームを ruamel.yaml の round-trip で読み込む
+         - 読み込めない場合、`path: $`・`{行} 行目: YAML として読めません: {理由}`・`YAML の文法の誤りを修正する` の 1 件を返却する
+      2. 作品の索引を作る（作品の索引の作成）
+      3. `work` を持ち、索引に無ければ `path: work`・`{行} 行目: 作品 `{work}` が works/ にありません`・`先に作品を登録するか、登録済みの作品の ID を指す` を加える
+      4. `tags[].name` のうち `CONTENT_TAGS` に入るものがちょうど 1 つでなければ、`path: tags`・`{行} 行目: 内容の分類のタグ（{CONTENT_TAGS}）をちょうど 1 つ持つ必要があります。持っているのは {持っていたタグ}`・`内容の分類のタグを 1 つだけ付ける` を加える
+      5. `work` が索引にあれば、作品のタグのうちネットミームに無いタグを集め、あれば `path: tags`・`{行} 行目: 作品 `{work}` のタグ {無いタグ} がありません`・`作品と同じタグを付ける` を加える
+      6. 行は、キーの行（ruamel.yaml の `.lc.key`）に 1 を足して求める。キーが無ければ 1 行目にする
+    unit_tests:
+      - name: test_check_meme
+        case: 正常
+        summary: 違反の無いネットミーム
+        condition: '`works/kusuriya.yaml`（タグ `topic:薬屋`）と、`work: kusuriya`・タグ `topic:薬屋`・`topic:セリフ` のネットミーム'
+        mock: なし（一時ディレクトリ）
+        expected: 空
+      - name: test_check_meme_when_work_not_found
+        case: 正常
+        summary: 指す作品が無い
+        condition: '`works/` が空で、`work: missing-work`・タグ `topic:セリフ` のネットミーム'
+        mock: なし（一時ディレクトリ）
+        expected: 1 件で、`path` が `work`、`rule` に `missing-work` とキーの行
+      - name: test_check_meme_when_tags_violate
+        case: 正常
+        summary: 内容の分類のタグが 2 つで、作品のタグが無い
+        condition: '`works/kusuriya.yaml`（タグ `topic:薬屋`）と、`work: kusuriya`・タグ `topic:セリフ`・`topic:タイトル` のネットミーム'
+        mock: なし（一時ディレクトリ）
+        expected: 2 件で、どちらも `path` が `tags`。1 件目の `rule` に `topic:セリフ` と `topic:タイトル`、2 件目の `rule` に `topic:薬屋`
+      - name: test_check_meme_when_no_content_tag
+        case: 正常
+        summary: 内容の分類のタグが無い
+        condition: '`work` を持たず、タグ `topic:食事` だけのネットミーム'
+        mock: なし（一時ディレクトリ）
+        expected: 1 件で、`path` が `tags`
+      - name: test_check_meme_when_broken
+        case: 正常
+        summary: 読み込めない YAML
+        condition: '`term: [`'
+        mock: なし
+        expected: '`path` が `$` の 1 件で、`rule` が `行目: YAML として読めません` を含む'
+    callees:
+      - '#functions[load_works]'
+    refs:
+      - to: IF-514-1
+        type: requires
+        when: '`check_meme` を修正するときに、IF-514-1 の `constraints` と突き合わせる。'
+  - name: load_works
+    title: 作品の索引の作成
+    kind: 関数
+    container: memes/scripts/meme_checks.py
+    usecase: ネットミームの検査
+    role: 読み込み
+    scope: public
+    summary: 配信元の作品から、作品の ID → タグの名前の索引を作る
+    args:
+      - name: root
+        title: 配信元の直下
+        type: Path
+        required: true
+        description: '`WORKS_DIR` を持つネットミームの配信元の直下'
+    returns:
+      type: dict[str, tuple[str, ...]]
+      description: 作品の `id` → `tags[].name` の並び
+    process: |-
+      1. `root / WORKS_DIR` の `*.yaml` をファイル名の順に UTF-8 で読み込み、`YAML(typ="safe")` で読み込む
+         - フォルダが無い場合、空を返却する
+         - 読み込めないファイルと、`id` が文字列でない作品を飛ばす
+      2. `id` と、`tags[]` の文字列の `name` の並びを索引に入れて返却する
+    unit_tests:
+      - name: test_load_works
+        case: 正常
+        summary: 作品の ID とタグを集める
+        condition: '`works/kusuriya.yaml`（タグ `topic:薬屋`）と、読み込めない YAML の `works/broken.yaml`'
+        mock: なし（一時ディレクトリ）
+        expected: '`{"kusuriya": ("topic:薬屋",)}`'
+      - name: test_load_works_when_missing_dir
+        case: 正常
+        summary: 作品のフォルダが無い
+        condition: '`works/` が無い一時ディレクトリ'
+        mock: なし
+        expected: 空
+test_files:
+  - tests/unit/scripts/test_meme_checks.py

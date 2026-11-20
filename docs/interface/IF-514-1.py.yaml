@@ -1,0 +1,188 @@
+id: IF-514-1
+visibility: internal
+title: ネットミームの検査
+entry:
+  kind: operation
+  value: '`memes/project-index.yaml` の `validators[]` の `meme-checks`。ネットミームの `documents[]` の行だけが指定し、作品の行は指定しない（project-index がネットミームの配信元の直下 `memes/` で子プロセスとして起動する。境界は標準入出力と終了コード）'
+lead: 標準入力のネットミーム 1 件に、スキーマで見られない決まり（指す作品の実在・内容の分類のタグ・作品のタグの一致）を適用し、違反を project-index の validators の約束で標準出力へ返却する。
+identifier: meme-checks
+idempotent: true
+side_effects: なし（ファイルを書き換えない）
+callers:
+  - SC-514-1#scenarios[正常シナリオ]
+  - SC-514-1#scenarios[異常シナリオ（指す作品が無い）]
+  - SC-72-6#scenarios[異常シナリオ（違反のある文書を含む）]
+exclusivity: 制限なし（読み込むだけで、同時に起動されても結果は変わらない）
+request:
+  - name: stdin
+    type: str
+    required: true
+    location: body
+    description: 検査するネットミーム 1 件の YAML（UTF-8）。書き込みでは書き込もうとする内容
+    constraints: 種類のスキーマの検査は project-index が先に実行する
+  - name: cwd
+    type: Path
+    required: true
+    location: argument
+    description: ネットミームの配信元の直下（`memes/`）。`works/*.yaml` を読み込み、指す作品の実在と作品のタグを確認する
+    notes: 引数ではなく、子プロセスの作業ディレクトリとして受け取る
+response:
+  - name: stdout
+    type: list[Violation]
+    description: 違反の配列の JSON。違反が無ければ `[]`
+  - name: stdout[].path
+    type: str
+    description: 違反した項目のパス（project-index の項目のパスと同じ記載方法）。文書全体にかかるものは `$`
+    example: work
+  - name: stdout[].rule
+    type: str
+    description: '違反の内容。先頭に文書の行（1 始まり）を `{行} 行目: ` で配置する'
+    example: '3 行目: 作品 `missing-work` が works/ にありません'
+  - name: stdout[].fix
+    type: str
+    description: 修正の仕方。1 文で記載する
+    example: 先に作品を登録するか、登録済みの作品の ID を指す
+  - name: stderr
+    type: str
+    description: 終了コードが 0 以外のときの理由（1 行）
+  - name: exit_code
+    type: Literal[0, 1]
+    description: 0 = 検査を終えた（違反の有無に依らない）。1 = 想定していない例外で落ちた
+response_example: |-
+  ```json
+  [
+    {"path": "work", "rule": "3 行目: 作品 `missing-work` が works/ にありません", "fix": "先に作品を登録するか、登録済みの作品の ID を指す"}
+  ]
+  ```
+response_notes: '違反があっても終了コードは 0 にする。project-index は 0 以外の終了コードで標準出力を読み込まず、違反 1 件（`path: $`）に置き換える'
+exceptions:
+  - name: なし（正常終了）
+    condition: 検査を終えた。違反・読み込めない YAML も違反として配列で返却し、終了コード 0
+  - name: 終了コード 1
+    condition: '想定していない例外。標準エラーに traceback を出し、project-index が「検査を実行できませんでした」の違反 1 件（`path: $`）に置き換える'
+constraints:
+  - item: 処理時間
+    constraint: 起動から 20 秒
+    decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
+  - item: 指す作品の実在
+    constraint: ネットミームの `work` が、`works/*.yaml` のどの作品の `id` にも一致しなければ `work` の違反 1 件にする。`work` を持たないネットミームには適用しない
+  - item: 内容の分類のタグ
+    constraint: ネットミームの `tags[].name` のうち、内容の分類のタグ（`topic:セリフ`・`topic:タイトル`・`topic:キャラクター`・`topic:用語`・`topic:題材`・`topic:口癖`・`topic:呼び名`）がちょうど 1 つでなければ `tags` の違反 1 件にする。`rule` に内容の分類のタグの一覧と、持っていた内容の分類のタグを並べる
+  - item: 作品のタグの一致
+    constraint: '`work` が実在する作品を指すネットミームで、作品の `tags[].name` のうちネットミームの `tags[].name` に無いタグがあれば、`tags` の違反 1 件にする。`rule` に無いタグを全て並べる'
+  - item: 読み込めない作品
+    constraint: '`works/` の中の YAML として読み込めないファイルは飛ばす（そのファイルの違反は、そのファイルを検査するときに出る）'
+flows:
+  - name: 正常系
+    summary: 違反の無いネットミームに空の配列を返却する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 配信元
+        description: '`works/kusuriya.yaml`（`tags: [{name: topic:薬屋}]`）を持つ一時フォルダ'
+      - name: 標準入力
+        description: '`work: kusuriya`、タグ `topic:薬屋`・`topic:セリフ`・`topic:危険` を持つネットミーム'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant D as project-index
+        participant S as ネットミームの検査
+        participant F as 配信元の works
+        D->>S: 標準入力にネットミームの YAML
+        S->>F: 作品の ID とタグを集める
+        S->>S: 指す作品・内容の分類のタグ・作品のタグを確認する
+        S-->>D: 終了コード 0 と空の配列
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力が `[]`
+      - 配信元のファイルのハッシュが変わらない
+    test: test_normal
+  - name: 正常系（指す作品が無い）
+    summary: '`work` が実在しない作品を指すネットミームに、`work` の違反 1 件を返却する'
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 配信元
+        description: '`works/kusuriya.yaml` を持つ一時フォルダ'
+      - name: 標準入力
+        description: '`work: missing-work` とタグ `topic:セリフ` を持つネットミーム'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant D as project-index
+        participant S as ネットミームの検査
+        participant F as 配信元の works
+        D->>S: 標準入力にネットミームの YAML
+        S->>F: 作品の ID を集める
+        S->>S: 指す作品が無いことを記録する
+        S-->>D: 終了コード 0 と違反の配列
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力の配列が 1 件で、`path` が `work`、`rule` に `missing-work` がある
+    test: test_normal_when_work_not_found
+  - name: 正常系（タグの語彙の違反）
+    summary: 内容の分類のタグが 2 つで、作品のタグが無いネットミームに、`tags` の違反 2 件を返却する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 配信元
+        description: '`works/kusuriya.yaml`（`tags: [{name: topic:薬屋}]`）を持つ一時フォルダ'
+      - name: 標準入力
+        description: '`work: kusuriya`、タグ `topic:セリフ`・`topic:タイトル` だけを持つネットミーム'
+        notes: 違反は 2 件
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant D as project-index
+        participant S as ネットミームの検査
+        participant F as 配信元の works
+        D->>S: 標準入力にネットミームの YAML
+        S->>F: 作品の ID とタグを集める
+        S->>S: 内容の分類のタグの数と作品のタグの有無を記録する
+        S-->>D: 終了コード 0 と違反の配列
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力の配列が 2 件で、どちらも `path` が `tags`
+      - 1 件の `rule` に `topic:セリフ` と `topic:タイトル`、もう 1 件の `rule` に `topic:薬屋` がある
+    test: test_normal_when_tag_vocabulary_violated
+  - name: 正常系（YAML として読み込めない）
+    summary: '読み込めない入力を `path: $` の違反 1 件で返却する'
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 標準入力
+        description: 括弧が閉じていない YAML
+        notes: '`term: [`'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant D as project-index
+        participant S as ネットミームの検査
+        D->>S: 標準入力に壊れた YAML
+        S->>S: YAML として読み込めない
+        S-->>D: 終了コード 0 と path $ の違反
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力が 1 件で、`path` が `$`
+    test: test_normal_when_invalid_yaml
+test_file: tests/integration/scripts/test_meme_checks.py

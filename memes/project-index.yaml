@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/shuhei1101/dev-docs/3fa52c474176b95140f6e05ec4a78869e1dd401c/schemas/dev-docs.schema.json
+version: "3"
+name: knowledge-memes
+description: 動画のセリフに入れるネットミーム（アニメ・漫画・ゲームのネタ、旬の話題、ネットの言い回し）と、その元になる作品
+instructions: |-
+  作品（meme_work）は `works/`、ネットミーム（meme）は `memes/` に、1 件 1 ファイルの YAML で持つ。ファイル名は `{id}.yaml`。
+  ネットミームの `work` は作品の `id` を指し、作品のタグ（`topic:{作品・話題の短い名前}`）をネットミームにも付ける。
+  ネットミームは内容の分類のタグ（`topic:セリフ`・`topic:タイトル`・`topic:キャラクター`・`topic:用語`・`topic:題材`・`topic:口癖`・`topic:呼び名`）をちょうど 1 つ持つ。
+  書き込みのときは meme-checks が、指す作品の実在・内容の分類のタグ・作品のタグの一致を検査する。
+  端末の設定の `direct_commit.scope` に当たる作業場所からは、`write_docs` の `commit` で develop へ直コミットできる。
+when:
+  - 動画のセリフに入れるネットミームを探すとき
+  - ネットミームと作品を登録するとき
+validators:
+  - id: meme-checks
+    run: [uv, run, --frozen, --script, scripts/meme_checks.py]
+    on: [write]
+direct_commit:
+  branch: develop
+  kinds: [meme, meme_work]
+documents:
+  - id: meme_work
+    title: 作品
+    paths: ["works/*.yaml"]
+    schema: schemas/meme-work.schema.yaml
+    metadata:
+      name: title
+      description: description
+      tags: tags[].name
+  - id: meme
+    title: ネットミーム
+    paths: ["memes/*.yaml"]
+    schema: schemas/meme.schema.yaml
+    validators: [meme-checks]
+    metadata:
+      name: term
+      description: context
+      tags: tags[].name
+nav:
+  tabs:
+    - title: ネットミーム
+      items:
+        - auto:
+            document: meme
+    - title: 作品
+      items:
+        - auto:
+            document: meme_work

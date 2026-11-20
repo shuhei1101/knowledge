@@ -1,0 +1,148 @@
+# 単体テスト（Red）
+
+環境: /tmp/pytest-of-shuhei2441 が root の持ち物で pytest の一時フォルダを作れないため、TMPDIR=$HOME/.cache/pytest-tmp-530 を指定して実行した
+
+## 全件実行
+
+$ (rc=0; uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit || rc=1; uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check || rc=1; exit $rc)
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source
+configfile: pytest.ini
+collected 305 items / 1 error
+
+==================================== ERRORS ====================================
+___________ ERROR collecting tests/unit/scripts/test_meme_checks.py ____________
+ImportError while importing test module '/home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source/tests/unit/scripts/test_meme_checks.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/scripts/test_meme_checks.py:6: in <module>
+    import meme_checks
+E   ModuleNotFoundError: No module named 'meme_checks'
+=========================== short test summary info ============================
+ERROR tests/unit/scripts/test_meme_checks.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 0.20s ===============================
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source
+configfile: pytest.ini
+collected 45 items
+
+tests/unit/slop-check/test_slop_check.py ............................... [ 68%]
+..............                                                           [100%]
+
+============================== 45 passed in 0.04s ==============================
+
+## 個別実行（全件実行が test_meme_checks.py の import で止まるため、test_check_all.py の結果を確認する）
+
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit/scripts/test_check_all.py
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source
+configfile: pytest.ini
+collected 58 items
+
+tests/unit/scripts/test_check_all.py ................................... [ 60%]
+....................FFF                                                  [100%]
+
+=================================== FAILURES ===================================
+_________________________ test_list_targets_when_memes _________________________
+
+tmp_path = PosixPath('/home/shuhei2441/.cache/pytest-tmp-530/pytest-of-shuhei2441/pytest-1/test_list_targets_when_memes0')
+
+    def test_list_targets_when_memes(tmp_path: Path) -> None:
+        """ネットミームの配信元の行を memes/ を基準に解く（正常系）。"""
+        # 準備
+        (tmp_path / "memes" / "memes").mkdir(parents=True)
+        (tmp_path / "memes" / "memes" / "a.yaml").write_text("id: a\n", encoding="utf-8")
+        (tmp_path / "memes" / "project-index.yaml").write_text(
+            'version: "3"\n'
+            "name: knowledge-memes\n"
+            "documents:\n"
+            "  - id: meme\n"
+            '    paths: ["memes/*.yaml"]\n'
+            "    schema: schemas/meme.schema.yaml\n"
+            "    validators: [meme-checks]\n",
+            encoding="utf-8",
+        )
+        # 実行
+        result = list_targets(tmp_path, [])
+        # 検証
+        assert (
+>           Target(
+                path=PurePosixPath("memes/memes/a.yaml"),
+                schema="memes/schemas/meme.schema.yaml",
+                checks=False,
+                meme_checks=True,
+            )
+            in result
+        )
+E       TypeError: Target.__init__() got an unexpected keyword argument 'meme_checks'
+
+tests/unit/scripts/test_check_all.py:1561: TypeError
+______________________ test_check_target_when_meme_checks ______________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x7a7ff3731220>
+
+    def test_check_target_when_meme_checks(repo_factory: RepoFactory) -> None:
+        """ネットミームの検査の違反を加える（正常系）。"""
+        # 準備
+        text = "id: a\nterm: あ\nwork: missing-work\ntags:\n  - name: topic:セリフ\n"
+        root = repo_factory(
+            {
+                "memes/schemas/meme.schema.yaml": "title: ネットミーム\n",
+>               "memes/scripts/meme_checks.py": (_REPO / "memes/scripts/meme_checks.py").read_text(
+                    encoding="utf-8"
+                ),
+            }
+        )
+
+tests/unit/scripts/test_check_all.py:1578: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../../../../.local/share/uv/python/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/pathlib/__init__.py:787: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source/memes/scripts/meme_checks.py')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/home/shuhei2441/repo/knowledge/.claude/worktrees/feat-memes-add-meme-source/memes/scripts/meme_checks.py'
+
+../../../../../.local/share/uv/python/cpython-3.14.3-linux-x86_64-gnu/lib/python3.14/pathlib/__init__.py:771: FileNotFoundError
+____________________ test_check_document_schemas_when_memes ____________________
+
+repo_factory = <function repo_factory.<locals>._create at 0x7a7ff3731d20>
+
+    def test_check_document_schemas_when_memes(repo_factory: RepoFactory) -> None:
+        """ネットミームの配信元のスキーマも検査する（正常系）。"""
+        # 準備
+        root = repo_factory({"memes/schemas/meme.schema.yaml": "title: ネットミーム\ntype: 1\n"})
+        # 実行
+        result = check_all.check_document_schemas(root, _meta())
+        # 検証
+>       assert len(result) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/unit/scripts/test_check_all.py:1609: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/scripts/test_check_all.py::test_list_targets_when_memes - T...
+FAILED tests/unit/scripts/test_check_all.py::test_check_target_when_meme_checks
+FAILED tests/unit/scripts/test_check_all.py::test_check_document_schemas_when_memes
+========================= 3 failed, 55 passed in 3.85s =========================
+
+## 実装の前から pass したテスト
+
+- test_main_when_memes_config_missing: memes/project-index.yaml が無いときに他の検査を続ける振る舞いは、scripts/check_all.py の main が memes/ を参照しないため既にある（develop の 6d9ad3e）

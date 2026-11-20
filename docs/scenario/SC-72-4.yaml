@@ -10,6 +10,8 @@ scenarios:
         description: 'knowledge のクローンの外部の作業場所（例: 別のリポジトリのクローン）'
       - name: 配信中の knowledge
         description: 用語集に別名を持つ用語がある（用語 `A.I.VOICE 2`、別名 `A.I.VOICE2`）
+      - name: 配信中の knowledge-memes
+        description: 作品 `kusuriya` と、それを `work` で指すネットミーム `kusuriya-dokudesu` がある
     flow: |-
       <!-- map -->
 
@@ -27,6 +29,8 @@ scenarios:
         M-->>E: 用語集の用語と文書の名前・別名
         E->>M: search_docs に term A.I.VOICE2
         M-->>E: 用語集の用語
+        E->>M: search_docs に source knowledge-memes と種類 meme
+        M-->>E: ネットミームの名前・説明・タグ
       ```
 
       <!-- /map -->
@@ -39,6 +43,8 @@ scenarios:
       - ID で取得した本文が develop のファイルの中身と一致する
       - '`list_match_words` が用語集（`docs/terms.yaml`）の用語の `name`・`aliases` を、文書の名前・別名と並べて返却する'
       - '`search_docs` の `term` に `A.I.VOICE2` を指定すると、用語 `A.I.VOICE 2` がヒットする'
+      - '`source: knowledge` の検索・`group_by: tags` の集計・`list_match_words` に、ネットミームの配信元の作品とネットミームが出ない'
+      - '`search_docs` に `source: knowledge-memes` と種類 `meme` を指定すると、`name` が `term` の値、`description` が `context` の値のネットミームがヒットする'
     test: test_normal
   - name: 異常シナリオ（作業場所が scope.read の外）
     setup:
