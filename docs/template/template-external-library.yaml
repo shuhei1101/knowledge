@@ -81,6 +81,7 @@ items:
       | catalogs[].entries[].params[].name | パラメータ | string | 必須 | - | - | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child`。 | 実装で、引数の名前にする。 | - |
       | catalogs[].entries[].params[].type | 型 | string | 必須 | - | - | 取りうる値が限られるときは列挙し、各値の意味は補足に記載する。 | 実装で、引数の型にする。 | - |
       | catalogs[].entries[].params[].required | 必須 | boolean | - | - | - | 省けない引数なら `true`。 | 実装で、省けない引数にする。 | - |
+      | catalogs[].entries[].params[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | catalogs[].entries[].params[].default | 既定 | string | - | - | - | 任意のパラメータの省略時の値。 | 実装で、パラメータを省くか、明示するかを決める。 | - |
       | catalogs[].entries[].params[].description | 説明 | string | 必須 | - | - | 引数が何を表すか。 | 実装で、引数に入れる値を決める。 | - |
       | catalogs[].entries[].params[].constraints | 制限 | string | - | - | - | 値の上限・下限・形式などの制限。 | 実装で、指定する前の検証にする。 | - |
@@ -89,11 +90,12 @@ items:
       | catalogs[].entries[].params[].verified_at | 確認日時 | string | - | - | format: `date-time` | `verification_state` を `verified` にした日時（ISO 8601、タイムゾーン付き）。 | 保守で、外部 API・外部ライブラリのバージョンが上がったときに、その後に再確認したかを判断する。<br>生成で、表の確認日時の列にする。 | `2026-11-14T10:00:00+09:00` |
       | catalogs[].entries[].params_example | パラメータ例 | string | - | - | - | import 込みの最小の動く例（コードブロック）。 | 実装で、呼び出しの見本にする。 | - |
       | catalogs[].entries[].returns | 戻り値 | array | - | - | - | 単純な値は `name` を `-` にした 1 要素。 | 実装で、戻り値の受け取りに使用する型にする。 | - |
-      | catalogs[].entries[].returns[].name | フィールド | string | 必須 | - | - | 返らないことがあるフィールドは `field?` と記載し、条件を補足に記載する。 | 実装で、戻り値のフィールドの名前にする。 | - |
+      | catalogs[].entries[].returns[].name | フィールド | string | 必須 | - | - | 返らないことがあるフィールドは `field?` と記載し、条件を `condition` に記載する。 | 実装で、戻り値のフィールドの名前にする。 | - |
       | catalogs[].entries[].returns[].type | 型 | string | 必須 | - | - | フィールドの型。 | 実装で、フィールドの型にする。 | - |
+      | catalogs[].entries[].returns[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | catalogs[].entries[].returns[].description | 説明 | string | 必須 | - | - | フィールドの値が何を表すか。 | 実装で、フィールドの値で分岐する条件を決める。 | - |
       | catalogs[].entries[].returns[].constraints | 制限 | string | - | - | - | 値の上限・形式などの制限。 | 実装で、戻り値を受け取る型と検証の範囲にする。 | - |
-      | catalogs[].entries[].returns[].notes | 補足 | string | - | - | - | フィールドの前提（返らない条件 等）。 | 実装で、フィールドが返らないときの扱いを決める。 | - |
+      | catalogs[].entries[].returns[].notes | 補足 | string | - | - | - | フィールドの前提（返らないときの扱い 等）。 | 実装で、フィールドが返らないときの扱いを決める。 | - |
       | catalogs[].entries[].returns_example | 戻り値例 | string | - | - | - | Markdown で記載する本文。定数は `!{名前}` で埋め込める。 | テストで、Mock の戻り値にする。 | - |
       | catalogs[].entries[].refs | 関連 | array | - | - | maxItems: `8` | 関連する設計書の一覧。 | 生成で、関連する設計書へのリンクにする。<br>レビューで、関連する設計書をたどって食い違いを確認する。 | - |
       | catalogs[].entries[].refs[].to | 相手の ID | string | 必須 | - | pattern: `^[A-Z]+-\d+(-\d+)?$` | 関連先の設計書の最上位の `id`。項目のパスは `item` に分ける。 | 検査で、関連先の設計書が実在するかを確認する。<br>project-index の `trace_related` で、文書の ID と一致させて関連をたどる。 | `IF-12` / `IF-3038-1` |
@@ -161,7 +163,9 @@ items:
       | selection.consequences | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | install | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | catalogs[].entries[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | catalogs[].entries[].params[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | catalogs[].entries[].params_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | catalogs[].entries[].returns[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | catalogs[].entries[].returns_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | catalogs[].entries[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
       | catalogs[].entries[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |

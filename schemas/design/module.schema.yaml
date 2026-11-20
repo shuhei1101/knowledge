@@ -667,6 +667,8 @@ properties:
                 description: 省けない項目なら `true`。
                 x-used-by:
                   - 実装で、省けるかを決める。
+              condition:
+                $ref: common.schema.yaml#/$defs/key_condition
               default:
                 type: string
                 title: デフォルト
@@ -831,6 +833,8 @@ properties:
                 description: 省けない項目なら `true`。
                 x-used-by:
                   - 実装で、省けるかを決める。
+              condition:
+                $ref: common.schema.yaml#/$defs/key_condition
               default:
                 type: string
                 title: デフォルト

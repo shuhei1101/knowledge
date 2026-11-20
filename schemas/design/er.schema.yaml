@@ -236,6 +236,8 @@ properties:
                 description: NULL を許可しないカラムなら `true`。
                 x-used-by:
                   - 実装で、NOT NULL の制約にする。
+              condition:
+                $ref: common.schema.yaml#/$defs/key_condition
               primary_key:
                 type: boolean
                 title: 主キー

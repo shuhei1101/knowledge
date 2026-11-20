@@ -274,6 +274,8 @@ properties:
           description: 入力が必須なら `true`。
           x-used-by:
             - 実装で、入力を必須にするかを決める。
+        condition:
+          $ref: common.schema.yaml#/$defs/key_condition
         required_label:
           type: string
           title: 要否の表示

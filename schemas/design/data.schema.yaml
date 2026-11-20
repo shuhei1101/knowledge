@@ -122,6 +122,8 @@ properties:
           description: 必ず値を持つ項目なら `true`。
           x-used-by:
             - 設計で、ER 図の設計書のカラムの NOT NULL を決める。
+        condition:
+          $ref: common.schema.yaml#/$defs/key_condition
         description:
           type: string
           title: 説明

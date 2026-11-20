@@ -163,6 +163,22 @@ $defs:
     description: そうしている理由。参照する側の判断が変わるものだけを記載する。
     x-used-by:
       - レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。
+  key_condition:
+    type: string
+    title: 条件
+    description: 'ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。'
+    x-used-by:
+      - 実装で、条件に該当するときだけキーを持たせる検証にする。
+      - レビューで、判別のキーで分かれるキーを表で一覧して確認する。
+    x-rules:
+      - 条件があるキーだけに記載する。
+      - 必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。
+      - 条件に該当しないときは、キーを持たない（ER 図は NULL にする）。
+    pattern: "^[^\\n]+$"
+    examples:
+      - "type: anime"
+      - "work なし"
+      - "styles[].type: parody"
   status:
     type: string
     title: 状態

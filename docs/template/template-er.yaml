@@ -84,6 +84,7 @@ items:
       | tables[].columns[].type | 型 | string | 必須 | - | - | DB は DBMS のネイティブ型、JSON / YAML は `string` / `number` / `boolean` / `object` / `array`。 | 実装で、カラムの型にする。 | - |
       | tables[].columns[].length | 長さ・精度 | string | - | - | - | 長さ・精度・小数の桁。 | 実装で、型の長さ・精度にする。<br>テストで、境界の長さのケースにする。 | - |
       | tables[].columns[].not_null | NOT NULL | boolean | - | - | - | NULL を許可しないカラムなら `true`。 | 実装で、NOT NULL の制約にする。 | - |
+      | tables[].columns[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | tables[].columns[].primary_key | 主キー | boolean | - | - | - | 主キーのカラムなら `true`。 | 実装で、主キーの制約にする。 | - |
       | tables[].columns[].unique | 一意 | boolean | - | - | - | 値が一意のカラムなら `true`。 | 実装で、一意の制約にする。 | - |
       | tables[].columns[].foreign_key | 外部キー | object | - | - | - | 参照先のテーブルとカラム。外部キーでないときは記載しない。 | 実装で、外部キーの制約にする。 | - |
@@ -138,6 +139,7 @@ items:
       | tables[].source | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
       | tables[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | tables[].columns[].source | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | tables[].columns[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | tables[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
       | tables[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
       | tables[].refs[].when | `when` を記載できない関連は張らない。 | - | - |
