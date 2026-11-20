@@ -90,3 +90,6 @@ scope_out:
   - item: 登録しない候補 85 件（A-245）
     reason: 利用者が登録しないと決定した（A-244）
     plan: none
+  - item: 'SKILL.md の生成が `type: mcp` の `calls[].server` をツールの完全な名前に解決せず、エージェントフローのスキーマの説明と食い違う'
+    reason: '生成のスクリプトとスキーマの不一致で、この PR の要望に含まれない。この PR のスキルは `type: tool` で完全な名前を記載して回避した'
+    plan: '#534'
