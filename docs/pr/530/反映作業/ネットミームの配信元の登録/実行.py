@@ -58,7 +58,7 @@ def main() -> int:
     backup = SETTINGS.with_name(f"{SETTINGS.name}.bak-{stamp}")
     shutil.copy2(SETTINGS, backup)
     print(f"退避: ok（{backup}）")
-    status, result = request("POST", API, {"source": ROW, "expected_version": body["version"]})
+    status, result = request("POST", API, {"source": ROW, "expectedVersion": body["version"]})
     if status != 201:
         print("配信元の行の追加: failed")
         print(f"POST {API}: HTTP {status} {result}", file=sys.stderr)

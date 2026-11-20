@@ -15,7 +15,7 @@ def main() -> int:
     if SOURCE_ID not in {row.get("id") for row in body.get("sources", [])}:
         print("配信元の行の削除: skipped")
         return 0
-    status, result = request("DELETE", f"{API}/{SOURCE_ID}?expected_version={body['version']}")
+    status, result = request("DELETE", f"{API}/{SOURCE_ID}?expectedVersion={body['version']}")
     if status != 200:
         print("配信元の行の削除: failed")
         print(f"DELETE {API}/{SOURCE_ID}: HTTP {status} {result}", file=sys.stderr)
