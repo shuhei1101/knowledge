@@ -7,6 +7,7 @@
 ## 使い方
 
 - project-index の配信元に登録すると、どの作業場所からでも dev-docs の画面と project-index の文書の MCP（`source: knowledge`）で文書を検索・取得できる（[knowledge を project-index の配信元に登録する](./docs/guide/guide-setup-docs-mcp.yaml)）
+- 作品とネットミームは、別の配信元 `knowledge-memes`（[memes/](./memes/)）に登録すると検索・取得でき、許可した作業場所からは直コミットで登録できる（同じページの「ネットミームの配信元を登録する」）
 - ファイルを触ったときにヒットする規約を案内させるときは、rule-inject の索引を適用する（[規約の索引を適用する](./docs/guide/guide-setup-apply-rule-index.yaml)）
 - 書き込んだ中身にある AI slop の単語と置き換え先を通知させるときは、プラグイン slop-check を追加する（[knowledge のプラグインを入れる](./docs/guide/guide-setup-install-plugin.yaml)）
 
