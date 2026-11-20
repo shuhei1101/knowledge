@@ -3,8 +3,8 @@ visibility: internal
 title: ネットミームの検査
 entry:
   kind: operation
-  value: '`memes/project-index.yaml` の `validators[]` の `meme-checks`（project-index がネットミームの配信元の直下 `memes/` で子プロセスとして起動する。境界は標準入出力と終了コード）'
-lead: 標準入力の作品かネットミーム 1 件に、スキーマで見られない決まり（指す作品の実在・内容の分類のタグ・作品のタグの一致）を適用し、違反を project-index の validators の約束で標準出力へ返却する。
+  value: '`memes/project-index.yaml` の `validators[]` の `meme-checks`。ネットミームの `documents[]` の行だけが指定し、作品の行は指定しない（project-index がネットミームの配信元の直下 `memes/` で子プロセスとして起動する。境界は標準入出力と終了コード）'
+lead: 標準入力のネットミーム 1 件に、スキーマで見られない決まり（指す作品の実在・内容の分類のタグ・作品のタグの一致）を適用し、違反を project-index の validators の約束で標準出力へ返却する。
 identifier: meme-checks
 idempotent: true
 side_effects: なし（ファイルを書き換えない）
@@ -18,9 +18,8 @@ request:
     type: str
     required: true
     location: body
-    description: 検査する作品かネットミーム 1 件の YAML（UTF-8）。書き込みでは書き込もうとする内容
+    description: 検査するネットミーム 1 件の YAML（UTF-8）。書き込みでは書き込もうとする内容
     constraints: 種類のスキーマの検査は project-index が先に実行する
-    notes: '`work` と `term` のどちらかを持てばネットミーム、`title` を持てば作品として扱う'
   - name: cwd
     type: Path
     required: true
@@ -66,9 +65,9 @@ constraints:
     constraint: 起動から 20 秒
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]
   - item: 指す作品の実在
-    constraint: ネットミームの `work` が、`works/*.yaml` のどの作品の `id` にも一致しなければ `work` の違反 1 件にする。`work` を持たないネットミームと作品には適用しない
+    constraint: ネットミームの `work` が、`works/*.yaml` のどの作品の `id` にも一致しなければ `work` の違反 1 件にする。`work` を持たないネットミームには適用しない
   - item: 内容の分類のタグ
-    constraint: ネットミームの `tags[].name` のうち、内容の分類のタグ（`topic:セリフ`・`topic:タイトル`・`topic:キャラクター`・`topic:用語`・`topic:題材`・`topic:口癖`・`topic:呼び名`）がちょうど 1 つでなければ `tags` の違反 1 件にする。`rule` に内容の分類のタグの一覧と、持っていた内容の分類のタグを並べる。作品には適用しない
+    constraint: ネットミームの `tags[].name` のうち、内容の分類のタグ（`topic:セリフ`・`topic:タイトル`・`topic:キャラクター`・`topic:用語`・`topic:題材`・`topic:口癖`・`topic:呼び名`）がちょうど 1 つでなければ `tags` の違反 1 件にする。`rule` に内容の分類のタグの一覧と、持っていた内容の分類のタグを並べる
   - item: 作品のタグの一致
     constraint: '`work` が実在する作品を指すネットミームで、作品の `tags[].name` のうちネットミームの `tags[].name` に無いタグがあれば、`tags` の違反 1 件にする。`rule` に無いタグを全て並べる'
   - item: 読み込めない作品

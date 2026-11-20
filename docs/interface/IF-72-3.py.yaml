@@ -154,7 +154,7 @@ flows:
       - name: Mock
         description: 差し替えない
       - name: リポジトリ
-        description: スキーマに合わない文書（`description` が無い）と、項目の ID が重複した文書と、`memes/memes/` の下で無い作品を `work` で指すネットミームを 1 つずつ持ち、`memes/project-index.yaml` と `schemas/meta.schema.yaml` を持つ一時フォルダ
+        description: 'スキーマに合わない文書（`description` が無い）と、項目の ID が重複した文書と、`memes/memes/` の下で無い作品を `work` で指すネットミームと、`styles[].type: parody` で `patterns` を持たないネットミームを 1 つずつ持ち、`memes/project-index.yaml` と `schemas/meta.schema.yaml` を持つ一時フォルダ'
     flow: |-
       <!-- map -->
 
@@ -174,7 +174,7 @@ flows:
       <!-- /map -->
     expected:
       - 終了コードが 1
-      - 標準出力に 3 つの文書の違反（ネットミームは `work` の違反）が、ファイルのパス・行・項目のパス・内容つきで 1 行ずつ出る
+      - 標準出力に 4 つの文書の違反（ネットミームは `work` の違反と、`styles` の要素の `patterns` の欠けのスキーマの違反）が、ファイルのパス・行・項目のパス・内容つきで 1 行ずつ出る
     test: test_normal_when_violations
   - name: 正常系（対応表のコピーが原本と違う・終了コード 1）
     summary: 対応表のコピーが原本から再作成したものと違えば、違反として出す
@@ -575,7 +575,7 @@ constraints:
       `x-used-by`: 全ての深さの `properties` の下のキーが `x-used-by` を持つか。`$ref` を持つキーは、キーの側か、`$ref` の検査と同じ登録から解いた型のどちらかが `x-used-by` を持てば合格にする（解決できない `$ref` は `$ref` の違反だけを出す）。`$defs` の直下の型と、`if` の条件の中のキーには適用しない。メタスキーマの違反があるスキーマには、`$ref`・`examples` と同じく適用しない。
       `schemas/*.schema.yaml`（knowledge の文書の種類のスキーマ）とは別に登録する
   - item: 文書の種類のスキーマの検査
-    constraint: '`schemas/*.schema.yaml`（`schemas/meta.schema.yaml` を含む）にも拡張したメタスキーマを適用する。`$ref`・`examples` の検査は適用しない'
+    constraint: '`schemas/*.schema.yaml`（`schemas/meta.schema.yaml` を含む）と `memes/schemas/*.schema.yaml` にも拡張したメタスキーマを適用する。`$ref`・`examples` の検査は適用しない'
   - item: '`x-rules`・`x-bad-examples` の形式'
     constraint: |-
       スキーマの全ての深さのキーに適用する。`examples`・`x-bad-examples` の値の中と、`properties` の中の同じ名前の項目には適用しない。
@@ -584,7 +584,7 @@ constraints:
   - item: スキーマの違反の行
     constraint: '設計書のスキーマと `schemas/*.schema.yaml` の違反の行は、スキーマの YAML の中の誤りのある位置の行。メタスキーマの違反は誤りのあるキー、`$ref` の違反は `$ref` のキー、`examples` の違反は誤りのある要素（要素の中の項目が誤りなら、その項目）の行、`x-used-by` の違反は `x-used-by` の無いキー（`$ref` の先の型にも無いときもキー）の行。項目のパスは同じ位置を `format_path` の記載方法で出す'
   - item: lint の適用先
-    constraint: 'markdownlint-cli2・textlint は、`documents[]` の YAML の文書の Markdown の項目（パスの末尾が `body` の文字列）を 1 項目 1 ファイルの一時の `.md` にして適用し、`.md` の文書にはそのまま適用する。yamllint は `documents[]` の YAML の文書と、直下の `project-index.yaml`・`rules.yaml` と、`schemas/*.schema.yaml`・`schemas/design/*.schema.yaml` に適用する'
+    constraint: 'markdownlint-cli2・textlint は、`documents[]` の YAML の文書の Markdown の項目（パスの末尾が `body` の文字列）を 1 項目 1 ファイルの一時の `.md` にして適用し、`.md` の文書にはそのまま適用する。yamllint は `documents[]` の YAML の文書と、直下の `project-index.yaml`・`rules.yaml` と、`memes/project-index.yaml` と、`schemas/*.schema.yaml`・`schemas/design/*.schema.yaml`・`memes/schemas/*.schema.yaml` に適用する'
   - item: lint の行
     constraint: 一時の `.md` の違反の行は、CLI の行に `iter_strings` が返却する項目の開始行を加算して 1 を減算した、元の文書の YAML の行で出す
   - item: lint の CLI の呼び出し
