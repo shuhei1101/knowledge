@@ -25,6 +25,7 @@ known-first-party = ["_common", "_lint", "knowledge_checks", "knowledge_markdown
 [lint.per-file-ignores]
 "tests/**" = ["S101", "PLR2004"]   # テストの assert と期待値の数値は許す
 "scripts/*.py" = ["T20"]   # スクリプトは print で出力する
+"memes/scripts/*.py" = ["T20"]   # スクリプトは print で出力する
 
 [format]
 quote-style = "double"

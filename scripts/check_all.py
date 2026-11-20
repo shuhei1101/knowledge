@@ -83,7 +83,7 @@ from build_word_list import COPY, SOURCE, render_copy
 from knowledge_checks import build_id_index, build_name_index, check_document
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator, Mapping, Sequence
+    from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 
     from ruamel.yaml.comments import CommentedMap
 
@@ -292,7 +292,7 @@ def list_targets(root: Path, rows: Sequence[Mapping[str, Any]]) -> list[Target]:
     return sorted(targets.values(), key=lambda target: target.path)
 
 
-def _load_check_meme(root: Path) -> Any:
+def _load_check_meme(root: Path) -> Callable[[str, Path], list[dict[str, str]]]:
     """ネットミームの配信元の scripts/meme_checks.py を読み込み、ネットミームの検査の関数を返す。"""
     path = root / MEMES_DIR / "scripts" / "meme_checks.py"
     spec = importlib.util.spec_from_file_location("meme_checks", path)
@@ -301,7 +301,7 @@ def _load_check_meme(root: Path) -> Any:
         raise ImportError(message)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.check_meme
+    return cast("Callable[[str, Path], list[dict[str, str]]]", module.check_meme)
 
 
 def build_validators(
