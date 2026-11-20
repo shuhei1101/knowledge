@@ -7,6 +7,7 @@ arguments:
 - sources
 allowed-tools:
 - Bash(gh run list *)
+- Bash(gh run watch *)
 ---
 
 <!-- docs/skill/meme-register.yaml から生成した。このファイルを修正せず、設計書を修正して再生成する -->
@@ -152,10 +153,25 @@ allowed-tools:
 ### 結果を伝える
 
 登録した作品と用語の数と、コミットと、登録しなかった候補を伝える。
-コミットしたときは、そのコミットで動いた develop のワークフローの結果を取得する。
-失敗していれば、失敗したワークフローと登録のコミットを打ち消すコミットを提案する。
-打ち消しのコミットは、利用者が回答するまで作らない。
+コミットしたときは、その登録で最後にプッシュしたコミットで動いた develop のワークフローの結果だけを確認する。
+途中のコミットの run は、同じ concurrency のグループの後の run に取り消される（`cancelled`）ことがあるので、結果を確認しない。
+
+1. `gh run list` を、そのコミットの run が一覧に出るまで繰り返す
+2. 出たら、`gh run watch` に run の ID と `--exit-status` を指定し、Bash の `run_in_background` で終了まで待つ
+3. 終了コードが 0 なら成功と伝える
+4. 0 以外なら、失敗したワークフローと、この登録のコミットを打ち消すコミットを提案する
+5. 打ち消しのコミットは、利用者が回答するまで作らない
+
+待つ時間の上限は、1 から 2 の終了までを合わせて 30 分にする。
+上限を超えたら待つのをやめ、結果が出ていない旨と run の URL を伝える。
+
+| 導出の元の値 | 値 |
+| --- | --- |
+| 同じグループで先に動いている run の待ち（`pages.yml` は `cancel-in-progress: false`） | `build`・`deploy` の `timeout-minutes` の合計 10 分 |
+| 自分の run | `build`・`deploy` の `timeout-minutes` の合計 10 分 |
+| 余裕 | 内側の待ちの合計の 50% で 10 分 |
 
 呼ぶもの:
 
-- コマンド `gh run list --repo shuhei1101/knowledge --branch develop --commit {コミット} --json conclusion,status,url,workflowName`
+- コマンド `gh run list --repo shuhei1101/knowledge --branch develop --commit {コミット} --json databaseId,status,conclusion,url,workflowName`
+- コマンド `gh run watch {run の ID} --repo shuhei1101/knowledge --exit-status`
