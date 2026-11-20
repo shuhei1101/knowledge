@@ -15,6 +15,7 @@ tags:
     main: true
   - name: topic:モジュール
   - name: topic:設計書
+  - name: topic:上限
 status: current
 visibility: internal
 rev: 2
@@ -34,6 +35,9 @@ related:
   - to: html-core-buildless
     type: references
     when: ブラウザのスクリプトの拡張子を確認するとき
+  - to: flowchart-nonfunctional-layer
+    type: references
+    when: 件数と上限の記載先を確認するとき
 items:
   - id: overview
     name: "概要"
@@ -59,6 +63,7 @@ items:
       | モジュール構成の設計書が物理ファイル 1 つにつき 1 つで、全ての要素の `container` が同じ物理ファイルを指していること | 分類の構成図・決まりは分類ごとの設計書（`モジュール構成/分類/`）が持ち、要素は持たない。ファイルの配置はフォルダ構成の設計書が持つ |
       | モジュール構成と一緒に修正したフォルダ構成の設計書が、規約 [フォルダ構成の切り方とレビュー](id:dev-folder-layout) のレビューの観点に該当しないこと | フォルダを追加・移動するのにフォルダ構成の設計書があって修正していない場合も指摘する |
       | 費用のかかる処理より前に、非機能要件で決めた時点の事前確認がフローに配置されていること | 規約 [事前確認](id:dev-precheck) |
+      | 要素・文書・ファイル・行の数に比例して繰り返す処理（ループの中の画面の読み書き・通信・ファイルの読み込み、要求ごとの全件の読み込み）をフローに追加する設計で、想定する最大の件数と、その件数での上限（時間か回数）が非機能要件に記載されていること | 処理が重いかではなく、件数と上限があるかを確認する。記載先のレイヤーは判定フローチャート [非機能要件のレイヤー](id:flowchart-nonfunctional-layer) に従う |
       | 新規作成した機能を呼ぶインターフェース（フック・MCP ツール・API・CLI）と、エージェントに指定する手順の指定方法（エージェントフロー・サブエージェント・スキル）の種類が、判定フローチャート [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice) の結果と合っていること | - |
       | モジュール構成の設計書が、ブラウザのスクリプトを `.ts` のファイルで設計し、`.js` を手書きする設計（ファイル名が `.js.yaml` の設計書など）になっていないこと | `.js` で記載してよいのは [js で記載してよい場合](id:html-core-buildless#script-extension-02) だけ。HTML に直接記載する `<script>` の処理も `.ts` へ分けているかを確認する（[HTML に直接記載する script](id:html-core-buildless#script-extension-04)） |
 
