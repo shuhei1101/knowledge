@@ -69,3 +69,33 @@ $defs:
           minLength: 1
         examples:
           - - 置き場
+      details:
+        title: 詳細
+        description: 用語を説明するページの並び。
+        type: array
+        items:
+          title: 詳細のページ
+          description: 用語を説明するページ 1 件。
+          type: object
+          additionalProperties: false
+          required:
+            - title
+            - href
+          properties:
+            title:
+              title: 表示名
+              description: リンクに出すページの名前。
+              type: string
+              minLength: 1
+              examples:
+                - 外部ライブラリの対応表
+            href:
+              title: リンク先
+              description: 用語集の YAML のあるフォルダからの相対パスか URL。見出しのアンカーを付けてよい。
+              type: string
+              minLength: 1
+              examples:
+                - ./設定.mark.md#外部ライブラリの対応表
+        examples:
+          - - title: 外部ライブラリの対応表
+              href: ./設定.mark.md#外部ライブラリの対応表
