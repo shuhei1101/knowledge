@@ -13,13 +13,7 @@ type RunScript = Callable[..., Any]
 _MEMES_SCRIPTS = Path(__file__).resolve().parents[3] / "memes" / "scripts"
 
 # タグ topic:薬屋 を持つ作品
-_WORK_KUSURIYA = (
-    "id: kusuriya\n"
-    "title: 薬屋のひとりごと\n"
-    "type: anime\n"
-    "tags:\n"
-    "  - name: topic:薬屋\n"
-)
+_WORK_KUSURIYA = "id: kusuriya\ntitle: 薬屋のひとりごと\ntype: anime\ntags:\n  - name: topic:薬屋\n"
 
 
 def _source(tmp_path: Path) -> Path:
