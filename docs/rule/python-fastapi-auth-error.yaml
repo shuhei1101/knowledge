@@ -116,7 +116,8 @@ items:
     group: 例外ハンドラ
     name: RequestValidationError のカスタム
     body: |-
-      - Pydantic の `RequestValidationError`（422）も `register_exception_handlers(app)` で ProblemDetail に統一する（MCP のツールと同じデータを返却する API は [MCP のツールと同じ構造のレスポンス](id:python-fastapi-auth-error#exception-handler-05) に統一する）
+      - Pydantic の `RequestValidationError`（422）も `register_exception_handlers(app)` で ProblemDetail に統一する。
+        MCP のツールと同じデータを返却する API は [MCP のツールと同じ構造のレスポンス](id:python-fastapi-auth-error#exception-handler-05) に統一する
   - id: exception-handler-05
     group: 例外ハンドラ
     name: MCP のツールと同じ構造のレスポンス
