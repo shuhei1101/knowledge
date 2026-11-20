@@ -1,0 +1,14 @@
+ネットミームの配信元の登録:
+  説明: 端末の設定（~/.config/project-index/settings.yaml）の sources[] に、ネットミームの配信元の行（config・scope・direct_commit.scope）を追加し、project-index の管理の MCP の reload で読み直す。書き換える前に同じフォルダへバックアップを取る
+  タグ: [設定, 再読み込み]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: 引数なしの describe の一覧に、ネットミームの配信元の行があり、直コミットの列に作品とネットミームの種類が出ている
+  状態: skipped
