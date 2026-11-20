@@ -391,6 +391,8 @@ $defs:
         x-used-by:
           - 検査で、種類ごとのキーの要否を確認する。
           - 検査で、文書の `type` が `flow` なら、`agents` の起動の構成で使用できるか（`permissions.deny` に無いか）を確認する。
+        x-rules:
+          - '文書の `type` が `skill` で MCP のツールを呼ぶときは、`mcp` にせず `tool` にし、`tool` に完全な名前を記載する。'
         enum:
         - mcp
         - tool
@@ -404,6 +406,7 @@ $defs:
         description: '`type` が `mcp` のときの『MCP サーバーの定義』への参照。'
         x-used-by:
           - 変換で、ツールの完全な名前（Claude Code では `mcp__{server}__{tool}`）を作る。
+          - 生成で、SKILL.md に完全な名前に解決せず参照のまま出す。
         examples:
         - MCP-1#
       tool:
