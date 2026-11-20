@@ -131,6 +131,13 @@ files:
     related:
       - to: scripts/knowledge_checks.py
         type: tests
+  - path: unit/scripts/test_meme_checks.py
+    name: ネットミームの検査の単体テスト
+    description: memes/scripts/meme_checks.py の関数をモジュール構成のとおりか確認する。ネットミームの検査の実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: MOD-514-1
+        type: tests
   - path: unit/scripts/test_knowledge_markdown.py
     name: 文書の Markdown への変換の単体テスト
     description: scripts/knowledge_markdown.py の関数をモジュール構成のとおりか確認する。文書の Markdown への変換の実装を変えたときに参照する。

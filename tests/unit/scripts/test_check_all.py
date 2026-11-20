@@ -1516,3 +1516,96 @@ def test_main_when_design_documents(
     assert PurePosixPath("docs/scenario/SC-1-1.yaml") in [
         target.path for targets in received for target in targets
     ]
+
+
+def test_main_when_memes_config_missing(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    repo_factory: RepoFactory,
+) -> None:
+    """ネットミームの配信元が無い（正常系）。"""
+    # 準備
+    root = repo_factory({"docs/rule/rule-a.yaml": _VALID_A})
+    monkeypatch.chdir(root)
+    monkeypatch.setattr(check_all, "find_lint_clis", _find_clis)
+    monkeypatch.setattr(check_all, "check_lints", _no_lints)
+    # 実行
+    code = check_all.main([])
+    # 検証
+    assert code == 0
+    assert (
+        capsys.readouterr().out.splitlines()[-1]
+        == "1 件の文書を検査し、違反は 0 件、警告は 0 件でした"
+    )
+
+
+def test_list_targets_when_memes(tmp_path: Path) -> None:
+    """ネットミームの配信元の行を memes/ を基準に解く（正常系）。"""
+    # 準備
+    (tmp_path / "memes" / "memes").mkdir(parents=True)
+    (tmp_path / "memes" / "memes" / "a.yaml").write_text("id: a\n", encoding="utf-8")
+    (tmp_path / "memes" / "project-index.yaml").write_text(
+        'version: "3"\n'
+        "name: knowledge-memes\n"
+        "documents:\n"
+        "  - id: meme\n"
+        '    paths: ["memes/*.yaml"]\n'
+        "    schema: schemas/meme.schema.yaml\n"
+        "    validators: [meme-checks]\n",
+        encoding="utf-8",
+    )
+    # 実行
+    result = list_targets(tmp_path, [])
+    # 検証
+    assert (
+        Target(
+            path=PurePosixPath("memes/memes/a.yaml"),
+            schema="memes/schemas/meme.schema.yaml",
+            checks=False,
+            meme_checks=True,
+        )
+        in result
+    )
+
+
+def test_check_target_when_meme_checks(repo_factory: RepoFactory) -> None:
+    """ネットミームの検査の違反を加える（正常系）。"""
+    # 準備
+    text = "id: a\nterm: あ\nwork: missing-work\ntags:\n  - name: topic:セリフ\n"
+    root = repo_factory(
+        {
+            "memes/schemas/meme.schema.yaml": "title: ネットミーム\n",
+            "memes/scripts/meme_checks.py": (_REPO / "memes/scripts/meme_checks.py").read_text(
+                encoding="utf-8"
+            ),
+        }
+    )
+    (root / "memes" / "works").mkdir()
+    validator = build_validators(root, ["memes/schemas/meme.schema.yaml"])[
+        "memes/schemas/meme.schema.yaml"
+    ]
+    target = Target(
+        path=PurePosixPath("memes/memes/a.yaml"),
+        schema="memes/schemas/meme.schema.yaml",
+        checks=False,
+        meme_checks=True,
+    )
+    # 実行
+    result = check_target(target, text, validator, root, {}, {})
+    # 検証
+    assert len(result) == 1
+    assert result[0][0] == 3
+    assert result[0][1] == "work"
+    assert "missing-work" in result[0][2]
+
+
+def test_check_document_schemas_when_memes(repo_factory: RepoFactory) -> None:
+    """ネットミームの配信元のスキーマも検査する（正常系）。"""
+    # 準備
+    root = repo_factory({"memes/schemas/meme.schema.yaml": "title: ネットミーム\ntype: 1\n"})
+    # 実行
+    result = check_all.check_document_schemas(root, _meta())
+    # 検証
+    assert len(result) == 1
+    assert result[0][0] == "memes/schemas/meme.schema.yaml"
+    assert result[0][3].startswith("metaschema: ")
