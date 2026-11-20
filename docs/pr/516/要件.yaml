@@ -1,0 +1,88 @@
+docs:
+  - page: docs/rule/convention-doc-presentation.yaml
+    new: false
+    change: key-table-01 の列を、キー・型・必須・条件・説明・例にし、条件があるキーが無い表には条件の列を出さないことを書く
+    status: todo
+  - page: schemas/design/config.schema.yaml
+    new: false
+    change: キーの表の要素の required の隣に condition を追加する
+    status: todo
+  - page: schemas/design/data.schema.yaml
+    new: false
+    change: fields[] の required の隣に condition を追加する
+    status: todo
+  - page: schemas/design/interface.schema.yaml
+    new: false
+    change: request[]・response[] の required の隣に condition を追加する
+    status: todo
+  - page: schemas/design/external_api.schema.yaml
+    new: false
+    change: 要求のパラメータの required の隣に condition を追加する
+    status: todo
+  - page: schemas/design/library.schema.yaml
+    new: false
+    change: 引数の required の隣に condition を追加する
+    status: todo
+  - page: schemas/design/component.schema.yaml
+    new: false
+    change: 引数の required の隣に condition を追加する
+    status: todo
+  - page: schemas/design/screen.schema.yaml
+    new: false
+    change: 要素の required の隣に condition を追加する
+    status: todo
+  - page: schemas/design/module.schema.yaml
+    new: false
+    change: 引数・プロパティの required の隣に condition を追加する
+    status: todo
+  - page: schemas/design/er.schema.yaml
+    new: false
+    change: カラムの not_null の隣に condition を追加する
+    status: todo
+  - page: docs/template/template-config.yaml
+    new: false
+    change: build_templates.py の再生成で condition の行を追随させる
+    status: todo
+  - page: docs/template/template-data.yaml
+    new: false
+    change: build_templates.py の再生成で condition の行を追随させる
+    status: todo
+  - page: docs/template/template-interface.yaml
+    new: false
+    change: build_templates.py の再生成で condition の行を追随させる
+    status: todo
+  - page: docs/template/template-external-api.yaml
+    new: false
+    change: build_templates.py の再生成で condition の行を追随させる
+    status: todo
+  - page: docs/template/template-external-library.yaml
+    new: false
+    change: build_templates.py の再生成で condition の行を追随させる
+    status: todo
+  - page: docs/template/template-component.yaml
+    new: false
+    change: build_templates.py の再生成で condition の行を追随させる
+    status: todo
+  - page: docs/template/template-screen-design.yaml
+    new: false
+    change: build_templates.py の再生成で condition の行を追随させる
+    status: todo
+  - page: docs/template/template-module.yaml
+    new: false
+    change: build_templates.py の再生成で condition の行を追随させる
+    status: todo
+  - page: docs/template/template-er.yaml
+    new: false
+    change: build_templates.py の再生成で condition の行を追随させる
+    status: todo
+scope_out:
+  - item: テンプレートを使用している各リポジトリの既存の設計書を、条件の列で書き直す
+    reason: '条件のキーは任意で、今の設計書はそのまま検査を通る。各リポジトリが design-schemas のタグを上げた後、判別のキーで分かれるキーを書くときに使用する（データ: ネットミームは #514 で使用する）'
+    plan: none
+  - item: dev-docs の画面の設計書の表で、条件のキーを持つ行が無い表に条件の列を出さない
+    reason: 設計書の種類の表はスキーマ駆動で dev-docs のサーバーが描く。空の列を省くかは dev-docs の描き方次第で、knowledge の変更では決まらない。今の判断は、ドキュメント修正で dev-docs の描き方を確かめ、空の列を出す場合は dev-docs へ起票する。確定はレビューで行う
+    plan: to_file
+  - item: 条件のキーを JSON Schema の if・then に変換して、条件に該当するときの必須を検査する
+    reason: 要望は表で一覧することで、条件からスキーマを生成する使い道は今無い。条件の値の型は要件.mark.md の未確定で決める
+    plan: none
+use_cases: []
