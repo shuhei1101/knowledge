@@ -210,7 +210,7 @@ constraints:
       次の並びで記載し、間を空行で区切る。値が無いものは配置しない。
       `when` があれば `{when}だけ行う。` の 1 行。
       `body` をそのまま。
-      `calls` があれば、`calls[]` の並びで 1 件を 1 行の箇条書きにした `呼ぶもの:` の一覧。`tool` は `ツール \`{tool}\``、`mcp` は `MCP \`{server}\` の \`{tool}\``、`command` は `コマンド \`{command}\``、`skill` は `スキル \`{skill}\``、`flow` は `エージェントフロー \`{flow}\``、`agent` は `サブエージェント \`{agent_type}\`: {instruction か flow}`（`agent_type` が無ければ `general-purpose`）。`args` があれば行の後ろに 1 行の YAML（フロースタイル）のインラインコードを添える
+      `calls` があれば、`calls[]` の並びで 1 件を 1 行の箇条書きにした `呼ぶもの:` の一覧。`tool` は `ツール \`{tool}\``、`mcp` は `MCP \`{server}\` の \`{tool}\``（`server` は参照先の『MCP サーバーの定義』を参照せず、記載した参照のまま出す）、`command` は `コマンド \`{command}\``、`skill` は `スキル \`{skill}\``、`flow` は `エージェントフロー \`{flow}\``、`agent` は `サブエージェント \`{agent_type}\`: {instruction か flow}`（`agent_type` が無ければ `general-purpose`）。`args` があれば行の後ろに 1 行の YAML（フロースタイル）のインラインコードを添える
   - item: 工程の埋め込み
     constraint: '`ref`（`{設計書の id}#steps[{name}]`）を持つ工程は、`docs/skill/{設計書の id}.yaml` の `steps[]` の同じ `name` の工程に置き換える。参照先も `ref` を持てばたどり、同じ工程へ戻る `ref` は解決できないものとして終了コード 2 にする'
   - item: 書き出す先
