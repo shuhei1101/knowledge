@@ -530,7 +530,7 @@ properties:
               name:
                 type: string
                 title: フィールド
-                description: 返らないことがあるフィールドは `field?` と記載し、条件を補足に記載する。
+                description: 返らないことがあるフィールドは `field?` と記載し、条件を `condition` に記載する。
                 x-used-by:
                   - 実装で、応答のフィールドの名前にする。
               type:
@@ -539,6 +539,8 @@ properties:
                 description: フィールドの型。
                 x-used-by:
                   - 実装で、フィールドの型にする。
+              condition:
+                $ref: common.schema.yaml#/$defs/key_condition
               description:
                 type: string
                 title: 説明
@@ -554,7 +556,7 @@ properties:
               notes:
                 type: string
                 title: 補足
-                description: フィールドの前提（返らない条件・ほかのフィールドとの関係 等）。
+                description: フィールドの前提（ほかのフィールドとの関係 等）。
                 x-used-by:
                   - 実装で、フィールドが返らないときの扱いを決める。
               verification_state:

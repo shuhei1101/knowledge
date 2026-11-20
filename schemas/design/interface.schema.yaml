@@ -353,9 +353,9 @@ properties:
         notes:
           type: string
           title: 補足
-          description: フィールドの前提（返らない条件 等）。
+          description: フィールドの前提（返らないときの扱い 等）。
           x-used-by:
-            - 実装で、フィールドを返却しない条件を決める。
+            - 実装で、フィールドを返却しないときの扱いを決める。
   response_example:
     $ref: common.schema.yaml#/$defs/markdown
     title: レスポンス例

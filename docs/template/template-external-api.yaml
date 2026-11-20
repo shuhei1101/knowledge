@@ -100,11 +100,12 @@ items:
       | endpoints[].request[].verified_at | 確認日時 | string | - | - | format: `date-time` | `verification_state` を `verified` にした日時（ISO 8601、タイムゾーン付き）。 | 保守で、外部 API・外部ライブラリのバージョンが上がったときに、その後に再確認したかを判断する。<br>生成で、表の確認日時の列にする。 | `2026-11-14T10:00:00+09:00` |
       | endpoints[].request_example | リクエスト例 | string | - | - | - | JSON のコードブロック。body を持たないときはリクエストライン。 | テストで、Mock の要求の見本にする。 | - |
       | endpoints[].response | レスポンス | array | - | - | - | 別のエンドポイントと同形のときは持たず、`same_as` に記載する。 | 実装で、応答の解析に使用する型にする。 | - |
-      | endpoints[].response[].name | フィールド | string | 必須 | - | - | 返らないことがあるフィールドは `field?` と記載し、条件を補足に記載する。 | 実装で、応答のフィールドの名前にする。 | - |
+      | endpoints[].response[].name | フィールド | string | 必須 | - | - | 返らないことがあるフィールドは `field?` と記載し、条件を `condition` に記載する。 | 実装で、応答のフィールドの名前にする。 | - |
       | endpoints[].response[].type | 型 | string | 必須 | - | - | フィールドの型。 | 実装で、フィールドの型にする。 | - |
+      | endpoints[].response[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | endpoints[].response[].description | 説明 | string | 必須 | - | - | フィールドの値が何を表すか。 | 実装で、フィールドの値で分岐する条件を決める。 | - |
       | endpoints[].response[].constraints | 制限 | string | - | - | - | 値の上限・形式などの制限。 | 実装で、応答の値を受け取る型と検証の範囲にする。 | - |
-      | endpoints[].response[].notes | 補足 | string | - | - | - | フィールドの前提（返らない条件・ほかのフィールドとの関係 等）。 | 実装で、フィールドが返らないときの扱いを決める。 | - |
+      | endpoints[].response[].notes | 補足 | string | - | - | - | フィールドの前提（ほかのフィールドとの関係 等）。 | 実装で、フィールドが返らないときの扱いを決める。 | - |
       | endpoints[].response[].verification_state | 確認の状態 | string | - | `verified` / `docs_only` / `unverified` | - | 外部 API・外部ライブラリの項目（パラメータ・フィールド・設定のキー）1 つを確認した方法で、`verified`（動かして確認した）/ `docs_only`（公式ドキュメントで確認しただけ）/ `unverified`（確認していない）のどれか。記載しなければ `unverified` として扱う。 | 実装で、`docs_only`・`unverified` の値を使用する前に動かして確認し、`verified` へ書き換える。<br>レビューで、`verified` でない値を確認せずに実装していないかを確認する。<br>生成で、表の確認の状態の列にする。 | - |
       | endpoints[].response[].verified_at | 確認日時 | string | - | - | format: `date-time` | `verification_state` を `verified` にした日時（ISO 8601、タイムゾーン付き）。 | 保守で、外部 API・外部ライブラリのバージョンが上がったときに、その後に再確認したかを判断する。<br>生成で、表の確認日時の列にする。 | `2026-11-14T10:00:00+09:00` |
       | endpoints[].same_as | 同形のレスポンス | string | - | - | - | レスポンスが同形のエンドポイントの名前。 | 実装で、同じ構造の応答の型を再利用する。 | - |
@@ -177,6 +178,7 @@ items:
       | endpoints[].description | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | endpoints[].request[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | endpoints[].request_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | endpoints[].response[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | endpoints[].response_example | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | endpoints[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
       | endpoints[].refs[].type | 片側だけに記載し、逆向きはツールで出す。`change_together` だけは両側に記載する。<br>`type` と記載する側は、規約『ドキュメント管理』の「関連」と判定フローチャート『関連の張り方』で決める。 | - | - |
