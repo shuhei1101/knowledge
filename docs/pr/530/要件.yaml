@@ -1,0 +1,75 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-2.yaml
+    impact: changed
+    detail: knowledge のクローンに、規約とは別のネットミームの配信元が加わり、利用者がそれも端末の設定に登録する（直コミットを呼べる作業場所を含む）
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: changed
+    detail: エージェントがネットミームの配信元を指定して、作品とネットミームを検索・取得できる。規約の検索の結果には混ざらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: changed
+    detail: エージェントが作品とネットミームを書き込むと、スキーマとネットミームの検査（作品の実在・タグの語彙）を通ったときだけ書き込まれ、許可した作業場所からは直コミットでコミットとプッシュまで行われる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: changed
+    detail: 全ての文書の検査が、ネットミームの配信元の作品とネットミームも検査する
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-1.yaml
+    impact: following
+    detail: 導入の流れに、ネットミームの配信元の登録が加わる（SC-72-2 の変更に追随）
+    depends_on:
+      - docs/scenario/SC-72-2.yaml
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: none
+    detail: 規約の配信元の画面のタブとサイドバーは変えない
+    depends_on: []
+docs:
+  - page: docs/guide/guide-setup-docs-mcp.yaml
+    new: false
+    change: ネットミームの配信元を端末の設定に登録する手順と、直コミットを呼べる作業場所（`sources[].direct_commit`）の記載を追加する
+    status: todo
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: knowledge が規約の配信元と別に、直コミットを許可するネットミームの配信元を持つことを追加する
+    status: todo
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: ネットミームの配信元のフォルダ（配信元の設定・作品とネットミームの文書）と、追加するスキーマの配置を追加する
+    status: todo
+  - page: README.md
+    new: false
+    change: ネットミームの配信元があることと、登録の手順への参照を追加する
+    status: todo
+  - page: CLAUDE.md
+    new: false
+    change: ネットミームの配信元（設定のファイル・配信元の ID）を `## ドキュメント` に追加する
+    status: todo
+  - page: schemas/files.yaml
+    new: false
+    change: 作品とネットミームのスキーマの行を追加する
+    status: todo
+  - page: files.yaml
+    new: false
+    change: ネットミームの配信元のフォルダと設定のファイルの行を追加する
+    status: todo
+  - page: docs/terms.yaml
+    new: false
+    change: 用語『ネットミーム』『作品』『直コミット』を追加する（既にあれば使い回す）
+    status: todo
+scope_out:
+  - item: 登録のスキル・リサーチャーのエージェントフロー・知名度の判定表と、最初の作品 19 件と用語 73 件の登録
+    reason: 'Issue の本文で #526 の範囲とされている'
+    plan: '#526'
+  - item: 優先度の順の検索（`search_memes`）と使用の記録
+    reason: aituber が持つため、knowledge の対象にしない（Issue の追記）
+    plan: none
+  - item: 規約の配信元（knowledge）の用語集・ノウハウ・対応表の行への直コミットの許可
+    reason: MindStella の資料 A-243 では候補に挙げているが、この Issue の要望はネットミームの種類だけ。規約の配信元はレビューを経る書き込みのままにする
+    plan: none
