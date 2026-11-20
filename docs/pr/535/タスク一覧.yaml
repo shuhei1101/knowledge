@@ -50,8 +50,10 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-20T17:48:38.447725+00:00'
   - process: インターフェース定義設計
-    status: todo
+    status: done
     note: IF-312-1 の「工程のセクション」の mcp の書式。直し方（要件の未確定）をここで決める
+    updated_by: planner
+    updated_at: '2026-11-20T17:58:20.648760+00:00'
   - process: 部品設計
     status: skipped
     reason: 画面を持たない
@@ -63,13 +65,25 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-20T17:48:38.447725+00:00'
   - process: モジュール構成設計
-    status: todo
+    status: skipped
+    reason: 生成の振る舞いを変えない直し方にしたため、MOD-312-1 の render_call の処理と単体テストはそのまま一致する
+    updated_by: planner
+    updated_at: '2026-11-20T17:58:20.648760+00:00'
   - process: ドキュメント修正
     status: todo
     note: agent_flow.schema.yaml の calls[].server の x-used-by と template-agent-flow.yaml の同じ行
   - process: 単体テスト作成
-    status: todo
+    status: skipped
+    reason: コードを変えない。test_render_call の mcp のケースが既に参照のまま出す書式を確かめている
+    updated_by: planner
+    updated_at: '2026-11-20T17:58:20.648760+00:00'
   - process: 実装
-    status: todo
+    status: skipped
+    reason: build_skills.py を変えない直し方にした
+    updated_by: planner
+    updated_at: '2026-11-20T17:58:20.648760+00:00'
   - process: 結合テスト作成
-    status: todo
+    status: skipped
+    reason: コードを変えない
+    updated_by: planner
+    updated_at: '2026-11-20T17:58:20.648760+00:00'
