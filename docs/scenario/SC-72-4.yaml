@@ -39,6 +39,7 @@ scenarios:
       - ID で取得した本文が develop のファイルの中身と一致する
       - '`list_match_words` が用語集（`docs/terms.yaml`）の用語の `name`・`aliases` を、文書の名前・別名と並べて返却する'
       - '`search_docs` の `term` に `A.I.VOICE2` を指定すると、用語 `A.I.VOICE 2` がヒットする'
+      - '`source: knowledge` の検索・`group_by: tags` の集計・`list_match_words` に、ネットミームの配信元の作品とネットミームが出ない'
     test: test_normal
   - name: 異常シナリオ（作業場所が scope.read の外）
     setup:

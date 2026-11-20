@@ -11,8 +11,8 @@ use_cases:
     depends_on: []
   - kind: single
     scenario: docs/scenario/SC-72-5.yaml
-    impact: changed
-    detail: エージェントが作品とネットミームを書き込むと、スキーマとネットミームの検査（作品の実在・タグの語彙）を通ったときだけ書き込まれ、許可した作業場所からは直コミットでコミットとプッシュまで行われる
+    impact: none
+    detail: 規約の配信元への書き込みは変わらない。作品とネットミームの書き込みは SC-514-1 が持つ
     depends_on: []
   - kind: single
     scenario: docs/scenario/SC-72-6.yaml
@@ -21,14 +21,18 @@ use_cases:
     depends_on: []
   - kind: single
     scenario: docs/scenario/SC-72-1.yaml
-    impact: following
-    detail: 導入の流れに、ネットミームの配信元の登録が加わる（SC-72-2 の変更に追随）
-    depends_on:
-      - docs/scenario/SC-72-2.yaml
+    impact: none
+    detail: 導入の流れは SC-72-2 の登録をそのまま使用し、記述は変わらない
+    depends_on: []
   - kind: single
     scenario: docs/scenario/SC-72-3.yaml
     impact: none
     detail: 規約の配信元の画面のタブとサイドバーは変えない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-514-1.yaml
+    impact: new
+    detail: エージェントが作品とネットミームを直コミットでネットミームの配信元へ書き込み、検査に合格したものだけが develop へプッシュされる
     depends_on: []
 docs:
   - page: docs/guide/guide-setup-docs-mcp.yaml

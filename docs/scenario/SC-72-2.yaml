@@ -37,6 +37,8 @@ scenarios:
       - '`sources[]` に knowledge の行があり、`config` が knowledge の `project-index.yaml` の絶対パス'
       - '`scope.read` が全ての作業場所、`scope.write` が knowledge のクローンと worktree'
       - 管理の MCP の `status` に knowledge が配信中で載る
+      - '`sources[]` にネットミームの配信元（`knowledge-memes`）の行があり、`config` がネットミームの配信元の設定のファイルの絶対パス、`direct_commit.scope` が直コミットを呼べる作業場所'
+      - 管理の MCP の `status` に `knowledge-memes` が配信中で載る
     test: test_normal
   - name: 異常シナリオ（点検で違反がある）
     setup:
