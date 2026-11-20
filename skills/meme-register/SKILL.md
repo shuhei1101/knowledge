@@ -156,7 +156,7 @@ allowed-tools:
 コミットしたときは、その登録で最後にプッシュしたコミットで動いた develop のワークフローの結果だけを確認する。
 途中のコミットの run は、同じ concurrency のグループの後の run に取り消される（`cancelled`）ことがあるので、結果を確認しない。
 
-1. `gh run list` を、そのコミットの run が一覧に出るまで繰り返す
+1. `gh run list` を、そのコミットの run が一覧に出るまで 30 秒ごとに繰り返す
 2. 出たら、`gh run watch` に run の ID と `--exit-status` を指定し、Bash の `run_in_background` で終了まで待つ
 3. 終了コードが 0 なら成功と伝える
 4. 0 以外なら、失敗したワークフローと、この登録のコミットを打ち消すコミットを提案する
@@ -170,6 +170,7 @@ allowed-tools:
 | 同じグループで先に動いている run の待ち（`pages.yml` は `cancel-in-progress: false`） | `build`・`deploy` の `timeout-minutes` の合計 10 分 |
 | 自分の run | `build`・`deploy` の `timeout-minutes` の合計 10 分 |
 | 余裕 | 内側の待ちの合計の 50% で 10 分 |
+| `gh run list` を繰り返す間隔 | 30 秒（上限 30 分の間で最大 60 回で、認証済みの GitHub の REST API の上限の 1 時間 5,000 回に収まる） |
 
 呼ぶもの:
 
