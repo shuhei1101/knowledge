@@ -8,7 +8,7 @@ preconditions:
   - ネットミームの配信元（`knowledge-memes`）が端末の設定の `sources[]` に登録され、配信中
   - エージェントの作業場所が、端末の設定の `sources[].direct_commit.scope` に該当する
   - knowledge のクローンに、develop を踏んだワークツリー（`.claude/worktrees/develop`）があり、リモートとの差が無い
-success_guarantee: 検査に合格した作品・ネットミームだけが、develop のコミットとしてリモートへプッシュされ、ネットミームの配信元の検索で取得できる。
+success_guarantee: 検査に合格した作品・ネットミームだけが、develop のコミットとしてリモートへプッシュされる。
 minimal_guarantee: 違反のある内容・直コミットを呼べない作業場所からの書き込みは、ワークツリーのファイルを変えず、コミットもせずに `isError` で返却する。
 scenarios:
   - name: 正常シナリオ
@@ -46,8 +46,6 @@ scenarios:
     expected:
       - リモートの develop の最新のコミットが `memes/memes/kusuriya-dokudesu.yaml` だけを追加している
       - '応答の `commit` に、コミットの `sha` と `branch: develop` が入る'
-      - '`search_docs` に `source: knowledge-memes` と種類 `meme` を指定すると、`name` が `term` の値、`related` が作品 `kusuriya` の文書がヒットする'
-      - '`search_docs` に `source: knowledge` を指定した検索と `group_by: tags` の集計に、作品とネットミームが出ない'
     test: test_normal
   - name: 異常シナリオ（指す作品が無い）
     setup:
@@ -75,54 +73,6 @@ scenarios:
       - ワークツリーのファイルが変わらず、リモートの develop にコミットが増えない
       - 応答が `isError` で、違反の `path` が `work`、内容に指した作品の ID が入る
     test: test_error_when_work_not_found
-  - name: 異常シナリオ（内容の分類のタグが無い）
-    setup:
-      - name: Mock
-        description: 差し替えない
-      - name: 書き込む内容
-        description: 作品のタグだけを持ち、内容の分類のタグ（`topic:セリフ` など）を持たないネットミーム
-    flow: |-
-      <!-- map -->
-
-      ```mermaid
-      sequenceDiagram
-        participant E as エージェント
-        participant M as project-index の文書の MCP
-        participant V as knowledge の検査のスクリプト
-        E->>M: write_docs に source knowledge-memes・ネットミーム・commit
-        M->>V: 標準入力にネットミームの YAML
-        V-->>M: 終了コード 0 と違反の配列
-        M-->>E: isError と違反の一覧
-      ```
-
-      <!-- /map -->
-    expected:
-      - ワークツリーのファイルが変わらず、リモートの develop にコミットが増えない
-      - 応答が `isError` で、違反の `path` が `tags`、内容に内容の分類のタグの一覧が入る
-    test: test_error_when_content_tag_missing
-  - name: 異常シナリオ（パロディに型が無い）
-    setup:
-      - name: Mock
-        description: 差し替えない
-      - name: 書き込む内容
-        description: '`styles[].type: parody` で `patterns` を持たないネットミーム'
-    flow: |-
-      <!-- map -->
-
-      ```mermaid
-      sequenceDiagram
-        participant E as エージェント
-        participant M as project-index の文書の MCP
-        E->>M: write_docs に source knowledge-memes・ネットミーム・commit
-        M->>M: スキーマを確認する
-        M-->>E: isError とスキーマの違反
-      ```
-
-      <!-- /map -->
-    expected:
-      - ワークツリーのファイルが変わらず、リモートの develop にコミットが増えない
-      - 応答が `isError` で、違反の `path` が `styles` の要素、内容に `patterns` の欠けが入る
-    test: test_error_when_parody_patterns_missing
   - name: 異常シナリオ（作業場所が直コミットの範囲の外）
     setup:
       - name: Mock

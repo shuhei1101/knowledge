@@ -50,7 +50,6 @@ scenarios:
       <!-- /map -->
     expected:
       - 終了コード 0 で終わる
-      - ネットミームの配信元の設定の `documents[]` が指す作品とネットミームにも、スキーマの検査と検査のスクリプトが適用される
     test: test_normal
   - name: 異常シナリオ（Markdown・YAML の書式の違反を含む）
     setup:
@@ -105,7 +104,7 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: knowledge のクローン
-        description: ID が重複した文書と、スキーマに合わない文書を 1 つずつ含む
+        description: ID が重複した文書と、スキーマに合わない文書と、`memes/memes/` の下で無い作品を `work` で指すネットミームを 1 つずつ含む
     flow: |-
       <!-- map -->
 
@@ -126,7 +125,8 @@ scenarios:
       <!-- /map -->
     expected:
       - 終了コード 1 で終わる
-      - 標準出力に 2 つの違反の両方が、文書のパス・項目・行・内容つきで出る
+      - 標準出力に 3 つの違反の全てが、文書のパス・項目・行・内容つきで出る
+      - 標準出力に、そのネットミームのパスと `work` の違反（指す作品が無い）が出る
     test: test_error_when_documents_have_violations
   - name: 異常シナリオ（誤りのある設計書のスキーマを含む）
     setup:

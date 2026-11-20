@@ -30,6 +30,15 @@ scenarios:
         S->>A: reload
         A-->>S: 配信中
         S-->>U: 追加した配信元と点検の結果
+        U->>S: /project-index:setup と memes/ のパス
+        S->>A: check_project
+        A->>K: memes/project-index.yaml と作品・ネットミームを参照する
+        A-->>S: 違反なし
+        S->>C: sources に knowledge-memes の行を記載する
+        S-->>U: 追加した配信元と点検の結果
+        U->>C: knowledge-memes の行に direct_commit.scope を記載する
+        U->>A: reload
+        A-->>U: 配信中
       ```
 
       <!-- /map -->
@@ -73,8 +82,9 @@ trigger: 利用者が `/project-index:setup {knowledge のクローンのパス}
 preconditions:
   - '`/project-index:global-setup` を終え、端末の設定（`~/.config/project-index/settings.yaml`）がある'
   - knowledge のクローンの直下に `project-index.yaml` がある
-success_guarantee: '`sources[]` に knowledge の行（`config`・`scope.read`・`scope.write`）があり、project-index が設定を再読み込みして knowledge を配信している。'
+  - knowledge のクローンの `memes/` に、ネットミームの配信元の `project-index.yaml` がある
+success_guarantee: '`sources[]` に knowledge の行（`config`・`scope.read`・`scope.write`）と、ネットミームの配信元 `knowledge-memes` の行（`direct_commit.scope` を含む）があり、project-index が設定を再読み込みして両方を配信している。'
 minimal_guarantee: 点検で違反があれば端末の設定を書き換えない。
 notes:
-  E2E テストの動かし方: スキル `/project-index:setup` は動かさず、スキルが行う処理（管理の MCP の `check_project` → 一時フォルダの端末の設定の `sources[]` への knowledge の行の記載 → `reload` → `status`）をテストが順に行う。スキルの手順（質問の仕方・記載する行）は project-index の E2E が確認する
+  E2E テストの動かし方: スキル `/project-index:setup` は動かさず、スキルが行う処理（管理の MCP の `check_project` → 一時フォルダの端末の設定の `sources[]` への行の記載 → `reload` → `status`）を、knowledge と `memes/` のそれぞれにテストが順に行う。`knowledge-memes` の行の `direct_commit.scope` はスキルが記載しないため、利用者の手順としてテストが記載する。スキルの手順（質問の仕方・記載する行）は project-index の E2E が確認する
 test_file: tests/e2e/単一ユースケース/test_利用者がproject-indexにknowledgeを登録する.py
