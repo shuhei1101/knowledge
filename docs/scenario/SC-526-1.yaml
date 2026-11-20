@@ -1,0 +1,159 @@
+id: SC-526-1
+visibility: internal
+title: 利用者がスキルでネットミームを登録する
+lead: 利用者が knowledge のプラグインのスキル `/knowledge:meme-register` に作品・話題を指定し、リサーチャーが集めた作品の情報と用語の候補を確認して、登録すると回答した作品と用語だけをネットミームの配信元へ直コミットで登録する。
+primary_actor: 利用者
+stakeholders:
+  - name: 利用者
+    interest: 確認した作品と用語だけが登録され、確認していない候補は登録されない
+  - name: 台本作成ノード・動画作成ノード
+    interest: 登録した用語を、ネットミームの配信元から検索して台本に入れられる
+trigger: 利用者が Claude Code のセッションで `/knowledge:meme-register` を実行する（引数の放送のシーズンと作品・話題は省略できる）
+preconditions:
+  - knowledge のプラグインが入っていて、スキル `/knowledge:meme-register` を呼べる
+  - ネットミームの配信元（`knowledge-memes`）が配信中で、セッションの作業場所が端末の設定の `sources[].direct_commit.scope` に該当する
+  - セッションで WebSearch・WebFetch とサブエージェントの起動を使用できる
+success_guarantee: 利用者が登録すると回答した作品と用語だけが、検査に合格して develop のコミットとしてリモートへプッシュされ、ネットミームの配信元の検索で返る。
+minimal_guarantee: 利用者が確認していない候補と、登録しないと回答した候補は書き込まない。検査で断られた作品・用語はコミットせず、断られた理由を利用者に伝える。
+scenarios:
+  - name: 正常シナリオ
+    setup:
+      - name: Mock
+        description: なし（Web とリモートは実物）
+      - name: 引数
+        description: 利用者が作品を 1 件指定する
+        notes: '`sources: FX戦士くるみちゃん`'
+      - name: 登録済みの作品
+        description: 指定した作品は登録されていない
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor U as 利用者
+        participant A as スキルを実行するエージェント
+        participant P as project-index の文書の MCP
+        participant R as リサーチャー
+        U->>A: /knowledge:meme-register に作品を指定する
+        A->>P: 登録済みの作品とネットミームを検索する
+        A->>R: 作品・利用者が示した言葉・登録済みの言葉・調べる日で調査を依頼する
+        R-->>A: 作品の情報と用語の候補
+        A->>A: 候補を選別して登録の推奨を付ける
+        A->>U: 作品の確認の表と、登録する用語の確認の表
+        U-->>A: 知名度と、登録する用語の No
+        A->>P: 作品を直コミットで書き込む
+        A->>P: 用語を直コミットで書き込む
+        A-->>U: 登録した作品と用語の数・コミット・登録しなかった候補
+      ```
+
+      <!-- /map -->
+    expected:
+      - ネットミームの配信元に、作品 1 件と、利用者が登録すると回答した用語だけが状態 `active` で増える
+      - 作品と用語の書き込みが、1 つの作品ごとに 1 回のコミットで develop へプッシュされる
+      - 利用者への結果に、登録した数・コミット・登録しなかった候補が出る
+  - name: 正常シナリオ（作品を指定しない）
+    setup:
+      - name: Mock
+        description: なし（Web とリモートは実物）
+      - name: 引数
+        description: 放送のシーズンだけを指定し、作品・話題を省略する
+        notes: '`season: 2026-fall`'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor U as 利用者
+        participant A as スキルを実行するエージェント
+        participant P as project-index の文書の MCP
+        participant W as Web
+        U->>A: /knowledge:meme-register にシーズンだけを指定する
+        A->>P: 登録済みの作品とネットミームを検索する
+        A->>W: そのシーズンのアニメの一覧と人気のランキングを検索する
+        A->>U: 登録済みでない作品の名前と順位
+        U-->>A: 調べる作品
+        A->>A: 選んだ作品ごとに、正常シナリオの調査から登録までを進める
+        A-->>U: 登録した作品と用語の数・コミット・登録しなかった候補
+      ```
+
+      <!-- /map -->
+    expected:
+      - 利用者に示す作品の名前に、登録済みの作品が含まれない
+      - 利用者が選んだ作品だけが調査と登録の対象になる
+  - name: 正常シナリオ（旬が過ぎたと指示した）
+    setup:
+      - name: Mock
+        description: なし（リモートは実物）
+      - name: 登録済みの用語
+        description: 状態 `active` の用語が 1 件ある
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor U as 利用者
+        participant A as スキルを実行するエージェント
+        participant P as project-index の文書の MCP
+        U->>A: 登録済みの用語を、旬が過ぎたと指示する
+        A->>P: 用語の状態を inactive にして直コミットで書き込む
+        A-->>U: 状態を変えた用語とコミット
+      ```
+
+      <!-- /map -->
+    expected:
+      - 指示した用語の状態が `inactive` になり、ほかのキーは変わらない
+      - 作品・話題を指示したときは、作品の 1 件だけの状態が変わる
+  - name: 異常シナリオ（作品を特定できない）
+    setup:
+      - name: Mock
+        description: なし（Web は実物）
+      - name: 引数
+        description: Web で特定できない作品の名前
+        notes: 音声入力の誤認識で、文脈から補っても特定できない名前
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor U as 利用者
+        participant A as スキルを実行するエージェント
+        participant R as リサーチャー
+        U->>A: /knowledge:meme-register に作品を指定する
+        A->>R: 調査を依頼する
+        R-->>A: 正式なタイトルが空で、unverified に title
+        A-->>U: 特定できなかった作品の名前と、言い直しの依頼
+      ```
+
+      <!-- /map -->
+    expected:
+      - ネットミームの配信元に何も書き込まない
+      - 利用者に、特定できなかった作品の名前が出る
+  - name: 異常シナリオ（書き込みが検査で断られた）
+    setup:
+      - name: Mock
+        description: なし（リモートは実物）
+      - name: 確認の回答
+        description: 利用者が登録すると回答した用語のタグが、内容の分類のタグを持たない
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor U as 利用者
+        participant A as スキルを実行するエージェント
+        participant P as project-index の文書の MCP
+        A->>P: 用語を直コミットで書き込む
+        P-->>A: isError と違反の一覧
+        A-->>U: 断られた用語と違反の内容
+      ```
+
+      <!-- /map -->
+    expected:
+      - 断られた用語はコミットされず、リモートの develop に増えない
+      - 利用者に、断られた用語と違反の内容が出る
+refs:
+  - to: SC-514-1
+    type: requires
+    when: 登録の工程が直コミットで書き込む流れを確認するとき
+notes:
+  E2E テスト: スキルの工程は Claude Code のエージェントが Web を調べながら実行し、出力が決定的でないため、テストのファイルを作らない。登録の書き込みは SC-514-1 の E2E テスト、SKILL.md の生成は SC-312-1 の E2E テストで確認する
