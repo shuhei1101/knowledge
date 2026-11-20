@@ -70,8 +70,10 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-20T15:00:31.354525+00:00'
   - process: ドキュメント修正
-    status: todo
+    status: done
     note: schemas/design/glossary.schema.yaml の description を 2 文以内にし、docs/template/template-glossary.yaml を生成し直す
+    updated_by: planner
+    updated_at: '2026-11-20T15:03:27.252332+00:00'
   - process: 単体テスト作成
     status: skipped
     reason: コードは変わらない
@@ -83,7 +85,7 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-20T15:00:31.354525+00:00'
   - process: 結合テスト作成
-    status: skipped
-    reason: 既存の test_normal_when_repository_schemas が確かめるので新しいテストは要らない
+    status: todo
     updated_by: planner
-    updated_at: '2026-11-20T15:00:31.354525+00:00'
+    updated_at: '2026-11-20T15:03:35.574199+00:00'
+    note: 新しいテストは作らず、計画書の実行範囲の test_normal_when_repository_schemas だけをレビューの合格後に実行する
