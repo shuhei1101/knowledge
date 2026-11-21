@@ -1,5 +1,5 @@
 docs:
-  - page: schemas/design/escalations.schema.yaml
+  - page: schemas/design/human_escalation.schema.yaml
     new: true
     change: ヒューマンエスカレーションの表の設計書のスキーマを新設する。A-207 のキー（items[].id・name・condition・examples・ask・steps・executor_context・record と notes）と決まりを持たせ、1 ファイル = 制作の種類 1 つにする（ファイル名・種類・キーの名前はインターフェース定義設計でユーザーへ確認する）
     status: todo
@@ -7,7 +7,7 @@ docs:
     new: true
     change: 確認観点の表の設計書のスキーマを新設する。A-214 のキー（items[].id・check・targets・steps・when・note と knowhow・notes）と決まりを持たせ、項目の決まりはテンプレート『チェックシート』から引き継ぐ（ファイル名・種類・キーの名前はインターフェース定義設計でユーザーへ確認する）
     status: todo
-  - page: docs/template/template-escalations.yaml
+  - page: docs/template/template-human-escalation.yaml
     new: true
     change: ヒューマンエスカレーションの表のテンプレートを新設し、scripts/build_templates.py で items を生成する（テンプレートの ID はスキーマの種類に合わせる）
     status: todo
