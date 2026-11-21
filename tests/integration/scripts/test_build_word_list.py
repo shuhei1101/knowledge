@@ -71,6 +71,21 @@ def test_normal(run_script: RunScript, tmp_path: Path) -> None:
     assert (root / _COPY).read_bytes() == copied
 
 
+def test_normal_when_called_as_generator(run_script: RunScript, tmp_path: Path) -> None:
+    """書き込んだ対応表のパスを引数に受けても、正本からコピーを作り直す（正常系）。"""
+    # 準備
+    root = _repo(tmp_path / "repo", source=True)
+    expected = run_script("build_word_list", root)
+    without_args = (root / _COPY).read_bytes()
+    (root / _COPY).unlink()
+    # 実行
+    result = run_script("build_word_list", root, args=[str(_SOURCE)])
+    # 検証
+    assert expected.exit_code == 0
+    assert result.exit_code == 0
+    assert (root / _COPY).read_bytes() == without_args
+
+
 def test_error_when_source_missing(run_script: RunScript, tmp_path: Path) -> None:
     """正本の対応表が無いか YAML として読めなければ、コピーを書き換えずに終わる（異常系）。"""
     # 準備
