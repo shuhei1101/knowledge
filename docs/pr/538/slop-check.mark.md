@@ -29,3 +29,7 @@
 | ファイル | メソッド | 変更種別 | 結果 | 補足 |
 | --- | --- | --- | --- | --- |
 | [tests/unit/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/c50ced7/tests/unit/slop-check/test_slop_check.py) | 全実行 | 変更 | ✅ | `default_word_list` の 4 件を追加。3.14 の全件 319 件・3.12 の 49 件 pass（ランナー）<br>`テスト結果/20261121180011_c50ced7_単体テスト.log`<br>lint: `テスト結果/20261121180011_c50ced7_lint.log` |
+
+### 結合テストの実行範囲
+
+[検査と変換のスクリプト](./検査と変換のスクリプト.mark.md) の `### 結合テストの実行範囲` の表にまとめた。
