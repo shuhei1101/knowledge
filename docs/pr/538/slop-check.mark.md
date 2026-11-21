@@ -33,3 +33,10 @@
 ### 結合テストの実行範囲
 
 [検査と変換のスクリプト](./検査と変換のスクリプト.mark.md) の `### 結合テストの実行範囲` の表にまとめた。
+
+### 結合
+
+| ファイル | メソッド | 変更種別 | 結果 | 補足 |
+| --- | --- | --- | --- | --- |
+| [tests/integration/slop-check/test_slop_check.py](https://github.com/shuhei1101/knowledge/blob/8ed4e5e/tests/integration/slop-check/test_slop_check.py) | 全実行 | 変更 | ✅ | `test_normal_when_word_list_env_set`・`test_normal_when_word_list_env_missing_file` を追加。`conftest.py` は端末の `SLOP_CHECK_WORD_LIST` を子プロセスへ持ち込まないようにした<br>`テスト結果/20261121181124_8ed4e5e_結合テスト.log` |
+
