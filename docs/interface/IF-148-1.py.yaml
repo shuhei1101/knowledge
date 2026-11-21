@@ -582,5 +582,5 @@ constraints:
     notes: '`additionalContext` は設定に関係なく出す。規約『Claude プラグインルール』の `settings-file-02`（`env` に記載するのは `{ツール名}_CONFIG` のパスだけ）から逸脱する。常駐のサーバーが無く、フックの子プロセスに `env` が渡るため、利用者が決めた（PR #505 の確認ログ）'
   - item: 対応表の場所の設定
     constraint: 環境変数 `SLOP_CHECK_WORD_LIST` で受け取る。指すファイルが無いときは、標準エラーに何も出さずにプラグインのフォルダのコピーを読み込む。指すファイルがあるが JSON として読み込めないときは、異常系（対応表が読み込めない）と同じく扱う
-    notes: 直コミットで knowledge の develop のワークツリーへ入った行を、プラグインを更新せずに照合へ反映するため。`SLOP_CHECK_SHOW_ADDED` と同じく規約『Claude プラグインルール』の `settings-file-02`・`settings-file-06` から逸脱する（確認事項でユーザーに確認する）
+    notes: '直コミットで knowledge の develop のワークツリーへ入った行を、プラグインを更新せずに照合へ反映するため。`SLOP_CHECK_SHOW_ADDED` と同じく規約『Claude プラグインルール』の `settings-file-02`・`settings-file-06` から逸脱する。値は端末に 1 つ決めればよく、フックを Python の標準ライブラリだけで動かすため、利用者が決めた（PR #538 の確認ログ）'
 test_file: tests/integration/slop-check/test_slop_check.py
