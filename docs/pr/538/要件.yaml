@@ -12,7 +12,7 @@ use_cases:
   - kind: single
     scenario: docs/scenario/SC-72-5.yaml
     impact: run_only
-    detail: knowledge のワークツリーの中からの書き込みは変わらない。対応表のコピーの生成を登録するため、書き込みの後に生成が流れても書き込みが通ることを確認する
+    detail: knowledge のワークツリーの中からの書き込みは変わらない。単語の対応表の行に対応表のコピーの生成を付けるため、対応表の書き込みの後に生成が実行されても書き込みが通ることを確認する
     depends_on: []
   - kind: single
     scenario: docs/scenario/SC-514-1.yaml
@@ -22,7 +22,7 @@ use_cases:
 docs:
   - page: project-index.yaml
     new: false
-    change: 'direct_commit（branch: develop・kinds: knowhow・word-list・terms）と、対応表のコピーの作成の generators[] を追加し、instructions に直コミットできる種類を追記する'
+    change: 'direct_commit（branch: develop・kinds: knowhow・word-list・terms）と、対応表のコピーの作成の generators[] を追加し、word-list の行だけに after_write を付けて、instructions に直コミットできる種類を追記する'
     status: todo
   - page: docs/guide/guide-setup-docs-mcp.yaml
     new: false
