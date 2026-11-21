@@ -12,7 +12,7 @@ use_cases:
 docs:
   - page: project-index.yaml
     new: false
-    change: '`generators[]`・`validators[]` に `project-index skill-md` を登録し、スキルの行を `agent_flow` の行（`docs/agent-flow/*.yaml`）へ改め、スキルの行の `validators`・`after_write` と `instructions` のスキルの説明を合わせる'
+    change: '`generators[]`・`validators[]` に `project-index skill-md` を登録し、スキルの行を `agent_flow` の行（`docs/agent-flow/*.yaml`）へ改め、スキルの行の `validators`・`after_write` と `instructions` のスキルの説明を合わせる。`nav` の「使い方」タブの `group: スキル` の `auto.document` を `skill` から `agent_flow` に改める'
     status: todo
   - page: docs/skill/text-review.yaml
     new: false
@@ -52,7 +52,7 @@ docs:
     status: todo
   - page: docs/dev-command/CMD-72-1.yaml
     new: false
-    change: '`build_skills.py` の `uv sync --script` と SKILL.md の再生成の手順を削除し、SKILL.md は書き込みの後に `project-index skill-md` が生成することに改める'
+    change: '`build_skills.py` の `uv sync --script` を削除し、SKILL.md の再生成の手順を、書き込みの後は project-index が生成し、`docs/agent-flow/` を直接編集したときは配信元の直下で `project-index skill-md` を実行する手順に改める。`refs` の IF-312-1 を削除する'
     status: todo
   - page: docs/layout/LAY-72-1.yaml
     new: false
@@ -61,11 +61,15 @@ docs:
   - page: docs/interface/README.mark.md
     new: false
     change: IF-312-1 の行を削除する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T12:58:40.322701+00:00'
   - page: docs/interface/index.yaml
     new: false
     change: IF-312-1 の行を削除する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T12:58:40.322701+00:00'
   - page: docs/module/README.mark.md
     new: false
     change: MOD-312-1 の行を削除する
