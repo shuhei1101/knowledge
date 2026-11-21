@@ -163,10 +163,11 @@ entries:
         content_types: [knowledge_doc]
         naming: ['guide-{name}.yaml']
       - type: folder
-        name: skill
-        contents: スキルの設計書
+        name: agent-flow
+        contents: 'スキルのエージェントフロー（`type: skill` と、`ref` の参照先の `type: flow`）'
         content_types: [knowledge_doc]
-        naming: ['{skill}.yaml']
+        naming:
+          - '{agent_flow}.yaml'
       - type: folder
         name: word-list
         contents: 単語の対応表の原本
@@ -419,16 +420,6 @@ entries:
           command: CMD-72-1#categories[依存の追加・更新・削除]
           tracked: '`uv run --frozen` がロックのバージョンで依存を入れる'
       - type: file
-        name: build_skills.py
-        contents: SKILL.md の生成（手元の CLI）
-      - type: file
-        name: build_skills.py.lock
-        contents: build_skills.py の依存のロック
-        generated_from:
-          path: scripts/build_skills.py
-          command: CMD-72-1#categories[依存の追加・更新・削除]
-          tracked: '`uv run --frozen` がロックのバージョンで依存を入れる'
-      - type: file
         name: files.yaml
         contents: '`scripts/` のファイルの一覧（project-index の files の行）'
         content_types: [file_list]
@@ -486,7 +477,7 @@ entries:
             name: SKILL.md
             contents: スキルの手順
             generated_from:
-              path: docs/skill/{skill}.yaml
+              path: docs/agent-flow/{skill}.yaml
               command: CMD-72-1#categories[ビルド・生成]
               tracked: プラグインを git から入れたときに Claude Code が SKILL.md を読み込む
       - type: file
