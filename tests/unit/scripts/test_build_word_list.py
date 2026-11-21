@@ -87,6 +87,25 @@ def test_main_when_source_missing(
     assert (folder / "word-list-ai-slop.json").read_text(encoding="utf-8") == '{"entries": []}\n'
 
 
+def test_main_when_called_with_paths(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """生成として呼ばれる（正常系）。"""
+    # 準備
+    (tmp_path / "docs" / "word-list").mkdir(parents=True)
+    (tmp_path / "docs" / "word-list" / "word-list-ai-slop.yaml").write_text(
+        _SOURCE, encoding="utf-8"
+    )
+    (tmp_path / "plugins" / "slop-check" / "hooks" / "post-tool-use").mkdir(parents=True)
+    monkeypatch.chdir(tmp_path)
+    # 実行
+    code = main(["docs/word-list/word-list-ai-slop.yaml"])
+    # 検証
+    assert code == 0
+    copy = (
+        tmp_path / "plugins" / "slop-check" / "hooks" / "post-tool-use" / "word-list-ai-slop.json"
+    )
+    assert copy.read_text(encoding="utf-8") == _COPY
+
+
 def test_render_copy() -> None:
     """残すキーだけを固定の順で（正常系）。"""
     # 準備

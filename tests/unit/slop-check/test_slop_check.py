@@ -564,3 +564,48 @@ def test_shows_added_when_other_value(value: str) -> None:
     result = slop_check.shows_added(environ)
     # 検証
     assert result is False
+
+
+def test_default_word_list_when_env_set(tmp_path: Path) -> None:
+    """環境変数が指すファイルがある（正常系）。"""
+    # 準備
+    copy = tmp_path / "worktree" / "word-list-ai-slop.json"
+    copy.parent.mkdir()
+    copy.write_text(_NAOSU_COPY, encoding="utf-8")
+    environ = {"SLOP_CHECK_WORD_LIST": str(copy), "CLAUDE_PLUGIN_ROOT": str(tmp_path / "plugin")}
+    # 実行
+    result = slop_check.default_word_list(environ)
+    # 検証
+    assert result == copy
+
+
+def test_default_word_list_when_env_file_missing(tmp_path: Path) -> None:
+    """環境変数が指すファイルが無い（正常系）。"""
+    # 準備
+    environ = {
+        "SLOP_CHECK_WORD_LIST": str(tmp_path / "missing.json"),
+        "CLAUDE_PLUGIN_ROOT": str(tmp_path),
+    }
+    # 実行
+    result = slop_check.default_word_list(environ)
+    # 検証
+    assert result == tmp_path / "hooks" / "post-tool-use" / "word-list-ai-slop.json"
+
+
+@pytest.mark.parametrize(
+    "word_list",
+    [
+        pytest.param(None, id="not-set"),
+        pytest.param("", id="empty"),
+    ],
+)
+def test_default_word_list_when_env_not_set(tmp_path: Path, word_list: str | None) -> None:
+    """環境変数が無い（正常系）。"""
+    # 準備
+    environ = {"CLAUDE_PLUGIN_ROOT": str(tmp_path)}
+    if word_list is not None:
+        environ["SLOP_CHECK_WORD_LIST"] = word_list
+    # 実行
+    result = slop_check.default_word_list(environ)
+    # 検証
+    assert result == tmp_path / "hooks" / "post-tool-use" / "word-list-ai-slop.json"
