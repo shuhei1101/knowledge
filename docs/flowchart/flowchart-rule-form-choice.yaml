@@ -2,7 +2,7 @@
 id: flowchart-rule-form-choice
 kind: flowchart
 name: 決まりの表し方の選び方 判定フローチャート
-description: 判断・作業の決まりを判定フローチャート・判定表・チェックシート・手順・規約のどれで表すかを判定し、規約・手順に判断や作業の決まりを記載するときに参照する。
+description: 判断・作業の決まりや知見を判定フローチャート・判定表・チェックシート・手順・規約・ノウハウのどれで表すかを判定し、規約・手順・ノウハウに決まりや知見を記載するときに参照する。
 aliases:
   - 決まりの表し方の選び方
 tags:
@@ -17,6 +17,7 @@ tags:
   - name: topic:規約
   - name: action:判定
   - name: action:選択
+  - name: topic:ノウハウ
 status: current
 visibility: internal
 rev: 2
@@ -24,7 +25,7 @@ items:
   - id: overview
     name: 概要
     body: |-
-      判断・作業の決まりを判定フローチャート・判定表・チェックシート・手順・規約のどれで表すかを判定し、規約・手順に判断や作業の決まりを記載するときに参照する。
+      判断・作業の決まりや知見を判定フローチャート・判定表・チェックシート・手順・規約・ノウハウのどれで表すかを判定し、規約・手順・ノウハウに決まりや知見を記載するときに参照する。
   - id: rule-form-choice-flow-01
     group: 決まりの表し方の選び方 判定フローチャート
     name: 判定フロー
@@ -44,7 +45,9 @@ items:
         r4(["手順（ステップ）"])
         q5{"値を導くか"}
         r5(["導き方の表（式・出典）"])
+        q6{"守らないと不具合・不統一になるか"}
         r6(["規約（表・箇条書き）"])
+        r7(["ノウハウ"])
         start --> q1
         q1 -->|YES| q2
         q2 -->|YES| r1
@@ -55,10 +58,12 @@ items:
         q4 -->|YES| r4
         q4 -->|NO| q5
         q5 -->|YES| r5
-        q5 -->|NO| r6
+        q5 -->|NO| q6
+        q6 -->|YES| r6
+        q6 -->|NO| r7
       ```
 
-      <!-- map-data: {"version": 1, "notes": {"q1": {"annotations": ["rule-form-choice-n1"]}, "q2": {"annotations": ["rule-form-choice-n2"]}, "q3": {"annotations": ["rule-form-choice-n3"]}, "q5": {"annotations": ["rule-form-choice-n4"]}}} -->
+      <!-- map-data: {"version": 1, "notes": {"q1": {"annotations": ["rule-form-choice-n1"]}, "q2": {"annotations": ["rule-form-choice-n2"]}, "q3": {"annotations": ["rule-form-choice-n3"]}, "q5": {"annotations": ["rule-form-choice-n4"]}, "q6": {"annotations": ["rule-form-choice-n5"]}}} -->
 
       <!-- /map -->
 
@@ -71,6 +76,9 @@ items:
           項目の順番は問わないか、実行の順に並べるだけ。
 
       ※[rule-form-choice-n4]: 値を導く: タイムアウト・上限・見積もりのように、元の値から数値を導く。
+
+      ※[rule-form-choice-n5]: 不具合・不統一になる: 守らないと、動かない・後から修正が要る・文書やコードの記載方法がそろわない。
+          守らなくても成り立ち、知っていると質が上がる知見（台本・演出・ゲーム作りの技法など）は NO。
   - id: rule-form-choice-example-01
     group: 見分け方の例
     name: 記載の形式と表し方
@@ -98,6 +106,8 @@ items:
       | 判定表 | [テンプレート: 判定表](id:template-decision-table) |
       | チェックシート | [テンプレート: チェックシート](id:template-checksheet) |
       | 手順（ステップ） | [ドキュメントの部品](id:doc-parts) のステップ |
+      | 規約 | `docs/rule/` に配置し、rule-inject の索引（rules.yaml）で該当する操作のときに案内する（[ルール索引への登録](id:dev-rule-index-registration)） |
+      | ノウハウ | [テンプレート: ノウハウ](id:template-knowhow)。索引に掲載せず、`aliases` とタグで案内する |
 
       <!-- /table -->
 
