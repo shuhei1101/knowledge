@@ -37,12 +37,12 @@ functions:
         type: Sequence[str] | None
         required: false
         default: None
-        description: コマンドの引数。`None` は `sys.argv[1:]`。引数は取らない（`--help` だけ）
+        description: コマンドの引数。`None` は `sys.argv[1:]`。位置引数 `paths`（`nargs="*"`。project-index の生成が指定する書き込んだ対応表のパス）を受け取り、使用しない
     returns:
       type: int
       description: 終了コード。`0` = 書き出した、`2` = 原本が読み込めない、`1` = 想定していない例外
     process: |-
-      1. argparse で引数を読み込む
+      1. argparse で引数を読み込む（位置引数 `paths` は受け取って捨てる）
       2. 作業ディレクトリの `SOURCE` を UTF-8 で読み込み、文書として読み込む（文書の読み込み）
          - `OSError`・`DocumentError` の場合、標準エラーへ `対応表を読めません: {SOURCE}: {理由}` を出し、コピーを書き換えずに `2` を返却する
       3. コピーの中身を作り（コピーの中身の作成）、`COPY` へ UTF-8・改行 `\n` で書き出し、`0` を返却する
@@ -60,6 +60,12 @@ functions:
         condition: 前回のコピーだけを持つ一時フォルダ
         mock: なし（一時ディレクトリ）
         expected: '`2` を返却し、標準エラーに `SOURCE` のパスが出て、コピーが変わらない'
+      - name: test_main_when_called_with_paths
+        case: 正常
+        summary: 生成として呼ばれる
+        condition: '`test_main` と同じ一時フォルダで、`argv` に `["docs/word-list/word-list-ai-slop.yaml"]`'
+        mock: なし（一時ディレクトリ）
+        expected: '`0` を返却し、`COPY` が引数なしの `test_main` と同じバイト列になる'
     callees:
       - MOD-72-2#functions[load_document]
     refs:
