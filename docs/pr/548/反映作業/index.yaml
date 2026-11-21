@@ -1,0 +1,28 @@
+設計書のスキーマのタグの作成:
+  説明: 作業 PR を develop へマージした後に、`design-schemas/v*` の最新のタグのマイナーを上げたタグを、メッセージに `(#548)` を入れて develop の squash commit へ作成して push する（`title` の説明と `x-rules` の変更と `pattern` を外す変更で、既存の設計書は検査を通ったままなので、マイナーを上げる）。切り戻しは、メッセージに `(#548)` を持つタグだけを削除する
+  タグ: [タグ, スキーマ]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグの commit で、`schemas/design/data.schema.yaml` の `title` に前置きを求める `pattern` が無い"
+  状態: skipped
+後続の Issue への連絡:
+  説明: タグを作成した後に、shuhei1101/aituber#136・shuhei1101/mindstella#543・shuhei1101/ai-monitor#3510 の会話欄へ、作成したタグの名前と、追加した判定フローチャートの ID を添えて着手できる旨をコメントし、それぞれに `確認:task-planner` を付ける（起点 Issue #545 の `## 依存・後続`）
+  タグ: [連絡, ラベル]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: shuhei1101/aituber#136・shuhei1101/mindstella#543・shuhei1101/ai-monitor#3510 のそれぞれの会話欄に、作成した `design-schemas/v*` のタグの名前を含む planner のコメントがあり、`確認:task-planner` が付いている
+  状態: skipped
