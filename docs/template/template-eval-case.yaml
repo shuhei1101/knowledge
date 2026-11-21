@@ -51,7 +51,7 @@ items:
       | criteria[].custom.visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>project-index の配信で、文書の公開範囲のメタデータにする。 | - |
       | criteria[].custom.aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | project-index の検索で、文書を名前と同じように検索できる言い換えにする。 | - |
       | criteria[].custom.title | 表示名 | string | 必須 | - | - | 観点の表示名。 | 実行で、結果の一覧の見出しにする。 | `状態に合う` |
-      | criteria[].custom.method | 確認の方法 | string | 必須 | `rule` / `llm` / `human` | - | `rule`（判定の関数が合否と理由を返却する）/ `llm`（採点の LLM が採点の基準で点を付ける）/ `human`（採点の LLM の点を人が確定する）。 | 検査で、確認の方法ごとのキーの要否を確認する。<br>実行で、採点の流れを決める。 | - |
+      | criteria[].custom.method | 確認の方法 | string | 必須 | `rule` / `llm` / `human` | - | `rule`（判定の関数が合否と理由を返却する）/ `llm`（採点の LLM が採点の基準で点を付ける）/ `human`（採点の LLM の点を人が確定する。採点のモデルが受け取れない形式の出力は、人だけが採点する）。 | 検査で、確認の方法ごとのキーの要否を確認する。<br>実行で、採点の流れを決める。 | - |
       | criteria[].custom.tags | タグ | array | 必須 | - | minItems: `1` | 何を確認するかの `aspect:{語彙}` を 1 つ以上と、難しい観点の `difficulty:high`。 | 実行で、タグごとに点を集計する。<br>レビューで、対象に要る `aspect:` が全て付いた観点と、`difficulty:high` の観点が 1 つ以上あるかを確認する。 | `[aspect:状況の判断, difficulty:high]` |
       | criteria[].custom.question | 質問 | string | - | - | - | 採点の LLM と人への質問で、ケースの値は `{名前}` で入れる。`method` が `llm`・`human` のときは必須。 | 実行で、採点のプロンプトと人の採点の画面の質問にする。 | `{need} が閾値を越えているとき、それを満たす行動を選んでいるか` |
       | criteria[].custom.rubric | 採点の基準 | array | - | - | minItems: `5`, maxItems: `5` | 点ごとの採点の基準。`method` が `llm`・`human` のときは必須。 | 実行で、採点のプロンプトの基準にする。 | - |
@@ -71,7 +71,7 @@ items:
 
       | 名前 | 決まり | 悪い例 | 理由 |
       | --- | --- | --- | --- |
-      | criteria[].custom | 1 ファイル = 1 つの観点にする。<br>観点の id はファイル名（`.yaml` を除いたもの）から導き、ファイルに記載しない。<br>観点の id はほかのファイルから指すので、一度決めたら変えない。<br>機械で判定できる観点は `rule`、文で基準を記載できる観点は `llm`、人にしか判定できない観点は `human` にする。<br>`human` の観点は、採点の LLM が採点の基準で点を付けた後、人が出力と LLM の点と理由を参照して点を確定する。<br>`aspect:` の語彙は、プロジェクトの精度評価の仕組みの設計書に記載する。 | - | - |
+      | criteria[].custom | 1 ファイル = 1 つの観点にする。<br>観点の id はファイル名（`.yaml` を除いたもの）から導き、ファイルに記載しない。<br>観点の id はほかのファイルから指すので、一度決めたら変えない。<br>機械で判定できる観点は `rule`、文で基準を記載できる観点は `llm`、人にしか判定できない観点は `human` にする。<br>`human` の観点は、採点の LLM が採点の基準で点を付けた後、人が出力と LLM の点と理由を参照して点を確定する。<br>`human` の観点で、出力が採点のモデルが受け取れない形式（画像・音声・動画）のときは、LLM の採点を省き、人だけが採点の基準で点を付ける。<br>`aspect:` の語彙は、プロジェクトの精度評価の仕組みの設計書に記載する。<br>`aspect:` の語彙は、タグ・確認すること・設ける場合（どういう対象にその観点を設けるか）の列を持つ表にする。<br>観点を設けるかは、チェックシート『精度評価の観点の抜け』（`checksheet-eval-aspect-coverage`）で確認する。<br>`method` と `check.gate` は、判定フローチャート『精度評価の観点の確認の方法』（`flowchart-eval-criterion-method`）で決める。 | - | - |
       | criteria[].custom.title | 表示名は id と別に、自由に変えてよい。 | - | - |
       | criteria[].custom.tags | 語彙に無いタグが要るときは、プロジェクトの語彙に追加してから付ける。 | - | - |
       | criteria[].custom.rubric | 5 つの点を全て記載する。 | - | - |

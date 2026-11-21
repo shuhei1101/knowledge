@@ -1,0 +1,110 @@
+id: flowchart-eval-criterion-method
+kind: flowchart
+name: 精度評価の観点の確認の方法 判定フローチャート
+description: 精度評価の観点 1 つの確認の方法（rule・llm・human）と rule の足切りを付けるかを判定し、精度評価の観点を作成するときに参照する。
+aliases:
+  - 精度評価の観点の確認の方法
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: template-eval-criterion
+    type: references
+    when: 判定した確認の方法で、観点の `method`・`check` を記載するときに参照する。
+  - to: checksheet-eval-aspect-coverage
+    type: references
+    when: 観点を作成した後に、観点とケースの抜けを確認するときに参照する。
+items:
+  - id: overview
+    name: 概要
+    body: 精度評価の観点 1 つの確認の方法（`method`）を `rule`・`llm`・`human` のどれにするかと、`rule` の足切り（`check.gate`）を付けるかを判定する。
+  - id: eval-criterion-method-flow-01
+    group: 精度評価の観点の確認の方法 判定フローチャート
+    name: 判定フロー
+    body: |-
+      <!-- map: {"title": "精度評価の観点の確認の方法"} -->
+
+      ```mermaid
+      flowchart TB
+        start(("観点の確認の方法を決めたい"))
+        q0{"出力 1 件から確認できるか"}
+        r0(["観点にしない"])
+        q1{"確認することの全てを、関数で判定できるか"}
+        q2{"不合格の出力を、ほかの観点で採点する必要が無いか"}
+        r1(["rule にし、足切り（check.gate）を true にする"])
+        r2(["rule にする"])
+        q3{"確認することの一部を、関数で判定できるか"}
+        r3(["観点を分け、それぞれで最初から判定する"])
+        q5{"採点のモデルが、出力の形式を受け取れるか"}
+        r6(["human にし、人だけが採点する"])
+        q4{"採点の基準を、別の人が採点しても同じ点になる文で記載できるか"}
+        r5(["llm にする"])
+        r4(["human にする"])
+        start --> q0
+        q0 -->|NO| r0
+        q0 -->|YES| q1
+        q1 -->|YES| q2
+        q1 -->|NO| q3
+        q2 -->|YES| r1
+        q2 -->|NO| r2
+        q3 -->|YES| r3
+        q3 -->|NO| q5
+        q5 -->|NO| r6
+        q5 -->|YES| q4
+        q4 -->|YES| r5
+        q4 -->|NO| r4
+      ```
+
+      <!-- map-data: {"version": 1, "notes": {"q0": {"annotations": ["eval-criterion-method-n1"]}, "q1": {"annotations": ["eval-criterion-method-n2"]}, "q2": {"annotations": ["eval-criterion-method-n3"]}, "r3": {"annotations": ["eval-criterion-method-n4"]}, "q5": {"annotations": ["eval-criterion-method-n5"]}, "r6": {"annotations": ["eval-criterion-method-n6"]}, "q4": {"annotations": ["eval-criterion-method-n7"]}, "r4": {"annotations": ["eval-criterion-method-n8"]}}} -->
+
+      <!-- /map -->
+
+      ※[eval-criterion-method-n1]: 出力 1 件から確認できない: 応答までの時間・費用・同じ入力での実行のブレ。
+          観点にせず、結果のデータベースの集計で確認する。
+
+      ※[eval-criterion-method-n2]: 関数で判定できる: 出力・ケース・引数だけから、合否と理由を返却する関数を記載できる。
+          例: 書式・字数・Mermaid が描画できるか。
+
+      ※[eval-criterion-method-n3]: 採点する必要が無い: 壊れた出力で、内容を採点できない（JSON として解釈できない・図を描画できない）。
+          または、不合格なら必ず再作成する（配信に出せない単語を含む）。
+
+      ※[eval-criterion-method-n4]: 観点を分ける: 関数で判定できる部分と残りを、別の観点にする。
+          分けた観点ごとに、この判定を最初から行う。
+
+      ※[eval-criterion-method-n5]: 受け取れない: 出力が画像・音声・動画で、採点のモデルが入力にできない。
+
+      ※[eval-criterion-method-n6]: 人だけが採点する: LLM の採点を省き、人が採点の基準で点を付ける。
+
+      ※[eval-criterion-method-n7]: 同じ点になる文: 5 つの点の様子を、採点する人の好みに依らない文で分けて記載できる。
+          迷うときは human にし、人の点と採点の LLM の点が一致し続けたら llm に変える。
+
+      ※[eval-criterion-method-n8]: human: 採点の LLM が点を付けた後に、人が出力と LLM の点と理由を参照して点を確定する。
+          人の採点が済むまで評価の全体が判定保留になるので、人にしか判定できない観点だけにする。
+  - id: eval-criterion-method-examples-01
+    group: 判定の例
+    name: 判定の例
+    body: |-
+      <!-- table: {"kind": "data"} -->
+
+      | 観点 | 判定 | 理由 |
+      | --- | --- | --- |
+      | 出力が JSON として解釈できる | `rule`（足切り） | 関数で判定でき、解釈できない出力は内容を採点できない |
+      | 字数の上限に収まる | `rule` | 関数で判定でき、上限を超えても内容は採点できる |
+      | 状態に合うセリフになっている | `llm` | 関数では判定できず、合う・合わないの様子を文で分けて記載できる |
+      | 口調が、キャラクターの設定に合う | `human`（一致し続けたら `llm` に変える） | 設定の文と照合する基準は記載できるが、人によって点が分かれるかをまだ確認していない |
+      | セリフが面白い | `human` | 採点する人の好みで、点が変わる |
+      | 素材の絵が、テーマの配色に合う（採点のモデルが画像を受け取れないとき） | `human`（人だけが採点する） | 採点のモデルが、出力を入力にできない |
+      | 字数に収まり、内容が正しい | 観点を分割する | 字数は `rule`、内容の正しさは `llm` |
+      | 応答が 3 秒以内 | 観点にしない | 出力 1 件から確認できない |
+
+      <!-- /table -->
+tags:
+  - name: scope:判定フローチャート
+  - name: topic:判定フローチャート
+  - name: topic:フローチャート
+  - name: topic:精度
+    main: true
+  - name: topic:llm
+  - name: topic:観点
+  - name: action:判定
+  - name: action:評価

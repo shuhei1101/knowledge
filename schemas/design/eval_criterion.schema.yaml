@@ -9,7 +9,11 @@ x-rules:
   - 観点の id はほかのファイルから指すので、一度決めたら変えない。
   - 機械で判定できる観点は `rule`、文で基準を記載できる観点は `llm`、人にしか判定できない観点は `human` にする。
   - '`human` の観点は、採点の LLM が採点の基準で点を付けた後、人が出力と LLM の点と理由を参照して点を確定する。'
+  - '`human` の観点で、出力が採点のモデルが受け取れない形式（画像・音声・動画）のときは、LLM の採点を省き、人だけが採点の基準で点を付ける。'
   - '`aspect:` の語彙は、プロジェクトの精度評価の仕組みの設計書に記載する。'
+  - '`aspect:` の語彙は、タグ・確認すること・設ける場合（どういう対象にその観点を設けるか）の列を持つ表にする。'
+  - 観点を設けるかは、チェックシート『精度評価の観点の抜け』（`checksheet-eval-aspect-coverage`）で確認する。
+  - '`method` と `check.gate` は、判定フローチャート『精度評価の観点の確認の方法』（`flowchart-eval-criterion-method`）で決める。'
 x-kind: eval_criterion
 type: object
 additionalProperties: false
@@ -36,7 +40,7 @@ properties:
   method:
     type: string
     title: 確認の方法
-    description: '`rule`（判定の関数が合否と理由を返却する）/ `llm`（採点の LLM が採点の基準で点を付ける）/ `human`（採点の LLM の点を人が確定する）。'
+    description: '`rule`（判定の関数が合否と理由を返却する）/ `llm`（採点の LLM が採点の基準で点を付ける）/ `human`（採点の LLM の点を人が確定する。採点のモデルが受け取れない形式の出力は、人だけが採点する）。'
     x-used-by:
       - 検査で、確認の方法ごとのキーの要否を確認する。
       - 実行で、採点の流れを決める。

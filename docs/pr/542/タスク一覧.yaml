@@ -1,0 +1,106 @@
+tasks:
+  - process: 初期構築
+    status: skipped
+    reason: 既存リポジトリのため対象外
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: リバースエンジニアリング
+    status: skipped
+    reason: 設計書が揃っているため対象外
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: 方針決め
+    status: skipped
+    reason: 方針決めを依頼する Issue でない
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: PoC 検証
+    status: skipped
+    reason: スキーマ・テンプレート・文書の追加と説明の変更で、未検証の技術機構に依存しない
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: 複合ユースケース設計
+    status: skipped
+    reason: 利用者の操作の流れを変えない
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: デザインスタイル選定
+    status: skipped
+    reason: 画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: 画面一覧・画面遷移
+    status: skipped
+    reason: 画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: 単一ユースケース設計
+    status: skipped
+    reason: 利用者の操作の流れを変えない
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: モック作成
+    status: skipped
+    reason: 画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: データ設計
+    status: skipped
+    reason: knowledge のデータ・設定・状態遷移の設計書を変えない。追加する 2 つの設計書のスキーマの種類・キーの名前は、インターフェース定義設計でユーザーへ確認する
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: インターフェース定義設計
+    status: done
+    note: IF-201-1 のテンプレートの対応表に、ヒューマンエスカレーションの表・確認観点の表の行を追加する。2 つのスキーマの種類・フォルダ・ID の接頭辞・テンプレートの ID・キーの名前のユーザーへの確認もこの工程で行う
+    updated_by: planner
+    updated_at: '2026-11-21T09:37:35.101193+00:00'
+  - process: エージェント・MCP サーバー設計
+    status: skipped
+    reason: 判定フローチャート『機能を呼ぶインターフェースの選び方』で、エージェント・MCP サーバー・手順を新たに提供しない（設計書の書式を追加するだけ）
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: エージェントフロー・LLM 呼び出し設計
+    status: skipped
+    reason: 判定フローチャート『機能を呼ぶインターフェースの選び方』で、エージェントフロー・LLM の呼び出しを新たに提供しない
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: 精度評価設計
+    status: skipped
+    reason: 判定フローチャート『精度評価をするか』で、LLM・意思決定モデルを使用するノードを持たない（精度評価の書式の決まりを変えるだけ）
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: 部品設計
+    status: skipped
+    reason: 画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: 画面設計
+    status: skipped
+    reason: 画面を持たない
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: モジュール構成設計
+    status: done
+    note: MOD-201-1 の定数 TEMPLATE_IDS の entries に、ヒューマンエスカレーションの表・確認観点の表の行を追加する
+    updated_by: planner
+    updated_at: '2026-11-21T09:51:54.930726+00:00'
+  - process: ドキュメント修正
+    status: done
+    note: 2 つの表のスキーマの新設、agent_flow.schema.yaml の human_escalation の追加、eval_criterion.schema.yaml の修正と既存のテンプレートの再生成、チェックシート・判定フローチャートの新設、rules.yaml・schemas/files.yaml の行の追加。2 つの表のテンプレートは、TEMPLATE_IDS への行の追加と一緒に実装で生成する
+    updated_by: planner
+    updated_at: '2026-11-21T10:10:22.647859+00:00'
+  - process: 単体テスト作成
+    status: skipped
+    reason: TEMPLATE_IDS に行を追加するだけで、テンプレートの生成の振る舞いを変えない
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'
+  - process: 実装
+    status: done
+    note: scripts/build_templates.py の TEMPLATE_IDS への行の追加と、反映作業『設計書のスキーマのタグの作成』のスクリプトの作成
+    updated_by: planner
+    updated_at: '2026-11-21T10:33:09.455536+00:00'
+  - process: 結合テスト作成
+    status: skipped
+    reason: テンプレートの生成の振る舞いを変えない
+    updated_by: planner
+    updated_at: '2026-11-21T09:31:32.328922+00:00'

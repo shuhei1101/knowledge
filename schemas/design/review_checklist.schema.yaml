@@ -1,0 +1,226 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: 確認観点の表
+description: |-
+  レビュアーが実行者の成果物を検証するときの項目の一覧を、制作の種類 1 つ分記載する設計書。
+  レビュアーのエージェントフローが `refs` で指して取得する。
+x-rules:
+  - 1 ファイル = 制作の種類 1 つにする。
+  - ファイルの配置はフォルダ構成の設計書で決め、レビュアーのエージェントフローの `refs` から文書の ID で指す。
+  - 成果物と参照した資料を比べて判定できる条件だけを項目にする。
+  - 面白さと技法は knowledge のノウハウに記載し、`knowhow` で指す。
+  - 利用者に判断を仰ぐ条件はヒューマンエスカレーションの表（`human_escalation`）に記載し、この表に同じ条件の項目を設けない。
+  - 項目の判定・指摘の重さ・ノウハウの扱いは、制作の種類ごとのレビュアーのエージェントフローに記載する。
+x-kind: review_checklist
+type: object
+additionalProperties: false
+required:
+- id
+- title
+- items
+properties:
+  id:
+    $ref: human_escalation.schema.yaml#/$defs/doc_id
+    title: ID
+    description: 文書の ID。フォルダ構成で `id_root` を付けたフォルダからのパスから `.yaml` を除いたもの。
+    x-used-by:
+      - 設計で、レビュアーのエージェントフローの `refs` から指す。
+      - 実行で、レビュアーが表を取得する ID にする。
+    examples:
+    - script-creation/review-checklist
+  visibility:
+    $ref: common.schema.yaml#/$defs/doc_visibility
+    title: 公開範囲
+  title:
+    type: string
+    title: タイトル
+    description: '`確認観点の表: {制作の種類}`。'
+    x-used-by:
+      - 生成で、ページの見出しにする。
+      - project-index の検索で、文書の名前にする。
+    pattern: '^確認観点の表: .+$'
+    examples:
+    - '確認観点の表: 台本作成'
+  lead:
+    $ref: common.schema.yaml#/$defs/markdown
+    title: 冒頭リード
+    description: 何の制作の表で、誰が参照するかを 1〜3 行で説明する。
+    x-used-by:
+      - 生成で、ページの冒頭の説明にする。
+      - project-index の検索で、文書の概要文にする。
+  items:
+    type: array
+    title: 項目
+    description: 成果物が満たす条件。1 要素が 1 項目。
+    x-used-by:
+      - 実行で、レビュアーが成果物ごとに項目を判定する。
+      - 生成で、項目の表にする。
+    x-heading: 項目
+    x-shape: table
+    x-key: id
+    minItems: 1
+    items:
+      $ref: '#/$defs/item'
+  knowhow:
+    type: array
+    title: ノウハウ
+    description: 工程ごとに、レビュアーが一緒に参照する knowledge のノウハウ。
+    x-used-by:
+      - 実行で、レビュアーが工程ごとにノウハウを取得する。
+      - 生成で、ノウハウの表にする。
+    x-rules:
+      - ノウハウを工程のタグで検索できる制作の種類では、記載しない。
+    x-heading: ノウハウ
+    x-shape: table
+    items:
+      $ref: '#/$defs/knowhow_row'
+  notes:
+    type: array
+    title: 補足
+    description: 項目の表に収まらない、この制作の種類の決まり。
+    x-used-by:
+      - 実行で、レビュアーが項目の判定に適用する。
+      - 生成で、補足の表にする。
+    x-heading: 補足
+    x-shape: table
+    items:
+      $ref: human_escalation.schema.yaml#/$defs/note
+$defs:
+  item:
+    type: object
+    title: 項目
+    description: 成果物が満たす条件 1 つ。
+    additionalProperties: false
+    required:
+    - id
+    - check
+    properties:
+      id:
+        type: string
+        title: 識別子
+        description: 項目の識別子。英語の名前を `_` でつなぐ。
+        x-used-by:
+          - 実行で、レビュアーが指摘に記載する。
+        pattern: ^[a-z][a-z0-9]*(_[a-z0-9]+)*$
+        examples:
+        - outline_has_all_must_points
+      check:
+        type: string
+        title: 確認文
+        description: 成果物と参照した資料から YES / NO で判定できる 1 文。
+        x-used-by:
+          - 実行で、レビュアーが判定する。
+        x-rules:
+          - 文末を `〜していること`・`〜していないこと` にする。
+          - 決定を含めない。
+        examples:
+        - 必ず入れることを、全て、セクションに割り振っていること
+        x-bad-examples:
+        - value: 必ず入れることを全てセクションに割り振る
+          reason: 文末が `〜していること` でなく、YES / NO で回答できない
+      targets:
+        type: array
+        title: 依頼の種類
+        description: 対象にする依頼の種類。値は、制作の種類ごとのレビュアーのエージェントフローの依頼の種類の識別子。
+        x-used-by:
+          - 実行で、レビュアーが依頼ごとに判定する項目を絞る。
+        x-rules:
+          - レビューの依頼の種類が 1 つの制作の種類では、記載しない。
+        minItems: 1
+        uniqueItems: true
+        items:
+          type: string
+          minLength: 1
+        examples:
+        - - proposal
+          - doc
+      steps:
+        type: array
+        title: 工程
+        description: 対象にする工程・成果物の識別子。記載しなければ全ての工程。
+        x-used-by:
+          - 実行で、レビュアーが工程ごとに判定する項目を絞る。
+        uniqueItems: true
+        items:
+          type: string
+          minLength: 1
+        examples:
+        - - outline
+      when:
+        type: string
+        title: 判定する条件
+        description: 項目を判定する条件。該当しない成果物では判定しない。
+        x-used-by:
+          - 実行で、レビュアーが判定するかを決める。
+        minLength: 1
+        examples:
+        - 全体の構成を実施した制作
+      note:
+        type: string
+        title: 判定の基準
+        description: 比べる資料と判定の基準。
+        x-used-by:
+          - 実行で、レビュアーが判定のときに参照する。
+        minLength: 1
+        examples:
+        - 'データ: 台本の、セクションの長さの目安'
+  knowhow_row:
+    type: object
+    title: ノウハウの行
+    description: 工程と、その工程で参照するノウハウ。
+    additionalProperties: false
+    required:
+    - refs
+    properties:
+      steps:
+        type: array
+        title: 工程
+        description: 工程・成果物の識別子。記載しなければ全ての工程。
+        x-used-by:
+          - 実行で、レビュアーが工程ごとに参照するノウハウを絞る。
+        uniqueItems: true
+        items:
+          type: string
+          minLength: 1
+        examples:
+        - - outline
+      refs:
+        type: array
+        title: ノウハウの ID
+        description: 参照する knowledge のノウハウの文書の ID。
+        x-used-by:
+          - 実行で、レビュアーがノウハウを取得する。
+        minItems: 1
+        uniqueItems: true
+        items:
+          type: string
+          minLength: 1
+        examples:
+        - - knowhow-script-but-therefore
+examples:
+- id: script-creation/review-checklist
+  title: '確認観点の表: 台本作成'
+  lead: 台本作成の工程の、案の記録と成果の資料が満たす条件。台本作成のレビュアーが参照する。
+  items:
+  - id: outline_has_all_must_points
+    check: 必ず入れることを、全て、セクションに割り振っていること
+    targets:
+    - proposal
+    - doc
+    steps:
+    - outline
+  - id: script_follows_outline
+    check: セクションの順・見出し・尺を、選ばれた全体の構成から、変えていないこと
+    targets:
+    - doc
+    steps:
+    - script
+    when: 全体の構成を実施した制作
+    note: 成果の資料の「取り入れ」に記載した変更は除く
+  knowhow:
+  - steps:
+    - outline
+    refs:
+    - knowhow-script-but-therefore
+  notes:
+  - item: 項目の修正
+    rule: 工程の成果の資料の項目と依頼の種類を変えたときに、`items` を合わせる。

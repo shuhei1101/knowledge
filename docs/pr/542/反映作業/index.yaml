@@ -1,0 +1,42 @@
+設計書のスキーマのタグの作成:
+  説明: 作業 PR を develop へマージした後に、`design-schemas/v*` の最新のタグのマイナーを上げたタグを、メッセージに `(#542)` を入れて develop の squash commit へ作成して push する（設計書のスキーマ 2 つの追加と観点のスキーマの説明の変更で、既存の設計書の検査の結果を変えないため、マイナーを上げる）。切り戻しは、メッセージに `(#542)` を持つタグだけを削除する
+  タグ: [タグ, スキーマ]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: 設計書のスキーマのタグの作成/疎通確認.sh
+  実行: 設計書のスキーマのタグの作成/実行.sh
+  確認: 設計書のスキーマのタグの作成/確認.sh
+  切り戻し: 設計書のスキーマのタグの作成/切り戻し.sh
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグの commit に、追加した 2 つの表の設計書のスキーマがあり、`schemas/design/eval_criterion.schema.yaml` の `x-rules` に語彙の表の列の決まりがある"
+  状態: skipped
+AI Monitor の後続の Issue への連絡:
+  説明: タグを作成した後に、shuhei1101/ai-monitor#3745 の会話欄へ、作成したタグの名前と追加した 2 つのテンプレートの ID を添えて着手できる旨をコメントし、shuhei1101/ai-monitor#3745 に `確認:task-planner` を付ける（起点 Issue #540 の終了の条件）
+  タグ: [連絡, ラベル]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: shuhei1101/ai-monitor#3745 の会話欄に、作成した `design-schemas/v*` のタグの名前を含む planner のコメントがあり、shuhei1101/ai-monitor#3745 に `確認:task-planner` が付いている
+  状態: skipped
+ヒューマンエスカレーションの表を使うプロジェクトへの起票:
+  説明: タグを作成した後に、ヒューマンエスカレーションの表・確認観点の表を持ちうる監視対象のプロジェクト（shuhei1101/ai-monitor・shuhei1101/aituber・shuhei1101/mindstella）へ、作成したタグの名前と追加した 2 つのテンプレートの ID を添えて、そのプロジェクトのエージェントフロー・設計書へ 2 つの表を展開する Issue を 1 件ずつ起票する（利用者の依頼 https://github.com/shuhei1101/knowledge/pull/542#issuecomment-7060821215）。起票の前に、同じ内容の open の Issue（ai-monitor#3745・aituber#145・aituber#159 など）があるかを確かめ、あればその Issue へコメントして起票しない
+  タグ: [起票, 連絡]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: shuhei1101/ai-monitor・shuhei1101/aituber・shuhei1101/mindstella のそれぞれに、作成した `design-schemas/v*` のタグの名前を含む planner の Issue かコメントがある
+  状態: skipped
