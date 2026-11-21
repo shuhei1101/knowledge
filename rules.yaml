@@ -822,14 +822,12 @@ rules:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["python-testing-workflow"]}, "view": "full", "outside_scope": true}'
   - rule: docs/rule/ui-screen-division.yaml
-    paths:
-      - "**/設計書/画面設計/**"
+    paths: ['**/設計書/画面設計/**', '**/docs/screen/*.yaml']
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["ui-screen-division"]}, "view": "full", "outside_scope": true}'
   - rule: docs/rule/ui-screen-design-principles.yaml
-    paths:
-      - "**/設計書/画面設計/**"
+    paths: ['**/設計書/画面設計/**', '**/docs/screen/*.yaml']
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["ui-screen-design-principles"]}, "view": "full", "outside_scope": true}'
@@ -896,3 +894,73 @@ rules:
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/review_checklist.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-form-schema.yaml
+    paths: ['**/frontend/src/features/**/form.ts', '**/frontend/src/shared/core/schema.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-form-schema"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-form-hook.yaml
+    paths: ['**/frontend/src/**/hooks/use-*-form.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-form-hook"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-data-query.yaml
+    paths: ['**/frontend/src/features/**/queries.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-data-query"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-data-mutation.yaml
+    paths: ['**/frontend/src/features/**/queries.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-data-mutation"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-data-api-client.yaml
+    paths: ['**/frontend/src/shared/adapters/{api,ws}-client.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-data-api-client"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-shared-error-class.yaml
+    paths: ['**/frontend/src/shared/adapters/api-client.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-shared-error-class"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-data-query-client.yaml
+    paths: ['**/frontend/src/app/**/*.{ts,tsx}']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-data-query-client"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-devtools-mock.yaml
+    paths: ['**/frontend/src/testing/msw/**/*.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-devtools-mock"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-testing-unit.yaml
+    paths: ['**/frontend/src/**/*.test.{ts,tsx}', '**/frontend/src/testing/*.{ts,tsx}']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-testing-unit"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-shared-env-var.yaml
+    paths: ['**/frontend/src/shared/core/{constants,feature-flags}.ts', '**/.env.sample']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-shared-env-var"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-shared-logger-implementation.yaml
+    paths: ['**/frontend/src/shared/lib/logger.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-shared-logger-implementation"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/typescript-core-type-location.yaml
+    paths: ['**/frontend/src/**/types.ts', '**/frontend/src/**/*.d.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["typescript-core-type-location"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/python-core-style.yaml
+    paths: ['**/pyproject.toml']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["python-core-style"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/dev-design-doc-purpose.yaml
+    paths: ['**/schemas/design/*.schema.yaml']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["dev-design-doc-purpose"]}, "view": "full", "outside_scope": true}'
