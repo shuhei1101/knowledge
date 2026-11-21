@@ -1,0 +1,1 @@
+# SKILL.md の生成を project-index skill-md へ切り替え、独自の生成のコマンドを廃止する
