@@ -7,7 +7,7 @@ use_cases:
   - kind: single
     scenario: docs/scenario/SC-148-1.yaml
     impact: changed
-    detail: 直コミットした単語の対応表の行が、プラグインを更新せずに直後の照合で通知される（要件の案 A にした場合）
+    detail: 環境変数で knowledge の develop のワークツリーの対応表を指した端末では、直コミットした単語の対応表の行が、プラグインを更新せずに直後の照合で通知される
     depends_on: []
   - kind: single
     scenario: docs/scenario/SC-72-5.yaml
@@ -26,7 +26,7 @@ docs:
     status: todo
   - page: docs/guide/guide-setup-docs-mcp.yaml
     new: false
-    change: knowledge の行の direct_commit.scope の記載手順と、直コミットできる種類の確認を追加する（案 A なら slop-check の環境変数の設定も）
+    change: knowledge の行の direct_commit.scope の記載手順と、直コミットできる種類の確認と、slop-check の環境変数 SLOP_CHECK_WORD_LIST の設定を追加する
     status: todo
   - page: README.md
     new: false
