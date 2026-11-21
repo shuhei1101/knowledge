@@ -1,7 +1,7 @@
 docs:
   - page: docs/flowchart/flowchart-sidebar-group-split.yaml
     new: true
-    change: 判定フローチャート『サイドバーのグループの分け方』を新設する。1 つのグループの件数が目安を超えるかを問い、超えるなら主題のタグ → 機能 → フォルダの順にその軸で分けられるかを問い、結果を nav の書き方（auto.group_by の値か group の並べ方）にする（件数の目安はユーザーへ確認する）
+    change: 判定フローチャート『サイドバーのグループの分け方』を新設する。件数で決めず、主題のタグ → 機能 → フォルダの順にその軸で 2 つ以上のグループに分かれるかを問い、結果を nav の auto.group_by の値にする
     status: done
     updated_by: planner
     updated_at: '2026-11-21T14:31:59.117582+00:00'
@@ -55,13 +55,13 @@ docs:
     updated_at: '2026-11-21T14:31:59.117582+00:00'
   - page: schemas/design/module.schema.yaml
     new: false
-    change: title の `{サブシステム名} / ` の前置きと pattern を外し、説明を分類の名前（物理ファイルの設計書は物理ファイルの名前）にする（推奨の案 A。ユーザーへ確認する）
+    change: title の `{サブシステム名} / ` の前置きと pattern を外し、説明を分類の名前（物理ファイルの設計書は物理ファイルの名前）にする
     status: done
     updated_by: planner
     updated_at: '2026-11-21T14:31:59.117582+00:00'
   - page: schemas/design/
     new: false
-    change: 文書の名前を title に持つ他の設計書のスキーマの title の x-rules に、種類の名前・フォルダの名前を前置きに付けない決まりを追加する（範囲はユーザーへ確認する）
+    change: 文書の名前を title に持つ他の設計書のスキーマの title の x-rules に、種類の名前・フォルダの名前を前置きに付けない決まりを追加する
     status: done
     updated_by: planner
     updated_at: '2026-11-21T14:31:59.117582+00:00'
