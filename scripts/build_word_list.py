@@ -11,6 +11,8 @@
 Usage:
 # 対応表のコピーを作り直す
 uv run --frozen --script scripts/build_word_list.py
+# project-index の生成として、書き込んだ対応表のパスを受けて作り直す（パスは使わない）
+uv run --frozen --script scripts/build_word_list.py [docs/word-list/word-list-ai-slop.yaml]
 """
 
 import argparse
@@ -42,6 +44,8 @@ _EXIT_UNEXPECTED = 1
 def main(argv: Sequence[str] | None = None) -> int:
     """正本を読み、コピーを書き出して終了コードを返す。"""
     parser = argparse.ArgumentParser(description="対応表の正本から slop-check が読むコピーを作る")
+    # project-index の生成が書き込んだ対応表のパスを指定する。コピーは正本から作るため使わない
+    parser.add_argument("paths", nargs="*", help="書き込んだ対応表のパス（使わない）")
     parser.parse_args(argv)
 
     try:

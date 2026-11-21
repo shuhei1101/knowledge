@@ -1,0 +1,28 @@
+knowledge の直コミットの範囲の登録:
+  説明: 端末の設定（~/.config/project-index/settings.yaml）の sources[] の knowledge の行に direct_commit.scope（/home/shuhei2441/**）を追加し、project-index の端末の設定の API で書き換えて再読み込みする。再読み込みで develop のワークツリーの project-index.yaml の direct_commit・generators も読み直す。切り戻しは同じ API で direct_commit.scope を空に戻す
+  タグ: [設定, 再読み込み]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: knowledge の直コミットの範囲の登録/疎通確認.py
+  実行: knowledge の直コミットの範囲の登録/実行.py
+  確認: knowledge の直コミットの範囲の登録/確認.py
+  切り戻し: knowledge の直コミットの範囲の登録/切り戻し.py
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: 端末の設定の API（GET /settings/sources）で knowledge の行の状態が serving で、その行の directCommit.scope が /home/shuhei2441/** になっている
+  状態: skipped
+slop-check の対応表の場所の設定:
+  説明: slop-check を入れたアカウントの設定フォルダ（~/.claude と ~/.claude-dev・~/.claude-dev1・~/.claude-sub〜~/.claude-sub7）ごとのユーザースコープの settings.json の env に SLOP_CHECK_WORD_LIST（/home/shuhei2441/repo/knowledge/.claude/worktrees/develop/plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json）を追加する。書き換える前に同じフォルダへ settings.json.bak-{YYYYMMDD-HHMMSS} で退避する。切り戻しは env から SLOP_CHECK_WORD_LIST だけを削除し、ほかのキーは変えない。次に起動したセッションのフックから有効になる
+  タグ: [設定]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: slop-check の対応表の場所の設定/疎通確認.py
+  実行: slop-check の対応表の場所の設定/実行.py
+  確認: slop-check の対応表の場所の設定/確認.py
+  切り戻し: slop-check の対応表の場所の設定/切り戻し.py
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: 対象の全ての settings.json の env の SLOP_CHECK_WORD_LIST が、knowledge の develop のワークツリーの対応表のコピーの絶対パスになっていて、そのファイルがある
+  状態: skipped

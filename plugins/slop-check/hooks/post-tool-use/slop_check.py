@@ -3,6 +3,7 @@
 標準入力の PostToolUse の入力から書き込んだ中身を取り出し、ヒットした行があれば NG と OK の表を持つ通知の文を
 `hookSpecificOutput.additionalContext` で、環境変数 `SLOP_CHECK_SHOW_ADDED` が `1` のときは検知した単語の 1 行を
 `systemMessage` で標準出力へ出す。
+環境変数 `SLOP_CHECK_WORD_LIST` が指す対応表のコピーがあれば、プラグインのフォルダのコピーの代わりに読み込む。
 書き込みは止めず、終了コードは常に 0。
 Python の標準ライブラリだけで書き、端末の python3（3.12 以上）で起動する。
 
@@ -114,6 +115,9 @@ SYSTEM_MESSAGE_HEAD = "AI slop を検知: "
 SHOW_ADDED_ENV = "SLOP_CHECK_SHOW_ADDED"
 SHOW_ADDED_VALUE = "1"
 
+# 指すファイルがあれば、プラグインのフォルダのコピーの代わりに読み込む対応表のコピーのパスの環境変数
+WORD_LIST_ENV = "SLOP_CHECK_WORD_LIST"
+
 # MCP ツールの名前の接頭辞と、サーバーの部分とツール名の区切り
 _MCP_PREFIX = "mcp__"
 _MCP_SEPARATOR = "__"
@@ -151,9 +155,16 @@ def _use_utf8(stream: object) -> None:
         stream.reconfigure(encoding="utf-8")
 
 
-def _default_word_list() -> Path:
-    """対応表のコピーの既定のパスを返す。"""
-    plugin_root = os.environ.get("CLAUDE_PLUGIN_ROOT")
+def default_word_list(environ: Mapping[str, str] | None = None) -> Path:
+    """環境変数から、読み込む対応表のコピーのパスを返却する。"""
+    values = os.environ if environ is None else environ
+    # 環境変数が指すファイルがあれば、プラグインのフォルダのコピーより優先する
+    word_list = values.get(WORD_LIST_ENV)
+    if word_list:
+        path = Path(word_list).expanduser()
+        if path.is_file():
+            return path
+    plugin_root = values.get("CLAUDE_PLUGIN_ROOT")
     if plugin_root:
         return Path(plugin_root) / "hooks" / "post-tool-use" / WORD_LIST_FILE
     return Path(__file__).with_name(WORD_LIST_FILE)
@@ -191,7 +202,7 @@ def main(argv: Sequence[str] | None = None, *, word_list: Path | None = None) ->
         if not text:
             return 0
 
-        path = word_list if word_list is not None else _default_word_list()
+        path = word_list if word_list is not None else default_word_list()
         try:
             entries = load_entries(path)
         except (OSError, ValueError) as error:

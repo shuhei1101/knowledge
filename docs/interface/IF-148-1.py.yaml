@@ -390,6 +390,70 @@ flows:
       - 標準出力の JSON に `decision` が無い
       - 標準出力の JSON に `systemMessage` が無い
     test: test_normal_when_display_value_not_one
+  - name: 正常系（環境変数が指す対応表のコピーを読み込む）
+    summary: 環境変数が指す対応表のコピーがあれば、プラグインのフォルダのコピーの代わりにそれで照合する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 環境変数
+        description: '`SLOP_CHECK_WORD_LIST` が、一時フォルダの対応表のコピーの絶対パス'
+      - name: 対応表
+        description: '環境変数が指すコピーは `試語`（`ok: [試験の語]`）の 1 行。プラグインのフォルダのコピーは `直す`（`ok: [修正]`）の 1 行'
+      - name: 標準入力
+        description: '`tool_name` が `Write`、`tool_input.content` が「試語を直す。」'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        participant L as 環境変数が指す対応表のコピー
+        C->>H: 標準入力に PostToolUse の入力
+        H->>L: 対応表を読み込む
+        L-->>H: 対応表の行
+        H->>H: tool_input.content を各行で照合する
+        H-->>C: 終了コード 0 と additionalContext に通知の文
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - '`hookSpecificOutput.additionalContext` の表が `| 試語 | 試験の語 |` の 1 行で、`直す` の行が無い'
+    test: test_normal_when_word_list_env_set
+  - name: 正常系（環境変数が指すファイルが無い）
+    summary: 環境変数が指すファイルが無ければ、プラグインのフォルダのコピーで照合する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 環境変数
+        description: '`SLOP_CHECK_WORD_LIST` が、存在しないパス'
+      - name: 対応表
+        description: 'プラグインのフォルダのコピーは `直す`（`ok: [修正]`）の 1 行'
+      - name: 標準入力
+        description: '`tool_name` が `Write`、`tool_input.content` が「設定を直す。」'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as Claude Code
+        participant H as 書き込んだ中身の照合
+        participant L as プラグインのフォルダの対応表のコピー
+        C->>H: 標準入力に PostToolUse の入力
+        H->>H: 環境変数が指すファイルが無い
+        H->>L: 対応表を読み込む
+        L-->>H: 対応表の行
+        H->>H: tool_input.content を各行で照合する
+        H-->>C: 終了コード 0 と additionalContext に通知の文
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - '`hookSpecificOutput.additionalContext` の表が `| 直す | 修正 |` の 1 行'
+      - 標準エラーが空
+    test: test_normal_when_word_list_env_missing_file
 lead: 書き込むツールの実行の後に、Claude Code から受け取った PostToolUse の入力から書き込んだ中身を取り出して対応表で照合し、ヒットした単語があれば NG と OK の表を持つ通知の文を `additionalContext` で返却し、画面への表示を有効にした端末では検知した単語と書き込みの名前の 1 行を `systemMessage` で利用者の画面へ出す。書き込みは止めない。
 identifier: slop-check
 idempotent: true
@@ -402,6 +466,7 @@ callers:
   - SC-148-1#scenarios[異常シナリオ（対応表が読み込めない）]
   - SC-148-1#scenarios[正常シナリオ（dev-docs の MCP ツールで書き込む）]
   - SC-148-1#scenarios[正常シナリオ（画面への表示を有効にした端末）]
+  - SC-148-1#scenarios[正常シナリオ（knowledge のワークツリーの対応表を指した端末）]
 exclusivity: 制限なし（読み込むだけで、同時に起動されても結果は変わらない）
 request:
   - name: stdin
@@ -444,7 +509,7 @@ request:
     type: Path
     required: true
     location: argument
-    description: プラグイン slop-check のフォルダ。対応表のコピー `hooks/post-tool-use/word-list-ai-slop.json` をここから読み込む
+    description: プラグイン slop-check のフォルダ。`SLOP_CHECK_WORD_LIST` が無いか、指すファイルが無いときは、対応表のコピー `hooks/post-tool-use/word-list-ai-slop.json` をここから読み込む
     notes: 環境変数で受け取る
   - name: SLOP_CHECK_SHOW_ADDED
     type: str
@@ -452,6 +517,13 @@ request:
     location: argument
     description: '`1` のとき `systemMessage` を出す。無いとき・`1` 以外の値のときは出さない'
     notes: 環境変数で受け取る。利用者は Claude Code のユーザースコープの `settings.json` の `env` に記載する
+  - name: SLOP_CHECK_WORD_LIST
+    type: str
+    required: false
+    location: argument
+    default: なし（プラグインのフォルダの対応表のコピーを読み込む）
+    description: 対応表のコピー（JSON）の絶対パス。指すファイルがあれば、プラグインのフォルダのコピーの代わりに読み込む
+    notes: 環境変数で受け取る。利用者は Claude Code のユーザースコープの `settings.json` の `env` に、knowledge の develop のワークツリーのコピーのパスを記載する。先頭の `~` はホームに展開する
 response:
   - name: stdout
     type: dict
@@ -496,7 +568,7 @@ constraints:
   - item: 照合
     constraint: '対応表の各行を、`pattern` があればその正規表現（Python の `re`）、無ければ `ng` の文字列で中身と照合する。ヒットした位置を含む、`allow` のいずれかの文字列の出現があれば、そのヒットは除く。1 行が複数ヒットしても表には 1 行だけ出す'
   - item: 対応表のコピー
-    constraint: '`${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-use/word-list-ai-slop.json`。`pattern` が正規表現として読み込めない行は、その行だけを飛ばして標準エラーに行の `id` を出す'
+    constraint: '環境変数 `SLOP_CHECK_WORD_LIST` があり、指すファイルがあればそのファイル。無ければ `${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-use/word-list-ai-slop.json`。`pattern` が正規表現として読み込めない行は、その行だけを飛ばして標準エラーに行の `id` を出す'
     notes: コピーは「対応表のコピーの作成」が原本の YAML から作る
   - item: 処理時間
     constraint: 制限なし（`hooks.json` に `timeout` を配置せず、Claude Code の既定の打ち切りに任せる。打ち切られても書き込みの結果は変わらない）
@@ -508,4 +580,7 @@ constraints:
   - item: 画面への表示の設定
     constraint: 環境変数 `SLOP_CHECK_SHOW_ADDED` が `1` のときだけ `systemMessage` を出す。無いとき・`1` 以外の値のときは出さず、標準エラーにも何も出さない
     notes: '`additionalContext` は設定に関係なく出す。規約『Claude プラグインルール』の `settings-file-02`（`env` に記載するのは `{ツール名}_CONFIG` のパスだけ）から逸脱する。常駐のサーバーが無く、フックの子プロセスに `env` が渡るため、利用者が決めた（PR #505 の確認ログ）'
+  - item: 対応表の場所の設定
+    constraint: 環境変数 `SLOP_CHECK_WORD_LIST` で受け取る。指すファイルが無いときは、標準エラーに何も出さずにプラグインのフォルダのコピーを読み込む。指すファイルがあるが JSON として読み込めないときは、異常系（対応表が読み込めない）と同じく扱う
+    notes: '直コミットで knowledge の develop のワークツリーへ入った行を、プラグインを更新せずに照合へ反映するため。`SLOP_CHECK_SHOW_ADDED` と同じく規約『Claude プラグインルール』の `settings-file-02`・`settings-file-06` から逸脱する。値は端末に 1 つ決めればよく、フックを Python の標準ライブラリだけで動かすため、利用者が決めた（PR #538 の確認ログ）'
 test_file: tests/integration/slop-check/test_slop_check.py

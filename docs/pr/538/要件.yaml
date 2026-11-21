@@ -1,0 +1,59 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-536-1.yaml
+    impact: new
+    detail: 手元のセッションが、ノウハウ・単語の対応表・用語集を knowledge へ直コミットで登録する。単語の対応表は対応表のコピーも同じコミットに入る。規約などほかの種類と、許可した作業場所の外部からの直コミットは断られる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-148-1.yaml
+    impact: changed
+    detail: 環境変数で knowledge の develop のワークツリーの対応表を指した端末では、直コミットした単語の対応表の行が、プラグインを更新せずに直後の照合で通知される
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: run_only
+    detail: knowledge のワークツリーの中からの書き込みは変わらない。単語の対応表の行に対応表のコピーの生成を付けるため、対応表の書き込みの後に生成が実行されても書き込みが通ることを確認する
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-514-1.yaml
+    impact: none
+    detail: ネットミームの配信元の直コミットは別の配信元の設定で、変わらない
+    depends_on: []
+docs:
+  - page: project-index.yaml
+    new: false
+    change: 'direct_commit（branch: develop・kinds: knowhow・word-list・terms）と、対応表のコピーの作成の generators[] を追加し、word-list の行だけに after_write を付けて、instructions に直コミットできる種類を追記する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T09:00:13.904517+00:00'
+  - page: docs/guide/guide-setup-docs-mcp.yaml
+    new: false
+    change: knowledge の行の direct_commit.scope の記載手順と、直コミットできる種類の確認と、slop-check の環境変数 SLOP_CHECK_WORD_LIST の設定を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T08:50:22.616247+00:00'
+  - page: README.md
+    new: false
+    change: ノウハウ・単語の対応表・用語集は許可した作業場所から直コミットで登録できることを追記する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T08:50:22.616247+00:00'
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: 手元のセッションから project-index 経由で knowledge の develop へ直コミットする経路を追記する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T08:50:22.616247+00:00'
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: project-index.yaml の contents に直コミットと生成を追記する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T08:50:22.616247+00:00'
+scope_out:
+  - item: 規約・テンプレート・判定フローチャートなど、ほかの種類の直コミット
+    reason: Issue の決定でレビューが要る種類は今までどおり作業 PR で登録する
+    plan: none
+  - item: 話し合いの表（A-157 のノウハウ・A-45 の単語）の登録
+    reason: Issue の後続で、利用者の指示の後に話し合いの側が直コミットで登録する
+    plan: none

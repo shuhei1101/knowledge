@@ -269,3 +269,39 @@ def test_normal_when_display_value_not_one(
     ]
     assert "decision" not in output
     assert "systemMessage" not in output
+
+
+# 環境変数が指すコピーにだけある行
+_SHIGO = {"id": "shigo", "ng": "試語", "ok": ["試験の語"]}
+
+
+def test_normal_when_word_list_env_set(
+    run_hook: RunHook, plugin_factory: PluginFactory, tmp_path: Path
+) -> None:
+    """環境変数が指す対応表のコピーがあれば、プラグインのフォルダのコピーの代わりにそれで照合する（正常系）。"""
+    # 準備
+    root = plugin_factory([_NAOSU])
+    copy = tmp_path / "worktree" / "word-list-ai-slop.json"
+    copy.parent.mkdir()
+    copy.write_text(json.dumps({"entries": [_SHIGO]}, ensure_ascii=False), encoding="utf-8")
+    stdin = _input("Write", {"file_path": "/work/a.md", "content": "試語を直す。"})
+    # 実行
+    result = run_hook(stdin, root, word_list=str(copy))
+    # 検証
+    assert result.exit_code == 0
+    assert _rows(result.stdout) == ["| 試語 | 試験の語 |"]
+
+
+def test_normal_when_word_list_env_missing_file(
+    run_hook: RunHook, plugin_factory: PluginFactory, tmp_path: Path
+) -> None:
+    """環境変数が指すファイルが無ければ、プラグインのフォルダのコピーで照合する（正常系）。"""
+    # 準備
+    root = plugin_factory([_NAOSU])
+    stdin = _input("Write", {"file_path": "/work/a.md", "content": "設定を直す。"})
+    # 実行
+    result = run_hook(stdin, root, word_list=str(tmp_path / "missing.json"))
+    # 検証
+    assert result.exit_code == 0
+    assert _rows(result.stdout) == ["| 直す | 修正 |"]
+    assert result.stderr == ""

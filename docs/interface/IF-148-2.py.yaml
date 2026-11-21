@@ -3,7 +3,7 @@ visibility: internal
 title: "対応表のコピーの作成"
 entry:
   kind: operation
-  value: リポジトリの直下で起動するコマンド（CLI）。開発者の手元から呼ぶ
+  value: リポジトリの直下で起動するコマンド（CLI）。開発者の手元と、project-index の単語の対応表の行の `after_write` の生成から呼ぶ
 flows:
   - name: 正常系
     summary: 原本の対応表の YAML から、フックが読み込む JSON のコピーを書き出す
@@ -60,12 +60,43 @@ flows:
       - 標準エラーに、読み込めなかった原本のパスが出る
       - 前回のコピーのバイト列が変わらない
     test: test_error_when_source_missing
+  - name: 正常系（生成として呼ばれる）
+    summary: 書き込んだ対応表のパスを引数に受けても、原本からコピーを再作成する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: 正常系と同じ一時フォルダ
+      - name: 引数
+        description: 書き込んだ対応表のパス 1 つ
+        notes: '`docs/word-list/word-list-ai-slop.yaml`'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as project-index の生成
+        participant S as 対応表のコピーの作成
+        participant F as リポジトリ
+        C->>S: 書き込んだ対応表のパスを引数に起動する
+        S->>F: 原本の対応表の YAML を読み込む
+        F-->>S: 対応表
+        S->>F: JSON のコピーを書き出す
+        S-->>C: 終了コード 0
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - コピーのバイト列が、引数なしで起動したときと同じ
+    test: test_normal_when_called_as_generator
 lead: 原本の対応表 `docs/word-list/word-list-ai-slop.yaml` から、プラグイン slop-check のフックが読み込む JSON のコピーを書き出す。
 identifier: build-word-list
 idempotent: true
 side_effects: '`plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を書き換える'
 callers:
   - IF-72-3#constraints[対応表のコピー]
+  - SC-536-1#scenarios[正常シナリオ（単語の対応表に行を追加する）]
 exclusivity: 制限なし（同じ原本からは同じバイト列を書き出す）
 request:
   - name: cwd
@@ -73,7 +104,14 @@ request:
     required: true
     location: argument
     description: knowledge のリポジトリの直下
-    notes: 引数は取らず、作業ディレクトリとして受け取る
+    notes: 作業ディレクトリとして受け取る。生成として呼ばれたときは、書き込んだ knowledge のワークツリーの直下
+  - name: paths
+    type: list[str]
+    required: false
+    location: argument
+    default: なし（開発者の手元から呼ぶとき）
+    description: project-index の生成として呼ばれたときに受け取る、書き込んだ対応表のパス
+    notes: 位置引数で受け取り、使用しない。コピーは引数に依らず原本から再作成する
 response:
   - name: stderr
     type: str
@@ -92,4 +130,7 @@ constraints:
     notes: 「全ての文書の検査」が原本と同じ書式で再作成して一致を確認する
   - item: 原本の検査
     constraint: しない（スキーマと `examples` の検査は「全ての文書の検査」と `write_docs` が担う）
+  - item: 生成の登録
+    constraint: '`project-index.yaml` の `generators[]` に ID `build-word-list`・`run: [uv, run, --frozen, --script, scripts/build_word_list.py]` で登録し、`documents[]` の `word-list` の行だけの `after_write` で指す'
+    notes: 直コミットでは、project-index が生成物のコピーも同じコミットに入れる
 test_file: tests/integration/scripts/test_build_word_list.py

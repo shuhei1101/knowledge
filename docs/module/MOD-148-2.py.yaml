@@ -137,6 +137,17 @@ constants:
         item: constraints[画面への表示の設定]
         type: requires
         when: '`SHOW_ADDED_VALUE` を修正するときに、IF-148-1 の「画面への表示の設定」の決まりと突き合わせる。'
+  - name: WORD_LIST_ENV
+    title: 対応表の場所の環境変数
+    container: plugins/slop-check/hooks/post-tool-use/slop_check.py
+    usecase: 書き込んだ中身の照合
+    summary: 指すファイルがあれば、プラグインのフォルダのコピーの代わりに読み込む対応表のコピーのパスの環境変数の名前
+    value: '"SLOP_CHECK_WORD_LIST"'
+    refs:
+      - to: IF-148-1
+        item: constraints[対応表の場所の設定]
+        type: requires
+        when: '`WORD_LIST_ENV` を修正するときに、IF-148-1 の「対応表の場所の設定」の決まりと突き合わせる。'
 functions:
   - name: main
     title: 書き込んだ中身の照合のエントリーポイント
@@ -159,7 +170,7 @@ functions:
         required: false
         default: None
         passing: keyword
-        description: '`None` は `$CLAUDE_PLUGIN_ROOT/hooks/post-tool-use/{WORD_LIST_FILE}`（環境変数が無ければ `Path(__file__).with_name(WORD_LIST_FILE)`）。結合テストが差し替える'
+        description: '`None` は対応表のコピーの既定のパス（対応表の読み込み先の決定）。結合テストが差し替える'
     returns:
       type: int
       description: 終了コード。常に `0`
@@ -652,5 +663,50 @@ functions:
         item: constraints[画面への表示の設定]
         type: requires
         when: '`shows_added` を修正するときに、IF-148-1 の「画面への表示の設定」の決まりと突き合わせる。'
+  - name: default_word_list
+    title: 対応表の読み込み先の決定
+    kind: 関数
+    container: plugins/slop-check/hooks/post-tool-use/slop_check.py
+    usecase: 書き込んだ中身の照合
+    scope: public
+    summary: 環境変数から、読み込む対応表のコピーのパスを返却する
+    args:
+      - name: environ
+        title: 環境変数
+        type: Mapping[str, str] | None
+        required: false
+        default: None
+        description: '`None` は `os.environ`。単体テストが差し替える'
+    returns:
+      type: Path
+      description: 読み込む対応表のコピーのパス
+    process: |-
+      1. `WORD_LIST_ENV` の値が空でなく、先頭の `~` をホームに展開したパスがファイルとしてあれば、そのパスを返却する
+      2. `CLAUDE_PLUGIN_ROOT` があれば `{CLAUDE_PLUGIN_ROOT}/hooks/post-tool-use/{WORD_LIST_FILE}` を返却する
+      3. どちらも無ければ `Path(__file__).with_name(WORD_LIST_FILE)` を返却する
+    unit_tests:
+      - name: test_default_word_list_when_env_set
+        case: 正常
+        summary: 環境変数が指すファイルがある
+        condition: '`{"SLOP_CHECK_WORD_LIST": 一時フォルダのコピーのパス, "CLAUDE_PLUGIN_ROOT": 別の一時フォルダ}`'
+        mock: なし（一時ディレクトリ）
+        expected: '`SLOP_CHECK_WORD_LIST` のパスを返却する'
+      - name: test_default_word_list_when_env_file_missing
+        case: 正常
+        summary: 環境変数が指すファイルが無い
+        condition: '`{"SLOP_CHECK_WORD_LIST": 存在しないパス, "CLAUDE_PLUGIN_ROOT": 一時フォルダ}`'
+        mock: なし（一時ディレクトリ）
+        expected: '`{CLAUDE_PLUGIN_ROOT}/hooks/post-tool-use/word-list-ai-slop.json` を返却する'
+      - name: test_default_word_list_when_env_not_set
+        case: 正常
+        summary: 環境変数が無い
+        condition: '`{"CLAUDE_PLUGIN_ROOT": 一時フォルダ}`・`{"SLOP_CHECK_WORD_LIST": "", "CLAUDE_PLUGIN_ROOT": 一時フォルダ}`'
+        mock: なし
+        expected: どちらも `{CLAUDE_PLUGIN_ROOT}/hooks/post-tool-use/word-list-ai-slop.json` を返却する
+    refs:
+      - to: IF-148-1
+        item: constraints[対応表のコピー]
+        type: requires
+        when: '`default_word_list` を修正するときに、IF-148-1 の「対応表のコピー」の決まりと突き合わせる。'
 notes:
   依存: Python の標準ライブラリだけ（`argparse`・`json`・`os`・`re`・`sys`・`traceback`・`dataclasses`・`pathlib`）。PEP 723 のメタデータは持たない。端末の `python3`（2026-11-03 に WSL2 で測った値は 3.12.3）を下限にし、3.13 以降の構文・API を使用しない
