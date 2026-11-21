@@ -36,9 +36,6 @@ flows:
           S->>F: entry.value の workflow のファイルを読み込む
           S->>S: on・inputs・concurrency・step の name と if を設計書と比べる
         end
-        loop docs/skill/ のスキルの設計書
-          S->>S: 「SKILL.md の生成」と同じ組み立ての中身と SKILL.md を比べる
-        end
         S-->>C: 終了コード 0 と件数の行
       ```
 
@@ -390,34 +387,6 @@ flows:
       - 終了コードが 1
       - '標準出力に `{設計書のパス}:{行}: exclusivity: {内容}` と `{設計書のパス}:{行}: overall_flow: {内容}` の 2 行が出て、内容に workflow のファイルのパスと workflow の側の値（`cancel-in-progress: true`・追加した step の `name`）が出る'
     test: test_normal_when_workflows_differ_from_interfaces
-  - name: 正常系（SKILL.md が生成元とずれている・終了コード 1）
-    summary: スキルの設計書から組み立てた中身が SKILL.md と違えば、違反として出す
-    setup:
-      - name: Mock
-        description: 差し替えない
-      - name: リポジトリ
-        description: '`schemas/design/agent_flow.schema.yaml`・`schemas/design/common.schema.yaml` と、`skill.path` が `skills/a/SKILL.md` の `docs/skill/a.yaml` と、その工程を 1 つ変更する前に生成した `skills/a/SKILL.md` と、`schemas/meta.schema.yaml` を持つ一時フォルダ'
-    flow: |-
-      <!-- map -->
-
-      ```mermaid
-      sequenceDiagram
-        participant C as 呼び出し元
-        participant S as 全ての文書の検査
-        participant F as リポジトリ
-        C->>S: リポジトリの直下で起動する
-        S->>F: docs/skill/ のスキルの設計書を読み込む
-        loop type が skill の設計書
-          S->>S: 「SKILL.md の生成」と同じ組み立てで中身を作り、skill.path の SKILL.md と比べる
-        end
-        S-->>C: 終了コード 1 と SKILL.md の違反の行
-      ```
-
-      <!-- /map -->
-    expected:
-      - 終了コードが 1
-      - 標準出力に、`skills/a/SKILL.md` のパスと、生成元の `docs/skill/a.yaml` と、「SKILL.md の生成」を実行する案内（`uv run --frozen --script scripts/build_skills.py`）の行が出る
-    test: test_normal_when_skills_out_of_date
   - name: 異常系（検査の CLI が無い・終了コード 2）
     summary: markdownlint-cli2・textlint・npx のどれかが見つからなければ検査を始めずに終わる
     setup:
@@ -520,7 +489,7 @@ flows:
       - 標準出力に、`description` が無い文書のスキーマの違反の行が出る
       - 標準エラーに、mdmark の点検が失敗したことと mdmark の終了コードが出る
     test: test_error_when_mdmark_check_fails
-lead: '`project-index.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を適用し、`schemas/design/` の設計書のスキーマにスキーマ自身の検査を適用し、設計書のテンプレートがスキーマと、SKILL.md が生成元と、workflow のファイルがインターフェース定義と一致するかを比べ、文書の map を mdmark で点検し、全ての違反を出して終了コードで合否を返却する。'
+lead: '`project-index.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を適用し、`schemas/design/` の設計書のスキーマにスキーマ自身の検査を適用し、設計書のテンプレートがスキーマと、workflow のファイルがインターフェース定義と一致するかを比べ、文書の map を mdmark で点検し、全ての違反を出して終了コードで合否を返却する。'
 identifier: check-all
 idempotent: true
 side_effects: なし（ファイルを書き換えない）
@@ -626,7 +595,4 @@ constraints:
       step: `overall_flow` の `flowchart` の開始・終了（`([...])`）を除くノードのラベルの集まりが、全てのジョブの step の `name` の集まりと同じで、`subgraph` の ID がジョブの ID で、`subgraph` の中のノードがそのジョブの step である。`flows[].flow` の開始・終了を除くノードのラベルは、全て step の `name` にある。`name` の無い step は、`overall_flow` の行でジョブの ID と step の番号を出す違反 1 件にする。
       分岐: `if` を持つ step・ジョブは、`overall_flow` のその step（ジョブは `subgraph`）へ入る線のどれかのラベルが、`if` の式（式を囲む `${{`・`}}` を除外した文字列）を含む
     decided_by: IF-137-2#
-  - item: SKILL.md
-    constraint: 「SKILL.md の生成」と同じ組み立てで作った中身のバイト列が、設計書ごとの `skill.path` のファイルと一致する。違うかファイルが無ければ、SKILL.md のパスの 1 行で違反 1 件にし、内容に生成元の設計書のパスと生成のコマンドを出す。組み立てられなければ（設計書がスキーマに合わない 等）、`docs/skill` の 1 行で理由の違反 1 件にする。`docs/skill/` が無ければ比べない
-    decided_by: IF-312-1#
 test_file: tests/integration/scripts/test_check_all.py
