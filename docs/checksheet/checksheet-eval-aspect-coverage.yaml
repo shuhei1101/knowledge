@@ -1,0 +1,49 @@
+id: checksheet-eval-aspect-coverage
+kind: checksheet
+name: 精度評価の観点の抜け チェックシート
+description: 精度評価のスイート 1 つに、対象に要る観点と観点が働くケースがそろっているかを確認し、観点とケースを作成した後とスイートをレビューするときに参照する。
+aliases:
+  - 精度評価の観点の抜け
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: flowchart-accuracy-evaluation
+    type: references
+    when: 精度評価をする対象かを確認するときに参照する。
+  - to: flowchart-eval-criterion-method
+    type: references
+    when: 観点ごとの `method` と `check.gate` を確認するときに参照する。
+  - to: template-eval-criterion
+    type: references
+    when: 観点のタグと `aspect:` の語彙の表の決まりを確認するときに参照する。
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      精度評価のスイート 1 つに、対象に要る観点と、観点の働くケースがそろっているかを確認するシート。
+      判定フローチャート [精度評価をするか](id:flowchart-accuracy-evaluation) で精度評価をすると判定した対象に、観点とケースを作成した後と、スイートをレビューするときに使用する。
+  - id: check-items-01
+    group: チェック項目
+    name: チェック項目
+    body: |-
+      | 項目 | 補足 |
+      | --- | --- |
+      | プロジェクトの語彙の `aspect:` を 1 つずつ語彙の表の「設ける場合」と照合し、対象が該当する `aspect:` の全てに観点を設けていること | 語彙の表は、プロジェクトの精度評価の仕組みの設計書が持つ（列は [テンプレート: 精度評価の観点](id:template-eval-criterion)） |
+      | 語彙のどの `aspect:` にも該当しない確認が要る場合、語彙の表にタグと「設ける場合」を追加してから観点を設けていること | - |
+      | `llm`・`human` の観点ごとに、その観点で点が分かれるケースを 1 つ以上持っていること | 例: 一貫性の観点には、会話履歴と矛盾しやすい入力のケース。どのケースでも満点になる観点では、抜けに気づけない |
+      | 難しい場面のケースを 1 つ以上持ち、そのケースで `difficulty:high` を付けた観点を採点していること ※[eval-aspect-n1] | ケースだけの観点（`criteria[].custom`）でもよい |
+      | 観点ごとの `method` と `check.gate` が、判定フローチャート [精度評価の観点の確認の方法](id:flowchart-eval-criterion-method) の判定の結果と一致していること | - |
+
+      ※[eval-aspect-n1]: `difficulty:high`: 点の出にくい場面を確認する観点に付けるタグ。
+          例: 複数の条件の衝突する場面・情報の足りない場面。
+          この観点の点で、モデルを変えると改善するかを判断する。
+tags:
+  - name: scope:dev
+  - name: topic:チェックシート
+  - name: topic:精度
+    main: true
+  - name: topic:llm
+  - name: topic:観点
+  - name: action:評価
+  - name: action:検査

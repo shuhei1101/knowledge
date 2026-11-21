@@ -880,3 +880,19 @@ rules:
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["template-knowhow"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/human_escalation.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [human_escalation]
+    on: [mcp]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/human_escalation.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/review_checklist.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [review_checklist]
+    on: [mcp]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/review_checklist.schema.yaml"]}, "view": "full", "outside_scope": true}'

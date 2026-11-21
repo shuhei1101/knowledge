@@ -223,6 +223,28 @@ properties:
     minItems: 1
     items:
       $ref: '#/$defs/step'
+  human_escalation:
+    type: object
+    title: ヒューマンエスカレーション
+    description: この手順の成果物で、該当すれば必ず利用者に判断を仰ぐ項目の表。
+    x-used-by:
+      - 実行で、実行者とレビュアーが表を取得して該当を判定する。
+      - レビューで、手順の成果物に利用者の判断が要る条件があるときに、表を指しているかを確認する。
+    x-rules:
+      - レビュアーのエージェントフローは、確認観点の表を `refs` で指す。
+    x-shape: attributes
+    additionalProperties: false
+    required:
+    - ref
+    properties:
+      ref:
+        $ref: human_escalation.schema.yaml#/$defs/doc_id
+        title: 表の ID
+        description: ヒューマンエスカレーションの表（`human_escalation`）の文書の ID。
+        x-used-by:
+          - 実行で、実行者とレビュアーが表を取得する ID にする。
+        examples:
+        - script-creation/human-escalation
   refs:
     type: array
     title: 関連
