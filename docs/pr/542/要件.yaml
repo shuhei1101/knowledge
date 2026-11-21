@@ -37,11 +37,19 @@ docs:
     status: todo
   - page: rules.yaml
     new: false
-    change: ヒューマンエスカレーションの表・確認観点の表の設計書を記載するときに、それぞれの設計書のスキーマを参照させる行を追加する
+    change: 'ヒューマンエスカレーションの表・確認観点の表の設計書を記載するときに、それぞれの設計書のスキーマを参照させる行を追加する。固定のフォルダを持たないため paths を持たせず、tools: [mcp__*__write_docs]・args: operations.kind: [human_escalation] / [review_checklist]・on: [mcp] で引く'
     status: todo
   - page: schemas/files.yaml
     new: false
     change: 追加する 2 つの設計書のスキーマの行（名前・概要文・タグ）を追加する
+    status: todo
+  - page: schemas/design/agent_flow.schema.yaml
+    new: false
+    change: 最上位に human_escalation（ref にヒューマンエスカレーションの表の文書の ID を持つ）を追加する。レビュアーのエージェントフローは、確認観点の表を既存の refs で指し、キーを追加しない（キーの名前はユーザーへ確認する）
+    status: todo
+  - page: docs/template/template-agent-flow.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、agent_flow.schema.yaml の human_escalation の追加を取り込む
     status: todo
 scope_out:
   - item: AI Monitor の手順に、ヒューマンエスカレーションの表・確認観点の表・チェックシート・判定フローチャートを作成する工程を入れること
