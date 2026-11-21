@@ -1,0 +1,101 @@
+id: template-review-checklist
+kind: template
+name: 'テンプレート: 確認観点の表'
+description: レビュアーが実行者の成果物を検証する項目を制作の種類 1 つ分並べる表の書式を定め、レビュアーの確認観点の表を作る・項目を追加するときに参照する。
+status: current
+visibility: internal
+rev: 1
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      レビュアーが実行者の成果物を検証するときの項目の一覧を、制作の種類 1 つ分記載する設計書。
+      レビュアーのエージェントフローが `refs` で指して取得する。
+  - id: rules-01
+    name: 決まり
+    body: |-
+      - 1 ファイル = 制作の種類 1 つにする。
+      - ファイルの配置はフォルダ構成の設計書で決め、レビュアーのエージェントフローの `refs` から文書の ID で指す。
+      - 成果物と参照した資料を比べて判定できる条件だけを項目にする。
+      - 面白さと技法は knowledge のノウハウに記載し、`knowhow` で指す。
+      - 利用者に判断を仰ぐ条件はヒューマンエスカレーションの表（`human_escalation`）に記載し、この表に同じ条件の項目を設けない。
+      - 項目の判定・指摘の重さ・ノウハウの扱いは、制作の種類ごとのレビュアーのエージェントフローに記載する。
+  - id: item-list-01
+    name: 項目
+    body: |-
+      <!-- table: {"kind": "data"} -->
+
+      | 名前 | title | 型 | 必須 | 選択肢 | 制約 | description | 使用先 | examples |
+      | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+      | id | ID | string | 必須 | - | pattern: `^[a-z0-9]+(-[a-z0-9]+)*(/[a-z0-9]+(-[a-z0-9]+)*)*$` | 文書の ID。フォルダ構成で `id_root` を付けたフォルダからのパスから `.yaml` を除いたもの。 | 設計で、レビュアーのエージェントフローの `refs` から指す。<br>実行で、レビュアーが表を取得する ID にする。 | `script-creation/review-checklist` |
+      | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>project-index の配信で、文書の公開範囲のメタデータにする。 | - |
+      | title | タイトル | string | 必須 | - | pattern: `^確認観点の表: .+$` | `確認観点の表: {制作の種類}`。 | 生成で、ページの見出しにする。<br>project-index の検索で、文書の名前にする。 | `確認観点の表: 台本作成` |
+      | lead | 冒頭リード | string | - | - | - | 何の制作の表で、誰が参照するかを 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>project-index の検索で、文書の概要文にする。 | - |
+      | items | 項目 | array | 必須 | - | minItems: `1` | 成果物が満たす条件。1 要素が 1 項目。 | 実行で、レビュアーが成果物ごとに項目を判定する。<br>生成で、項目の表にする。 | - |
+      | items[].id | 識別子 | string | 必須 | - | pattern: `^[a-z][a-z0-9]*(_[a-z0-9]+)*$` | 項目の識別子。英語の名前を `_` でつなぐ。 | 実行で、レビュアーが指摘に記載する。 | `outline_has_all_must_points` |
+      | items[].check | 確認文 | string | 必須 | - | - | 成果物と参照した資料から YES / NO で判定できる 1 文。 | 実行で、レビュアーが判定する。 | `必ず入れることを、全て、セクションに割り振っていること` |
+      | items[].targets | 依頼の種類 | array | - | - | minItems: `1` | 対象にする依頼の種類。値は、制作の種類ごとのレビュアーのエージェントフローの依頼の種類の識別子。 | 実行で、レビュアーが依頼ごとに判定する項目を絞る。 | `[proposal, doc]` |
+      | items[].steps | 工程 | array | - | - | - | 対象にする工程・成果物の識別子。記載しなければ全ての工程。 | 実行で、レビュアーが工程ごとに判定する項目を絞る。 | `[outline]` |
+      | items[].when | 判定する条件 | string | - | - | minLength: `1` | 項目を判定する条件。該当しない成果物では判定しない。 | 実行で、レビュアーが判定するかを決める。 | `全体の構成を実施した制作` |
+      | items[].note | 判定の基準 | string | - | - | minLength: `1` | 比べる資料と判定の基準。 | 実行で、レビュアーが判定のときに参照する。 | `データ: 台本の、セクションの長さの目安` |
+      | knowhow | ノウハウ | array | - | - | - | 工程ごとに、レビュアーが一緒に参照する knowledge のノウハウ。 | 実行で、レビュアーが工程ごとにノウハウを取得する。<br>生成で、ノウハウの表にする。 | - |
+      | knowhow[].steps | 工程 | array | - | - | - | 工程・成果物の識別子。記載しなければ全ての工程。 | 実行で、レビュアーが工程ごとに参照するノウハウを絞る。 | `[outline]` |
+      | knowhow[].refs | ノウハウの ID | array | 必須 | - | minItems: `1` | 参照する knowledge のノウハウの文書の ID。 | 実行で、レビュアーがノウハウを取得する。 | `[knowhow-script-but-therefore]` |
+      | notes | 補足 | array | - | - | - | 項目の表に収まらない、この制作の種類の決まり。 | 実行で、レビュアーが項目の判定に適用する。<br>生成で、補足の表にする。 | - |
+      | notes[].item | 項目 | string | 必須 | - | minLength: `1` | 決まりの対象。 | 生成で、補足の表の項目の列にする。 | `案を選ぶ工程の、案の段階` |
+      | notes[].rule | 決まり | string | 必須 | - | minLength: `1` | 対象についての決まり。 | 実行で、実行者とレビュアーが判定と確認の検討事項の記載方法に適用する。 | `全ての案を対象に判定する。該当する案があれば、ヒューマンゲートがオフでも、利用者が案を選ぶ。` |
+
+      <!-- /table -->
+  - id: key-rules-01
+    name: キーごとの決まり
+    body: |-
+      <!-- table: {"kind": "data"} -->
+
+      | 名前 | 決まり | 悪い例 | 理由 |
+      | --- | --- | --- | --- |
+      | id | - | script-creation/human_escalation | `_` でつないでいる |
+      | lead | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | items[].check | 文末を `〜していること`・`〜していないこと` にする。<br>決定を含めない。 | 必ず入れることを全てセクションに割り振る | 文末が `〜していること` でなく、YES / NO で回答できない |
+      | items[].targets | レビューの依頼の種類が 1 つの制作の種類では、記載しない。 | - | - |
+      | knowhow | ノウハウを工程のタグで検索できる制作の種類では、記載しない。 | - | - |
+
+      <!-- /table -->
+  - id: example-sample-01
+    name: 記載例
+    body: |-
+      ```yaml
+      id: script-creation/review-checklist
+      title: '確認観点の表: 台本作成'
+      lead: 台本作成の工程の、案の記録と成果の資料が満たす条件。台本作成のレビュアーが参照する。
+      items:
+      - id: outline_has_all_must_points
+        check: 必ず入れることを、全て、セクションに割り振っていること
+        targets:
+        - proposal
+        - doc
+        steps:
+        - outline
+      - id: script_follows_outline
+        check: セクションの順・見出し・尺を、選ばれた全体の構成から、変えていないこと
+        targets:
+        - doc
+        steps:
+        - script
+        when: 全体の構成を実施した制作
+        note: 成果の資料の「取り入れ」に記載した変更は除く
+      knowhow:
+      - steps:
+        - outline
+        refs:
+        - knowhow-script-but-therefore
+      notes:
+      - item: 項目の修正
+        rule: 工程の成果の資料の項目と依頼の種類を変えたときに、`items` を合わせる。
+      ```
+tags:
+  - name: scope:テンプレート
+  - name: topic:テンプレート
+  - name: topic:観点
+    main: true
+  - name: topic:エージェント
+  - name: action:レビュー
