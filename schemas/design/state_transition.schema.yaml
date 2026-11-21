@@ -32,11 +32,12 @@ properties:
   title:
     type: string
     title: タイトル
-    description: '`状態遷移: {エンティティ名}`。'
+    description: エンティティの名前。
     x-used-by:
       - 生成で、ページの見出しにする。
       - project-index の検索で、文書の名前にする。
-    pattern: '^状態遷移: .+$'
+    x-rules:
+      - '種類の名前（`データ: `・`ER 図: ` など）・フォルダの名前を前置きに付けない。'
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
@@ -77,7 +78,7 @@ properties:
     x-shape: sections
 examples:
 - id: ST-1
-  title: '状態遷移: 記事'
+  title: 記事
   lead: '`記事` が取りうる状態と許可された遷移の一覧。'
   state_transitions:
     states:

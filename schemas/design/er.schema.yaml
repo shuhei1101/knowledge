@@ -33,11 +33,12 @@ properties:
   title:
     type: string
     title: タイトル
-    description: '`ER 図: {分類名}`。'
+    description: 分類の名前。
     x-used-by:
       - 生成で、ページの見出しにする。
       - project-index の検索で、文書の名前にする。
-    pattern: '^ER 図: .+$'
+    x-rules:
+      - '種類の名前（`データ: `・`ER 図: ` など）・フォルダの名前を前置きに付けない。'
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
@@ -413,7 +414,7 @@ properties:
     x-shape: sections
 examples:
 - id: ER-1
-  title: 'ER 図: タスク'
+  title: タスク
   lead: '`タスク` ドメインに属するデータストア構造。'
   er:
     entities:

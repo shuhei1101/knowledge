@@ -1,0 +1,81 @@
+docs:
+  - page: docs/flowchart/flowchart-sidebar-group-split.yaml
+    new: true
+    change: 判定フローチャート『サイドバーのグループの分け方』を新設する。件数で決めず、主題のタグ → 機能 → フォルダの順にその軸で 2 つ以上のグループに分かれるかを問い、結果を nav の auto.group_by の値にする
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T14:31:59.117582+00:00'
+  - page: docs/rule/dev-docs-navigation.yaml
+    new: false
+    change: sidebar-01 に、グループを分けるかと分ける軸は判定フローチャート『サイドバーのグループの分け方』で決める 1 行と関連を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T14:31:59.117582+00:00'
+  - page: schemas/design/config.schema.yaml
+    new: false
+    change: 'title の説明から前置き（`設定: `）を外して名前だけにし、pattern を外す。x-rules に種類の名前・フォルダの名前を前置きに付けない決まりを追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T14:31:59.117582+00:00'
+  - page: schemas/design/data.schema.yaml
+    new: false
+    change: 'title の説明から前置き（`データ: `）を外して名前だけにし、pattern を外す。x-rules に前置きを付けない決まりを追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T14:31:59.117582+00:00'
+  - page: schemas/design/dataflow.schema.yaml
+    new: false
+    change: 'title の説明から前置き（`データフロー: `）を外して名前だけにし、pattern を外す。x-rules に前置きを付けない決まりを追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T14:31:59.117582+00:00'
+  - page: schemas/design/er.schema.yaml
+    new: false
+    change: 'title の説明から前置き（`ER 図: `）を外して名前だけにし、pattern を外す。x-rules に前置きを付けない決まりを追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T14:31:59.117582+00:00'
+  - page: schemas/design/state_transition.schema.yaml
+    new: false
+    change: 'title の説明から前置き（`状態遷移: `）を外して名前だけにし、pattern を外す。x-rules に前置きを付けない決まりを追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T14:31:59.117582+00:00'
+  - page: schemas/design/human_escalation.schema.yaml
+    new: false
+    change: 'title の説明・例から前置き（`ヒューマンエスカレーションの表: `）を外して名前だけにし、pattern を外す。x-rules に前置きを付けない決まりを追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T14:31:59.117582+00:00'
+  - page: schemas/design/review_checklist.schema.yaml
+    new: false
+    change: 'title の説明・例から前置き（`確認観点の表: `）を外して名前だけにし、pattern を外す。x-rules に前置きを付けない決まりを追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T14:31:59.117582+00:00'
+  - page: schemas/design/module.schema.yaml
+    new: false
+    change: title の `{サブシステム名} / ` の前置きと pattern を外し、説明を分類の名前（物理ファイルの設計書は物理ファイルの名前）にする
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T14:31:59.117582+00:00'
+  - page: schemas/design/
+    new: false
+    change: 文書の名前を title に持つ他の設計書のスキーマの title の x-rules に、種類の名前・フォルダの名前を前置きに付けない決まりを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T14:31:59.117582+00:00'
+  - page: docs/template/
+    new: false
+    change: 変えたスキーマのテンプレートを scripts/build_templates.py で生成し直す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T14:31:59.117582+00:00'
+scope_out:
+  - item: 各リポジトリの設計書のタイトルの前置きの削除と、件数の多いグループの分割
+    reason: 起点 Issue の後続で、各リポジトリの Issue（shuhei1101/aituber#136・shuhei1101/mindstella#543・shuhei1101/ai-monitor#3510）が扱う。この作業 PR は完了後に着手できる旨を連絡する（反映作業）
+    plan: none
+  - item: 前置きのあるタイトルを検査で違反にする
+    reason: 要望は説明として案内すること。違反にすると、後続の Issue で前置きを削除する前に各リポジトリの設計書が検査を通らなくなり、design-schemas のメジャーを上げる破壊的変更になる
+    plan: none
+use_cases: []

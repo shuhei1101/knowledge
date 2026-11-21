@@ -34,11 +34,12 @@ properties:
   title:
     type: string
     title: タイトル
-    description: '`データフロー: {データ名}`。'
+    description: データの名前。
     x-used-by:
       - 生成で、ページの見出しにする。
       - project-index の検索で、文書の名前にする。
-    pattern: '^データフロー: .+$'
+    x-rules:
+      - '種類の名前（`データ: `・`ER 図: ` など）・フォルダの名前を前置きに付けない。'
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
@@ -209,7 +210,7 @@ properties:
     x-shape: sections
 examples:
 - id: DF-1
-  title: 'データフロー: 問い合わせメッセージ'
+  title: 問い合わせメッセージ
   lead: '`問い合わせメッセージ` がシステムを流れる過程。'
   source: 問い合わせ者
   sink: 問い合わせ DB とサポート担当
