@@ -2,11 +2,15 @@ docs:
   - page: schemas/design/human_escalation.schema.yaml
     new: true
     change: ヒューマンエスカレーションの表の設計書のスキーマを新設する。A-207 のキー（items[].id・name・condition・examples・ask・steps・executor_context・record と notes）と決まりを持たせ、1 ファイル = 制作の種類 1 つにする（ファイル名・種類・キーの名前はインターフェース定義設計でユーザーへ確認する）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T10:09:16.839765+00:00'
   - page: schemas/design/review_checklist.schema.yaml
     new: true
     change: 確認観点の表の設計書のスキーマを新設する。A-214 のキー（items[].id・check・targets・steps・when・note と knowhow・notes）と決まりを持たせ、項目の決まりはテンプレート『チェックシート』から引き継ぐ（ファイル名・種類・キーの名前はインターフェース定義設計でユーザーへ確認する）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T10:09:16.839765+00:00'
   - page: docs/template/template-human-escalation.yaml
     new: true
     change: ヒューマンエスカレーションの表のテンプレートを新設し、scripts/build_templates.py で items を生成する（テンプレートの ID はスキーマの種類に合わせる）
@@ -18,39 +22,63 @@ docs:
   - page: schemas/design/eval_criterion.schema.yaml
     new: false
     change: '最上位の x-rules の aspect: の語彙の決まりに、語彙の表の列（タグ・確認すること・設ける場合）を追加する。human の決まりと method の description に、採点のモデルが受け取れない形式の出力（画像・音声・動画）のときは LLM の採点を省いて人だけが採点の基準で点を付ける例外（D-818）を追加する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T10:09:16.839765+00:00'
   - page: docs/template/template-eval-criterion.yaml
     new: false
     change: scripts/build_templates.py で再生成し、eval_criterion.schema.yaml の変更を取り込む
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T10:09:16.839765+00:00'
   - page: docs/checksheet/checksheet-eval-aspect-coverage.yaml
     new: true
     change: チェックシート『精度評価の観点の抜け』を A-266 を原稿にテンプレート『チェックシート』の書式で新設する（話し合いの ID の参照は knowledge の文書の ID に置き換える）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T10:09:16.839765+00:00'
   - page: docs/flowchart/flowchart-eval-criterion-method.yaml
     new: true
     change: 判定フローチャート『精度評価の観点の確認の方法』を A-267 を原稿にテンプレート『判定フローチャート』の書式で新設する（話し合いの ID の参照は knowledge の文書の ID に置き換える）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T10:09:16.839765+00:00'
   - page: docs/flowchart/flowchart-accuracy-evaluation.yaml
     new: false
     change: 精度評価をすると判定した後に参照する文書として、チェックシート『精度評価の観点の抜け』と判定フローチャート『精度評価の観点の確認の方法』への関連を追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T10:09:16.839765+00:00'
   - page: rules.yaml
     new: false
     change: 'ヒューマンエスカレーションの表・確認観点の表の設計書を記載するときに、それぞれの設計書のスキーマを参照させる行を追加する。固定のフォルダを持たないため paths を持たせず、tools: [mcp__*__write_docs]・args: operations.kind: [human_escalation] / [review_checklist]・on: [mcp] で引く'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T10:09:16.839765+00:00'
   - page: schemas/files.yaml
     new: false
     change: 追加する 2 つの設計書のスキーマの行（名前・概要文・タグ）を追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T10:09:16.839765+00:00'
   - page: schemas/design/agent_flow.schema.yaml
     new: false
     change: 最上位に human_escalation（ref にヒューマンエスカレーションの表の文書の ID を持つ）を追加する。レビュアーのエージェントフローは、確認観点の表を既存の refs で指し、キーを追加しない（キーの名前はユーザーへ確認する）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T10:09:16.839765+00:00'
   - page: docs/template/template-agent-flow.yaml
     new: false
     change: scripts/build_templates.py で再生成し、agent_flow.schema.yaml の human_escalation の追加を取り込む
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T10:09:16.839765+00:00'
+  - page: docs/template/template-eval-case.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、ケースだけの観点（criteria[].custom）に取り込んだ eval_criterion.schema.yaml の変更を反映する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T10:09:22.840567+00:00'
 scope_out:
   - item: AI Monitor の手順に、ヒューマンエスカレーションの表・確認観点の表・チェックシート・判定フローチャートを作成する工程を入れること
     reason: AI Monitor のリポジトリが持つ変更で、shuhei1101/ai-monitor#3745 が扱う（この作業 PR のマージの後に、着手できる旨を連絡する）
