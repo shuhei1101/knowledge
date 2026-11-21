@@ -168,7 +168,8 @@ items:
     name: slop-check の対応表の場所の記載
     body: |-
       プラグイン slop-check を入れた端末で、直コミットした単語の対応表をプラグインを更新せずに照合へ使用するときに実行する。
-      ユーザースコープの `~/.claude/settings.json` の `env` に、`SLOP_CHECK_WORD_LIST` で knowledge の develop のワークツリーの対応表のコピーを記載する。
+      ユーザースコープの `~/.claude/settings.json` の `env` に `SLOP_CHECK_WORD_LIST` を追加する。
+      値は knowledge の develop のワークツリーの対応表のコピーのパスにする。
 
       ```json
       {
