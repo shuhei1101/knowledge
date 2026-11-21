@@ -35,11 +35,12 @@ properties:
   title:
     type: string
     title: タイトル
-    description: '`データ: {オブジェクトの名前}`。'
+    description: オブジェクトの名前。
     x-used-by:
       - 生成で、ページの見出しにする。
       - project-index の検索で、文書の名前にする。
-    pattern: '^データ: .+$'
+    x-rules:
+      - '種類の名前（`データ: `・`ER 図: ` など）・フォルダの名前を前置きに付けない。'
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
@@ -378,7 +379,7 @@ properties:
     x-shape: sections
 examples:
 - id: DATA-1
-  title: 'データ: 動画'
+  title: 動画
   lead: 動画作成で作る動画 1 本。セグメントの一覧と、成果物ごとのバージョンと利用者の OK を持つ。
   datastore: SQLite
   fields:

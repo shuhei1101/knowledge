@@ -80,6 +80,7 @@ items:
       - タブの中の文書は、`group` か `auto.group_by` でグループにまとめる
       - 上の階層は利用者の作業か機能の単位で分け、その下に文書を並べる
       - 入れ子は 2 階層までにする
+      - 1 つのグループを分けるかと分ける軸は、判定フローチャート [サイドバーのグループの分け方](id:flowchart-sidebar-group-split) で決める
       - ページの分け方とサイドバーのまとめ方は [表し方の優先順位](id:convention-doc-presentation#page-split-01) に従う
   - id: sidebar-02
     group: サイドバー
@@ -95,3 +96,7 @@ items:
       - フォルダの目次（`kind: index`）は、タブとサイドバーに並べない
       - `auto` には、`filter` に `not`（`kind` が `index`）を記載して目次を除く。
         `group_by: '@folder'` は各フォルダの `index.yaml` を先頭に並べるので、同じ `filter` を記載する
+related:
+  - to: flowchart-sidebar-group-split
+    type: references
+    when: サイドバーのグループの文書が多いときに、分けるかと分ける軸を決めるときに参照する。

@@ -38,11 +38,12 @@ properties:
   title:
     type: string
     title: タイトル
-    description: '`{サブシステム名} / {分類名}`（物理ファイルの設計書は `{サブシステム名} / {分類名} / {物理ファイルの名前}`）。'
+    description: 分類の名前（物理ファイルの設計書は物理ファイルの名前）。
     x-used-by:
       - 生成で、ページの見出しにする。
       - project-index の検索で、文書の名前にする。
-    pattern: ^.+ / .+$
+    x-rules:
+      - '種類の名前（`データ: `・`ER 図: ` など）・フォルダの名前を前置きに付けない。'
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
@@ -1669,7 +1670,7 @@ $defs:
         $ref: common.schema.yaml#/$defs/notes
 examples:
 - id: MOD-1
-  title: 設計書 / 種別とSchema
+  title: 種別とSchema
   lead: 種別の Schema を読み込んで種別の一覧と `$ref` の解決先を持ち、設計書のパスから種別を解決する。
   test_files:
   - tests/unit/features/schemas/test_loader.py
