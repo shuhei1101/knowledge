@@ -26,3 +26,17 @@ AI Monitor の後続の Issue への連絡:
   失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
   確認方法: shuhei1101/ai-monitor#3745 の会話欄に、作成した `design-schemas/v*` のタグの名前を含む planner のコメントがあり、shuhei1101/ai-monitor#3745 に `確認:task-planner` が付いている
   状態: skipped
+ヒューマンエスカレーションの表を使うプロジェクトへの起票:
+  説明: タグを作成した後に、ヒューマンエスカレーションの表・確認観点の表を持ちうる監視対象のプロジェクト（shuhei1101/ai-monitor・shuhei1101/aituber・shuhei1101/mindstella）へ、作成したタグの名前と追加した 2 つのテンプレートの ID を添えて、そのプロジェクトのエージェントフロー・設計書へ 2 つの表を展開する Issue を 1 件ずつ起票する（利用者の依頼 https://github.com/shuhei1101/knowledge/pull/542#issuecomment-7060821215）。起票の前に、同じ内容の open の Issue（ai-monitor#3745・aituber#145・aituber#159 など）があるかを確かめ、あればその Issue へコメントして起票しない
+  タグ: [起票, 連絡]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: shuhei1101/ai-monitor・shuhei1101/aituber・shuhei1101/mindstella のそれぞれに、作成した `design-schemas/v*` のタグの名前を含む planner の Issue かコメントがある
+  状態: skipped
