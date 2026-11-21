@@ -822,7 +822,7 @@ rules:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["python-testing-workflow"]}, "view": "full", "outside_scope": true}'
   - rule: docs/rule/ui-screen-division.yaml
-    paths: ['**/設計書/画面設計/**', '**/docs/screen/*.yaml']
+    paths: ['**/設計書/画面設計/**']
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["ui-screen-division"]}, "view": "full", "outside_scope": true}'
@@ -935,7 +935,7 @@ rules:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-devtools-mock"]}, "view": "full", "outside_scope": true}'
   - rule: docs/rule/react-testing-unit.yaml
-    paths: ['**/frontend/src/**/*.test.{ts,tsx}', '**/frontend/src/testing/*.{ts,tsx}']
+    paths: ['**/frontend/src/**/*.test.{ts,tsx}', '**/frontend/src/testing/*.{ts,tsx}', '**/vitest.config.ts']
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-testing-unit"]}, "view": "full", "outside_scope": true}'
