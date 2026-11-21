@@ -97,7 +97,7 @@ repository:
 subsystems:
   - name: 文書
     scope: docs
-    role: 規約・ノウハウ・テンプレート・判定フローチャート・判定表・チェックシート・使い方・変更履歴・スキルの YAML とそのスキーマ、YAML の文書の行に該当しないファイル（スクリプト・テスト・スキーマ・設定・目次）をフォルダごとに記載する files.yaml、project-index への配信の設定 `project-index.yaml` を持つ。各プロジェクトが `design-schemas/v*` のタグで指す設計書のスキーマの原本（`schemas/design/`）も持つ。規約の配信元とは別に、作品とネットミームの YAML とそのスキーマ・配信の設定を持つネットミームの配信元（`memes/`。直コミットで登録する）を持つ
+    role: 規約・ノウハウ・テンプレート・判定フローチャート・判定表・チェックシート・使い方・変更履歴・スキルの YAML とそのスキーマ、YAML の文書の行に該当しないファイル（スクリプト・テスト・スキーマ・設定・目次）をフォルダごとに記載する files.yaml、project-index への配信の設定 `project-index.yaml` を持つ。ノウハウ・単語の対応表・用語集は、許可した作業場所から直コミットで登録する。各プロジェクトが `design-schemas/v*` のタグで指す設計書のスキーマの原本（`schemas/design/`）も持つ。規約の配信元とは別に、作品とネットミームの YAML とそのスキーマ・配信の設定を持つネットミームの配信元（`memes/`。直コミットで登録する）を持つ
     runtime: YAML（JSON Schema 2020-12）
     runs_on: project-index が読み込むリポジトリの作業ツリー
   - name: 検査と変換のスクリプト
@@ -120,7 +120,7 @@ lead: |-
   索引・検索・書き込みの MCP と検査・変換のスクリプトの起動は project-index、画面は dev-docs が持ち、knowledge は文書・スキーマ・検査と変換のスクリプト・CI と、書き込んだ中身を照合するプラグイン slop-check だけを持つ。
 external_systems:
   - name: project-index
-    purpose: knowledge の文書を文書の MCP と読み取り API で配信し、書き込みのときに検査のスクリプト、配信のときに変換のスクリプトを呼ぶ。ネットミームの配信元への直コミットでは、書き込みの後に develop へコミットしてプッシュする
+    purpose: knowledge の文書を文書の MCP と読み取り API で配信し、書き込みのときに検査のスクリプト、配信のときに変換のスクリプトを呼ぶ。ネットミームの配信元と、規約の配信元のノウハウ・単語の対応表・用語集への直コミットでは、書き込みの後に develop へコミットしてプッシュする（単語の対応表は、生成で再作成した対応表のコピーも同じコミットに入れる）
     direction: 双方向
     protocol: 子プロセス（標準入力に文書の YAML、標準出力に JSON / Markdown）
     notes:

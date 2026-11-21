@@ -147,6 +147,39 @@ items:
       ```
 
       記載しないと、`write_docs` に `commit` を指定した呼び出しが `DirectCommitNotPermittedError` で断られる。
+  - id: step-direct-commit-01
+    group: 手順 > knowledge へ直コミットできるようにする
+    name: 直コミットを呼べる作業場所の記載
+    body: |-
+      ノウハウ・単語の対応表・用語集を knowledge のクローンの外部の作業場所から登録するときに実行する。
+      端末の設定の `knowledge` の行に `direct_commit.scope` を追加し、管理の MCP の `reload` を呼ぶ。
+
+      ```yaml
+      sources:
+        - config: {knowledge のクローンの絶対パス}/project-index.yaml
+          direct_commit:
+            scope: ["{直コミットを呼ぶ作業場所を配置するフォルダ}/**"]
+      ```
+
+      直コミットできるのはノウハウ・単語の対応表・用語集だけで、規約などのほかの種類は作業 PR で登録する。
+      記載しないと、`write_docs` に `commit` を指定した呼び出しが `DirectCommitNotPermittedError` で断られる。
+  - id: step-direct-commit-02
+    group: 手順 > knowledge へ直コミットできるようにする
+    name: slop-check の対応表の場所の記載
+    body: |-
+      プラグイン slop-check を入れた端末で、直コミットした単語の対応表をプラグインを更新せずに照合へ使用するときに実行する。
+      ユーザースコープの `~/.claude/settings.json` の `env` に、`SLOP_CHECK_WORD_LIST` で knowledge の develop のワークツリーの対応表のコピーを記載する。
+
+      ```json
+      {
+        "env": {
+          "SLOP_CHECK_WORD_LIST": "{knowledge のクローンの絶対パス}/.claude/worktrees/develop/plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json"
+        }
+      }
+      ```
+
+      次に起動したセッションから有効になる。
+      記載しないか、指したファイルが無いときは、プラグインのフォルダの対応表のコピーで照合する。
   - id: reflection-01
     group: 反映
     name: 反映のタイミング
@@ -175,6 +208,13 @@ items:
       `direct_commit.scope` にヒットする作業場所で Claude Code を起動し、引数なしの `describe` を呼ぶ。
 
       `knowledge-memes` の行の直コミットの列に、作品とネットミームの種類が出る。
+  - id: check-direct-commit-01
+    group: 確認 > knowledge へ直コミットできる
+    name: 直コミットできる種類の確認
+    body: |-
+      `direct_commit.scope` にヒットする knowledge のクローンの外部の作業場所で Claude Code を起動し、引数なしの `describe` を呼ぶ。
+
+      `knowledge` の行の直コミットの列に、`knowhow`・`word-list`・`terms` の 3 つの種類が出る。
   - id: rollback-01
     group: 元に戻す
     name: 元に戻す
