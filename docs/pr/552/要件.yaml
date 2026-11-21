@@ -1,0 +1,22 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: run_only
+    detail: ノウハウに呼び名とタグが増え、呼び名・タグで検索したときに当たるノウハウが増える。検索の流れは変わらない
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 呼び名とタグを足した全てのノウハウが、全ての文書の検査に合格し続ける。検査の流れは変わらない
+    depends_on: []
+docs:
+  - page: docs/knowhow/
+    new: false
+    change: フォルダの全てのノウハウに、判定フローチャート『エイリアスの登録』と判定表『エイリアスを登録しない条件』で決めた呼び名を aliases へ追加し、呼び名・本文の題材に当たる足りないタグを補う
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T18:35:43.797508+00:00'
+scope_out:
+  - item: テンプレート『ノウハウ』（docs/template/template-knowhow.yaml）に、aliases とタグの付け方を記載する
+    reason: 要望は既存のノウハウの補強で、これから作るノウハウの書式を含まない。新規作成するノウハウの aliases は、判定フローチャート『エイリアスの登録』の起点（文書を作成した）と規約『ドキュメント管理』の knowhow-01 で既に決定しており、テンプレートへの重ね書きは要らない（reviewer の回答 https://github.com/shuhei1101/knowledge/pull/552#discussion_r4654336874）
+    plan: none

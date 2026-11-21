@@ -43,3 +43,16 @@ tags:
     main: true
   - name: topic:構成
   - name: topic:ノウハウ
+  - name: topic:ボケ
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 台本
+    - ネタ
+    - ボケ
+    - 漫才
+    - コント
+    - 構成
+aliases:
+  - 尻上がり
