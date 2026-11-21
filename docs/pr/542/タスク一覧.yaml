@@ -85,8 +85,10 @@ tasks:
     updated_by: planner
     updated_at: '2026-11-21T09:51:54.930726+00:00'
   - process: ドキュメント修正
-    status: todo
-    note: schemas/design/ の 2 つのスキーマの新設と eval_criterion.schema.yaml の修正、テンプレートの生成・再生成、チェックシート『精度評価の観点の抜け』・判定フローチャート『精度評価の観点の確認の方法』の新設、『精度評価をするか』の関連の追加、rules.yaml・schemas/files.yaml の行の追加
+    status: done
+    note: 2 つの表のスキーマの新設、agent_flow.schema.yaml の human_escalation の追加、eval_criterion.schema.yaml の修正と既存のテンプレートの再生成、チェックシート・判定フローチャートの新設、rules.yaml・schemas/files.yaml の行の追加。2 つの表のテンプレートは、TEMPLATE_IDS への行の追加と一緒に実装で生成する
+    updated_by: planner
+    updated_at: '2026-11-21T10:10:22.647859+00:00'
   - process: 単体テスト作成
     status: skipped
     reason: TEMPLATE_IDS に行を追加するだけで、テンプレートの生成の振る舞いを変えない
