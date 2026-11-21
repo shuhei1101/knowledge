@@ -1,4 +1,4 @@
-"""対象の settings.json の env に SLOP_CHECK_WORD_LIST を追加する。書き換える前に同じフォルダへ退避する。
+"""対象の settings.json の env に SLOP_CHECK_WORD_LIST を追加する。書き換える前に同じフォルダへ {ファイル名}.bak-{YYYYMMDD-HHMMSS} で退避する。
 
 Usage:
 # 計画だけを出す
@@ -10,6 +10,7 @@ python3 -B 実行.py
 from __future__ import annotations
 
 import argparse
+import datetime
 import difflib
 import json
 import os
@@ -18,7 +19,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from _common import BACKUP_SUFFIX, ENV_KEY, SETTINGS, VALUE
+from _common import ENV_KEY, SETTINGS, VALUE
 
 
 def render(data: dict) -> str:
@@ -70,6 +71,7 @@ def main() -> int:
         return 0
 
     # 適用（一時ファイルに書く → 検証 → 退避 → 置き換え）
+    stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     for path, new in plans:
         fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=".settings.", suffix=".json")
         with os.fdopen(fd, "w", encoding="utf-8") as handle:
@@ -78,7 +80,9 @@ def main() -> int:
             Path(tmp).unlink()
             print(f"{path} の検証: failed")
             return 1
-        shutil.copy2(path, path.with_name(path.name + BACKUP_SUFFIX))
+        backup = path.with_name(f"{path.name}.bak-{stamp}")
+        shutil.copy2(path, backup)
+        print(f"{path} の退避: ok（{backup}）")
         shutil.copymode(path, tmp)
         Path(tmp).replace(path)
         print(f"{path} の書き換え: changed")

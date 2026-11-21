@@ -13,7 +13,7 @@ knowledge の直コミットの範囲の登録:
   確認方法: 端末の設定の API（GET /settings/sources）で knowledge の行の状態が serving で、その行の directCommit.scope が /home/shuhei2441/** になっている
   状態: skipped
 slop-check の対応表の場所の設定:
-  説明: slop-check を入れたアカウントの設定フォルダ（~/.claude と ~/.claude-dev・~/.claude-dev1・~/.claude-sub〜~/.claude-sub7）ごとのユーザースコープの settings.json の env に SLOP_CHECK_WORD_LIST（/home/shuhei2441/repo/knowledge/.claude/worktrees/develop/plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json）を追加する。書き換える前に同じフォルダへ settings.json.bak-pr538 として退避する。次に起動したセッションのフックから有効になる
+  説明: slop-check を入れたアカウントの設定フォルダ（~/.claude と ~/.claude-dev・~/.claude-dev1・~/.claude-sub〜~/.claude-sub7）ごとのユーザースコープの settings.json の env に SLOP_CHECK_WORD_LIST（/home/shuhei2441/repo/knowledge/.claude/worktrees/develop/plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json）を追加する。書き換える前に同じフォルダへ settings.json.bak-{YYYYMMDD-HHMMSS} で退避する。切り戻しは env から SLOP_CHECK_WORD_LIST だけを削除し、ほかのキーは変えない。次に起動したセッションのフックから有効になる
   タグ: [設定]
   実行者: planner
   時期: マージの後

@@ -19,4 +19,3 @@ SETTINGS = [
     Path("/home/shuhei2441/.claude-sub6/settings.json"),
     Path("/home/shuhei2441/.claude-sub7/settings.json"),
 ]
-BACKUP_SUFFIX = ".bak-pr538"
