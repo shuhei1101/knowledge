@@ -1,0 +1,483 @@
+$ run_url=$(gh workflow run test.yml --ref "$(git branch --show-current)" -f layer=unit | grep -o 'https://[^ ]*/actions/runs/[0-9]*') && run_id=${run_url##*/} && ... gh run view "$run_id" --log
+
+test	Set up job	﻿2026-11-21T08:54:10.3880546Z Current runner version: '2.338.2'
+test	Set up job	2026-11-21T08:54:10.3899740Z ##[group]Runner Image Provisioner
+test	Set up job	2026-11-21T08:54:10.3900391Z Hosted Compute Agent
+test	Set up job	2026-11-21T08:54:10.3900861Z Version: 20261111.635
+test	Set up job	2026-11-21T08:54:10.3901310Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed
+test	Set up job	2026-11-21T08:54:10.3901875Z Build Date: 2026-11-11T01:49:01Z
+test	Set up job	2026-11-21T08:54:10.3902383Z Worker ID: {b4c2dd9d-a9dc-44e8-9ecb-44ccd7f27dc8}
+test	Set up job	2026-11-21T08:54:10.3903343Z Region: us-east-1
+test	Set up job	2026-11-21T08:54:10.3903771Z Cloud: AWS
+test	Set up job	2026-11-21T08:54:10.3904159Z ##[endgroup]
+test	Set up job	2026-11-21T08:54:10.3905193Z ##[group]Operating System
+test	Set up job	2026-11-21T08:54:10.3905663Z Ubuntu
+test	Set up job	2026-11-21T08:54:10.3906057Z 26.04.1
+test	Set up job	2026-11-21T08:54:10.3906473Z LTS
+test	Set up job	2026-11-21T08:54:10.3906839Z ##[endgroup]
+test	Set up job	2026-11-21T08:54:10.3907279Z ##[group]Runner Image
+test	Set up job	2026-11-21T08:54:10.3907702Z Image: ubuntu-26.04
+test	Set up job	2026-11-21T08:54:10.3908663Z Version: 20261116.88.1
+test	Set up job	2026-11-21T08:54:10.3909427Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261116.88/images/ubuntu/Ubuntu2604-Readme.md
+test	Set up job	2026-11-21T08:54:10.3910721Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261116.88
+test	Set up job	2026-11-21T08:54:10.3911432Z ##[endgroup]
+test	Set up job	2026-11-21T08:54:10.3912248Z ##[group]GITHUB_TOKEN Permissions
+test	Set up job	2026-11-21T08:54:10.3914339Z Contents: read
+test	Set up job	2026-11-21T08:54:10.3914769Z Metadata: read
+test	Set up job	2026-11-21T08:54:10.3915177Z ##[endgroup]
+test	Set up job	2026-11-21T08:54:10.3916731Z Secret source: Actions
+test	Set up job	2026-11-21T08:54:10.3917410Z Cache mode: write
+test	Set up job	2026-11-21T08:54:10.3918027Z Prepare workflow directory
+test	Set up job	2026-11-21T08:54:10.4147913Z Prepare all required actions
+test	Set up job	2026-11-21T08:54:10.4185070Z Getting action download info
+test	Set up job	2026-11-21T08:54:10.5978838Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+test	Set up job	2026-11-21T08:54:11.7205190Z Download action repository 'astral-sh/setup-uv@v6' (SHA:d0cc045d04ccac9d8b7881df0226f9e82c39688e)
+test	Set up job	2026-11-21T08:54:11.9293950Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+test	Set up job	2026-11-21T08:54:12.1221276Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+test	Set up job	2026-11-21T08:54:12.3536037Z Complete job name: test
+test	ブランチを取得する	﻿2026-11-21T08:54:12.4147844Z ##[group]Run actions/checkout@v4
+test	ブランチを取得する	2026-11-21T08:54:12.4148497Z with:
+test	ブランチを取得する	2026-11-21T08:54:12.4148815Z   repository: shuhei1101/knowledge
+test	ブランチを取得する	2026-11-21T08:54:12.4150991Z   token: ***
+test	ブランチを取得する	2026-11-21T08:54:12.4151283Z   ssh-strict: true
+test	ブランチを取得する	2026-11-21T08:54:12.4151545Z   ssh-user: git
+test	ブランチを取得する	2026-11-21T08:54:12.4151817Z   persist-credentials: true
+test	ブランチを取得する	2026-11-21T08:54:12.4152289Z   clean: true
+test	ブランチを取得する	2026-11-21T08:54:12.4152832Z   sparse-checkout-cone-mode: true
+test	ブランチを取得する	2026-11-21T08:54:12.4153178Z   fetch-depth: 1
+test	ブランチを取得する	2026-11-21T08:54:12.4153436Z   fetch-tags: false
+test	ブランチを取得する	2026-11-21T08:54:12.4153743Z   show-progress: true
+test	ブランチを取得する	2026-11-21T08:54:12.4154028Z   lfs: false
+test	ブランチを取得する	2026-11-21T08:54:12.4154271Z   submodules: false
+test	ブランチを取得する	2026-11-21T08:54:12.4154540Z   set-safe-directory: true
+test	ブランチを取得する	2026-11-21T08:54:12.4154834Z   allow-unsafe-pr-checkout: false
+test	ブランチを取得する	2026-11-21T08:54:12.4155326Z ##[endgroup]
+test	ブランチを取得する	2026-11-21T08:54:15.3796981Z Syncing repository: shuhei1101/knowledge
+test	ブランチを取得する	2026-11-21T08:54:15.3798484Z ##[group]Getting Git version info
+test	ブランチを取得する	2026-11-21T08:54:15.3798907Z Working directory is '/home/runner/work/knowledge/knowledge'
+test	ブランチを取得する	2026-11-21T08:54:15.3799641Z [command]/usr/bin/git version
+test	ブランチを取得する	2026-11-21T08:54:15.3800288Z git version 2.56.1
+test	ブランチを取得する	2026-11-21T08:54:15.3812523Z ##[endgroup]
+test	ブランチを取得する	2026-11-21T08:54:15.3821570Z Temporarily overriding HOME='/home/runner/work/_temp/99b7f56a-bf88-4729-be4e-0d3db8147bb1' before making global git config changes
+test	ブランチを取得する	2026-11-21T08:54:15.3822343Z Adding repository directory to the temporary git global config as a safe directory
+test	ブランチを取得する	2026-11-21T08:54:15.3825410Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/knowledge/knowledge
+test	ブランチを取得する	2026-11-21T08:54:15.3902998Z Deleting the contents of '/home/runner/work/knowledge/knowledge'
+test	ブランチを取得する	2026-11-21T08:54:15.3905703Z ##[group]Initializing the repository
+test	ブランチを取得する	2026-11-21T08:54:15.3908583Z [command]/usr/bin/git init /home/runner/work/knowledge/knowledge
+test	ブランチを取得する	2026-11-21T08:54:15.4350226Z hint: Using 'master' as the name for the initial branch. This default branch name
+test	ブランチを取得する	2026-11-21T08:54:15.4350976Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+test	ブランチを取得する	2026-11-21T08:54:15.4351782Z hint: to use in all of your new repositories, which will suppress this warning,
+test	ブランチを取得する	2026-11-21T08:54:15.4352220Z hint: call:
+test	ブランチを取得する	2026-11-21T08:54:15.4352447Z hint:
+test	ブランチを取得する	2026-11-21T08:54:15.4353000Z hint: 	git config --global init.defaultBranch <name>
+test	ブランチを取得する	2026-11-21T08:54:15.4353344Z hint:
+test	ブランチを取得する	2026-11-21T08:54:15.4353701Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+test	ブランチを取得する	2026-11-21T08:54:15.4354191Z hint: 'development'. The just-created branch can be renamed via this command:
+test	ブランチを取得する	2026-11-21T08:54:15.4354545Z hint:
+test	ブランチを取得する	2026-11-21T08:54:15.4354819Z hint: 	git branch -m <name>
+test	ブランチを取得する	2026-11-21T08:54:15.4355119Z hint:
+test	ブランチを取得する	2026-11-21T08:54:15.4355462Z hint: Disable this message with "git config set advice.defaultBranchName false"
+test	ブランチを取得する	2026-11-21T08:54:15.4370740Z Initialized empty Git repository in /home/runner/work/knowledge/knowledge/.git/
+test	ブランチを取得する	2026-11-21T08:54:15.4380979Z [command]/usr/bin/git remote add origin https://github.com/shuhei1101/knowledge
+test	ブランチを取得する	2026-11-21T08:54:15.4444309Z ##[endgroup]
+test	ブランチを取得する	2026-11-21T08:54:15.4445066Z ##[group]Disabling automatic garbage collection
+test	ブランチを取得する	2026-11-21T08:54:15.4447477Z [command]/usr/bin/git config --local gc.auto 0
+test	ブランチを取得する	2026-11-21T08:54:15.4471376Z ##[endgroup]
+test	ブランチを取得する	2026-11-21T08:54:15.4472018Z ##[group]Setting up auth
+test	ブランチを取得する	2026-11-21T08:54:15.4476880Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test	ブランチを取得する	2026-11-21T08:54:15.4498792Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test	ブランチを取得する	2026-11-21T08:54:15.8161596Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test	ブランチを取得する	2026-11-21T08:54:15.8184838Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test	ブランチを取得する	2026-11-21T08:54:15.8368496Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test	ブランチを取得する	2026-11-21T08:54:15.8390658Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test	ブランチを取得する	2026-11-21T08:54:15.8564881Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+test	ブランチを取得する	2026-11-21T08:54:15.8590142Z ##[endgroup]
+test	ブランチを取得する	2026-11-21T08:54:15.8590977Z ##[group]Fetching the repository
+test	ブランチを取得する	2026-11-21T08:54:15.8600136Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +4a1d71956c1f0c863949e5047e831b2b04fbe30f:refs/remotes/origin/feat/project-index/knowledge-direct-commit
+test	ブランチを取得する	2026-11-21T08:54:16.4474729Z From https://github.com/shuhei1101/knowledge
+test	ブランチを取得する	2026-11-21T08:54:16.4475377Z  * [new ref]         4a1d71956c1f0c863949e5047e831b2b04fbe30f -> origin/feat/project-index/knowledge-direct-commit
+test	ブランチを取得する	2026-11-21T08:54:16.4495615Z ##[endgroup]
+test	ブランチを取得する	2026-11-21T08:54:16.4496283Z ##[group]Determining the checkout info
+test	ブランチを取得する	2026-11-21T08:54:16.4496786Z ##[endgroup]
+test	ブランチを取得する	2026-11-21T08:54:16.4497164Z [command]/usr/bin/git sparse-checkout disable
+test	ブランチを取得する	2026-11-21T08:54:16.4536275Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+test	ブランチを取得する	2026-11-21T08:54:16.4558172Z ##[group]Checking out the ref
+test	ブランチを取得する	2026-11-21T08:54:16.4560243Z [command]/usr/bin/git checkout --progress --force -B feat/project-index/knowledge-direct-commit refs/remotes/origin/feat/project-index/knowledge-direct-commit
+test	ブランチを取得する	2026-11-21T08:54:16.5371845Z Switched to a new branch 'feat/project-index/knowledge-direct-commit'
+test	ブランチを取得する	2026-11-21T08:54:16.5378541Z branch 'feat/project-index/knowledge-direct-commit' set up to track 'origin/feat/project-index/knowledge-direct-commit'.
+test	ブランチを取得する	2026-11-21T08:54:16.5385537Z ##[endgroup]
+test	ブランチを取得する	2026-11-21T08:54:16.5427037Z [command]/usr/bin/git log -1 --format=%H
+test	ブランチを取得する	2026-11-21T08:54:16.5444718Z 4a1d71956c1f0c863949e5047e831b2b04fbe30f
+test	uv を入れる	﻿2026-11-21T08:54:16.5674353Z ##[group]Run astral-sh/setup-uv@v6
+test	uv を入れる	2026-11-21T08:54:16.5674658Z with:
+test	uv を入れる	2026-11-21T08:54:16.5674878Z   activate-environment: false
+test	uv を入れる	2026-11-21T08:54:16.5675229Z   working-directory: /home/runner/work/knowledge/knowledge
+test	uv を入れる	2026-11-21T08:54:16.5675588Z   server-url: https://github.com
+test	uv を入れる	2026-11-21T08:54:16.5677591Z   github-token: ***
+test	uv を入れる	2026-11-21T08:54:16.5677816Z   enable-cache: auto
+test	uv を入れる	2026-11-21T08:54:16.5678300Z   cache-dependency-glob: **/*requirements*.txt
+test	uv を入れる	**/*requirements*.in
+test	uv を入れる	**/*constraints*.txt
+test	uv を入れる	**/*constraints*.in
+test	uv を入れる	**/pyproject.toml
+test	uv を入れる	**/uv.lock
+test	uv を入れる	**/*.py.lock
+test	uv を入れる	
+test	uv を入れる	2026-11-21T08:54:16.5678928Z   restore-cache: true
+test	uv を入れる	2026-11-21T08:54:16.5679153Z   save-cache: true
+test	uv を入れる	2026-11-21T08:54:16.5679381Z   prune-cache: true
+test	uv を入れる	2026-11-21T08:54:16.5679609Z   ignore-nothing-to-cache: false
+test	uv を入れる	2026-11-21T08:54:16.5679860Z   ignore-empty-workdir: false
+test	uv を入れる	2026-11-21T08:54:16.5680158Z   add-problem-matchers: true
+test	uv を入れる	2026-11-21T08:54:16.5680418Z ##[endgroup]
+test	uv を入れる	2026-11-21T08:54:16.7509379Z (node:2361) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test	uv を入れる	2026-11-21T08:54:16.7510344Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test	uv を入れる	2026-11-21T08:54:16.7578224Z Trying to find version for uv in: /home/runner/work/knowledge/knowledge/uv.toml
+test	uv を入れる	2026-11-21T08:54:16.7579249Z Could not find file: /home/runner/work/knowledge/knowledge/uv.toml
+test	uv を入れる	2026-11-21T08:54:16.7579863Z Trying to find version for uv in: /home/runner/work/knowledge/knowledge/pyproject.toml
+test	uv を入れる	2026-11-21T08:54:16.7580423Z Could not find file: /home/runner/work/knowledge/knowledge/pyproject.toml
+test	uv を入れる	2026-11-21T08:54:16.7581003Z Could not determine uv version from uv.toml or pyproject.toml. Falling back to latest.
+test	uv を入れる	2026-11-21T08:54:16.7581829Z Getting latest version from GitHub API...
+test	uv を入れる	2026-11-21T08:54:16.9741869Z manifest-file not provided, reading from local file.
+test	uv を入れる	2026-11-21T08:54:16.9771580Z manifest-file does not contain version 0.13.9, arch x86_64, platform unknown-linux-gnu. Falling back to GitHub releases.
+test	uv を入れる	2026-11-21T08:54:16.9772469Z Downloading uv from "https://github.com/astral-sh/uv/releases/download/0.13.9/uv-x86_64-unknown-linux-gnu.tar.gz" ...
+test	uv を入れる	2026-11-21T08:54:17.1662421Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/45bfd5b2-8d43-4b6f-9bbc-02c02ded9352 -f /home/runner/work/_temp/f682251c-a076-4633-9673-c72b2b6187b6
+test	uv を入れる	2026-11-21T08:54:17.3581651Z Added /home/runner/.local/bin to the path
+test	uv を入れる	2026-11-21T08:54:17.3582301Z Added /opt/hostedtoolcache/uv/0.13.9/x86_64 to the path
+test	uv を入れる	2026-11-21T08:54:17.3604821Z Set UV_CACHE_DIR to /home/runner/work/_temp/setup-uv-cache
+test	uv を入れる	2026-11-21T08:54:17.3605292Z Successfully installed uv version 0.13.9
+test	uv を入れる	2026-11-21T08:54:17.3606825Z Searching files using cache dependency glob: /home/runner/work/knowledge/knowledge/**/*requirements*.txt,/home/runner/work/knowledge/knowledge/**/*requirements*.in,/home/runner/work/knowledge/knowledge/**/*constraints*.txt,/home/runner/work/knowledge/knowledge/**/*constraints*.in,/home/runner/work/knowledge/knowledge/**/pyproject.toml,/home/runner/work/knowledge/knowledge/**/uv.lock,/home/runner/work/knowledge/knowledge/**/*.py.lock
+test	uv を入れる	2026-11-21T08:54:17.5633019Z /home/runner/work/knowledge/knowledge/memes/scripts/meme_checks.py.lock
+test	uv を入れる	2026-11-21T08:54:17.5712521Z /home/runner/work/knowledge/knowledge/scripts/build_pages.py.lock
+test	uv を入れる	2026-11-21T08:54:17.5719963Z /home/runner/work/knowledge/knowledge/scripts/build_skills.py.lock
+test	uv を入れる	2026-11-21T08:54:17.5726353Z /home/runner/work/knowledge/knowledge/scripts/build_templates.py.lock
+test	uv を入れる	2026-11-21T08:54:17.5732775Z /home/runner/work/knowledge/knowledge/scripts/build_word_list.py.lock
+test	uv を入れる	2026-11-21T08:54:17.5739061Z /home/runner/work/knowledge/knowledge/scripts/check_all.py.lock
+test	uv を入れる	2026-11-21T08:54:17.5746391Z /home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py.lock
+test	uv を入れる	2026-11-21T08:54:17.5754396Z /home/runner/work/knowledge/knowledge/scripts/knowledge_markdown.py.lock
+test	uv を入れる	2026-11-21T08:54:17.5801149Z Found 8 files to hash.
+test	uv を入れる	2026-11-21T08:54:17.6366569Z Trying to restore uv cache from GitHub Actions cache with key: setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-e47daf1c1500f6016476578d434a00fd9d1f9eb40570eaf4fb1785987baaf429
+test	uv を入れる	2026-11-21T08:54:17.6778307Z Cache hit for: setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-e47daf1c1500f6016476578d434a00fd9d1f9eb40570eaf4fb1785987baaf429
+test	uv を入れる	2026-11-21T08:54:17.6848666Z (node:2361) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+test	uv を入れる	2026-11-21T08:54:18.0132832Z Received 2209 of 2209 (100.0%), 0.1 MBs/sec
+test	uv を入れる	2026-11-21T08:54:18.0133386Z Cache Size: ~0 MB (2209 B)
+test	uv を入れる	2026-11-21T08:54:18.0148676Z [command]/usr/bin/tar -xf /home/runner/work/_temp/b2f89e51-e6d3-4a5c-a206-fa0401b171cf/cache.tzst -P -C /home/runner/work/knowledge/knowledge --use-compress-program unzstd
+test	uv を入れる	2026-11-21T08:54:18.0193845Z Cache restored successfully
+test	uv を入れる	2026-11-21T08:54:18.0197327Z uv cache restored from GitHub Actions cache with key: setup-uv-1-x86_64-unknown-linux-gnu-3.14.4-pruned-e47daf1c1500f6016476578d434a00fd9d1f9eb40570eaf4fb1785987baaf429
+test	層の全件を回す	﻿2026-11-21T08:54:18.0327056Z ##[group]Run set -o pipefail
+test	層の全件を回す	2026-11-21T08:54:18.0327373Z ^[[36;1mset -o pipefail^[[0m
+test	層の全件を回す	2026-11-21T08:54:18.0327560Z ^[[36;1mcase "$LAYER" in^[[0m
+test	層の全件を回す	2026-11-21T08:54:18.0327737Z ^[[36;1m  unit)^[[0m
+test	層の全件を回す	2026-11-21T08:54:18.0328456Z ^[[36;1m    (rc=0; uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/unit || rc=1; uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check || rc=1; exit $rc) 2>&1 | tee test.log^[[0m
+test	層の全件を回す	2026-11-21T08:54:18.0329197Z ^[[36;1m    ;;^[[0m
+test	層の全件を回す	2026-11-21T08:54:18.0329354Z ^[[36;1m  integration)^[[0m
+test	層の全件を回す	2026-11-21T08:54:18.0329828Z ^[[36;1m    uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 pytest tests/integration 2>&1 | tee test.log^[[0m
+test	層の全件を回す	2026-11-21T08:54:18.0330329Z ^[[36;1m    ;;^[[0m
+test	層の全件を回す	2026-11-21T08:54:18.0330475Z ^[[36;1mesac^[[0m
+test	層の全件を回す	2026-11-21T08:54:18.0354675Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+test	層の全件を回す	2026-11-21T08:54:18.0355012Z env:
+test	層の全件を回す	2026-11-21T08:54:18.0355213Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+test	層の全件を回す	2026-11-21T08:54:18.0355441Z   LAYER: unit
+test	層の全件を回す	2026-11-21T08:54:18.0355603Z ##[endgroup]
+test	層の全件を回す	2026-11-21T08:54:18.2560004Z Downloading pygments (1.2MiB)
+test	層の全件を回す	2026-11-21T08:54:18.2791176Z  Downloaded pygments
+test	層の全件を回す	2026-11-21T08:54:18.2841621Z Installed 14 packages in 4ms
+test	層の全件を回す	2026-11-21T08:54:20.2179264Z ============================= test session starts ==============================
+test	層の全件を回す	2026-11-21T08:54:20.2179791Z platform linux -- Python 3.14.4, pytest-9.2.0, pluggy-1.7.0
+test	層の全件を回す	2026-11-21T08:54:20.2180152Z rootdir: /home/runner/work/knowledge/knowledge
+test	層の全件を回す	2026-11-21T08:54:20.2180378Z configfile: pytest.ini
+test	層の全件を回す	2026-11-21T08:54:20.2180585Z plugins: platformdirs-4.14.5, typeguard-4.4.4
+test	層の全件を回す	2026-11-21T08:54:20.2180852Z collected 319 items
+test	層の全件を回す	2026-11-21T08:54:20.2180949Z 
+test	層の全件を回す	2026-11-21T08:54:20.2857707Z tests/unit/scripts/test_build_pages.py ...................               [  5%]
+test	層の全件を回す	2026-11-21T08:54:23.3027574Z tests/unit/scripts/test_build_skills.py .......................          [ 13%]
+test	層の全件を回す	2026-11-21T08:54:23.3848848Z tests/unit/scripts/test_build_templates.py ........................      [ 20%]
+test	層の全件を回す	2026-11-21T08:54:23.4221191Z tests/unit/scripts/test_build_word_list.py ..F.                          [ 21%]
+test	層の全件を回す	2026-11-21T08:54:26.3697567Z tests/unit/scripts/test_check_all.py ................................... [ 32%]
+test	層の全件を回す	2026-11-21T08:54:26.9499364Z .......................                                                  [ 40%]
+test	層の全件を回す	2026-11-21T08:54:26.9700813Z tests/unit/scripts/test_common.py ....................                   [ 46%]
+test	層の全件を回す	2026-11-21T08:54:27.0081204Z tests/unit/scripts/test_knowledge_checks.py ..........................   [ 54%]
+test	層の全件を回す	2026-11-21T08:54:27.0287025Z tests/unit/scripts/test_knowledge_markdown.py .......................... [ 62%]
+test	層の全件を回す	2026-11-21T08:54:27.0385935Z ...................                                                      [ 68%]
+test	層の全件を回す	2026-11-21T08:54:27.1748200Z tests/unit/scripts/test_lint.py .....................                    [ 75%]
+test	層の全件を回す	2026-11-21T08:54:27.1873928Z tests/unit/scripts/test_meme_checks.py .........                         [ 78%]
+test	層の全件を回す	2026-11-21T08:54:27.3277586Z tests/unit/scripts/test_workflow.py .....................                [ 84%]
+test	層の全件を回す	2026-11-21T08:54:27.3460150Z tests/unit/slop-check/test_slop_check.py ............................... [ 94%]
+test	層の全件を回す	2026-11-21T08:54:27.4102404Z ..............FFFF                                                       [100%]
+test	層の全件を回す	2026-11-21T08:54:27.4103128Z 
+test	層の全件を回す	2026-11-21T08:54:27.4103291Z =================================== FAILURES ===================================
+test	層の全件を回す	2026-11-21T08:54:27.4103620Z _______________________ test_main_when_called_with_paths _______________________
+test	層の全件を回す	2026-11-21T08:54:27.4103829Z 
+test	層の全件を回す	2026-11-21T08:54:27.4104016Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_main_when_called_with_pat0')
+test	層の全件を回す	2026-11-21T08:54:27.4104473Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x79f8af332c50>
+test	層の全件を回す	2026-11-21T08:54:27.4104694Z 
+test	層の全件を回す	2026-11-21T08:54:27.4104938Z     def test_main_when_called_with_paths(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+test	層の全件を回す	2026-11-21T08:54:27.4105912Z         """生成として呼ばれる（正常系）。"""
+test	層の全件を回す	2026-11-21T08:54:27.4106120Z         # 準備
+test	層の全件を回す	2026-11-21T08:54:27.4106326Z         (tmp_path / "docs" / "word-list").mkdir(parents=True)
+test	層の全件を回す	2026-11-21T08:54:27.4106646Z         (tmp_path / "docs" / "word-list" / "word-list-ai-slop.yaml").write_text(
+test	層の全件を回す	2026-11-21T08:54:27.4106933Z             _SOURCE, encoding="utf-8"
+test	層の全件を回す	2026-11-21T08:54:27.4107125Z         )
+test	層の全件を回す	2026-11-21T08:54:27.4107383Z         (tmp_path / "plugins" / "slop-check" / "hooks" / "post-tool-use").mkdir(parents=True)
+test	層の全件を回す	2026-11-21T08:54:27.4107701Z         monkeypatch.chdir(tmp_path)
+test	層の全件を回す	2026-11-21T08:54:27.4107911Z         # 実行
+test	層の全件を回す	2026-11-21T08:54:27.4108118Z >       code = main(["docs/word-list/word-list-ai-slop.yaml"])
+test	層の全件を回す	2026-11-21T08:54:27.4108392Z                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-21T08:54:27.4108536Z 
+test	層の全件を回す	2026-11-21T08:54:27.4108729Z /home/runner/work/knowledge/knowledge/tests/unit/scripts/test_build_word_list.py:100: 
+test	層の全件を回す	2026-11-21T08:54:27.4109095Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test	層の全件を回す	2026-11-21T08:54:27.4109421Z /home/runner/work/knowledge/knowledge/scripts/build_word_list.py:45: in main
+test	層の全件を回す	2026-11-21T08:54:27.4109725Z     parser.parse_args(argv)
+test	層の全件を回す	2026-11-21T08:54:27.4109947Z /usr/lib/python3.14/argparse.py:2020: in parse_args
+test	層の全件を回す	2026-11-21T08:54:27.4110175Z     self.error(msg)
+test	層の全件を回す	2026-11-21T08:54:27.4110362Z /usr/lib/python3.14/argparse.py:2797: in error
+test	層の全件を回す	2026-11-21T08:54:27.4110637Z     self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+test	層の全件を回す	2026-11-21T08:54:27.4110909Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+test	層の全件を回す	2026-11-21T08:54:27.4111084Z 
+test	層の全件を回す	2026-11-21T08:54:27.4111593Z self = ArgumentParser(prog='pytest', usage=None, description='対応表の正本から slop-check が読むコピーを作る', formatter_class=<class 'argparse.HelpFormatter'>, conflict_handler='error', add_help=True)
+test	層の全件を回す	2026-11-21T08:54:27.4112126Z status = 2
+test	層の全件を回す	2026-11-21T08:54:27.4112401Z message = 'pytest: error: unrecognized arguments: docs/word-list/word-list-ai-slop.yaml\n'
+test	層の全件を回す	2026-11-21T08:54:27.4112833Z 
+test	層の全件を回す	2026-11-21T08:54:27.4112947Z     def exit(self, status=0, message=None):
+test	層の全件を回す	2026-11-21T08:54:27.4113205Z         if message:
+test	層の全件を回す	2026-11-21T08:54:27.4113457Z             self._print_message(message, _sys.stderr)
+test	層の全件を回す	2026-11-21T08:54:27.4113744Z >       _sys.exit(status)
+test	層の全件を回す	2026-11-21T08:54:27.4113950Z E       SystemExit: 2
+test	層の全件を回す	2026-11-21T08:54:27.4114079Z 
+test	層の全件を回す	2026-11-21T08:54:27.4114200Z /usr/lib/python3.14/argparse.py:2784: SystemExit
+test	層の全件を回す	2026-11-21T08:54:27.4114593Z ----------------------------- Captured stderr call -----------------------------
+test	層の全件を回す	2026-11-21T08:54:27.4114958Z usage: pytest [-h]
+test	層の全件を回す	2026-11-21T08:54:27.4115310Z pytest: error: unrecognized arguments: docs/word-list/word-list-ai-slop.yaml
+test	層の全件を回す	2026-11-21T08:54:27.4115942Z _____________________ test_default_word_list_when_env_set ______________________
+test	層の全件を回す	2026-11-21T08:54:27.4116218Z 
+test	層の全件を回す	2026-11-21T08:54:27.4116485Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_default_word_list_when_en0')
+test	層の全件を回す	2026-11-21T08:54:27.4116822Z 
+test	層の全件を回す	2026-11-21T08:54:27.4117018Z     def test_default_word_list_when_env_set(tmp_path: Path) -> None:
+test	層の全件を回す	2026-11-21T08:54:27.4117509Z         """環境変数が指すファイルがある（正常系）。"""
+test	層の全件を回す	2026-11-21T08:54:27.4117792Z         # 準備
+test	層の全件を回す	2026-11-21T08:54:27.4118043Z         copy = tmp_path / "worktree" / "word-list-ai-slop.json"
+test	層の全件を回す	2026-11-21T08:54:27.4118408Z         copy.parent.mkdir()
+test	層の全件を回す	2026-11-21T08:54:27.4118731Z         copy.write_text(_NAOSU_COPY, encoding="utf-8")
+test	層の全件を回す	2026-11-21T08:54:27.4119248Z         environ = {"SLOP_CHECK_WORD_LIST": str(copy), "CLAUDE_PLUGIN_ROOT": str(tmp_path / "plugin")}
+test	層の全件を回す	2026-11-21T08:54:27.4119723Z         # 実行
+test	層の全件を回す	2026-11-21T08:54:27.4119982Z >       result = slop_check.default_word_list(environ)
+test	層の全件を回す	2026-11-21T08:54:27.4120312Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-21T08:54:27.4120729Z E       AttributeError: module 'slop_check' has no attribute 'default_word_list'
+test	層の全件を回す	2026-11-21T08:54:27.4121030Z 
+test	層の全件を回す	2026-11-21T08:54:27.4121217Z tests/unit/slop-check/test_slop_check.py:577: AttributeError
+test	層の全件を回す	2026-11-21T08:54:27.4121840Z _________________ test_default_word_list_when_env_file_missing _________________
+test	層の全件を回す	2026-11-21T08:54:27.4122201Z 
+test	層の全件を回す	2026-11-21T08:54:27.4122487Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_default_word_list_when_en1')
+test	層の全件を回す	2026-11-21T08:54:27.4123401Z 
+test	層の全件を回す	2026-11-21T08:54:27.4123651Z     def test_default_word_list_when_env_file_missing(tmp_path: Path) -> None:
+test	層の全件を回す	2026-11-21T08:54:27.4124186Z         """環境変数が指すファイルが無い（正常系）。"""
+test	層の全件を回す	2026-11-21T08:54:27.4124584Z         # 準備
+test	層の全件を回す	2026-11-21T08:54:27.4124977Z         environ = {
+test	層の全件を回す	2026-11-21T08:54:27.4125366Z             "SLOP_CHECK_WORD_LIST": str(tmp_path / "missing.json"),
+test	層の全件を回す	2026-11-21T08:54:27.4125802Z             "CLAUDE_PLUGIN_ROOT": str(tmp_path),
+test	層の全件を回す	2026-11-21T08:54:27.4126142Z         }
+test	層の全件を回す	2026-11-21T08:54:27.4126530Z         # 実行
+test	層の全件を回す	2026-11-21T08:54:27.4126847Z >       result = slop_check.default_word_list(environ)
+test	層の全件を回す	2026-11-21T08:54:27.4127243Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-21T08:54:27.4127703Z E       AttributeError: module 'slop_check' has no attribute 'default_word_list'
+test	層の全件を回す	2026-11-21T08:54:27.4128173Z 
+test	層の全件を回す	2026-11-21T08:54:27.4128396Z tests/unit/slop-check/test_slop_check.py:590: AttributeError
+test	層の全件を回す	2026-11-21T08:54:27.4128924Z _______________ test_default_word_list_when_env_not_set[not-set] _______________
+test	層の全件を回す	2026-11-21T08:54:27.4129334Z 
+test	層の全件を回す	2026-11-21T08:54:27.4129554Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_default_word_list_when_en2')
+test	層の全件を回す	2026-11-21T08:54:27.4129927Z word_list = None
+test	層の全件を回す	2026-11-21T08:54:27.4130040Z 
+test	層の全件を回す	2026-11-21T08:54:27.4130173Z     @pytest.mark.parametrize(
+test	層の全件を回す	2026-11-21T08:54:27.4130422Z         "word_list",
+test	層の全件を回す	2026-11-21T08:54:27.4130696Z         [
+test	層の全件を回す	2026-11-21T08:54:27.4130920Z             pytest.param(None, id="not-set"),
+test	層の全件を回す	2026-11-21T08:54:27.4131167Z             pytest.param("", id="empty"),
+test	層の全件を回す	2026-11-21T08:54:27.4131368Z         ],
+test	層の全件を回す	2026-11-21T08:54:27.4131508Z     )
+test	層の全件を回す	2026-11-21T08:54:27.4131781Z     def test_default_word_list_when_env_not_set(tmp_path: Path, word_list: str | None) -> None:
+test	層の全件を回す	2026-11-21T08:54:27.4132180Z         """環境変数が無い（正常系）。"""
+test	層の全件を回す	2026-11-21T08:54:27.4132367Z         # 準備
+test	層の全件を回す	2026-11-21T08:54:27.4132747Z         environ = {"CLAUDE_PLUGIN_ROOT": str(tmp_path)}
+test	層の全件を回す	2026-11-21T08:54:27.4133117Z         if word_list is not None:
+test	層の全件を回す	2026-11-21T08:54:27.4133398Z             environ["SLOP_CHECK_WORD_LIST"] = word_list
+test	層の全件を回す	2026-11-21T08:54:27.4133719Z         # 実行
+test	層の全件を回す	2026-11-21T08:54:27.4133978Z >       result = slop_check.default_word_list(environ)
+test	層の全件を回す	2026-11-21T08:54:27.4134288Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-21T08:54:27.4134677Z E       AttributeError: module 'slop_check' has no attribute 'default_word_list'
+test	層の全件を回す	2026-11-21T08:54:27.4134957Z 
+test	層の全件を回す	2026-11-21T08:54:27.4135091Z tests/unit/slop-check/test_slop_check.py:609: AttributeError
+test	層の全件を回す	2026-11-21T08:54:27.4135666Z ________________ test_default_word_list_when_env_not_set[empty] ________________
+test	層の全件を回す	2026-11-21T08:54:27.4135882Z 
+test	層の全件を回す	2026-11-21T08:54:27.4136056Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_default_word_list_when_en3')
+test	層の全件を回す	2026-11-21T08:54:27.4136379Z word_list = ''
+test	層の全件を回す	2026-11-21T08:54:27.4136469Z 
+test	層の全件を回す	2026-11-21T08:54:27.4136557Z     @pytest.mark.parametrize(
+test	層の全件を回す	2026-11-21T08:54:27.4136749Z         "word_list",
+test	層の全件を回す	2026-11-21T08:54:27.4136902Z         [
+test	層の全件を回す	2026-11-21T08:54:27.4137071Z             pytest.param(None, id="not-set"),
+test	層の全件を回す	2026-11-21T08:54:27.4137283Z             pytest.param("", id="empty"),
+test	層の全件を回す	2026-11-21T08:54:27.4137475Z         ],
+test	層の全件を回す	2026-11-21T08:54:27.4137611Z     )
+test	層の全件を回す	2026-11-21T08:54:27.4137881Z     def test_default_word_list_when_env_not_set(tmp_path: Path, word_list: str | None) -> None:
+test	層の全件を回す	2026-11-21T08:54:27.4138234Z         """環境変数が無い（正常系）。"""
+test	層の全件を回す	2026-11-21T08:54:27.4138418Z         # 準備
+test	層の全件を回す	2026-11-21T08:54:27.4138599Z         environ = {"CLAUDE_PLUGIN_ROOT": str(tmp_path)}
+test	層の全件を回す	2026-11-21T08:54:27.4138840Z         if word_list is not None:
+test	層の全件を回す	2026-11-21T08:54:27.4139062Z             environ["SLOP_CHECK_WORD_LIST"] = word_list
+test	層の全件を回す	2026-11-21T08:54:27.4139291Z         # 実行
+test	層の全件を回す	2026-11-21T08:54:27.4139472Z >       result = slop_check.default_word_list(environ)
+test	層の全件を回す	2026-11-21T08:54:27.4139756Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-21T08:54:27.4140045Z E       AttributeError: module 'slop_check' has no attribute 'default_word_list'
+test	層の全件を回す	2026-11-21T08:54:27.4140256Z 
+test	層の全件を回す	2026-11-21T08:54:27.4140384Z tests/unit/slop-check/test_slop_check.py:609: AttributeError
+test	層の全件を回す	2026-11-21T08:54:27.4140667Z =========================== short test summary info ============================
+test	層の全件を回す	2026-11-21T08:54:27.4141093Z FAILED tests/unit/scripts/test_build_word_list.py::test_main_when_called_with_paths - SystemExit: 2
+test	層の全件を回す	2026-11-21T08:54:27.4141711Z FAILED tests/unit/slop-check/test_slop_check.py::test_default_word_list_when_env_set - AttributeError: module 'slop_check' has no attribute 'default_word_list'
+test	層の全件を回す	2026-11-21T08:54:27.4142463Z FAILED tests/unit/slop-check/test_slop_check.py::test_default_word_list_when_env_file_missing - AttributeError: module 'slop_check' has no attribute 'default_word_list'
+test	層の全件を回す	2026-11-21T08:54:27.4143548Z FAILED tests/unit/slop-check/test_slop_check.py::test_default_word_list_when_env_not_set[not-set] - AttributeError: module 'slop_check' has no attribute 'default_word_list'
+test	層の全件を回す	2026-11-21T08:54:27.4144365Z FAILED tests/unit/slop-check/test_slop_check.py::test_default_word_list_when_env_not_set[empty] - AttributeError: module 'slop_check' has no attribute 'default_word_list'
+test	層の全件を回す	2026-11-21T08:54:27.4144919Z ======================== 5 failed, 314 passed in 7.59s =========================
+test	層の全件を回す	2026-11-21T08:54:27.5717926Z Downloading cpython-3.12.16-linux-x86_64-gnu (download) (33.1MiB)
+test	層の全件を回す	2026-11-21T08:54:28.0611509Z  Downloaded cpython-3.12.16-linux-x86_64-gnu (download)
+test	層の全件を回す	2026-11-21T08:54:28.1759681Z Installed 5 packages in 3ms
+test	層の全件を回す	2026-11-21T08:54:28.8564798Z ============================= test session starts ==============================
+test	層の全件を回す	2026-11-21T08:54:28.8565372Z platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0
+test	層の全件を回す	2026-11-21T08:54:28.8565693Z rootdir: /home/runner/work/knowledge/knowledge
+test	層の全件を回す	2026-11-21T08:54:28.8565915Z configfile: pytest.ini
+test	層の全件を回す	2026-11-21T08:54:28.8566084Z collected 49 items
+test	層の全件を回す	2026-11-21T08:54:28.8566201Z 
+test	層の全件を回す	2026-11-21T08:54:28.8755769Z tests/unit/slop-check/test_slop_check.py ............................... [ 63%]
+test	層の全件を回す	2026-11-21T08:54:28.9235357Z ..............FFFF                                                       [100%]
+test	層の全件を回す	2026-11-21T08:54:28.9235729Z 
+test	層の全件を回す	2026-11-21T08:54:28.9236328Z =================================== FAILURES ===================================
+test	層の全件を回す	2026-11-21T08:54:28.9236748Z _____________________ test_default_word_list_when_env_set ______________________
+test	層の全件を回す	2026-11-21T08:54:28.9237014Z 
+test	層の全件を回す	2026-11-21T08:54:28.9237261Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-1/test_default_word_list_when_en0')
+test	層の全件を回す	2026-11-21T08:54:28.9237561Z 
+test	層の全件を回す	2026-11-21T08:54:28.9237707Z     def test_default_word_list_when_env_set(tmp_path: Path) -> None:
+test	層の全件を回す	2026-11-21T08:54:28.9238576Z         """環境変数が指すファイルがある（正常系）。"""
+test	層の全件を回す	2026-11-21T08:54:28.9238788Z         # 準備
+test	層の全件を回す	2026-11-21T08:54:28.9239016Z         copy = tmp_path / "worktree" / "word-list-ai-slop.json"
+test	層の全件を回す	2026-11-21T08:54:28.9239278Z         copy.parent.mkdir()
+test	層の全件を回す	2026-11-21T08:54:28.9239520Z         copy.write_text(_NAOSU_COPY, encoding="utf-8")
+test	層の全件を回す	2026-11-21T08:54:28.9239864Z         environ = {"SLOP_CHECK_WORD_LIST": str(copy), "CLAUDE_PLUGIN_ROOT": str(tmp_path / "plugin")}
+test	層の全件を回す	2026-11-21T08:54:28.9240192Z         # 実行
+test	層の全件を回す	2026-11-21T08:54:28.9240377Z >       result = slop_check.default_word_list(environ)
+test	層の全件を回す	2026-11-21T08:54:28.9240610Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-21T08:54:28.9240990Z E       AttributeError: module 'slop_check' has no attribute 'default_word_list'. Did you mean: '_default_word_list'?
+test	層の全件を回す	2026-11-21T08:54:28.9241289Z 
+test	層の全件を回す	2026-11-21T08:54:28.9241434Z tests/unit/slop-check/test_slop_check.py:577: AttributeError
+test	層の全件を回す	2026-11-21T08:54:28.9241755Z _________________ test_default_word_list_when_env_file_missing _________________
+test	層の全件を回す	2026-11-21T08:54:28.9241974Z 
+test	層の全件を回す	2026-11-21T08:54:28.9242147Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-1/test_default_word_list_when_en1')
+test	層の全件を回す	2026-11-21T08:54:28.9242393Z 
+test	層の全件を回す	2026-11-21T08:54:28.9242540Z     def test_default_word_list_when_env_file_missing(tmp_path: Path) -> None:
+test	層の全件を回す	2026-11-21T08:54:28.9243194Z         """環境変数が指すファイルが無い（正常系）。"""
+test	層の全件を回す	2026-11-21T08:54:28.9243392Z         # 準備
+test	層の全件を回す	2026-11-21T08:54:28.9243541Z         environ = {
+test	層の全件を回す	2026-11-21T08:54:28.9243764Z             "SLOP_CHECK_WORD_LIST": str(tmp_path / "missing.json"),
+test	層の全件を回す	2026-11-21T08:54:28.9244017Z             "CLAUDE_PLUGIN_ROOT": str(tmp_path),
+test	層の全件を回す	2026-11-21T08:54:28.9244219Z         }
+test	層の全件を回す	2026-11-21T08:54:28.9244367Z         # 実行
+test	層の全件を回す	2026-11-21T08:54:28.9244556Z >       result = slop_check.default_word_list(environ)
+test	層の全件を回す	2026-11-21T08:54:28.9244773Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-21T08:54:28.9245129Z E       AttributeError: module 'slop_check' has no attribute 'default_word_list'. Did you mean: '_default_word_list'?
+test	層の全件を回す	2026-11-21T08:54:28.9245436Z 
+test	層の全件を回す	2026-11-21T08:54:28.9245552Z tests/unit/slop-check/test_slop_check.py:590: AttributeError
+test	層の全件を回す	2026-11-21T08:54:28.9245870Z _______________ test_default_word_list_when_env_not_set[not-set] _______________
+test	層の全件を回す	2026-11-21T08:54:28.9246080Z 
+test	層の全件を回す	2026-11-21T08:54:28.9246251Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-1/test_default_word_list_when_en2')
+test	層の全件を回す	2026-11-21T08:54:28.9246546Z word_list = None
+test	層の全件を回す	2026-11-21T08:54:28.9246642Z 
+test	層の全件を回す	2026-11-21T08:54:28.9246721Z     @pytest.mark.parametrize(
+test	層の全件を回す	2026-11-21T08:54:28.9246914Z         "word_list",
+test	層の全件を回す	2026-11-21T08:54:28.9247069Z         [
+test	層の全件を回す	2026-11-21T08:54:28.9247232Z             pytest.param(None, id="not-set"),
+test	層の全件を回す	2026-11-21T08:54:28.9247450Z             pytest.param("", id="empty"),
+test	層の全件を回す	2026-11-21T08:54:28.9247651Z         ],
+test	層の全件を回す	2026-11-21T08:54:28.9247789Z     )
+test	層の全件を回す	2026-11-21T08:54:28.9248043Z     def test_default_word_list_when_env_not_set(tmp_path: Path, word_list: str | None) -> None:
+test	層の全件を回す	2026-11-21T08:54:28.9248385Z         """環境変数が無い（正常系）。"""
+test	層の全件を回す	2026-11-21T08:54:28.9248573Z         # 準備
+test	層の全件を回す	2026-11-21T08:54:28.9248758Z         environ = {"CLAUDE_PLUGIN_ROOT": str(tmp_path)}
+test	層の全件を回す	2026-11-21T08:54:28.9248985Z         if word_list is not None:
+test	層の全件を回す	2026-11-21T08:54:28.9249201Z             environ["SLOP_CHECK_WORD_LIST"] = word_list
+test	層の全件を回す	2026-11-21T08:54:28.9249437Z         # 実行
+test	層の全件を回す	2026-11-21T08:54:28.9249614Z >       result = slop_check.default_word_list(environ)
+test	層の全件を回す	2026-11-21T08:54:28.9249836Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-21T08:54:28.9250198Z E       AttributeError: module 'slop_check' has no attribute 'default_word_list'. Did you mean: '_default_word_list'?
+test	層の全件を回す	2026-11-21T08:54:28.9250498Z 
+test	層の全件を回す	2026-11-21T08:54:28.9250624Z tests/unit/slop-check/test_slop_check.py:609: AttributeError
+test	層の全件を回す	2026-11-21T08:54:28.9250938Z ________________ test_default_word_list_when_env_not_set[empty] ________________
+test	層の全件を回す	2026-11-21T08:54:28.9251148Z 
+test	層の全件を回す	2026-11-21T08:54:28.9251316Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-1/test_default_word_list_when_en3')
+test	層の全件を回す	2026-11-21T08:54:28.9251612Z word_list = ''
+test	層の全件を回す	2026-11-21T08:54:28.9251762Z 
+test	層の全件を回す	2026-11-21T08:54:28.9251846Z     @pytest.mark.parametrize(
+test	層の全件を回す	2026-11-21T08:54:28.9252031Z         "word_list",
+test	層の全件を回す	2026-11-21T08:54:28.9252183Z         [
+test	層の全件を回す	2026-11-21T08:54:28.9252345Z             pytest.param(None, id="not-set"),
+test	層の全件を回す	2026-11-21T08:54:28.9252703Z             pytest.param("", id="empty"),
+test	層の全件を回す	2026-11-21T08:54:28.9252907Z         ],
+test	層の全件を回す	2026-11-21T08:54:28.9253044Z     )
+test	層の全件を回す	2026-11-21T08:54:28.9253305Z     def test_default_word_list_when_env_not_set(tmp_path: Path, word_list: str | None) -> None:
+test	層の全件を回す	2026-11-21T08:54:28.9253661Z         """環境変数が無い（正常系）。"""
+test	層の全件を回す	2026-11-21T08:54:28.9253848Z         # 準備
+test	層の全件を回す	2026-11-21T08:54:28.9254026Z         environ = {"CLAUDE_PLUGIN_ROOT": str(tmp_path)}
+test	層の全件を回す	2026-11-21T08:54:28.9254250Z         if word_list is not None:
+test	層の全件を回す	2026-11-21T08:54:28.9254467Z             environ["SLOP_CHECK_WORD_LIST"] = word_list
+test	層の全件を回す	2026-11-21T08:54:28.9254688Z         # 実行
+test	層の全件を回す	2026-11-21T08:54:28.9254866Z >       result = slop_check.default_word_list(environ)
+test	層の全件を回す	2026-11-21T08:54:28.9255082Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+test	層の全件を回す	2026-11-21T08:54:28.9255450Z E       AttributeError: module 'slop_check' has no attribute 'default_word_list'. Did you mean: '_default_word_list'?
+test	層の全件を回す	2026-11-21T08:54:28.9255740Z 
+test	層の全件を回す	2026-11-21T08:54:28.9255867Z tests/unit/slop-check/test_slop_check.py:609: AttributeError
+test	層の全件を回す	2026-11-21T08:54:28.9256242Z =========================== short test summary info ============================
+test	層の全件を回す	2026-11-21T08:54:28.9256894Z FAILED tests/unit/slop-check/test_slop_check.py::test_default_word_list_when_env_set - AttributeError: module 'slop_check' has no attribute 'default_word_list'. Did you mean: '_default_word_list'?
+test	層の全件を回す	2026-11-21T08:54:28.9257828Z FAILED tests/unit/slop-check/test_slop_check.py::test_default_word_list_when_env_file_missing - AttributeError: module 'slop_check' has no attribute 'default_word_list'. Did you mean: '_default_word_list'?
+test	層の全件を回す	2026-11-21T08:54:28.9258764Z FAILED tests/unit/slop-check/test_slop_check.py::test_default_word_list_when_env_not_set[not-set] - AttributeError: module 'slop_check' has no attribute 'default_word_list'. Did you mean: '_default_word_list'?
+test	層の全件を回す	2026-11-21T08:54:28.9259714Z FAILED tests/unit/slop-check/test_slop_check.py::test_default_word_list_when_env_not_set[empty] - AttributeError: module 'slop_check' has no attribute 'default_word_list'. Did you mean: '_default_word_list'?
+test	層の全件を回す	2026-11-21T08:54:28.9260343Z ========================= 4 failed, 45 passed in 0.08s =========================
+test	層の全件を回す	2026-11-21T08:54:28.9533933Z ##[error]Process completed with exit code 1.
+test	ログを成果物に上げる	﻿2026-11-21T08:54:28.9593830Z ##[group]Run actions/upload-artifact@v4
+test	ログを成果物に上げる	2026-11-21T08:54:28.9594071Z with:
+test	ログを成果物に上げる	2026-11-21T08:54:28.9594223Z   name: test-log
+test	ログを成果物に上げる	2026-11-21T08:54:28.9594378Z   path: test.log
+test	ログを成果物に上げる	2026-11-21T08:54:28.9594547Z   if-no-files-found: ignore
+test	ログを成果物に上げる	2026-11-21T08:54:28.9594734Z   compression-level: 6
+test	ログを成果物に上げる	2026-11-21T08:54:28.9594902Z   overwrite: false
+test	ログを成果物に上げる	2026-11-21T08:54:28.9595066Z   include-hidden-files: false
+test	ログを成果物に上げる	2026-11-21T08:54:28.9595243Z env:
+test	ログを成果物に上げる	2026-11-21T08:54:28.9595434Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+test	ログを成果物に上げる	2026-11-21T08:54:28.9595671Z ##[endgroup]
+test	ログを成果物に上げる	2026-11-21T08:54:29.0838696Z (node:2503) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test	ログを成果物に上げる	2026-11-21T08:54:29.0839267Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test	ログを成果物に上げる	2026-11-21T08:54:29.0870743Z With the provided path, there will be 1 file uploaded
+test	ログを成果物に上げる	2026-11-21T08:54:29.0874028Z Artifact name is valid!
+test	ログを成果物に上げる	2026-11-21T08:54:29.0874281Z Root directory input is valid!
+test	ログを成果物に上げる	2026-11-21T08:54:29.2778598Z Beginning upload of artifact content to blob storage
+test	ログを成果物に上げる	2026-11-21T08:54:29.3664529Z (node:2503) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+test	ログを成果物に上げる	2026-11-21T08:54:29.4078562Z Uploaded bytes 2240
+test	ログを成果物に上げる	2026-11-21T08:54:29.4252367Z Finished uploading artifact content to blob storage!
+test	ログを成果物に上げる	2026-11-21T08:54:29.4253104Z SHA256 digest of uploaded artifact zip is 3b35f398499a06b18e829607115df3f5beb2d91ab960004e413e2bbb7386a90b
+test	ログを成果物に上げる	2026-11-21T08:54:29.4254228Z Finalizing artifact upload
+test	ログを成果物に上げる	2026-11-21T08:54:29.7438410Z Artifact test-log.zip successfully finalized. Artifact ID 14700069089
+test	ログを成果物に上げる	2026-11-21T08:54:29.7439044Z Artifact test-log has been successfully uploaded! Final size is 2240 bytes. Artifact ID is 14700069089
+test	ログを成果物に上げる	2026-11-21T08:54:29.7444925Z Artifact download URL: https://github.com/shuhei1101/knowledge/actions/runs/44887025141/artifacts/14700069089
+test	Post ブランチを取得する	﻿2026-11-21T08:54:29.7575536Z Post job cleanup.
+test	Post ブランチを取得する	2026-11-21T08:54:29.8187997Z [command]/usr/bin/git version
+test	Post ブランチを取得する	2026-11-21T08:54:29.8214621Z git version 2.56.1
+test	Post ブランチを取得する	2026-11-21T08:54:29.8237437Z Temporarily overriding HOME='/home/runner/work/_temp/66a1b946-2a42-4bb4-b2c8-6cde130ac9bf' before making global git config changes
+test	Post ブランチを取得する	2026-11-21T08:54:29.8238249Z Adding repository directory to the temporary git global config as a safe directory
+test	Post ブランチを取得する	2026-11-21T08:54:29.8240829Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/knowledge/knowledge
+test	Post ブランチを取得する	2026-11-21T08:54:29.8269631Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test	Post ブランチを取得する	2026-11-21T08:54:29.8292330Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test	Post ブランチを取得する	2026-11-21T08:54:29.8484004Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test	Post ブランチを取得する	2026-11-21T08:54:29.8499856Z http.https://github.com/.extraheader
+test	Post ブランチを取得する	2026-11-21T08:54:29.8506535Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+test	Post ブランチを取得する	2026-11-21T08:54:29.8527662Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test	Post ブランチを取得する	2026-11-21T08:54:29.8704810Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test	Post ブランチを取得する	2026-11-21T08:54:29.8726181Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test	Complete job	﻿2026-11-21T08:54:29.9005010Z Cleaning up orphan processes
+test	Complete job	2026-11-21T08:54:29.9233204Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4, astral-sh/setup-uv@v6. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+exit 1
