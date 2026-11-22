@@ -19,15 +19,21 @@ docs:
   - page: skills/text-review/SKILL.md
     new: false
     change: 先頭の生成元のコメント（設計書から生成した・このファイルを修正しない旨）を削除し、手で記載するファイルにする
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T07:27:10.457282+00:00'
   - page: skills/meme-register/SKILL.md
     new: false
     change: 先頭の生成元のコメント（設計書から生成した・このファイルを修正しない旨）を削除し、手で記載するファイルにする
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T07:27:10.457282+00:00'
   - page: skills/files.yaml
     new: false
     change: SKILL.md の概要文の「docs/skill/{スキル}.yaml から生成した」を、設計書を参照して記載した旨に改める
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T07:27:10.457282+00:00'
   - page: scripts/files.yaml
     new: false
     change: '`build_skills.py`・`build_skills.py.lock` の行を削除し、`check_all.py` の行の概要文から SKILL.md の比較を削除する'
@@ -39,7 +45,9 @@ docs:
   - page: docs/dev-command/CMD-72-1.yaml
     new: false
     change: '`build_skills.py` の `uv sync --script` と、スキルの設計書を変えたら SKILL.md を再生成する手順を削除し、`refs` の IF-312-1 を削除する'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T07:27:10.457282+00:00'
   - page: docs/layout/LAY-72-1.yaml
     new: false
     change: '`build_skills.py`・ロックの行を削除し、`skills/{skill}/SKILL.md` の `generated_from` を削除する（`docs/skill/` は今のまま）'
@@ -73,23 +81,33 @@ docs:
   - page: README.md
     new: false
     change: 全ての文書の検査の説明から、SKILL.md と `docs/skill/` の設計書の比較の記述を削除する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T07:27:10.457282+00:00'
   - page: schemas/design/agent_flow.schema.yaml
     new: false
     change: '`type: skill` の文書を SKILL.md の生成元とする記述と、キーの使用先の「生成で、SKILL.md …」を、実装で SKILL.md を記載するときに参照する記述に改める'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T07:27:10.457282+00:00'
   - page: docs/template/template-agent-flow.yaml
     new: false
     change: スキーマの変更に合わせ、設計書のテンプレートの生成（IF-201-1）で `items` を再生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T07:27:10.457282+00:00'
   - page: docs/flowchart/flowchart-interface-choice.yaml
     new: false
     change: 注記 interface-choice-n3 の「SKILL.md はエージェントフローから生成し」を、設計書を参照して記載する旨に改める
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T07:27:10.457282+00:00'
   - page: schemas/files.yaml
     new: false
     change: '`design/agent_flow.schema.yaml` の行の概要文の「スキルの SKILL.md の生成元を含む」を改める'
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T07:27:10.457282+00:00'
 scope_out:
   - item: project-index の SKILL.md の自動生成（`project-index skill-md`・配信元の設定の登録）の廃止
     reason: project-index のリポジトリの作業で、knowledge の廃止とは独立して成り立つ
@@ -97,3 +115,6 @@ scope_out:
   - item: rule-inject の SKILL.md の自動生成（配信元の設定の `project-index skill-md` の登録）の廃止
     reason: rule-inject のリポジトリの作業で、knowledge の廃止とは独立して成り立つ
     plan: shuhei1101/rule-inject#210
+  - item: 規約『設計書を作成する目的』（dev-design-doc-purpose）の「設計書と実装で二重管理にしない。設計の成果物をそのまま実装の原本にできるものは、設計の段階で原本を記載し、実装はそれを参照する」の行の見直し
+    reason: 判断が分かれている。ユーザーの判断（SKILL.md は設計書と二重管理にする）とこの行が食い違う。今の判断は、この PR で行を「設計書は実装の原本にせず、実装は設計書を参照して記載し、設計書に無い細部は実装で詰める。食い違いはレビューで確認する」に改める案。ただしこの行はプロンプトの YAML など SKILL.md 以外にも当たるため、レビューでユーザーへ回すかを確定する
+    plan: to_file
