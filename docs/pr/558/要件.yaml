@@ -1,0 +1,47 @@
+docs:
+  - page: docs/rule/ui-input-wording.yaml
+    new: false
+    change: input-submit-01 の「送信中は二重送信を防ぎ、処理中であることを見せる」の行を、書き込み（送信・保存・更新・削除）をするボタン全般の決まりに広げる（応答を待つ間はもう一度押せなくし、押したボタンの上で待っていることを見せる。ボタンの幅を変えない）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T04:25:46.821622+00:00'
+  - page: docs/rule/react-data-mutation.yaml
+    new: false
+    change: useMutation のセクションに、mutation を呼ぶボタンを `isPending` の間は押せなくし、押したボタンの上で待っていることを見せる行（use-mutation-03）を追加する。楽観更新の許可リストで楽観更新をする操作のボタンは除く
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T04:25:46.821622+00:00'
+  - page: schemas/design/screen.schema.yaml
+    new: false
+    change: elements[] の initial_state の後に、書き込みの応答を待つ間の要素の状態と見た目を文で記載する任意のキー pending_state を追加し、examples の保存ボタンに例を入れる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T04:25:46.821622+00:00'
+  - page: docs/template/template-screen-design.yaml
+    new: false
+    change: scripts/build_templates.py でスキーマから items を生成し直し、追加したキーの行を出す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T04:25:46.821622+00:00'
+  - page: docs/checksheet/checksheet-review-implemented-screen.yaml
+    new: false
+    change: 書き込みをするボタンを応答を待つ間に続けて押しても 1 回だけ反映され、待っていることがボタンの上で分かることを確かめる行を追加する（規約『入力と文言』を参照する）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T04:25:46.821622+00:00'
+  - page: docs/checksheet/checksheet-review-mock-html.yaml
+    new: false
+    change: 画面の状態の場面を撮る行に、書き込みのボタンの応答を待つ間の場面を加える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T04:25:46.821622+00:00'
+scope_out:
+  - item: MindStella のプレビューの送信・更新のボタンの二重の実行の修正
+    reason: MindStella のリポジトリの不具合で、今回の規約の追加がマージされなくても同じ内容で成り立つ
+    plan: shuhei1101/mindstella#677
+  - item: 'テンプレート『ユースケース要件 観点: 新規』『同: 編集』の「二重送信防止」の行'
+    reason: 「送信中のボタン無効化 / 冪等キー」を既に歩く観点に持ち、変える必要が無い
+    plan: none
+  - item: 設計書『部品設計』のスキーマ・テンプレートの states
+    reason: states の説明に「読み込み中」が既にあり、ボタンの部品の応答を待つ間のストーリーを記載できる
+    plan: none
