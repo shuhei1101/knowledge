@@ -10,8 +10,6 @@ allowed-tools:
 - Bash(gh run watch *)
 ---
 
-<!-- docs/skill/meme-register.yaml から生成した。このファイルを修正せず、設計書を修正して再生成する -->
-
 # ネットミームの登録
 
 ## 引数
