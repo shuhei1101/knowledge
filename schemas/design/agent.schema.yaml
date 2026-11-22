@@ -242,6 +242,107 @@ properties:
           - 検査で、このエージェントの `clients[].allow` にあるかを確認する。
         examples:
         - write_progress
+  turn_notices:
+    type: array
+    title: 番の初めの通知
+    description: エージェントが番の初め（起動の後・前の処理を終えて次の入力を受け取るとき）に、状態に応じて受け取る通知。
+    x-used-by:
+      - 実装で、通知ごとに条件を判定して内容を組み立て、届け方の入力の文かツールの結果に入れる。
+      - レビューで、エージェントフローの工程が受け取る通知の一覧と、ツールのインターフェース定義の応答の項目が食い違わないかを確認する。
+    x-rules:
+      - エージェントを起動し入力を渡すきっかけは `triggers` に記載し、前の番の後の状態に応じて番の初めに添える通知だけをここに記載する。
+    x-heading: 番の初めの通知
+    x-shape: table
+    x-key: name
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - name
+      - when
+      - content
+      - delivery
+      properties:
+        name:
+          type: string
+          title: 名前
+          description: 通知の名前（英小文字とハイフン）。エージェントの中で重ねない。
+          x-used-by:
+            - 設計で、エージェントフローの工程の文から `{エージェントの ID}#turn_notices[{name}]` で指す。
+          pattern: ^[a-z0-9]+(-[a-z0-9]+)*$
+          examples:
+          - game-switched
+        when:
+          type: string
+          title: 条件
+          description: 通知する条件。前の番の後に何が起きたら通知するかを記載する。
+          x-used-by:
+            - 実装で、番の初めに通知を入れるかを判定する条件にする。
+          examples:
+          - 前の番の後に、遊んでいるゲームが切り替わった
+        content:
+          type: string
+          title: 内容
+          description: 通知する内容。
+          x-used-by:
+            - 実装で、通知の文に入れる値を組み立てる。
+          examples:
+          - 切り替わったことと、切り替えた後のゲームの概要
+        sources:
+          type: array
+          title: 元にするデータ
+          description: 条件の判定と内容に使用するデータの設計書への参照。
+          x-used-by:
+            - 実装で、条件の判定と内容の組み立てで参照するデータを決定する。
+          items:
+            $ref: common.schema.yaml#/$defs/ref
+          examples:
+          - - DATA-3#
+        delivery:
+          type: object
+          title: 届け方
+          description: 通知を、番の初めの入力の文に入れるか、ツールの結果に添えるか。
+          x-used-by:
+            - 実装で、通知を入れる場所を決める。
+          x-shape: attributes
+          additionalProperties: false
+          required:
+          - via
+          properties:
+            via:
+              type: string
+              title: 経路
+              description: '`input`（番の初めの入力の文に入れる）か `tool_result`（ツールの結果に添える）。'
+              x-used-by:
+                - 実装で、通知を入力の文とツールの結果のどちらに入れるかを決める。
+              enum:
+              - input
+              - tool_result
+            server:
+              $ref: common.schema.yaml#/$defs/ref
+              title: MCP サーバー
+              description: '`via` が `tool_result` のときの、ツールを持つ『MCP サーバーの定義』への参照。'
+              x-used-by:
+                - 実装で、通知を添えるツールの完全な名前を作る。
+              examples:
+              - MCP-1#
+            tool:
+              type: string
+              title: ツール
+              description: '`via` が `tool_result` のときの、結果に通知を添えるツールの名前（『MCP サーバーの定義』の `tools[].name`）。'
+              x-used-by:
+                - レビューで、ツールのインターフェース定義の応答に通知の項目があるかを確認する。
+              examples:
+              - fetch_utterances
+          allOf:
+          - if:
+              properties:
+                via:
+                  const: tool_result
+            then:
+              required:
+              - server
+              - tool
   refs:
     $ref: common.schema.yaml#/$defs/related
   decisions:
@@ -304,6 +405,21 @@ examples:
   progress:
     server: MCP-1#
     tool: write_progress
+  turn_notices:
+  - name: game-switched
+    when: 前の番の後に、遊んでいるゲームが切り替わった
+    content: 切り替わったことと、切り替えた後のゲームの概要
+    sources:
+    - DATA-3#
+    delivery:
+      via: tool_result
+      server: MCP-1#
+      tool: fetch_utterances
+  - name: speech-stopped
+    when: 前の番の後に、再生中のセリフを止めて、残りの文がある
+    content: 止めたセリフと、話していない残りの文
+    delivery:
+      via: input
   refs:
   - to: SC-3
     type: requires
