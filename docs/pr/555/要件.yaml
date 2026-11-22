@@ -1,0 +1,14 @@
+docs:
+  - page: docs/rule/dev-tag-term-registration.yaml
+    new: false
+    change: グループ『タグの構造』に、タグの形式の使い分け（knowledge の設計書・規約は主題のタグを持つオブジェクトの配列、主題のタグが要らないアプリのデータなどは文字列の配列）を 1 行で追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T01:57:11.324028+00:00'
+scope_out:
+  - item: knowledge の設計書・規約のタグを文字列の配列にし、主題のタグを別のキーへ移す
+    reason: D-858 で見送った案。全てのリポジトリの全ての設計書とスキーマの修正が要る
+    plan: none
+  - item: 既存のアプリのデータ（aituber のゲームの情報など）のタグの形式の書き換え
+    reason: 要望に含まれない。データ A-279 は既に文字列の配列で、追加する使い分けに沿っている
+    plan: none
