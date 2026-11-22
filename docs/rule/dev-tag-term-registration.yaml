@@ -22,8 +22,8 @@ tags:
   - name: action:登録
 status: current
 visibility: internal
-rev: 11
-last_reviewed: '2026-11-04'
+rev: 12
+last_reviewed: '2026-11-22'
 sources:
   - title: "W3C: SKOS Reference"
     url: https://www.w3.org/TR/skos-reference
@@ -47,6 +47,7 @@ items:
       - タグは自由な文字列で、比較の前に正規化（NFKC・大文字小文字）する
         分類は `scope:` などの接頭辞の命名で表す
         付ける数の上限・目安は持たない
+      - タグの形式は、主題のタグを持つ knowledge の設計書・規約はオブジェクトの配列（`tags[].name` と `tags[].main`）、主題のタグが要らないアプリのデータなどは文字列の配列にする
   - id: tag-split-01
     group: タグの分け方
     name: 単語まで分ける
