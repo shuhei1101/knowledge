@@ -32,7 +32,7 @@ items:
       | --- | --- | --- | --- | --- | --- | --- | --- | --- |
       | id | ID | string | 必須 | - | pattern: `^[a-z0-9]+(-[a-z0-9]+)*(/[a-z0-9]+(-[a-z0-9]+)*)*$` | 文書の ID。フォルダ構成で `id_root` を付けたフォルダからのパスから `.yaml` を除いたもの。 | 設計で、エージェントフローの `human_escalation.ref` から指す。<br>実行で、実行者とレビュアーが表を取得する ID にする。 | `script-creation/human-escalation` |
       | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>project-index の配信で、文書の公開範囲のメタデータにする。 | - |
-      | title | タイトル | string | 必須 | - | pattern: `^ヒューマンエスカレーションの表: .+$` | `ヒューマンエスカレーションの表: {制作の種類}`。 | 生成で、ページの見出しにする。<br>project-index の検索で、文書の名前にする。 | `ヒューマンエスカレーションの表: 台本作成` |
+      | title | タイトル | string | 必須 | - | - | 制作の種類の名前。 | 生成で、ページの見出しにする。<br>project-index の検索で、文書の名前にする。 | `台本作成` |
       | lead | 冒頭リード | string | - | - | - | 何の制作の表で、誰が参照するかを 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>project-index の検索で、文書の概要文にする。 | - |
       | items | 項目 | array | 必須 | - | minItems: `1` | 該当すれば利用者に判断を仰ぐ項目。1 要素が 1 項目。 | 実行で、実行者とレビュアーが成果物ごとに該当を判定する。<br>生成で、項目の表にする。 | - |
       | items[].id | 識別子 | string | 必須 | - | pattern: `^[a-z][a-z0-9]*(_[a-z0-9]+)*$` | 項目の識別子。英語の名前を `_` でつなぐ。 | 実行で、利用者の判断の記録（台本の `approvals[].gate` など）に記載する値にする。 | `fact_change` |
@@ -59,6 +59,7 @@ items:
       | 名前 | 決まり | 悪い例 | 理由 |
       | --- | --- | --- | --- |
       | id | - | script-creation/human_escalation | `_` でつないでいる |
+      | title | 種類の名前（`データ: `・`ER 図: ` など）・フォルダの名前を前置きに付けない。 | - | - |
       | lead | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | items[].id | 一度使用した識別子は判断の記録に残るので、意味を変えない。 | - | - |
       | items[].executor_context | 重要な項目にだけ記載する。 | - | - |
@@ -69,7 +70,7 @@ items:
     body: |-
       ```yaml
       id: script-creation/human-escalation
-      title: 'ヒューマンエスカレーションの表: 台本作成'
+      title: 台本作成
       lead: 台本作成の工程の成果が該当すれば、ヒューマンゲートがオフでも利用者に判断を仰ぐ項目。台本作成ノード（実行者）とレビュアーが参照する。
       items:
       - id: fact_change

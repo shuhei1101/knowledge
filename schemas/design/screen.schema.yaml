@@ -36,6 +36,8 @@ properties:
     x-used-by:
       - 生成で、ページの見出しにする。
       - project-index の検索で、文書の名前にする。
+    x-rules:
+      - '種類の名前（`データ: `・`ER 図: ` など）・フォルダの名前を前置きに付けない。'
   screen:
     type: string
     title: 画面
@@ -384,6 +386,17 @@ properties:
           - 活性
           - 非活性
           - 読み取り専用
+        pending_state:
+          type: string
+          title: 応答を待つ間の状態
+          description: 書き込み（送信・保存・更新・削除）の応答を待つ間の要素の状態と見た目。
+          x-used-by:
+            - 実装で、書き込みの応答を待つ間の要素の状態と見た目にする。
+            - レビューで、応答を待つ間に続けて操作したときの振る舞いと照合する。
+          x-rules:
+            - 書き込みを始める要素と、応答を待つ間に操作を止める要素に記載する。
+          examples:
+            - 非活性にし、ボタンの文言の左に回る表示を出す（ボタンの幅は変えない）
         initial_value:
           type: string
           title: 初期値
@@ -598,6 +611,7 @@ examples:
     label: 保存
     visible_when: 常時
     enabled_when: 必須項目が入力済みで制限の違反が無いとき
+    pending_state: 非活性にし、ボタンの文言の左に回る表示を出す（ボタンの幅は変えない）
     action_ref: IF-1#
   input_checks:
   - element: タスク名入力欄

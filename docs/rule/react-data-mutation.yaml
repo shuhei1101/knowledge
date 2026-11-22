@@ -50,6 +50,12 @@ items:
     body: |-
       - 成功と失敗は、必ず利用者に通知する。
         失敗は、toast かフィールドのエラーで出す。
+  - id: use-mutation-03
+    group: useMutation
+    name: 応答を待つ間はボタンを押せなくする
+    body: |-
+      - mutation を呼ぶボタンは、`isPending` の間は押せなくし、押したボタンの上で待っていることを見せる。
+        楽観更新の許可リストで楽観更新をする操作のボタンは除く。
   - id: optimistic-allow-list-01
     group: 楽観更新の許可リスト
     name: 楽観更新の許可リスト

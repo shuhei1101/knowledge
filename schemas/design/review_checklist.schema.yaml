@@ -33,13 +33,14 @@ properties:
   title:
     type: string
     title: タイトル
-    description: '`確認観点の表: {制作の種類}`。'
+    description: 制作の種類の名前。
     x-used-by:
       - 生成で、ページの見出しにする。
       - project-index の検索で、文書の名前にする。
-    pattern: '^確認観点の表: .+$'
+    x-rules:
+      - '種類の名前（`データ: `・`ER 図: ` など）・フォルダの名前を前置きに付けない。'
     examples:
-    - '確認観点の表: 台本作成'
+    - 台本作成
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
@@ -198,7 +199,7 @@ $defs:
         - - knowhow-script-but-therefore
 examples:
 - id: script-creation/review-checklist
-  title: '確認観点の表: 台本作成'
+  title: 台本作成
   lead: 台本作成の工程の、案の記録と成果の資料が満たす条件。台本作成のレビュアーが参照する。
   items:
   - id: outline_has_all_must_points

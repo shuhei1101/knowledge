@@ -23,12 +23,18 @@ rules:
   - rule: docs/template/template-checksheet.yaml
     paths:
       - "**/docs/checksheet/*.yaml"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [checksheet]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["template-checksheet"]}, "view": "full", "outside_scope": true}'
   - rule: docs/template/template-decision-table.yaml
     paths:
       - "**/docs/decision-table/*.yaml"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [decision-table]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["template-decision-table"]}, "view": "full", "outside_scope": true}'
@@ -36,18 +42,27 @@ rules:
     paths:
       - "**/判定フローチャート/**/*.{md,yaml}"
       - "**/docs/flowchart/*.yaml"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [flowchart]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["template-flowchart"]}, "view": "full", "outside_scope": true}'
   - rule: docs/template/template-setup-procedure.yaml
     paths:
       - "**/docs/guide/guide-setup-*.yaml"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^guide-setup-]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["template-setup-procedure"]}, "view": "full", "outside_scope": true}'
   - rule: docs/template/template-getting-started.yaml
     paths:
       - "**/docs/guide/guide-getting-started-*.yaml"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^guide-getting-started-]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["template-getting-started"]}, "view": "full", "outside_scope": true}'
@@ -60,6 +75,9 @@ rules:
   - rule: schemas/template.schema.yaml
     paths:
       - "**/docs/template/*.yaml"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [template]
   - rule: schemas/meta.schema.yaml
     paths:
       - "**/schemas/**/*.schema.yaml"
@@ -319,8 +337,7 @@ rules:
       - "**/SKILL.md"
       - "**/.claude/agents/**"
       - "**/.claude/commands/**"
-    tools:
-      - "mcp__*__write_design_doc*"
+    tools: [mcp__*__write_design_doc*, mcp__*__write_docs]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["convention-doc-presentation"]}, "view": "full", "outside_scope": true}'
@@ -390,6 +407,9 @@ rules:
       - "**/規約/**/*.md"
       - "**/判定フローチャート/**/*.{md,yaml}"
       - "**/チェックシート/**/*.md"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [rule, rules, flowchart, decision-table, checksheet]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["flowchart-rule-form-choice"]}, "view": "full", "outside_scope": true}'
@@ -405,8 +425,7 @@ rules:
       - "**/SKILL.md"
       - "**/.claude/agents/**"
       - "**/.claude/commands/**"
-    tools:
-      - "mcp__*__write_design_doc*"
+    tools: [mcp__*__write_design_doc*, mcp__*__write_docs]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["flowchart-presentation-choice"]}, "view": "full", "outside_scope": true}'
@@ -425,6 +444,9 @@ rules:
   - rule: docs/rule/convention-keep-existing-text.yaml
     paths:
       - "**/*.{md,yaml}"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.op: [update, replace, replace_text]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["convention-keep-existing-text"]}, "view": "full", "outside_scope": true}'
@@ -503,6 +525,9 @@ rules:
   - rule: docs/rule/dev-tag-term-registration.yaml
     paths:
       - "**/terms.yaml"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [terms]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["dev-tag-term-registration"]}, "view": "full", "outside_scope": true}'
@@ -822,32 +847,42 @@ rules:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["python-testing-workflow"]}, "view": "full", "outside_scope": true}'
   - rule: docs/rule/ui-screen-division.yaml
-    paths:
-      - "**/設計書/画面設計/**"
+    paths: ['**/設計書/画面設計/**']
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["ui-screen-division"]}, "view": "full", "outside_scope": true}'
   - rule: docs/rule/ui-screen-design-principles.yaml
-    paths:
-      - "**/設計書/画面設計/**"
+    paths: ['**/設計書/画面設計/**', '**/docs/screen/*.yaml']
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [screen]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["ui-screen-design-principles"]}, "view": "full", "outside_scope": true}'
   - rule: docs/word-list/word-list-ai-slop.yaml
     paths:
       - "**/docs/word-list/*.yaml"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [word-list]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["word-list-ai-slop"]}, "view": "full", "outside_scope": true}'
   - rule: docs/decision-table/decision-table-dataflow.yaml
     paths:
       - "**/docs/dataflow/*.yaml"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [dataflow]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["decision-table-dataflow"]}, "view": "full", "outside_scope": true}'
   - rule: docs/flowchart/flowchart-nonfunctional-layer.yaml
     paths:
       - "**/docs/nonfunctional/*.yaml"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [nonfunctional]
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["flowchart-nonfunctional-layer"]}, "view": "full", "outside_scope": true}'
@@ -896,3 +931,259 @@ rules:
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/review_checklist.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-form-schema.yaml
+    paths: ['**/frontend/src/features/**/form.ts', '**/frontend/src/shared/core/schema.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-form-schema"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-form-hook.yaml
+    paths: ['**/frontend/src/**/hooks/use-*-form.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-form-hook"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-data-query.yaml
+    paths: ['**/frontend/src/features/**/queries.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-data-query"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-data-mutation.yaml
+    paths: ['**/frontend/src/features/**/queries.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-data-mutation"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-data-api-client.yaml
+    paths: ['**/frontend/src/shared/adapters/{api,ws}-client.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-data-api-client"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-shared-error-class.yaml
+    paths: ['**/frontend/src/shared/adapters/api-client.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-shared-error-class"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-data-query-client.yaml
+    paths: ['**/frontend/src/app/**/*.{ts,tsx}']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-data-query-client"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-devtools-mock.yaml
+    paths: ['**/frontend/src/testing/msw/**/*.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-devtools-mock"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-testing-unit.yaml
+    paths: ['**/frontend/src/**/*.test.{ts,tsx}', '**/frontend/src/testing/*.{ts,tsx}', '**/vitest.config.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-testing-unit"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-shared-env-var.yaml
+    paths: ['**/frontend/src/shared/core/{constants,feature-flags}.ts', '**/.env.sample']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-shared-env-var"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/react-shared-logger-implementation.yaml
+    paths: ['**/frontend/src/shared/lib/logger.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["react-shared-logger-implementation"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/typescript-core-type-location.yaml
+    paths: ['**/frontend/src/**/types.ts', '**/frontend/src/**/*.d.ts']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["typescript-core-type-location"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/python-core-style.yaml
+    paths: ['**/pyproject.toml']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["python-core-style"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/dev-design-doc-purpose.yaml
+    paths: ['**/schemas/design/*.schema.yaml']
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["dev-design-doc-purpose"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/scenario.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^SC-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/scenario.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/interface.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^IF-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/interface.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/module.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^MOD-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/module.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/architecture.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^ARCH-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/architecture.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/nonfunctional.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^NFR-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/nonfunctional.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/config.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^CFG-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/config.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/er.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^ER-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/er.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/data.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^DATA-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/data.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/state_transition.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^ST-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/state_transition.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/screen.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^SCR-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/screen.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/dataflow.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^DF-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/dataflow.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/external_api.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^API-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/external_api.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/library.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^LIB-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/library.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/test_procedure.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^TP-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/test_procedure.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/dev_command.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^CMD-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/dev_command.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/component.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^CMP-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/component.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/design/glossary.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^GLO-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["schemas/design/glossary.schema.yaml"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/template/template-checksheet.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^checksheet-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["template-checksheet"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/template/template-decision-table.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^decision-table-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["template-decision-table"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/template/template-flowchart.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^flowchart-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["template-flowchart"]}, "view": "full", "outside_scope": true}'
+  - rule: schemas/template.schema.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^template-]
+  - rule: docs/flowchart/flowchart-rule-form-choice.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^(rule|flowchart|decision-table|checksheet)-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["flowchart-rule-form-choice"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/word-list/word-list-ai-slop.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^word-list-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["word-list-ai-slop"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/decision-table/decision-table-dataflow.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^DF-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["decision-table-dataflow"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/flowchart/flowchart-nonfunctional-layer.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^NFR-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["flowchart-nonfunctional-layer"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/ui-screen-design-principles.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^SCR-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["ui-screen-design-principles"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/template/template-knowhow.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^knowhow-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["template-knowhow"]}, "view": "full", "outside_scope": true}'

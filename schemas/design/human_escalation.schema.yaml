@@ -36,13 +36,14 @@ properties:
   title:
     type: string
     title: タイトル
-    description: '`ヒューマンエスカレーションの表: {制作の種類}`。'
+    description: 制作の種類の名前。
     x-used-by:
       - 生成で、ページの見出しにする。
       - project-index の検索で、文書の名前にする。
-    pattern: '^ヒューマンエスカレーションの表: .+$'
+    x-rules:
+      - '種類の名前（`データ: `・`ER 図: ` など）・フォルダの名前を前置きに付けない。'
     examples:
-    - 'ヒューマンエスカレーションの表: 台本作成'
+    - 台本作成
   lead:
     $ref: common.schema.yaml#/$defs/markdown
     title: 冒頭リード
@@ -237,7 +238,7 @@ $defs:
         - 全ての案を対象に判定する。該当する案があれば、ヒューマンゲートがオフでも、利用者が案を選ぶ。
 examples:
 - id: script-creation/human-escalation
-  title: 'ヒューマンエスカレーションの表: 台本作成'
+  title: 台本作成
   lead: 台本作成の工程の成果が該当すれば、ヒューマンゲートがオフでも利用者に判断を仰ぐ項目。台本作成ノード（実行者）とレビュアーが参照する。
   items:
   - id: fact_change

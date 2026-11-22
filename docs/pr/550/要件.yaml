@@ -1,0 +1,60 @@
+docs:
+  - page: docs/rule/dev-document-management.yaml
+    new: false
+    change: knowhow-01 に、規約は rule-inject の索引で該当する操作のときに案内し、ノウハウは索引に掲載せずエイリアスとタグで任意に案内する届け方を追加する（#546）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T15:55:48.177319+00:00'
+  - page: docs/flowchart/flowchart-rule-form-choice.yaml
+    new: false
+    change: 規約（r6）に至る前に、守らないと不具合・不統一になるか（規約）・知っていると質が上がる知見か（ノウハウ）の分岐と、結果ごとの届け方を追加する（#546）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T15:55:48.177319+00:00'
+  - page: docs/rule/dev-rule-index-registration.yaml
+    new: false
+    change: 規約は 4 つの基準を満たすかを確かめて極力索引に掲載し、満たさない規約とノウハウはタグと aliases で案内する関係を、規約とノウハウの届け方に合わせる（#546）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T15:55:48.177319+00:00'
+  - page: rules.yaml
+    new: false
+    change: 索引の無い規約（docs/rule/ のうち rules.yaml に無いもの）のうち、規約『ルール索引への登録』の基準を満たすものにエントリを追加する（#546）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T15:55:48.177319+00:00'
+  - page: docs/rule/
+    new: false
+    change: aliases の無い規約・話題に出る呼び名が aliases に足りない規約に aliases を追加する（#546）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T15:55:48.177319+00:00'
+  - page: docs/rule/ui-information-hierarchy.yaml
+    new: false
+    change: 選択中・ホバー・目立たせる要素（未読のマークなど）が、ほかの状態と見分けられることを、状態ごとのスクリーンショットで確認する決まりを追加する（#547）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T15:55:48.177319+00:00'
+  - page: docs/checksheet/checksheet-review-mock-html.yaml
+    new: false
+    change: 押せる要素と Disabled と選択中の見分けの行に、ホバー・目立たせる要素と、状態ごとのスクリーンショットでの確認を追加する（#547）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T15:55:48.177319+00:00'
+  - page: docs/checksheet/checksheet-review-implemented-screen.yaml
+    new: false
+    change: 選択中・ホバー・目立たせる要素が、ほかの状態と見分けられることを状態ごとのスクリーンショットで確認する行を追加する（#547）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-21T15:55:48.177319+00:00'
+scope_out:
+  - item: 既存のノウハウ（docs/knowhow/）の aliases とタグの補強
+    reason: '要望の補強は今の規約が対象（reviewer の確認で確定）。ノウハウは届け方の記載だけで、既存のノウハウの補強は #551 で扱う'
+    plan: '#551'
+  - item: 状態ごとの色の差の数値の基準（新しいコントラスト比のしきい値）
+    reason: 話し合いで決定していない。部品とフォーカス表示の 3:1 は規約『操作とアクセシビリティ』に既にあり、今回はそれを指してスクリーンショットでの確認を追加するだけにする
+    plan: none
+  - item: MindStella の画面の色の修正
+    reason: 別のリポジトリの修正で、shuhei1101/mindstella#671 に起票済み
+    plan: none
+use_cases: []
