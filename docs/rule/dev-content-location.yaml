@@ -108,7 +108,7 @@ items:
       | `source.type` | string | ✓ | - | `download`（URL から取得した）/ `generated`（ツールで生成した）/ `original`（自作で、取得し直せない） | `download` |
       | `source.url` | string | ✓ | `type: download` | 取得元のページかファイルの URL | `https://example.com/bgm/track01` |
       | `source.generator` | string | ✓ | `type: generated` | 生成に使用したツールとモデルの名前 | `{ツール名} {モデル名}` |
-      | `source.parameters` | object | | `type: generated` | 生成の条件（プロンプト・シード・設定の値） | `{prompt: 夜の街, seed: 42}` |
+      | `source.parameters` | object | ✓ | `type: generated` | 生成の条件（プロンプト・シード・設定の値） | `{prompt: 夜の街, seed: 42}` |
       | `source.retrieved_at` | string | ✓ | `type: download`・`type: generated` | 取得・生成した日（`YYYY-MM-DD`） | `2026-11-22` |
 
       <!-- /table -->
