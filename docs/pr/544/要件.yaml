@@ -2,7 +2,7 @@ use_cases:
   - kind: single
     scenario: docs/scenario/SC-312-1.yaml
     impact: removed
-    detail: 開発者がスキルの設計書から SKILL.md を生成する流れを、knowledge 独自のコマンドから、配信元の書き込みの後に project-index が生成する流れ（project-index の SC-7）へ移すため削除する
+    detail: SKILL.md の自動生成を廃止し、SKILL.md を設計書を参照して手で記載するため、開発者がスキルの設計書から SKILL.md を生成する流れを削除する
     depends_on: []
   - kind: single
     scenario: docs/scenario/SC-72-6.yaml
