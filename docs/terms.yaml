@@ -38,3 +38,10 @@ terms:
   - id: net-meme
     name: ネットミーム
     description: 動画のセリフに入れる、アニメ・漫画・ゲームのネタ、旬の話題、ネットの言い回しの用語 1 件。knowledge の配信元 `knowledge-memes` に作品と分けて登録する。
+  - id: direct-commit
+    name: 直コミット方式
+    description: Issue と PR を経ずに、project-index の `write_docs`・`delete_docs` に `commit` を指定して、配信元の文書を検査してから書き込み、既定のブランチへコミットしてプッシュする登録の方式で、許可する種類は配信元の設定の `direct_commit` で決める。
+    aliases:
+      - 直コミット
+    avoid:
+      - 直接コミット方式
