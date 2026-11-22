@@ -2,11 +2,15 @@ docs:
   - page: schemas/design/agent.schema.yaml
     new: false
     change: progress の後に、番の初めに受け取る通知の任意の配列 turn_notices（要素は name・when・content・sources・delivery）を追加し、examples に通知の例を追加する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T02:19:19.110631+00:00'
   - page: docs/template/template-agent.yaml
     new: false
     change: scripts/build_templates.py でスキーマから items を生成し直し、turn_notices の行を出す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T02:19:19.110631+00:00'
 scope_out:
   - item: aituber のブレインノードのエージェントの定義（ゲーム実況・配信・個人チャット）へ通知を記載する
     reason: aituber のリポジトリの作業で、今回追加するキーとタグを前提にする後続
