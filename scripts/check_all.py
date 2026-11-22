@@ -30,8 +30,6 @@ from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, cast
 
 from _workflow import check_workflows
-from build_skills import COMMAND as SKILLS_COMMAND
-from build_skills import SKILLS_DIR, plan_skills
 from build_templates import (
     COMMAND,
     SCHEMAS_DIR,
@@ -214,7 +212,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             *check_document_schemas(root, meta),
             *check_word_list_copy(root),
             *check_design_templates(root),
-            *check_skills(root),
             *check_workflows(root, _interface_docs(targets, texts, root)),
         ):
             print(f"{file_path}:{line}: {path}: {message}")
@@ -752,35 +749,6 @@ def _interface_docs(
             # 読めない文書の違反は文書 1 件の検査が出す
             continue
     return docs
-
-
-def check_skills(root: Path) -> list[tuple[str, int, str, str]]:
-    """スキルの設計書から組み立てた SKILL.md の中身が、skill.path のファイルと一致するかを確認する。"""
-    if not (root / SKILLS_DIR).is_dir():
-        return []
-    try:
-        plans = plan_skills(root)
-    except BuildError as error:
-        return [(str(SKILLS_DIR), 1, "-", f"SKILL.md を組み立てられません: {error}")]
-    results: list[tuple[str, int, str, str]] = []
-    for plan in plans:
-        path = root / plan.path
-        try:
-            current = path.read_bytes()
-        except FileNotFoundError:
-            current = None
-        # 生成と同じバイト列（改行は LF）で比べる
-        if current == plan.text.encode("utf-8"):
-            continue
-        results.append(
-            (
-                str(plan.path),
-                1,
-                "-",
-                f"SKILL.md が設計書 {plan.source} と一致しません。{SKILLS_COMMAND} で作り直してください",
-            )
-        )
-    return sorted(results, key=lambda result: result[0])
 
 
 if __name__ == "__main__":

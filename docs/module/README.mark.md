@@ -14,7 +14,6 @@
 | [検査と変換のスクリプト / scripts / _workflow.py](./MOD-376-1.py.yaml) | エントリーポイントが trigger のインターフェース定義と GitHub Actions の workflow のファイルの突き合わせ |
 | [検査と変換のスクリプト / scripts / build_pages.py](./MOD-137-1.py.yaml) | 公開文書の配信のワークフローと手元から呼ぶ Pages の成果物の作成 |
 | [検査と変換のスクリプト / scripts / build_templates.py](./MOD-201-1.py.yaml) | 手元から呼ぶ設計書のテンプレートの生成 |
-| [検査と変換のスクリプト / scripts / build_skills.py](./MOD-312-1.py.yaml) | 手元から呼ぶ SKILL.md の生成 |
 | [検査と変換のスクリプト / scripts / build_word_list.py](./MOD-148-3.py.yaml) | 手元から呼ぶ対応表のコピーの作成 |
 | [検査と変換のスクリプト / scripts / check_all.py](./MOD-72-6.py.yaml) | 手元から呼ぶ全ての文書の検査 |
 | [検査と変換のスクリプト / scripts / knowledge_checks.py](./MOD-72-4.py.yaml) | validators の knowledge-checks |

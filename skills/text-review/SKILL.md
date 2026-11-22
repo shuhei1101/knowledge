@@ -9,8 +9,6 @@ allowed-tools:
 - Bash(git diff *)
 ---
 
-<!-- docs/skill/text-review.yaml から生成した。このファイルを修正せず、設計書を修正して再生成する -->
-
 # 文章を点検して修正する
 
 ## 引数

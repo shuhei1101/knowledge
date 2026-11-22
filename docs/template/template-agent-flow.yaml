@@ -2,7 +2,7 @@
 id: template-agent-flow
 kind: template
 name: 'テンプレート: エージェントフロー'
-description: エージェントが順に進める工程と工程で呼ぶものを記載し、スキルの SKILL.md の生成元にもなるエージェントフローの書式を定め、エージェントフローやスキルを作る・修正するときに参照する。
+description: エージェントが順に進める工程と工程で呼ぶものを記載し、スキルの SKILL.md を記載するときに参照する設計書にもなるエージェントフローの書式を定め、エージェントフローやスキルを作る・修正するときに参照する。
 tags:
   - name: scope:テンプレート
   - name: topic:エージェント
@@ -19,7 +19,7 @@ items:
     name: 概要
     body: |-
       エージェントが順に進める工程と、工程で呼ぶもの（MCP のツール・組み込みのツール・コマンド・サブエージェント・スキル・別のエージェントフロー）を記載する設計書。
-      エージェントがそのまま参照する原本で、`type` が `skill` の文書は SKILL.md の生成元にもなる。
+      エージェントがそのまま参照する原本で、`type` が `skill` の文書は SKILL.md を記載するときに参照する設計書にもなる。
   - id: rules-01
     name: 決まり
     body: |-
@@ -40,23 +40,23 @@ items:
       | id | ID | string | 必須 | - | pattern: `^[a-z0-9]+(-[a-z0-9]+)*(/[a-z0-9]+(-[a-z0-9]+)*)*$` | 文書の ID。フォルダ構成で `id_root` を付けたフォルダからのパスから `.yaml` を除いたもの。 | 設計で、`steps[].ref`・`steps[].calls[].flow`・`steps[].calls[].skill` から指す。<br>生成で、エージェントフローの索引の ID の列にする。<br>実行で、エージェントがエージェントフローを取得する ID にする。 | `brain/stream/on-event` |
       | visibility | 公開範囲 | string | - | `public` / `internal` | - | 文書を Pages に出す（`public`）か出さない（`internal`）かで、記載しなければ `internal` として扱う。項目の公開（`visibility` の `user` / `developer`）とは別。 | 生成で、文書を Pages に出すかを決める。<br>project-index の配信で、文書の公開範囲のメタデータにする。 | - |
       | aliases | 別名 | array | - | - | - | 検索でヒットさせたい言い換え。 | project-index の検索で、文書を名前と同じように検索できる言い換えにする。 | - |
-      | type | 種類 | string | - | `flow` / `skill` | - | `flow`（エージェントが MCP で参照するエージェントフロー）か `skill`（SKILL.md として配布するスキル）。記載しなければ `flow`。 | 検査で、種類ごとのキーの要否を確認する。<br>生成で、`skill` なら SKILL.md を作り、エージェントフローの索引に出さない。 | - |
+      | type | 種類 | string | - | `flow` / `skill` | - | `flow`（エージェントが MCP で参照するエージェントフロー）か `skill`（SKILL.md として配布するスキル）。記載しなければ `flow`。 | 検査で、種類ごとのキーの要否を確認する。<br>生成で、`skill` ならエージェントフローの索引に出さない。<br>実装で、`skill` なら SKILL.md を記載する。 | - |
       | title | 手順の名前 | string | - | - | - | 手順の名前。記載しなければ、パスの段階の `stages[].title`。 | 生成で、エージェントフローの索引の手順の列と、Markdown に変換したときの見出しにする。 | `イベントの手順` |
-      | summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 手順の概要（1 文）。 | project-index の検索で、文書の概要文にする。<br>生成で、`type` が `skill` なら SKILL.md の `description` にする。 | `コメントと状態を取得し、次の一手を決めて演出指示書を書き込む` |
+      | summary | 概要 | string | 必須 | - | pattern: `^[^\n]+$`, minLength: `1` | 手順の概要（1 文）。 | project-index の検索で、文書の概要文にする。<br>実装で、`type` が `skill` なら SKILL.md の `description` に記載する。 | `コメントと状態を取得し、次の一手を決めて演出指示書を書き込む` |
       | condition | 実行条件 | string | - | - | pattern: `^[^\n]+$`, minLength: `1` | 手順を実行する条件。`type` が `flow` のときだけ記載する。 | 生成で、エージェントフローの索引の実行条件の列にする。<br>実行で、エージェントが参照する手順を決める。 | `「次へ」を受けたとき` |
       | agents | 使用するエージェント | array | - | - | - | この手順を使用する『エージェントの定義』への参照。複数のエージェントが使用する共通の手順で記載する。 | 生成で、エージェントフローの索引をエージェントごとに作る。 | `[AG-1#, AG-2#]` |
       | triggers | きっかけ | array | - | - | - | この手順を実行するきっかけで、『エージェントの定義』の `triggers[]` への参照。記載しなければ、パスの段階の `stages[].trigger`。 | レビューで、きっかけごとにエージェントフローがあるかを確認する。 | `['AG-1#triggers[external-event]']` |
       | embed_only | 埋め込み専用 | boolean | - | - | - | `true` なら、ほかの手順の `steps[].ref` で埋め込むだけの部品にする。記載しなければ `false`。 | 生成で、`true` の手順をエージェントフローの索引に出さない。 | - |
       | tags | タグ | array | - | - | - | 検索で絞り込むタグ。 | project-index の検索で、文書の絞り込みにする。 | `[topic:コメント]` |
-      | skill | スキル | object | - | - | - | スキルに固有の項目。`type` が `skill` のときだけ記載する。 | 生成で、SKILL.md の配置先と frontmatter にする。 | - |
-      | skill.path | 配置先 | string | 必須 | - | pattern: `^\S+/SKILL\.md$` | 生成する SKILL.md の、リポジトリの直下からのパス。 | 生成で、SKILL.md を書き出す先にする。 | `plugins/mindstella/skills/setup/SKILL.md` |
-      | skill.name | 名前 | string | - | - | - | スキルの名前。記載しなければ `path` のフォルダ名。 | 生成で、SKILL.md の `name` にする。 | `setup` |
-      | skill.arguments | 引数 | array | - | - | - | スキルの引数。 | 生成で、SKILL.md の `arguments`・`argument-hint` と、本文の引数の説明にする。 | - |
-      | skill.arguments[].name | 引数名 | string | 必須 | - | - | 引数の名前。本文では `$名前` で参照する。 | 生成で、SKILL.md の `arguments` にする。 | `workspace` |
-      | skill.arguments[].hint | 書式 | string | 必須 | - | - | 補完で出す書式。 | 生成で、SKILL.md の `argument-hint` にする。 | `ワークスペースのフォルダ` |
-      | skill.arguments[].description | 説明 | string | 必須 | - | - | 引数の意味と、省いたときの動き。 | 生成で、SKILL.md の本文の引数の説明にする。 | `ワークスペースにするフォルダ。省くと今のフォルダ` |
-      | skill.allowed_tools | 確認なしで使用するツール | array | - | - | - | スキルの実行中に確認なしで使用できるツール。 | 生成で、SKILL.md の `allowed-tools` にする。<br>検査で、`steps[].calls` の `command` が含まれるかを確認する。 | `[Bash(mindstella init *)]` |
-      | skill.frontmatter | その他の frontmatter | object | - | - | - | 上の項目に無い SKILL.md の frontmatter の項目を、SKILL.md の項目名のまま記載する。 | 生成で、SKILL.md の frontmatter に加える。 | `{paths: [docs/**]}` |
+      | skill | スキル | object | - | - | - | スキルに固有の項目。`type` が `skill` のときだけ記載する。 | 実装で、SKILL.md の配置先と frontmatter を記載する。 | - |
+      | skill.path | 配置先 | string | 必須 | - | pattern: `^\S+/SKILL\.md$` | 記載する SKILL.md の、リポジトリの直下からのパス。 | 実装で、SKILL.md を配置する先にする。 | `plugins/mindstella/skills/setup/SKILL.md` |
+      | skill.name | 名前 | string | - | - | - | スキルの名前。記載しなければ `path` のフォルダ名。 | 実装で、SKILL.md の `name` に記載する。 | `setup` |
+      | skill.arguments | 引数 | array | - | - | - | スキルの引数。 | 実装で、SKILL.md の `arguments`・`argument-hint` と、本文の引数の説明に記載する。 | - |
+      | skill.arguments[].name | 引数名 | string | 必須 | - | - | 引数の名前。本文では `$名前` で参照する。 | 実装で、SKILL.md の `arguments` に記載する。 | `workspace` |
+      | skill.arguments[].hint | 書式 | string | 必須 | - | - | 補完で出す書式。 | 実装で、SKILL.md の `argument-hint` に記載する。 | `ワークスペースのフォルダ` |
+      | skill.arguments[].description | 説明 | string | 必須 | - | - | 引数の意味と、省いたときの動き。 | 実装で、SKILL.md の本文の引数の説明に記載する。 | `ワークスペースにするフォルダ。省くと今のフォルダ` |
+      | skill.allowed_tools | 確認なしで使用するツール | array | - | - | - | スキルの実行中に確認なしで使用できるツール。 | 実装で、SKILL.md の `allowed-tools` に記載する。<br>検査で、`steps[].calls` の `command` が含まれるかを確認する。 | `[Bash(mindstella init *)]` |
+      | skill.frontmatter | その他の frontmatter | object | - | - | - | 上の項目に無い SKILL.md の frontmatter の項目を、SKILL.md の項目名のまま記載する。 | 実装で、SKILL.md の frontmatter に加える。 | `{paths: [docs/**]}` |
       | skill.frontmatter_reason | その他の frontmatter の理由 | string | - | - | - | `frontmatter` を記載する理由。`frontmatter` を記載したときは必須。 | レビューで、`frontmatter` が要るかを確認する。 | `docs の編集のときだけ読み込ませるため` |
       | steps | 工程 | array | 必須 | - | minItems: `1` | 順に進める工程。 | 生成で、Markdown の工程のセクションにする。<br>実行で、エージェントが順に進める工程にする。 | - |
       | steps[].name | 名前 | string | 必須 | - | - | 工程の名前。手順の中で重ねない。 | 生成で、Markdown の工程の見出しにする。<br>設計で、`ref` が工程を指すキーにする。<br>実行で、進み具合の目印にする。 | `コメントを取得する` |
@@ -65,7 +65,7 @@ items:
       | steps[].when | 条件 | string | - | - | - | この工程をする条件。記載しなければ毎回する。 | 生成で、Markdown の工程の頭に条件を出す。 | `細かい値や過去のことが要るとき` |
       | steps[].calls | 呼ぶもの | array | - | - | - | 工程で呼ぶもの。互いの結果を使用しないものだけを並べる。 | 生成で、Markdown の工程に呼ぶものを出す。 | - |
       | steps[].calls[].type | 種類 | string | 必須 | `mcp` / `tool` / `command` / `agent` / `skill` / `flow` | - | `mcp`（MCP のツール）/ `tool`（組み込みのツール。文書の `type` が `skill` なら MCP のツールも）/ `command`（シェルのコマンド）/ `agent`（Agent ツールで起動するサブエージェント）/ `skill`（Skill ツールで呼ぶスキル）/ `flow`（別のエージェントフローを参照し、全ての工程を進める）。 | 検査で、種類ごとのキーの要否を確認する。<br>検査で、文書の `type` が `flow` なら、`agents` の起動の構成で使用できるか（`permissions.deny` に無いか）を確認する。 | - |
-      | steps[].calls[].server | MCP サーバー | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[\]]\|\[(?:[^\[\]]\|\[[^\[\]]*\])*\])*$` | `type` が `mcp` のときの『MCP サーバーの定義』への参照。 | 変換で、ツールの完全な名前（Claude Code では `mcp__{server}__{tool}`）を作る。<br>生成で、SKILL.md に完全な名前に解決せず参照のまま出す。 | `MCP-1#` |
+      | steps[].calls[].server | MCP サーバー | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[\]]\|\[(?:[^\[\]]\|\[[^\[\]]*\])*\])*$` | `type` が `mcp` のときの『MCP サーバーの定義』への参照。 | 変換で、ツールの完全な名前（Claude Code では `mcp__{server}__{tool}`）を作る。<br>実装で、SKILL.md の工程に呼ぶ MCP サーバーを記載する。 | `MCP-1#` |
       | steps[].calls[].tool | ツール | string | - | - | - | `type` が `mcp`・`tool` のときのツールの名前。`mcp` は『MCP サーバーの定義』の `tools[].name`、`tool` は組み込みのツールの名前（文書の `type` が `skill` なら MCP のツールの完全な名前も）。 | 生成で、Markdown に呼ぶツールを出す。<br>検査で、`mcp` のツールがエージェントの `clients[].allow` にあるかを確認する。 | `search` |
       | steps[].calls[].args | 引数の制約 | object | - | - | - | `type` が `mcp`・`tool` のときの引数の制約。JSON Schema の `required`・`properties`・`additionalProperties` と、引数ごとの `const`・`enum`・`pattern` で記載する。 | 生成で、Markdown に引数の制約を出す。<br>検査で、`mcp` のツールの `inputSchema` に合うかを確認する。 | `{required: [character_id]}` |
       | steps[].calls[].command | コマンド | string | - | - | - | `type` が `command` のときに実行するコマンド。 | 生成で、Markdown にコマンドを出す。<br>検査で、文書の `type` が `skill` なら `skill.allowed_tools` にあるかを確認する。 | `mdmark export {file}` |

@@ -500,35 +500,6 @@ _CONFIG_WITH_INTERFACE = (
     "    schema: schemas/design/interface.schema.yaml\n"
 )
 
-# スキルの設計書と、その工程を変更する前に生成した SKILL.md
-_SKILL_DOC = (
-    "id: a\n"
-    "type: skill\n"
-    "title: A を処理する\n"
-    "summary: A を処理するスキル\n"
-    "skill:\n"
-    "  path: skills/a/SKILL.md\n"
-    "steps:\n"
-    "  - name: 取得する\n"
-    "    body: A を一覧で取得する。\n"
-)
-_STALE_SKILL_MD = (
-    "---\n"
-    "name: a\n"
-    "description: A を処理するスキル\n"
-    "---\n"
-    "\n"
-    "<!-- docs/skill/a.yaml から生成した。このファイルを修正せず、設計書を修正して再生成する -->\n"
-    "\n"
-    "# A を処理する\n"
-    "\n"
-    "## 手順\n"
-    "\n"
-    "### 取得する\n"
-    "\n"
-    "A を取得する。\n"
-)
-
 
 def _copy_schemas(root: Path, names: list[str]) -> None:
     """リポジトリの schemas/design/ から、指定したスキーマを root にコピーする。"""
@@ -591,22 +562,6 @@ def test_normal_when_workflows_differ_from_interfaces(
     assert any(": exclusivity: " in line and "cancel-in-progress: true" in line for line in lines)
     assert any(": overall_flow: " in line and "成果物の大きさを確かめる" in line for line in lines)
     assert all(".github/workflows/pages.yml" in line for line in lines)
-
-
-def test_normal_when_skills_out_of_date(run_script: RunScript, repo_factory: RepoFactory) -> None:
-    """スキルの設計書から組み立てた中身が SKILL.md と違えば、違反として出す（正常系）。"""
-    # 準備
-    root = repo_factory({"docs/skill/a.yaml": _SKILL_DOC, "skills/a/SKILL.md": _STALE_SKILL_MD})
-    _copy_schemas(root, ["agent_flow.schema.yaml", "common.schema.yaml"])
-    # 実行
-    result = run_script("check_all", root)
-    # 検証
-    line = next(
-        line for line in result.stdout.splitlines() if line.startswith("skills/a/SKILL.md:")
-    )
-    assert result.exit_code == 1
-    assert "docs/skill/a.yaml" in line
-    assert "uv run --frozen --script scripts/build_skills.py" in line
 
 
 def test_error_when_mdmark_check_fails(

@@ -14,7 +14,7 @@ files:
     tags: [topic:変換, topic:markdown, tool:dev-docs, tool:mdmark]
   - path: check_all.py
     name: 全ての文書の検査
-    description: project-index.yaml が指す全ての文書にスキーマの検査と文書の違反の検査を当て、SKILL.md と workflow のファイルを生成元・インターフェース定義と比べ、手元のコマンドで合否を返す。検査の範囲や出力を変えるときに参照する。
+    description: project-index.yaml が指す全ての文書にスキーマの検査と文書の違反の検査を当て、workflow のファイルをインターフェース定義と比べ、手元のコマンドで合否を返す。検査の範囲や出力を変えるときに参照する。
     tags: [topic:検査, topic:スキーマ, tool:jsonschema]
   - path: build_pages.py
     name: Pages の成果物の作成
@@ -28,10 +28,6 @@ files:
     name: 設計書のテンプレートの生成
     description: 設計書のスキーマから、docs/template/ の対応するテンプレートの items を書き出す。テンプレートに出す項目や表の書き方を変えるときに参照する。
     tags: [topic:テンプレート, topic:スキーマ, topic:生成, tool:ruamel.yaml]
-  - path: build_skills.py
-    name: SKILL.md の生成
-    description: docs/skill/ のスキルの設計書から、skill.path の SKILL.md を書き出す。SKILL.md に出す項目や工程の書き方を変えるときに参照する。
-    tags: [topic:スキル, topic:生成, tool:ruamel.yaml]
   - path: _lint.py
     name: lint の呼び出し
     description: markdownlint-cli2・textlint・yamllint と mdmark の map の点検の、在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応を受け持つ。lint の CLI のバージョンを上げるときや、CLI の出力の読み方を変えるときに参照する。

@@ -1,0 +1,38 @@
+$ (TL-1 lint の run_all)
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+All checks passed!
+warning: Selection `PLC2701` has no effect because preview is not enabled.
+warning: Selection `PLW1514` has no effect because preview is not enabled.
+36 files already formatted
+/home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/integration/scripts/test_check_all.py
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/integration/scripts/test_check_all.py:176:35 - warning: Type of "load" is partially unknown
+    Type of "load" is "(stream: Unknown) -> Any" (reportUnknownMemberType)
+/home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_check_all.py
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_check_all.py:408:28 - warning: Type of "iter_errors" is partially unknown
+    Type of "iter_errors" is "Overload[(instance: str | int | float | bool | Mapping[str, _JsonParameter] | Sequence[_JsonParameter] | None) -> Generator[Any, None, None], (instance: Unknown, _schema: bool | Mapping[str, Any] | None) -> Generator[Any, None, None]]" (reportUnknownMemberType)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_check_all.py:1175:62 - warning: Type of "iter_errors" is partially unknown
+    Type of "iter_errors" is "Overload[(instance: str | int | float | bool | Mapping[str, _JsonParameter] | Sequence[_JsonParameter] | None) -> Generator[Any, None, None], (instance: Unknown, _schema: bool | Mapping[str, Any] | None) -> Generator[Any, None, None]]" (reportUnknownMemberType)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_check_all.py:1183:17 - warning: Type of "iter_errors" is partially unknown
+    Type of "iter_errors" is "Overload[(instance: str | int | float | bool | Mapping[str, _JsonParameter] | Sequence[_JsonParameter] | None) -> Generator[Any, None, None], (instance: Unknown, _schema: bool | Mapping[str, Any] | None) -> Generator[Any, None, None]]" (reportUnknownMemberType)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_check_all.py:1367:32 - warning: Type of "iter_errors" is partially unknown
+    Type of "iter_errors" is "Overload[(instance: str | int | float | bool | Mapping[str, _JsonParameter] | Sequence[_JsonParameter] | None) -> Generator[Any, None, None], (instance: Unknown, _schema: bool | Mapping[str, Any] | None) -> Generator[Any, None, None]]" (reportUnknownMemberType)
+/home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_common.py
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_common.py:34:12 - warning: Type of "lc" is unknown (reportUnknownMemberType)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_common.py:34:12 - warning: Type of "key" is unknown (reportUnknownMemberType)
+/home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_knowledge_markdown.py
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_knowledge_markdown.py:323:5 - warning: Type of "doc" is partially unknown
+    Type of "doc" is "dict[str, str | list[Unknown]]" (reportUnknownVariableType)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_knowledge_markdown.py:332:22 - warning: Argument type is partially unknown
+    Argument corresponds to parameter "doc" in function "convert"
+    Argument type is "dict[str, str | list[Unknown]]" (reportUnknownArgumentType)
+/home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_lint.py
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_lint.py:384:36 - warning: Type of "enabled_rules" is partially unknown
+    Type of "enabled_rules" is "(filepath: Unknown) -> list[ModuleType]" (reportUnknownMemberType)
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_lint.py:397:36 - warning: Type of "enabled_rules" is partially unknown
+    Type of "enabled_rules" is "(filepath: Unknown) -> list[ModuleType]" (reportUnknownMemberType)
+/home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_workflow.py
+  /home/shuhei2441/repo/knowledge/.claude/worktrees/refactor-skill-switch-to-project-index-skill-md/tests/unit/scripts/test_workflow.py:339:39 - warning: Argument type is unknown
+    Argument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
+0 errors, 12 warnings, 0 informations
+exit=0
