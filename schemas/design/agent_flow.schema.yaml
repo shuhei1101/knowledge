@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 title: エージェントフロー
 description: |-
   エージェントが順に進める工程と、工程で呼ぶもの（MCP のツール・組み込みのツール・コマンド・サブエージェント・スキル・別のエージェントフロー）を記載する設計書。
-  エージェントがそのまま参照する原本で、`type` が `skill` の文書は SKILL.md の生成元にもなる。
+  エージェントがそのまま参照する原本で、`type` が `skill` の文書は SKILL.md を記載するときに参照する設計書にもなる。
 x-rules:
   - 1 ファイル = 1 つの手順にする。
   - ファイルの配置はフォルダ構成の設計書の `entries[]` と `naming` で決め、段階（stage）はフォルダ構成の `placeholders` を適用してパスから導く。
@@ -40,7 +40,8 @@ properties:
     description: '`flow`（エージェントが MCP で参照するエージェントフロー）か `skill`（SKILL.md として配布するスキル）。記載しなければ `flow`。'
     x-used-by:
       - 検査で、種類ごとのキーの要否を確認する。
-      - 生成で、`skill` なら SKILL.md を作り、エージェントフローの索引に出さない。
+      - 生成で、`skill` ならエージェントフローの索引に出さない。
+      - 実装で、`skill` なら SKILL.md を記載する。
     enum:
     - flow
     - skill
@@ -58,7 +59,7 @@ properties:
     description: 手順の概要（1 文）。
     x-used-by:
       - project-index の検索で、文書の概要文にする。
-      - 生成で、`type` が `skill` なら SKILL.md の `description` にする。
+      - 実装で、`type` が `skill` なら SKILL.md の `description` に記載する。
     examples:
     - コメントと状態を取得し、次の一手を決めて演出指示書を書き込む
   condition:
@@ -116,7 +117,7 @@ properties:
     title: スキル
     description: スキルに固有の項目。`type` が `skill` のときだけ記載する。
     x-used-by:
-      - 生成で、SKILL.md の配置先と frontmatter にする。
+      - 実装で、SKILL.md の配置先と frontmatter を記載する。
     x-shape: attributes
     additionalProperties: false
     required:
@@ -125,9 +126,9 @@ properties:
       path:
         type: string
         title: 配置先
-        description: 生成する SKILL.md の、リポジトリの直下からのパス。
+        description: 記載する SKILL.md の、リポジトリの直下からのパス。
         x-used-by:
-          - 生成で、SKILL.md を書き出す先にする。
+          - 実装で、SKILL.md を配置する先にする。
         pattern: ^\S+/SKILL\.md$
         examples:
         - plugins/mindstella/skills/setup/SKILL.md
@@ -136,7 +137,7 @@ properties:
         title: 名前
         description: スキルの名前。記載しなければ `path` のフォルダ名。
         x-used-by:
-          - 生成で、SKILL.md の `name` にする。
+          - 実装で、SKILL.md の `name` に記載する。
         examples:
         - setup
       arguments:
@@ -144,7 +145,7 @@ properties:
         title: 引数
         description: スキルの引数。
         x-used-by:
-          - 生成で、SKILL.md の `arguments`・`argument-hint` と、本文の引数の説明にする。
+          - 実装で、SKILL.md の `arguments`・`argument-hint` と、本文の引数の説明に記載する。
         items:
           type: object
           additionalProperties: false
@@ -158,7 +159,7 @@ properties:
               title: 引数名
               description: 引数の名前。本文では `$名前` で参照する。
               x-used-by:
-                - 生成で、SKILL.md の `arguments` にする。
+                - 実装で、SKILL.md の `arguments` に記載する。
               examples:
               - workspace
             hint:
@@ -166,7 +167,7 @@ properties:
               title: 書式
               description: 補完で出す書式。
               x-used-by:
-                - 生成で、SKILL.md の `argument-hint` にする。
+                - 実装で、SKILL.md の `argument-hint` に記載する。
               examples:
               - ワークスペースのフォルダ
             description:
@@ -174,7 +175,7 @@ properties:
               title: 説明
               description: 引数の意味と、省いたときの動き。
               x-used-by:
-                - 生成で、SKILL.md の本文の引数の説明にする。
+                - 実装で、SKILL.md の本文の引数の説明に記載する。
               examples:
               - ワークスペースにするフォルダ。省くと今のフォルダ
       allowed_tools:
@@ -182,7 +183,7 @@ properties:
         title: 確認なしで使用するツール
         description: スキルの実行中に確認なしで使用できるツール。
         x-used-by:
-          - 生成で、SKILL.md の `allowed-tools` にする。
+          - 実装で、SKILL.md の `allowed-tools` に記載する。
           - 検査で、`steps[].calls` の `command` が含まれるかを確認する。
         items:
           type: string
@@ -193,7 +194,7 @@ properties:
         title: その他の frontmatter
         description: 上の項目に無い SKILL.md の frontmatter の項目を、SKILL.md の項目名のまま記載する。
         x-used-by:
-          - 生成で、SKILL.md の frontmatter に加える。
+          - 実装で、SKILL.md の frontmatter に加える。
         x-rules:
           - 上の項目で表せない理由があるときだけ記載する。
         examples:
@@ -428,7 +429,7 @@ $defs:
         description: '`type` が `mcp` のときの『MCP サーバーの定義』への参照。'
         x-used-by:
           - 変換で、ツールの完全な名前（Claude Code では `mcp__{server}__{tool}`）を作る。
-          - 生成で、SKILL.md に完全な名前に解決せず参照のまま出す。
+          - 実装で、SKILL.md の工程に呼ぶ MCP サーバーを記載する。
         examples:
         - MCP-1#
       tool:
