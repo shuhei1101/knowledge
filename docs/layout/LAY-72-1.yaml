@@ -163,11 +163,10 @@ entries:
         content_types: [knowledge_doc]
         naming: ['guide-{name}.yaml']
       - type: folder
-        name: agent-flow
-        contents: 'スキルのエージェントフロー（`type: skill` と、`ref` の参照先の `type: flow`）'
+        name: skill
+        contents: スキルの設計書
         content_types: [knowledge_doc]
-        naming:
-          - '{agent_flow}.yaml'
+        naming: ['{skill}.yaml']
       - type: folder
         name: word-list
         contents: 単語の対応表の原本
@@ -476,10 +475,6 @@ entries:
           - type: file
             name: SKILL.md
             contents: スキルの手順
-            generated_from:
-              path: docs/agent-flow/{skill}.yaml
-              command: CMD-72-1#categories[ビルド・生成]
-              tracked: プラグインを git から入れたときに Claude Code が SKILL.md を読み込む
       - type: file
         name: files.yaml
         contents: '`skills/` のファイルの一覧（project-index の files の行）'
