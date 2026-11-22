@@ -2,27 +2,39 @@ docs:
   - page: docs/rule/ui-input-wording.yaml
     new: false
     change: input-submit-01 の「送信中は二重送信を防ぎ、処理中であることを見せる」の行を、書き込み（送信・保存・更新・削除）をするボタン全般の決まりに広げる（応答を待つ間はもう一度押せなくし、押したボタンの上で待っていることを見せる。ボタンの幅を変えない）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T04:25:46.821622+00:00'
   - page: docs/rule/react-data-mutation.yaml
     new: false
-    change: useMutation の節に、mutation を呼ぶボタンを `isPending` の間は押せなくする行を追加する（編集・新規画面の保存ボタン以外の、削除・送信などのボタンにも当てる。楽観更新の許可リストの操作の扱いは計画書の未確定）
-    status: todo
+    change: useMutation のセクションに、mutation を呼ぶボタンを `isPending` の間は押せなくし、押したボタンの上で待っていることを見せる行（use-mutation-03）を追加する。楽観更新の許可リストで楽観更新をする操作のボタンは除く
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T04:25:46.821622+00:00'
   - page: schemas/design/screen.schema.yaml
     new: false
-    change: elements[] に、書き込みの応答を待つ間の要素の状態を記載するキーを追加する（initial_state の後）
-    status: todo
+    change: elements[] の initial_state の後に、書き込みの応答を待つ間の要素の状態と見た目を文で記載する任意のキー pending_state を追加し、examples の保存ボタンに例を入れる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T04:25:46.821622+00:00'
   - page: docs/template/template-screen-design.yaml
     new: false
     change: scripts/build_templates.py でスキーマから items を生成し直し、追加したキーの行を出す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T04:25:46.821622+00:00'
   - page: docs/checksheet/checksheet-review-implemented-screen.yaml
     new: false
     change: 書き込みをするボタンを応答を待つ間に続けて押しても 1 回だけ反映され、待っていることがボタンの上で分かることを確かめる行を追加する（規約『入力と文言』を参照する）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T04:25:46.821622+00:00'
   - page: docs/checksheet/checksheet-review-mock-html.yaml
     new: false
     change: 画面の状態の場面を撮る行に、書き込みのボタンの応答を待つ間の場面を加える
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T04:25:46.821622+00:00'
 scope_out:
   - item: MindStella のプレビューの送信・更新のボタンの二重の実行の修正
     reason: MindStella のリポジトリの不具合で、今回の規約の追加がマージされなくても同じ内容で成り立つ
