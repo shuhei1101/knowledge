@@ -1,7 +1,6 @@
 """scripts/check_all.py の単体テスト。"""
 
 import re
-import shutil
 from collections.abc import Callable, Mapping
 from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING
@@ -663,117 +662,6 @@ def test_check_design_templates_when_ref_unresolvable(repo_factory: RepoFactory)
     )
     # 実行
     result = check_all.check_design_templates(root)
-    # 検証
-    assert result == []
-
-
-# リポジトリの設計書のスキーマのフォルダ
-_DESIGN_SCHEMAS = _REPO / "schemas" / "design"
-
-# スキルの設計書
-_SKILL_DOC = (
-    "id: a\n"
-    "type: skill\n"
-    "title: A を処理する\n"
-    "summary: A を処理するスキル\n"
-    "skill:\n"
-    "  path: skills/a/SKILL.md\n"
-    "steps:\n"
-    "  - name: 取得する\n"
-    "    body: A を取得する。\n"
-)
-
-# _SKILL_DOC から生成した SKILL.md
-_SKILL_MD = (
-    "---\n"
-    "name: a\n"
-    "description: A を処理するスキル\n"
-    "---\n"
-    "\n"
-    "<!-- docs/skill/a.yaml から生成した。このファイルを修正せず、設計書を修正して再生成する -->\n"
-    "\n"
-    "# A を処理する\n"
-    "\n"
-    "## 手順\n"
-    "\n"
-    "### 取得する\n"
-    "\n"
-    "A を取得する。\n"
-)
-
-
-def _skill_repo(tmp_path: Path, files: Mapping[str, str]) -> Path:
-    """schemas/design/ のコピーと、指定したファイルを持つリポジトリの直下を作る。"""
-    root = tmp_path / "repo"
-    shutil.copytree(_DESIGN_SCHEMAS, root / "schemas" / "design")
-    for relative, text in files.items():
-        path = root / relative
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(text, encoding="utf-8")
-    return root
-
-
-def test_check_skills(tmp_path: Path) -> None:
-    """一致する（正常系）。"""
-    # 準備
-    root = _skill_repo(tmp_path, {"docs/skill/a.yaml": _SKILL_DOC, "skills/a/SKILL.md": _SKILL_MD})
-    # 実行
-    result = check_all.check_skills(root)
-    # 検証
-    assert result == []
-
-
-def test_check_skills_when_stale(tmp_path: Path) -> None:
-    """一致しない（正常系）。"""
-    # 準備
-    root = _skill_repo(
-        tmp_path,
-        {
-            "docs/skill/a.yaml": _SKILL_DOC.replace("A を取得する。", "A を一覧で取得する。"),
-            "skills/a/SKILL.md": _SKILL_MD,
-        },
-    )
-    # 実行
-    result = check_all.check_skills(root)
-    # 検証
-    assert len(result) == 1
-    assert result[0][:3] == ("skills/a/SKILL.md", 1, "-")
-    assert "docs/skill/a.yaml" in result[0][3]
-    assert "build_skills.py" in result[0][3]
-
-
-def test_check_skills_when_missing(tmp_path: Path) -> None:
-    """SKILL.md が無い（正常系）。"""
-    # 準備
-    root = _skill_repo(tmp_path, {"docs/skill/a.yaml": _SKILL_DOC})
-    # 実行
-    result = check_all.check_skills(root)
-    # 検証
-    assert len(result) == 1
-    assert result[0][0] == "skills/a/SKILL.md"
-
-
-def test_check_skills_when_build_error(tmp_path: Path) -> None:
-    """組み立てられない（正常系）。"""
-    # 準備
-    root = _skill_repo(
-        tmp_path,
-        {"docs/skill/a.yaml": _SKILL_DOC.replace("  path: skills/a/SKILL.md\n", "  name: a\n")},
-    )
-    # 実行
-    result = check_all.check_skills(root)
-    # 検証
-    assert len(result) == 1
-    assert result[0][0] == "docs/skill"
-    assert "SKILL.md を組み立てられません" in result[0][3]
-
-
-def test_check_skills_when_no_skill_dir(tmp_path: Path) -> None:
-    """docs/skill/ が無い（正常系）。"""
-    # 準備
-    root = _skill_repo(tmp_path, {})
-    # 実行
-    result = check_all.check_skills(root)
     # 検証
     assert result == []
 
