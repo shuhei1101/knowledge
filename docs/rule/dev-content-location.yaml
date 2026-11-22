@@ -2,7 +2,7 @@
 id: dev-content-location
 kind: rule
 name: コンテンツの置き場所
-description: リポジトリ直下の content/ に配置する、コードではない原本と、配置しない値を定め、プロンプトや素材の一覧などを配置する場所を決めるときに参照する。
+description: リポジトリ直下の content/ に配置する、コードではない原本と、配置しない値と、data/ に配置した大きいファイルを復元するための取得元の記載を定め、プロンプトや素材の一覧などを配置する場所を決めるときと、大きいファイルのメタデータを設計するときに参照する。
 tags:
   - name: scope:dev
   - name: topic:カタログ
@@ -16,9 +16,11 @@ tags:
   - name: topic:正本
   - name: action:定義
   - name: action:評価
+  - name: topic:メタデータ
+  - name: action:復元
 status: current
 visibility: internal
-rev: 5
+rev: 6
 last_reviewed: '2026-11-22'
 items:
   - id: overview
@@ -83,3 +85,37 @@ items:
       | 定数の YAML | `config/constants.yaml` |
       | 実行の記録（履歴・キャッシュ・ジョブの結果・会話の記録） | `data/` |
       | 大きいファイル（音声・画像・動画） | `data/` |
+  - id: restore-01
+    group: 大きいファイルの復元
+    name: 取得元から取得し直して復元する
+    body: |-
+      `data/` に配置した大きいファイル（音声・画像・動画）は、メタデータの YAML にファイルの取得元を記載し、端末を移したとき・失ったときは取得元から取得し直して復元する。
+
+      取得し直せないファイル（`source.type` が `original`）と、`source` を記載していないファイルは、同期で残す。
+      そのファイルを配置する `data/` のサブフォルダだけを外部の保管先へ同期し、同期し直して復元する。
+      同期のツールと保管先は、各リポジトリのセットアップ手順に記載する。
+  - id: restore-02
+    group: 大きいファイルの復元
+    name: 取得元のキー
+    body: |-
+      取得元は、ファイルごとのメタデータの YAML の `source` に記載する。
+
+      <!-- table: {"kind": "data"} -->
+
+      | キー | 型 | 必須 | 条件 | 説明 | 例 |
+      | --- | --- | --- | --- | --- | --- |
+      | `source` | object | | - | ファイルの取得元 | - |
+      | `source.type` | string | ✓ | - | `download`（URL から取得した）/ `generated`（ツールで生成した）/ `original`（自作で、取得し直せない） | `download` |
+      | `source.url` | string | ✓ | `type: download` | 取得元のページかファイルの URL | `https://example.com/bgm/track01` |
+      | `source.generator` | string | ✓ | `type: generated` | 生成に使用したツールとモデルの名前 | `{ツール名} {モデル名}` |
+      | `source.parameters` | object | | `type: generated` | 生成の条件（プロンプト・シード・設定の値） | `{prompt: 夜の街, seed: 42}` |
+      | `source.retrieved_at` | string | ✓ | `type: download`・`type: generated` | 取得・生成した日（`YYYY-MM-DD`） | `2026-11-22` |
+
+      <!-- /table -->
+
+      ```yaml
+      source:
+        type: download
+        url: https://example.com/bgm/track01
+        retrieved_at: "2026-11-22"
+      ```
