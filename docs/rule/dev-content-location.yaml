@@ -18,8 +18,8 @@ tags:
   - name: action:評価
 status: current
 visibility: internal
-rev: 4
-last_reviewed: '2026-10-24'
+rev: 5
+last_reviewed: '2026-11-22'
 items:
   - id: overview
     name: 概要
@@ -57,6 +57,17 @@ items:
     name: モデルと単価の一覧
     body: |-
       - モデルと単価の一覧
+  - id: put-items-07
+    group: 配置するもの
+    name: アプリが実行中に書き換える定義・メタデータ・一覧
+    body: |-
+      - アプリが実行中に書き換える定義・メタデータ・一覧
+        - 書き込みのたびに、稼働しているブランチへ直コミット（project-index の `write_docs` の `commit`）か通常のコミットで残す
+  - id: put-items-08
+    group: 配置するもの
+    name: メタデータとファイルの本体を分ける
+    body: |-
+      アセットのようにメタデータと画像・音声のファイルを持つものは、メタデータの YAML だけを `content/` に配置し、ファイルは `data/` に配置する。
   - id: not-put-items-01
     group: 配置しないもの
     name: content/ に配置しない値
@@ -70,4 +81,5 @@ items:
       | --- | --- |
       | 設定の既定値 | `config/defaults.yaml` |
       | 定数の YAML | `config/constants.yaml` |
-      | ランタイムの状態 | `data/` |
+      | 実行の記録（履歴・キャッシュ・ジョブの結果・会話の記録） | `data/` |
+      | 大きいファイル（音声・画像・動画） | `data/` |

@@ -1,0 +1,24 @@
+docs:
+  - page: docs/rule/dev-content-location.yaml
+    new: false
+    change: 「配置するもの」にアプリが実行中に書き換える定義・メタデータ・一覧（書き込みのたびに稼働しているブランチへ直コミットか通常のコミットで残す）を追加し、「配置しないもの」のランタイムの状態を実行の記録（履歴・キャッシュ・ジョブの結果・会話の記録）と大きいファイル（音声・画像・動画）へ言い換え、メタデータの YAML だけを content/ に配置してファイルの本体を data/ に配置するアセットの例を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T13:14:53.976991+00:00'
+  - page: docs/flowchart/flowchart-config-location.yaml
+    new: false
+    change: 概要の対象外の案内に、実行中に書き換わる定義・メタデータ・一覧も『コンテンツの置き場所』に従う旨を追加し、q3（実行中に書き換わる状態か）が指す状態を実行の記録と分かる記載にする
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T13:14:53.976991+00:00'
+scope_out:
+  - item: 大きいファイルの本体（音声・画像・動画）の復元の方法（別のリポジトリ・Git LFS など）
+    reason: 話し合いで未決定（D-868）で、起点 Issue の本文が範囲の外としている
+    plan: '#561'
+  - item: aituber のアセット・キャラクター・ゲームインフォ・プリセットの YAML の配置先の設計書・実装の修正
+    reason: aituber のリポジトリの作業で、要望に含まれない（実装は既に content/sources/ に配置して直コミットしている）
+    plan: none
+  - item: 規約『Claude プラグインルール』と判定フローチャート『設定値の置き場所』のリポジトリの外で動くツールの状態（XDG_STATE_HOME）
+    reason: リポジトリの外で動くツールの状態の配置先で、リポジトリに配置する定義・一覧の判定とは別の題材のため変えない
+    plan: none
+use_cases: []
