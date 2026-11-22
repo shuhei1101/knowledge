@@ -108,6 +108,12 @@ docs:
     status: done
     updated_by: planner
     updated_at: '2026-11-22T07:27:10.457282+00:00'
+  - page: docs/rule/dev-design-doc-purpose.yaml
+    new: false
+    change: 守ることの表の「設計書と実装で二重管理にしない」の行を、「設計書は実装の原本にしない。実装は設計書を参照して記載し、設計書に無い細部は実装で詰める。食い違いはレビューで確認する」に改める（確認ログの決定 A）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-22T11:01:47.222104+00:00'
 scope_out:
   - item: project-index の SKILL.md の自動生成（`project-index skill-md`・配信元の設定の登録）の廃止
     reason: project-index のリポジトリの作業で、knowledge の廃止とは独立して成り立つ
@@ -115,6 +121,3 @@ scope_out:
   - item: rule-inject の SKILL.md の自動生成（配信元の設定の `project-index skill-md` の登録）の廃止
     reason: rule-inject のリポジトリの作業で、knowledge の廃止とは独立して成り立つ
     plan: shuhei1101/rule-inject#210
-  - item: 規約『設計書を作成する目的』（dev-design-doc-purpose）の「設計書と実装で二重管理にしない。設計の成果物をそのまま実装の原本にできるものは、設計の段階で原本を記載し、実装はそれを参照する」の行の見直し
-    reason: 判断が分かれている。ユーザーの判断（SKILL.md は設計書と二重管理にする）とこの行が食い違う。今の判断は、この PR で行を「設計書は実装の原本にせず、実装は設計書を参照して記載し、設計書に無い細部は実装で詰める。食い違いはレビューで確認する」に改める案。ただしこの行はプロンプトの YAML など SKILL.md 以外にも当たるため、レビューでユーザーへ回すかを確定する
-    plan: to_file
