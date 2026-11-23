@@ -1,0 +1,1 @@
+# dev-docs のメタデータの画面から直コミットしてよい種類を direct_commit.kinds に追加する
