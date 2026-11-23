@@ -11,7 +11,7 @@ preconditions:
 success_guarantee: |-
   検査に合格した、直コミットを許可した種類の文書だけが、develop のコミットとしてリモートへプッシュされる。
   単語の対応表を書き換えたコミットには、原本と同じ内容で再作成した対応表のコピーが入る。
-minimal_guarantee: 直コミットを許可していない種類・直コミットを呼べない作業場所からの書き込みは、ワークツリーのファイルを変えず、コミットもせずに `isError` で返却する。
+minimal_guarantee: 直コミットを許可していない種類・管理用の YAML の行が指す本文の書き換え・直コミットを呼べない作業場所からの書き込みは、ワークツリーのファイルを変えず、コミットもせずに `isError` で返却する。
 scenarios:
   - name: 正常シナリオ
     setup:
@@ -228,6 +228,33 @@ scenarios:
       - リモートの develop の最新のコミットが、別名を追加した規約のファイル `docs/rule/{ID}.yaml` だけを変えている
       - develop のワークツリーを参照する `search_docs`（`term` に追加した別名）が、その規約を返却する
     test: test_normal_when_rule_alias_added
+  - name: 異常シナリオ（管理用の YAML の行の本文を書き換える）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 作業場所
+        description: knowledge のクローンの外部で、`direct_commit.scope` に該当する作業場所
+      - name: 書き込む内容
+        description: 管理用の YAML `schemas/files.yaml` の 1 行の本文（行が指すスキーマのファイル）を置き換える
+        notes: '`update` の `set` の `@body`（`kind: schemas`）'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant E as エージェント
+        participant M as project-index の文書の MCP
+        E->>M: write_docs に source knowledge・管理用の YAML の行の本文・commit
+        M-->>E: isError と本文の書き換えを許可していない種類
+      ```
+
+      <!-- /map -->
+    expected:
+      - ワークツリーのファイルが変わらず、リモートの develop にコミットが増えない
+      - 応答が `isError` で、種類 `schemas` は本文の書き換えを許可していないことが入る
+    test: test_error_when_files_row_body_changed
+    notes:
+      前提: shuhei1101/project-index#267 の、直コミットで本文の書き換えを断る設定を使用する
 notes:
   E2E テストの動かし方: 一時フォルダに knowledge のクローンと bare リポジトリの `origin` を作り、一時フォルダの端末の設定で project-index を起動して、文書の MCP の `write_docs` を呼ぶ。プッシュ先は bare リポジトリにし、GitHub へはプッシュしない
 test_file: tests/e2e/単一ユースケース/test_エージェントがknowledgeへ直コミットで書き込む.py
