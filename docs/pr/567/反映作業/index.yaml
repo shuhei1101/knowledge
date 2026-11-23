@@ -1,0 +1,28 @@
+設計書のスキーマのタグの作成:
+  説明: 作業 PR を develop へマージした後に、`design-schemas/v*` の最新のタグのマイナーを上げたタグを、メッセージに `(#567)` を入れて develop の squash commit へ作成して push する（工程への任意のキーの追加で、既存の設計書の検査の結果を変えないため、マイナーを上げる）。切り戻しは、メッセージに `(#567)` を持つタグだけを削除する
+  タグ: [タグ, スキーマ]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: 設計書のスキーマのタグの作成/疎通確認.sh
+  実行: 設計書のスキーマのタグの作成/実行.sh
+  確認: 設計書のスキーマのタグの作成/確認.sh
+  切り戻し: 設計書のスキーマのタグの作成/切り戻し.sh
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグの commit の `schemas/design/agent_flow.schema.yaml` の `$defs/step` に `gates`・`proposals`・`unit` がある"
+  状態: skipped
+aituber の後続の作業 PR への連絡:
+  説明: タグを作成した後に、shuhei1101/aituber#228 の会話欄へ、作成したタグの名前を添えて、工程の `id`・`gates`・`proposals`・`unit` を記載できる旨をコメントする（起点 Issue #566 の依頼元）
+  タグ: [連絡]
+  実行者: planner
+  時期: マージの後
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: shuhei1101/aituber#228 の会話欄に、作成した `design-schemas/v*` のタグの名前を含む planner のコメントがある
+  状態: skipped

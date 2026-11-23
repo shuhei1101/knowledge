@@ -1,0 +1,23 @@
+docs:
+  - page: schemas/design/agent_flow.schema.yaml
+    new: false
+    change: $defs/step に steps[].id・gates（agent・human と、それぞれの toggle）・proposals（authors[].author・authors[].toggle・min_per_author）・unit（single・per_script）を追加する。gates・proposals・unit を記載する工程は id を必須にし、proposals・unit は gates を持つ工程にだけ記載できるようにする。id はエージェントフローの中で一意にする決まりを持たせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-23T10:26:45.287220+00:00'
+  - page: docs/template/template-agent-flow.yaml
+    new: false
+    change: scripts/build_templates.py で再生成し、agent_flow.schema.yaml の工程のキーの追加を取り込む
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-23T10:26:45.287220+00:00'
+scope_out:
+  - item: aituber の配信元 aituber-node-docs の schema.ref を新しいタグへ上げ、script-creation/main の工程にこのキーを記載すること
+    reason: aituber のリポジトリが持つ変更で、shuhei1101/aituber#228 が扱う（マージの後にタグの名前を連絡する）
+    plan: none
+  - item: サーバー本体が工程の id・gates を持つ工程を読み込んで進み具合へコピーすること
+    reason: aituber のサーバー本体の実装で、shuhei1101/aituber#145 の系列の作業が扱う
+    plan: none
+  - item: steps[].id のエージェントフローの中での一意を検査のスクリプトで確かめること
+    reason: 既存の steps[].name の「手順の中で重ねない」も検査のスクリプトを持たず、スキーマの説明の決まりにとどめている。要望は書式のキーの追加で、検査の追加を含まない
+    plan: none

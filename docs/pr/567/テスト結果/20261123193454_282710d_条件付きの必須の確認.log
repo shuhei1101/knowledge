@@ -1,0 +1,33 @@
+$ uv run --script /tmp/t567/v.py
+# /tmp/t567/v.py の本文
+# /// script
+# dependencies = ["jsonschema>=4.26.0", "ruamel.yaml==0.19.1"]
+# ///
+import sys, re
+from pathlib import Path
+from ruamel.yaml import YAML
+from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
+y = YAML(typ="safe")
+d = Path("schemas/design")
+reg = Registry()
+for p in d.glob("*.schema.yaml"):
+    reg = reg.with_resource(p.name, Resource.from_contents(y.load(p.read_text())))
+s = y.load((d/"agent_flow.schema.yaml").read_text())
+v = Draft202012Validator(s, registry=reg)
+base = {"id": "x/y", "summary": "s", "condition": "c"}
+cases = {
+ "proposals_no_gates": {"id": "a", "name": "n", "body": "b", "proposals": {"authors": [{"author": "node"}], "min_per_author": 1}},
+ "unit_no_gates": {"id": "a", "name": "n", "body": "b", "unit": "single"},
+ "gates_no_id": {"name": "n", "body": "b", "gates": {"agent": {}}},
+ "toggle_value": {"id": "a", "name": "n", "body": "b", "gates": {"agent": {"toggle": {"x": 1}}}},
+ "plain": {"name": "n", "body": "b"},
+}
+for k, st in cases.items():
+    print(k, "errors" if list(v.iter_errors({**base, "steps": [st]})) else "ok")
+# 出力
+proposals_no_gates errors
+unit_no_gates errors
+gates_no_id errors
+toggle_value errors
+plain ok
