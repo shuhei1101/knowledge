@@ -1,0 +1,15 @@
+project-index の再起動:
+  説明: '動いている project-index の常駐サーバー（127.0.0.1:8786）を、direct_commit.kinds[] の {id, body: false} に対応したクローンのコード（shuhei1101/project-index#268 の f3c4bcd 以降）で起動し直す。古いコードのまま knowledge の develop へこの PR が入ると、配信元の設定の検証で direct_commit.kinds[] の要素の型の誤りになり、配信元 knowledge を配信しなくなるため、マージの前に済ませる。管理の MCP の restart を呼ぶ'
+  タグ: [再起動]
+  実行者: planner
+  時期: マージの前
+  回数: 1 回限り
+  起動し直す対象: project-index serve（127.0.0.1:8786）
+  可逆: true
+  疎通確認: project-index の再起動/疎通確認.py
+  実行: project-index の再起動/実行.py
+  確認: project-index の再起動/確認.py
+  切り戻し: null
+  失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返す
+  確認方法: '管理の MCP の check_project に {id, body: false} を含む knowledge の設定を渡すと direct_commit の違反を返さず、status の配信元 knowledge が serving である'
+  状態: done
