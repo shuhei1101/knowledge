@@ -38,9 +38,9 @@ if dry_run:
 
 # 適用
 try:
-    _admin.call_tool("restart", {})
+    result = _admin.restart(lambda: _admin.accepts_body_false()[0])
 except Exception as e:  # noqa: BLE001
     print("再起動: failed")
     print(f"tools/call restart: {e}", file=sys.stderr)
     sys.exit(1)
-print("再起動: changed")
+print(f"再起動: {result}")

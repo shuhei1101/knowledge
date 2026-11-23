@@ -16,7 +16,15 @@ except Exception as e:  # noqa: BLE001
     sys.exit(1)
 knowledge = next((s for s in st.get("sources", []) if s.get("id") == "knowledge"), None)
 state = knowledge.get("status") if knowledge else None
-ok, detail = _admin.accepts_body_false()
+ok, detail = False, ""
+for _ in range(_admin.RETRY_ATTEMPTS):
+    try:
+        ok, detail = _admin.accepts_body_false()
+    except _admin.TransientError as e:
+        ok, detail = False, str(e)
+    if ok:
+        break
+    _admin.time.sleep(_admin.LOAD_WAIT_INTERVAL_SEC)
 print(f"body: false の受け付け: {'ok' if ok else 'failed'}（{detail}）")
 print(f"配信元 knowledge: {'ok' if state == 'serving' else 'failed'}（{state}）")
 sys.exit(0 if ok and state == "serving" else 1)
