@@ -1,0 +1,40 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-536-1.yaml
+    impact: changed
+    detail: エージェントが直コミットで書き込める種類に、管理用の YAML の行（と、決めた場合は規約などの文書）を加え、許可していない種類の例を直す
+    depends_on: []
+docs:
+  - page: project-index.yaml
+    new: false
+    change: direct_commit.kinds に管理用の YAML の種類（と、決めた場合は規約などの種類）を追加し、instructions の直コミットできる種類の文を合わせる
+    status: todo
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: 文書のサブシステムと project-index の役割の、直コミットで登録する種類の記載を direct_commit.kinds に合わせる
+    status: todo
+  - page: docs/guide/guide-setup-docs-mcp.yaml
+    new: false
+    change: 「knowledge へ直コミットできるようにする」の直コミットできる種類の文を direct_commit.kinds に合わせる
+    status: todo
+  - page: README.md
+    new: false
+    change: 直コミットで登録できる種類の行を direct_commit.kinds に合わせる
+    status: todo
+  - page: docs/scenario/index.yaml
+    new: false
+    change: SC-536-1 のタイトルを変えた場合、目次の行を合わせる（README.mark.md も生成し直す）
+    status: todo
+scope_out:
+  - item: 端末の設定の sources[].direct_commit.write_api_kinds への種類の追加
+    reason: Git の外の端末の設定で、起点 Issue の本文のとおり dev-docs の反映作業で扱う
+    plan: shuhei1101/dev-docs#314
+  - item: rule-inject の索引（rules.yaml）を配信する種類の追加と直コミット
+    reason: 索引の検査の手段が rule-inject 側に要り、dev-docs#313 で切り出し済み
+    plan: shuhei1101/dev-docs#316
+  - item: template・skill・changelog・設計書の種類・目次の直コミット
+    reason: dev-docs#310 の決定でテンプレートとスキーマは今のまま。スキルと設計書は作業 PR のレビューで変える
+    plan: none
+  - item: ネットミームの配信元（memes/project-index.yaml）の direct_commit.kinds
+    reason: '要望は直下の project-index.yaml だけで、ネットミームの配信元は #514 で既に直コミットの種類を持つ'
+    plan: none
