@@ -1187,3 +1187,31 @@ rules:
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["template-knowhow"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/dev-v-model.yaml
+    paths:
+      - "**/tests/{unit,integration,e2e,nfr,external}/**"
+      - "**/docs/{nonfunctional,architecture,scenario,interface,screen,module}/*.yaml"
+      - "**/docs/component/**/*.yaml"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.kind: [nonfunctional, architecture, scenario, interface, screen, component, module]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["dev-v-model"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/dev-v-model.yaml
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^(NFR|ARCH|SC|IF|SCR|CMP|MOD)-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["dev-v-model"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/convention-project-name.yaml
+    paths:
+      - "**/README.md"
+      - "**/docs/guide/*.{md,yaml}"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^guide-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["convention-project-name"]}, "view": "full", "outside_scope": true}'
