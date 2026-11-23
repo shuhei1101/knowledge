@@ -4,14 +4,10 @@ set -eu
 # この PR の変更を表すマーカー（エージェントフローのスキーマの工程に gates・proposals・unit があり、ゲートの型がある）
 has_change() {
   F=$(git show "$1:schemas/design/agent_flow.schema.yaml" 2>/dev/null) || return 1
-  printf '%s
-' "$F" | grep -q '^      gates:' || return 1
-  printf '%s
-' "$F" | grep -q '^      proposals:' || return 1
-  printf '%s
-' "$F" | grep -q '^      unit:' || return 1
-  printf '%s
-' "$F" | grep -q '^  gate:' || return 1
+  printf '%s\n' "$F" | grep -q '^      gates:' || return 1
+  printf '%s\n' "$F" | grep -q '^      proposals:' || return 1
+  printf '%s\n' "$F" | grep -q '^      unit:' || return 1
+  printf '%s\n' "$F" | grep -q '^  gate:' || return 1
   return 0
 }
 
