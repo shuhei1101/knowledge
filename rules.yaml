@@ -1187,3 +1187,20 @@ rules:
     read_tool:
       tool: mcp__plugin_project-index_project-index__search_docs
       args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["template-knowhow"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/dev-v-model.yaml
+    paths:
+      - "**/tests/{unit,integration,e2e,nfr,external}/**"
+    on: [write]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["dev-v-model"]}, "view": "full", "outside_scope": true}'
+  - rule: docs/rule/convention-project-name.yaml
+    paths:
+      - "**/README.md"
+      - "**/docs/guide/*.{md,yaml}"
+    tools: [mcp__*__write_docs]
+    args:
+      operations.id: [re:^guide-]
+    read_tool:
+      tool: mcp__plugin_project-index_project-index__search_docs
+      args: '{"source": "knowledge", "filter": {"field": "id", "op": "eq", "values": ["convention-project-name"]}, "view": "full", "outside_scope": true}'
