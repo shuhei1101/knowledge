@@ -9,7 +9,7 @@ instructions: |-
   YAML の文書の行に当たらないファイル（`skills/`・`scripts/`・`schemas/`・`tests/`・`plugins/slop-check/`・直下・`docs/` の目次）は、各フォルダの `files.yaml` が名前・概要文・タグを持つ。`docs/pr/` は配信しない。
   設計書（`docs/` の `scenario`・`interface`・`module` などの種類のフォルダ）は AI Monitor の設計書で、書式は knowledge の原本 `schemas/design/{種類}.schema.yaml` が持ち、他の設計書は `{ID}#{項目のパス}` で指す。
   書き込みのときは knowledge-checks が、項目の ID の重複・参照先の実在・`aliases` の衝突・文書の中の `aliases` の重複を検査する。
-  ノウハウ（knowhow）・単語の対応表（word-list）・用語集（terms）・規約（rule）・判定フローチャート（flowchart）・判定表（decision-table）・チェックシート（checksheet）・使い方（guide）は、端末の設定の `direct_commit.scope` に当たる作業場所から `write_docs` の `commit` で develop へ直コミットできる。規約などの本文の直コミットは行の追加と文言の修正だけにする。管理用の YAML の種類（skills・scripts・plugin・tests・schemas・docs_folder・root）は、行のメタデータだけを直コミットでき、行が指す本文のファイルは直コミットできない。単語の対応表を書き込むと、生成の build-word-list が対応表のコピーを再作成する。
+  ノウハウ（knowhow）・単語の対応表（word-list）・用語集（terms）・規約（rule）・判定フローチャート（flowchart）・判定表（decision-table）・チェックシート（checksheet）・使い方（guide）は、端末の設定の `direct_commit.scope` に当たる作業場所から `write_docs` の `commit` で develop へ直コミットできる。規約などの本文の直コミットは行の追加と文言の修正だけにする。管理用の YAML の種類（scripts・plugin・tests・schemas・docs_folder・root）は、行のメタデータだけを直コミットでき、行が指す本文のファイルは直コミットできない（skills は本文のファイルも直コミットできる）。単語の対応表を書き込むと、生成の build-word-list が対応表のコピーを再作成する。
 when:
   - コードを作成・レビューする前に、言語やフレームワークの規約を確認するとき
   - 設計書・文書を作成する前に、テンプレートと記載方法の規約を確認するとき
