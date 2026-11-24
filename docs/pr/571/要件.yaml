@@ -1,0 +1,39 @@
+docs:
+  - page: schemas/design/screen.schema.yaml
+    new: false
+    change: elements[] に、表示する値が長いときの扱い（wrap / truncate / scroll）と表示する値の最大の長さを記載する任意のキーを追加し、examples に例を入れる（キーの構造は要件の未確定の案から決める）
+    status: todo
+  - page: docs/template/template-screen-design.yaml
+    new: false
+    change: scripts/build_templates.py でスキーマから items を再生成し、追加したキーの行を出す
+    status: todo
+  - page: docs/rule/ui-layout.yaml
+    new: false
+    change: 落とし穴チェックリストのテキスト・コードに、固定の文言のラベル・ボタンを長さが変わる値と同じ行に並べるときは、ラベル・ボタンを折り返さず縮めず、値の側で折り返すか省略する行を追加する
+    status: todo
+  - page: docs/rule/testing-core-e2e.yaml
+    new: false
+    change: ルールに、長さが変わる値を表示する画面は画面設計の最大の長さの値を入れたテストデータの場面を持ち、その画面のスクリーンショットを撮る行を追加する
+    status: todo
+  - page: docs/rule/react-devtools-storybook.yaml
+    new: false
+    change: 長さが変わる値を表示する共通コンポーネントは、最大の長さの値を入れたストーリーを持つ行を追加する
+    status: todo
+  - page: docs/checksheet/checksheet-review-implemented-screen.yaml
+    new: false
+    change: 「極端なデータ」の行を、長さが変わる値を表示する箇所ごとに最大の長さの値を入れた画面のスクリーンショットがあり、ラベル・ボタンの中の折り返し・枠からのはみ出し・後ろの要素との重なりが無いことを確認する行へ具体化し、補足に規約『レイアウト』『表示の安定』を参照させる
+    status: todo
+  - page: docs/checksheet/checksheet-review-mock-html.yaml
+    new: false
+    change: 「長い名前」の行を、同じ内容（最大の長さの値を入れた画面のスクリーンショットと、折り返し・はみ出し・重なりが無いこと）へ具体化する
+    status: todo
+scope_out:
+  - item: MindStella のレビュー中の書き込みの行の「返信」のラベルの折り返しの修正
+    reason: MindStella のリポジトリの不具合で、今回の規約の追加がマージされなくても同じ内容で成り立つ
+    plan: shuhei1101/mindstella#690
+  - item: AI Monitor の reviewer の観点（実装した画面）の手順の修正
+    reason: AI Monitor の reviewer の観点は一般の観点を knowledge のチェックシートに任せており、チェックシートの修正の配布で反映される。AI Monitor の手順に別の修正が要るかは配布の後に AI Monitor の側で判断する
+    plan: none
+  - item: 設計書『部品設計』のスキーマ・テンプレートの states
+    reason: states の説明に「長文」が既にあり、状態 1 つ = ストーリー 1 つで最大の長さの値のストーリーを記載できる
+    plan: none
