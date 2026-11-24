@@ -126,6 +126,13 @@ items:
     body: |-
       - 視覚回帰は `toHaveScreenshot` で行う（`snapshotPathTemplate` で `tests/e2e/snapshots/` に保存する）。
         ベースラインは、比較する環境と同じ OS で生成する。
+  - id: rules-10
+    group: ルール
+    name: 長さが変わる値の最大の長さの場面
+    body: |-
+      - 長さが変わる値（記録から取得する値・利用者が入力する値）を表示する画面は、最大の長さの値を入れたテストデータの場面を持ち、その画面のスクリーンショットを撮る。
+        最大の長さは画面設計の `overflow.max_length`（無ければ `max_length`）の文字数にする。
+        固定の文言だけの画面は対象にしない。
   - id: rules-06
     group: ルール
     name: a11y の検査

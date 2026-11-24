@@ -348,6 +348,41 @@ properties:
           description: 要素の表示幅（CSS の長さか、全体に対する割合）。
           x-used-by:
             - 実装で、要素の表示幅にする。
+        overflow:
+          type: object
+          title: 長い値の扱い
+          description: 長さが変わる値（記録から取得する値・利用者が入力する値）を表示する要素の、値が表示幅に収まらないときの扱いと、表示する値の最大の長さ。
+          x-used-by:
+            - 実装で、値が収まらないときの折り返し・省略・横スクロールにする。
+            - テストで、最大の長さの値を入れた場面にする。
+            - レビューで、最大の長さの値を入れた画面のスクリーンショットと照合する。
+          x-rules:
+            - 長さが変わる値を表示する要素に記載し、固定の文言だけの要素には記載しない。
+          additionalProperties: false
+          required:
+          - type
+          properties:
+            type:
+              type: string
+              title: 扱い
+              description: 値が収まらないときに、折り返す（`wrap`）・省略する（`truncate`）・横にスクロールする（`scroll`）のどれにするか。
+              x-used-by:
+                - 実装で、値の側の折り返し・省略・横スクロールの指定にする。
+              x-rules:
+                - '`truncate` にする要素は、省略した値の全文を出す方法を `description` に記載する。'
+              enum:
+              - wrap
+              - truncate
+              - scroll
+            max_length:
+              type: integer
+              title: 表示する最大の長さ
+              description: 表示する値の最大の文字数。
+              x-used-by:
+                - テストで、最大の長さの値を入れた場面の値の文字数にする。
+                - レビューで、スクリーンショットの値が最大の長さかを確認する。
+              x-rules:
+                - 入力を受ける要素で、入力の最大長（`max_length`）と同じ値なら省く。
         display_format:
           type: string
           title: 表示形式
@@ -568,6 +603,17 @@ examples:
   impl_files:
   - app/(authenticated)/tasks/new/_components/task-create-form.tsx
   elements:
+  - name: プロジェクト名
+    kind: label
+    position: フォーム本体 > 見出しの下
+    description: タスクを作るプロジェクトの名前を出す。1 行に収まらないときは省略し、全文をツールチップに出す
+    io: 表示
+    type: 文字列
+    visible_when: 常時
+    overflow:
+      type: truncate
+      max_length: 50
+    source: プロジェクト詳細取得.project.name
   - name: タスク名入力欄
     kind: input
     position: フォーム本体
