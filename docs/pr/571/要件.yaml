@@ -1,0 +1,53 @@
+docs:
+  - page: schemas/design/screen.schema.yaml
+    new: false
+    change: 'elements[] の width の後に、長さが変わる値の扱いの任意のオブジェクトのキー overflow（type: wrap / truncate / scroll、max_length: 表示する最大の文字数）を追加し、examples にプロジェクト名のラベルの例を入れる'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-24T01:38:30.728339+00:00'
+  - page: docs/template/template-screen-design.yaml
+    new: false
+    change: scripts/build_templates.py でスキーマから items を再生成し、追加したキーの行を出す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-24T01:38:30.728339+00:00'
+  - page: docs/rule/ui-layout.yaml
+    new: false
+    change: '落とし穴チェックリストのテキスト・コードに pitfall-text-code-04 を追加し、固定の文言のラベル・ボタンは折り返さず縮めず（white-space: nowrap・flex-shrink: 0）、値の側を min-width: 0 にして画面設計の overflow のとおりに折り返すか省略する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-24T01:38:30.728339+00:00'
+  - page: docs/rule/testing-core-e2e.yaml
+    new: false
+    change: ルールに rules-10 を追加し、長さが変わる値を表示する画面は画面設計の overflow.max_length（無ければ max_length）の文字数の値を入れたテストデータの場面を持ち、スクリーンショットを撮る
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-24T01:38:30.728339+00:00'
+  - page: docs/rule/react-devtools-storybook.yaml
+    new: false
+    change: storybook-07 を追加し、長さが変わる値を表示する共通コンポーネントは最大の長さの値を入れたストーリーを持つ
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-24T01:38:30.728339+00:00'
+  - page: docs/checksheet/checksheet-review-implemented-screen.yaml
+    new: false
+    change: 「極端なデータ」の行から長文を外し、長さが変わる値を表示する箇所ごとに最大の長さの値を入れた画面のスクリーンショットがあり、折り返し・はみ出し・重なりが無いことを確認する行を追加する（補足に規約『レイアウト』『表示の安定』）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-24T01:38:30.728339+00:00'
+  - page: docs/checksheet/checksheet-review-mock-html.yaml
+    new: false
+    change: 「長い名前」の行から名前・URL・ID を外し、同じ内容の最大の長さの値の行を追加する（補足に規約『レイアウト』）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-24T01:38:30.728339+00:00'
+scope_out:
+  - item: MindStella のレビュー中の書き込みの行の「返信」のラベルの折り返しの修正
+    reason: MindStella のリポジトリの不具合で、今回の規約の追加がマージされなくても同じ内容で成り立つ
+    plan: shuhei1101/mindstella#690
+  - item: AI Monitor の reviewer の観点（実装した画面）の手順の修正
+    reason: AI Monitor の reviewer の観点は一般の観点を knowledge のチェックシートに任せており、チェックシートの修正の配布で反映される。AI Monitor の手順に別の修正が要るかは配布の後に AI Monitor の側で判断する
+    plan: none
+  - item: 設計書『部品設計』のスキーマ・テンプレートの states
+    reason: states の説明に「長文」が既にあり、状態 1 つ = ストーリー 1 つで最大の長さの値のストーリーを記載できる
+    plan: none

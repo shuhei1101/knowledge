@@ -73,6 +73,9 @@ items:
       | elements[].pattern | 形式 | string | - | - | - | 正規表現。 | 実装で、入力の形式の検証にする。 | - |
       | elements[].charset | 文字種の扱い | string | - | - | - | 受け付ける文字と、制限せず変換するか。 | 実装で、受け付ける文字の検証と変換にする。 | - |
       | elements[].width | 表示幅 | string | - | - | - | 要素の表示幅（CSS の長さか、全体に対する割合）。 | 実装で、要素の表示幅にする。 | - |
+      | elements[].overflow | 長い値の扱い | object | - | - | - | 長さが変わる値（記録から取得する値・利用者が入力する値）を表示する要素の、値が表示幅に収まらないときの扱いと、表示する値の最大の長さ。 | 実装で、値が収まらないときの折り返し・省略・横スクロールにする。<br>テストで、最大の長さの値を入れた場面にする。<br>レビューで、最大の長さの値を入れた画面のスクリーンショットと照合する。 | - |
+      | elements[].overflow.type | 扱い | string | 必須 | `wrap` / `truncate` / `scroll` | - | 値が収まらないときに、折り返す（`wrap`）・省略する（`truncate`）・横にスクロールする（`scroll`）のどれにするか。 | 実装で、値の側の折り返し・省略・横スクロールの指定にする。 | - |
+      | elements[].overflow.max_length | 表示する最大の長さ | integer | - | - | - | 表示する値の最大の文字数。 | テストで、最大の長さの値を入れた場面の値の文字数にする。<br>レビューで、スクリーンショットの値が最大の長さかを確認する。 | - |
       | elements[].display_format | 表示形式 | string | - | - | - | 日付・時刻・数値の表示の形式と、表示の例。 | 実装で、日付・時刻・数値の書式にする。 | - |
       | elements[].align | 文字揃え | string | - | `左` / `中央` / `右` | - | 文字揃え（左・中央・右）。 | 実装で、文字揃えにする。 | - |
       | elements[].tab_order | タブ順 | integer | - | - | - | Tab キーで移る順番。 | 実装で、キー操作の順にする。 | - |
@@ -135,6 +138,9 @@ items:
       | elements[].name | 画面の中で一意にする。 | - | - |
       | elements[].component | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
       | elements[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
+      | elements[].overflow | 長さが変わる値を表示する要素に記載し、固定の文言だけの要素には記載しない。 | - | - |
+      | elements[].overflow.type | `truncate` にする要素は、省略した値の全文を出す方法を `description` に記載する。 | - | - |
+      | elements[].overflow.max_length | 入力の最大長（`max_length`）を持たない要素には記載する。<br>入力を受ける要素で、入力の最大長（`max_length`）と同じ値なら省く。 | - | - |
       | elements[].pending_state | 書き込みを始める要素と、応答を待つ間に操作を止める要素に記載する。 | - | - |
       | elements[].action_ref | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
       | elements[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
@@ -161,6 +167,17 @@ items:
       impl_files:
       - app/(authenticated)/tasks/new/_components/task-create-form.tsx
       elements:
+      - name: プロジェクト名
+        kind: label
+        position: フォーム本体 > 見出しの下
+        description: タスクを作るプロジェクトの名前を出す。1 行に収まらないときは省略し、全文をツールチップに出す
+        io: 表示
+        type: 文字列
+        visible_when: 常時
+        overflow:
+          type: truncate
+          max_length: 50
+        source: プロジェクト詳細取得.project.name
       - name: タスク名入力欄
         kind: input
         position: フォーム本体

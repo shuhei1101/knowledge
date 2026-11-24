@@ -149,6 +149,13 @@ items:
     name: ellipsis の全文表示
     body: |-
       - `text-overflow: ellipsis` で省略する場合、タップ全文表示の導線を用意する
+  - id: pitfall-text-code-04
+    group: 落とし穴チェックリスト > テキスト・コード
+    name: 固定の文言と長さが変わる値を同じ行に並べる
+    body: |-
+      - 固定の文言のラベル・ボタンを長さが変わる値（記録から取得する値・利用者が入力する値）と同じ行に並べる場合、ラベル・ボタンは折り返さず縮めない。
+        ラベル・ボタンには `white-space: nowrap` と `flex-shrink: 0` を付ける
+      - 値の側に `min-width: 0` を付け、画面設計の `overflow` のとおりに折り返すか省略する
   - id: pitfall-table-01
     group: 落とし穴チェックリスト > テーブル
     name: 多列 table の横スクロール

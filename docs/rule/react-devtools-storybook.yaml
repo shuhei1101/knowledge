@@ -51,6 +51,12 @@ items:
     name: 状態のある部品は play 関数
     body: |-
       - 状態のあるコンポーネント（Dialog など）は、`play` 関数で操作する。
+  - id: storybook-07
+    group: Storybook
+    name: 長さが変わる値の最大の長さのストーリー
+    body: |-
+      - 長さが変わる値（記録から取得する値・利用者が入力する値）を表示する共通コンポーネントは、最大の長さの値を入れたストーリーを持つ。
+        最大の長さは、そのコンポーネントを使用する画面設計の要素の `overflow.max_length`（無ければ `max_length`）のうち最大の値にする。
   - id: storybook-04
     group: Storybook
     name: addon-a11y の導入
