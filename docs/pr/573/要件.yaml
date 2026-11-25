@@ -1,0 +1,33 @@
+docs:
+  - page: docs/rule/ui-information-hierarchy.yaml
+    new: false
+    change: visual-consistency-01 の「同じ種類の操作部品…高さを 1 つの値に統一する」の行の後に、同じ行や近くに並べたボタン・ボタンの見た目のリンク・入力欄・選択欄は種類が違っても高さをそろえる行と、ボタンに似せたリンクはボタンと同じ見た目のクラス（React は部品の variant）を使用し高さを別に記載しない行を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-25T00:10:49.435142+00:00'
+  - page: docs/rule/ui-layout.yaml
+    new: false
+    change: tap-target-01 の表の後に、タップ領域を広げる幅では同じ行に並べた部品をまとめて広げ、高さをそろえる文を追加し、規約『情報の階層と見た目』を参照する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-25T00:10:49.435142+00:00'
+  - page: docs/checksheet/checksheet-review-mock-html.yaml
+    new: false
+    change: 同じ行・近くに並べたボタン・ボタンの見た目のリンク・入力欄・選択欄の高さがそろい、PC 幅とスマホ幅で並びが崩れていないことを確認する行を追加する（補足に規約『情報の階層と見た目』）
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-25T00:10:49.435142+00:00'
+  - page: docs/checksheet/checksheet-review-implemented-screen.yaml
+    new: false
+    change: 「同じ種類の操作部品の寸法…」の行を、同じ行・近くに並べた種類の違う操作部品の高さも確認する行へ修正する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-25T00:10:49.435142+00:00'
+scope_out:
+  - item: aituber のキャラクターの管理画面の保存とキャンセルの高さの修正
+    reason: aituber のリポジトリの画面で、shuhei1101/aituber#292 の commit 9794b424 で修正済み
+    plan: none
+  - item: 規約『ボタンのラベル』への寸法の決まりの追加
+    reason: ボタンのラベルはアイコンと文字の使い分け・文言の規約で、寸法の決まりは見た目の一貫性を持つ規約『情報の階層と見た目』に 1 か所で持つ
+    plan: none
+use_cases: []
