@@ -6,7 +6,7 @@ version:
   current: 1.38.0
   latest: 1.38.0
   checked_on: '2026-11-05'
-  source: '`scripts/check_all.py` のスクリプトの依存と uv のロック'
+  source: '`scripts/check_all.py`・`scripts/knowledge_checks.py` のスクリプトの依存と uv のロック'
   pinning: 完全なバージョンで固定する
 catalogs:
   - name: API
@@ -72,4 +72,4 @@ selection:
   candidates: yamllint
   decision: Python で動き、`scripts/check_all.py` の依存として uv のロックで入る
 install: |-
-  `scripts/check_all.py` の冒頭のスクリプトの依存に追加し、`uv lock --script scripts/check_all.py` でロックする
+  `scripts/check_all.py`・`scripts/knowledge_checks.py`（`_lint.py` を import する）の冒頭のスクリプトの依存に同じバージョンで追加し、`uv lock --script scripts/check_all.py`・`uv lock --script scripts/knowledge_checks.py` でロックする
