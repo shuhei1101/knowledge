@@ -1,0 +1,29 @@
+docs:
+  - page: schemas/design/agent_flow.schema.yaml
+    new: false
+    change: '`$defs/step/properties` の `id`・`unit` の `description` を 2 文以内にし、外した決まりを `x-rules` へ移す'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T16:35:42.142517+00:00'
+  - page: docs/template/template-agent-flow.yaml
+    new: false
+    change: '`scripts/build_templates.py` でスキーマから再生成する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T16:35:42.142517+00:00'
+  - page: docs/template/markdown/agent-flow.md
+    new: false
+    change: '`scripts/build_markdown_templates.py` で再生成する（Markdown のテンプレートは description と x-rules を出さず、差分は出ない）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T16:35:42.142517+00:00'
+  - page: docs/template/markdown/agent-flow.example.md
+    new: false
+    change: '`scripts/build_markdown_templates.py` で再生成する（Markdown のテンプレートは description と x-rules を出さず、差分は出ない）'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T16:35:42.142517+00:00'
+scope_out:
+  - item: '`schemas/design/` の agent_flow 以外のスキーマの description の修正'
+    reason: テストと同じ条件（`。` が 3 つ以上）で全てのスキーマを調べ、該当はこの 2 件だけだったため
+    plan: none
