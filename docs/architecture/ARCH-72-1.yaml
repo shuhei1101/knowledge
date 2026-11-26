@@ -126,11 +126,12 @@ external_systems:
     notes:
       事前確認: 不要。project-index が knowledge のスクリプトを呼ぶ側で、knowledge から project-index を呼ばない
   - name: dev-docs
-    purpose: project-index の読み取り API で取得した knowledge の文書を画面に表示する
+    purpose: project-index の読み取り API で取得した knowledge の文書を画面に表示する。「Markdown のテンプレートの生成」が、設計書の YAML を Markdown にする変換を Python のパッケージとして取り込んで呼ぶ
     direction: 送信のみ
-    protocol: project-index の読み取り API（knowledge と直接はやり取りしない）
+    protocol: 画面は project-index の読み取り API。変換は Python の import（スクリプトの依存の宣言でコミットを固定する）
     notes:
-      事前確認: 不要。knowledge から dev-docs を呼ばない
+      事前確認: 不要。画面は knowledge から呼ばない。変換は、uv が固定したコミットを取得できなければ「Markdown のテンプレートの生成」が起動しない。全ての文書の検査は、そのとき他の検査を終えてから終了コード 2 で終わる
+    detail: LIB-574-1#
   - name: GitHub Actions
     purpose: develop への push で公開文書の配信のワークフローを、手動の起動でテストの全件実行のワークフローを動かす
     direction: 受信のみ

@@ -1,0 +1,57 @@
+id: LIB-574-1
+visibility: internal
+title: dev-docs
+kind: ライブラリ
+lead: project-index が配信している開発ドキュメントを、人が参照する画面で出すサーバー。Python のパッケージとして、設計書の YAML をスキーマの `x-heading`・`x-shape` などに沿って mdmark の記法の Markdown にする変換を持つ。
+supplier: shuhei1101
+dependency_scope: 必須
+adoption: 採用
+used_in:
+  - scripts/build_markdown_templates.py
+upstream: shuhei1101/dev-docs
+verification:
+  state: 未確認
+  detail: 起点 Issue の試作で、dev-docs の develop の worktree の `.venv` から `schema_to_markdown` を呼び、28 種類の雛形と記載例をエラー無く生成できた。固定したコミットを `uv run --frozen --script` の依存の宣言で入れて呼ぶ確認は、実装の工程で行う
+version:
+  current: c07f4e519568f0e93c248aa623adc1ba3e45e8d7
+  latest: c07f4e519568f0e93c248aa623adc1ba3e45e8d7
+  checked_on: '2026-11-26'
+  source: '`scripts/build_markdown_templates.py` の依存の宣言（PEP 723）と `scripts/build_markdown_templates.py.lock`'
+  pinning: develop の commit の 40 桁の SHA で固定する（`dev-docs @ git+https://github.com/shuhei1101/dev-docs@{SHA}`）。変換を修正した dev-docs を取り込むときは、SHA を上げてロックを再作成し、Markdown のテンプレートを再生成する
+license: ライセンスの表記なし（knowledge と同じ所有者の公開リポジトリ）
+official_url: https://github.com/shuhei1101/dev-docs
+selection:
+  candidates: dev-docs の `schema_to_markdown` を import して使用する、knowledge 側に変換の規則（`x-heading`・`x-shape` の解釈）を実装する、project-index の converter として呼ぶ
+  decision: 変換の規則を二重に持たない。converter は配信元が自分の変換を登録する仕組みで、knowledge から dev-docs の変換を使用する向きには使用できない
+  consequences: dev-docs の変換が変わっても、SHA を上げるまで Markdown のテンプレートは変わらない。生成と全ての文書の検査は、初回に git から dev-docs を取得できる必要がある
+install: |-
+  入れる手順は無い。`uv run --frozen --script` が依存の宣言とロックから取得する
+
+  ```bash
+  uv run --frozen --script scripts/build_markdown_templates.py
+  ```
+catalogs:
+  - name: API
+    version: c07f4e519568f0e93c248aa623adc1ba3e45e8d7
+    entries:
+      - name: dev_docs.features.convert.markdown.schema_to_markdown
+        kind: 関数
+        purpose: YAML の文書をスキーマの x-heading・x-shape・x-key・x-diagram・x-hidden・title に沿って Markdown にする
+        params:
+          - name: document
+            type: dev_docs.integrations.project_index.types.IndexedDocument
+            required: true
+            description: 変換する文書。`id`・`kind`・`source_id`・`path`・`data`（文書の中身）・`metadata`・`version` を持つ
+          - name: schema
+            type: Mapping[str, Any]
+            required: true
+            description: 文書の種類のスキーマ
+          - name: context
+            type: dev_docs.features.convert.types.RenderContext
+            required: true
+            description: リンクの引き先（`links`）・Issue の URL（`issue_url`）・文書のパス（`path`）
+        returns:
+          - name: '-'
+            type: str
+            description: 'mdmark の記法の Markdown。表の前に dev-docs の画面専用の `<!-- dev-docs-table: {キー} -->` の行を持つ。末尾は改行 1 つ'
+        verification_state: docs_only
