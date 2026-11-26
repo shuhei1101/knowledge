@@ -1,0 +1,1 @@
+# screen.schema.yaml の count_limit.type の description を 2 文以内にし、スキーマの結合テストを pass させる
