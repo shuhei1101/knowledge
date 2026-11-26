@@ -421,18 +421,18 @@ functions:
         type: Sequence[LintSource]
         required: true
         description: '`collect_map_sources` が返却した全ての文書の分'
-      - name: npx
-        title: npx の実行ファイル
-        type: str
+      - name: command
+        title: mdmark を起動するコマンド
+        type: Sequence[str]
         required: true
-        description: '`shutil.which("npx")` が返却した絶対パス'
+        description: '`check --text -` の前までのコマンド。全ての文書の検査は `mdmark_npx_command` が返却した npx のコマンド、書き込みの検査は PATH の `mdmark` の絶対パスだけ'
     returns:
       type: list[LintFinding]
       description: mdmark が出した順の map の違反。`tool` は `mdmark`、`rule` はずれの種類、`warning` は `False`
     process: |-
       1. `sources` が空の場合、空を返却する（mdmark を呼ばない）
       2. `sources` の `text` を、間に空行 2 行（`\n\n\n`）を挟んでつなぐ。項目ごとに、つないだ中の開始行を控える
-      3. 一時フォルダを作業ディレクトリにして、`[npx, "-y", f"github:shuhei1101/mdmark#{MDMARK_REF}", "check", "--text", "-"]` を、つないだ Markdown を標準入力にして呼ぶ
+      3. 一時フォルダを作業ディレクトリにして、`[*command, "check", "--text", "-"]` を、つないだ Markdown を標準入力にして呼ぶ
          - 終了コードが 0・1 でないか、標準出力の最後の空でない行が `ずれ {件数} 件` でない場合、`MdmarkCheckError`（終了コードと標準エラー）を送出する
       4. 標準出力の `-:{行}: {種類}: {内容}` の行のうち、種類が `map_` で始まる行ごとに、行を含む項目の `LintSource` で `LintFinding` を作る。行は `start_line` + （mdmark の行 - その項目のつないだ中の開始行）。他の種類の行は捨てる
       5. 一時フォルダを削除して返却する
@@ -441,26 +441,26 @@ functions:
         case: 正常
         summary: map のずれだけを元の文書の行で返却する
         condition: '`start_line` が 10 と 40 の 2 件（どちらも 5 行）'
-        mock: '`npx` を、つないだ中の 2 件目の 3 行目の `map_invalid` と 1 行目の `legacy_mark` と `ずれ 2 件` を標準出力へ出し終了コード 1 で終わるスクリプトに差し替える'
+        mock: 'mdmark の CLI を、つないだ中の 2 件目の 3 行目の `map_invalid` と 1 行目の `legacy_mark` と `ずれ 2 件` を標準出力へ出し終了コード 1 で終わるスクリプトに差し替える'
         expected: '`line` が 42・`rule` が `map_invalid`・`tool` が `mdmark` の 1 件だけ'
       - name: test_run_map_check_when_empty
         case: 正常
         summary: map を含む項目が無い
         condition: 空の `sources`
-        mock: '`npx` を、呼ばれたらマーカーのファイルを作るスクリプトに差し替える'
+        mock: 'mdmark の CLI を、呼ばれたらマーカーのファイルを作るスクリプトに差し替える'
         expected: 空で、マーカーのファイルが無い
       - name: test_run_map_check_when_not_checked
         case: 異常
         summary: 点検せずに終了コード 1 で終わった
         condition: 1 件
-        mock: '`npx` を、標準出力に何も出さず標準エラーに 1 行出して終了コード 1 で終わるスクリプトに差し替える'
+        mock: 'mdmark の CLI を、標準出力に何も出さず標準エラーに 1 行出して終了コード 1 で終わるスクリプトに差し替える'
         expected: '`MdmarkCheckError` で、メッセージに終了コード 1 と標準エラーの行'
         exception: 標準出力の最後の行が `ずれ {件数} 件` でない
       - name: test_run_map_check_when_crashed
         case: 異常
         summary: 終了コードが 0・1 でない
         condition: 1 件
-        mock: '`npx` を、終了コード 2 で終わるスクリプトに差し替える'
+        mock: 'mdmark の CLI を、終了コード 2 で終わるスクリプトに差し替える'
         expected: '`MdmarkCheckError` で、メッセージに終了コード 2'
         exception: 終了コードが 0・1 でない
     refs:
@@ -578,5 +578,36 @@ functions:
       - to: LIB-176-2
         type: references
         when: '`_call_textlint` の外部ライブラリの呼び出し方を修正するときに、LIB-176-2 の使用する部分を確認する。'
+  - name: mdmark_npx_command
+    title: npx の mdmark のコマンドの組み立て
+    kind: 関数
+    container: scripts/_lint.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: '`MDMARK_REF` の mdmark を npx で起動するコマンドを組み立てる'
+    args:
+      - name: npx
+        title: npx の実行ファイル
+        type: str
+        required: true
+        description: '`shutil.which("npx")` が返却した絶対パス'
+    returns:
+      type: list[str]
+      description: '`[npx, "-y", f"github:shuhei1101/mdmark#{MDMARK_REF}"]`'
+    process: 1. `[npx, "-y", f"github:shuhei1101/mdmark#{MDMARK_REF}"]` を返却する
+    unit_tests:
+      - name: test_mdmark_npx_command
+        case: 正常
+        summary: npx の mdmark のコマンド
+        condition: '`/usr/bin/npx`'
+        mock: なし
+        expected: '`["/usr/bin/npx", "-y", "github:shuhei1101/mdmark#{MDMARK_REF}"]`'
+    callees:
+      - MOD-72-2#constants[MDMARK_REF]
+    refs:
+      - to: IF-72-3
+        item: constraints[map の点検の呼び出し]
+        type: requires
+        when: '`mdmark_npx_command` を修正するときに、IF-72-3 の「map の点検の呼び出し」の決まりと突き合わせる。'
 test_files:
   - tests/unit/scripts/test_lint.py

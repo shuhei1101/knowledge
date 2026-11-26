@@ -26,7 +26,8 @@ categories:
       date: '2026-11-06'
       detail: 3 つのスクリプトの `uv sync --script` がロックの依存を入れた（2026-10-31）。worktree で `npm ci --prefix scripts/lint` を実行し、`scripts/lint/node_modules/.bin/` に `markdownlint-cli2`・`textlint` が入った（2026-11-05）。worktree で `uv sync --script scripts/build_templates.py` がロックの依存を入れた（2026-11-06）。worktree で `uv sync --script scripts/build_markdown_templates.py` がロックの依存（git から取得する dev-docs を含む）を入れた（2026-11-27）
     prerequisites:
-      - Node.js 24 以降（`npm ci` と、書き込みの検査（`knowledge-checks`）が map を含む文書を点検する `npx -y` が使用する。`write_docs` で書き込む作業ツリーの project-index の PATH にも要る。外部ライブラリ『mdmark』）
+      - Node.js 24 以降（`npm ci` が使用する）
+      - '`write_docs` を受ける project-index のプロセスの PATH に、`check --text` を持つ mdmark の CLI がある（書き込みの検査（`knowledge-checks`）が map を含む文書を点検する。外部ライブラリ『mdmark』）'
   - name: 取り込み後の追従（pull 後）
     commands: |-
       1. ロック（`scripts/*.py.lock`）が変わったときは、エントリーポイントのスクリプトごとに依存を再インストールする

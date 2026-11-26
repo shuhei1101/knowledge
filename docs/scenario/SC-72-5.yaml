@@ -235,7 +235,7 @@ scenarios:
         participant E as エージェント
         participant M as project-index の文書の MCP
         participant V as knowledge の検査のスクリプト
-        participant C as mdmark の CLI（npx）
+        participant C as mdmark の CLI
         E->>M: write_docs に source knowledge と文書
         M->>V: 標準入力に文書の YAML
         V->>C: check --text -（map を含む項目）
@@ -249,7 +249,7 @@ scenarios:
       - 作業ツリーの文書が変わらない
       - 応答が `isError` で、違反の `path` が項目の `body` のパス、`rule` に文書の行と mdmark の `map_invalid` が入る
     test: test_error_when_map_check_reports_violation
-  - name: 異常シナリオ（map を含む文書の書き込みで npx が無い）
+  - name: 異常シナリオ（map を含む文書の書き込みで mdmark の CLI が無い）
     setup:
       - name: Mock
         description: 差し替えない
@@ -258,7 +258,7 @@ scenarios:
       - name: 書き込む内容
         description: map の範囲を項目の `body` に持ち、ほかの違反の無い規約の YAML
       - name: project-index の起動の環境
-        description: '`npx` を持たず、`node` と mdmark の CLI（`check --text`）を持つ PATH で project-index を起動する'
+        description: 'mdmark の CLI を持たず、`node` を持つ PATH で project-index を起動する'
     flow: |-
       <!-- map -->
 
@@ -269,16 +269,16 @@ scenarios:
         participant V as knowledge の検査のスクリプト
         E->>M: write_docs に source knowledge と文書
         M->>V: 標準入力に文書の YAML
-        V->>V: map の点検で呼ぶ npx が無い
-        V-->>M: 終了コード 0 と npx が無いことの違反
+        V->>V: map の点検で呼ぶ mdmark の CLI が PATH に無い
+        V-->>M: 終了コード 0 と mdmark の CLI が無いことの違反
         M-->>E: isError と違反の一覧
       ```
 
       <!-- /map -->
     expected:
       - 作業ツリーの文書が変わらない
-      - 応答が `isError` で、違反の `path` が `$`、`rule` に npx が無いこと、`fix` に Node を入れることが入る
-    test: test_error_when_npx_missing
+      - 応答が `isError` で、違反の `path` が `$`、`rule` に mdmark の CLI が無いこと、`fix` に mdmark の CLI を入れることが入る
+    test: test_error_when_mdmark_missing
 lead: エージェントが knowledge のクローンか worktree で `write_docs` を呼び、project-index がスキーマと knowledge の検査のスクリプトで検査してから文書を書き込む。
 primary_actor: エージェント
 trigger: エージェントが規約を追加・修正する
@@ -286,7 +286,6 @@ preconditions:
   - knowledge が project-index に登録され、配信中
   - '`check --text` を持つ mdmark の CLI が Linux 側に入り、PATH で見つかる'
   - 書き込む作業ツリーの `scripts/lint/` に markdownlint-cli2・textlint が入っている（開発コマンドの `npm ci --prefix scripts/lint`）
-  - Linux 側の PATH で `npx` が見つかる（map を含む文書の map の点検で mdmark を呼ぶ）
 success_guarantee: 違反の無い内容だけが knowledge の作業ツリーに書き込まれる。
 minimal_guarantee: 違反のある内容・`scope.write` の外からの書き込みは、ファイルを変えずに `isError` で返却する。
 test_file: tests/e2e/単一ユースケース/test_エージェントがknowledgeの文書を書き込む.py

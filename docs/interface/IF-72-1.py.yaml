@@ -495,7 +495,7 @@ flows:
       sequenceDiagram
         participant D as project-index
         participant S as 文書の違反の検査
-        participant C as mdmark の CLI（npx）
+        participant C as mdmark の CLI
         D->>S: 標準入力に文書の YAML
         S->>S: map を含む項目をつないだ Markdown を作る
         S->>C: check --text -（一時のフォルダで）
@@ -510,11 +510,11 @@ flows:
       - 標準出力の配列が 1 件で、`path` が `items[0].body`
       - '`rule` が `{行} 行目: mdmark/map_invalid: ` で始まり、行が `items[0].body` の中の行と一致する'
     test: test_normal_when_map_violations
-  - name: 正常系（npx が無い）
-    summary: 'map を含む項目があり npx が見つからなければ、`path: $` の違反 1 件とほかの検査の違反を返却する'
+  - name: 正常系（mdmark の CLI が無い）
+    summary: 'map を含む項目があり mdmark の CLI が PATH に見つからなければ、`path: $` の違反 1 件とほかの検査の違反を返却する'
     setup:
       - name: Mock
-        description: '`node` へのシンボリックリンクだけを持ち `npx` を持たないフォルダを、子プロセスの環境変数 `PATH` にする'
+        description: '`node` へのシンボリックリンクだけを持ち `mdmark` を持たないフォルダを、子プロセスの環境変数 `PATH` にする'
       - name: 配信元
         description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
       - name: 標準入力
@@ -527,20 +527,20 @@ flows:
         participant D as project-index
         participant S as 文書の違反の検査
         D->>S: 標準入力に文書の YAML
-        S->>S: map を含む項目があり、PATH に npx が無い
+        S->>S: map を含む項目があり、PATH に mdmark の CLI が無い
         S-->>D: 終了コード 0 と path $ の違反
       ```
 
       <!-- /map -->
     expected:
       - 終了コードが 0
-      - 標準出力の配列が 1 件で、`path` が `$`、`rule` に npx が見つからないこと、`fix` に Node を入れることが入る
-    test: test_normal_when_npx_missing
+      - 標準出力の配列が 1 件で、`path` が `$`、`rule` に mdmark の CLI が見つからないこと、`fix` に mdmark の CLI を入れることが入る
+    test: test_normal_when_mdmark_missing
   - name: 正常系（map の点検が失敗する）
     summary: 'mdmark の終了コードが 0・1 でないか最後の行が `ずれ {件数} 件` でなければ、`path: $` の違反 1 件を返却する'
     setup:
       - name: Mock
-        description: '`npx` を、標準エラーに 1 行を出して終了コード 2 で終わるシェルスクリプトに差し替える'
+        description: '`mdmark` を、標準エラーに 1 行を出して終了コード 2 で終わるシェルスクリプトに差し替える'
         notes: 子プロセスの環境変数 `PATH` の先頭のフォルダに配置する
       - name: 配信元
         description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
@@ -553,7 +553,7 @@ flows:
       sequenceDiagram
         participant D as project-index
         participant S as 文書の違反の検査
-        participant C as mdmark の CLI（npx）
+        participant C as mdmark の CLI
         D->>S: 標準入力に文書の YAML
         S->>C: check --text -
         C-->>S: 終了コード 2 と標準エラー
@@ -577,7 +577,7 @@ callers:
   - SC-72-5#scenarios[異常シナリオ（本文に markdownlint-cli2 の違反がある）]
   - SC-72-5#scenarios[異常シナリオ（文書の YAML に yamllint の違反がある）]
   - SC-72-5#scenarios[異常シナリオ（map の図を描けない）]
-  - SC-72-5#scenarios[異常シナリオ（map を含む文書の書き込みで npx が無い）]
+  - SC-72-5#scenarios[異常シナリオ（map を含む文書の書き込みで mdmark の CLI が無い）]
   - SC-536-1#scenarios[正常シナリオ]
   - SC-536-1#scenarios[異常シナリオ（本文に textlint の違反がある）]
   - SC-536-1#scenarios[異常シナリオ（本文に markdownlint-cli2 の違反がある）]
@@ -664,8 +664,6 @@ constraints:
   - item: textlint
     constraint: '文書の Markdown の項目（パスの末尾が `body` の文字列）を 1 項目 1 ファイルの一時の `.md` にし、`--lint-dir` の `.textlintrc.json` で textlint を 1 回呼ぶ。`error` で返却した違反を、項目のパスを `path`、元の文書の行と `textlint/{ルール}: {内容}` を `rule` にした違反 1 件にする。`warning` で返却した違反は返却しない。Markdown の項目が無い文書では textlint を呼ばず、textlint があるかも確認しない'
     decided_by: IF-72-3#constraints[lint の設定]
-  - item: textlint が無い・失敗したとき
-    constraint: 'textlint が `--lint-dir` の `node_modules/.bin/` に無いときと、textlint の終了コードが 0・1 でないか出力を読み込めないときは、textlint の違反の代わりに `path: $` の違反 1 件を返却し、書き込みを止める。ほかの検査の違反も並べて返却し、終了コードは 0 にする'
   - item: markdownlint-cli2
     constraint: 'textlint と同じ一時の `.md` に、`--lint-dir` の `.markdownlint-cli2.jsonc` で markdownlint-cli2 を 1 回呼ぶ。`error` で返却した違反を、項目のパスを `path`、元の文書の行と `markdownlint/{ルール}: {内容}` を `rule` にした違反 1 件にする。`warning` で返却した違反は返却しない。Markdown の項目が無い文書では markdownlint-cli2 を呼ばず、markdownlint-cli2 があるかも確認しない'
     decided_by: IF-72-3#constraints[lint の設定]
@@ -675,8 +673,8 @@ constraints:
     constraint: '標準入力の文書の YAML 全体に、`--lint-dir` の `.yamllint.yaml` の設定で yamllint を Python のライブラリとして同じプロセスで適用する。`error` の違反を、`path` を `-`、`rule` を `{行} 行目: yamllint/{ルール}: {内容}` にした違反 1 件にする。`warning` の違反は返却しない。YAML として読み込めない文書には適用しない（読み込めない違反 1 件だけを返却する）'
     decided_by: IF-72-3#constraints[lint の設定]
   - item: map の点検
-    constraint: '値に `<!-- map -->` を含む文字列の項目（パスの末尾を問わない）を、項目の間に空行 2 行を挟んで 1 つの Markdown につなぎ、`npx -y github:shuhei1101/mdmark#{参照} check --text -` を一時のフォルダで 1 回呼ぶ。種類が `map_` で始まるずれだけを、項目のパスを `path`、元の文書の行と `mdmark/{種類}: {内容}` を `rule` にした違反 1 件にする。該当する項目が 0 件なら mdmark を呼ばず、npx があるかも確認しない'
-    decided_by: IF-72-3#constraints[map の点検の呼び出し]
-  - item: npx が無い・map の点検が失敗したとき
-    constraint: 'map を含む項目があり `PATH` に `npx` が無いときは、`fix` を Node 24 以降を入れることにした `path: $` の違反 1 件を返却する。mdmark の終了コードが 0・1 でないか標準出力の最後の行が `ずれ {件数} 件` でないときは、map のずれの代わりに、mdmark の終了コードと標準エラーを `rule` に入れ、`fix` を npx が GitHub から mdmark を取得できるかを確認することにした `path: $` の違反 1 件を返却する。どちらもほかの検査の違反も並べて返却し、終了コードは 0 にする'
+    constraint: '値に `<!-- map -->` を含む文字列の項目（パスの末尾を問わない）を、項目の間に空行 2 行を挟んで 1 つの Markdown につなぎ、`PATH` の `mdmark` の `check --text -` を一時のフォルダで 1 回呼ぶ（project-index の書き込みの点検と同じ CLI。npx で取得しない）。種類が `map_` で始まるずれだけを、項目のパスを `path`、元の文書の行と `mdmark/{種類}: {内容}` を `rule` にした違反 1 件にする。該当する項目が 0 件なら mdmark を呼ばず、mdmark の CLI があるかも確認しない'
+    decided_by: IF-72-3#constraints[map の違反にするずれ]
+  - item: mdmark の CLI が無い・map の点検が失敗したとき
+    constraint: 'map を含む項目があり `PATH` に `mdmark` が無いときは、`fix` を mdmark の CLI を入れることにした `path: $` の違反 1 件を返却する。mdmark の終了コードが 0・1 でないか標準出力の最後の行が `ずれ {件数} 件` でないときは、map のずれの代わりに、mdmark の終了コードと標準エラーを `rule` に入れ、`fix` を PATH の mdmark の CLI が `check --text` を持つかを確認することにした `path: $` の違反 1 件を返却する。どちらもほかの検査の違反も並べて返却し、終了コードは 0 にする'
 test_file: tests/integration/scripts/test_knowledge_checks.py

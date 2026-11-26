@@ -653,48 +653,48 @@ functions:
         description: 標準入力の文書 1 件の YAML
     returns:
       type: list[Violation]
-      description: 'map のずれ。npx が無い・点検が失敗したときは `path: $` の 1 件'
+      description: 'map のずれ。mdmark の CLI が無い・点検が失敗したときは `path: $` の 1 件'
     process: |-
       1. `collect_map_sources(PurePosixPath("-.yaml"), text)` で map を含む項目を取り出す
          - 空の場合、空を返却する
-      2. `shutil.which("npx")` で npx を探す
-         - 見つからない場合、`path` が `$`、`rule` が `1 行目: npx が PATH に見つかりません`、`fix` が `Node 24 以降を入れて npx を使用できるようにする` の 1 件を返却する
-      3. `run_map_check(sources, npx)` を呼ぶ
-         - `MdmarkCheckError` の場合、`path` が `$`、`rule` が `1 行目: mdmark の点検が失敗しました: {例外のメッセージ}`、`fix` が `npx が GitHub から mdmark を取得できるかを確認する` の 1 件を返却する
+      2. `shutil.which("mdmark")` で mdmark の CLI を探す
+         - 見つからない場合、`path` が `$`、`rule` が `1 行目: mdmark の CLI が PATH に見つかりません`、`fix` が `npm install -g github:shuhei1101/mdmark#develop か project-index の管理の MCP の update で mdmark の CLI を入れる` の 1 件を返却する
+      3. `run_map_check(sources, [mdmark])` を呼ぶ
+         - `MdmarkCheckError` の場合、`path` が `$`、`rule` が `1 行目: mdmark の点検が失敗しました: {例外のメッセージ}`、`fix` が `PATH の mdmark の CLI が check --text を持つかを確認する` の 1 件を返却する
       4. `LintFinding` ごとに、`path` が `item_path`、`rule` が `{line} 行目: mdmark/{rule}: {message}`、`fix` が `map の範囲を書き換えて mdmark の {rule} のずれを無くす` の違反を作って返却する
     unit_tests:
       - name: test_check_map
         case: 正常
         summary: map のずれを元の文書の行で返却する
         condition: '`items[0].body` に `<!-- map -->` を持つ文書'
-        mock: '`shutil.which` を npx のパスを返却する関数に、`run_map_check` を `line` 4・`rule` `map_invalid` の 1 件を返却する関数に差し替える'
-        expected: '1 件で、`path` が `items[0].body`、`rule` が `4 行目: mdmark/map_invalid: ` で始まる'
+        mock: '`shutil.which` を mdmark のパスを返却する関数に、`run_map_check` を `line` 4・`rule` `map_invalid` の 1 件を返却する関数に差し替える'
+        expected: '`run_map_check` に mdmark のパスだけのコマンドが渡り、1 件で、`path` が `items[0].body`、`rule` が `4 行目: mdmark/map_invalid: ` で始まる'
       - name: test_check_map_when_no_map
         case: 正常
         summary: map を含む項目が無い
         condition: '`<!-- map -->` を持たない文書'
         mock: '`shutil.which`・`run_map_check` を、呼ばれたら失敗させる関数に差し替える'
         expected: 空
-      - name: test_check_map_when_npx_missing
+      - name: test_check_map_when_mdmark_missing
         case: 正常
-        summary: npx が無い
+        summary: mdmark の CLI が無い
         condition: '`items[0].body` に `<!-- map -->` を持つ文書'
         mock: '`shutil.which` を `None` を返却する関数に、`run_map_check` を呼ばれたら失敗させる関数に差し替える'
-        expected: 1 件で、`path` が `$`、`rule` に `npx`、`fix` に `Node 24`
+        expected: 1 件で、`path` が `$`、`rule` に `mdmark の CLI`、`fix` に `npm install -g github:shuhei1101/mdmark#develop`
       - name: test_check_map_when_failed
         case: 正常
         summary: mdmark の点検が失敗した
         condition: '`items[0].body` に `<!-- map -->` を持つ文書'
-        mock: '`shutil.which` を npx のパスを返却する関数に、`run_map_check` を `MdmarkCheckError("mdmark が終了コード 2 で終わりました: boom")` を送出する関数に差し替える'
+        mock: '`shutil.which` を mdmark のパスを返却する関数に、`run_map_check` を `MdmarkCheckError("mdmark が終了コード 2 で終わりました: boom")` を送出する関数に差し替える'
         expected: 1 件で、`path` が `$`、`rule` に `終了コード 2` と `boom`
     callees:
       - MOD-176-1#functions[collect_map_sources]
       - MOD-176-1#functions[run_map_check]
     refs:
       - to: IF-72-1
-        item: constraints[npx が無い・map の点検が失敗したとき]
+        item: constraints[mdmark の CLI が無い・map の点検が失敗したとき]
         type: requires
-        when: '`check_map` を修正するときに、IF-72-1 の「map の点検」「npx が無い・map の点検が失敗したとき」の決まりと突き合わせる。'
+        when: '`check_map` を修正するときに、IF-72-1 の「map の点検」「mdmark の CLI が無い・map の点検が失敗したとき」の決まりと突き合わせる。'
 notes:
   依存: |-
     PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と、`_lint.py` が import する `yamllint==1.38.0`（LIB-176-3。`check_all.py` と同じバージョン）を記載し、`uv lock --script scripts/knowledge_checks.py` でロック（`knowledge_checks.py.lock`）を更新して、`_common.py`・`_lint.py` を同じフォルダから import する。
