@@ -18,7 +18,7 @@ data_models:
         description: 書き出す中身（末尾は改行 1 つ）
       - name: schema_path
         type: PurePosixPath
-        description: 生成元のスキーマのリポジトリの直下からのパス。`files.yaml` はずれた行の種類のうちパスの昇順で最初のもの（「ずれの列挙」が決める）
+        description: 生成元のスキーマのリポジトリの直下からのパス。`files.yaml` は全ての種類から作るので `schemas/design`
   - name: TemplateMeta
     title: YAML のテンプレートのメタデータ
     container: scripts/build_markdown_templates.py
@@ -79,7 +79,7 @@ functions:
         description: コマンドの引数。`None` は `sys.argv[1:]`。`--check` だけを取る
     returns:
       type: int
-      description: 終了コード。`0` = 一致した（書き換えたものを含む）、`1` = `--check` でずれがあったか想定していない例外、`2` = スキーマ・テンプレートが読み込めないか変換に失敗した
+      description: 終了コード。`0` = 一致した（書き換えたものを含む）、`1` = `--check` でずれがあった、`2` = スキーマ・テンプレートが読み込めないか、変換に失敗したか、想定していない例外
     process: |-
       1. argparse で引数を読み込み、標準出力を UTF-8 にする
       2. 作業ディレクトリの設計書のスキーマを読み込み、全ての `$ref` を解決できるかを確認する（設計書のスキーマの読み込み）
@@ -88,7 +88,7 @@ functions:
       4. 今の `MARKDOWN_DIR` と比べ、ずれたファイルを列挙する（ずれの列挙）
       5. `--check` のとき、ずれをパスの昇順で `{パス}\t{生成元のスキーマのパス}`（生成の対象に無い Markdown は `{パス}`）の 1 行ずつ出し、ずれがあれば `1`、無ければ `0` を返却する
       6. `--check` でないとき、ずれたファイルを書き出し・削除し、パスを昇順で 1 行ずつ出して `0` を返却する
-         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返却する
+         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `2` を返却する
     unit_tests:
       - name: test_main
         case: 正常
@@ -101,7 +101,7 @@ functions:
         summary: --check でずれを出す
         condition: '`test_main` の一時フォルダに `old.md` を加え、`--check` を指定する'
         mock: '`test_main` と同じ'
-        expected: '`1` を返却し、er の 3 行が `\tschemas/design/er.schema.yaml` 付きで、`old.md` がタブを持たない行で出て、どのファイルも変わらない'
+        expected: '`1` を返却し、`er.md`・`er.example.md` が `\tschemas/design/er.schema.yaml` 付き、`files.yaml` が `\tschemas/design` 付きで、`old.md` がタブを持たない行で出て、どのファイルも変わらない'
       - name: test_main_when_unchanged
         case: 正常
         summary: 2 回目の起動
@@ -114,6 +114,12 @@ functions:
         condition: '`test_main` の一時フォルダから `template-config.yaml` を削除する'
         mock: '`test_main` と同じ'
         expected: '`2` を返却し、標準エラーに `template-config` と `schemas/design/config.schema.yaml` が出て、`docs/template/markdown/` のファイルが変わらない'
+      - name: test_main_when_unexpected_error
+        case: 異常
+        summary: 想定していない例外
+        condition: '`test_main` の一時フォルダで `--check` を指定する'
+        mock: dev-docs の変換を差し替え、ずれの列挙を `RuntimeError` を送出する関数に差し替える
+        expected: '`2` を返却し、標準出力が空で、標準エラーに traceback が出る'
     callees:
       - MOD-201-1#functions[load_schemas]
       - MOD-574-1#functions[build_outputs]
@@ -338,7 +344,7 @@ functions:
         description: 「生成するファイルの組み立て」の戻り値
     returns:
       type: tuple[list[Output], list[PurePosixPath]]
-      description: 今の中身と違うか無いファイル（`files.yaml` の `schema_path` はずれた行の種類のうちパスの昇順で最初のもの）と、生成の対象に無い `*.md`（どちらもパスの昇順）
+      description: 今の中身と違うか無いファイルと、生成の対象に無い `*.md`（どちらもパスの昇順）
     unit_tests:
       - name: test_list_differences
         case: 正常
@@ -351,7 +357,7 @@ functions:
         summary: files.yaml の生成元
         condition: '`files.yaml` の er と module の行だけが違う'
         mock: なし（一時ディレクトリ）
-        expected: '`files.yaml` の `schema_path` が `schemas/design/er.schema.yaml`'
+        expected: '`files.yaml` の `schema_path` が `schemas/design`'
     refs:
       - to: IF-574-1
         item: response[stdout]

@@ -28,21 +28,21 @@ request:
 response:
   - name: stdout
     type: str
-    description: 書き換えた・削除したファイルのパスを 1 行に 1 件、パスの昇順で出す。`--check` のときはずれたファイルを `{ファイルのパス}\t{生成元のスキーマのパス}` で出す。`files.yaml` の生成元は、ずれた行の種類のスキーマのうちパスの昇順で最初のもの。生成の対象に無い Markdown は、タブを持たない `{ファイルのパス}` だけの行で出す。無ければ空
+    description: 書き換えた・削除したファイルのパスを 1 行に 1 件、パスの昇順で出す。`--check` のときはずれたファイルを `{ファイルのパス}\t{生成元のスキーマのパス}` で出す。`files.yaml` は全ての種類から作るので、生成元を `schemas/design` にする。生成の対象に無い Markdown は、タブを持たない `{ファイルのパス}` だけの行で出す。無ければ空
     example: docs/template/markdown/er.md
   - name: stderr
     type: str
     description: 終了コード 2 のときの理由（原因のファイルのパスを含む）
   - name: exit_code
     type: Literal[0, 1, 2]
-    description: 0 = 全てのファイルが作った内容と一致した（書き換えたものを含む）。1 = `--check` でずれたファイルがあった。2 = スキーマ・YAML のテンプレートが読み込めないか変換に失敗し、どのファイルも書き換えなかった
+    description: 0 = 全てのファイルが作った内容と一致した（書き換えたものを含む）。1 = `--check` でずれたファイルがあった。2 = スキーマ・YAML のテンプレートが読み込めないか、変換に失敗したか、想定していない例外で、どのファイルも書き換えなかった
 exceptions:
   - name: なし（正常終了）
     condition: 全ての種類の雛形と記載例を作り、違うものを書き出した。`--check` でずれが無かった
   - name: 終了コード 1
     condition: '`--check` で、作った内容と違うファイル・無いファイル・生成の対象に無い Markdown があった'
   - name: 終了コード 2
-    condition: スキーマが無い・YAML として読み込めない、`$ref` を解決できない、種類のスキーマに対応する YAML のテンプレートが無い・読み込めない、dev-docs の変換が例外を送出した
+    condition: スキーマが無い・YAML として読み込めない、`$ref` を解決できない、種類のスキーマに対応する YAML のテンプレートが無い・読み込めない、dev-docs の変換が例外を送出した、想定していない例外
 constraints:
   - item: 生成の対象
     constraint: 「設計書のテンプレートの生成」の「生成の対象」と「テンプレートの対応表」と同じ種類のスキーマと、対応する YAML のテンプレートの文書
@@ -148,7 +148,7 @@ flows:
       <!-- /map -->
     expected:
       - 終了コードが 1
-      - 標準出力に `docs/template/markdown/er.md`・`er.example.md`・`files.yaml` が `schemas/design/er.schema.yaml` との組で、`docs/template/markdown/old.md` がタブを持たないパスだけの行で出る
+      - 標準出力に `docs/template/markdown/er.md`・`er.example.md` が `schemas/design/er.schema.yaml` との組で、`files.yaml` が `schemas/design` との組で、`docs/template/markdown/old.md` がタブを持たないパスだけの行で出る
       - '`docs/template/markdown/` の全てのファイルのバイト列が実行の前と同じ'
     test: test_normal_when_check_finds_differences
   - name: 正常系（生成の対象に無い Markdown を削除する）
