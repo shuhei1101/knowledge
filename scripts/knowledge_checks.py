@@ -496,8 +496,8 @@ _STDIN_PATH = PurePosixPath("-.yaml")
 # lint の CLI を入れるコマンド
 _LINT_INSTALL = "npm ci --prefix scripts/lint"
 
-# mdmark を呼ぶ npx のコマンド名
-_NPX = "npx"
+# map の点検で PATH から探す mdmark の CLI のコマンド名（project-index の書き込みの点検と同じ CLI）
+_MDMARK = "mdmark"
 
 
 def check_markdown_lints(text: str, lint_dir: Path) -> list[Violation]:
@@ -563,28 +563,31 @@ def check_yamllint(text: str, lint_dir: Path) -> list[Violation]:
 def check_map(text: str) -> list[Violation]:
     """文書の map を含む項目を mdmark で点検し、map のずれを元の文書の行の違反で返す。"""
     sources = collect_map_sources(_STDIN_PATH, text)
-    # map を含む項目が無い: npx を探さない
+    # map を含む項目が無い: mdmark の CLI を探さない
     if not sources:
         return []
-    npx = shutil.which(_NPX)
-    # npx が無い: 書き込みを止める 1 件を返す
-    if npx is None:
+    mdmark = shutil.which(_MDMARK)
+    # mdmark の CLI が無い: 書き込みを止める 1 件を返す
+    if mdmark is None:
         return [
             {
                 "path": "$",
-                "rule": "1 行目: npx が PATH に見つかりません",
-                "fix": "Node 24 以降を入れて npx を使用できるようにする",
+                "rule": "1 行目: mdmark の CLI が PATH に見つかりません",
+                "fix": (
+                    "npm install -g github:shuhei1101/mdmark#develop か"
+                    " project-index の管理の MCP の update で mdmark の CLI を入れる"
+                ),
             }
         ]
     try:
-        findings = run_map_check(sources, npx)
+        findings = run_map_check(sources, [mdmark])
     except MdmarkCheckError as error:
         # mdmark の点検が失敗した: 書き込みを止める 1 件を返す
         return [
             {
                 "path": "$",
                 "rule": f"1 行目: mdmark の点検が失敗しました: {error.message}",
-                "fix": "npx が GitHub から mdmark を取得できるかを確認する",
+                "fix": "PATH の mdmark の CLI が check --text を持つかを確認する",
             }
         ]
     return [

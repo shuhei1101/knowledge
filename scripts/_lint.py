@@ -186,7 +186,12 @@ def extract_map_mermaid(text: str) -> str | None:
     return None
 
 
-def run_map_check(sources: Sequence[LintSource], npx: str) -> list[LintFinding]:
+def mdmark_npx_command(npx: str) -> list[str]:
+    """MDMARK_REF の mdmark を npx で起動するコマンド（check --text - の前まで）を返す。"""
+    return [npx, "-y", f"github:shuhei1101/mdmark#{MDMARK_REF}"]
+
+
+def run_map_check(sources: Sequence[LintSource], command: Sequence[str]) -> list[LintFinding]:
     """map を含む全ての項目をつないで mdmark の check --text - を 1 回呼び、map のずれを元の文書の行で返却する。"""
     if not sources:
         return []
@@ -200,7 +205,7 @@ def run_map_check(sources: Sequence[LintSource], npx: str) -> list[LintFinding]:
     with tempfile.TemporaryDirectory() as workdir:
         # 一時のフォルダで呼び、リポジトリの設定ファイルを読ませない
         result = subprocess.run(  # noqa: S603 - 引数は配列で渡し、シェルを通さない
-            [npx, "-y", f"github:shuhei1101/mdmark#{MDMARK_REF}", "check", "--text", "-"],
+            [*command, "check", "--text", "-"],
             cwd=workdir,
             input=joined,
             capture_output=True,
