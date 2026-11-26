@@ -42,7 +42,7 @@ docs:
 scope_out:
   - item: 書き込みの検査で markdownlint-cli2・yamllint・mdmark の map の点検も適用する
     reason: 要望は textlint の違反だけで、他の lint は要望に含まれない
-    plan: to_file
+    plan: '#589'
   - item: 画面設計のスキーマの description が 3 文以上で、結合テスト test_normal_when_repository_schemas が develop で落ちる
     reason: '#585 で入った既存の失敗で、develop の worktree でも落ちる。この PR の変更と関係が無い'
     plan: '#588'
