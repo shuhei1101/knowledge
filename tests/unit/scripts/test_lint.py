@@ -20,6 +20,7 @@ from _lint import (
     load_yamllint_config,
     run_map_check,
     run_markdown_lints,
+    run_textlint,
     run_yamllint,
 )
 
@@ -372,6 +373,57 @@ def test_run_markdown_lints_when_crashed(tmp_path: Path, fake_cli_factory: FakeC
     # 実行・検証
     with pytest.raises(LintOutputError, match=r"textlint.*2.*設定を読めません"):
         run_markdown_lints(sources, tmp_path / "lint", clis)
+
+
+def test_run_textlint(tmp_path: Path, fake_cli_factory: FakeCliFactory) -> None:
+    """違反を元の文書の行で返す（正常系）。"""
+    # 準備
+    textlint = fake_cli_factory(
+        "textlint",
+        stdout=(
+            '[{"filePath": "{first}", "messages": [{"line": 2,'
+            ' "ruleId": "ja-technical-writing/no-doubled-joshi",'
+            ' "severity": 2, "message": "助詞が重なっています"}]}]'
+        ),
+        exit_code=1,
+    )
+    sources = [LintSource(PurePosixPath("docs/rule/a.yaml"), "items[0].body", 26, "本文。\n本文。")]
+    # 実行
+    result = run_textlint(sources, tmp_path / "lint", textlint)
+    # 検証
+    assert result == [
+        LintFinding(
+            PurePosixPath("docs/rule/a.yaml"),
+            27,
+            "items[0].body",
+            "textlint",
+            "ja-technical-writing/no-doubled-joshi",
+            "助詞が重なっています",
+            False,
+        )
+    ]
+
+
+def test_run_textlint_when_empty(tmp_path: Path, fake_cli_factory: FakeCliFactory) -> None:
+    """当てる Markdown が無い（正常系）。"""
+    # 準備
+    marker = tmp_path / "called.txt"
+    textlint = fake_cli_factory("textlint", stdout="[]", marker=marker)
+    # 実行
+    result = run_textlint([], tmp_path / "lint", textlint)
+    # 検証
+    assert result == []
+    assert not marker.exists()
+
+
+def test_run_textlint_when_crashed(tmp_path: Path, fake_cli_factory: FakeCliFactory) -> None:
+    """textlint が落ちた（異常系）。"""
+    # 準備
+    textlint = fake_cli_factory("textlint", stderr="設定を読めません\n", exit_code=2)
+    sources = [LintSource(PurePosixPath("docs/rule/a.yaml"), "items[0].body", 6, "本文。")]
+    # 実行・検証
+    with pytest.raises(LintOutputError, match=r"textlint.*2.*設定を読めません"):
+        run_textlint(sources, tmp_path / "lint", textlint)
 
 
 def test_load_yamllint_config(tmp_path: Path) -> None:
