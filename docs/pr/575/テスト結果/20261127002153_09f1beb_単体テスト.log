@@ -1,0 +1,166 @@
+# 単体テスト作成の Red（テストコード 09f1beb）
+
+## 全件実行
+$ TMPDIR=/tmp/planner-575-tmp （/tmp/pytest-of-shuhei2441 が root の持ち物で残っているため）
+$ (rc=0; uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 --with "dev-docs @ git+https://github.com/shuhei1101/dev-docs@c07f4e519568f0e93c248aa623adc1ba3e45e8d7" pytest tests/unit || rc=1; uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check || rc=1; exit $rc)
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-template-markdown-template-generation
+configfile: pytest.ini
+plugins: anyio-4.16.0
+collected 297 items / 1 error
+
+==================================== ERRORS ====================================
+_____ ERROR collecting tests/unit/scripts/test_build_markdown_templates.py _____
+ImportError while importing test module '/home/shuhei2441/repo/knowledge/.claude/worktrees/feat-template-markdown-template-generation/tests/unit/scripts/test_build_markdown_templates.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/scripts/test_build_markdown_templates.py:14: in <module>
+    import build_markdown_templates
+E   ModuleNotFoundError: No module named 'build_markdown_templates'
+=========================== short test summary info ============================
+ERROR tests/unit/scripts/test_build_markdown_templates.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 0.17s ===============================
+Installed 5 packages in 7ms
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-template-markdown-template-generation
+configfile: pytest.ini
+collected 49 items
+
+tests/unit/slop-check/test_slop_check.py ............................... [ 63%]
+..................                                                       [100%]
+
+============================== 49 passed in 0.07s ==============================
+exit=1
+
+## 個別実行（全件実行が test_build_markdown_templates.py の収集で止まるため、test_check_all.py を個別に回した）
+$ uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 --with "dev-docs @ git+https://github.com/shuhei1101/dev-docs@c07f4e519568f0e93c248aa623adc1ba3e45e8d7" pytest tests/unit/scripts/test_check_all.py
+============================= test session starts ==============================
+platform linux -- Python 3.14.3, pytest-9.2.0, pluggy-1.7.0
+rootdir: /home/shuhei2441/repo/knowledge/.claude/worktrees/feat-template-markdown-template-generation
+configfile: pytest.ini
+plugins: anyio-4.16.0
+collected 59 items
+
+tests/unit/scripts/test_check_all.py ................................... [ 59%]
+..................FFFFFF                                                 [100%]
+
+=================================== FAILURES ===================================
+________________________ test_check_markdown_templates _________________________
+
+tmp_path = PosixPath('/tmp/planner-575-tmp/pytest-of-shuhei2441/pytest-1/test_check_markdown_templates0')
+
+    def test_check_markdown_templates(tmp_path: Path) -> None:
+        """ずれが無い（正常系）。"""
+        # 準備
+        (tmp_path / "docs/template/markdown").mkdir(parents=True)
+        run = _completed(0)
+        # 実行
+>       result = check_all.check_markdown_templates(tmp_path, run=run)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'check_all' has no attribute 'check_markdown_templates'. Did you mean: 'check_design_templates'?
+
+tests/unit/scripts/test_check_all.py:1522: AttributeError
+______________ test_check_markdown_templates_when_folder_missing _______________
+
+tmp_path = PosixPath('/tmp/planner-575-tmp/pytest-of-shuhei2441/pytest-1/test_check_markdown_templates_0')
+
+    def test_check_markdown_templates_when_folder_missing(tmp_path: Path) -> None:
+        """docs/template/markdown/ が無い（正常系）。"""
+    
+        # 準備
+        def _must_not_run(*args: object, **kwargs: object) -> object:
+            del args, kwargs
+            raise AssertionError("呼ばれてはいけない")
+    
+        # 実行
+>       result = check_all.check_markdown_templates(tmp_path, run=_must_not_run)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'check_all' has no attribute 'check_markdown_templates'. Did you mean: 'check_design_templates'?
+
+tests/unit/scripts/test_check_all.py:1540: AttributeError
+________________ test_check_markdown_templates_when_differences ________________
+
+tmp_path = PosixPath('/tmp/planner-575-tmp/pytest-of-shuhei2441/pytest-1/test_check_markdown_templates_1')
+
+    def test_check_markdown_templates_when_differences(tmp_path: Path) -> None:
+        """ずれがある（正常系）。"""
+        # 準備
+        (tmp_path / "docs/template/markdown").mkdir(parents=True)
+        run = _completed(
+            1,
+            "docs/template/markdown/er.md\tschemas/design/er.schema.yaml\n"
+            "docs/template/markdown/old.md\n",
+        )
+        # 実行
+>       result = check_all.check_markdown_templates(tmp_path, run=run)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'check_all' has no attribute 'check_markdown_templates'. Did you mean: 'check_design_templates'?
+
+tests/unit/scripts/test_check_all.py:1555: AttributeError
+_____________ test_check_markdown_templates_when_generation_fails ______________
+
+tmp_path = PosixPath('/tmp/planner-575-tmp/pytest-of-shuhei2441/pytest-1/test_check_markdown_templates_2')
+
+    def test_check_markdown_templates_when_generation_fails(tmp_path: Path) -> None:
+        """生成が終了コード 2 で終わる（異常系）。"""
+        # 準備
+        (tmp_path / "docs/template/markdown").mkdir(parents=True)
+        run = _completed(2, err="dev-docs を取得できません")
+        # 実行・検証
+>       with pytest.raises(check_all.MarkdownTemplateError, match="dev-docs を取得できません"):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'check_all' has no attribute 'MarkdownTemplateError'
+
+tests/unit/scripts/test_check_all.py:1572: AttributeError
+__________________ test_check_markdown_templates_when_timeout __________________
+
+tmp_path = PosixPath('/tmp/planner-575-tmp/pytest-of-shuhei2441/pytest-1/test_check_markdown_templates_3')
+
+    def test_check_markdown_templates_when_timeout(tmp_path: Path) -> None:
+        """打ち切る（異常系）。"""
+        import subprocess
+    
+        # 準備
+        (tmp_path / "docs/template/markdown").mkdir(parents=True)
+    
+        def _timeout(*args: object, **kwargs: object) -> object:
+            del kwargs
+            raise subprocess.TimeoutExpired(args[0], 180)  # type: ignore[arg-type]
+    
+        # 実行・検証
+>       with pytest.raises(check_all.MarkdownTemplateError, match="180 秒"):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'check_all' has no attribute 'MarkdownTemplateError'
+
+tests/unit/scripts/test_check_all.py:1588: AttributeError
+________________ test_check_markdown_templates_when_not_started ________________
+
+tmp_path = PosixPath('/tmp/planner-575-tmp/pytest-of-shuhei2441/pytest-1/test_check_markdown_templates_4')
+
+    def test_check_markdown_templates_when_not_started(tmp_path: Path) -> None:
+        """起動できない（異常系）。"""
+        # 準備
+        (tmp_path / "docs/template/markdown").mkdir(parents=True)
+    
+        def _missing(*args: object, **kwargs: object) -> object:
+            del args, kwargs
+            raise FileNotFoundError("uv")
+    
+        # 実行・検証
+>       with pytest.raises(check_all.MarkdownTemplateError, match="起動できません"):
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: module 'check_all' has no attribute 'MarkdownTemplateError'
+
+tests/unit/scripts/test_check_all.py:1602: AttributeError
+=========================== short test summary info ============================
+FAILED tests/unit/scripts/test_check_all.py::test_check_markdown_templates - ...
+FAILED tests/unit/scripts/test_check_all.py::test_check_markdown_templates_when_folder_missing
+FAILED tests/unit/scripts/test_check_all.py::test_check_markdown_templates_when_differences
+FAILED tests/unit/scripts/test_check_all.py::test_check_markdown_templates_when_generation_fails
+FAILED tests/unit/scripts/test_check_all.py::test_check_markdown_templates_when_timeout
+FAILED tests/unit/scripts/test_check_all.py::test_check_markdown_templates_when_not_started
+========================= 6 failed, 53 passed in 1.33s =========================
+exit=1
