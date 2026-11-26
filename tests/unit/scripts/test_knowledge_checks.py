@@ -395,6 +395,27 @@ def test_check_duplicate_ids_when_unique() -> None:
     assert result == []
 
 
+def test_check_duplicate_ids_when_aspects_duplicate() -> None:
+    """観点の ID の重複を違反にし、項目とは比べない（正常系）。"""
+    # 準備
+    doc = load_document(
+        "items:\n"
+        "  - id: a\n"
+        "aspects:\n"
+        "  - id: a\n"
+        "  - id: aspect-review-common-01\n"
+        "  - id: aspect-review-common-01\n"
+    )
+    # 実行
+    result = check_duplicate_ids(doc)
+    # 検証
+    assert len(result) == 1
+    assert result[0]["path"] == "aspects[2].id"
+    assert result[0]["rule"].startswith("6 行目: ")
+    assert "観点の ID" in result[0]["rule"]
+    assert "aspects[1]" in result[0]["rule"]
+
+
 def test_check_references() -> None:
     """実在する参照は通す（正常系）。"""
     # 準備
