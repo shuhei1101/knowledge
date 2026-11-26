@@ -162,7 +162,7 @@ scenarios:
       <!-- /map -->
     expected:
       - 作業ツリーの文書が変わらない
-      - 応答が `isError` で、違反の `path` が `$`、`rule` に textlint が無いことと `npm ci --prefix scripts/lint` が入る
+      - 応答が `isError` で、違反の `path` が `$`、`rule` に textlint が無いこと、`fix` に `npm ci --prefix scripts/lint` が入る
     test: test_error_when_textlint_missing
 lead: エージェントが knowledge のクローンか worktree で `write_docs` を呼び、project-index がスキーマと knowledge の検査のスクリプトで検査してから文書を書き込む。
 primary_actor: エージェント
