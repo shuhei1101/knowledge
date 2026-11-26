@@ -1,7 +1,7 @@
 id: "MOD-176-1"
 visibility: internal
 title: "検査と変換のスクリプト / scripts / _lint.py"
-lead: 全ての文書の検査で適用する markdownlint-cli2（LIB-176-1）・textlint（LIB-176-2）・yamllint（LIB-176-3）と mdmark（LIB-137-1）の map の点検の、在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応。
+lead: 全ての文書の検査（textlint は文書の違反の検査も）で適用する markdownlint-cli2（LIB-176-1）・textlint（LIB-176-2）・yamllint（LIB-176-3）と mdmark（LIB-137-1）の map の点検の、在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応。
 data_models:
   - name: LintSource
     title: lint を適用する Markdown
@@ -227,7 +227,7 @@ functions:
       description: markdownlint の違反の後に textlint の違反。行は `start_line` + CLI の行 - 1
     process: |-
       1. `sources` が空の場合、空を返却する
-      2. 一時フォルダに、`sources` の順の添字で `{添字:05d}.md` を書き出す
+      2. 一時フォルダに、`sources` の順の添字で `{添字:05d}.md` を書き出す（`run_textlint` と同じ書き出し方）
       3. markdownlint-cli2 を、作業ディレクトリを `lint_dir`、引数を `--config {lint_dir}/.markdownlint-cli2.jsonc` と全ての `.md` の絶対パスにして呼ぶ
          - 終了コードが 0・1 でない場合、`LintOutputError` を送出する
          - 標準エラーの `{ファイル}:{行}[:{列}] {error|warning} {ルール名}/{別名} {内容}` の行ごとに、ファイル名の添字の `LintSource` で `LintFinding` を作る。`rule` はルール名、`warning` は `warning` の行
@@ -515,5 +515,67 @@ functions:
         item: "constraints[workflow の突き合わせ]"
         type: requires
         when: "`extract_map_mermaid` を修正するときに、IF-72-3 の「workflow の突き合わせ」の決まりと突き合わせる。"
+  - name: run_textlint
+    title: textlint だけの呼び出し
+    kind: 関数
+    container: scripts/_lint.py
+    usecase: 文書の違反の検査
+    role: 外部呼び出し
+    scope: public
+    summary: Markdown を一時の `.md` に書き出し、textlint を 1 回呼んで、違反を元の文書の行で返却する
+    args:
+      - name: sources
+        title: lint を適用する Markdown
+        type: Sequence[LintSource]
+        required: true
+        description: '`collect_sources` が返却した文書 1 件の分'
+      - name: lint_dir
+        title: lint のフォルダ
+        type: Path
+        required: true
+        description: '`.textlintrc.json` を持つフォルダ。CLI の作業ディレクトリにする'
+      - name: textlint
+        title: textlint の実行ファイル
+        type: str
+        required: true
+        description: '`find_lint_clis` が返却した絶対パス'
+    returns:
+      type: list[LintFinding]
+      description: textlint の違反（warning を含む）。行は `start_line` + CLI の行 - 1
+    process: |-
+      1. `sources` が空の場合、空を返却する
+      2. 一時フォルダに、`sources` の順の添字で `{添字:05d}.md` を書き出す（末尾の改行を補う）
+      3. textlint を、作業ディレクトリを `lint_dir`、引数を `--config {lint_dir}/.textlintrc.json --format json` と全ての `.md` の絶対パスにして呼ぶ
+         - 終了コードが 0・1 でないか、標準出力が JSON として読み込めない場合、`LintOutputError` を送出する
+         - `[].messages[]` ごとに `LintFinding` を作る（`run_markdown_lints` の textlint と同じ）
+      4. 一時フォルダを削除して返却する
+    unit_tests:
+      - name: test_run_textlint
+        case: 正常
+        summary: 違反を元の文書の行で返却する
+        condition: '`start_line` が 26 の 1 件'
+        mock: textlint を、`severity` 2 の `ja-technical-writing/no-doubled-joshi` の 2 行目を JSON で出し終了コード 1 で終わるスクリプトに差し替える
+        expected: '`line` が 27・`rule` が `ja-technical-writing/no-doubled-joshi`・`warning` が `False` の 1 件'
+      - name: test_run_textlint_when_empty
+        case: 正常
+        summary: 適用する Markdown が無い
+        condition: 空の `sources`
+        mock: textlint を、呼ばれたらマーカーのファイルを作るスクリプトに差し替える
+        expected: 空で、マーカーのファイルが無い
+      - name: test_run_textlint_when_crashed
+        case: 異常
+        summary: textlint が落ちた
+        condition: 1 件
+        mock: textlint を、終了コード 2 で標準エラーに 1 行出すスクリプトに差し替える
+        expected: '`LintOutputError` で、メッセージに `textlint`・終了コード 2・標準エラーの行'
+        exception: 終了コードが 0・1 でない
+    refs:
+      - to: LIB-176-2
+        type: references
+        when: '`run_textlint` の外部ライブラリの呼び出し方を修正するときに、LIB-176-2 の使用する部分を確認する。'
+      - to: IF-72-1
+        item: constraints[textlint]
+        type: requires
+        when: '`run_textlint` を修正するときに、IF-72-1 の「textlint」の決まりと突き合わせる。'
 test_files:
   - tests/unit/scripts/test_lint.py
