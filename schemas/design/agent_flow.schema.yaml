@@ -355,9 +355,11 @@ $defs:
       id:
         type: string
         title: 識別子
-        description: 工程の識別子。エージェントフローの中で重ねない。`gates`・`proposals`・`unit` を記載する工程は必須。
+        description: 工程の識別子。エージェントフローの中で重ねない。
         x-used-by:
           - 実行で、ゲートと進み具合のデータが工程を指すキーにする。
+        x-rules:
+          - '`gates`・`proposals`・`unit` を記載する工程では省略しない。'
         pattern: ^[a-z0-9]+(_[a-z0-9]+)*$
         examples:
         - plan
@@ -485,9 +487,12 @@ $defs:
       unit:
         type: string
         title: 単位の種類
-        description: 工程の成果の単位。`single`（1 件）か `per_script`（台本 1 本に 1 件）。記載しなければ `single`。`gates` を持つ工程にだけ記載する。
+        description: 工程の成果の単位。`single`（1 件）か `per_script`（台本 1 本に 1 件）。
         x-used-by:
           - 実行で、進み具合のデータの単位にする。
+        x-rules:
+          - 記載しなければ `single` として扱う。
+          - '`gates` を持つ工程にだけ記載する。'
         enum:
         - single
         - per_script

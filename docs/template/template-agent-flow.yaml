@@ -59,7 +59,7 @@ items:
       | skill.frontmatter | その他の frontmatter | object | - | - | - | 上の項目に無い SKILL.md の frontmatter の項目を、SKILL.md の項目名のまま記載する。 | 実装で、SKILL.md の frontmatter に加える。 | `{paths: [docs/**]}` |
       | skill.frontmatter_reason | その他の frontmatter の理由 | string | - | - | - | `frontmatter` を記載する理由。`frontmatter` を記載したときは必須。 | レビューで、`frontmatter` が要るかを確認する。 | `docs の編集のときだけ読み込ませるため` |
       | steps | 工程 | array | 必須 | - | minItems: `1` | 順に進める工程。 | 生成で、Markdown の工程のセクションにする。<br>実行で、エージェントが順に進める工程にする。 | - |
-      | steps[].id | 識別子 | string | - | - | pattern: `^[a-z0-9]+(_[a-z0-9]+)*$` | 工程の識別子。エージェントフローの中で重ねない。`gates`・`proposals`・`unit` を記載する工程は必須。 | 実行で、ゲートと進み具合のデータが工程を指すキーにする。 | `plan` / `core_message` |
+      | steps[].id | 識別子 | string | - | - | pattern: `^[a-z0-9]+(_[a-z0-9]+)*$` | 工程の識別子。エージェントフローの中で重ねない。 | 実行で、ゲートと進み具合のデータが工程を指すキーにする。 | `plan` / `core_message` |
       | steps[].name | 名前 | string | 必須 | - | - | 工程の名前。手順の中で重ねない。 | 生成で、Markdown の工程の見出しにする。<br>設計で、`ref` が工程を指すキーにする。<br>実行で、進み具合の目印にする。 | `コメントを取得する` |
       | steps[].body | 本文 | string | - | - | - | 工程でやること。 | 生成で、Markdown の工程の本文にする。 | `選別済みで未読のコメントを取得する` |
       | steps[].ref | 埋め込む工程 | string | - | - | pattern: `^[^\s#]+#.*$` | 共通の工程を埋め込む。`{エージェントフローの id}#steps[{name}]` で記載する。 | 変換で、指した工程の中身に置き換える。 | `shared/character-state#steps[キャラクター情報を取得する]` |
@@ -91,7 +91,7 @@ items:
       | steps[].proposals.authors[].author | 作成者の識別子 | string | 必須 | - | - | `node`（エージェントフローを進めるノード）か、外部の作成者の識別子。 | 実行で、案を依頼する先にする。 | `node` / `chatgpt` |
       | steps[].proposals.authors[].toggle | 切り替え | object | - | - | - | 記載がある作成者は、制作の設定で工程ごとにオンとオフを切り替えられる。 | 実行で、制作の設定で切り替えられる項目にする。 | `{}` |
       | steps[].proposals.min_per_author | 作成者ごとの案の数 | integer | 必須 | - | minimum: `1` | 作成者ごとに依頼する案の数の下限。 | 実行で、作成者ごとに依頼する案の数にする。 | `3` |
-      | steps[].unit | 単位の種類 | string | - | `single` / `per_script` | - | 工程の成果の単位。`single`（1 件）か `per_script`（台本 1 本に 1 件）。記載しなければ `single`。`gates` を持つ工程にだけ記載する。 | 実行で、進み具合のデータの単位にする。 | - |
+      | steps[].unit | 単位の種類 | string | - | `single` / `per_script` | - | 工程の成果の単位。`single`（1 件）か `per_script`（台本 1 本に 1 件）。 | 実行で、進み具合のデータの単位にする。 | - |
       | human_escalation | ヒューマンエスカレーション | object | - | - | - | この手順の成果物で、該当すれば必ず利用者に判断を仰ぐ項目の表。 | 実行で、実行者とレビュアーが表を取得して該当を判定する。<br>レビューで、手順の成果物に利用者の判断が要る条件があるときに、表を指しているかを確認する。 | - |
       | human_escalation.ref | 表の ID | string | 必須 | - | pattern: `^[a-z0-9]+(-[a-z0-9]+)*(/[a-z0-9]+(-[a-z0-9]+)*)*$` | ヒューマンエスカレーションの表（`human_escalation`）の文書の ID。 | 実行で、実行者とレビュアーが表を取得する ID にする。 | `script-creation/human-escalation` |
       | refs | 関連 | array | - | - | maxItems: `8` | 参照する共通の手順・ノウハウへの関連。 | 生成で、関連する手順へのリンクにする。<br>レビューで、関連する手順をたどって食い違いを確認する。 | - |
@@ -113,12 +113,13 @@ items:
       | id | - | brain/stream/on_event | `_` でつないでいる |
       | agents | 記載しなければ、フォルダ構成で配置先のフォルダの `used_by` にあるエージェントにする。<br>配置先のフォルダの `used_by` と両方を記載したときは、食い違いを検査する。 | - | - |
       | skill.frontmatter | 上の項目で表せない理由があるときだけ記載する。 | - | - |
-      | steps[].id | - | core-message | `-` でつないでいる。進み具合のデータのキーにするため `_` でつなぐ |
+      | steps[].id | `gates`・`proposals`・`unit` を記載する工程では省略しない。 | core-message | `-` でつないでいる。進み具合のデータのキーにするため `_` でつなぐ |
       | steps[].body | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | steps[].calls[].type | 文書の `type` が `skill` で MCP のツールを呼ぶときは、`mcp` にせず `tool` にし、`tool` に完全な名前を記載する。 | - | - |
       | steps[].calls[].server | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
       | steps[].calls[].args | 引数を自由にするときは記載しない。 | - | - |
       | steps[].calls[].tools | レビュアーのサブエージェントには `Agent` を許可しない。 | - | - |
+      | steps[].unit | 記載しなければ `single` として扱う。<br>`gates` を持つ工程にだけ記載する。 | - | - |
       | human_escalation | レビュアーのエージェントフローは、確認観点の表を `refs` で指す。 | - | - |
       | human_escalation.ref | - | script-creation/human_escalation | `_` でつないでいる |
       | refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
