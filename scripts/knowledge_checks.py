@@ -8,13 +8,13 @@
 """標準入力の文書 1 件に、スキーマで見られない決まりを当て、違反の配列の JSON を標準出力へ出す。
 
 dev-docs の validators の knowledge-checks。項目の ID の重複・id: の参照と related の to の実在・aliases の衝突・文書の中の aliases の重複と、
-対応表の examples が照合と合うか、Markdown の項目の textlint の違反を検査する。
+対応表の examples が照合と合うか、Markdown の項目の markdownlint-cli2・textlint の違反、文書の YAML の yamllint の違反、map の点検のずれを検査する。
 作業ディレクトリは配信元（knowledge のリポジトリ）の直下にする。
 
 Usage:
 # 文書 1 件を検査する
 uv run --frozen --script scripts/knowledge_checks.py < docs/rule/dev-yaml.yaml
-# textlint の設定と CLI を持つフォルダを指定して検査する
+# lint の設定と CLI を持つフォルダを指定して検査する
 uv run --frozen --script scripts/knowledge_checks.py [--lint-dir scripts/lint] < docs/rule/dev-yaml.yaml
 """
 
@@ -22,6 +22,7 @@ import argparse
 import io
 import json
 import re
+import shutil
 import sys
 import traceback
 import unicodedata
@@ -45,11 +46,17 @@ from _common import (
 )
 from _lint import (
     DEFAULT_LINT_DIR,
+    MARKDOWNLINT,
     TEXTLINT,
     LintOutputError,
+    MdmarkCheckError,
+    collect_map_sources,
     collect_sources,
     find_lint_clis,
-    run_textlint,
+    load_yamllint_config,
+    run_map_check,
+    run_markdown_lints,
+    run_yamllint,
 )
 
 # 対応表の照合は slop-check のフックが持つものを使う
@@ -87,7 +94,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--lint-dir",
         type=Path,
         default=DEFAULT_LINT_DIR,
-        help="textlint の設定と node_modules/.bin/textlint を持つフォルダ",
+        help="lint の設定と node_modules/.bin/ の markdownlint-cli2・textlint を持つフォルダ",
     )
     args = parser.parse_args(argv)
     lint_dir = cast("Path", args.lint_dir)
@@ -97,8 +104,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         text = sys.stdin.read()
         violations = check_document(text, Path.cwd())
-        # textlint は文書の検査の後ろにつなぐ（全ての文書の検査は check_document だけを文書ごとに呼ぶ）
-        violations.extend(check_textlint(text, lint_dir))
+        # lint と map の点検は文書の検査の後ろにつなぐ（全ての文書の検査は check_document だけを文書ごとに呼ぶ）
+        violations.extend(check_markdown_lints(text, lint_dir))
+        violations.extend(check_yamllint(text, lint_dir))
+        violations.extend(check_map(text))
     except Exception:  # noqa: BLE001 - 想定していない例外は traceback を出して終了コードで返す
         traceback.print_exc()
         return _EXIT_UNEXPECTED
@@ -484,46 +493,107 @@ def check_word_list(doc: CommentedMap) -> list[Violation]:
 # 標準入力の文書の拡張子。collect_sources に YAML として読ませる
 _STDIN_PATH = PurePosixPath("-.yaml")
 
-# textlint を入れるコマンド
-_TEXTLINT_INSTALL = "npm ci --prefix scripts/lint"
+# lint の CLI を入れるコマンド
+_LINT_INSTALL = "npm ci --prefix scripts/lint"
+
+# mdmark を呼ぶ npx のコマンド名
+_NPX = "npx"
 
 
-def check_textlint(text: str, lint_dir: Path) -> list[Violation]:
-    """文書の Markdown の項目に textlint を当て、error の違反を元の文書の行の違反で返す。"""
+def check_markdown_lints(text: str, lint_dir: Path) -> list[Violation]:
+    """文書の Markdown の項目に markdownlint-cli2・textlint を当て、error の違反を元の文書の行の違反で返す。"""
     sources = collect_sources(_STDIN_PATH, text)
-    # Markdown の項目が無い（読めない文書を含む）: textlint を呼ばない
+    # Markdown の項目が無い（読めない文書を含む）: CLI を呼ばない
     if not sources:
         return []
-    textlint = find_lint_clis(lint_dir)[TEXTLINT]
-    # textlint が入っていない: 書き込みを止める 1 件を返す
-    if textlint is None:
+    found = find_lint_clis(lint_dir)
+    missing = [name for name in (MARKDOWNLINT, TEXTLINT) if found[name] is None]
+    # CLI が入っていない: 書き込みを止める 1 件を返す
+    if missing:
         return [
             {
                 "path": "$",
-                "rule": f"1 行目: textlint が {lint_dir}/node_modules/.bin/ に見つかりません",
-                "fix": f"{_TEXTLINT_INSTALL} を実行して textlint を入れる",
+                "rule": f"1 行目: {'・'.join(missing)} が {lint_dir}/node_modules/.bin/ に見つかりません",
+                "fix": f"{_LINT_INSTALL} を実行して markdownlint-cli2・textlint を入れる",
             }
         ]
+    clis = {name: path for name, path in found.items() if path is not None}
     try:
-        findings = run_textlint(sources, lint_dir, textlint)
+        findings = run_markdown_lints(sources, lint_dir, clis)
     except LintOutputError as error:
-        # textlint 自身が失敗した: 書き込みを止める 1 件を返す
+        # CLI 自身が失敗した: 書き込みを止める 1 件を返す
         return [
             {
                 "path": "$",
-                "rule": f"1 行目: textlint を実行できません: {error.message}",
-                "fix": f"{_TEXTLINT_INSTALL} を実行して textlint を再インストールする",
+                "rule": f"1 行目: markdownlint-cli2・textlint を実行できません: {error.message}",
+                "fix": f"{_LINT_INSTALL} を実行して markdownlint-cli2・textlint を再インストールする",
             }
         ]
     # warning のルールの違反は書き込みを止めない
     return [
         {
             "path": finding.item_path,
-            "rule": f"{finding.line} 行目: textlint/{finding.rule}: {finding.message}",
-            "fix": f"文を書き換えて textlint の {finding.rule} の違反を無くす",
+            "rule": f"{finding.line} 行目: {finding.tool}/{finding.rule}: {finding.message}",
+            "fix": f"文を書き換えて {finding.tool} の {finding.rule} の違反を無くす",
         }
         for finding in findings
         if not finding.warning
+    ]
+
+
+def check_yamllint(text: str, lint_dir: Path) -> list[Violation]:
+    """文書の YAML 全体に yamllint を当て、error の違反をファイル全体の違反で返す。"""
+    try:
+        load_document(text)
+    except DocumentError:
+        # 読めない文書の違反は文書の検査が出す
+        return []
+    config = load_yamllint_config(lint_dir)
+    return [
+        {
+            "path": finding.item_path,
+            "rule": f"{finding.line} 行目: yamllint/{finding.rule}: {finding.message}",
+            "fix": f"YAML を書き換えて yamllint の {finding.rule} の違反を無くす",
+        }
+        for finding in run_yamllint(_STDIN_PATH, text, config)
+        if not finding.warning
+    ]
+
+
+def check_map(text: str) -> list[Violation]:
+    """文書の map を含む項目を mdmark で点検し、map のずれを元の文書の行の違反で返す。"""
+    sources = collect_map_sources(_STDIN_PATH, text)
+    # map を含む項目が無い: npx を探さない
+    if not sources:
+        return []
+    npx = shutil.which(_NPX)
+    # npx が無い: 書き込みを止める 1 件を返す
+    if npx is None:
+        return [
+            {
+                "path": "$",
+                "rule": "1 行目: npx が PATH に見つかりません",
+                "fix": "Node 24 以降を入れて npx を使用できるようにする",
+            }
+        ]
+    try:
+        findings = run_map_check(sources, npx)
+    except MdmarkCheckError as error:
+        # mdmark の点検が失敗した: 書き込みを止める 1 件を返す
+        return [
+            {
+                "path": "$",
+                "rule": f"1 行目: mdmark の点検が失敗しました: {error.message}",
+                "fix": "npx が GitHub から mdmark を取得できるかを確認する",
+            }
+        ]
+    return [
+        {
+            "path": finding.item_path,
+            "rule": f"{finding.line} 行目: mdmark/{finding.rule}: {finding.message}",
+            "fix": f"map の範囲を書き換えて mdmark の {finding.rule} のずれを無くす",
+        }
+        for finding in findings
     ]
 
 

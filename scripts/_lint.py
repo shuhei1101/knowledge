@@ -1,4 +1,4 @@
-"""全ての文書の検査で当てる markdownlint-cli2・textlint・yamllint と mdmark の map の点検の、在りかの確認と呼び出しと違反の行の対応。
+"""全ての文書の検査と書き込みの検査で当てる markdownlint-cli2・textlint・yamllint と mdmark の map の点検の、在りかの確認と呼び出しと違反の行の対応。
 
 check_all.py・knowledge_checks.py が同じフォルダから import する。
 """
@@ -365,15 +365,6 @@ def run_markdown_lints(
         )
         textlint = _call_textlint(files, sources, lint_dir, clis[TEXTLINT])
     return _parse_markdownlint(markdownlint.stderr, sources) + textlint
-
-
-def run_textlint(sources: Sequence[LintSource], lint_dir: Path, textlint: str) -> list[LintFinding]:
-    """Markdown を一時の .md に書き出し、textlint を 1 回呼んで、違反を元の文書の行で返す。"""
-    if not sources:
-        return []
-    with tempfile.TemporaryDirectory() as folder:
-        files = _write_sources(sources, Path(folder))
-        return _call_textlint(files, sources, lint_dir, textlint)
 
 
 def load_yamllint_config(lint_dir: Path, name: str = _YAMLLINT_CONFIG) -> YamlLintConfig:
