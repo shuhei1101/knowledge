@@ -288,6 +288,7 @@ preconditions:
   - '`scripts/lint/.yamllint.yaml` が `comments` を `level: error` にしている'
   - '`scripts/lint/.yamllint-schemas.yaml` が `brackets`・`braces` を `forbid: non-empty` にしている'
   - 開発コマンドの環境構築（クローン直後）を実行してある
+  - 全ての文書の検査が、Markdown のテンプレートの生成と同じ固定した dev-docs のコミットを取得できる
 success_guarantee: 違反が無ければ終了コード 0 で終わる。
 minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反・スキーマのフロー形式・設計書のスキーマの誤り・スキーマとずれたテンプレート・スキーマとずれた Markdown のテンプレート・map の図の誤り・workflow のファイルとインターフェース定義の食い違い）が 1 つでもあれば終了コード 1 で終わり、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名。スキーマとずれたテンプレートは、行が `items` のキーの行で、内容が生成元のスキーマのパスと生成のコマンド。スキーマとずれた Markdown のテンプレートは、パスがずれたファイルで、内容が生成元のスキーマのパスと Markdown のテンプレートの生成のコマンド。map の図の誤りは mdmark の違反の種類。workflow のファイルとの食い違いは、インターフェース定義の項目のパスと workflow のファイルのパスと値）が標準出力に出る。文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに終了コード 2 で終わる。
 notes:

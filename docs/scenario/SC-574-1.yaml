@@ -18,14 +18,14 @@ preconditions:
   - '`schemas/design/` の設計書の種類のスキーマ（`common`・`index` を除く）ごとに、`docs/template/` に対応する YAML のテンプレートの文書がある'
   - 生成のコマンドが固定した dev-docs のコミットを取得できる
 success_guarantee: '設計書の種類ごとの雛形と記載例の Markdown が、スキーマから dev-docs の変換で作った内容と一致し、dev-docs の画面専用のマーカー `<!-- dev-docs-table: … -->` を含まない。管理用の YAML の行が、対応する YAML のテンプレートの `name`・`description`・`tags` から作った値と一致する。'
-minimal_guarantee: スキーマが読み込めないか、対応する YAML のテンプレートが無いか、変換に失敗すれば、どのファイルも書き換えずに 0 以外の終了コードで終わり、原因のパスが標準エラーに出る。
+minimal_guarantee: スキーマが読み込めないか、対応する YAML のテンプレートが無いか、変換に失敗すれば、どのファイルも書き換えずに終了コード 2 で終わり、原因のパスが標準エラーに出る。
 scenarios:
   - name: 正常シナリオ
     setup:
       - name: Mock
         description: 差し替えない
       - name: スキーマ
-        description: 全ての Markdown のテンプレートと管理用の YAML がスキーマから生成した状態の knowledge のクローンで、`schemas/design/er.schema.yaml` に `title` を持つキーを 1 つ追加し、トップの `examples` にそのキーの値を加えたもの。他のスキーマは変えていない
+        description: 全ての Markdown のテンプレートと管理用の YAML がスキーマから生成した状態の knowledge のクローンで、`schemas/design/er.schema.yaml` に `title` を持つキーを 1 つ追加し、トップの `examples` にそのキーの値を加えたもの。他のスキーマは変えていない。YAML のテンプレートの生成は実行してある
     flow: |-
       <!-- map -->
 
