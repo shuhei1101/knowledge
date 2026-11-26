@@ -45,8 +45,10 @@ docs:
     status: todo
   - page: docs/test-procedure/TP-72-1.yaml
     new: false
-    change: 結合の層の前提に、全ての文書の検査が起動する「Markdown のテンプレートの生成」が dev-docs を git から取得できることを加える
-    status: todo
+    change: lint・単体・結合の層のコマンドに固定したコミットの dev-docs を加え、前提に dev-docs を git から取得できることを加える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T15:12:17.700111+00:00'
   - page: docs/library/LIB-574-1.yaml
     new: true
     change: dev-docs の schema_to_markdown を取り込む外部ライブラリの設計書を新設する（コミットの固定と上げ方）
@@ -68,4 +70,8 @@ docs:
   - page: scripts/build_markdown_templates.py.lock
     new: true
     change: dev-docs の固定したコミットを含む依存のロックを新設する
+    status: todo
+  - page: .github/workflows/test.yml
+    new: false
+    change: 「層の全件を回す」のコマンドをテスト実行方法の単体・結合の層の run_all と同じにする（dev-docs を加える）
     status: todo
