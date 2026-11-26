@@ -1,0 +1,62 @@
+docs:
+  - page: schemas/design/screen.schema.yaml
+    new: false
+    change: elements[] に件数の上限と超えたときの扱い（折り返す・件数でまとめる・読み込みを分ける）の任意のキー、overflow に上限が無い値の区分のキーを追加し、入力を持たない値を表示する要素と固定の領域に配置する要素で overflow を allOf の if / then で必須にして、x-rules・examples を合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:40:14.767992+00:00'
+  - page: docs/template/template-screen-design.yaml
+    new: false
+    change: scripts/build_templates.py でスキーマから items を再生成し、追加したキーと必須の条件の行を出す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:40:14.767992+00:00'
+  - page: docs/template/markdown/screen-design.md
+    new: false
+    change: scripts/build_markdown_templates.py でスキーマから再生成し、追加したキーの列を出す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:40:14.767992+00:00'
+  - page: docs/template/markdown/screen-design.example.md
+    new: false
+    change: scripts/build_markdown_templates.py でスキーマの examples から再生成する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:40:14.767992+00:00'
+  - page: docs/rule/ui-layout.yaml
+    new: false
+    change: 落とし穴チェックリストのテキスト・コードに pitfall-text-code-05 を追加し、画面設計の overflow.type の既定（固定の領域は truncate と全文の導線、それ以外は wrap、折り返すと判読できない値だけ scroll）を記載する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:54:57.430370+00:00'
+  - page: docs/rule/testing-core-e2e.yaml
+    new: false
+    change: rules-10 に overflow.unbounded の要素の文字数と、count_limit を持つ要素の max_count の件数と超える件数の場面を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:54:57.430370+00:00'
+  - page: docs/rule/react-devtools-storybook.yaml
+    new: false
+    change: storybook-07 に overflow.unbounded の要素で使用するコンポーネントの文字数と、件数が変わる値を並べるコンポーネントのストーリーを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:54:57.430370+00:00'
+  - page: docs/checksheet/checksheet-review-implemented-screen.yaml
+    new: false
+    change: 長い値の行の補足に unbounded の文字数を追加し、件数が変わる値の上限と上限を超える件数のスクリーンショットの行を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:54:57.430370+00:00'
+  - page: docs/checksheet/checksheet-review-mock-html.yaml
+    new: false
+    change: 件数が変わる値の上限と上限を超える件数のスクリーンショットの行を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:54:57.430370+00:00'
+scope_out:
+  - item: ai-monitor の手順（『モック作成』・『設計』の画面設計の観点）と規約『モック画面構成』の「データの量の場面」を、追加したキーを参照する形に追随させる
+    reason: 'Issue #584 の後続で、ai-monitor のリポジトリの変更。今回追加するキーとメジャーを上げたタグを前提にする'
+    plan: shuhei1101/ai-monitor#3833
+  - item: 配布先（ai-monitor・aituber・mindstella・claude-balancer・shuhdev-gateway・dev-docs・mdmark）の画面設計への overflow の記載
+    reason: 各プロジェクトは design-schemas のタグを指しており、メジャーを上げたタグへ参照を上げるときにそのプロジェクトで記載する。設計書の変換は配布先が参照のリビジョンを上げるときに掛けるため、この作業 PR の反映作業にしない
+    plan: none

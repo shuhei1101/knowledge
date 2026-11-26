@@ -115,6 +115,36 @@ properties:
       - name
       - kind
       - description
+      allOf:
+      - if:
+          properties:
+            io:
+              const: 表示
+          required:
+          - io
+          - source
+        then:
+          required:
+          - overflow
+      - if:
+          properties:
+            fixed_area:
+              const: true
+          required:
+          - fixed_area
+          anyOf:
+          - required:
+            - source
+          - properties:
+              io:
+                enum:
+                - 入力
+                - 入出力
+            required:
+            - io
+        then:
+          required:
+          - overflow
       properties:
         name:
           type: string
@@ -222,6 +252,13 @@ properties:
             - 実装で、要素を配置する入れ子の場所にする。
           examples:
             - 削除確認ダイアログ > フッター
+        fixed_area:
+          type: boolean
+          title: 固定の領域
+          description: 幅か高さが固定の領域（ヘッダー・フッター・サイドバー・ツールバー・表のセル 等）に配置する要素なら `true`。
+          x-used-by:
+            - 実装で、値が長くても領域の大きさを変えない折り返し・省略・横スクロールにする。
+            - 検査で、`overflow` を必須にする要素を決める。
         description:
           type: string
           title: 説明
@@ -358,9 +395,22 @@ properties:
             - レビューで、最大の長さの値を入れた画面のスクリーンショットと照合する。
           x-rules:
             - 長さが変わる値を表示する要素に記載し、固定の文言だけの要素には記載しない。
+            - 入力を持たない値を表示する要素（`io` が `表示` で `source` を持つ要素）には必ず記載する。
+            - 固定の領域に配置する要素（`fixed_area` が `true`）で、`source` を持つか `io` が `入力`・`入出力` の要素には必ず記載する。
+            - '`type` は、規約『レイアウト』の `pitfall-text-code-05`（長さが変わる値を折り返すか省略するかの既定）に従って選ぶ。'
           additionalProperties: false
           required:
           - type
+          allOf:
+          - if:
+              properties:
+                unbounded:
+                  const: true
+              required:
+              - unbounded
+            then:
+              properties:
+                max_length: false
           properties:
             type:
               type: string
@@ -382,8 +432,55 @@ properties:
                 - テストで、最大の長さの値を入れた場面の値の文字数にする。
                 - レビューで、スクリーンショットの値が最大の長さかを確認する。
               x-rules:
-                - 入力の最大長（`max_length`）を持たない要素には記載する。
+                - 入力の最大長（`max_length`）を持たず、`unbounded` が `true` でない要素には記載する。
                 - 入力を受ける要素で、入力の最大長（`max_length`）と同じ値なら省く。
+            unbounded:
+              type: boolean
+              title: 長さの上限が無い値
+              description: 表示する値の長さに上限が無い（AI や他の人が記載した文字を、長さを制限せずに表示する）なら `true`。
+              x-used-by:
+                - 実装で、どれだけ長い値でも崩れない折り返し・省略・横スクロールにする。
+                - テストで、`x-rules` の文字数の値を入れた場面にする。
+                - レビューで、長さを制限していない値の要素に `overflow` の記載が漏れていないかを確認する。
+              x-rules:
+                - '`true` の要素は、表示する最大の長さ（`max_length`）を記載しない。'
+                - テストで入れる値の文字数は、同じ画面設計の要素の表示する最大の長さ（`overflow.max_length`、無ければ `max_length`）のうち最大の値の 3 倍にする。
+                - 同じ画面設計に最大の長さを持つ要素が無いときは、テストで入れる値の文字数を `description` に記載する。
+        count_limit:
+          type: object
+          title: 件数の上限
+          description: 複数の値を並べる要素（タグ・一覧・チップ 等）の、表示する件数の上限と、上限を超えたときの扱い。
+          x-used-by:
+            - 実装で、表示する件数の上限と、超えた分の折り返し・件数でのまとめ・読み込みの分割にする。
+            - テストで、上限の件数と上限を超える件数の値を入れた場面にする。
+            - レビューで、上限を超える件数の値を入れた画面のスクリーンショットと照合する。
+          x-rules:
+            - 並べる値の件数が変わる要素に記載し、件数が固定の要素には記載しない。
+          additionalProperties: false
+          required:
+          - max_count
+          - type
+          properties:
+            max_count:
+              type: integer
+              minimum: 1
+              title: 表示する最大の件数
+              description: '`summarize`・`paginate` では一度に表示する値の最大の件数、`wrap` では折り返さずに 1 行に並べる値の最大の件数。'
+              x-used-by:
+                - 実装で、件数でまとめる・読み込みを分ける・折り返す境目の件数にする。
+                - テストで、上限の件数と、上限を超える件数（`wrap` では折り返す件数）の値を入れた場面の件数にする。
+            type:
+              type: string
+              title: 上限を超えたときの扱い
+              description: 上限を超えたときに、折り返して全て出す（`wrap`）・超えた分を件数でまとめる（`summarize`。「+3」と出す）・読み込みを分ける（`paginate`。ページネーション・続きの読み込み）のどれにするか。
+              x-used-by:
+                - 実装で、上限を超えた分の出し方にする。
+              x-rules:
+                - '`summarize` にする要素は、まとめた値の全てを出す方法を `description` に記載する。'
+              enum:
+              - wrap
+              - summarize
+              - paginate
         display_format:
           type: string
           title: 表示形式
@@ -615,6 +712,32 @@ examples:
       type: truncate
       max_length: 50
     source: プロジェクト詳細取得.project.name
+  - name: プロジェクトのタグ
+    kind: label
+    position: フォーム本体 > プロジェクト名の下
+    description: プロジェクトに付いたタグを横に並べる。1 件のタグが 20 文字を超えたら省略し、全文をツールチップに出す。上限を超えた分は「+3」にまとめ、押すと全てのタグをポップオーバーに出す
+    io: 表示
+    type: 文字列の配列
+    visible_when: タグが 1 件以上あるとき
+    overflow:
+      type: truncate
+      max_length: 20
+    count_limit:
+      max_count: 5
+      type: summarize
+    source: プロジェクト詳細取得.project.tags[]
+  - name: プロジェクトの説明
+    kind: label
+    position: サイドバー > プロジェクトの情報
+    fixed_area: true
+    description: 他の人が記載したプロジェクトの説明を出す。3 行を超えたら省略し、押すと全文をダイアログに出す
+    io: 表示
+    type: 文字列
+    visible_when: 説明があるとき
+    overflow:
+      type: truncate
+      unbounded: true
+    source: プロジェクト詳細取得.project.description
   - name: タスク名入力欄
     kind: input
     position: フォーム本体

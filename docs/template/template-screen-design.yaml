@@ -53,6 +53,7 @@ items:
       | elements[].slots[].name | スロット | string | 必須 | - | - | 部品設計の `slots` の `name`。 | 実装で、差し込むスロットにする。 | `default` / `actions` |
       | elements[].slots[].value | 差し込む中身 | string | 必須 | - | - | 差し込む要素の名前か、部品の部品設計。 | 実装で、差し込む要素か部品にする。 | `行の番号` / `CMP-3#` |
       | elements[].position | 位置 | string | - | - | - | `>` で区切った入れ子のパス。 | 実装で、要素を配置する入れ子の場所にする。 | `削除確認ダイアログ > フッター` |
+      | elements[].fixed_area | 固定の領域 | boolean | - | - | - | 幅か高さが固定の領域（ヘッダー・フッター・サイドバー・ツールバー・表のセル 等）に配置する要素なら `true`。 | 実装で、値が長くても領域の大きさを変えない折り返し・省略・横スクロールにする。<br>検査で、`overflow` を必須にする要素を決める。 | - |
       | elements[].description | 説明 | string | 必須 | - | - | 要素の役割（何を表示し、何を受け付けるか）。 | 実装で、要素に表示する値と受け付ける入力を決める。 | - |
       | elements[].label | 表示文言 | string | - | - | - | 画面に固定で出る文字列。 | 実装で、画面に出す文字列にする。 | - |
       | elements[].placeholder | プレースホルダ | string | - | - | - | 入力欄が空のときに出す文言。 | 実装で、入力欄のプレースホルダにする。 | - |
@@ -76,6 +77,10 @@ items:
       | elements[].overflow | 長い値の扱い | object | - | - | - | 長さが変わる値（記録から取得する値・利用者が入力する値）を表示する要素の、値が表示幅に収まらないときの扱いと、表示する値の最大の長さ。 | 実装で、値が収まらないときの折り返し・省略・横スクロールにする。<br>テストで、最大の長さの値を入れた場面にする。<br>レビューで、最大の長さの値を入れた画面のスクリーンショットと照合する。 | - |
       | elements[].overflow.type | 扱い | string | 必須 | `wrap` / `truncate` / `scroll` | - | 値が収まらないときに、折り返す（`wrap`）・省略する（`truncate`）・横にスクロールする（`scroll`）のどれにするか。 | 実装で、値の側の折り返し・省略・横スクロールの指定にする。 | - |
       | elements[].overflow.max_length | 表示する最大の長さ | integer | - | - | - | 表示する値の最大の文字数。 | テストで、最大の長さの値を入れた場面の値の文字数にする。<br>レビューで、スクリーンショットの値が最大の長さかを確認する。 | - |
+      | elements[].overflow.unbounded | 長さの上限が無い値 | boolean | - | - | - | 表示する値の長さに上限が無い（AI や他の人が記載した文字を、長さを制限せずに表示する）なら `true`。 | 実装で、どれだけ長い値でも崩れない折り返し・省略・横スクロールにする。<br>テストで、`x-rules` の文字数の値を入れた場面にする。<br>レビューで、長さを制限していない値の要素に `overflow` の記載が漏れていないかを確認する。 | - |
+      | elements[].count_limit | 件数の上限 | object | - | - | - | 複数の値を並べる要素（タグ・一覧・チップ 等）の、表示する件数の上限と、上限を超えたときの扱い。 | 実装で、表示する件数の上限と、超えた分の折り返し・件数でのまとめ・読み込みの分割にする。<br>テストで、上限の件数と上限を超える件数の値を入れた場面にする。<br>レビューで、上限を超える件数の値を入れた画面のスクリーンショットと照合する。 | - |
+      | elements[].count_limit.max_count | 表示する最大の件数 | integer | 必須 | - | minimum: `1` | `summarize`・`paginate` では一度に表示する値の最大の件数、`wrap` では折り返さずに 1 行に並べる値の最大の件数。 | 実装で、件数でまとめる・読み込みを分ける・折り返す境目の件数にする。<br>テストで、上限の件数と、上限を超える件数（`wrap` では折り返す件数）の値を入れた場面の件数にする。 | - |
+      | elements[].count_limit.type | 上限を超えたときの扱い | string | 必須 | `wrap` / `summarize` / `paginate` | - | 上限を超えたときに、折り返して全て出す（`wrap`）・超えた分を件数でまとめる（`summarize`。「+3」と出す）・読み込みを分ける（`paginate`。ページネーション・続きの読み込み）のどれにするか。 | 実装で、上限を超えた分の出し方にする。 | - |
       | elements[].display_format | 表示形式 | string | - | - | - | 日付・時刻・数値の表示の形式と、表示の例。 | 実装で、日付・時刻・数値の書式にする。 | - |
       | elements[].align | 文字揃え | string | - | `左` / `中央` / `右` | - | 文字揃え（左・中央・右）。 | 実装で、文字揃えにする。 | - |
       | elements[].tab_order | タブ順 | integer | - | - | - | Tab キーで移る順番。 | 実装で、キー操作の順にする。 | - |
@@ -138,9 +143,12 @@ items:
       | elements[].name | 画面の中で一意にする。 | - | - |
       | elements[].component | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
       | elements[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
-      | elements[].overflow | 長さが変わる値を表示する要素に記載し、固定の文言だけの要素には記載しない。 | - | - |
+      | elements[].overflow | 長さが変わる値を表示する要素に記載し、固定の文言だけの要素には記載しない。<br>入力を持たない値を表示する要素（`io` が `表示` で `source` を持つ要素）には必ず記載する。<br>固定の領域に配置する要素（`fixed_area` が `true`）で、`source` を持つか `io` が `入力`・`入出力` の要素には必ず記載する。<br>`type` は、規約『レイアウト』の `pitfall-text-code-05`（長さが変わる値を折り返すか省略するかの既定）に従って選ぶ。 | - | - |
       | elements[].overflow.type | `truncate` にする要素は、省略した値の全文を出す方法を `description` に記載する。 | - | - |
-      | elements[].overflow.max_length | 入力の最大長（`max_length`）を持たない要素には記載する。<br>入力を受ける要素で、入力の最大長（`max_length`）と同じ値なら省く。 | - | - |
+      | elements[].overflow.max_length | 入力の最大長（`max_length`）を持たず、`unbounded` が `true` でない要素には記載する。<br>入力を受ける要素で、入力の最大長（`max_length`）と同じ値なら省く。 | - | - |
+      | elements[].overflow.unbounded | `true` の要素は、表示する最大の長さ（`max_length`）を記載しない。<br>テストで入れる値の文字数は、同じ画面設計の要素の表示する最大の長さ（`overflow.max_length`、無ければ `max_length`）のうち最大の値の 3 倍にする。<br>同じ画面設計に最大の長さを持つ要素が無いときは、テストで入れる値の文字数を `description` に記載する。 | - | - |
+      | elements[].count_limit | 並べる値の件数が変わる要素に記載し、件数が固定の要素には記載しない。 | - | - |
+      | elements[].count_limit.type | `summarize` にする要素は、まとめた値の全てを出す方法を `description` に記載する。 | - | - |
       | elements[].pending_state | 書き込みを始める要素と、応答を待つ間に操作を止める要素に記載する。 | - | - |
       | elements[].action_ref | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
       | elements[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
@@ -178,6 +186,32 @@ items:
           type: truncate
           max_length: 50
         source: プロジェクト詳細取得.project.name
+      - name: プロジェクトのタグ
+        kind: label
+        position: フォーム本体 > プロジェクト名の下
+        description: プロジェクトに付いたタグを横に並べる。1 件のタグが 20 文字を超えたら省略し、全文をツールチップに出す。上限を超えた分は「+3」にまとめ、押すと全てのタグをポップオーバーに出す
+        io: 表示
+        type: 文字列の配列
+        visible_when: タグが 1 件以上あるとき
+        overflow:
+          type: truncate
+          max_length: 20
+        count_limit:
+          max_count: 5
+          type: summarize
+        source: プロジェクト詳細取得.project.tags[]
+      - name: プロジェクトの説明
+        kind: label
+        position: サイドバー > プロジェクトの情報
+        fixed_area: true
+        description: 他の人が記載したプロジェクトの説明を出す。3 行を超えたら省略し、押すと全文をダイアログに出す
+        io: 表示
+        type: 文字列
+        visible_when: 説明があるとき
+        overflow:
+          type: truncate
+          unbounded: true
+        source: プロジェクト詳細取得.project.description
       - name: タスク名入力欄
         kind: input
         position: フォーム本体
