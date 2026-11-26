@@ -144,9 +144,7 @@ _FAKE_MARKDOWN = (
 
 # 受け取った値を属性に持つだけの dev-docs の型の差し替え
 _FAKE_TYPE = (
-    "class {name}:\n"
-    "    def __init__(self, **kwargs):\n"
-    "        self.__dict__.update(kwargs)\n"
+    "class {name}:\n    def __init__(self, **kwargs):\n        self.__dict__.update(kwargs)\n"
 )
 
 
