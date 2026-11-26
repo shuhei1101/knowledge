@@ -2,17 +2,20 @@
 # requires-python = ">=3.14"
 # dependencies = [
 #     "ruamel.yaml==0.19.1",
+#     "yamllint==1.38.0",
 # ]
 # ///
 """標準入力の文書 1 件に、スキーマで見られない決まりを当て、違反の配列の JSON を標準出力へ出す。
 
 dev-docs の validators の knowledge-checks。項目の ID の重複・id: の参照と related の to の実在・aliases の衝突・文書の中の aliases の重複と、
-対応表の examples が照合と合うかを検査する。
+対応表の examples が照合と合うか、Markdown の項目の textlint の違反を検査する。
 作業ディレクトリは配信元（knowledge のリポジトリ）の直下にする。
 
 Usage:
 # 文書 1 件を検査する
 uv run --frozen --script scripts/knowledge_checks.py < docs/rule/dev-yaml.yaml
+# textlint の設定と CLI を持つフォルダを指定して検査する
+uv run --frozen --script scripts/knowledge_checks.py [--lint-dir scripts/lint] < docs/rule/dev-yaml.yaml
 """
 
 import argparse
@@ -22,7 +25,7 @@ import re
 import sys
 import traceback
 import unicodedata
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, cast
 
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
@@ -39,6 +42,14 @@ from _common import (
     load_document,
     read_texts,
     value_line,
+)
+from _lint import (
+    DEFAULT_LINT_DIR,
+    TEXTLINT,
+    LintOutputError,
+    collect_sources,
+    find_lint_clis,
+    run_textlint,
 )
 
 # 対応表の照合は slop-check のフックが持つものを使う
@@ -72,12 +83,22 @@ def _use_utf8(stream: object) -> None:
 def main(argv: Sequence[str] | None = None) -> int:
     """標準入力の文書を検査し、違反の配列の JSON を標準出力へ出す。"""
     parser = argparse.ArgumentParser(description="標準入力の文書 1 件の違反を JSON の配列で出す")
-    parser.parse_args(argv)
+    parser.add_argument(
+        "--lint-dir",
+        type=Path,
+        default=DEFAULT_LINT_DIR,
+        help="textlint の設定と node_modules/.bin/textlint を持つフォルダ",
+    )
+    args = parser.parse_args(argv)
+    lint_dir = cast("Path", args.lint_dir)
     _use_utf8(sys.stdin)
     _use_utf8(sys.stdout)
 
     try:
-        violations = check_document(sys.stdin.read(), Path.cwd())
+        text = sys.stdin.read()
+        violations = check_document(text, Path.cwd())
+        # textlint は文書の検査の後ろにつなぐ（全ての文書の検査は check_document だけを文書ごとに呼ぶ）
+        violations.extend(check_textlint(text, lint_dir))
     except Exception:  # noqa: BLE001 - 想定していない例外は traceback を出して終了コードで返す
         traceback.print_exc()
         return _EXIT_UNEXPECTED
@@ -458,6 +479,52 @@ def check_word_list(doc: CommentedMap) -> list[Violation]:
                     }
                 )
     return violations
+
+
+# 標準入力の文書の拡張子。collect_sources に YAML として読ませる
+_STDIN_PATH = PurePosixPath("-.yaml")
+
+# textlint を入れるコマンド
+_TEXTLINT_INSTALL = "npm ci --prefix scripts/lint"
+
+
+def check_textlint(text: str, lint_dir: Path) -> list[Violation]:
+    """文書の Markdown の項目に textlint を当て、error の違反を元の文書の行の違反で返す。"""
+    sources = collect_sources(_STDIN_PATH, text)
+    # Markdown の項目が無い（読めない文書を含む）: textlint を呼ばない
+    if not sources:
+        return []
+    textlint = find_lint_clis(lint_dir)[TEXTLINT]
+    # textlint が入っていない: 書き込みを止める 1 件を返す
+    if textlint is None:
+        return [
+            {
+                "path": "$",
+                "rule": f"1 行目: textlint が {lint_dir}/node_modules/.bin/ に見つかりません",
+                "fix": f"{_TEXTLINT_INSTALL} を実行して textlint を入れる",
+            }
+        ]
+    try:
+        findings = run_textlint(sources, lint_dir, textlint)
+    except LintOutputError as error:
+        # textlint 自身が失敗した: 書き込みを止める 1 件を返す
+        return [
+            {
+                "path": "$",
+                "rule": f"1 行目: textlint を実行できません: {error.message}",
+                "fix": f"{_TEXTLINT_INSTALL} を実行して textlint を再インストールする",
+            }
+        ]
+    # warning のルールの違反は書き込みを止めない
+    return [
+        {
+            "path": finding.item_path,
+            "rule": f"{finding.line} 行目: textlint/{finding.rule}: {finding.message}",
+            "fix": f"文を書き換えて textlint の {finding.rule} の違反を無くす",
+        }
+        for finding in findings
+        if not finding.warning
+    ]
 
 
 if __name__ == "__main__":
