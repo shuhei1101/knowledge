@@ -264,3 +264,49 @@ def test_normal_when_invalid_yaml(run_script: RunScript, repo_factory: RepoFacto
     assert len(violations) == 1
     assert violations[0]["path"] == "$"
     assert " 行目: " in violations[0]["rule"]
+
+
+# docs/checksheet/*.yaml の行だけを持つ project-index.yaml
+_CHECKSHEET_CONFIG = (
+    'version: "3"\n'
+    "name: knowledge\n"
+    "validators:\n"
+    "  - id: knowledge-checks\n"
+    "    run: [uv, run, --frozen, --script, scripts/knowledge_checks.py]\n"
+    "    on: [write]\n"
+    "documents:\n"
+    "  - id: checksheet\n"
+    "    paths:\n"
+    "      - docs/checksheet/*.yaml\n"
+    "    schema: schemas/checksheet.schema.yaml\n"
+    "    validators:\n"
+    "      - knowledge-checks\n"
+)
+
+
+def test_normal_when_aspect_ids_duplicate(run_script: RunScript, repo_factory: RepoFactory) -> None:
+    """チェックシートの観点の要素の ID の重複を、後に出た要素の違反にする（正常系）。"""
+    # 準備
+    root = repo_factory({"project-index.yaml": _CHECKSHEET_CONFIG})
+    stdin = (
+        "id: checksheet-review-common\n"
+        "kind: checksheet\n"
+        "items:\n"
+        "  - id: overview\n"
+        "    body: 概要\n"
+        "aspects:\n"
+        "  - id: aspect-review-common-01\n"
+        "    name: A\n"
+        "  - id: aspect-review-common-01\n"
+        "    name: B\n"
+        "  - id: aspect-review-common-02\n"
+        "    name: C\n"
+    )
+    # 実行
+    result = run_script("knowledge_checks", root, stdin)
+    # 検証
+    assert result.exit_code == 0
+    violations = json.loads(result.stdout)
+    assert [violation["path"] for violation in violations] == ["aspects[1].id"]
+    assert "aspects[0]" in violations[0]["rule"]
+    assert violations[0]["rule"].startswith("9 行目: ")
