@@ -420,7 +420,7 @@ functions:
     container: scripts/knowledge_checks.py
     usecase: 文書の違反の検査
     scope: public
-    summary: '`items[].id` の重複を、後に出た項目の違反にする'
+    summary: '`items[].id` と `aspects[].id` の重複を、それぞれの配列の中で後に出た要素の違反にする'
     args:
       - name: doc
         title: 文書
@@ -431,8 +431,11 @@ functions:
       type: list[Violation]
       description: 重複した項目ごとの違反
     process: |-
-      1. `items` が配列でなければ空を返却する
-      2. `items[i].id` を順に確認して、先に出た ID と同じなら `path: items[{i}].id`・`{行} 行目: 項目の ID `{id}` が items[{先の添字}] と重複しています`・`項目の ID を文書の中で一意にする` にする（行は `items[i].lc.value("id")` + 1）
+      1. `items` と `aspects` の配列ごとに、次を適用する。配列でないキーは飛ばす
+      2. `{キー}[i].id` を順に確認して、同じ配列の先に出た ID と同じなら違反にする（行は `{キー}[i].lc.value("id")` + 1）
+         - `items` の場合、`path: items[{i}].id`・`{行} 行目: 項目の ID `{id}` が items[{先の添字}] と重複しています`・`項目の ID を文書の中で一意にする`
+         - `aspects` の場合、`path: aspects[{i}].id`・`{行} 行目: 観点の ID `{id}` が aspects[{先の添字}] と重複しています`・`観点の ID を文書の中で一意にする`
+      3. `items` の違反の後に `aspects` の違反をつないで返却する
     unit_tests:
       - name: test_check_duplicate_ids
         case: 正常
@@ -446,6 +449,17 @@ functions:
         condition: '`items` の ID が `a`・`b`'
         mock: なし
         expected: 空
+      - name: test_check_duplicate_ids_when_aspects_duplicate
+        case: 正常
+        summary: 観点の ID の重複を違反にし、項目とは比べない
+        condition: '`items` の ID が `a`、`aspects` の ID が `a`・`aspect-review-common-01`・`aspect-review-common-01`'
+        mock: なし
+        expected: 1 件で、`path` が `aspects[2].id`、`rule` が `観点の ID` と `aspects[1]` を含み、行が 3 つ目の観点の `id:` の行
+    refs:
+      - to: IF-72-1
+        item: constraints[観点の ID の重複]
+        type: requires
+        when: '`check_duplicate_ids` を修正するときに、IF-72-1 の「観点の ID の重複」の決まりと突き合わせる。'
   - name: check_references
     title: 参照の検査
     kind: 関数

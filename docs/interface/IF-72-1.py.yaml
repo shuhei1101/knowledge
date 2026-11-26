@@ -253,7 +253,7 @@ flows:
         participant D as project-index
         participant S as 文書の違反の検査
         D->>S: 標準入力にチェックシートの YAML
-        S->>S: items と aspects の要素の ID の重複を確認する
+        S->>S: items と aspects のそれぞれで要素の ID の重複を確認する
         S-->>D: 終了コード 0 と違反の配列
       ```
 
