@@ -1,0 +1,123 @@
+id: SC-574-1
+visibility: internal
+title: 開発者がスキーマから Markdown のテンプレートを生成する
+lead: 開発者が設計書のスキーマを変えた後に Markdown のテンプレートの生成のコマンドを実行し、`docs/template/markdown/` に設計書の種類ごとの雛形と記載例の Markdown と、そのメタデータを持つ管理用の YAML をスキーマから書き出す。
+tags:
+  - name: topic:テンプレート
+    main: true
+  - name: topic:markdown
+  - name: topic:スキーマ
+  - name: topic:生成
+  - name: tool:dev-docs
+primary_actor: 開発者
+stakeholders:
+  - name: Markdown を原本にして設計書を記載するプロジェクト
+    interest: スキーマと一致した雛形と記載例を、ファイルをコピーするだけで使用できる
+trigger: 開発者が `schemas/design/` のスキーマを変えて、Markdown のテンプレートの生成のコマンドを実行する
+preconditions:
+  - '`schemas/design/` の設計書の種類のスキーマ（`common`・`index` を除く）ごとに、`docs/template/` に対応する YAML のテンプレートの文書がある'
+  - 生成のコマンドが固定した dev-docs のコミットを取得できる
+success_guarantee: '設計書の種類ごとの雛形と記載例の Markdown が、スキーマから dev-docs の変換で作った内容と一致し、dev-docs の画面専用のマーカー `<!-- dev-docs-table: … -->` を含まない。管理用の YAML の行が、対応する YAML のテンプレートの `name`・`description`・`tags` から作った値と一致する。'
+minimal_guarantee: スキーマが読み込めないか、対応する YAML のテンプレートが無いか、変換に失敗すれば、どのファイルも書き換えずに 0 以外の終了コードで終わり、原因のパスが標準エラーに出る。
+scenarios:
+  - name: 正常シナリオ
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: スキーマ
+        description: 全ての Markdown のテンプレートと管理用の YAML がスキーマから生成した状態の knowledge のクローンで、`schemas/design/er.schema.yaml` に `title` を持つキーを 1 つ追加し、トップの `examples` にそのキーの値を加えたもの。他のスキーマは変えていない
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor D as 開発者
+        participant G as Markdown のテンプレートの生成
+        participant S as 設計書のスキーマ
+        participant T as YAML のテンプレート
+        participant X as dev-docs の変換
+        participant M as Markdown のテンプレート
+        D->>G: 生成のコマンドを実行する
+        G->>S: 全てのスキーマを読み込み、$ref を解決する
+        G->>T: 全ての種類のスキーマに対応する YAML のテンプレートがあるかを確認し、name・description・tags を読み込む
+        loop 設計書の種類のスキーマ
+          G->>G: 全てのキーにプレースホルダを入れた雛形の文書と、examples の記載例の文書を組み立てる
+          G->>X: スキーマと 2 つの文書を指定する
+          X-->>G: 雛形と記載例の Markdown
+          G->>G: dev-docs-table のマーカーを取り除き、プレースホルダの表記を整える
+        end
+        loop 作った内容が今の内容と違うファイル
+          G->>M: 雛形・記載例の Markdown と管理用の YAML を書き出す
+        end
+        G-->>D: 書き換えたファイルのパスを出して終了コード 0
+      ```
+
+      <!-- /map -->
+    expected:
+      - '`docs/template/markdown/` の ER 図の雛形に、追加したキーの `title` のプレースホルダが出る'
+      - '`docs/template/markdown/` の ER 図の記載例に、`examples` に加えた値が出る'
+      - '`docs/template/markdown/` のどの Markdown にも `<!-- dev-docs-table:` が無い'
+      - 設計書の種類の他の Markdown のテンプレートと管理用の YAML は、実行の前とバイト単位で同じ
+      - 標準出力に ER 図の雛形と記載例のパスだけが出る
+      - 続けて全ての文書の検査を実行すると成功で終わる
+    test: test_normal
+  - name: 異常シナリオ（スキーマが読み込めない）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: スキーマ
+        description: '`schemas/design/er.schema.yaml` のキーの `$ref` が、無い `$defs` を指す knowledge のクローン'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor D as 開発者
+        participant G as Markdown のテンプレートの生成
+        participant S as 設計書のスキーマ
+        D->>G: 生成のコマンドを実行する
+        G->>S: 全てのスキーマを読み込み、$ref を解決する
+        G-->>D: 解決できない $ref のスキーマのパスと項目を出して終了コード 2
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 2
+      - 標準エラーに、スキーマのパスと解決できない `$ref` の項目が出る
+      - '`docs/template/markdown/` の全てのファイルは実行の前とバイト単位で同じ'
+    test: test_error_when_schema_unresolvable
+  - name: 異常シナリオ（対応する YAML のテンプレートが無い）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: テンプレート
+        description: '`docs/template/template-er.yaml` を削除した knowledge のクローン'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor D as 開発者
+        participant G as Markdown のテンプレートの生成
+        participant T as YAML のテンプレート
+        D->>G: 生成のコマンドを実行する
+        G->>T: 全ての種類のスキーマに対応する YAML のテンプレートがあるかを確認する
+        G-->>D: 無いテンプレートの ID とスキーマのパスを出して終了コード 2
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 2
+      - 標準エラーに、無いテンプレートの ID（`template-er`）とスキーマのパス（`schemas/design/er.schema.yaml`）が出る
+      - '`docs/template/markdown/` の全てのファイルは実行の前とバイト単位で同じ'
+    test: test_error_when_template_missing
+refs:
+  - to: SC-201-1
+    type: change_together
+    when: YAML のテンプレートの生成とスキーマの扱い（$ref の解決・対応するテンプレートの確認）をそろえるときに参照する。
+  - to: SC-72-6
+    type: change_together
+    when: 全ての文書の検査が Markdown のテンプレートのずれを違反にする条件を変えるときに参照する。
+notes:
+  E2E テストの動かし方: 生成のコマンドを、一時フォルダへコピーした knowledge のクローンで子プロセスとして起動し、終了コード・標準出力・標準エラーと、実行の前後のファイルの中身で確認する
+test_file: tests/e2e/単一ユースケース/test_開発者がスキーマからMarkdownのテンプレートを生成する.py

@@ -33,6 +33,9 @@ scenarios:
         loop 設計書の種類のテンプレート
           C->>C: スキーマから組み立てた items と、テンプレートの items を比べる
         end
+        loop 設計書の種類の Markdown のテンプレート
+          C->>C: スキーマから生成した雛形・記載例・管理用の YAML の行と、今のファイルを比べる
+        end
         loop map を含む文書の Markdown の項目
           C->>M: 項目の Markdown の点検
           M-->>C: map の誤りの無い点検の結果
@@ -252,6 +255,32 @@ scenarios:
       - 終了コード 1 で終わる
       - 標準出力に 2 つの食い違いの両方が、インターフェース定義のパス・行・項目と、workflow のファイルのパス・値つきで出る
     test: test_error_when_workflows_differ_from_interfaces
+  - name: 異常シナリオ（Markdown のテンプレートがスキーマとずれている）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: knowledge のクローン
+        description: '`schemas/design/er.schema.yaml` に `title` を持つキーを 1 つ追加し、YAML のテンプレートの生成だけを実行して、Markdown のテンプレートの生成を実行していない'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        actor D as 開発者
+        participant C as 全ての文書の検査
+        D->>C: クローンの直下で起動する
+        loop 設計書の種類の Markdown のテンプレート
+          C->>C: スキーマから生成した雛形・記載例・管理用の YAML の行と、今のファイルを比べる
+        end
+        C-->>D: ずれたファイルと生成のコマンドを出して終了コード 1
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コード 1 で終わる
+      - 標準出力に、`docs/template/markdown/` の ER 図の雛形と記載例のパス・生成元のスキーマのパス・Markdown のテンプレートの生成のコマンドが出る
+      - YAML のテンプレートのずれは出ない
+    test: test_error_when_markdown_templates_out_of_date
 lead: 開発者が knowledge のクローンで全ての文書の検査を実行し、全ての文書へスキーマの検査と検査のスクリプトを適用して、違反があれば終了コードで失敗を返却する。
 primary_actor: 開発者
 trigger: 開発者が knowledge のクローンで全ての文書の検査のコマンド（`uv run --frozen --script scripts/check_all.py`）を実行する
@@ -260,7 +289,7 @@ preconditions:
   - '`scripts/lint/.yamllint-schemas.yaml` が `brackets`・`braces` を `forbid: non-empty` にしている'
   - 開発コマンドの環境構築（クローン直後）を実行してある
 success_guarantee: 違反が無ければ終了コード 0 で終わる。
-minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反・スキーマのフロー形式・設計書のスキーマの誤り・スキーマとずれたテンプレート・map の図の誤り・workflow のファイルとインターフェース定義の食い違い）が 1 つでもあれば終了コード 1 で終わり、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名。スキーマとずれたテンプレートは、行が `items` のキーの行で、内容が生成元のスキーマのパスと生成のコマンド。map の図の誤りは mdmark の違反の種類。workflow のファイルとの食い違いは、インターフェース定義の項目のパスと workflow のファイルのパスと値）が標準出力に出る。文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに終了コード 2 で終わる。
+minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML の書式の違反・スキーマのフロー形式・設計書のスキーマの誤り・スキーマとずれたテンプレート・スキーマとずれた Markdown のテンプレート・map の図の誤り・workflow のファイルとインターフェース定義の食い違い）が 1 つでもあれば終了コード 1 で終わり、全ての違反の文書のパス・行・内容（スキーマと文書の違反は項目のパス、書式の違反は検査のツールのルール名。スキーマとずれたテンプレートは、行が `items` のキーの行で、内容が生成元のスキーマのパスと生成のコマンド。スキーマとずれた Markdown のテンプレートは、パスがずれたファイルで、内容が生成元のスキーマのパスと Markdown のテンプレートの生成のコマンド。map の図の誤りは mdmark の違反の種類。workflow のファイルとの食い違いは、インターフェース定義の項目のパスと workflow のファイルのパスと値）が標準出力に出る。文書の Markdown の項目の違反の行は、元の文書の YAML の行で出る。検査に要るランタイムが欠けていれば検査を始めずに終了コード 2 で終わる。
 notes:
   E2E テストの動かし方: 全ての文書の検査のコマンド（`uv run --frozen --script scripts/check_all.py`）を、knowledge のクローンで子プロセスとして起動し、終了コードと標準出力で確認する。lint の CLI が入っていない場合は `--lint-dir` に存在しないフォルダを指定して起動する
 test_file: tests/e2e/単一ユースケース/test_開発者が文書の違反を検査する.py
