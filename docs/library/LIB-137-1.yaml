@@ -6,7 +6,7 @@ version:
   current: develop
   latest: v0.13.0
   checked_on: '2026-11-17'
-  source: Pages の成果物の作成と全ての文書の検査のスクリプトが呼ぶ `npx -y github:shuhei1101/mdmark#{参照}`（参照は `scripts/_common.py` の `MDMARK_REF`）
+  source: Pages の成果物の作成・全ての文書の検査・書き込みの検査（`knowledge-checks`）のスクリプトが呼ぶ `npx -y github:shuhei1101/mdmark#{参照}`（参照は `scripts/_common.py` の `MDMARK_REF`）
   pinning: 既定は `develop`（develop の最新の配布物）。固定するときは `MDMARK_REF` をタグ（`v{MAJOR}.{MINOR}.{PATCH}`）か、develop の配布物を再作成した commit（件名が `develop の配布物を再作成する（{元の短縮 SHA}）`）の SHA に書き換える。それ以外の commit の SHA は 1 つ前の配布物を呼ぶため使用しない
 catalogs:
   - name: コマンド
@@ -72,6 +72,7 @@ adoption: 採用
 used_in:
   - scripts/build_pages.py
   - scripts/check_all.py
+  - scripts/knowledge_checks.py
 upstream: shuhei1101/mdmark
 verification:
   state: 済
