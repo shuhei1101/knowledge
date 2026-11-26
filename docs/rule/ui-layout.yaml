@@ -158,6 +158,13 @@ items:
       - 固定の文言のラベル・ボタンを長さが変わる値（記録から取得する値・利用者が入力する値）と同じ行に並べる場合、ラベル・ボタンは折り返さず縮めない。
         ラベル・ボタンには `white-space: nowrap` と `flex-shrink: 0` を付ける
       - 値の側に `min-width: 0` を付け、画面設計の `overflow` のとおりに折り返すか省略する
+  - id: pitfall-text-code-05
+    group: 落とし穴チェックリスト > テキスト・コード
+    name: 長さが変わる値を折り返すか省略するかの既定
+    body: |-
+      - 画面設計の `overflow.type` は、固定の領域（`fixed_area`）に配置する要素では `truncate` にし、全文を出す導線を付ける（`pitfall-text-code-03`）
+      - それ以外の要素では `wrap` にし、`overflow-wrap: anywhere` で折り返す（`pitfall-text-code-01`）
+      - `<pre>` / `<code>` と多列の表のように、折り返すと判読できなくなる値だけを `scroll` にする
   - id: pitfall-table-01
     group: 落とし穴チェックリスト > テーブル
     name: 多列 table の横スクロール
