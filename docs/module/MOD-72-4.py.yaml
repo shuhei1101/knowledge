@@ -1,7 +1,7 @@
 id: "MOD-72-4"
 visibility: internal
 title: "検査と変換のスクリプト / scripts / knowledge_checks.py"
-lead: project-index の validators の `knowledge-checks`。標準入力の文書 1 件に、項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複・Markdown の項目の textlint の違反を適用し、違反の配列を返却する（IF-72-1）。
+lead: project-index の validators の `knowledge-checks`。標準入力の文書 1 件に、項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複・Markdown の項目の markdownlint-cli2・textlint の違反・文書の YAML の yamllint の違反・map の点検のずれを適用し、違反の配列を返却する（IF-72-1）。
 constants:
   - name: ID_LINK
     title: 'id: の参照'
@@ -30,7 +30,7 @@ functions:
         type: Sequence[str] | None
         required: false
         default: None
-        description: コマンドの引数。`None` は `sys.argv[1:]`。`--lint-dir`（textlint の設定と `node_modules/.bin/textlint` を持つフォルダ。既定は `_lint.py` の `DEFAULT_LINT_DIR`）だけを取る
+        description: コマンドの引数。`None` は `sys.argv[1:]`。`--lint-dir`（lint の設定と `node_modules/.bin/` の markdownlint-cli2・textlint を持つフォルダ。既定は `_lint.py` の `DEFAULT_LINT_DIR`）だけを取る
     returns:
       type: int
       description: 終了コード。`0` = 検査を終えた（違反の有無に依らない）、`1` = 想定していない例外
@@ -38,7 +38,7 @@ functions:
       1. argparse で `--lint-dir` を読み込む
       2. 標準入出力を UTF-8 にする（`sys.stdin.reconfigure(encoding="utf-8")`・`sys.stdout` も同じ）
       3. 標準入力を読み込み、作業ディレクトリを配信元の直下にして検査する（文書の検査）
-      4. 同じ文書に `--lint-dir` で textlint を適用し（textlint の検査）、違反を文書の検査の違反の後ろにつなぐ
+      4. 同じ文書に、`--lint-dir` で markdownlint-cli2・textlint（Markdown の lint の検査）と yamllint（yamllint の検査）を、続けて map の点検（map の点検）を適用し、違反をこの順に文書の検査の違反の後ろにつなぐ
       5. 違反の配列を `json.dumps(..., ensure_ascii=False)` で標準出力へ出し、`0` を返却する
          - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返却する
     unit_tests:
@@ -46,7 +46,7 @@ functions:
         case: 正常
         summary: 違反の無い文書
         condition: '標準入力に違反の無い文書。作業ディレクトリは空の `docs/` と、`documents: []` の `project-index.yaml` を持つ一時フォルダ'
-        mock: なし
+        mock: Markdown の lint の検査・yamllint の検査・map の点検を、空を返却する関数に差し替える
         expected: '`0` を返却し、標準出力が `[]`'
       - name: test_main_when_unexpected_error
         case: 正常
@@ -54,15 +54,17 @@ functions:
         condition: 文書の検査が `RuntimeError` を送出する
         mock: 文書の検査を `RuntimeError` を送出する関数に差し替える
         expected: '`1` を返却し、標準エラーに `Traceback` が出る'
-      - name: test_main_when_textlint_violation
+      - name: test_main_when_lint_violations
         case: 正常
-        summary: textlint の違反をつなぐ
+        summary: lint の違反をつなぐ
         condition: 標準入力に違反の無い文書。引数は `--lint-dir {一時フォルダ}`
-        mock: textlint の検査を、受け取った lint のフォルダを記録して違反 1 件を返却する関数に差し替える
-        expected: '`0` を返却し、標準出力がその 1 件だけの配列で、記録した lint のフォルダが `--lint-dir` の値'
+        mock: Markdown の lint の検査・yamllint の検査を、受け取った lint のフォルダを記録して違反 1 件ずつを返却する関数に、map の点検を違反 1 件を返却する関数に差し替える
+        expected: '`0` を返却し、標準出力が Markdown の lint・yamllint・map の点検の順の 3 件で、記録した lint のフォルダが 2 つとも `--lint-dir` の値'
     callees:
       - '#functions[check_document]'
-      - '#functions[check_textlint]'
+      - '#functions[check_markdown_lints]'
+      - '#functions[check_yamllint]'
+      - '#functions[check_map]'
     refs:
       - to: IF-72-1
         type: requires
@@ -515,14 +517,14 @@ functions:
         condition: 本文の ```yaml の囲みの中に `[B](id:missing)`、囲みの後に `[C](id:gone)`。索引は空
         mock: なし
         expected: 1 件で、`rule` が `gone` を含み、行が `[C](id:gone)` の行
-  - name: check_textlint
-    title: textlint の検査
+  - name: check_markdown_lints
+    title: Markdown の lint の検査
     kind: 関数
     container: scripts/knowledge_checks.py
     usecase: 文書の違反の検査
     role: 外部呼び出し
     scope: public
-    summary: 文書の Markdown の項目に textlint を適用し、error の違反を元の文書の行の違反で返却する
+    summary: 文書の Markdown の項目に markdownlint-cli2・textlint を適用し、error の違反を元の文書の行の違反で返却する
     args:
       - name: text
         title: 文書
@@ -536,53 +538,167 @@ functions:
         description: '`--lint-dir` の値'
     returns:
       type: list[Violation]
-      description: 'textlint の error の違反。textlint が無い・失敗したときは `path: $` の 1 件'
+      description: 'markdownlint-cli2 の違反の後に textlint の違反。CLI が無い・失敗したときは `path: $` の 1 件'
     process: |-
       1. `collect_sources(PurePosixPath("-.yaml"), text)` で Markdown の項目を取り出す
          - 空の場合（Markdown の項目が無いか、YAML として読み込めない）、空を返却する
-      2. `find_lint_clis(lint_dir)` で textlint を探す
-         - 見つからない場合、`path` が `$`、`rule` が `1 行目: textlint が {lint_dir}/node_modules/.bin/ に見つかりません`、`fix` が `npm ci --prefix scripts/lint を実行して textlint を入れる` の 1 件を返却する
-      3. `run_textlint(sources, lint_dir, textlint)` を呼ぶ
-         - `LintOutputError` の場合、`path` が `$`、`rule` が `1 行目: textlint を実行できません: {例外のメッセージ}`、`fix` が `npm ci --prefix scripts/lint を実行して textlint を再インストールする` の 1 件を返却する
-      4. `warning` が `False` の `LintFinding` ごとに、`path` が `item_path`、`rule` が `{line} 行目: textlint/{rule}: {message}`、`fix` が `文を書き換えて textlint の {rule} の違反を無くす` の違反を作って返却する
+      2. `find_lint_clis(lint_dir)` で markdownlint-cli2・textlint を探す
+         - どちらかが見つからない場合、`path` が `$`、`rule` が `1 行目: {見つからない CLI を「・」でつないだもの} が {lint_dir}/node_modules/.bin/ に見つかりません`、`fix` が `npm ci --prefix scripts/lint を実行して markdownlint-cli2・textlint を入れる` の 1 件を返却する
+      3. `run_markdown_lints(sources, lint_dir, clis)` を呼ぶ
+         - `LintOutputError` の場合、`path` が `$`、`rule` が `1 行目: markdownlint-cli2・textlint を実行できません: {例外のメッセージ}`、`fix` が `npm ci --prefix scripts/lint を実行して markdownlint-cli2・textlint を再インストールする` の 1 件を返却する
+      4. `warning` が `False` の `LintFinding` ごとに、`path` が `item_path`、`rule` が `{line} 行目: {tool}/{rule}: {message}`、`fix` が `文を書き換えて {tool} の {rule} の違反を無くす` の違反を作って返却する
     unit_tests:
-      - name: test_check_textlint
+      - name: test_check_markdown_lints
         case: 正常
         summary: error の違反を元の文書の行で返却する
-        condition: '`items[0].body` を持つ文書。`node_modules/.bin/textlint` を持つ一時フォルダ'
-        mock: '`run_textlint` を、`line` 5・`rule` `ja-technical-writing/no-doubled-joshi`・`warning` `False` の 1 件と `warning` `True` の 1 件を返却する関数に差し替える'
-        expected: '1 件で、`path` が `items[0].body`、`rule` が `5 行目: textlint/ja-technical-writing/no-doubled-joshi: ` で始まる'
-      - name: test_check_textlint_when_no_markdown
+        condition: '`items[0].body` を持つ文書。`node_modules/.bin/` に `markdownlint-cli2`・`textlint` を持つ一時フォルダ'
+        mock: '`run_markdown_lints` を、`tool` `markdownlint`・`line` 3・`rule` `MD019`・`warning` `False` の 1 件、`tool` `textlint`・`line` 5・`rule` `ja-technical-writing/no-doubled-joshi`・`warning` `False` の 1 件、`warning` `True` の 1 件を返却する関数に差し替える'
+        expected: '2 件で、`rule` が `3 行目: markdownlint/MD019: `・`5 行目: textlint/ja-technical-writing/no-doubled-joshi: ` で始まる順。`path` はどちらも `items[0].body`'
+      - name: test_check_markdown_lints_when_no_markdown
         case: 正常
         summary: Markdown の項目が無い
         condition: '`body` の項目を持たない文書。存在しない lint のフォルダ'
-        mock: '`run_textlint` を、呼ばれたら失敗させる関数に差し替える'
+        mock: '`run_markdown_lints` を、呼ばれたら失敗させる関数に差し替える'
         expected: 空
-      - name: test_check_textlint_when_missing
+      - name: test_check_markdown_lints_when_missing
         case: 正常
-        summary: textlint が無い
-        condition: '`items[0].body` を持つ文書。`node_modules` を持たない一時フォルダ'
-        mock: なし
-        expected: 1 件で、`path` が `$`、`rule` に lint のフォルダ、`fix` に `npm ci --prefix scripts/lint`
-      - name: test_check_textlint_when_failed
+        summary: markdownlint-cli2 が無い
+        condition: '`items[0].body` を持つ文書。`node_modules/.bin/` に `textlint` だけを持つ一時フォルダ'
+        mock: '`run_markdown_lints` を、呼ばれたら失敗させる関数に差し替える'
+        expected: 1 件で、`path` が `$`、`rule` に `markdownlint-cli2` と lint のフォルダがあり `textlint` が無い、`fix` に `npm ci --prefix scripts/lint`
+      - name: test_check_markdown_lints_when_failed
         case: 正常
-        summary: textlint が失敗した
-        condition: '`items[0].body` を持つ文書。`node_modules/.bin/textlint` を持つ一時フォルダ'
-        mock: '`run_textlint` を、`LintOutputError("textlint が終了コード 2 で終わりました: boom")` を送出する関数に差し替える'
+        summary: CLI が失敗した
+        condition: '`items[0].body` を持つ文書。`node_modules/.bin/` に `markdownlint-cli2`・`textlint` を持つ一時フォルダ'
+        mock: '`run_markdown_lints` を、`LintOutputError("markdownlint-cli2 が終了コード 2 で終わりました: boom")` を送出する関数に差し替える'
         expected: 1 件で、`path` が `$`、`rule` に `終了コード 2` と `boom`
     callees:
       - MOD-176-1#functions[collect_sources]
       - MOD-176-1#functions[find_lint_clis]
-      - MOD-176-1#functions[run_textlint]
+      - MOD-176-1#functions[run_markdown_lints]
     refs:
       - to: IF-72-1
-        item: constraints[textlint]
+        item: constraints[markdownlint-cli2・textlint が無い・失敗したとき]
         type: requires
-        when: '`check_textlint` を修正するときに、IF-72-1 の「textlint」「textlint が無い・失敗したとき」の決まりと突き合わせる。'
+        when: '`check_markdown_lints` を修正するときに、IF-72-1 の「markdownlint-cli2」「textlint」「markdownlint-cli2・textlint が無い・失敗したとき」の決まりと突き合わせる。'
+  - name: check_yamllint
+    title: yamllint の検査
+    kind: 関数
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    role: ドメインロジック
+    scope: public
+    summary: 文書の YAML 全体に yamllint を適用し、error の違反をファイル全体の違反で返却する
+    args:
+      - name: text
+        title: 文書
+        type: str
+        required: true
+        description: 標準入力の文書 1 件の YAML
+      - name: lint_dir
+        title: lint のフォルダ
+        type: Path
+        required: true
+        description: '`--lint-dir` の値。`.yamllint.yaml` を読み込む'
+    returns:
+      type: list[Violation]
+      description: yamllint の error の違反。`path` は `-`
+    process: |-
+      1. 文書を読み込む（文書の読み込み）
+         - `DocumentError` の場合、空を返却する（読み込めない違反は文書の検査が出す）
+      2. `load_yamllint_config(lint_dir)` で `.yamllint.yaml` を読み込む
+      3. `run_yamllint(PurePosixPath("-.yaml"), text, config)` を呼ぶ
+      4. `warning` が `False` の `LintFinding` ごとに、`path` が `item_path`（`-`）、`rule` が `{line} 行目: yamllint/{rule}: {message}`、`fix` が `YAML を書き換えて yamllint の {rule} の違反を無くす` の違反を作って返却する
+    unit_tests:
+      - name: test_check_yamllint
+        case: 正常
+        summary: error の違反をファイル全体の違反で返却する
+        condition: 1 行目が `#` の直後に空白の無いコメントの文書。既定の lint のフォルダ
+        mock: なし
+        expected: '1 件で、`path` が `-`、`rule` が `1 行目: yamllint/comments: ` で始まる'
+      - name: test_check_yamllint_when_warning
+        case: 正常
+        summary: warning の違反を返却しない
+        condition: '1 行目が `#` の直後に空白の無いコメントの文書。`comments` を `level: warning` にした `.yamllint.yaml` を持つ一時フォルダ'
+        mock: なし
+        expected: 空
+      - name: test_check_yamllint_when_broken
+        case: 正常
+        summary: 読み込めない YAML
+        condition: 括弧の閉じていない YAML。既定の lint のフォルダ
+        mock: '`run_yamllint` を、呼ばれたら失敗させる関数に差し替える'
+        expected: 空
+    callees:
+      - MOD-72-2#functions[load_document]
+      - MOD-176-1#functions[load_yamllint_config]
+      - MOD-176-1#functions[run_yamllint]
+    refs:
+      - to: IF-72-1
+        item: constraints[yamllint]
+        type: requires
+        when: '`check_yamllint` を修正するときに、IF-72-1 の「yamllint」の決まりと突き合わせる。'
+  - name: check_map
+    title: map の点検
+    kind: 関数
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    role: 外部呼び出し
+    scope: public
+    summary: 文書の map を含む項目を mdmark で点検し、map のずれを元の文書の行の違反で返却する
+    args:
+      - name: text
+        title: 文書
+        type: str
+        required: true
+        description: 標準入力の文書 1 件の YAML
+    returns:
+      type: list[Violation]
+      description: 'map のずれ。npx が無い・点検が失敗したときは `path: $` の 1 件'
+    process: |-
+      1. `collect_map_sources(PurePosixPath("-.yaml"), text)` で map を含む項目を取り出す
+         - 空の場合、空を返却する
+      2. `shutil.which("npx")` で npx を探す
+         - 見つからない場合、`path` が `$`、`rule` が `1 行目: npx が PATH に見つかりません`、`fix` が `Node 24 以降を入れて npx を使用できるようにする` の 1 件を返却する
+      3. `run_map_check(sources, npx)` を呼ぶ
+         - `MdmarkCheckError` の場合、`path` が `$`、`rule` が `1 行目: mdmark の点検が失敗しました: {例外のメッセージ}`、`fix` が `npx が GitHub から mdmark を取得できるかを確認する` の 1 件を返却する
+      4. `LintFinding` ごとに、`path` が `item_path`、`rule` が `{line} 行目: mdmark/{rule}: {message}`、`fix` が `map の範囲を書き換えて mdmark の {rule} のずれを無くす` の違反を作って返却する
+    unit_tests:
+      - name: test_check_map
+        case: 正常
+        summary: map のずれを元の文書の行で返却する
+        condition: '`items[0].body` に `<!-- map -->` を持つ文書'
+        mock: '`shutil.which` を npx のパスを返却する関数に、`run_map_check` を `line` 4・`rule` `map_invalid` の 1 件を返却する関数に差し替える'
+        expected: '1 件で、`path` が `items[0].body`、`rule` が `4 行目: mdmark/map_invalid: ` で始まる'
+      - name: test_check_map_when_no_map
+        case: 正常
+        summary: map を含む項目が無い
+        condition: '`<!-- map -->` を持たない文書'
+        mock: '`shutil.which`・`run_map_check` を、呼ばれたら失敗させる関数に差し替える'
+        expected: 空
+      - name: test_check_map_when_npx_missing
+        case: 正常
+        summary: npx が無い
+        condition: '`items[0].body` に `<!-- map -->` を持つ文書'
+        mock: '`shutil.which` を `None` を返却する関数に、`run_map_check` を呼ばれたら失敗させる関数に差し替える'
+        expected: 1 件で、`path` が `$`、`rule` に `npx`、`fix` に `Node 24`
+      - name: test_check_map_when_failed
+        case: 正常
+        summary: mdmark の点検が失敗した
+        condition: '`items[0].body` に `<!-- map -->` を持つ文書'
+        mock: '`shutil.which` を npx のパスを返却する関数に、`run_map_check` を `MdmarkCheckError("mdmark が終了コード 2 で終わりました: boom")` を送出する関数に差し替える'
+        expected: 1 件で、`path` が `$`、`rule` に `終了コード 2` と `boom`
+    callees:
+      - MOD-176-1#functions[collect_map_sources]
+      - MOD-176-1#functions[run_map_check]
+    refs:
+      - to: IF-72-1
+        item: constraints[npx が無い・map の点検が失敗したとき]
+        type: requires
+        when: '`check_map` を修正するときに、IF-72-1 の「map の点検」「npx が無い・map の点検が失敗したとき」の決まりと突き合わせる。'
 notes:
   依存: |-
     PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と、`_lint.py` が import する `yamllint==1.38.0`（LIB-176-3。`check_all.py` と同じバージョン）を記載し、`uv lock --script scripts/knowledge_checks.py` でロック（`knowledge_checks.py.lock`）を更新して、`_common.py`・`_lint.py` を同じフォルダから import する。
     `slop_check.py`（MOD-148-2）は、`Path(__file__).resolve().parents[1] / "plugins/slop-check/hooks/post-tool-use"` を `sys.path` の先頭に入れてから import する（MOD-148-1 の照合の共有）。
-    textlint の検査は `main` だけが呼び、文書の検査（`check_document`）には含めない。全ての文書の検査は `check_document` を文書ごとに呼び、textlint は全ての文書をまとめて 1 回呼ぶため
+    Markdown の lint の検査・yamllint の検査・map の点検は `main` だけが呼び、文書の検査（`check_document`）には含めない。全ての文書の検査は `check_document` を文書ごとに呼び、lint と map の点検は全ての文書をまとめて呼ぶため
 test_files:
   - tests/unit/scripts/test_knowledge_checks.py
