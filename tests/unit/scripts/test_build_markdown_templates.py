@@ -2,16 +2,11 @@
 
 import functools
 import json
-from collections.abc import Mapping
 from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING
 
-import pytest
-from build_templates import BuildError, load_schemas
-from jsonschema import Draft202012Validator
-from ruamel.yaml import YAML
-
 import build_markdown_templates
+import pytest
 from build_markdown_templates import (
     Output,
     TemplateMeta,
@@ -22,8 +17,13 @@ from build_markdown_templates import (
     render_files_index,
     render_markdown,
 )
+from build_templates import BuildError, load_schemas
+from jsonschema import Draft202012Validator
+from ruamel.yaml import YAML
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping
+
     from conftest import RepoFactory
 
 # リポジトリの直下
@@ -227,17 +227,13 @@ def test_main_when_unchanged(
     monkeypatch.chdir(root)
     main([])
     capsys.readouterr()
-    before = {
-        p.name: p.read_bytes() for p in (root / "docs/template/markdown").iterdir()
-    }
+    before = {p.name: p.read_bytes() for p in (root / "docs/template/markdown").iterdir()}
     # 実行
     code = main([])
     # 検証
     assert code == 0
     assert capsys.readouterr().out == ""
-    assert {
-        p.name: p.read_bytes() for p in (root / "docs/template/markdown").iterdir()
-    } == before
+    assert {p.name: p.read_bytes() for p in (root / "docs/template/markdown").iterdir()} == before
 
 
 @pytest.mark.usefixtures("fake_build_outputs")
@@ -272,7 +268,8 @@ def test_main_when_unexpected_error(
     # 準備
     def _broken(root: Path, outputs: object) -> object:
         del root, outputs
-        raise RuntimeError("壊れた")
+        msg = "壊れた"
+        raise RuntimeError(msg)
 
     root = repo_factory(_REPO_FILES)
     monkeypatch.chdir(root)
@@ -333,7 +330,8 @@ def test_build_outputs_when_convert_fails(repo_factory: RepoFactory) -> None:
     ) -> str:
         del path, data, schema
         if kind == "config":
-            raise ValueError("変換できない")
+            msg = "変換できない"
+            raise ValueError(msg)
         return "ok\n"
 
     root = repo_factory(_REPO_FILES)
