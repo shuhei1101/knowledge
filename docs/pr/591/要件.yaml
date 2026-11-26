@@ -1,0 +1,48 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: changed
+    detail: 文書を書き込むときに Markdown の記載方法・YAML の記載方法・図の記法の検査も行い、違反があれば書き込まずに違反を返す
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-536-1.yaml
+    impact: changed
+    detail: 直コミットで書き込むときにも Markdown の記載方法・YAML の記載方法・図の記法の検査を行い、違反があれば develop へコミットせずに違反を返す
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: none
+    detail: 全ての文書の検査は変わらない。書き込みの検査と同じ設定で検査する元になる
+    depends_on: []
+docs:
+  - page: docs/library/LIB-176-1.yaml
+    new: false
+    change: markdownlint-cli2 を使用する場所に書き込みの検査（knowledge-checks）を加える
+    status: todo
+  - page: docs/library/LIB-176-3.yaml
+    new: false
+    change: yamllint を使用する場所に、書き込む文書へ yamllint を当てる書き込みの検査（knowledge-checks）を加える
+    status: todo
+  - page: docs/library/LIB-137-1.yaml
+    new: false
+    change: mdmark の map の点検を使用する場所に書き込みの検査（knowledge-checks）を加える
+    status: todo
+  - page: docs/nonfunctional/NFR-72-1.yaml
+    new: false
+    change: 検査と変換のスクリプトの 1 文書あたりの処理時間の根拠を、追加する lint の呼び出しを含めた実測で見直す
+    status: todo
+  - page: docs/dev-command/CMD-72-1.yaml
+    new: false
+    change: 書き込みの検査が npx で mdmark を呼ぶため、書き込む作業ツリーの前提に Node（npx）を加える
+    status: todo
+  - page: docs/module/index.yaml
+    new: false
+    change: MOD-176-1・MOD-72-4 の概要を変えたときに目次の概要を合わせる
+    status: todo
+scope_out:
+  - item: 全ての文書の検査（check_all.py）の lint の当て方を変える
+    reason: 要望は書き込みの検査に lint を加えることで、全ての文書の検査の結果は変えない
+    plan: none
+  - item: validators を持たない種類（設計書など）の文書の書き込みで lint を当てる
+    reason: 要望は書き込みの検査 knowledge-checks に lint を加えることで、project-index.yaml の validators の付け方は要望に含まれない
+    plan: none
