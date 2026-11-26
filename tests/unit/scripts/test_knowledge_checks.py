@@ -752,6 +752,15 @@ def test_check_yamllint_when_broken(monkeypatch: pytest.MonkeyPatch) -> None:
     assert result == []
 
 
+def _which_npx(_name: str) -> str:
+    """npx のパスを返す shutil.which の差し替え。"""
+    return "/usr/bin/npx"
+
+
+def _which_none(_name: str) -> None:
+    """何も見つからない shutil.which の差し替え。"""
+
+
 def test_check_map(monkeypatch: pytest.MonkeyPatch) -> None:
     """map のずれを元の文書の行で返す（正常系）。"""
     # 準備
@@ -760,7 +769,7 @@ def test_check_map(monkeypatch: pytest.MonkeyPatch) -> None:
     def _fake(*_args: object) -> list[LintFinding]:
         return [LintFinding(source, 4, "items[0].body", "mdmark", "map_invalid", "描けない", False)]
 
-    monkeypatch.setattr(knowledge_checks.shutil, "which", lambda _name: "/usr/bin/npx")
+    monkeypatch.setattr(knowledge_checks.shutil, "which", _which_npx)
     monkeypatch.setattr(knowledge_checks, "run_map_check", _fake)
     # 実行
     result = knowledge_checks.check_map(_MAP_DOC)
@@ -784,7 +793,7 @@ def test_check_map_when_no_map(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_check_map_when_npx_missing(monkeypatch: pytest.MonkeyPatch) -> None:
     """npx が無い（正常系）。"""
     # 準備
-    monkeypatch.setattr(knowledge_checks.shutil, "which", lambda _name: None)
+    monkeypatch.setattr(knowledge_checks.shutil, "which", _which_none)
     monkeypatch.setattr(knowledge_checks, "run_map_check", _fail)
     # 実行
     result = knowledge_checks.check_map(_MAP_DOC)
@@ -803,7 +812,7 @@ def test_check_map_when_failed(monkeypatch: pytest.MonkeyPatch) -> None:
         message = "mdmark が終了コード 2 で終わりました: boom"
         raise MdmarkCheckError(message)
 
-    monkeypatch.setattr(knowledge_checks.shutil, "which", lambda _name: "/usr/bin/npx")
+    monkeypatch.setattr(knowledge_checks.shutil, "which", _which_npx)
     monkeypatch.setattr(knowledge_checks, "run_map_check", _raise)
     # 実行
     result = knowledge_checks.check_map(_MAP_DOC)
