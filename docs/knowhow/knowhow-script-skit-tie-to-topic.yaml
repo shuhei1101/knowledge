@@ -1,0 +1,68 @@
+id: knowhow-script-skit-tie-to-topic
+kind: knowhow
+name: 茶番は本題と連動させ、本題で要る言葉や前提を茶番の中で仕込む
+description: 本題の冒頭や途中に挟む茶番（短い寸劇）を本題とつながる話にし、本題で要る言葉の説明やオチの伏線を茶番の中で仕込む技法を記載し、解説動画の茶番の題材を決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-26'
+aliases:
+  - 茶番の題材
+sources:
+  - id: ICHINOSUKE
+    title: 春風亭一之輔インタビュー（ミモレ）
+    url: https://mi-mollet.com/articles/-/40433?page=2
+  - id: NTJ
+    title: 落語の特徴 マクラ（文化デジタルライブラリー）
+    url: https://www2.ntj.jac.go.jp/dglib/contents/learn/edc20/geino/rakugo/tokucyo1.html
+  - id: EBI
+    title: 落語のマクラ（ebi company）
+    url: https://www.ebi-company.com/post/rakugo-makura
+  - id: FF
+    title: Using Humor in the Classroom（Faculty Focus）
+    url: https://www.facultyfocus.com/articles/effective-teaching-strategies/using-humor-classroom/
+necessity: reference
+scenes:
+  fits:
+    - 解説動画の冒頭や説明の合間に茶番を入れるとき。
+  misfits:
+    - 本題と無関係な小ネタだけで笑いを取りたいとき。
+cases:
+  - work: 落語のマクラ
+    content: 酒の噺の前に酒飲みの話を振り、本題で要る分かりにくい言葉の説明やオチの伏線を仕込む。マクラと本題が乖離するともったいない、という落語家の発言がある。
+    source: ICHINOSUKE
+evidence:
+  - source: ICHINOSUKE
+    speaker: practitioner
+  - source: NTJ
+    speaker: third_party
+  - source: EBI
+    speaker: third_party
+  - source: FF
+    speaker: third_party
+confidence: high
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      茶番は本題とつながる話にし、本題で要る言葉の説明やオチの伏線を茶番の中で仕込む。
+      本題と切り離した茶番を後から足さない。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 本題で視聴者がつまずく言葉か、後で回収したいくだりを 1 つ選ぶ
+      2. その言葉やくだりがキャラクターの掛け合いに自然に出る茶番の状況を決める
+      3. 本題に入ってから、茶番で出した言葉やくだりに一度触れる
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 茶番
+    - 寸劇
+    - 小芝居
+tags:
+  - name: topic:台本
+  - name: topic:笑い
+  - name: topic:茶番
+    main: true
+  - name: topic:ノウハウ

@@ -1,0 +1,59 @@
+id: knowhow-script-skit-avoid-disliked
+kind: knowhow
+name: 長い・本題と無関係・大げさな効果音・ボケとツッコミの連発の茶番を入れない
+description: 視聴者の不満が集まる茶番（長い・本題の遅れ・本題と無関係・大げさな効果音・ボケとツッコミの連発）を記載し、茶番を入れた台本やセリフを確認するときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-26'
+sources:
+  - id: ANOND
+    title: ゆっくり解説の茶番への不満（はてな匿名ダイアリー）
+    url: https://anond.hatelabo.jp/20221103123646
+  - id: CHIEBUKURO
+    title: ゆっくり解説の茶番についての質問（Yahoo!知恵袋）
+    url: https://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q12262716107
+  - id: NICODIC
+    title: ゆっくり解説（ニコニコ大百科の掲示板）
+    url: https://dic.nicovideo.jp/a/%E3%82%86%E3%81%A3%E3%81%8F%E3%82%8A%E8%A7%A3%E8%AA%AC
+  - id: TOHYO
+    title: ゆっくり解説の茶番の好き嫌い（投票トーク）
+    url: https://tohyotalk.com/question/399056
+necessity: reference
+scenes:
+  fits:
+    - 茶番を入れた台本やセリフを確認するとき。
+evidence:
+  - source: ANOND
+    speaker: anonymous
+  - source: CHIEBUKURO
+    speaker: anonymous
+  - source: NICODIC
+    speaker: anonymous
+  - source: TOHYO
+    speaker: anonymous
+confidence: low
+items:
+  - id: overview
+    name: 概要
+    body: 視聴者の不満は、茶番があること自体より、長さ・本題の遅れ・本題と無関係・大げさな効果音・ボケとツッコミの連発に集まる。
+  - id: checks-01
+    name: 確認すること
+    body: |-
+      - 本題が始まるまでが長くないか
+      - 茶番が本題とつながっているか
+      - ボケのたびにツッコミを入れていないか（流してそのまま進めてよい）
+      - 効果音やエフェクトが大げさすぎないか
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 茶番
+    - 寸劇
+    - 小芝居
+tags:
+  - name: topic:台本
+  - name: topic:笑い
+  - name: topic:茶番
+    main: true
+  - name: topic:ノウハウ

@@ -1,0 +1,52 @@
+id: knowhow-script-skit-status-swap
+kind: knowhow
+name: 茶番の中で 2 人の立場の上下を入れ替える
+description: 掛け合いの 2 人のその場での立場の上下（ステータス）を、茶番の役の中だけ普段と逆にする技法を記載し、2 人の掛け合いの茶番の役を決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-26'
+sources:
+  - id: IMPROWIKI
+    title: Status（improwiki）
+    url: https://improwiki.com/en/wikis/status-group
+  - id: CARRANE
+    title: Changing Statuses（Jimmy Carrane）
+    url: https://jimmycarrane.com/changing-statuses/
+necessity: reference
+scenes:
+  fits:
+    - 普段の上下（天然としっかり者など）が決まっている 2 人の茶番の役を決めるとき。
+  misfits:
+    - キャラクターの関係を初めて見せる場面。
+evidence:
+  - source: IMPROWIKI
+    speaker: third_party
+  - source: CARRANE
+    speaker: practitioner
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      インプロのステータス（Keith Johnstone）は、その場の振る舞いで相手との間に生まれる上下を指す。
+      茶番の役の中だけ、2 人の普段の上下を逆にする（天然の姉が先生役、しっかり者の妹が生徒役など）。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 2 人の普段の上下を確認する
+      2. 茶番の役を、上下が逆になる組み合わせにする
+      3. 茶番の終わりで普段の上下に戻し、本題に入る
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 茶番
+    - 寸劇
+    - 小芝居
+tags:
+  - name: topic:台本
+  - name: topic:笑い
+  - name: topic:茶番
+    main: true
+  - name: topic:ノウハウ

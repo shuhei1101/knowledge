@@ -1,0 +1,53 @@
+id: knowhow-script-skit-open-with-payoff
+kind: knowhow
+name: 冒頭の茶番は動画の中で回収する本題の問いや結果で始め、回収しない煽りを置かない
+description: 冒頭の茶番に、動画の中で必ず回収する本題の問いや結果を使い、回収しない劇的な煽りを置かない技法を記載し、解説動画の冒頭の茶番を決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-26'
+sources:
+  - id: VANPELT
+    title: "Cold Open: Don't Bury the Payoff（Van Pelt）"
+    url: https://vanpelt.studio/learn/hooks/cold-open-dont-bury-the-payoff/
+  - id: CE
+    title: Cold Open（Creator Essentials）
+    url: https://www.creatoressentials.com/glossary/cold-open/
+necessity: reference
+scenes:
+  fits:
+    - 動画の冒頭に、タイトルや挨拶より前の茶番を置くとき。
+  misfits:
+    - 教育動画で、問いより先に前提を示した方が分かりやすいとき。
+evidence:
+  - source: VANPELT
+    speaker: third_party
+  - source: CE
+    speaker: third_party
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      冒頭の茶番は、動画の中で必ず回収する本題の問いや結果を見せ、まだ分からないことを示してから本題を始める。
+      回収しない煽りで釣ると、本題に移った途端に視聴者が離れる。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 動画の中で回収する問いか結果を 1 つ選ぶ
+      2. 茶番でその問いか結果をキャラクターに言わせ、答えを言わずに本題へ入る
+      3. 本題の中で、その問いか結果を回収する
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 茶番
+    - 寸劇
+    - 小芝居
+    - 冒頭
+tags:
+  - name: topic:台本
+  - name: topic:構成
+  - name: topic:茶番
+    main: true
+  - name: topic:ノウハウ

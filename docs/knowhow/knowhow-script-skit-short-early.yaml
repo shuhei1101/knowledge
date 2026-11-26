@@ -1,0 +1,62 @@
+id: knowhow-script-skit-short-early
+kind: knowhow
+name: 茶番は 1 回を短くして本題を早く始め、何回かに分けて挟む
+description: 茶番を 1 か所で長く続けず、1 回を短くして本題を早く始め、本題の途中に何回かに分けて挟む技法を記載し、解説動画の茶番の長さと配置を決めるときに参照する。
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-26'
+sources:
+  - id: MOVIS
+    title: ゆっくり解説動画の作り方（movis）
+    url: https://movis.jp/youtube-yukkuri-kaisetu/
+  - id: SCLIP
+    title: 台本の 3 段階の作り方（s-clip）
+    url: https://www.s-clip.com/blog/academia/science/540/
+  - id: VANPELT
+    title: "Cold Open: Don't Bury the Payoff（Van Pelt）"
+    url: https://vanpelt.studio/learn/hooks/cold-open-dont-bury-the-payoff/
+  - id: ANOND
+    title: ゆっくり解説の茶番への不満（はてな匿名ダイアリー）
+    url: https://anond.hatelabo.jp/20221103123646
+necessity: reference
+scenes:
+  fits:
+    - 解説動画の冒頭の茶番の長さを決めるとき。
+    - 長い説明の合間に息抜きを入れるとき。
+  misfits:
+    - 茶番そのものが動画の主題になっているとき。
+evidence:
+  - source: MOVIS
+    speaker: third_party
+  - source: SCLIP
+    speaker: third_party
+  - source: VANPELT
+    speaker: third_party
+  - source: ANOND
+    speaker: anonymous
+confidence: medium
+items:
+  - id: overview
+    name: 概要
+    body: |-
+      茶番が無いと視聴者が離れ、長すぎても離れる。
+      1 回の茶番は短い掛け合いで終え、本題を早く始め、茶番は本題の途中に何回かに分けて挟む。
+  - id: steps-01
+    name: 使用方法
+    body: |-
+      1. 冒頭の茶番は短い掛け合いで切り上げ、本題に入る
+      2. 説明が続く区切りの合間に、短い茶番を挟む
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 茶番
+    - 寸劇
+    - 小芝居
+tags:
+  - name: topic:台本
+  - name: topic:構成
+  - name: topic:茶番
+    main: true
+  - name: topic:ノウハウ
