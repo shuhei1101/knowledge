@@ -8,4 +8,85 @@ properties:
     title: 種類
     description: 文書の種類。この種類では `checksheet` に固定する。
     const: checksheet
+  aspects:
+    title: 観点
+    description: 'レビューの観点の並び。1 要素が観点 1 件で、`project-index.yaml` の `review_aspect` の行が `records: aspects` で 1 件ずつ文書にする。'
+    x-rules:
+      - レビューのチェックシート（`checksheet-review-*`）だけが持つ。
+    type: array
+    minItems: 1
+    items:
+      title: 観点
+      description: 成果物が満たしているべき状態 1 つと、観点を適用する成果物の種類・工程のタグ。
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - description
+        - tags
+        - visibility
+      properties:
+        id:
+          title: 観点 ID
+          description: '`aspect-{ファイル名から checksheet- を除いた名前}-{2 桁の番号}`。'
+          x-rules:
+            - 改名・移動でも変えない。
+          type: string
+          pattern: ^aspect-[a-z0-9-]+-[0-9]{2}$
+          examples:
+            - aspect-review-common-01
+        name:
+          title: 観点名
+          description: 観点を表す名詞句。
+          type: string
+          minLength: 1
+          examples:
+            - 公式ドキュメントとの一致
+        description:
+          title: 確認すること
+          description: 成果物が満たしているべき状態を 1 文で記載する。
+          type: string
+          minLength: 1
+        note:
+          title: 補足
+          description: 確認の仕方・指摘の仕方・問わない例外。
+          type: string
+          minLength: 1
+        tags:
+          title: タグ
+          description: 観点を適用する成果物の種類（`target:`）と工程（`process:`）のタグ。成果物の種類のタグか共通のタグ（`target:共通`）を 1 つ以上持つ。
+          x-rules:
+            - 値は AI Monitor の観点（`docs/checksheet/review-aspects-*.yaml`）のタグと同じ語彙にする。
+          type: array
+          minItems: 1
+          uniqueItems: true
+          contains:
+            type: object
+            properties:
+              name:
+                pattern: ^target:.+$
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - name
+            properties:
+              name:
+                title: タグの名前
+                description: '`target:{成果物の種類}`・`process:{工程名}`・`topic:{主題の単語}` のどれか。'
+                type: string
+                pattern: ^(target|process|topic):.+$
+                examples:
+                  - target:共通
+              main:
+                title: 主題
+                description: 観点を配置したページの成果物の種類のタグだけ `true` にする。
+                type: boolean
+        visibility:
+          title: 公開範囲
+          description: '`public` は GitHub Pages に公開する文書、`internal` は開発ドキュメントサーバーだけで配信する文書。観点を配置したページの `visibility` と同じ値にする。'
+          enum:
+            - public
+            - internal
 unevaluatedProperties: false
