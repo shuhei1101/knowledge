@@ -2,19 +2,27 @@ docs:
   - page: schemas/design/screen.schema.yaml
     new: false
     change: elements[] に件数の上限と超えたときの扱い（折り返す・件数でまとめる・読み込みを分ける）の任意のキー、overflow に上限が無い値の区分のキーを追加し、入力を持たない値を表示する要素と固定の領域に配置する要素で overflow を allOf の if / then で必須にして、x-rules・examples を合わせる
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:40:14.767992+00:00'
   - page: docs/template/template-screen-design.yaml
     new: false
     change: scripts/build_templates.py でスキーマから items を再生成し、追加したキーと必須の条件の行を出す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:40:14.767992+00:00'
   - page: docs/template/markdown/screen-design.md
     new: false
     change: scripts/build_markdown_templates.py でスキーマから再生成し、追加したキーの列を出す
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:40:14.767992+00:00'
   - page: docs/template/markdown/screen-design.example.md
     new: false
     change: scripts/build_markdown_templates.py でスキーマの examples から再生成する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:40:14.767992+00:00'
 scope_out:
   - item: ai-monitor の手順（『モック作成』・『設計』の画面設計の観点）と規約『モック画面構成』の「データの量の場面」を、追加したキーを参照する形に追随させる
     reason: 'Issue #584 の後続で、ai-monitor のリポジトリの変更。今回追加するキーとメジャーを上げたタグを前提にする'
