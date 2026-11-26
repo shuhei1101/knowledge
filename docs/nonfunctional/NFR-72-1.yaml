@@ -11,19 +11,19 @@ requirements:
     source: https://github.com/shuhei1101/project-index/blob/develop/src/project_index/features/settings/types.py
     value: '20'
     unit: 秒
-    rationale: 外側の待ち 30 秒に、内側（スクリプト全体）の 50% の余裕を含めて 30 ÷ 1.5 = 20 秒にする。最も大きい文書（`docs/template/template-module.yaml`、約 175KB）の文書の違反の検査は、textlint の呼び出しを含めて実測 7.7〜8.3 秒（textlint を含めない場合は 6.6 秒）で、スクリプト全体の 20 秒に収まる
+    rationale: 外側の待ち 30 秒に、内側（スクリプト全体）の 50% の余裕を含めて 30 ÷ 1.5 = 20 秒にする。最も大きく map も含む文書（`docs/template/template-module.yaml`、約 175KB）の文書の違反の検査は、markdownlint-cli2・textlint・yamllint と PATH の mdmark の map の点検を含めて実測 8.0〜8.7 秒で、スクリプト全体の 20 秒に収まる。map の点検を npx で呼ぶと、npx のキャッシュが空のときに 56.6 秒かかるため、書き込みの検査は npx を呼ばない
     overflow: 30 秒を超えたときは project-index が `timeout` として返却する（書き込みは行われない）
     breakdown:
       - part: 外側の待ち（project-index の `script_timeout_sec`）
         value: 30 秒
       - part: 余裕（内側の 50%）
         value: 10 秒
-        notes: 実測の最大 8.3 秒に対して、スクリプト全体の 20 秒まで 11 秒余る
+        notes: 実測の最大 8.7 秒に対して、スクリプト全体の 20 秒まで 11 秒余る
       - part: スクリプト全体
         value: 20 秒
     verification:
       device: WSL2 の Ubuntu（手元の PC）で `uv run --frozen --script scripts/knowledge_checks.py` を 3 回
-      version: Python 3.14・textlint 15.8.0
+      version: Python 3.14・textlint 15.8.0・markdownlint-cli2 0.24.0・mdmark v0.15.0+develop.c9af6d2・Node v24.14.0
       date: '2026-11-27'
       result: 合格
   - id: NFR-2
