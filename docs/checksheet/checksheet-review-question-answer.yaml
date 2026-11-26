@@ -15,27 +15,44 @@ tags:
   - name: topic:根拠
 status: current
 visibility: internal
-rev: 1
+rev: 2
 related:
   - to: checksheet-review-common
     type: references
     when: 成果物の種類によらない共通の観点も確認するとき
 items:
   - id: overview
-    name: "概要"
-    body: |-
-      質問への回答をレビューするときの観点。
-  - id: check-items-01
-    group: チェック項目
-    name: "チェック項目"
-    body: |-
-      <!-- table: {"kind": "data"} -->
-
-      | 項目 | 補足 |
-      | --- | --- |
-      | 回答の根拠が、実在するドキュメントのページ・コード・Issue / PR を指していること | 指した箇所を開いて確認する |
-      | 指した箇所に、回答のとおりのことが記載されていること | ハルシネーションの検査 |
-      | 回答できなかった部分が明示されていること | 分からないことを断定していないか |
-      | 推測で補った箇所が、推測と分かるように記載されていること | - |
-
-      <!-- /table -->
+    name: 概要
+    body: 質問への回答をレビューするときの観点。
+aspects:
+  - id: aspect-review-question-answer-01
+    name: 根拠の実在
+    description: 回答の根拠が、実在するドキュメントのページ・コード・Issue / PR を指していること
+    note: 指した箇所を開いて確認する
+    tags:
+      - name: target:質問への回答
+        main: true
+    visibility: internal
+  - id: aspect-review-question-answer-02
+    name: 根拠の箇所の記載
+    description: 指した箇所に、回答のとおりのことが記載されていること
+    note: ハルシネーションの検査
+    tags:
+      - name: target:質問への回答
+        main: true
+    visibility: internal
+  - id: aspect-review-question-answer-03
+    name: 回答できなかった部分
+    description: 回答できなかった部分が明示されていること
+    note: 分からないことを断定していないか
+    tags:
+      - name: target:質問への回答
+        main: true
+    visibility: internal
+  - id: aspect-review-question-answer-04
+    name: 推測で補った箇所
+    description: 推測で補った箇所が、推測と分かるように記載されていること
+    tags:
+      - name: target:質問への回答
+        main: true
+    visibility: internal

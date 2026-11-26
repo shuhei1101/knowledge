@@ -18,7 +18,7 @@ tags:
   - name: topic:上限
 status: current
 visibility: internal
-rev: 2
+rev: 3
 related:
   - to: checksheet-review-common
     type: references
@@ -40,31 +40,162 @@ related:
     when: 件数と上限の記載先を確認するとき
 items:
   - id: overview
-    name: "概要"
-    body: |-
-      インターフェース定義とモジュール構成の設計書をレビューするときの観点。
-  - id: check-items-01
-    group: チェック項目
-    name: "チェック項目"
-    body: |-
-      <!-- table: {"kind": "data"} -->
-
-      | 項目 | 補足 |
-      | --- | --- |
-      | 状態を持つ箇所で、取りうる状態と遷移が漏れなく記載されていること | - |
-      | 失敗経路（例外・タイムアウト・部分成功）の扱いが決定していること | 正常系だけの設計は指摘する |
-      | 設定値・定数がハードコードされず、設定 / 定数のページに配置されていること | - |
-      | インターフェース定義とモジュール構成で型と名前が一致していること | - |
-      | 採用したライブラリの API が公式ドキュメントのシグネチャどおりになっていること | 引数名・戻り値・例外まで確認する |
-      | 使用する外部ライブラリ・外部 API の設計書があり、プロセス境界を越える相手にはアーキテクチャ図の外部システム連携に行があり、詳細がその設計書を指していること | - |
-      | 適切にログ出力が設計されていること | エラーなどを適切にログ出力するよう記載されているか |
-      | エントリーポイントが `trigger` の GitHub Actions の workflow で、全体の流れの結末ごとにフローがあること | 結末にフローが無い分岐と、ジョブの中で重なる `name` は指摘する。起動の条件・リクエスト・排他・step の `name`・分岐の `if` と workflow のファイルの一致は、[全ての文書の検査](id:IF-72-3#constraints[workflow の突き合わせ]) が確認する |
-      | インターフェース定義側に具体的なプロバイダー依存の記述が無いこと | プロバイダー依存（特定 API や特定ライブラリ）はモジュール構成側にインターフェースや関数型を用いて抽象化する（今後の横展開、拡張性を考慮されていること。いわゆる Adapter パターン） |
-      | モジュール構成の設計書が物理ファイル 1 つにつき 1 つで、全ての要素の `container` が同じ物理ファイルを指していること | 分類の構成図・決まりは分類ごとの設計書（`モジュール構成/分類/`）が持ち、要素は持たない。ファイルの配置はフォルダ構成の設計書が持つ |
-      | モジュール構成と一緒に修正したフォルダ構成の設計書が、規約 [フォルダ構成の切り方とレビュー](id:dev-folder-layout) のレビューの観点に該当しないこと | フォルダを追加・移動するのにフォルダ構成の設計書があって修正していない場合も指摘する |
-      | 費用のかかる処理より前に、非機能要件で決めた時点の事前確認がフローに配置されていること | 規約 [事前確認](id:dev-precheck) |
-      | 要素・文書・ファイル・行の数に比例して繰り返す処理（ループの中の画面の読み書き・通信・ファイルの読み込み、要求ごとの全件の読み込み）をフローに追加する設計で、想定する最大の件数と、その件数での上限（時間か回数）が非機能要件に記載されていること | 処理が重いかではなく、件数と上限があるかを確認する。記載先のレイヤーは判定フローチャート [非機能要件のレイヤー](id:flowchart-nonfunctional-layer) に従う |
-      | 新規作成した機能を呼ぶインターフェース（フック・MCP ツール・API・CLI）と、エージェントに指定する手順の指定方法（エージェントフロー・サブエージェント・スキル）の種類が、判定フローチャート [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice) の結果と合っていること | - |
-      | モジュール構成の設計書が、ブラウザのスクリプトを `.ts` のファイルで設計し、`.js` を手書きする設計（ファイル名が `.js.yaml` の設計書など）になっていないこと | `.js` で記載してよいのは [js で記載してよい場合](id:html-core-buildless#script-extension-02) だけ。HTML に直接記載する `<script>` の処理も `.ts` へ分けているかを確認する（[HTML に直接記載する script](id:html-core-buildless#script-extension-04)） |
-
-      <!-- /table -->
+    name: 概要
+    body: インターフェース定義とモジュール構成の設計書をレビューするときの観点。
+aspects:
+  - id: aspect-review-interface-module-01
+    name: 状態と遷移の網羅
+    description: 状態を持つ箇所で、取りうる状態と遷移が漏れなく記載されていること
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:インターフェース定義設計
+      - name: process:モジュール構成設計
+    visibility: internal
+  - id: aspect-review-interface-module-02
+    name: 失敗経路の扱い
+    description: 失敗経路（例外・タイムアウト・部分成功）の扱いが決定していること
+    note: 正常系だけの設計は指摘する
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:インターフェース定義設計
+      - name: process:モジュール構成設計
+    visibility: internal
+  - id: aspect-review-interface-module-03
+    name: 設定値・定数の配置
+    description: 設定値・定数がハードコードされず、設定 / 定数のページに配置されていること
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:インターフェース定義設計
+      - name: process:モジュール構成設計
+    visibility: internal
+  - id: aspect-review-interface-module-04
+    name: 型と名前の一致
+    description: インターフェース定義とモジュール構成で型と名前が一致していること
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:インターフェース定義設計
+      - name: process:モジュール構成設計
+      - name: target:ER図
+    visibility: internal
+  - id: aspect-review-interface-module-05
+    name: ライブラリの API のシグネチャ
+    description: 採用したライブラリの API が公式ドキュメントのシグネチャどおりになっていること
+    note: 引数名・戻り値・例外まで確認する
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:インターフェース定義設計
+      - name: process:モジュール構成設計
+    visibility: internal
+  - id: aspect-review-interface-module-06
+    name: 外部ライブラリ・外部 API の設計書と外部システム連携
+    description: 使用する外部ライブラリ・外部 API の設計書があり、プロセス境界を越える相手にはアーキテクチャ図の外部システム連携に行があり、詳細がその設計書を指していること
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:インターフェース定義設計
+      - name: process:モジュール構成設計
+    visibility: internal
+  - id: aspect-review-interface-module-07
+    name: ログ出力の設計
+    description: 適切にログ出力が設計されていること
+    note: エラーなどを適切にログ出力するよう記載されているか
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:インターフェース定義設計
+      - name: process:モジュール構成設計
+    visibility: internal
+  - id: aspect-review-interface-module-08
+    name: workflow の結末ごとのフロー
+    description: エントリーポイントが `trigger` の GitHub Actions の workflow で、全体の流れの結末ごとにフローがあること
+    note: 結末にフローが無い分岐と、ジョブの中で重なる `name` は指摘する。起動の条件・リクエスト・排他・step の `name`・分岐の `if` と workflow のファイルの一致は、[全ての文書の検査](id:IF-72-3#constraints[workflow の突き合わせ]) が確認する
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: process:インターフェース定義設計
+    visibility: internal
+  - id: aspect-review-interface-module-09
+    name: プロバイダー依存の分離
+    description: インターフェース定義側に具体的なプロバイダー依存の記述が無いこと
+    note: プロバイダー依存（特定 API や特定ライブラリ）はモジュール構成側にインターフェースや関数型を用いて抽象化する（今後の横展開、拡張性を考慮されていること。いわゆる Adapter パターン）
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:インターフェース定義設計
+      - name: process:モジュール構成設計
+    visibility: internal
+  - id: aspect-review-interface-module-10
+    name: 物理ファイルごとのモジュール構成
+    description: モジュール構成の設計書が物理ファイル 1 つにつき 1 つで、全ての要素の `container` が同じ物理ファイルを指していること
+    note: 分類の構成図・決まりは分類ごとの設計書（`モジュール構成/分類/`）が持ち、要素は持たない。ファイルの配置はフォルダ構成の設計書が持つ
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:モジュール構成設計
+    visibility: internal
+  - id: aspect-review-interface-module-11
+    name: 一緒に修正したフォルダ構成の設計書
+    description: モジュール構成と一緒に修正したフォルダ構成の設計書が、規約 [フォルダ構成の切り方とレビュー](id:dev-folder-layout) のレビューの観点に該当しないこと
+    note: フォルダを追加・移動するのにフォルダ構成の設計書があって修正していない場合も指摘する
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:モジュール構成設計
+    visibility: internal
+  - id: aspect-review-interface-module-12
+    name: 事前確認の配置
+    description: 費用のかかる処理より前に、非機能要件で決めた時点の事前確認がフローに配置されていること
+    note: 規約 [事前確認](id:dev-precheck)
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:インターフェース定義設計
+      - name: process:モジュール構成設計
+    visibility: internal
+  - id: aspect-review-interface-module-13
+    name: 繰り返す処理の件数と上限
+    description: 要素・文書・ファイル・行の数に比例して繰り返す処理（ループの中の画面の読み書き・通信・ファイルの読み込み、要求ごとの全件の読み込み）をフローに追加する設計で、想定する最大の件数と、その件数での上限（時間か回数）が非機能要件に記載されていること
+    note: 処理が重いかではなく、件数と上限があるかを確認する。記載先のレイヤーは判定フローチャート [非機能要件のレイヤー](id:flowchart-nonfunctional-layer) に従う
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:インターフェース定義設計
+      - name: process:モジュール構成設計
+    visibility: internal
+  - id: aspect-review-interface-module-14
+    name: 機能を呼ぶインターフェースの種類
+    description: 新規作成した機能を呼ぶインターフェース（フック・MCP ツール・API・CLI）と、エージェントに指定する手順の指定方法（エージェントフロー・サブエージェント・スキル）の種類が、判定フローチャート [機能を呼ぶインターフェースの選び方](id:flowchart-interface-choice) の結果と合っていること
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:インターフェース定義設計
+      - name: process:モジュール構成設計
+    visibility: internal
+  - id: aspect-review-interface-module-15
+    name: ブラウザのスクリプトの拡張子
+    description: モジュール構成の設計書が、ブラウザのスクリプトを `.ts` のファイルで設計し、`.js` を手書きする設計（ファイル名が `.js.yaml` の設計書など）になっていないこと
+    note: '`.js` で記載してよいのは [js で記載してよい場合](id:html-core-buildless#script-extension-02) だけ。HTML に直接記載する `<script>` の処理も `.ts` へ分けているかを確認する（[HTML に直接記載する script](id:html-core-buildless#script-extension-04)）'
+    tags:
+      - name: target:インターフェース定義
+        main: true
+      - name: target:モジュール構成
+      - name: process:モジュール構成設計
+    visibility: internal

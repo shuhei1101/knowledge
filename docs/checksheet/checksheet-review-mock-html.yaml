@@ -16,7 +16,7 @@ tags:
   - name: scope:ui
 status: current
 visibility: internal
-rev: 1
+rev: 2
 related:
   - to: checksheet-review-common
     type: references
@@ -29,39 +29,200 @@ related:
     when: 業務系・管理画面の UI 要素を確認するとき
 items:
   - id: overview
-    name: "概要"
-    body: |-
-      モック HTML の画面をレビューするときの観点。
-  - id: check-items-01
-    group: チェック項目
-    name: "チェック項目"
-    body: |-
-      <!-- table: {"kind": "data"} -->
-
-      | 項目 | 補足 |
-      | --- | --- |
-      | モックが確定した画面一覧・画面遷移と一致し、未確定の論点は推奨の案で作っていること | - |
-      | 配色とレイアウトが規約 [デザインスタイル規約](id:convention-design-style) の方針どおりになっていること | - |
-      | 同じ役割の要素の見た目が画面をまたいで統一されていること | - |
-      | 検索の結果・項目の一覧を、行ごとのカードでなく、区切り線か表の行で並べていること | 規約 [業務画面のUI要素](id:ui-business-screen-elements#data-display-01) |
-      | 空状態・エラー状態・読み込み中が画面に現れていること | 正常時だけのモックは指摘する |
-      | タブ・モーダル・パネルの使用方法が規約 [画面の分け方](id:ui-screen-division) のとおりであること | - |
-      | 配置した UI 要素が規約 [業務画面のUI要素](id:ui-business-screen-elements) のとおりで、PC 幅とスマホ幅のスクリーンショットで確認してあること | 業務系・管理画面のモックに適用する |
-      | PC・タブレット・スマホ幅とブレークポイントの前後で、動きのある要素の全ての場面を撮ってあること | - |
-      | 要素が重なっていない・ボタンの中の文字が不自然に改行していない・余白と左右上下の位置の統一が崩れていないこと | - |
-      | 同じ行・近くに並べたボタン・ボタンの見た目のリンク・入力欄・選択欄の高さが統一され、PC 幅とスマホ幅で並びが崩れていないこと | 規約 [情報の階層と見た目](id:ui-information-hierarchy) |
-      | スマホ幅が PC の配置を縦に並べただけになっていない・情報量が多すぎず不必要に縦長になっていない・固定ヘッダー / フッター / フローティングボタンが中身を隠していないこと | - |
-      | スマホ幅で表の列が細くなりすぎて 1 行が縦に長くなっていない・操作列が見えること | 崩れる場合は横スクロールかカード形式への切り替えを検討してあること |
-      | 見出し・本文・補足の重要度と Primary Action が一目で分かり、補助のボタンが Primary Action より目立っていないこと | - |
-      | 桁の多い数値・空・1 件・大量のデータを表示した場面でも崩れないこと | - |
-      | 長さが変わる値（名前・URL・ID などの記録から取得する値・利用者が入力する値）を表示する箇所ごとに、最大の長さの値を入れた画面のスクリーンショットがあり、ラベル・ボタンの中の折り返し・枠からのはみ出し・後ろの要素との重なりが無いこと | 固定の文言だけの箇所は除く。規約 [レイアウト](id:ui-layout#pitfall-text-code-04) |
-      | 件数が変わる値（タグ・一覧・チップ 等）を表示する箇所ごとに、上限の件数と上限を超える件数の値を入れた画面のスクリーンショットがあり、折り返す・件数でまとめる・読み込みを分けるのどれかで、枠からのはみ出し・後ろの要素との重なりが無いこと | 上限は画面設計の `count_limit.max_count` |
-      | 画面にある Disabled・Selected / Active・Hover・Focus・入力エラー・書き込みの応答を待つ間・Modal・Dropdown・Tooltip の場面を撮ってあり、Modal / Dropdown が画面の外へはみ出さず閉じられること | - |
-      | タップ対象が小さすぎず間が近すぎない・削除など誤操作が困るボタンが密集していない・押せる要素と Disabled と選択中が見分けられること | - |
-      | 選択中・ホバー・目立たせる要素が、ほかの状態と一目で見分けられること | 状態ごとのスクリーンショットを並べて比べる。規約 [情報の階層と見た目](id:ui-information-hierarchy) |
-      | 文字が小さすぎない・境界線や文字色が薄すぎない・Focus が見える・色だけで状態を表していないこと | - |
-      | 本文の区画に操作の説明文が無く、絵文字をアイコンに使用せず、移った先・選択中・フォーカスを片側だけの枠線で示していないこと | 規約 [情報の階層と見た目](id:ui-information-hierarchy) |
-      | 既存の画面と見た目が統一され、対象外の画面・部品に変更が入っていないこと | - |
-      | 実際の利用者が使用したときに違和感や操作の迷いが無いこと | - |
-
-      <!-- /table -->
+    name: 概要
+    body: モック HTML の画面をレビューするときの観点。
+aspects:
+  - id: aspect-review-mock-html-01
+    name: 画面一覧・画面遷移との一致
+    description: モックが確定した画面一覧・画面遷移と一致し、未確定の論点は推奨の案で作っていること
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-02
+    name: デザインスタイルの方針
+    description: 配色とレイアウトが規約 [デザインスタイル規約](id:convention-design-style) の方針どおりになっていること
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+      - name: process:デザインスタイル選定
+    visibility: internal
+  - id: aspect-review-mock-html-03
+    name: 同じ役割の要素の見た目
+    description: 同じ役割の要素の見た目が画面をまたいで統一されていること
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-04
+    name: 一覧の並べ方
+    description: 検索の結果・項目の一覧を、行ごとのカードでなく、区切り線か表の行で並べていること
+    note: 規約 [業務画面のUI要素](id:ui-business-screen-elements#data-display-01)
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-05
+    name: 空・エラー・読み込み中の状態
+    description: 空状態・エラー状態・読み込み中が画面に現れていること
+    note: 正常時だけのモックは指摘する
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-06
+    name: タブ・モーダル・パネルの使用方法
+    description: タブ・モーダル・パネルの使用方法が規約 [画面の分け方](id:ui-screen-division) のとおりであること
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-07
+    name: 業務画面の UI 要素
+    description: 配置した UI 要素が規約 [業務画面のUI要素](id:ui-business-screen-elements) のとおりで、PC 幅とスマホ幅のスクリーンショットで確認してあること
+    note: 業務系・管理画面のモックに適用する
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-08
+    name: 画面幅ごとの動きのある要素の撮影
+    description: PC・タブレット・スマホ幅とブレークポイントの前後で、動きのある要素の全ての場面を撮ってあること
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-09
+    name: 重なり・改行・余白
+    description: 要素が重なっていない・ボタンの中の文字が不自然に改行していない・余白と左右上下の位置の統一が崩れていないこと
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-10
+    name: 並べた操作部品の高さ
+    description: 同じ行・近くに並べたボタン・ボタンの見た目のリンク・入力欄・選択欄の高さが統一され、PC 幅とスマホ幅で並びが崩れていないこと
+    note: 規約 [情報の階層と見た目](id:ui-information-hierarchy)
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-11
+    name: スマホ幅の配置
+    description: スマホ幅が PC の配置を縦に並べただけになっていない・情報量が多すぎず不必要に縦長になっていない・固定ヘッダー / フッター / フローティングボタンが中身を隠していないこと
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-12
+    name: スマホ幅の表
+    description: スマホ幅で表の列が細くなりすぎて 1 行が縦に長くなっていない・操作列が見えること
+    note: 崩れる場合は横スクロールかカード形式への切り替えを検討してあること
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-13
+    name: 重要度と Primary Action
+    description: 見出し・本文・補足の重要度と Primary Action が一目で分かり、補助のボタンが Primary Action より目立っていないこと
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-14
+    name: データの量の場面
+    description: 桁の多い数値・空・1 件・大量のデータを表示した場面でも崩れないこと
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-15
+    name: 長さが変わる値の表示
+    description: 長さが変わる値（名前・URL・ID などの記録から取得する値・利用者が入力する値）を表示する箇所ごとに、最大の長さの値を入れた画面のスクリーンショットがあり、ラベル・ボタンの中の折り返し・枠からのはみ出し・後ろの要素との重なりが無いこと
+    note: 固定の文言だけの箇所は除く。規約 [レイアウト](id:ui-layout#pitfall-text-code-04)
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-16
+    name: 件数が変わる値の表示
+    description: 件数が変わる値（タグ・一覧・チップ 等）を表示する箇所ごとに、上限の件数と上限を超える件数の値を入れた画面のスクリーンショットがあり、折り返す・件数でまとめる・読み込みを分けるのどれかで、枠からのはみ出し・後ろの要素との重なりが無いこと
+    note: 上限は画面設計の `count_limit.max_count`
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-17
+    name: 状態ごとの場面の撮影
+    description: 画面にある Disabled・Selected / Active・Hover・Focus・入力エラー・書き込みの応答を待つ間・Modal・Dropdown・Tooltip の場面を撮ってあり、Modal / Dropdown が画面の外へはみ出さず閉じられること
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-18
+    name: タップ対象と誤操作
+    description: タップ対象が小さすぎず間が近すぎない・削除など誤操作が困るボタンが密集していない・押せる要素と Disabled と選択中が見分けられること
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-19
+    name: 状態の見分け
+    description: 選択中・ホバー・目立たせる要素が、ほかの状態と一目で見分けられること
+    note: 状態ごとのスクリーンショットを並べて比べる。規約 [情報の階層と見た目](id:ui-information-hierarchy)
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-20
+    name: 文字と色の見やすさ
+    description: 文字が小さすぎない・境界線や文字色が薄すぎない・Focus が見える・色だけで状態を表していないこと
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-21
+    name: 説明文・絵文字・片側の枠線
+    description: 本文の区画に操作の説明文が無く、絵文字をアイコンに使用せず、移った先・選択中・フォーカスを片側だけの枠線で示していないこと
+    note: 規約 [情報の階層と見た目](id:ui-information-hierarchy)
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-22
+    name: 既存の画面との統一
+    description: 既存の画面と見た目が統一され、対象外の画面・部品に変更が入っていないこと
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal
+  - id: aspect-review-mock-html-23
+    name: 利用者の違和感と迷い
+    description: 実際の利用者が使用したときに違和感や操作の迷いが無いこと
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal

@@ -17,7 +17,7 @@ tags:
   - name: action:実装
 status: current
 visibility: internal
-rev: 1
+rev: 2
 related:
   - to: checksheet-review-common
     type: references
@@ -33,33 +33,154 @@ sources:
     url: https://www.nngroup.com/articles/ten-usability-heuristics/
 items:
   - id: overview
-    name: "概要"
-    body: |-
-      実装した画面をブラウザで操作してレビューするときの観点。
-  - id: check-items-01
-    group: チェック項目
-    name: "チェック項目"
-    body: |-
-      <!-- table: {"kind": "data"} -->
-
-      | 項目 | 補足 |
-      | --- | --- |
-      | 極端なデータ（0 件・大量・絵文字）で崩れないこと | - |
-      | 長さが変わる値（記録から取得する値・利用者が入力する値）を表示する箇所ごとに、最大の長さの値を入れた画面のスクリーンショットがあり、ラベル・ボタンの中の折り返し・枠からのはみ出し・後ろの要素との重なりが無いこと | 最大の長さは画面設計の `overflow`（無ければ `max_length`。`overflow.unbounded` の要素は画面設計のスキーマの `unbounded` の決まりの文字数）。固定の文言だけの箇所は除く。規約 [レイアウト](id:ui-layout#pitfall-text-code-04)・[表示の安定](id:ui-display-stability#display-stability-01) |
-      | 件数が変わる値（画面設計の `count_limit` を持つ要素）を表示する箇所ごとに、上限の件数と上限を超える件数の値を入れた画面のスクリーンショットがあり、`count_limit.type` のとおりに折り返す・件数でまとめる・読み込みを分けていて、枠からのはみ出し・後ろの要素との重なりが無いこと | 上限は `count_limit.max_count`。`summarize` の要素は、まとめた値の全てを出せることも確認する |
-      | キーボードだけで主な操作を実行できること | - |
-      | 再読み込み・戻る・別タブでも、入力や選択が失われないこと | - |
-      | ブラウザのコンソールにエラーが出ていないこと | - |
-      | 今の画面・ビューで機能しない部品を出していないこと | 押しても何も変わらない部品を名指しで指摘する |
-      | 同じ種類の操作部品の寸法と、同じ行・近くに並べた種類の違う操作部品（ボタン・ボタンの見た目のリンク・入力欄・選択欄）の高さと、アイコンと文字の上下の位置が統一されていること | 規約 [情報の階層と見た目](id:ui-information-hierarchy) |
-      | 本文の区画に操作の説明文が無く、絵文字をアイコンに使用せず、移った先・選択中・フォーカスを片側だけの枠線で示していないこと | 規約 [情報の階層と見た目](id:ui-information-hierarchy) |
-      | 操作部品とデータの表示に、状態の抜けが無いこと | 規約 [情報の階層と見た目](id:ui-information-hierarchy) の状態の行と突き合わせる |
-      | 書き込み（送信・保存・更新・削除）をするボタンを応答を待つ間に続けて押しても反映が 1 回だけで、待っていることがボタンの上で分かること | 開発者ツールで通信を遅くして続けて押す。楽観更新の操作（いいね・トグル 等）のボタンは除く。規約 [入力と文言](id:ui-input-wording#input-submit-01) |
-      | タブ・ビュー・絞り込みを切り替えても、枠の幅や高さが揺れないこと | 切り替えの前後のスクリーンショットを比べる |
-      | 選択中・ホバー・目立たせる要素が、ほかの状態と一目で見分けられること | 状態ごとのスクリーンショットを並べて比べる。規約 [情報の階層と見た目](id:ui-information-hierarchy) |
-      | 配置した UI 要素が規約 [業務画面のUI要素](id:ui-business-screen-elements) のとおりであること | 業務系・管理画面に適用する |
-      | 管理画面は「熟練者（ショートカット・一括操作）」と「支援技術の利用者」の視点で批評すること | - |
-      | UX を Nielsen の 10 原則に沿って批評すること | [10 Usability Heuristics](https://www.nngroup.com/articles/ten-usability-heuristics/) |
-      | 画面設計の `action` を持つ要素を PC 幅とスマホ幅で全て操作し、記載どおりに動くこと | スマホ幅でだけ出る・隠れる要素は `visible_when` の条件どおりかも確認する |
-
-      <!-- /table -->
+    name: 概要
+    body: 実装した画面をブラウザで操作してレビューするときの観点。
+aspects:
+  - id: aspect-review-implemented-screen-01
+    name: 極端なデータ
+    description: 極端なデータ（0 件・大量・絵文字）で崩れないこと
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-02
+    name: 長さが変わる値の表示
+    description: 長さが変わる値（記録から取得する値・利用者が入力する値）を表示する箇所ごとに、最大の長さの値を入れた画面のスクリーンショットがあり、ラベル・ボタンの中の折り返し・枠からのはみ出し・後ろの要素との重なりが無いこと
+    note: 最大の長さは画面設計の `overflow`（無ければ `max_length`。`overflow.unbounded` の要素は画面設計のスキーマの `unbounded` の決まりの文字数）。固定の文言だけの箇所は除く。規約 [レイアウト](id:ui-layout#pitfall-text-code-04)・[表示の安定](id:ui-display-stability#display-stability-01)
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-03
+    name: 件数が変わる値の表示
+    description: 件数が変わる値（画面設計の `count_limit` を持つ要素）を表示する箇所ごとに、上限の件数と上限を超える件数の値を入れた画面のスクリーンショットがあり、`count_limit.type` のとおりに折り返す・件数でまとめる・読み込みを分けていて、枠からのはみ出し・後ろの要素との重なりが無いこと
+    note: 上限は `count_limit.max_count`。`summarize` の要素は、まとめた値の全てを出せることも確認する
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-04
+    name: キーボードだけの操作
+    description: キーボードだけで主な操作を実行できること
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-05
+    name: 入力と選択の保持
+    description: 再読み込み・戻る・別タブでも、入力や選択が失われないこと
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-06
+    name: コンソールのエラー
+    description: ブラウザのコンソールにエラーが出ていないこと
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-07
+    name: 機能しない部品
+    description: 今の画面・ビューで機能しない部品を出していないこと
+    note: 押しても何も変わらない部品を名指しで指摘する
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-08
+    name: 操作部品の寸法と位置の統一
+    description: 同じ種類の操作部品の寸法と、同じ行・近くに並べた種類の違う操作部品（ボタン・ボタンの見た目のリンク・入力欄・選択欄）の高さと、アイコンと文字の上下の位置が統一されていること
+    note: 規約 [情報の階層と見た目](id:ui-information-hierarchy)
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-09
+    name: 説明文・絵文字・片側の枠線
+    description: 本文の区画に操作の説明文が無く、絵文字をアイコンに使用せず、移った先・選択中・フォーカスを片側だけの枠線で示していないこと
+    note: 規約 [情報の階層と見た目](id:ui-information-hierarchy)
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-10
+    name: 状態の抜け
+    description: 操作部品とデータの表示に、状態の抜けが無いこと
+    note: 規約 [情報の階層と見た目](id:ui-information-hierarchy) の状態の行と突き合わせる
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-11
+    name: 書き込みのボタンの連打
+    description: 書き込み（送信・保存・更新・削除）をするボタンを応答を待つ間に続けて押しても反映が 1 回だけで、待っていることがボタンの上で分かること
+    note: 開発者ツールで通信を遅くして続けて押す。楽観更新の操作（いいね・トグル 等）のボタンは除く。規約 [入力と文言](id:ui-input-wording#input-submit-01)
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-12
+    name: 切り替えでの枠の揺れ
+    description: タブ・ビュー・絞り込みを切り替えても、枠の幅や高さが揺れないこと
+    note: 切り替えの前後のスクリーンショットを比べる
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-13
+    name: 状態の見分け
+    description: 選択中・ホバー・目立たせる要素が、ほかの状態と一目で見分けられること
+    note: 状態ごとのスクリーンショットを並べて比べる。規約 [情報の階層と見た目](id:ui-information-hierarchy)
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-14
+    name: 業務画面の UI 要素
+    description: 配置した UI 要素が規約 [業務画面のUI要素](id:ui-business-screen-elements) のとおりであること
+    note: 業務系・管理画面に適用する
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-15
+    name: 熟練者と支援技術の利用者の視点
+    description: 管理画面は「熟練者（ショートカット・一括操作）」と「支援技術の利用者」の視点で批評すること
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-16
+    name: Nielsen の 10 原則
+    description: UX を Nielsen の 10 原則に沿って批評すること
+    note: '[10 Usability Heuristics](https://www.nngroup.com/articles/ten-usability-heuristics/)'
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-17
+    name: 画面設計の action の操作
+    description: 画面設計の `action` を持つ要素を PC 幅とスマホ幅で全て操作し、記載どおりに動くこと
+    note: スマホ幅でだけ出る・隠れる要素は `visible_when` の条件どおりかも確認する
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal

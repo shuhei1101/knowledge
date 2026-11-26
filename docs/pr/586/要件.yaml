@@ -1,0 +1,114 @@
+docs:
+  - page: docs/checksheet/checksheet-review-as-is-design.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-bug-investigation.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-code-test.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-component.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-composite-uc-scenario.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-foundation.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-implemented-screen.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-interface-module.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-mock-html.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-poc.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-question-answer.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-related-docs.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-requirements.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-screen-list-transition.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+  - page: docs/checksheet/checksheet-review-single-uc-scenario.yaml
+    new: false
+    change: '表の観点を target:・process: のタグ付きの aspects の要素へ書き換える'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T19:38:19.311352+00:00'
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-4.yaml
+    impact: run_only
+    detail: エージェントが成果物の種類・工程のタグで絞ったとき、15 ページの観点も 1 件ずつ返る
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: run_only
+    detail: 全ての文書の検査が、書き換えた 15 ページと観点の文書を検査して合格する
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-3.yaml
+    impact: run_only
+    detail: 画面のチェックシートのページに、観点が表で出る
+    depends_on: []
+scope_out:
+  - item: AI Monitor の reviewer の knowledge の観点の参照の手順をタグの検索へ書き換える
+    reason: AI Monitor のリポジトリの変更で、この作業の後に後続の Issue が受け持つ
+    plan: shuhei1101/ai-monitor#3828
+  - item: checksheet-review-* 以外のチェックシート（checksheet-design-change-impact・checksheet-eval-aspect-coverage・checksheet-major-release-test-review）の観点の書き換え
+    reason: スキーマの aspects はレビューのチェックシートだけが持ち、要望に含まれない
+    plan: none

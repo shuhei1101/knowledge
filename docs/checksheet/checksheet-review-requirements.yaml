@@ -15,32 +15,83 @@ tags:
   - name: topic:スコープ
 status: current
 visibility: internal
-rev: 1
+rev: 2
 related:
   - to: checksheet-review-common
     type: references
     when: 成果物の種類によらない共通の観点も確認するとき
 items:
   - id: overview
-    name: "概要"
-    body: |-
-      依頼から整理した要件をレビューするときの観点。
-  - id: check-items-01
-    group: チェック項目
-    name: "チェック項目"
-    body: |-
-      <!-- table: {"kind": "data"} -->
-
-      | 項目 | 補足 |
-      | --- | --- |
-      | 要望の本文にある要求が、要件かスコープ外のどちらかに入っていること | 取りこぼした要求を名指しで指摘する |
-      | 要望が規約・テンプレートからの逸脱（または不具合）の是正のとき、同じ型の箇所が、要件かスコープ外のどちらかに記載されていること | リポジトリ全体から同じ型の箇所を探し、記載されていない箇所をパスと逸脱している規約つきで指摘する |
-      | 本文に記載されていない要件を追加していないこと | 追加する場合は確認事項として出させる |
-      | 既存の Issue / PR と重複する作業になっていないこと | 重複していれば既存の作業に統一する案を出す |
-      | 影響するユースケースの影響有無が、現状のシナリオと突き合わせて決定していること | 影響なしと記載したユースケースが本当に変わらないかを確認する |
-      | 配布物の入れ方・起動に影響するファイルを変える変更で、利用者の入れ方で入れて起動する単一ユースケースが、影響するユースケースに挙がっていること | - |
-      | 更新するドキュメントの洗い出しが要望・影響するユースケースと突き合わせて完了していること | 更新が要るのに挙がっていないページを名指しで指摘する |
-      | 更新するドキュメントの各行が、実在するページか新規作成の行のどちらかになっていること | 実在しないのに新規作成と記載されていない行を名指しで指摘する |
-      | スコープ外が明示され、担当外の要求を抱え込んでいないこと | - |
-
-      <!-- /table -->
+    name: 概要
+    body: 依頼から整理した要件をレビューするときの観点。
+aspects:
+  - id: aspect-review-requirements-01
+    name: 要求の取りこぼし
+    description: 要望の本文にある要求が、要件かスコープ外のどちらかに入っていること
+    note: 取りこぼした要求を名指しで指摘する
+    tags:
+      - name: target:要件
+        main: true
+    visibility: internal
+  - id: aspect-review-requirements-02
+    name: 同じ型の箇所の記載
+    description: 要望が規約・テンプレートからの逸脱（または不具合）の是正のとき、同じ型の箇所が、要件かスコープ外のどちらかに記載されていること
+    note: リポジトリ全体から同じ型の箇所を探し、記載されていない箇所をパスと逸脱している規約つきで指摘する
+    tags:
+      - name: target:要件
+        main: true
+    visibility: internal
+  - id: aspect-review-requirements-03
+    name: 本文に無い要件の追加
+    description: 本文に記載されていない要件を追加していないこと
+    note: 追加する場合は確認事項として出させる
+    tags:
+      - name: target:要件
+        main: true
+    visibility: internal
+  - id: aspect-review-requirements-04
+    name: 既存の作業との重複
+    description: 既存の Issue / PR と重複する作業になっていないこと
+    note: 重複していれば既存の作業に統一する案を出す
+    tags:
+      - name: target:要件
+        main: true
+    visibility: internal
+  - id: aspect-review-requirements-05
+    name: 影響有無の突き合わせ
+    description: 影響するユースケースの影響有無が、現状のシナリオと突き合わせて決定していること
+    note: 影響なしと記載したユースケースが本当に変わらないかを確認する
+    tags:
+      - name: target:要件
+        main: true
+    visibility: internal
+  - id: aspect-review-requirements-06
+    name: 入れ方・起動の単一ユースケース
+    description: 配布物の入れ方・起動に影響するファイルを変える変更で、利用者の入れ方で入れて起動する単一ユースケースが、影響するユースケースに挙がっていること
+    tags:
+      - name: target:要件
+        main: true
+    visibility: internal
+  - id: aspect-review-requirements-07
+    name: 更新するドキュメントの洗い出し
+    description: 更新するドキュメントの洗い出しが要望・影響するユースケースと突き合わせて完了していること
+    note: 更新が要るのに挙がっていないページを名指しで指摘する
+    tags:
+      - name: target:要件
+        main: true
+    visibility: internal
+  - id: aspect-review-requirements-08
+    name: 更新するドキュメントの実在
+    description: 更新するドキュメントの各行が、実在するページか新規作成の行のどちらかになっていること
+    note: 実在しないのに新規作成と記載されていない行を名指しで指摘する
+    tags:
+      - name: target:要件
+        main: true
+    visibility: internal
+  - id: aspect-review-requirements-09
+    name: スコープ外の明示
+    description: スコープ外が明示され、担当外の要求を抱え込んでいないこと
+    tags:
+      - name: target:要件
+        main: true
+    visibility: internal
