@@ -11,16 +11,21 @@ requirements:
     source: https://github.com/shuhei1101/project-index/blob/develop/src/project_index/features/settings/types.py
     value: '20'
     unit: 秒
-    rationale: 外側の待ち 30 秒に、内側（スクリプト全体）の 50% の余裕を含めて 30 ÷ 1.5 = 20 秒にする。余裕は実測が無いので仮置きで、実装の後に最も大きい文書で測って見直す
+    rationale: 外側の待ち 30 秒に、内側（スクリプト全体）の 50% の余裕を含めて 30 ÷ 1.5 = 20 秒にする。最も大きい文書（`docs/template/template-module.yaml`、約 175KB）の文書の違反の検査は、textlint の呼び出しを含めて実測 7.7〜8.3 秒（textlint を含めない場合は 6.6 秒）で、スクリプト全体の 20 秒に収まる
     overflow: 30 秒を超えたときは project-index が `timeout` として返却する（書き込みは行われない）
     breakdown:
       - part: 外側の待ち（project-index の `script_timeout_sec`）
         value: 30 秒
       - part: 余裕（内側の 50%）
         value: 10 秒
-        notes: 実測が無いので仮置き
+        notes: 実測の最大 8.3 秒に対して、スクリプト全体の 20 秒まで 11 秒余る
       - part: スクリプト全体
         value: 20 秒
+    verification:
+      device: WSL2 の Ubuntu（手元の PC）で `uv run --frozen --script scripts/knowledge_checks.py` を 3 回
+      version: Python 3.14・textlint 15.8.0
+      date: '2026-11-27'
+      result: 合格
   - id: NFR-2
     name: CI の 1 回の所要時間
     english_name: ci_duration
