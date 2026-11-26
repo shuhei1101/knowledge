@@ -1,15 +1,20 @@
 use_cases:
   - kind: single
     scenario: docs/scenario/SC-201-1.yaml
-    impact: changed
-    detail: スキーマから生成するテンプレートに、Markdown の雛形と記載例を加える（新しい単一 UC に分けるかはインターフェース定義設計で決める）
+    impact: none
+    detail: Markdown のテンプレートの生成を別の単一 UC（SC-574-1）に分けたため、YAML のテンプレートの生成は変わらない
     depends_on: []
   - kind: single
     scenario: docs/scenario/SC-72-6.yaml
     impact: changed
     detail: Markdown のテンプレートがスキーマから生成した内容とずれていたら違反にする
     depends_on:
-      - docs/scenario/SC-201-1.yaml
+      - docs/scenario/SC-574-1.yaml
+  - kind: single
+    scenario: docs/scenario/SC-574-1.yaml
+    impact: new
+    detail: Markdown のテンプレートの生成のコマンドで、設計書の種類ごとの雛形と記載例の Markdown と管理用の YAML をスキーマから書き出す
+    depends_on: []
 scope_out:
   - item: util プラグインのスキル util:md-template-create をスキーマとつなぐ
     reason: 起点 Issue が対象外と明示している
@@ -20,7 +25,7 @@ scope_out:
 docs:
   - page: project-index.yaml
     new: false
-    change: Markdown のテンプレートの documents[] の行と、nav の「テンプレート」のグループの auto を加える
+    change: Markdown のテンプレートの documents[] の行と、nav の「テンプレート」のグループの auto と、「シナリオ」のグループの SC-574-1 の行を加える
     status: todo
   - page: docs/layout/LAY-72-1.yaml
     new: false
@@ -48,7 +53,7 @@ docs:
     status: todo
   - page: scripts/files.yaml
     new: false
-    change: 生成のスクリプトの行を加える（案 A の場合）
+    change: Markdown のテンプレートの生成のスクリプトの行を加える
     status: todo
   - page: tests/files.yaml
     new: false
