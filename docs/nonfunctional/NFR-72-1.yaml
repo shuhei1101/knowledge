@@ -52,4 +52,26 @@ requirements:
     value: Linux（WSL2 の Ubuntu と ubuntu-latest）
     rationale: スクリプトを起動するのは project-index・手元のコマンド・CI だけで、どれも Linux で動く。スクリプトの仮想環境は uv のキャッシュ（Linux 側）に配置する（MOD-72-1）
     source: ARCH-72-1#subsystems[scripts]
+  - id: NFR-4
+    name: Markdown のテンプレートの生成の所要時間
+    english_name: markdown_template_duration
+    category: 性能
+    external_constraint: テストの全件実行のジョブは 40 分で打ち切られ、全ての文書の検査は生成を子プロセスで待つ。初回の起動は uv が git から dev-docs と依存を取得する
+    source_kind: 実行基盤の制限
+    source: IF-352-1#
+    value: '180'
+    unit: 秒
+    rationale: 内側（内訳）の合計 120 秒に 50% の余裕を追加して 180 秒にする。内側は実測が無いので仮置きで、実装の後に初回と 2 回目の起動を測って見直す
+    overflow: 全ての文書の検査が子プロセスを打ち切り、他の検査を終えてから終了コード 2 で終わる
+    breakdown:
+      - part: dev-docs と依存の取得（初回だけ）
+        value: 90 秒
+        notes: 実測が無いので仮置き
+      - part: 全ての種類の変換と比較
+        value: 30 秒
+        notes: 実測が無いので仮置き
+      - part: 余裕（内側の 50%）
+        value: 60 秒
+      - part: 打ち切り
+        value: 180 秒
 lead: 外部の制約から逆算した knowledge の決定値（検査と変換のスクリプトの処理時間・CI の所要時間など）を定め、これらの値を決める・変えるときに参照する。

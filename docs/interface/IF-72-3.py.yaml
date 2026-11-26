@@ -245,7 +245,7 @@ flows:
       - name: Mock
         description: 「Markdown のテンプレートの生成」を、`docs/template/markdown/er.md\tschemas/design/er.schema.yaml` の 1 行を出して終了コード 1 で終わるものに差し替える
       - name: リポジトリ
-        description: 正常系（テンプレートがスキーマとずれている）の一時フォルダで、`docs/template/template-er.yaml` を今のスキーマから生成したもの
+        description: 正常系（テンプレートがスキーマとずれている）の一時フォルダで、`docs/template/template-er.yaml` を今のスキーマから生成し、`docs/template/markdown/` を持つもの
     flow: |-
       <!-- map -->
 
@@ -523,7 +523,7 @@ flows:
       - name: Mock
         description: 「Markdown のテンプレートの生成」を、標準エラーに `dev-docs を取得できません` を出して終了コード 2 で終わるものに差し替える
       - name: リポジトリ
-        description: 正常系（違反がある）の一時フォルダ
+        description: 正常系（違反がある）の一時フォルダに、`schemas/design/er.schema.yaml`・`common.schema.yaml`・`docs/template/template-er.yaml`・`docs/template/markdown/` を加えたもの
     flow: |-
       <!-- map -->
 
@@ -632,10 +632,11 @@ constraints:
     decided_by: IF-201-1#constraints[組み立てる items]
   - item: Markdown のテンプレート
     constraint: |-
-      「Markdown のテンプレートの生成」を `uv run --frozen --script scripts/build_markdown_templates.py --check` で子プロセスとして起動する。
-      終了コード 1 のとき、標準出力の行ごとに、ずれたファイルのパスで違反 1 件にし、行は 1、内容に生成元のスキーマのパスと「Markdown のテンプレートの生成」のコマンドを出す。生成元の無い行は、内容に生成の対象に無いことを出す。
-      終了コード 2 か起動できないときは、他の検査を終えてから標準エラーに子プロセスの標準エラーを出して終了コード 2 で終わる
-    decided_by: IF-574-1#constraints[出力のパス]
+      検査するリポジトリに `docs/template/markdown/` があり、「設計書のスキーマの検査」に違反が無く、テンプレートの対応表に行がある全ての種類の YAML のテンプレートの文書があるときだけ比べる（それ以外のときは、比べずに他の違反だけを出す）。
+      比べるときは、`check_all.py` と同じフォルダの `build_markdown_templates.py` を `uv run --frozen --script {そのパス} --check` で、検査するリポジトリの直下を作業ディレクトリにして子プロセスとして起動し、「Markdown のテンプレートの生成の所要時間」で打ち切る。
+      終了コード 1 のとき、標準出力の行ごとに、ずれたファイルのパスで違反 1 件にし、行は 1、内容に生成元のスキーマのパスと「Markdown のテンプレートの生成」のコマンドを出す。タブを持たない行は、内容に生成の対象に無いこととコマンドを出す。
+      終了コード 2 で終わった、起動できない、打ち切ったときは、他の検査を終えてから標準エラーに子プロセスの標準エラー（打ち切ったときは打ち切った旨）を出して終了コード 2 で終わる
+    decided_by: NFR-72-1#requirements[Markdown のテンプレートの生成の所要時間]
   - item: 1 文書あたりの処理時間
     constraint: 「文書の違反の検査」と同じ 20 秒
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]

@@ -28,7 +28,7 @@ request:
 response:
   - name: stdout
     type: str
-    description: 書き換えた・削除したファイルのパスを 1 行に 1 件、パスの昇順で出す。`--check` のときはずれたファイルを `{ファイルのパス}\t{生成元のスキーマのパス}` で出す。無ければ空
+    description: 書き換えた・削除したファイルのパスを 1 行に 1 件、パスの昇順で出す。`--check` のときはずれたファイルを `{ファイルのパス}\t{生成元のスキーマのパス}` で出す。`files.yaml` の生成元は、ずれた行の種類のスキーマのうちパスの昇順で最初のもの。生成の対象に無い Markdown は、タブを持たない `{ファイルのパス}` だけの行で出す。無ければ空
     example: docs/template/markdown/er.md
   - name: stderr
     type: str
@@ -76,7 +76,8 @@ constraints:
   - item: 書き出しの順序
     constraint: 全てのスキーマ・YAML のテンプレートの読み込み、`$ref` の解決、全ての種類の変換を終えてから書き出す。書き出しの前に 1 件でも失敗したら、どのファイルも書き換えない。作った内容が今の内容と同じファイルは書き換えない
   - item: タイムアウト
-    constraint: 制限なし
+    constraint: 自分では打ち切らない。「全ての文書の検査」は「Markdown のテンプレートの生成の所要時間」で打ち切る
+    decided_by: NFR-72-1#requirements[Markdown のテンプレートの生成の所要時間]
 flows:
   - name: 正常系
     summary: スキーマが変わった種類の雛形と記載例だけを書き出す
@@ -147,7 +148,7 @@ flows:
       <!-- /map -->
     expected:
       - 終了コードが 1
-      - 標準出力に `docs/template/markdown/er.md`・`er.example.md`・`files.yaml` が `schemas/design/er.schema.yaml` との組で、`docs/template/markdown/old.md` が生成元の無い行で出る
+      - 標準出力に `docs/template/markdown/er.md`・`er.example.md`・`files.yaml` が `schemas/design/er.schema.yaml` との組で、`docs/template/markdown/old.md` がタブを持たないパスだけの行で出る
       - '`docs/template/markdown/` の全てのファイルのバイト列が実行の前と同じ'
     test: test_normal_when_check_finds_differences
   - name: 正常系（生成の対象に無い Markdown を削除する）
