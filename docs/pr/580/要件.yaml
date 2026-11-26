@@ -29,24 +29,28 @@ use_cases:
 docs:
   - page: schemas/checksheet.schema.yaml
     new: false
-    change: '観点 1 件 = 1 要素の配列（ID・観点名・確認すること・補足・target:・process: のタグ・公開範囲）を追加する（ファイルの配置が案 B なら新規のスキーマにし、この行を差し替える）'
-    status: todo
+    change: '観点 1 件 = 1 要素の配列 aspects（ID・観点名・確認すること・補足・target:・process: のタグ・公開範囲）を追加する'
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T17:27:16.514596+00:00'
   - page: project-index.yaml
     new: false
-    change: 観点 1 件を 1 文書として配信する records の行と、nav の観点のまとまりを追加する
-    status: todo
+    change: 観点 1 件を 1 文書として配信する種類 review_aspect の records の行を checksheet の行の後ろに、nav にレビューの観点のまとまりを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T17:27:16.514596+00:00'
   - page: docs/checksheet/checksheet-review-common.yaml
     new: false
     change: 表の 20 行の観点を target:共通 のタグ付きの要素へ書き換える
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T17:27:16.514596+00:00'
   - page: docs/template/template-checksheet.yaml
     new: false
     change: 観点を要素で持つときの書式とタグの語彙を追加する
-    status: todo
-  - page: docs/layout/LAY-72-1.yaml
-    new: false
-    change: 追加・変更するスキーマとチェックシートのファイルのエントリを合わせる
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T17:27:16.514596+00:00'
 scope_out:
   - item: checksheet-review-common を除く checksheet-review-* の 15 ページの観点の書き換え
     reason: 構造が決まった後の作業で、受付判断で別の Issue に分けられている
@@ -54,3 +58,6 @@ scope_out:
   - item: AI Monitor の reviewer の knowledge の観点の参照の手順をタグの検索へ書き換える
     reason: AI Monitor のリポジトリの変更で、この作業の後に後続の Issue が受け持つ
     plan: shuhei1101/ai-monitor#3828
+  - item: 全ての文書の検査の textlint の違反 4 件（docs/knowhow/knowhow-prompt-open-ended-line.yaml・knowhow-script-skit-open-with-payoff.yaml・knowhow-script-skit-status-swap.yaml）
+    reason: この作業 PR が触らないノウハウの文書の違反で、要望に含まれない
+    plan: to_file
