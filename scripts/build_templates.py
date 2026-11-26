@@ -91,7 +91,7 @@ CONSTRAINT_KEYS = (
 COMMAND = "uv run --frozen --script scripts/build_templates.py"
 
 # 値の中がスキーマではないキーワード（$ref の確認で辿らない）
-_DATA_KEYWORDS = frozenset({"examples", "enum", "const", "default", "x-bad-examples"})
+DATA_KEYWORDS = frozenset({"examples", "enum", "const", "default", "x-bad-examples"})
 
 # 値が「名前 → スキーマ」の対応のキーワード
 _NAMED_SCHEMA_KEYWORDS = frozenset({"properties", "patternProperties", "$defs", "dependentSchemas"})
@@ -258,7 +258,7 @@ def _iter_refs(node: object) -> Iterator[str]:
         yield ref
     for key, value in schema.items():
         # データの値（examples・enum など）の中はスキーマではない
-        if key in _DATA_KEYWORDS:
+        if key in DATA_KEYWORDS:
             continue
         named = as_mapping(value) if key in _NAMED_SCHEMA_KEYWORDS else None
         # 名前 → スキーマの対応は、値のスキーマだけを辿る
@@ -318,7 +318,7 @@ def _strings(value: object) -> list[str]:
     return [item for item in as_list(value) or [] if isinstance(item, str)]
 
 
-def _resolve(
+def resolve_ref(
     schema: Mapping[str, object], resolver: Resolver[Any]
 ) -> tuple[Mapping[str, object], Resolver[Any], frozenset[int]]:
     """$ref を辿った先に、キーの側の値を重ねたスキーマと、その先の解決器と、辿った先の id() の集合を返す。"""
@@ -328,7 +328,7 @@ def _resolve(
     resolved = resolver.lookup(ref)
     target = as_mapping(resolved.contents) or {}
     # 解決した先がさらに $ref を持てば、その先の解決器で続けて引く
-    base, next_resolver, targets = _resolve(target, resolved.resolver)
+    base, next_resolver, targets = resolve_ref(target, resolved.resolver)
     merged = {**base, **{key: value for key, value in schema.items() if key != "$ref"}}
     # 辿った先は、解決した値そのものの id() で表す（重ねた merged は呼ぶたびに別のオブジェクトになる）
     return merged, next_resolver, targets | {id(resolved.contents)}
@@ -351,7 +351,7 @@ def _iter_keys(
         sub = as_mapping(value)
         if sub is None:
             continue
-        merged, sub_resolver, key_targets = _resolve(sub, resolver)
+        merged, sub_resolver, key_targets = resolve_ref(sub, resolver)
         name = f"{prefix}{key}"
         yield KeyRow(name=name, schema=merged, required=key in required)
         # 配列の要素の $ref も、子へ潜る前に解決しておく
@@ -360,7 +360,7 @@ def _iter_keys(
         element_resolver = sub_resolver
         element_targets: frozenset[int] = frozenset()
         if element is not None:
-            element_schema, element_resolver, element_targets = _resolve(element, sub_resolver)
+            element_schema, element_resolver, element_targets = resolve_ref(element, sub_resolver)
         targets = key_targets | element_targets
         # 親が辿った先をもう一度指している: 再帰する $ref のため、子はたどらない
         if targets & ancestors:

@@ -142,6 +142,22 @@ entries:
           path: schemas/design/
           command: CMD-72-1#categories[ビルド・生成]
           tracked: project-index が knowledge の文書として配信する
+        children:
+          - type: folder
+            name: markdown
+            contents: 設計書の種類ごとの Markdown のテンプレート（雛形と記載例）。全てを `schemas/design/` から生成し、手で記載しない
+            content_types: [knowledge_doc]
+            naming: ['{name}.md', '{name}.example.md']
+            used_by: [IF-574-1#]
+            generated_from:
+              path: schemas/design/
+              command: CMD-72-1#categories[ビルド・生成]
+              tracked: project-index が knowledge の文書として配信し、全ての文書の検査がスキーマとの一致を確認する
+            children:
+              - type: file
+                name: files.yaml
+                contents: '`docs/template/markdown/` の Markdown のテンプレートの一覧（project-index の files の行）。生成のスクリプトが書き出す'
+                content_types: [file_list]
       - type: folder
         name: flowchart
         contents: 判定フローチャート
@@ -416,6 +432,16 @@ entries:
         contents: build_templates.py の依存のロック
         generated_from:
           path: scripts/build_templates.py
+          command: CMD-72-1#categories[依存の追加・更新・削除]
+          tracked: '`uv run --frozen` がロックのバージョンで依存を入れる'
+      - type: file
+        name: build_markdown_templates.py
+        contents: Markdown のテンプレートの生成（手元の CLI と全ての文書の検査から呼ぶ）
+      - type: file
+        name: build_markdown_templates.py.lock
+        contents: build_markdown_templates.py の依存のロック（dev-docs の固定したコミットを含む）
+        generated_from:
+          path: scripts/build_markdown_templates.py
           command: CMD-72-1#categories[依存の追加・更新・削除]
           tracked: '`uv run --frozen` がロックのバージョンで依存を入れる'
       - type: file

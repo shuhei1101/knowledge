@@ -136,6 +136,7 @@ flows:
         loop テンプレートの対応表に行がある種類のスキーマ
           S->>S: 組み立てた items とテンプレートの items を比べる
         end
+        S->>S: 「Markdown のテンプレートの生成」を --check で起動し、ずれが無いことを確かめる
         S-->>C: スキーマの違反なし
       ```
 
@@ -238,6 +239,33 @@ flows:
       - 終了コードが 1
       - 標準出力に、`docs/template/template-er.yaml` のパスと、生成元の `schemas/design/er.schema.yaml` と、「設計書のテンプレートの生成」を実行する案内の行が出る
     test: test_normal_when_templates_out_of_date
+  - name: 正常系（Markdown のテンプレートがスキーマとずれている・終了コード 1）
+    summary: Markdown のテンプレートが「Markdown のテンプレートの生成」の --check でずれていれば、違反として出す
+    setup:
+      - name: Mock
+        description: 「Markdown のテンプレートの生成」を、`docs/template/markdown/er.md\tschemas/design/er.schema.yaml` の 1 行を出して終了コード 1 で終わるものに差し替える
+      - name: リポジトリ
+        description: 正常系（テンプレートがスキーマとずれている）の一時フォルダで、`docs/template/template-er.yaml` を今のスキーマから生成し、`docs/template/markdown/` を持つもの
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant M as Markdown のテンプレートの生成
+        C->>S: リポジトリの直下で起動する
+        S->>M: --check を付けて子プロセスで起動する
+        M-->>S: ずれたファイルと生成元のスキーマと終了コード 1
+        S-->>C: 終了コード 1 と Markdown のテンプレートの違反の行
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 1
+      - 標準出力に、`docs/template/markdown/er.md` のパスと、生成元の `schemas/design/er.schema.yaml` と、「Markdown のテンプレートの生成」を実行する案内の行が出る
+      - 標準出力に、`docs/template/template-er.yaml` の違反の行が出ない
+    test: test_normal_when_markdown_templates_out_of_date
   - name: 正常系（Markdown・YAML の書式の違反がある・終了コード 1）
     summary: 失敗させるルールの lint の違反を、元の文書の YAML の行で出して終了コード 1 で終わる
     setup:
@@ -489,6 +517,36 @@ flows:
       - 標準出力に、`description` が無い文書のスキーマの違反の行が出る
       - 標準エラーに、mdmark の点検が失敗したことと mdmark の終了コードが出る
     test: test_error_when_mdmark_check_fails
+  - name: 異常系（Markdown のテンプレートの生成が失敗する・終了コード 2）
+    summary: 「Markdown のテンプレートの生成」が終了コード 2 で終わったら、他の検査を終えてから終了コード 2 で終わる
+    setup:
+      - name: Mock
+        description: 「Markdown のテンプレートの生成」を、標準エラーに `dev-docs を取得できません` を出して終了コード 2 で終わるものに差し替える
+      - name: リポジトリ
+        description: 正常系（違反がある）の一時フォルダに、`schemas/design/er.schema.yaml`・`common.schema.yaml`・`docs/template/template-er.yaml`・`docs/template/markdown/` を加えたもの
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant S as 全ての文書の検査
+        participant M as Markdown のテンプレートの生成
+        C->>S: リポジトリの直下で起動する
+        loop 全ての文書
+          S->>S: スキーマの検査と文書の違反の検査
+        end
+        S->>M: --check を付けて子プロセスで起動する
+        M-->>S: 終了コード 2 と標準エラー
+        S-->>C: 全ての違反の行と、標準エラーの内容と終了コード 2
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 2
+      - 標準出力に、正常系（違反がある）と同じ文書の違反の行が出る
+      - 標準エラーに `dev-docs を取得できません` が出る
+    test: test_error_when_markdown_template_generation_fails
 lead: '`project-index.yaml` の `documents[]` が指す全ての文書に、行の `schema` のスキーマの検査と「文書の違反の検査」と同じ検査を適用し、`schemas/design/` の設計書のスキーマにスキーマ自身の検査を適用し、設計書のテンプレートがスキーマと、workflow のファイルがインターフェース定義と一致するかを比べ、文書の map を mdmark で点検し、全ての違反を出して終了コードで合否を返却する。'
 identifier: check-all
 idempotent: true
@@ -527,7 +585,7 @@ exceptions:
   - name: 終了コード 1
     condition: 違反（設計書のスキーマの誤りを含む）が 1 件以上ある。全ての文書と設計書のスキーマを検査し終えてから返却する
   - name: 終了コード 2
-    condition: markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`npx` が `PATH` に無いか、`project-index.yaml` が無い・YAML として読み込めないか、`schemas/meta.schema.yaml` が無い・YAML として読み込めない・それ自身が JSON Schema 2020-12 のメタスキーマに合わない。mdmark の点検が失敗したとき（終了コードが 0・1 以外か、標準出力の最後の行が `ずれ {件数} 件` でない）も、他の検査を終えてから標準エラーに mdmark の標準エラーを出して終了コード 2 で終わる
+    condition: markdownlint-cli2・textlint が `--lint-dir` の `node_modules/.bin/` に無いか、`npx` が `PATH` に無いか、`project-index.yaml` が無い・YAML として読み込めないか、`schemas/meta.schema.yaml` が無い・YAML として読み込めない・それ自身が JSON Schema 2020-12 のメタスキーマに合わない。mdmark の点検が失敗したとき（終了コードが 0・1 以外か、標準出力の最後の行が `ずれ {件数} 件` でない）も、他の検査を終えてから標準エラーに mdmark の標準エラーを出して終了コード 2 で終わる。「Markdown のテンプレートの生成」が終了コード 2 で終わったか起動できなかったときも、他の検査を終えてから標準エラーにその標準エラーを出して終了コード 2 で終わる
 constraints:
   - item: 検査の範囲
     constraint: '`project-index.yaml` の `documents[]` の全ての行（`docs/` の種類と files.yaml の行）。行ごとに `schema` が指すスキーマで検査し、`validators[]` に `knowledge-checks` を持つ行はその検査も適用する。ネットミームの配信元の `memes/project-index.yaml` の `documents[]` の全ての行も、`memes/` を基準に同じく検査し、`validators[]` に `meme-checks` を持つ行は「ネットミームの検査」（IF-514-1）も適用する。
@@ -572,6 +630,13 @@ constraints:
       テンプレートの文書が無ければ、テンプレートのパスで違反 1 件にする。
       `$ref` を解決できないスキーマは「設計書のスキーマの検査」が違反にするので、そのスキーマのテンプレートは比べない
     decided_by: IF-201-1#constraints[組み立てる items]
+  - item: Markdown のテンプレート
+    constraint: |-
+      検査するリポジトリに `docs/template/markdown/` があり、「設計書のスキーマの検査」に違反が無く、テンプレートの対応表に行がある全ての種類の YAML のテンプレートの文書があるときだけ比べる（それ以外のときは、比べずに他の違反だけを出す）。
+      比べるときは、`check_all.py` と同じフォルダの `build_markdown_templates.py` を `uv run --frozen --script {そのパス} --check` で、検査するリポジトリの直下を作業ディレクトリにして子プロセスとして起動し、「Markdown のテンプレートの生成の所要時間」で打ち切る。
+      終了コード 1 のとき、標準出力の行ごとに、ずれたファイルのパスで違反 1 件にし、行は 1、内容に生成元のスキーマのパスと「Markdown のテンプレートの生成」のコマンドを出す。タブを持たない行は、内容に生成の対象に無いこととコマンドを出す。
+      終了コード 2 で終わった、起動できない、打ち切ったときは、他の検査を終えてから標準エラーに子プロセスの標準エラー（打ち切ったときは打ち切った旨）を出して終了コード 2 で終わる
+    decided_by: NFR-72-1#requirements[Markdown のテンプレートの生成の所要時間]
   - item: 1 文書あたりの処理時間
     constraint: 「文書の違反の検査」と同じ 20 秒
     decided_by: NFR-72-1#requirements[検査と変換のスクリプトの 1 文書あたりの処理時間]

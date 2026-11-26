@@ -1,0 +1,604 @@
+# yaml-language-server: $schema=../../../schemas/knowledge-files.schema.yaml
+files:
+  - path: agent-flow.example.md
+    name: 'テンプレート（Markdown）の記載例: エージェントフロー'
+    description: エージェントが順に進める工程と工程で呼ぶものを記載し、スキルの SKILL.md を記載するときに参照する設計書にもなるエージェントフローの書式を定め、エージェントフローやスキルを作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:エージェント
+      - topic:スキル
+      - topic:手順
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: agent-flow.md
+    name: 'テンプレート（Markdown）: エージェントフロー'
+    description: エージェントが順に進める工程と工程で呼ぶものを記載し、スキルの SKILL.md を記載するときに参照する設計書にもなるエージェントフローの書式を定め、エージェントフローやスキルを作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:エージェント
+      - topic:スキル
+      - topic:手順
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: agent.example.md
+    name: 'テンプレート（Markdown）の記載例: エージェントの定義'
+    description: ツールを使用して手順を進める LLM のエージェント 1 つの、セッションの持ち方・モデル・きっかけ・段階を記載する書式を定め、エージェントの定義の設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:エージェント
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: agent.md
+    name: 'テンプレート（Markdown）: エージェントの定義'
+    description: ツールを使用して手順を進める LLM のエージェント 1 つの、セッションの持ち方・モデル・きっかけ・段階を記載する書式を定め、エージェントの定義の設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:エージェント
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: architecture.example.md
+    name: 'テンプレート（Markdown）の記載例: アーキテクチャ図'
+    description: システム全体の輪郭（サブシステムの分け方・外部システムとの境界）を記載するアーキテクチャ図の書式を定め、アーキテクチャ図を作る・見直すときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:architecture
+      - topic:サブシステム
+      - topic:システム
+      - topic:テンプレート
+      - topic:境界
+  - path: architecture.md
+    name: 'テンプレート（Markdown）: アーキテクチャ図'
+    description: システム全体の輪郭（サブシステムの分け方・外部システムとの境界）を記載するアーキテクチャ図の書式を定め、アーキテクチャ図を作る・見直すときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:architecture
+      - topic:サブシステム
+      - topic:システム
+      - topic:テンプレート
+      - topic:境界
+  - path: component.example.md
+    name: 'テンプレート（Markdown）の記載例: 部品設計'
+    description: 画面の要素が使用する React の部品 1 つの仕様（props・children・コールバック・variants・状態）を記載する部品設計の書式を定め、部品設計を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:props
+      - topic:テンプレート
+      - topic:バリエーション
+      - topic:仕様
+      - topic:画面
+      - topic:要素
+      - topic:部品
+      - tool:react
+      - action:設計
+  - path: component.md
+    name: 'テンプレート（Markdown）: 部品設計'
+    description: 画面の要素が使用する React の部品 1 つの仕様（props・children・コールバック・variants・状態）を記載する部品設計の書式を定め、部品設計を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:props
+      - topic:テンプレート
+      - topic:バリエーション
+      - topic:仕様
+      - topic:画面
+      - topic:要素
+      - topic:部品
+      - tool:react
+      - action:設計
+  - path: config.example.md
+    name: 'テンプレート（Markdown）の記載例: 設定'
+    description: サブシステム 1 つの設定値・環境変数の一覧を記載する設定の書式を定め、設定の設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:サブシステム
+      - topic:テンプレート
+      - topic:変数
+      - topic:環境
+      - topic:環境変数
+      - topic:設定
+      - topic:設計書
+  - path: config.md
+    name: 'テンプレート（Markdown）: 設定'
+    description: サブシステム 1 つの設定値・環境変数の一覧を記載する設定の書式を定め、設定の設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:サブシステム
+      - topic:テンプレート
+      - topic:変数
+      - topic:環境
+      - topic:環境変数
+      - topic:設定
+      - topic:設計書
+  - path: data.example.md
+    name: 'テンプレート（Markdown）の記載例: データ'
+    description: 利用者と決めるデータの構造を、書き込みの単位のオブジェクトごとにキーの表で記載する書式を定め、データの設計書を作る・更新するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:データ
+      - topic:構造
+      - topic:キー
+      - topic:状態遷移
+      - topic:データストア
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: data.md
+    name: 'テンプレート（Markdown）: データ'
+    description: 利用者と決めるデータの構造を、書き込みの単位のオブジェクトごとにキーの表で記載する書式を定め、データの設計書を作る・更新するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:データ
+      - topic:構造
+      - topic:キー
+      - topic:状態遷移
+      - topic:データストア
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: dataflow.example.md
+    name: 'テンプレート（Markdown）の記載例: データフロー'
+    description: 1 つのデータがシステムをどう流れるか（DFD）を記載するデータフローの書式を定め、データフローの設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:dfd
+      - topic:システム
+      - topic:テンプレート
+      - topic:データ
+      - topic:データフロー
+      - topic:設計書
+  - path: dataflow.md
+    name: 'テンプレート（Markdown）: データフロー'
+    description: 1 つのデータがシステムをどう流れるか（DFD）を記載するデータフローの書式を定め、データフローの設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:dfd
+      - topic:システム
+      - topic:テンプレート
+      - topic:データ
+      - topic:データフロー
+      - topic:設計書
+  - path: dev-command.example.md
+    name: 'テンプレート（Markdown）の記載例: 開発コマンド'
+    description: 開発者が開発で使用するコマンドの前提・実行の順序・料金や副作用・確認した記録を記載する開発コマンドの書式を定め、開発コマンドを作る・追加するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:コマンド
+      - topic:テンプレート
+      - topic:副作用
+      - topic:料金
+      - action:実行
+      - action:記録
+      - action:開発
+  - path: dev-command.md
+    name: 'テンプレート（Markdown）: 開発コマンド'
+    description: 開発者が開発で使用するコマンドの前提・実行の順序・料金や副作用・確認した記録を記載する開発コマンドの書式を定め、開発コマンドを作る・追加するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:コマンド
+      - topic:テンプレート
+      - topic:副作用
+      - topic:料金
+      - action:実行
+      - action:記録
+      - action:開発
+  - path: er.example.md
+    name: 'テンプレート（Markdown）の記載例: ER図'
+    description: データストアの構造（DB スキーマ / JSON / YAML）を業務ドメインの分類ごとにまとめる ER 図の書式を定め、ER 図を作る・更新するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:db
+      - topic:er図
+      - tool:json
+      - tool:yaml
+      - topic:スキーマ
+      - topic:テンプレート
+      - topic:データストア
+      - topic:ドメイン
+      - topic:業務
+      - topic:構造
+      - action:分類
+  - path: er.md
+    name: 'テンプレート（Markdown）: ER図'
+    description: データストアの構造（DB スキーマ / JSON / YAML）を業務ドメインの分類ごとにまとめる ER 図の書式を定め、ER 図を作る・更新するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:db
+      - topic:er図
+      - tool:json
+      - tool:yaml
+      - topic:スキーマ
+      - topic:テンプレート
+      - topic:データストア
+      - topic:ドメイン
+      - topic:業務
+      - topic:構造
+      - action:分類
+  - path: eval-case.example.md
+    name: 'テンプレート（Markdown）の記載例: 精度評価のケース'
+    description: 精度評価のケース 1 つの、場面・入力・採点する観点とその上書きを記載する書式を定め、精度評価のケースを作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:精度評価
+      - topic:ケース
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: eval-case.md
+    name: 'テンプレート（Markdown）: 精度評価のケース'
+    description: 精度評価のケース 1 つの、場面・入力・採点する観点とその上書きを記載する書式を定め、精度評価のケースを作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:精度評価
+      - topic:ケース
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: eval-criterion.example.md
+    name: 'テンプレート（Markdown）の記載例: 精度評価の観点'
+    description: 精度評価の観点 1 つの、確認の方法・質問・採点の基準・合格の点・タグを記載する書式を定め、精度評価の観点を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:精度評価
+      - topic:観点
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: eval-criterion.md
+    name: 'テンプレート（Markdown）: 精度評価の観点'
+    description: 精度評価の観点 1 つの、確認の方法・質問・採点の基準・合格の点・タグを記載する書式を定め、精度評価の観点を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:精度評価
+      - topic:観点
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: evaluation.example.md
+    name: 'テンプレート（Markdown）の記載例: 精度評価のスイート'
+    description: 精度評価 1 つの、評価の対象・つなぐ順番・再評価する変更を記載するスイートの書式を定め、精度評価のスイートを作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:精度評価
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: evaluation.md
+    name: 'テンプレート（Markdown）: 精度評価のスイート'
+    description: 精度評価 1 つの、評価の対象・つなぐ順番・再評価する変更を記載するスイートの書式を定め、精度評価のスイートを作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:精度評価
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: external-api.example.md
+    name: 'テンプレート（Markdown）の記載例: 外部API'
+    description: 利用する外部 API 1 つにつき 1 ファイルで、使用するエンドポイントだけを公式ドキュメントから抜き出す外部 API の書式を定め、外部 API を採用して設計書を作るときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:api
+      - topic:エンドポイント
+      - topic:テンプレート
+      - topic:ファイル
+      - topic:文書
+      - topic:設計書
+  - path: external-api.md
+    name: 'テンプレート（Markdown）: 外部API'
+    description: 利用する外部 API 1 つにつき 1 ファイルで、使用するエンドポイントだけを公式ドキュメントから抜き出す外部 API の書式を定め、外部 API を採用して設計書を作るときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:api
+      - topic:エンドポイント
+      - topic:テンプレート
+      - topic:ファイル
+      - topic:文書
+      - topic:設計書
+  - path: external-library.example.md
+    name: 'テンプレート（Markdown）の記載例: 外部ライブラリ'
+    description: 採用した外部ライブラリ 1 つにつき 1 ファイルで、使用する部分だけを公式ドキュメントから抜き出す外部ライブラリの書式を定め、外部ライブラリを採用して設計書を作るときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:テンプレート
+      - topic:ファイル
+      - topic:ライブラリ
+      - topic:文書
+      - topic:設計書
+      - action:採用
+  - path: external-library.md
+    name: 'テンプレート（Markdown）: 外部ライブラリ'
+    description: 採用した外部ライブラリ 1 つにつき 1 ファイルで、使用する部分だけを公式ドキュメントから抜き出す外部ライブラリの書式を定め、外部ライブラリを採用して設計書を作るときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:テンプレート
+      - topic:ファイル
+      - topic:ライブラリ
+      - topic:文書
+      - topic:設計書
+      - action:採用
+  - path: glossary.example.md
+    name: 'テンプレート（Markdown）の記載例: 用語集'
+    description: リポジトリ固有の用語と使用しない言い方を 1 リポジトリ 1 ファイルで並べる用語集の書式を定め、リポジトリの用語集を作る・用語を追加するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:テンプレート
+      - topic:用語集
+      - topic:用語
+      - topic:エイリアス
+      - action:登録
+  - path: glossary.md
+    name: 'テンプレート（Markdown）: 用語集'
+    description: リポジトリ固有の用語と使用しない言い方を 1 リポジトリ 1 ファイルで並べる用語集の書式を定め、リポジトリの用語集を作る・用語を追加するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:テンプレート
+      - topic:用語集
+      - topic:用語
+      - topic:エイリアス
+      - action:登録
+  - path: human-escalation.example.md
+    name: 'テンプレート（Markdown）の記載例: ヒューマンエスカレーションの表'
+    description: 該当すれば必ず利用者に判断を仰ぐ項目を制作の種類 1 つ分並べる表の書式を定め、エージェントフローを持つ機能のヒューマンエスカレーションの表を作る・項目を追加するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:テンプレート
+      - topic:エスカレーション
+      - topic:エージェント
+      - action:判定
+  - path: human-escalation.md
+    name: 'テンプレート（Markdown）: ヒューマンエスカレーションの表'
+    description: 該当すれば必ず利用者に判断を仰ぐ項目を制作の種類 1 つ分並べる表の書式を定め、エージェントフローを持つ機能のヒューマンエスカレーションの表を作る・項目を追加するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:テンプレート
+      - topic:エスカレーション
+      - topic:エージェント
+      - action:判定
+  - path: interface.example.md
+    name: 'テンプレート（Markdown）の記載例: インターフェース定義'
+    description: 1 操作（API エンドポイント・MCP ツール・画面操作・周期やイベント起動の処理）の入出力・制約・正常系と異常系のフローを記載するインターフェース定義の書式を定め、インターフェース定義を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:api
+      - topic:イベント
+      - topic:インターフェース
+      - topic:エンドポイント
+      - topic:ツール
+      - topic:テンプレート
+      - topic:フロー
+      - topic:入出力
+      - topic:制約
+      - topic:周期
+      - topic:画面
+      - tool:mcp
+      - action:出力
+      - action:定義
+      - action:操作
+      - action:起動
+  - path: interface.md
+    name: 'テンプレート（Markdown）: インターフェース定義'
+    description: 1 操作（API エンドポイント・MCP ツール・画面操作・周期やイベント起動の処理）の入出力・制約・正常系と異常系のフローを記載するインターフェース定義の書式を定め、インターフェース定義を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:api
+      - topic:イベント
+      - topic:インターフェース
+      - topic:エンドポイント
+      - topic:ツール
+      - topic:テンプレート
+      - topic:フロー
+      - topic:入出力
+      - topic:制約
+      - topic:周期
+      - topic:画面
+      - tool:mcp
+      - action:出力
+      - action:定義
+      - action:操作
+      - action:起動
+  - path: launch.example.md
+    name: 'テンプレート（Markdown）の記載例: 起動の構成'
+    description: エージェント 1 つを起動するときにだけ決定する値（起動する仕組み・許可・フック・環境変数・待つ上限・終了したときの扱い）を記載する書式を定め、起動の構成の設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:エージェント
+      - topic:起動
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: launch.md
+    name: 'テンプレート（Markdown）: 起動の構成'
+    description: エージェント 1 つを起動するときにだけ決定する値（起動する仕組み・許可・フック・環境変数・待つ上限・終了したときの扱い）を記載する書式を定め、起動の構成の設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:エージェント
+      - topic:起動
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: layout.example.md
+    name: 'テンプレート（Markdown）の記載例: フォルダ構成'
+    description: リポジトリの直下からの全てのフォルダとファイルを入れ子で記載するフォルダ構成の書式を定め、フォルダ構成の設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:フォルダ
+      - topic:構成
+      - topic:リポジトリ
+      - topic:テンプレート
+      - topic:gitignore
+      - topic:ツリー
+  - path: layout.md
+    name: 'テンプレート（Markdown）: フォルダ構成'
+    description: リポジトリの直下からの全てのフォルダとファイルを入れ子で記載するフォルダ構成の書式を定め、フォルダ構成の設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:フォルダ
+      - topic:構成
+      - topic:リポジトリ
+      - topic:テンプレート
+      - topic:gitignore
+      - topic:ツリー
+  - path: llm-call.example.md
+    name: 'テンプレート（Markdown）の記載例: LLM の呼び出し'
+    description: LLM・意思決定モデルを 1 回呼んで結果を受け取る処理の、モデル・プロンプト・入力・待つ上限・失敗したときの扱いを記載する書式を定め、LLM の呼び出しの設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:llm
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: llm-call.md
+    name: 'テンプレート（Markdown）: LLM の呼び出し'
+    description: LLM・意思決定モデルを 1 回呼んで結果を受け取る処理の、モデル・プロンプト・入力・待つ上限・失敗したときの扱いを記載する書式を定め、LLM の呼び出しの設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:llm
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: mcp-server.example.md
+    name: 'テンプレート（Markdown）の記載例: MCP サーバーの定義'
+    description: MCP サーバー 1 つの、接続の仕方・提供するツール・エージェントごとの使用の仕方を記載する書式を定め、MCP サーバーの定義の設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:mcp
+      - topic:サーバー
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: mcp-server.md
+    name: 'テンプレート（Markdown）: MCP サーバーの定義'
+    description: MCP サーバー 1 つの、接続の仕方・提供するツール・エージェントごとの使用の仕方を記載する書式を定め、MCP サーバーの定義の設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:mcp
+      - topic:サーバー
+      - topic:テンプレート
+      - topic:スキーマ
+  - path: module.example.md
+    name: 'テンプレート（Markdown）の記載例: モジュール構成'
+    description: サブシステムと分類 1 つ分の構成要素を記載するモジュール構成の書式を定め、モジュール構成を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:サブシステム
+      - topic:テンプレート
+      - topic:モジュール
+      - topic:構成
+      - topic:要素
+      - action:分類
+  - path: module.md
+    name: 'テンプレート（Markdown）: モジュール構成'
+    description: サブシステムと分類 1 つ分の構成要素を記載するモジュール構成の書式を定め、モジュール構成を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:サブシステム
+      - topic:テンプレート
+      - topic:モジュール
+      - topic:構成
+      - topic:要素
+      - action:分類
+  - path: nonfunctional.example.md
+    name: 'テンプレート（Markdown）の記載例: 非機能要件'
+    description: 外部コンポーネントの制約を踏まえてアプリとして守る値を記載する非機能要件の書式を定め、非機能要件を作る・更新するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:部品
+      - topic:アプリ
+      - topic:テンプレート
+      - topic:制約
+      - topic:要件
+  - path: nonfunctional.md
+    name: 'テンプレート（Markdown）: 非機能要件'
+    description: 外部コンポーネントの制約を踏まえてアプリとして守る値を記載する非機能要件の書式を定め、非機能要件を作る・更新するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:部品
+      - topic:アプリ
+      - topic:テンプレート
+      - topic:制約
+      - topic:要件
+  - path: review-checklist.example.md
+    name: 'テンプレート（Markdown）の記載例: 確認観点の表'
+    description: レビュアーが実行者の成果物を検証する項目を制作の種類 1 つ分並べる表の書式を定め、レビュアーの確認観点の表を作る・項目を追加するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:テンプレート
+      - topic:観点
+      - topic:エージェント
+      - action:レビュー
+  - path: review-checklist.md
+    name: 'テンプレート（Markdown）: 確認観点の表'
+    description: レビュアーが実行者の成果物を検証する項目を制作の種類 1 つ分並べる表の書式を定め、レビュアーの確認観点の表を作る・項目を追加するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:テンプレート
+      - topic:観点
+      - topic:エージェント
+      - action:レビュー
+  - path: scenario.example.md
+    name: 'テンプレート（Markdown）の記載例: シナリオ'
+    description: 単一ユースケースまたは複合ユースケースの正常・異常シナリオを記載するシナリオの書式を定め、シナリオを作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:シナリオ
+      - topic:テンプレート
+      - topic:ユースケース
+      - topic:複合ユースケース
+  - path: scenario.md
+    name: 'テンプレート（Markdown）: シナリオ'
+    description: 単一ユースケースまたは複合ユースケースの正常・異常シナリオを記載するシナリオの書式を定め、シナリオを作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:シナリオ
+      - topic:テンプレート
+      - topic:ユースケース
+      - topic:複合ユースケース
+  - path: screen-design.example.md
+    name: 'テンプレート（Markdown）の記載例: 画面設計'
+    description: 1 画面の要素の仕様と入力チェックを記載する画面設計の書式を定め、画面設計を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:テンプレート
+      - topic:仕様
+      - topic:画面
+      - topic:要素
+      - action:入力
+      - action:検査
+      - action:設計
+  - path: screen-design.md
+    name: 'テンプレート（Markdown）: 画面設計'
+    description: 1 画面の要素の仕様と入力チェックを記載する画面設計の書式を定め、画面設計を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:テンプレート
+      - topic:仕様
+      - topic:画面
+      - topic:要素
+      - action:入力
+      - action:検査
+      - action:設計
+  - path: state-transition.example.md
+    name: 'テンプレート（Markdown）の記載例: 状態遷移'
+    description: 1 エンティティが取りうる状態と許可された遷移を記載する状態遷移の書式を定め、状態遷移の設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:エンティティ
+      - topic:テンプレート
+      - topic:状態遷移
+      - topic:設計書
+      - action:遷移
+  - path: state-transition.md
+    name: 'テンプレート（Markdown）: 状態遷移'
+    description: 1 エンティティが取りうる状態と許可された遷移を記載する状態遷移の書式を定め、状態遷移の設計書を作る・修正するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:エンティティ
+      - topic:テンプレート
+      - topic:状態遷移
+      - topic:設計書
+      - action:遷移
+  - path: test-procedure.example.md
+    name: 'テンプレート（Markdown）の記載例: テスト実行方法'
+    description: テスト種別ごとの実行コマンドと前提を記載するテスト実行方法の書式を定め、テスト実行方法を作る・更新するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:testing
+      - topic:コマンド
+      - topic:テンプレート
+      - topic:種別
+      - action:実行
+  - path: test-procedure.md
+    name: 'テンプレート（Markdown）: テスト実行方法'
+    description: テスト種別ごとの実行コマンドと前提を記載するテスト実行方法の書式を定め、テスト実行方法を作る・更新するときに参照する。
+    tags:
+      - scope:テンプレート
+      - topic:testing
+      - topic:コマンド
+      - topic:テンプレート
+      - topic:種別
+      - action:実行

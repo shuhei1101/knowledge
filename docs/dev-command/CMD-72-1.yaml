@@ -13,6 +13,7 @@ categories:
       uv sync --script scripts/build_pages.py
       uv sync --script scripts/build_word_list.py
       uv sync --script scripts/build_templates.py
+      uv sync --script scripts/build_markdown_templates.py
       ```
 
       2. 全ての文書の検査が呼ぶ markdownlint-cli2・textlint とルールを、ロック（`scripts/lint/package-lock.json`）のバージョンで `scripts/lint/node_modules/` に入れる
@@ -23,7 +24,7 @@ categories:
     verification:
       state: 済
       date: '2026-11-06'
-      detail: 3 つのスクリプトの `uv sync --script` がロックの依存を入れた（2026-10-31）。worktree で `npm ci --prefix scripts/lint` を実行し、`scripts/lint/node_modules/.bin/` に `markdownlint-cli2`・`textlint` が入った（2026-11-05）。worktree で `uv sync --script scripts/build_templates.py` がロックの依存を入れた（2026-11-06）
+      detail: 3 つのスクリプトの `uv sync --script` がロックの依存を入れた（2026-10-31）。worktree で `npm ci --prefix scripts/lint` を実行し、`scripts/lint/node_modules/.bin/` に `markdownlint-cli2`・`textlint` が入った（2026-11-05）。worktree で `uv sync --script scripts/build_templates.py` がロックの依存を入れた（2026-11-06）。worktree で `uv sync --script scripts/build_markdown_templates.py` がロックの依存（git から取得する dev-docs を含む）を入れた（2026-11-27）
   - name: 取り込み後の追従（pull 後）
     commands: |-
       1. ロック（`scripts/*.py.lock`）が変わったときは、エントリーポイントのスクリプトごとに依存を再インストールする
@@ -35,6 +36,7 @@ categories:
       uv sync --script scripts/build_pages.py
       uv sync --script scripts/build_word_list.py
       uv sync --script scripts/build_templates.py
+      uv sync --script scripts/build_markdown_templates.py
       ```
 
       2. `scripts/lint/package-lock.json` が変わったときは、lint の CLI とルールを再インストールする
@@ -45,7 +47,7 @@ categories:
     verification:
       state: 済
       date: '2026-11-05'
-      detail: 3 つのスクリプトで実行し、ロックの依存が入っていることを確認した（2026-10-31）。2 は環境構築の 2 と同じコマンドで確認した（2026-11-05）。`build_templates.py` の 1 は環境構築の 1 と同じコマンドで確認した（2026-11-06）
+      detail: 3 つのスクリプトで実行し、ロックの依存が入っていることを確認した（2026-10-31）。2 は環境構築の 2 と同じコマンドで確認した（2026-11-05）。`build_templates.py` の 1 は環境構築の 1 と同じコマンドで確認した（2026-11-06）。`build_markdown_templates.py` の 1 は環境構築の 1 と同じコマンドで確認した（2026-11-27）
   - name: 依存の追加・更新・削除
     commands: |-
       依存はスクリプトの PEP 723 のメタデータとロック（`{スクリプト}.py.lock`）が持つ。`pyproject.toml` は作らない。
@@ -124,6 +126,12 @@ categories:
       ```bash
       cd {AI Monitor のクローン} && PYTHONPATH=src uv run python -m ai_monitor.design_docs publish --only docs/{フォルダ}/index --root {knowledge の作業ツリー}
       ```
+
+      6. 設計書のスキーマ（`schemas/design/`）か `docs/template/` の設計書の種類のテンプレートを変えたら、`docs/template/markdown/` の Markdown のテンプレート（雛形と記載例）と管理用の YAML を再作成し、一緒に commit する（IF『Markdown のテンプレートの生成』）
+
+      ```bash
+      uv run --frozen --script scripts/build_markdown_templates.py
+      ```
     refs:
       - to: IF-137-1
         type: references
@@ -141,11 +149,14 @@ categories:
       - to: IF-201-1
         type: references
         when: 設計書のテンプレートを生成し直すコマンド（`scripts/build_templates.py`）の入出力を確認・修正するとき。
+      - to: IF-574-1
+        type: references
+        when: Markdown のテンプレートを生成し直すコマンド（`scripts/build_markdown_templates.py`）の入出力を確認・修正するとき。
     verification:
       state: 済
       date: '2026-11-20'
-      detail: WSL2 の Ubuntu（Node 24.14.0）で 1・2 のコマンドを実行した。公開の 5 文書が `_site/index.html` にまとまり（約 11 秒、終了コード 0）、YAML の検査は何も出さず終了コード 0 を返却した（2026-10-31）。3 のコマンドは worktree で実行し、終了コード 0 で、原本から再作成したコピーが commit 済みのコピーと一致した（2026-11-03）。4 のコマンドは worktree で実行し、終了コード 0 で 15 件のテンプレートを書き出し、続けて全ての文書の検査が違反 0 件で終わった（2026-11-06）。5 のコマンドは worktree で `--only docs/scenario/index` を指定して実行し、終了コード 0 で `docs/scenario/README.md` だけを書き換えた（約 47 秒）。ただし、行のリンクの表示名が文書のタイトルではなくファイル名（`SC-72-1` など）になる。AI Monitor の README の生成が knowledge の `schemas/design/` の種類を読み込まないためで、shuhei1101/ai-monitor#3424 で修正する（2026-11-14）。5 のコマンドを `--only` を指定せずに AI Monitor の develop（`88e73e9e`）で実行し、終了コード 0 で `docs/` と 9 つのフォルダの `README.mark.md` を書き出して `README.md` を削除した。書き出した中身は削除した `README.md` と一致し、行の表示名は文書のタイトルだった（2026-11-20）
-    effects: 1 は約 11 秒（初回は `npx` が mdmark と依存を取る）。`_site` は中身を削除してから書き込む。3 は `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を上書きする。4 は `docs/template/` の設計書の種類のテンプレートのうち、スキーマから組み立てた `items` と違うものの `items` だけを上書きする。5 は `--only` に指定したフォルダの `README.mark.md` を上書きし、そのフォルダの `README.md` を削除する
+      detail: WSL2 の Ubuntu（Node 24.14.0）で 1・2 のコマンドを実行した。公開の 5 文書が `_site/index.html` にまとまり（約 11 秒、終了コード 0）、YAML の検査は何も出さず終了コード 0 を返却した（2026-10-31）。3 のコマンドは worktree で実行し、終了コード 0 で、原本から再作成したコピーが commit 済みのコピーと一致した（2026-11-03）。4 のコマンドは worktree で実行し、終了コード 0 で 15 件のテンプレートを書き出し、続けて全ての文書の検査が違反 0 件で終わった（2026-11-06）。5 のコマンドは worktree で `--only docs/scenario/index` を指定して実行し、終了コード 0 で `docs/scenario/README.md` だけを書き換えた（約 47 秒）。ただし、行のリンクの表示名が文書のタイトルではなくファイル名（`SC-72-1` など）になる。AI Monitor の README の生成が knowledge の `schemas/design/` の種類を読み込まないためで、shuhei1101/ai-monitor#3424 で修正する（2026-11-14）。5 のコマンドを `--only` を指定せずに AI Monitor の develop（`88e73e9e`）で実行し、終了コード 0 で `docs/` と 9 つのフォルダの `README.mark.md` を書き出して `README.md` を削除した。書き出した中身は削除した `README.md` と一致し、行の表示名は文書のタイトルだった（2026-11-20）。6 のコマンドは worktree で実行し、終了コード 0 で 28 種類の雛形と記載例の 56 件と `files.yaml` を書き出した（約 9 秒）。続けて `--check` を付けて実行し、終了コード 0 で何も出さなかった（2026-11-27）
+    effects: 1 は約 11 秒（初回は `npx` が mdmark と依存を取る）。`_site` は中身を削除してから書き込む。3 は `plugins/slop-check/hooks/post-tool-use/word-list-ai-slop.json` を上書きする。4 は `docs/template/` の設計書の種類のテンプレートのうち、スキーマから組み立てた `items` と違うものの `items` だけを上書きする。5 は `--only` に指定したフォルダの `README.mark.md` を上書きし、そのフォルダの `README.md` を削除する。6 は `docs/template/markdown/` の Markdown と `files.yaml` のうち中身の違うものを上書きし、生成の対象に無い Markdown を削除する
   - name: 取り込み前の検査
     prerequisites:
       - 環境構築（クローン直後）を実行してある

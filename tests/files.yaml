@@ -25,6 +25,13 @@ files:
     related:
       - to: scripts/build_pages.py
         type: tests
+  - path: integration/scripts/test_build_markdown_templates.py
+    name: Markdown のテンプレートの生成の結合テスト
+    description: scripts/build_markdown_templates.py を子プロセスで起動し、Markdown のテンプレートの生成の入出力をインターフェース定義のとおりか確認する。Markdown のテンプレートの生成の振る舞いを変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/build_markdown_templates.py
+        type: tests
   - path: integration/scripts/test_build_templates.py
     name: 設計書のテンプレートの生成の結合テスト
     description: scripts/build_templates.py を子プロセスで起動し、設計書のテンプレートの生成の入出力をインターフェース定義のとおりか確認する。設計書のテンプレートの生成の振る舞いを変えたときに参照する。
@@ -88,6 +95,13 @@ files:
     tags: [topic:テスト, tool:pytest]
     related:
       - to: scripts/build_pages.py
+        type: tests
+  - path: unit/scripts/test_build_markdown_templates.py
+    name: Markdown のテンプレートの生成の単体テスト
+    description: scripts/build_markdown_templates.py の関数をモジュール構成のとおりか確認する。Markdown のテンプレートの生成の実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/build_markdown_templates.py
         type: tests
   - path: unit/scripts/test_build_templates.py
     name: 設計書のテンプレートの生成の単体テスト

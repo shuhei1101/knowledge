@@ -28,6 +28,10 @@ files:
     name: 設計書のテンプレートの生成
     description: 設計書のスキーマから、docs/template/ の対応するテンプレートの items を書き出す。テンプレートに出す項目や表の書き方を変えるときに参照する。
     tags: [topic:テンプレート, topic:スキーマ, topic:生成, tool:ruamel.yaml]
+  - path: build_markdown_templates.py
+    name: Markdown のテンプレートの生成
+    description: 設計書のスキーマから、docs/template/markdown/ の種類ごとの雛形と記載例の Markdown と管理用の YAML を書き出す。雛形の値の書き方や出力のファイル名を変えるときに参照する。
+    tags: [topic:テンプレート, topic:スキーマ, topic:生成, topic:markdown, tool:dev-docs]
   - path: _lint.py
     name: lint の呼び出し
     description: markdownlint-cli2・textlint・yamllint と mdmark の map の点検の、在りかの確認と、文書の Markdown の項目の取り出し・呼び出し・違反の行の対応を受け持つ。lint の CLI のバージョンを上げるときや、CLI の出力の読み方を変えるときに参照する。

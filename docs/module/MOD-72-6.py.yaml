@@ -34,6 +34,12 @@ data_models:
       - name: message
         type: str
         description: 標準エラーへ出す理由の 1 行
+  - name: MarkdownTemplateError
+    title: Markdown のテンプレートを比べられない理由
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    summary: 「Markdown のテンプレートの生成」が終了コード 2 で終わった・起動できない・打ち切った理由
+    description: '`Exception` を継承する。`str()` で標準エラーへ出す理由を返却する。'
 constants:
   - name: CHECKS_ID
     title: 文書の違反の検査の ID
@@ -71,6 +77,17 @@ constants:
     usecase: 全ての文書の検査
     summary: ネットミームの配信元（`project-index.yaml`・`schemas/`・`scripts/meme_checks.py` を持つ）の、リポジトリの直下からのパス
     value: PurePosixPath("memes")
+  - name: MARKDOWN_TEMPLATES_TIMEOUT_SEC
+    title: Markdown のテンプレートの生成を待つ時間
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    summary: 子プロセスを打ち切るまでの秒数
+    value: '180'
+    refs:
+      - to: NFR-72-1
+        item: requirements[Markdown のテンプレートの生成の所要時間]
+        type: requires
+        when: 値を変えるときに、非機能要件の決定値と突き合わせる。
 functions:
   - name: main
     title: 全ての文書の検査のエントリーポイント
@@ -89,7 +106,7 @@ functions:
         description: コマンドの引数。`None` は `sys.argv[1:]`。`--lint-dir`（既定は `DEFAULT_LINT_DIR`）だけを取る
     returns:
       type: int
-      description: 終了コード。`0` = 違反なし、`1` = 違反が 1 件以上か想定していない例外、`2` = 検査を始めなかったか mdmark の点検が失敗した
+      description: 終了コード。`0` = 違反なし、`1` = 違反が 1 件以上か想定していない例外、`2` = 検査を始めなかったか、mdmark の点検か Markdown のテンプレートの生成が失敗した
     process: |-
       1. argparse で引数を読み込み、標準出力を UTF-8 にする
       2. lint の CLI の在りかを確認し（lint の CLI の在りかの確認）、`shutil.which("npx")` で npx を探す
@@ -104,6 +121,8 @@ functions:
       8. 設計書のスキーマと `schemas/` の直下のスキーマを検査し（設計書のスキーマの検査・文書の種類のスキーマの検査）、違反を同じ形式の行で出す
       9. 対応表のコピーを検査し（対応表のコピーの検査）、違反を同じ形式の行で出す
          設計書のテンプレートを検査し（設計書のテンプレートの検査）、違反を同じ形式の行で出す
+         8 の設計書のスキーマの違反が 0 件で、設計書のテンプレートの検査にテンプレートが無い違反が無いとき、Markdown のテンプレートを検査し（Markdown のテンプレートの検査）、違反を同じ形式の行で出す
+         - `MarkdownTemplateError` の場合、理由を記録して続け、最後の行を出した後に標準エラーへ理由を出し `2` を返却する
          5 で読み込んだ文書のうち、`schema` が `schemas/design/interface.schema.yaml` の文書を workflow のファイルと突き合わせ（workflow のファイルの突き合わせ）、違反を同じ形式の行で出す
       10. lint を適用する（lint の検査）。違反を `{ファイルのパス}:{行}: {項目のパス}: {tool}/{rule}: {message}`、`warning` の違反は `{内容}` の前に `warning: ` を付けた行で、文書のパスと行の順に出す。続けて、中身の読み込めた文書ごとに map を含む項目を取り出し（map を含む項目の取り出し）、まとめて map の点検を呼び（map の点検の呼び出し）、違反を lint と同じ形式の行で出す
          - 読み込めない lint の出力の場合、標準エラーへ理由を出し `1` を返却する
@@ -199,6 +218,7 @@ functions:
       - MOD-376-1#functions[check_workflows]
       - MOD-176-1#functions[collect_map_sources]
       - MOD-176-1#functions[run_map_check]
+      - MOD-72-6#functions[check_markdown_templates]
     refs:
       - to: IF-72-3
         type: requires
@@ -808,6 +828,104 @@ functions:
       - MOD-72-2#functions[line_of]
       - MOD-72-2#functions[format_path]
       - MOD-72-4#functions[check_document]
+  - name: check_markdown_templates
+    title: Markdown のテンプレートの検査
+    kind: 関数
+    container: scripts/check_all.py
+    usecase: 全ての文書の検査
+    scope: public
+    summary: 「Markdown のテンプレートの生成」を `--check` で子プロセスとして起動し、ずれを違反にする
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: 検査するリポジトリ。子プロセスの作業ディレクトリにする
+      - name: run
+        title: 子プロセスの起動
+        type: Callable[..., subprocess.CompletedProcess[str]]
+        required: false
+        default: subprocess.run
+        passing: keyword
+        description: 単体テストで差し替える
+    returns:
+      type: list[tuple[str, int, str, str]]
+      description: （ファイルのパス、行、項目のパス、内容）。`docs/template/markdown/` が無いかずれが無ければ空
+    process: |-
+      1. `{root}/docs/template/markdown/` が無ければ空を返却する
+      2. `check_all.py` と同じフォルダの `build_markdown_templates.py` を、`["uv", "run", "--frozen", "--script", {そのパス}, "--check"]` で、`cwd` を `root`、打ち切りを `MARKDOWN_TEMPLATES_TIMEOUT_SEC` にして起動する
+         - 起動できない場合（`OSError`）、`MarkdownTemplateError("Markdown のテンプレートの生成を起動できません: {理由}")` を送出する
+         - 打ち切った場合（`subprocess.TimeoutExpired`）、`MarkdownTemplateError("Markdown のテンプレートの生成が {秒数} 秒で終わりませんでした")` を送出する
+      3. 終了コードで分ける
+         - `0` の場合、空を返却する
+         - `1` で、標準出力に空でない行が無い場合（import の失敗など）、`MarkdownTemplateError(子プロセスの標準エラー)` を送出する
+         - `1` の場合、標準出力の空でない行ごとに、タブを持つ行は `(パス, 1, "$", "Markdown のテンプレートがスキーマ {生成元} と一致しません。{COMMAND} で再作成してください")`、タブを持たない行は `(パス, 1, "$", "生成の対象に無い Markdown です。{COMMAND} で削除してください")` を追加し、パスの順に返却する（`{COMMAND}` は「Markdown のテンプレートの生成」の `COMMAND` と同じ文字列。dev-docs を依存に持たないため import せず、起動するスクリプト名から組み立てる）
+         - それ以外の場合、`MarkdownTemplateError(子プロセスの標準エラー)` を送出する
+    exceptions:
+      - name: MarkdownTemplateError
+        condition: 子プロセスを起動できない
+        message: '`Markdown のテンプレートの生成を起動できません: {理由}`'
+      - name: MarkdownTemplateError
+        condition: '`MARKDOWN_TEMPLATES_TIMEOUT_SEC` で打ち切った'
+        message: '`Markdown のテンプレートの生成が {秒数} 秒で終わりませんでした`'
+      - name: MarkdownTemplateError
+        condition: 終了コードが 0・1 以外
+        message: 子プロセスの標準エラー
+      - name: MarkdownTemplateError
+        condition: 終了コードが 1 で、標準出力に空でない行が無い
+        message: 子プロセスの標準エラー
+    unit_tests:
+      - name: test_check_markdown_templates
+        case: 正常
+        summary: ずれが無い
+        condition: '`docs/template/markdown/` を持つ一時フォルダ'
+        mock: '`run` を、終了コード 0 で空の標準出力を返却する関数に差し替える'
+        expected: 空で、`run` に `--check` と `cwd` の一時フォルダと `MARKDOWN_TEMPLATES_TIMEOUT_SEC` が指定された
+      - name: test_check_markdown_templates_when_folder_missing
+        case: 正常
+        summary: docs/template/markdown/ が無い
+        condition: '`docs/template/markdown/` を持たない一時フォルダ'
+        mock: '`run` を、呼ばれたら失敗させる関数に差し替える'
+        expected: 空で、`run` が呼ばれない
+      - name: test_check_markdown_templates_when_differences
+        case: 正常
+        summary: ずれがある
+        condition: '`test_check_markdown_templates` と同じ'
+        mock: '`run` を、終了コード 1 で `docs/template/markdown/er.md\tschemas/design/er.schema.yaml` と `docs/template/markdown/old.md` の 2 行を返却する関数に差し替える'
+        expected: 2 件で、er.md の内容に `schemas/design/er.schema.yaml` と `build_markdown_templates.py` があり、old.md の内容に生成の対象に無いことがある
+      - name: test_check_markdown_templates_when_generation_fails
+        case: 異常
+        summary: 生成が終了コード 2 で終わる
+        condition: '`test_check_markdown_templates` と同じ'
+        mock: '`run` を、終了コード 2 と標準エラー `dev-docs を取得できません` を返却する関数に差し替える'
+        expected: '`MarkdownTemplateError` で、理由が `dev-docs を取得できません`'
+        exception: 終了コードが 0・1 以外
+      - name: test_check_markdown_templates_when_timeout
+        case: 異常
+        summary: 打ち切る
+        condition: '`test_check_markdown_templates` と同じ'
+        mock: '`run` を、`subprocess.TimeoutExpired` を送出する関数に差し替える'
+        expected: '`MarkdownTemplateError` で、理由に秒数がある'
+        exception: '`MARKDOWN_TEMPLATES_TIMEOUT_SEC` で打ち切った'
+      - name: test_check_markdown_templates_when_not_started
+        case: 異常
+        summary: 起動できない
+        condition: '`test_check_markdown_templates` と同じ'
+        mock: '`run` を、`FileNotFoundError` を送出する関数に差し替える'
+        expected: '`MarkdownTemplateError` で、理由に起動できないことがある'
+        exception: 子プロセスを起動できない
+      - name: test_check_markdown_templates_when_exit_one_without_lines
+        case: 異常
+        summary: ずれの行を出さずに終了コード 1 で終わる
+        condition: '`test_check_markdown_templates` と同じ'
+        mock: "`run` を、終了コード 1 で空の標準出力と標準エラー `ModuleNotFoundError: No module named 'dev_docs'` を返却する関数に差し替える"
+        expected: '`MarkdownTemplateError` で、理由が標準エラーの `ModuleNotFoundError` の行'
+        exception: 終了コードが 1 で、標準出力に空でない行が無い
+    refs:
+      - to: IF-72-3
+        item: constraints[Markdown のテンプレート]
+        type: requires
+        when: '`check_markdown_templates` を修正するときに、IF-72-3 の「Markdown のテンプレート」の決まりと突き合わせる。'
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と `jsonschema>=4.26.0`（LIB-72-2）と `yamllint==1.38.0`（LIB-176-3）を記載し、`knowledge_checks.py`・`build_word_list.py`・`_lint.py`・`_workflow.py`（`check_workflows`）を同じフォルダから import する。
 test_files:
