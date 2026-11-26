@@ -441,6 +441,114 @@ def test_normal_when_templates_out_of_date(
     assert "scripts/build_templates.py" in line
 
 
+# 「Markdown のテンプレートの生成」を差し替えるテストの、設計書のスキーマの検査に違反しない共通と ER 図のスキーマ
+_MARKDOWN_COMMON = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: 共通\n"
+    "$defs:\n"
+    "  id:\n"
+    "    type: string\n"
+    "    description: 変わらない ID。\n"
+)
+_MARKDOWN_ER = (
+    "$schema: https://json-schema.org/draft/2020-12/schema\n"
+    "title: ER 図\n"
+    "description: データストアの構造をまとめる。\n"
+    "x-kind: er\n"
+    "type: object\n"
+    "properties:\n"
+    "  id:\n"
+    "    $ref: common.schema.yaml#/$defs/id\n"
+    "    title: ID\n"
+    "    x-used-by:\n"
+    "      - 検査で、参照の解決先にする。\n"
+)
+
+
+def _fake_markdown_generation(bin_dir: Path, body: str) -> Path:
+    """build_markdown_templates.py の起動だけを body の動作に差し替え、それ以外は本物へ渡す uv を作る。"""
+    real_uv = shutil.which("uv")
+    assert real_uv is not None
+    bin_dir.mkdir()
+    fake = bin_dir / "uv"
+    fake.write_text(
+        "#!/bin/sh\n"
+        'case "$*" in\n'
+        f"  *build_markdown_templates.py*) {body} ;;\n"
+        "esac\n"
+        f'exec "{real_uv}" "$@"\n',
+        encoding="utf-8",
+    )
+    fake.chmod(0o755)
+    return bin_dir
+
+
+def test_normal_when_markdown_templates_out_of_date(
+    run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
+) -> None:
+    """Markdown のテンプレートが「Markdown のテンプレートの生成」の --check でずれていれば、違反として出す（正常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "schemas/design/common.schema.yaml": _MARKDOWN_COMMON,
+            "schemas/design/er.schema.yaml": _MARKDOWN_ER,
+        }
+    )
+    # YAML のテンプレートは今のスキーマから items を生成した状態にする
+    (root / "docs/template").mkdir(parents=True, exist_ok=True)
+    (root / "docs/template/template-er.yaml").write_text(
+        "id: template-er\nkind: template\nitems: []\n", encoding="utf-8"
+    )
+    run_script("build_templates", root)
+    (root / "docs/template/markdown").mkdir(parents=True)
+    bin_dir = _fake_markdown_generation(
+        tmp_path / "bin",
+        "printf 'docs/template/markdown/er.md\\tschemas/design/er.schema.yaml\\n'; exit 1",
+    )
+    # 実行
+    result = run_script("check_all", root, path_prefix=bin_dir)
+    # 検証
+    lines = result.stdout.splitlines()
+    assert result.exit_code == 1
+    line = next(line for line in lines if line.startswith("docs/template/markdown/er.md:1: $: "))
+    assert "schemas/design/er.schema.yaml" in line
+    assert "scripts/build_markdown_templates.py" in line
+    assert not any(line.startswith("docs/template/template-er.yaml") for line in lines)
+
+
+def test_error_when_markdown_template_generation_fails(
+    run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
+) -> None:
+    """「Markdown のテンプレートの生成」が終了コード 2 で終わったら、他の検査を終えてから終了コード 2 で終わる（異常系）。"""
+    # 準備
+    root = repo_factory(
+        {
+            "docs/rule/a.yaml": "id: a\nkind: rule\nname: A\nitems:\n  - id: x\n    body: 本文。\n",
+            "schemas/design/common.schema.yaml": _MARKDOWN_COMMON,
+            "schemas/design/er.schema.yaml": _MARKDOWN_ER,
+        }
+    )
+    # YAML のテンプレートは今のスキーマから items を生成した状態にする
+    (root / "docs/template").mkdir(parents=True, exist_ok=True)
+    (root / "docs/template/template-er.yaml").write_text(
+        "id: template-er\nkind: template\nitems: []\n", encoding="utf-8"
+    )
+    run_script("build_templates", root)
+    (root / "docs/template/markdown").mkdir(parents=True)
+    bin_dir = _fake_markdown_generation(
+        tmp_path / "bin", "echo 'dev-docs を取得できません' >&2; exit 2"
+    )
+    # 実行
+    result = run_script("check_all", root, path_prefix=bin_dir)
+    # 検証
+    lines = result.stdout.splitlines()
+    assert result.exit_code == 2
+    assert lines[0].startswith("docs/rule/a.yaml:1: $: ")
+    assert "description" in lines[0]
+    assert lines[-1] == "1 件の文書を検査し、違反は 1 件、警告は 0 件でした"
+    assert "dev-docs を取得できません" in result.stderr
+
+
 # map の中の Mermaid に `:` の無いメッセージの行を持つ文書（13 行目が誤りの行）
 _MAP_INVALID = (
     "id: rule-a\n"
