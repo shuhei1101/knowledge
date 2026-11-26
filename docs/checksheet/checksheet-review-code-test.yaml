@@ -47,6 +47,7 @@ aspects:
       - name: target:テストコード
       - name: process:単体テスト作成
       - name: process:実装
+      - name: process:結合テスト作成
     visibility: internal
   - id: aspect-review-code-test-02
     name: 壊れたときに失敗するテスト
@@ -152,6 +153,8 @@ aspects:
       - name: target:実装コード
         main: true
       - name: process:実装
+      - name: target:テンプレート
+      - name: process:ドキュメント修正
     visibility: internal
   - id: aspect-review-code-test-13
     name: 開発コマンドの確認の記録
