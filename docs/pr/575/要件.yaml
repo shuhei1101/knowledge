@@ -26,7 +26,9 @@ docs:
   - page: project-index.yaml
     new: false
     change: Markdown のテンプレートの documents[] の行と、nav の「テンプレート」のグループの auto と、「シナリオ」のグループの SC-574-1 の行を加える
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T15:38:18.356144+00:00'
   - page: docs/layout/LAY-72-1.yaml
     new: false
     change: docs/template/markdown/ と files.yaml、scripts/build_markdown_templates.py とそのロックの配置を加える
@@ -42,7 +44,9 @@ docs:
   - page: docs/dev-command/CMD-72-1.yaml
     new: false
     change: Markdown のテンプレートの生成のコマンドを加える
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T15:38:18.356144+00:00'
   - page: docs/test-procedure/TP-72-1.yaml
     new: false
     change: lint・単体・結合の層のコマンドに固定したコミットの dev-docs を加え、前提に dev-docs を git から取得できることを加える
@@ -58,20 +62,30 @@ docs:
   - page: docs/template/markdown/files.yaml
     new: true
     change: Markdown のテンプレートのメタデータを持つ管理用の YAML を新設する（生成のスクリプトが書き出す）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T15:38:18.356144+00:00'
   - page: scripts/files.yaml
     new: false
     change: Markdown のテンプレートの生成のスクリプトの行を加える
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T15:38:18.356144+00:00'
   - page: tests/files.yaml
     new: false
     change: 生成のスクリプトのテストの行を加える
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T15:38:18.356144+00:00'
   - page: scripts/build_markdown_templates.py.lock
     new: true
     change: dev-docs の固定したコミットを含む依存のロックを新設する
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T15:38:18.356144+00:00'
   - page: .github/workflows/test.yml
     new: false
     change: 「層の全件を回す」のコマンドをテスト実行方法の単体・結合の層の run_all と同じにする（dev-docs を加える）
-    status: todo
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T15:38:18.356144+00:00'
