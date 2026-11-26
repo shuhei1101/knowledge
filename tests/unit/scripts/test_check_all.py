@@ -1497,3 +1497,107 @@ def test_check_document_schemas_when_memes(repo_factory: RepoFactory) -> None:
     assert len(result) == 1
     assert result[0][0] == "memes/schemas/meme.schema.yaml"
     assert result[0][3].startswith("metaschema: ")
+
+
+def _completed(code: int, out: str = "", err: str = "") -> Callable[..., object]:
+    """子プロセスの起動の差し替え。受け取った引数を記録し、決めた終了コードと出力を返却する。"""
+    import subprocess
+
+    calls: list[tuple[tuple[object, ...], dict[str, object]]] = []
+
+    def _run(*args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
+        calls.append((args, kwargs))
+        return subprocess.CompletedProcess(args, code, out, err)
+
+    _run.calls = calls  # type: ignore[attr-defined]
+    return _run
+
+
+def test_check_markdown_templates(tmp_path: Path) -> None:
+    """ずれが無い（正常系）。"""
+    # 準備
+    (tmp_path / "docs/template/markdown").mkdir(parents=True)
+    run = _completed(0)
+    # 実行
+    result = check_all.check_markdown_templates(tmp_path, run=run)
+    # 検証
+    assert result == []
+    args, kwargs = run.calls[0]  # type: ignore[attr-defined]
+    assert "--check" in args[0]
+    assert kwargs["cwd"] == tmp_path
+    assert kwargs["timeout"] == check_all.MARKDOWN_TEMPLATES_TIMEOUT_SEC
+
+
+def test_check_markdown_templates_when_folder_missing(tmp_path: Path) -> None:
+    """docs/template/markdown/ が無い（正常系）。"""
+
+    # 準備
+    def _must_not_run(*args: object, **kwargs: object) -> object:
+        del args, kwargs
+        raise AssertionError("呼ばれてはいけない")
+
+    # 実行
+    result = check_all.check_markdown_templates(tmp_path, run=_must_not_run)
+    # 検証
+    assert result == []
+
+
+def test_check_markdown_templates_when_differences(tmp_path: Path) -> None:
+    """ずれがある（正常系）。"""
+    # 準備
+    (tmp_path / "docs/template/markdown").mkdir(parents=True)
+    run = _completed(
+        1,
+        "docs/template/markdown/er.md\tschemas/design/er.schema.yaml\n"
+        "docs/template/markdown/old.md\n",
+    )
+    # 実行
+    result = check_all.check_markdown_templates(tmp_path, run=run)
+    # 検証
+    assert [r[0] for r in result] == [
+        "docs/template/markdown/er.md",
+        "docs/template/markdown/old.md",
+    ]
+    assert "schemas/design/er.schema.yaml" in result[0][3]
+    assert "build_markdown_templates.py" in result[0][3]
+    assert "生成の対象に無い" in result[1][3]
+
+
+def test_check_markdown_templates_when_generation_fails(tmp_path: Path) -> None:
+    """生成が終了コード 2 で終わる（異常系）。"""
+    # 準備
+    (tmp_path / "docs/template/markdown").mkdir(parents=True)
+    run = _completed(2, err="dev-docs を取得できません")
+    # 実行・検証
+    with pytest.raises(check_all.MarkdownTemplateError, match="dev-docs を取得できません"):
+        check_all.check_markdown_templates(tmp_path, run=run)
+
+
+def test_check_markdown_templates_when_timeout(tmp_path: Path) -> None:
+    """打ち切る（異常系）。"""
+    import subprocess
+
+    # 準備
+    (tmp_path / "docs/template/markdown").mkdir(parents=True)
+
+    def _timeout(*args: object, **kwargs: object) -> object:
+        del kwargs
+        raise subprocess.TimeoutExpired(args[0], 180)  # type: ignore[arg-type]
+
+    # 実行・検証
+    with pytest.raises(check_all.MarkdownTemplateError, match="180 秒"):
+        check_all.check_markdown_templates(tmp_path, run=_timeout)
+
+
+def test_check_markdown_templates_when_not_started(tmp_path: Path) -> None:
+    """起動できない（異常系）。"""
+    # 準備
+    (tmp_path / "docs/template/markdown").mkdir(parents=True)
+
+    def _missing(*args: object, **kwargs: object) -> object:
+        del args, kwargs
+        raise FileNotFoundError("uv")
+
+    # 実行・検証
+    with pytest.raises(check_all.MarkdownTemplateError, match="起動できません"):
+        check_all.check_markdown_templates(tmp_path, run=_missing)
