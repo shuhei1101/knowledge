@@ -1,0 +1,48 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-72-5.yaml
+    impact: changed
+    detail: 文書を書き込むときに文章の検査も行い、違反があれば書き込まずに違反を返す
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: none
+    detail: 全ての文書の検査の文章の検査は変わらない。書き込みの検査と同じ設定で検査する元になる
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-536-1.yaml
+    impact: changed
+    detail: 直コミットで書き込むときにも文章の検査を行い、違反があれば develop へコミットせずに違反を返す
+    depends_on: []
+docs:
+  - page: docs/library/LIB-176-2.yaml
+    new: false
+    change: textlint を使用する場所に書き込みの検査（knowledge-checks）を加える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T20:40:58.185283+00:00'
+  - page: docs/nonfunctional/NFR-72-1.yaml
+    new: false
+    change: 検査と変換のスクリプトの 1 文書あたりの処理時間を、textlint の呼び出しを含めた実測で見直す
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T20:48:49.488444+00:00'
+  - page: docs/dev-command/CMD-72-1.yaml
+    new: false
+    change: 書き込みの検査が textlint を使用するため、環境構築の npm ci --prefix scripts/lint を書き込む作業ツリーの前提に加える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T20:40:58.185283+00:00'
+  - page: docs/library/LIB-176-3.yaml
+    new: false
+    change: yamllint を使用する場所に、`_lint.py` を import する書き込みの検査（knowledge-checks）の依存と、`uv lock --script scripts/knowledge_checks.py` でのロックを加える
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T20:40:58.185283+00:00'
+scope_out:
+  - item: 書き込みの検査で markdownlint-cli2・yamllint・mdmark の map の点検も適用する
+    reason: 要望は textlint の違反だけで、他の lint は要望に含まれない
+    plan: '#589'
+  - item: 画面設計のスキーマの description が 3 文以上で、結合テスト test_normal_when_repository_schemas が develop で落ちる
+    reason: '#585 で入った既存の失敗で、develop の worktree でも落ちる。この PR の変更と関係が無い'
+    plan: '#588'

@@ -1,10 +1,12 @@
 """scripts/knowledge_checks.py の単体テスト。"""
 
 import json
+from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING
 
 import knowledge_checks
 from _common import load_config, load_document
+from _lint import LintFinding, LintOutputError
 from knowledge_checks import (
     build_id_index,
     build_name_index,
@@ -17,8 +19,7 @@ from knowledge_checks import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
-    from pathlib import Path
+    from collections.abc import Callable, Sequence
 
     import pytest
 
@@ -61,6 +62,11 @@ def test_main(
     (tmp_path / "docs").mkdir()
     (tmp_path / "project-index.yaml").write_text(_EMPTY_CONFIG, encoding="utf-8")
     monkeypatch.chdir(tmp_path)
+
+    def _no_textlint(_text: str, _lint_dir: Path) -> list[dict[str, str]]:
+        return []
+
+    monkeypatch.setattr(knowledge_checks, "check_textlint", _no_textlint)
     stdin_factory(_VALID_DOC)
     # 実行
     code = knowledge_checks.main([])
@@ -91,6 +97,35 @@ def test_main_when_unexpected_error(
     # 検証
     assert code == 1
     assert "Traceback" in capsys.readouterr().err
+
+
+def test_main_when_textlint_violation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    stdin_factory: Callable[[str], None],
+) -> None:
+    """textlint の違反をつなぐ（正常系）。"""
+    # 準備
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "project-index.yaml").write_text(_EMPTY_CONFIG, encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    lint_dir = tmp_path / "lint"
+    received: list[Path] = []
+    violation = {"path": "items[0].body", "rule": "8 行目: textlint/r: m", "fix": "f"}
+
+    def _spy(_text: str, lint: Path) -> list[dict[str, str]]:
+        received.append(lint)
+        return [violation]
+
+    monkeypatch.setattr(knowledge_checks, "check_textlint", _spy)
+    stdin_factory(_VALID_DOC)
+    # 実行
+    code = knowledge_checks.main(["--lint-dir", str(lint_dir)])
+    # 検証
+    assert code == 0
+    assert json.loads(capsys.readouterr().out) == [violation]
+    assert received == [lint_dir]
 
 
 def test_check_document(tmp_path: Path) -> None:
@@ -541,3 +576,98 @@ def test_check_word_list_when_valid() -> None:
     result = knowledge_checks.check_word_list(doc)
     # 検証
     assert result == []
+
+
+def _create_textlint(lint_dir: Path) -> None:
+    """lint のフォルダの node_modules/.bin/ に、実行権限のある textlint を置く。"""
+    folder = lint_dir / "node_modules" / ".bin"
+    folder.mkdir(parents=True)
+    path = folder / "textlint"
+    path.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+    path.chmod(0o755)
+
+
+def test_check_textlint(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """error の違反を元の文書の行で返す（正常系）。"""
+    # 準備
+    _create_textlint(tmp_path / "lint")
+    source = PurePosixPath("-.yaml")
+
+    def _fake(*_args: object) -> list[LintFinding]:
+        return [
+            LintFinding(
+                source,
+                5,
+                "items[0].body",
+                "textlint",
+                "ja-technical-writing/no-doubled-joshi",
+                "助詞が重なっています",
+                False,
+            ),
+            LintFinding(
+                source,
+                6,
+                "items[0].body",
+                "textlint",
+                "one-sentence-per-line",
+                "1 行に 2 文があります",
+                True,
+            ),
+        ]
+
+    monkeypatch.setattr(knowledge_checks, "run_textlint", _fake)
+    # 実行
+    result = knowledge_checks.check_textlint(_VALID_DOC, tmp_path / "lint")
+    # 検証
+    assert len(result) == 1
+    assert result[0]["path"] == "items[0].body"
+    assert result[0]["rule"].startswith("5 行目: textlint/ja-technical-writing/no-doubled-joshi: ")
+
+
+def test_check_textlint_when_no_markdown(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Markdown の項目が無い（正常系）。"""
+    # 準備
+    text = "id: self\nkind: rule\nname: 文書\ndescription: 説明\n"
+
+    def _fail(*_args: object) -> list[LintFinding]:
+        message = "呼ばれない"
+        raise AssertionError(message)
+
+    monkeypatch.setattr(knowledge_checks, "run_textlint", _fail)
+    # 実行
+    result = knowledge_checks.check_textlint(text, tmp_path / "missing")
+    # 検証
+    assert result == []
+
+
+def test_check_textlint_when_missing(tmp_path: Path) -> None:
+    """textlint が無い（正常系）。"""
+    # 準備
+    lint_dir = tmp_path / "lint"
+    lint_dir.mkdir()
+    # 実行
+    result = knowledge_checks.check_textlint(_VALID_DOC, lint_dir)
+    # 検証
+    assert len(result) == 1
+    assert result[0]["path"] == "$"
+    assert str(lint_dir) in result[0]["rule"]
+    assert "npm ci --prefix scripts/lint" in result[0]["fix"]
+
+
+def test_check_textlint_when_failed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """textlint が失敗した（正常系）。"""
+    # 準備
+    _create_textlint(tmp_path / "lint")
+
+    def _raise(*_args: object) -> Sequence[LintFinding]:
+        message = "textlint が終了コード 2 で終わりました: boom"
+        raise LintOutputError(message)
+
+    monkeypatch.setattr(knowledge_checks, "run_textlint", _raise)
+    # 実行
+    result = knowledge_checks.check_textlint(_VALID_DOC, tmp_path / "lint")
+    # 検証
+    assert len(result) == 1
+    assert result[0]["path"] == "$"
+    assert "終了コード 2" in result[0]["rule"]
+    assert "boom" in result[0]["rule"]

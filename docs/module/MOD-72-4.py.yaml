@@ -1,7 +1,7 @@
 id: "MOD-72-4"
 visibility: internal
 title: "検査と変換のスクリプト / scripts / knowledge_checks.py"
-lead: project-index の validators の `knowledge-checks`。標準入力の文書 1 件に、項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複を適用し、違反の配列を返却する（IF-72-1）。
+lead: project-index の validators の `knowledge-checks`。標準入力の文書 1 件に、項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複・Markdown の項目の textlint の違反を適用し、違反の配列を返却する（IF-72-1）。
 constants:
   - name: ID_LINK
     title: 'id: の参照'
@@ -30,15 +30,16 @@ functions:
         type: Sequence[str] | None
         required: false
         default: None
-        description: コマンドの引数。`None` は `sys.argv[1:]`。引数は取らない（`--help` だけ）
+        description: コマンドの引数。`None` は `sys.argv[1:]`。`--lint-dir`（textlint の設定と `node_modules/.bin/textlint` を持つフォルダ。既定は `_lint.py` の `DEFAULT_LINT_DIR`）だけを取る
     returns:
       type: int
       description: 終了コード。`0` = 検査を終えた（違反の有無に依らない）、`1` = 想定していない例外
     process: |-
-      1. argparse で引数を読み込む
+      1. argparse で `--lint-dir` を読み込む
       2. 標準入出力を UTF-8 にする（`sys.stdin.reconfigure(encoding="utf-8")`・`sys.stdout` も同じ）
       3. 標準入力を読み込み、作業ディレクトリを配信元の直下にして検査する（文書の検査）
-      4. 違反の配列を `json.dumps(..., ensure_ascii=False)` で標準出力へ出し、`0` を返却する
+      4. 同じ文書に `--lint-dir` で textlint を適用し（textlint の検査）、違反を文書の検査の違反の後ろにつなぐ
+      5. 違反の配列を `json.dumps(..., ensure_ascii=False)` で標準出力へ出し、`0` を返却する
          - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返却する
     unit_tests:
       - name: test_main
@@ -53,8 +54,15 @@ functions:
         condition: 文書の検査が `RuntimeError` を送出する
         mock: 文書の検査を `RuntimeError` を送出する関数に差し替える
         expected: '`1` を返却し、標準エラーに `Traceback` が出る'
+      - name: test_main_when_textlint_violation
+        case: 正常
+        summary: textlint の違反をつなぐ
+        condition: 標準入力に違反の無い文書。引数は `--lint-dir {一時フォルダ}`
+        mock: textlint の検査を、受け取った lint のフォルダを記録して違反 1 件を返却する関数に差し替える
+        expected: '`0` を返却し、標準出力がその 1 件だけの配列で、記録した lint のフォルダが `--lint-dir` の値'
     callees:
       - '#functions[check_document]'
+      - '#functions[check_textlint]'
     refs:
       - to: IF-72-1
         type: requires
@@ -507,9 +515,74 @@ functions:
         condition: 本文の ```yaml の囲みの中に `[B](id:missing)`、囲みの後に `[C](id:gone)`。索引は空
         mock: なし
         expected: 1 件で、`rule` が `gone` を含み、行が `[C](id:gone)` の行
+  - name: check_textlint
+    title: textlint の検査
+    kind: 関数
+    container: scripts/knowledge_checks.py
+    usecase: 文書の違反の検査
+    role: 外部呼び出し
+    scope: public
+    summary: 文書の Markdown の項目に textlint を適用し、error の違反を元の文書の行の違反で返却する
+    args:
+      - name: text
+        title: 文書
+        type: str
+        required: true
+        description: 標準入力の文書 1 件の YAML
+      - name: lint_dir
+        title: lint のフォルダ
+        type: Path
+        required: true
+        description: '`--lint-dir` の値'
+    returns:
+      type: list[Violation]
+      description: 'textlint の error の違反。textlint が無い・失敗したときは `path: $` の 1 件'
+    process: |-
+      1. `collect_sources(PurePosixPath("-.yaml"), text)` で Markdown の項目を取り出す
+         - 空の場合（Markdown の項目が無いか、YAML として読み込めない）、空を返却する
+      2. `find_lint_clis(lint_dir)` で textlint を探す
+         - 見つからない場合、`path` が `$`、`rule` が `1 行目: textlint が {lint_dir}/node_modules/.bin/ に見つかりません`、`fix` が `npm ci --prefix scripts/lint を実行して textlint を入れる` の 1 件を返却する
+      3. `run_textlint(sources, lint_dir, textlint)` を呼ぶ
+         - `LintOutputError` の場合、`path` が `$`、`rule` が `1 行目: textlint を実行できません: {例外のメッセージ}`、`fix` が `npm ci --prefix scripts/lint を実行して textlint を再インストールする` の 1 件を返却する
+      4. `warning` が `False` の `LintFinding` ごとに、`path` が `item_path`、`rule` が `{line} 行目: textlint/{rule}: {message}`、`fix` が `文を書き換えて textlint の {rule} の違反を無くす` の違反を作って返却する
+    unit_tests:
+      - name: test_check_textlint
+        case: 正常
+        summary: error の違反を元の文書の行で返却する
+        condition: '`items[0].body` を持つ文書。`node_modules/.bin/textlint` を持つ一時フォルダ'
+        mock: '`run_textlint` を、`line` 5・`rule` `ja-technical-writing/no-doubled-joshi`・`warning` `False` の 1 件と `warning` `True` の 1 件を返却する関数に差し替える'
+        expected: '1 件で、`path` が `items[0].body`、`rule` が `5 行目: textlint/ja-technical-writing/no-doubled-joshi: ` で始まる'
+      - name: test_check_textlint_when_no_markdown
+        case: 正常
+        summary: Markdown の項目が無い
+        condition: '`body` の項目を持たない文書。存在しない lint のフォルダ'
+        mock: '`run_textlint` を、呼ばれたら失敗させる関数に差し替える'
+        expected: 空
+      - name: test_check_textlint_when_missing
+        case: 正常
+        summary: textlint が無い
+        condition: '`items[0].body` を持つ文書。`node_modules` を持たない一時フォルダ'
+        mock: なし
+        expected: 1 件で、`path` が `$`、`rule` に lint のフォルダ、`fix` に `npm ci --prefix scripts/lint`
+      - name: test_check_textlint_when_failed
+        case: 正常
+        summary: textlint が失敗した
+        condition: '`items[0].body` を持つ文書。`node_modules/.bin/textlint` を持つ一時フォルダ'
+        mock: '`run_textlint` を、`LintOutputError("textlint が終了コード 2 で終わりました: boom")` を送出する関数に差し替える'
+        expected: 1 件で、`path` が `$`、`rule` に `終了コード 2` と `boom`
+    callees:
+      - MOD-176-1#functions[collect_sources]
+      - MOD-176-1#functions[find_lint_clis]
+      - MOD-176-1#functions[run_textlint]
+    refs:
+      - to: IF-72-1
+        item: constraints[textlint]
+        type: requires
+        when: '`check_textlint` を修正するときに、IF-72-1 の「textlint」「textlint が無い・失敗したとき」の決まりと突き合わせる。'
 notes:
   依存: |-
-    PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）を記載し、`_common.py` を同じフォルダから import する。
+    PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と、`_lint.py` が import する `yamllint==1.38.0`（LIB-176-3。`check_all.py` と同じバージョン）を記載し、`uv lock --script scripts/knowledge_checks.py` でロック（`knowledge_checks.py.lock`）を更新して、`_common.py`・`_lint.py` を同じフォルダから import する。
     `slop_check.py`（MOD-148-2）は、`Path(__file__).resolve().parents[1] / "plugins/slop-check/hooks/post-tool-use"` を `sys.path` の先頭に入れてから import する（MOD-148-1 の照合の共有）。
+    textlint の検査は `main` だけが呼び、文書の検査（`check_document`）には含めない。全ての文書の検査は `check_document` を文書ごとに呼び、textlint は全ての文書をまとめて 1 回呼ぶため
 test_files:
   - tests/unit/scripts/test_knowledge_checks.py

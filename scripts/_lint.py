@@ -1,6 +1,6 @@
 """全ての文書の検査で当てる markdownlint-cli2・textlint・yamllint と mdmark の map の点検の、在りかの確認と呼び出しと違反の行の対応。
 
-check_all.py が同じフォルダから import する。
+check_all.py・knowledge_checks.py が同じフォルダから import する。
 """
 
 import json
@@ -324,6 +324,31 @@ def _parse_textlint(stdout: str, sources: Sequence[LintSource]) -> list[LintFind
     return findings
 
 
+def _write_sources(sources: Sequence[LintSource], folder: Path) -> list[str]:
+    """Markdown を sources の順の添字の {添字:05d}.md として一時フォルダに書き出し、絶対パスを返す。"""
+    files: list[str] = []
+    for index, source in enumerate(sources):
+        path = folder / f"{index:05d}.md"
+        # 文書の項目の |- は末尾の改行を落とすため、ファイルの末尾の改行を補う（MD047 を項目に当てない）
+        path.write_text(
+            source.text if source.text.endswith("\n") else f"{source.text}\n", encoding="utf-8"
+        )
+        files.append(str(path))
+    return files
+
+
+def _call_textlint(
+    files: Sequence[str], sources: Sequence[LintSource], lint_dir: Path, textlint: str
+) -> list[LintFinding]:
+    """書き出した .md に textlint を 1 回呼び、JSON の出力を元の文書の行の違反にする。"""
+    result = _run_cli(
+        TEXTLINT,
+        [textlint, "--config", str(lint_dir / _TEXTLINT_CONFIG), "--format", "json", *files],
+        lint_dir,
+    )
+    return _parse_textlint(result.stdout, sources)
+
+
 def run_markdown_lints(
     sources: Sequence[LintSource], lint_dir: Path, clis: Mapping[str, str]
 ) -> list[LintFinding]:
@@ -332,34 +357,23 @@ def run_markdown_lints(
         return []
     with tempfile.TemporaryDirectory() as folder:
         # sources の添字をファイル名にし、違反のファイル名から元の項目を引く
-        files: list[str] = []
-        for index, source in enumerate(sources):
-            path = Path(folder) / f"{index:05d}.md"
-            # 文書の項目の |- は末尾の改行を落とすため、ファイルの末尾の改行を補う（MD047 を項目に当てない）
-            path.write_text(
-                source.text if source.text.endswith("\n") else f"{source.text}\n", encoding="utf-8"
-            )
-            files.append(str(path))
+        files = _write_sources(sources, Path(folder))
         markdownlint = _run_cli(
             MARKDOWNLINT,
             [clis[MARKDOWNLINT], "--config", str(lint_dir / _MARKDOWNLINT_CONFIG), *files],
             lint_dir,
         )
-        textlint = _run_cli(
-            TEXTLINT,
-            [
-                clis[TEXTLINT],
-                "--config",
-                str(lint_dir / _TEXTLINT_CONFIG),
-                "--format",
-                "json",
-                *files,
-            ],
-            lint_dir,
-        )
-    return _parse_markdownlint(markdownlint.stderr, sources) + _parse_textlint(
-        textlint.stdout, sources
-    )
+        textlint = _call_textlint(files, sources, lint_dir, clis[TEXTLINT])
+    return _parse_markdownlint(markdownlint.stderr, sources) + textlint
+
+
+def run_textlint(sources: Sequence[LintSource], lint_dir: Path, textlint: str) -> list[LintFinding]:
+    """Markdown を一時の .md に書き出し、textlint を 1 回呼んで、違反を元の文書の行で返す。"""
+    if not sources:
+        return []
+    with tempfile.TemporaryDirectory() as folder:
+        files = _write_sources(sources, Path(folder))
+        return _call_textlint(files, sources, lint_dir, textlint)
 
 
 def load_yamllint_config(lint_dir: Path, name: str = _YAMLLINT_CONFIG) -> YamlLintConfig:

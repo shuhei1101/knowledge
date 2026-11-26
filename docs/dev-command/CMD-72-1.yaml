@@ -16,7 +16,7 @@ categories:
       uv sync --script scripts/build_markdown_templates.py
       ```
 
-      2. 全ての文書の検査が呼ぶ markdownlint-cli2・textlint とルールを、ロック（`scripts/lint/package-lock.json`）のバージョンで `scripts/lint/node_modules/` に入れる
+      2. 全ての文書の検査が呼ぶ markdownlint-cli2・textlint とルールを、ロック（`scripts/lint/package-lock.json`）のバージョンで `scripts/lint/node_modules/` に入れる。書き込みの検査（`knowledge-checks`）も textlint を呼ぶため、`write_docs` で書き込む worktree と直コミットの develop のワークツリーでも実行する（入っていないと書き込みが止まる）
 
       ```bash
       npm ci --prefix scripts/lint

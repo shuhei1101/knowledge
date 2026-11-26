@@ -9,7 +9,7 @@ scenarios:
       - name: 作業場所
         description: knowledge の worktree
       - name: 書き込む内容
-        description: スキーマに合い、ID の重複・参照切れが無く、mdmark の警告が無い規約の YAML
+        description: スキーマに合い、ID の重複・参照切れ・textlint の error の違反が無く、mdmark の警告が無い規約の YAML
         notes: '`tags` はタグの名前の配列（`["scope:dev"]`）、`main_tags` は主題のタグの名前（`["scope:dev"]`）で指定する'
     flow: |-
       <!-- map -->
@@ -23,6 +23,7 @@ scenarios:
         E->>M: write_docs に source knowledge と文書
         M->>M: scope.write とスキーマを確認する
         M->>V: 標準入力に文書の YAML
+        V->>V: 項目の Markdown に textlint を適用する
         V-->>M: 終了コード 0 と空の違反の配列
         M->>W: 文書を書き込む
         M-->>E: 書き込んだ文書
@@ -108,12 +109,68 @@ scenarios:
       - knowledge の作業ツリーの文書が変わらない
       - 応答が `isError` で、`scope.write` の外であることが分かる
     test: test_error_when_out_of_write_scope
+  - name: 異常シナリオ（本文に textlint の違反がある）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 書き込む内容
+        description: スキーマと検査のスクリプトの他の検査には合い、項目の `body` に textlint の error の違反を持つ規約の YAML
+        notes: 1 文の中で同じ助詞が重なる行（`ja-technical-writing/no-doubled-joshi`）
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant E as エージェント
+        participant M as project-index の文書の MCP
+        participant V as knowledge の検査のスクリプト
+        E->>M: write_docs に source knowledge と文書
+        M->>V: 標準入力に文書の YAML
+        V->>V: 項目の Markdown に textlint を適用する
+        V-->>M: 終了コード 0 と違反の配列
+        M-->>E: isError と違反の一覧
+      ```
+
+      <!-- /map -->
+    expected:
+      - 作業ツリーの文書が変わらない
+      - 応答が `isError` で、違反の `path` が項目の `body` のパス、`rule` に文書の行と textlint のルール名が入る
+    test: test_error_when_textlint_reports_violation
+  - name: 異常シナリオ（作業ツリーに textlint が無い）
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 作業場所
+        description: '`scripts/lint/node_modules/` を持たない knowledge の worktree'
+      - name: 書き込む内容
+        description: 正常シナリオと同じ規約の YAML
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant E as エージェント
+        participant M as project-index の文書の MCP
+        participant V as knowledge の検査のスクリプト
+        E->>M: write_docs に source knowledge と文書
+        M->>V: 標準入力に文書の YAML
+        V->>V: scripts/lint/ に textlint が無い
+        V-->>M: 終了コード 0 と textlint が無いことの違反
+        M-->>E: isError と違反の一覧
+      ```
+
+      <!-- /map -->
+    expected:
+      - 作業ツリーの文書が変わらない
+      - 応答が `isError` で、違反の `path` が `$`、`rule` に textlint が無いこと、`fix` に `npm ci --prefix scripts/lint` が入る
+    test: test_error_when_textlint_missing
 lead: エージェントが knowledge のクローンか worktree で `write_docs` を呼び、project-index がスキーマと knowledge の検査のスクリプトで検査してから文書を書き込む。
 primary_actor: エージェント
 trigger: エージェントが規約を追加・修正する
 preconditions:
   - knowledge が project-index に登録され、配信中
   - '`check --text` を持つ mdmark の CLI が Linux 側に入り、PATH で見つかる'
+  - 書き込む作業ツリーの `scripts/lint/` に textlint が入っている（開発コマンドの `npm ci --prefix scripts/lint`）
 success_guarantee: 違反の無い内容だけが knowledge の作業ツリーに書き込まれる。
 minimal_guarantee: 違反のある内容・`scope.write` の外からの書き込みは、ファイルを変えずに `isError` で返却する。
 test_file: tests/e2e/単一ユースケース/test_エージェントがknowledgeの文書を書き込む.py
