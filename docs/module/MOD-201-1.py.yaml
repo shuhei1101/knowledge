@@ -137,6 +137,12 @@ constants:
     usecase: 共通
     summary: 標準エラーと「全ての文書の検査」の違反に出す、再生成するコマンド
     value: '"uv run --frozen --script scripts/build_templates.py"'
+  - name: DATA_KEYWORDS
+    title: データの値を持つキーワード
+    container: scripts/build_templates.py
+    usecase: 共通
+    summary: 値の中がスキーマではないキーワード。`$ref` を辿らず、展開しない。「全ての文書の検査」と「Markdown のテンプレートの生成」も import して使用する
+    value: frozenset({"examples", "enum", "const", "default", "x-bad-examples"})
 functions:
   - name: main
     title: 設計書のテンプレートの生成のエントリーポイント
@@ -540,6 +546,31 @@ functions:
         item: "constraints[書き出し]"
         type: requires
         when: "`replace_items` を修正するときに、IF-201-1 の「書き出し」の決まりと突き合わせる。"
+  - name: resolve_ref
+    title: $ref の解決
+    kind: 関数
+    container: scripts/build_templates.py
+    usecase: 共通
+    scope: public
+    summary: '`$ref` を辿った先にキーの側の値を重ねたスキーマと、その先の解決器と、辿った先の `id()` の集合を返却する。「Markdown のテンプレートの生成」も import して使用する'
+    args:
+      - name: schema
+        title: スキーマ
+        type: Mapping[str, object]
+        required: true
+        description: '解決するスキーマ。`$ref` を持たないスキーマも受け取る'
+      - name: resolver
+        title: 解決器
+        type: Resolver[Any]
+        required: true
+        description: '`schema` の `$ref` を解決する解決器'
+    returns:
+      type: tuple[Mapping[str, object], Resolver[Any], frozenset[int]]
+      description: 重ねたスキーマ・その先の解決器・辿った先の `id()` の集合。`$ref` が無ければ `schema`・`resolver`・空の集合
+    process: |-
+      1. `$ref` が無ければそのまま返却する
+      2. `resolver.lookup` で解決した先がさらに `$ref` を持てば、その先の解決器で続けて解決する
+      3. 解決した先に `$ref` 以外のキーの側の値を重ね、辿った先の値そのものの `id()` を集合に加えて返却する
 notes:
   依存: PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）・`referencing`（`check_all.py` と同じバージョン）を記載し、`_common.py` を同じフォルダから import する。
   「全ての文書の検査」との共有: '`check_all.py` は `load_schemas`（`check_refs=False`）と `build_items` を import し、生成と同じ組み立てでずれを検査する（`check_all.py` の `check_design_templates`）。'

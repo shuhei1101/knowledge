@@ -29,12 +29,14 @@ from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING, Any, cast
 
 from build_templates import (
+    DATA_KEYWORDS,
     SCHEMAS_DIR,
     TEMPLATE_IDS,
     TEMPLATES_DIR,
     BuildError,
     SchemaSet,
     load_schemas,
+    resolve_ref,
 )
 from dev_docs.features.convert.markdown import schema_to_markdown  # pyright: ignore[reportMissingTypeStubs]
 from dev_docs.features.convert.types import RenderContext  # pyright: ignore[reportMissingTypeStubs]
@@ -69,9 +71,6 @@ _TEMPLATE_ID_PREFIX = "template-"
 
 # dev-docs の文書の配信元
 _SOURCE_ID = "knowledge"
-
-# データの値を持つキーワード（中はスキーマではないので $ref を展開しない）
-_DATA_KEYWORDS = frozenset({"examples", "enum", "const", "default", "x-bad-examples"})
 
 # 終了コード。1 = --check でずれがあった、2 = 作れなかったか想定していない例外
 _EXIT_DIFFERENT = 1
@@ -220,21 +219,6 @@ def _read_meta(root: Path, template_id: str, schema_path: PurePosixPath) -> Temp
     )
 
 
-def _resolve(
-    schema: Mapping[str, object], resolver: Resolver[Any]
-) -> tuple[Mapping[str, object], Resolver[Any], frozenset[int]]:
-    """$ref を辿った先にキーの側の値を重ねたスキーマと、その先の解決器と、辿った先の id() の集合を返す。"""
-    ref = schema.get("$ref")
-    if not isinstance(ref, str):
-        return schema, resolver, frozenset()
-    resolved = resolver.lookup(ref)
-    target = as_mapping(resolved.contents) or {}
-    # 解決した先がさらに $ref を持てば、その先の解決器で続けて引く
-    base, next_resolver, targets = _resolve(target, resolved.resolver)
-    merged = {**base, **{key: value for key, value in schema.items() if key != "$ref"}}
-    return merged, next_resolver, targets | {id(resolved.contents)}
-
-
 def _inline_refs(node: object, resolver: Resolver[Any], ancestors: frozenset[int]) -> object:
     """スキーマの全ての $ref を展開した写しを返す。再帰する $ref の先は中身を展開しない。"""
     items = as_list(node)
@@ -243,15 +227,13 @@ def _inline_refs(node: object, resolver: Resolver[Any], ancestors: frozenset[int
     schema = as_mapping(node)
     if schema is None:
         return node
-    merged, sub_resolver, targets = _resolve(schema, resolver)
+    merged, sub_resolver, targets = resolve_ref(schema, resolver)
     # 親が辿った先をもう一度指している: 再帰する $ref のため、子のキーと要素を展開しない
     if targets & ancestors:
         return {key: value for key, value in merged.items() if key not in ("properties", "items")}
     child_ancestors = ancestors | targets
     return {
-        key: (
-            value if key in _DATA_KEYWORDS else _inline_refs(value, sub_resolver, child_ancestors)
-        )
+        key: (value if key in DATA_KEYWORDS else _inline_refs(value, sub_resolver, child_ancestors))
         for key, value in merged.items()
     }
 
@@ -272,7 +254,7 @@ def _placeholder_object(
         sub = as_mapping(value)
         if sub is None:
             continue
-        merged, sub_resolver, targets = _resolve(sub, resolver)
+        merged, sub_resolver, targets = resolve_ref(sub, resolver)
         # 親が辿った先をもう一度指している: 再帰する $ref のため、このキーを入れない
         if targets & ancestors:
             continue
@@ -320,7 +302,7 @@ def _placeholder_array(
     # 要素のスキーマが無い: 配列のキーの title で 1 件にする
     if element is None:
         return [f"{{{label}}}"]
-    merged, element_resolver, targets = _resolve(element, resolver)
+    merged, element_resolver, targets = resolve_ref(element, resolver)
     # 要素が親の辿った先を指す（再帰する $ref）: このキーを入れない
     if targets & ancestors:
         return None

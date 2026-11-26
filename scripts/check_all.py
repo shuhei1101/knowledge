@@ -33,6 +33,7 @@ from typing import TYPE_CHECKING, Any, cast
 from _workflow import check_workflows
 from build_templates import (
     COMMAND,
+    DATA_KEYWORDS,
     SCHEMAS_DIR,
     TEMPLATE_IDS,
     TEMPLATES_DIR,
@@ -108,9 +109,6 @@ META_SCHEMA_PATH = PurePosixPath("schemas/meta.schema.yaml")
 
 # Markdown のテンプレートのフォルダ
 MARKDOWN_TEMPLATES_DIR = PurePosixPath("docs/template/markdown")
-
-# スキーマのキーワードのうち、値がスキーマではなくデータのもの
-_DATA_KEYWORDS = frozenset({"examples", "enum", "const", "default", "x-bad-examples"})
 
 # スキーマのキーワードのうち、値が名前 → スキーマの対応のもの
 _NAMED_SCHEMA_KEYWORDS = frozenset({"properties", "patternProperties", "$defs", "dependentSchemas"})
@@ -581,7 +579,7 @@ def _iter_schemas(
     yield parts, schema
     for key, value in schema.items():
         # データの値（examples・enum・const・default）の中はスキーマではない
-        if key in _DATA_KEYWORDS:
+        if key in DATA_KEYWORDS:
             continue
         named = as_mapping(value) if key in _NAMED_SCHEMA_KEYWORDS else None
         # 名前 → スキーマの対応: キーは名前なので、キーワードと見なさずに値のスキーマを辿る
@@ -786,12 +784,12 @@ def check_markdown_templates(
     # 0 = ずれが無い、1 = ずれがある、それ以外 = 比べられなかった
     if completed.returncode == 0:
         return []
-    if completed.returncode != _EXIT_VIOLATIONS:
+    lines = [line for line in completed.stdout.splitlines() if line.strip()]
+    # 1 以外か、ずれの行を出さずに 1 で終わった（import の失敗など）場合は比べられなかった
+    if completed.returncode != _EXIT_VIOLATIONS or not lines:
         raise MarkdownTemplateError(completed.stderr.strip())
     results: list[tuple[str, int, str, str]] = []
-    for line in completed.stdout.splitlines():
-        if not line.strip():
-            continue
+    for line in lines:
         path, tab, schema = line.partition("\t")
         # タブを持つ行は中身のずれ、持たない行は生成の対象に無い Markdown
         if tab:

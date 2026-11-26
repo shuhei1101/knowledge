@@ -858,7 +858,8 @@ functions:
          - 打ち切った場合（`subprocess.TimeoutExpired`）、`MarkdownTemplateError("Markdown のテンプレートの生成が {秒数} 秒で終わりませんでした")` を送出する
       3. 終了コードで分ける
          - `0` の場合、空を返却する
-         - `1` の場合、標準出力の行ごとに、タブを持つ行は `(パス, 1, "$", "Markdown のテンプレートがスキーマ {生成元} と一致しません。{COMMAND} で再作成してください")`、タブを持たない行は `(パス, 1, "$", "生成の対象に無い Markdown です。{COMMAND} で削除してください")` を追加し、パスの順に返却する（`{COMMAND}` は「Markdown のテンプレートの生成」の `COMMAND` と同じ文字列。dev-docs を依存に持たないため import せず、起動するスクリプト名から組み立てる）
+         - `1` で、標準出力に空でない行が無い場合（import の失敗など）、`MarkdownTemplateError(子プロセスの標準エラー)` を送出する
+         - `1` の場合、標準出力の空でない行ごとに、タブを持つ行は `(パス, 1, "$", "Markdown のテンプレートがスキーマ {生成元} と一致しません。{COMMAND} で再作成してください")`、タブを持たない行は `(パス, 1, "$", "生成の対象に無い Markdown です。{COMMAND} で削除してください")` を追加し、パスの順に返却する（`{COMMAND}` は「Markdown のテンプレートの生成」の `COMMAND` と同じ文字列。dev-docs を依存に持たないため import せず、起動するスクリプト名から組み立てる）
          - それ以外の場合、`MarkdownTemplateError(子プロセスの標準エラー)` を送出する
     exceptions:
       - name: MarkdownTemplateError
@@ -869,6 +870,9 @@ functions:
         message: '`Markdown のテンプレートの生成が {秒数} 秒で終わりませんでした`'
       - name: MarkdownTemplateError
         condition: 終了コードが 0・1 以外
+        message: 子プロセスの標準エラー
+      - name: MarkdownTemplateError
+        condition: 終了コードが 1 で、標準出力に空でない行が無い
         message: 子プロセスの標準エラー
     unit_tests:
       - name: test_check_markdown_templates
@@ -910,6 +914,13 @@ functions:
         mock: '`run` を、`FileNotFoundError` を送出する関数に差し替える'
         expected: '`MarkdownTemplateError` で、理由に起動できないことがある'
         exception: 子プロセスを起動できない
+      - name: test_check_markdown_templates_when_exit_one_without_lines
+        case: 異常
+        summary: ずれの行を出さずに終了コード 1 で終わる
+        condition: '`test_check_markdown_templates` と同じ'
+        mock: "`run` を、終了コード 1 で空の標準出力と標準エラー `ModuleNotFoundError: No module named 'dev_docs'` を返却する関数に差し替える"
+        expected: '`MarkdownTemplateError` で、理由が標準エラーの `ModuleNotFoundError` の行'
+        exception: 終了コードが 1 で、標準出力に空でない行が無い
     refs:
       - to: IF-72-3
         item: constraints[Markdown のテンプレート]
