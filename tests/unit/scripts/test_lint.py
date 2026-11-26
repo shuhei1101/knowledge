@@ -7,6 +7,7 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 
+from _common import MDMARK_REF
 from _lint import (
     YAMLLINT_SCHEMAS_CONFIG,
     LintFinding,
@@ -18,6 +19,7 @@ from _lint import (
     extract_map_mermaid,
     find_lint_clis,
     load_yamllint_config,
+    mdmark_npx_command,
     run_map_check,
     run_markdown_lints,
     run_yamllint,
@@ -223,8 +225,8 @@ def test_collect_map_sources_when_broken() -> None:
 def test_run_map_check(fake_cli_factory: FakeCliFactory) -> None:
     """map のずれだけを元の文書の行で返却する（正常系）。"""
     # 準備
-    npx = fake_cli_factory(
-        "npx",
+    mdmark = fake_cli_factory(
+        "mdmark",
         stdout=(
             "-:10: map_invalid: 2 行目 `A->>B hello` を読めません\n"
             "-:1: legacy_mark: table のマーカーの引数が今の書き方です\n"
@@ -237,7 +239,7 @@ def test_run_map_check(fake_cli_factory: FakeCliFactory) -> None:
         LintSource(PurePosixPath("docs/b.yaml"), "overall_flow", 40, "1\n2\n3\n4\n5"),
     ]
     # 実行
-    result = run_map_check(sources, npx)
+    result = run_map_check(sources, [mdmark])
     # 検証
     assert result == [
         LintFinding(
@@ -256,9 +258,9 @@ def test_run_map_check_when_empty(tmp_path: Path, fake_cli_factory: FakeCliFacto
     """map を含む項目が無い（正常系）。"""
     # 準備
     marker = tmp_path / "called.txt"
-    npx = fake_cli_factory("npx", stdout="ずれ 0 件\n", marker=marker)
+    mdmark = fake_cli_factory("mdmark", stdout="ずれ 0 件\n", marker=marker)
     # 実行
-    result = run_map_check([], npx)
+    result = run_map_check([], [mdmark])
     # 検証
     assert result == []
     assert not marker.exists()
@@ -267,21 +269,29 @@ def test_run_map_check_when_empty(tmp_path: Path, fake_cli_factory: FakeCliFacto
 def test_run_map_check_when_not_checked(fake_cli_factory: FakeCliFactory) -> None:
     """点検せずに終了コード 1 で終わった（異常系）。"""
     # 準備
-    npx = fake_cli_factory("npx", stderr="npm error code E404\n", exit_code=1)
+    mdmark = fake_cli_factory("mdmark", stderr="npm error code E404\n", exit_code=1)
     sources = [LintSource(PurePosixPath("docs/a.yaml"), "flows[0].flow", 10, "本文")]
     # 実行・検証
     with pytest.raises(MdmarkCheckError, match=r"1.*npm error code E404"):
-        run_map_check(sources, npx)
+        run_map_check(sources, [mdmark])
 
 
 def test_run_map_check_when_crashed(fake_cli_factory: FakeCliFactory) -> None:
     """終了コードが 0・1 でない（異常系）。"""
     # 準備
-    npx = fake_cli_factory("npx", stdout="ずれ 0 件\n", exit_code=2)
+    mdmark = fake_cli_factory("mdmark", stdout="ずれ 0 件\n", exit_code=2)
     sources = [LintSource(PurePosixPath("docs/a.yaml"), "flows[0].flow", 10, "本文")]
     # 実行・検証
     with pytest.raises(MdmarkCheckError, match=r"2"):
-        run_map_check(sources, npx)
+        run_map_check(sources, [mdmark])
+
+
+def test_mdmark_npx_command() -> None:
+    """npx の mdmark のコマンド（正常系）。"""
+    # 実行
+    result = mdmark_npx_command("/usr/bin/npx")
+    # 検証
+    assert result == ["/usr/bin/npx", "-y", f"github:shuhei1101/mdmark#{MDMARK_REF}"]
 
 
 def test_extract_map_mermaid() -> None:

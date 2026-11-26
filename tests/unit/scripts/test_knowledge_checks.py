@@ -752,9 +752,9 @@ def test_check_yamllint_when_broken(monkeypatch: pytest.MonkeyPatch) -> None:
     assert result == []
 
 
-def _which_npx(_name: str) -> str:
-    """npx のパスを返す shutil.which の差し替え。"""
-    return "/usr/bin/npx"
+def _which_mdmark(_name: str) -> str:
+    """mdmark のパスを返す shutil.which の差し替え。"""
+    return "/usr/bin/mdmark"
 
 
 def _which_none(_name: str) -> None:
@@ -766,10 +766,13 @@ def test_check_map(monkeypatch: pytest.MonkeyPatch) -> None:
     # 準備
     source = PurePosixPath("-.yaml")
 
-    def _fake(*_args: object) -> list[LintFinding]:
+    received: list[Sequence[str]] = []
+
+    def _fake(_sources: object, command: Sequence[str]) -> list[LintFinding]:
+        received.append(command)
         return [LintFinding(source, 4, "items[0].body", "mdmark", "map_invalid", "描けない", False)]
 
-    monkeypatch.setattr(knowledge_checks.shutil, "which", _which_npx)
+    monkeypatch.setattr(knowledge_checks.shutil, "which", _which_mdmark)
     monkeypatch.setattr(knowledge_checks, "run_map_check", _fake)
     # 実行
     result = knowledge_checks.check_map(_MAP_DOC)
@@ -777,6 +780,7 @@ def test_check_map(monkeypatch: pytest.MonkeyPatch) -> None:
     assert len(result) == 1
     assert result[0]["path"] == "items[0].body"
     assert result[0]["rule"].startswith("4 行目: mdmark/map_invalid: ")
+    assert received == [["/usr/bin/mdmark"]]
 
 
 def test_check_map_when_no_map(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -790,8 +794,8 @@ def test_check_map_when_no_map(monkeypatch: pytest.MonkeyPatch) -> None:
     assert result == []
 
 
-def test_check_map_when_npx_missing(monkeypatch: pytest.MonkeyPatch) -> None:
-    """npx が無い（正常系）。"""
+def test_check_map_when_mdmark_missing(monkeypatch: pytest.MonkeyPatch) -> None:
+    """mdmark の CLI が無い（正常系）。"""
     # 準備
     monkeypatch.setattr(knowledge_checks.shutil, "which", _which_none)
     monkeypatch.setattr(knowledge_checks, "run_map_check", _fail)
@@ -800,8 +804,8 @@ def test_check_map_when_npx_missing(monkeypatch: pytest.MonkeyPatch) -> None:
     # 検証
     assert len(result) == 1
     assert result[0]["path"] == "$"
-    assert "npx" in result[0]["rule"]
-    assert "Node 24" in result[0]["fix"]
+    assert "mdmark の CLI" in result[0]["rule"]
+    assert "npm install -g github:shuhei1101/mdmark#develop" in result[0]["fix"]
 
 
 def test_check_map_when_failed(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -812,7 +816,7 @@ def test_check_map_when_failed(monkeypatch: pytest.MonkeyPatch) -> None:
         message = "mdmark が終了コード 2 で終わりました: boom"
         raise MdmarkCheckError(message)
 
-    monkeypatch.setattr(knowledge_checks.shutil, "which", _which_npx)
+    monkeypatch.setattr(knowledge_checks.shutil, "which", _which_mdmark)
     monkeypatch.setattr(knowledge_checks, "run_map_check", _raise)
     # 実行
     result = knowledge_checks.check_map(_MAP_DOC)
