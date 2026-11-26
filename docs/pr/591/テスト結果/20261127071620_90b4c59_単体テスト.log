@@ -1,0 +1,336 @@
+# 単体テスト作成の Red（90b4c59）
+# 13 件の fail は、check_markdown_lints・check_yamllint・check_map と shutil の import が実装に無いことによるもの
+
+## ランナーでの全件実行（TP-72-1 の単体テスト（バック）の run_runner）
+$ run_url=$(gh workflow run test.yml --ref "$(git branch --show-current)" -f layer=unit | grep -o 'https://[^ ]*/actions/runs/[0-9]*') && run_id=${run_url##*/} && ... && (rc=0; gh run watch "$run_id" --exit-status > /dev/null || rc=1; gh run view "$run_id" --log; exit $rc)
+﻿2026-11-26T22:15:51.8044626Z ##[group]Run set -o pipefail
+2026-11-26T22:15:51.8045208Z ^[[36;1mset -o pipefail^[[0m
+2026-11-26T22:15:51.8045625Z ^[[36;1mcase "$LAYER" in^[[0m
+2026-11-26T22:15:51.8045958Z ^[[36;1m  unit)^[[0m
+2026-11-26T22:15:51.8047317Z ^[[36;1m    (rc=0; uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 --with "dev-docs @ git+https://github.com/shuhei1101/dev-docs@c07f4e519568f0e93c248aa623adc1ba3e45e8d7" pytest tests/unit || rc=1; uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check || rc=1; exit $rc) 2>&1 | tee test.log^[[0m
+2026-11-26T22:15:51.8048700Z ^[[36;1m    ;;^[[0m
+2026-11-26T22:15:51.8049060Z ^[[36;1m  integration)^[[0m
+2026-11-26T22:15:51.8050232Z ^[[36;1m    uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 --with "dev-docs @ git+https://github.com/shuhei1101/dev-docs@c07f4e519568f0e93c248aa623adc1ba3e45e8d7" pytest tests/integration 2>&1 | tee test.log^[[0m
+2026-11-26T22:15:51.8051477Z ^[[36;1m    ;;^[[0m
+2026-11-26T22:15:51.8051770Z ^[[36;1mesac^[[0m
+2026-11-26T22:15:51.8082896Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-26T22:15:51.8083477Z env:
+2026-11-26T22:15:51.8083945Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-11-26T22:15:51.8084912Z   LAYER: unit
+2026-11-26T22:15:51.8085216Z ##[endgroup]
+2026-11-26T22:15:52.2254152Z    Updating https://github.com/shuhei1101/dev-docs (c07f4e519568f0e93c248aa623adc1ba3e45e8d7)
+2026-11-26T22:15:52.2505559Z Downloading pygments (1.2MiB)
+2026-11-26T22:15:52.2580641Z Downloading pydantic-core (2.2MiB)
+2026-11-26T22:15:52.2590519Z Downloading cryptography (4.5MiB)
+2026-11-26T22:15:52.3611897Z  Downloaded pygments
+2026-11-26T22:15:52.3645627Z  Downloaded pydantic-core
+2026-11-26T22:15:52.3878549Z  Downloaded cryptography
+2026-11-26T22:15:55.1264045Z     Updated https://github.com/shuhei1101/dev-docs (c07f4e519568f0e93c248aa623adc1ba3e45e8d7)
+2026-11-26T22:15:55.1266812Z    Building dev-docs @ git+https://github.com/shuhei1101/dev-docs@c07f4e519568f0e93c248aa623adc1ba3e45e8d7
+2026-11-26T22:15:55.4893056Z       Built dev-docs @ git+https://github.com/shuhei1101/dev-docs@c07f4e519568f0e93c248aa623adc1ba3e45e8d7
+2026-11-26T22:15:55.5258562Z Installed 45 packages in 28ms
+2026-11-26T22:15:57.6001112Z ============================= test session starts ==============================
+2026-11-26T22:15:57.6001921Z platform linux -- Python 3.14.4, pytest-9.2.0, pluggy-1.7.0
+2026-11-26T22:15:57.6002554Z rootdir: /home/runner/work/knowledge/knowledge
+2026-11-26T22:15:57.6003037Z configfile: pytest.ini
+2026-11-26T22:15:57.6003555Z plugins: anyio-4.16.0, platformdirs-4.14.5, typeguard-4.4.4
+2026-11-26T22:15:57.6004064Z collected 325 items
+2026-11-26T22:15:57.6004320Z 
+2026-11-26T22:15:57.7109943Z tests/unit/scripts/test_build_markdown_templates.py ..............       [  4%]
+2026-11-26T22:15:57.7958604Z tests/unit/scripts/test_build_pages.py ...................               [ 10%]
+2026-11-26T22:15:57.9071338Z tests/unit/scripts/test_build_templates.py ........................      [ 17%]
+2026-11-26T22:15:57.9174950Z tests/unit/scripts/test_build_word_list.py ....                          [ 18%]
+2026-11-26T22:15:58.7839025Z tests/unit/scripts/test_check_all.py ................................... [ 29%]
+2026-11-26T22:15:59.3668623Z .........................                                                [ 37%]
+2026-11-26T22:15:59.4251163Z tests/unit/scripts/test_common.py ....................                   [ 43%]
+2026-11-26T22:15:59.5105554Z tests/unit/scripts/test_knowledge_checks.py F.F......................... [ 52%]
+2026-11-26T22:15:59.5893774Z FFFFFFFFFFF                                                              [ 55%]
+2026-11-26T22:15:59.6173339Z tests/unit/scripts/test_knowledge_markdown.py .......................... [ 63%]
+2026-11-26T22:15:59.6310780Z ...................                                                      [ 69%]
+2026-11-26T22:15:59.8146193Z tests/unit/scripts/test_lint.py .....................                    [ 75%]
+2026-11-26T22:15:59.8312708Z tests/unit/scripts/test_meme_checks.py .........                         [ 78%]
+2026-11-26T22:16:00.0189608Z tests/unit/scripts/test_workflow.py .....................                [ 84%]
+2026-11-26T22:16:00.0436528Z tests/unit/slop-check/test_slop_check.py ............................... [ 94%]
+2026-11-26T22:16:00.1012695Z ..................                                                       [100%]
+2026-11-26T22:16:00.1013251Z 
+2026-11-26T22:16:00.1013548Z =================================== FAILURES ===================================
+2026-11-26T22:16:00.1014362Z __________________________________ test_main ___________________________________
+2026-11-26T22:16:00.1014669Z 
+2026-11-26T22:16:00.1014959Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_main5')
+2026-11-26T22:16:00.1015565Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x747a32d5c0c0>
+2026-11-26T22:16:00.1016103Z capsys = <_pytest.capture.CaptureFixture object at 0x747a32f92050>
+2026-11-26T22:16:00.1016709Z stdin_factory = <function stdin_factory.<locals>._set at 0x747a32d309e0>
+2026-11-26T22:16:00.1017105Z 
+2026-11-26T22:16:00.1017262Z     def test_main(
+2026-11-26T22:16:00.1017591Z         tmp_path: Path,
+2026-11-26T22:16:00.1018568Z         monkeypatch: pytest.MonkeyPatch,
+2026-11-26T22:16:00.1018961Z         capsys: pytest.CaptureFixture[str],
+2026-11-26T22:16:00.1019366Z         stdin_factory: Callable[[str], None],
+2026-11-26T22:16:00.1019734Z     ) -> None:
+2026-11-26T22:16:00.1020692Z         """違反の無い文書（正常系）。"""
+2026-11-26T22:16:00.1021133Z         # 準備
+2026-11-26T22:16:00.1021491Z         (tmp_path / "docs").mkdir()
+2026-11-26T22:16:00.1022117Z         (tmp_path / "project-index.yaml").write_text(_EMPTY_CONFIG, encoding="utf-8")
+2026-11-26T22:16:00.1022847Z         monkeypatch.chdir(tmp_path)
+2026-11-26T22:16:00.1023251Z     
+2026-11-26T22:16:00.1023593Z         def _no_lint(*_args: object) -> list[dict[str, str]]:
+2026-11-26T22:16:00.1023986Z             return []
+2026-11-26T22:16:00.1024331Z     
+2026-11-26T22:16:00.1024738Z >       monkeypatch.setattr(knowledge_checks, "check_markdown_lints", _no_lint)
+2026-11-26T22:16:00.1025556Z E       AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'check_markdown_lints'
+2026-11-26T22:16:00.1026152Z 
+2026-11-26T22:16:00.1026454Z /home/runner/work/knowledge/knowledge/tests/unit/scripts/test_knowledge_checks.py:69: AttributeError
+2026-11-26T22:16:00.1027089Z ________________________ test_main_when_lint_violations ________________________
+2026-11-26T22:16:00.1027433Z 
+2026-11-26T22:16:00.1027687Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_main_when_lint_violations0')
+2026-11-26T22:16:00.1028500Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x747a32d6d4e0>
+2026-11-26T22:16:00.1029077Z capsys = <_pytest.capture.CaptureFixture object at 0x747a331a47d0>
+2026-11-26T22:16:00.1029586Z stdin_factory = <function stdin_factory.<locals>._set at 0x747a32f02820>
+2026-11-26T22:16:00.1029903Z 
+2026-11-26T22:16:00.1030028Z     def test_main_when_lint_violations(
+2026-11-26T22:16:00.1030880Z         tmp_path: Path,
+2026-11-26T22:16:00.1031220Z         monkeypatch: pytest.MonkeyPatch,
+2026-11-26T22:16:00.1031613Z         capsys: pytest.CaptureFixture[str],
+2026-11-26T22:16:00.1031991Z         stdin_factory: Callable[[str], None],
+2026-11-26T22:16:00.1032392Z     ) -> None:
+2026-11-26T22:16:00.1032791Z         """lint の違反をつなぐ（正常系）。"""
+2026-11-26T22:16:00.1033135Z         # 準備
+2026-11-26T22:16:00.1033448Z         (tmp_path / "docs").mkdir()
+2026-11-26T22:16:00.1033934Z         (tmp_path / "project-index.yaml").write_text(_EMPTY_CONFIG, encoding="utf-8")
+2026-11-26T22:16:00.1034405Z         monkeypatch.chdir(tmp_path)
+2026-11-26T22:16:00.1034802Z         lint_dir = tmp_path / "lint"
+2026-11-26T22:16:00.1035157Z         received: list[Path] = []
+2026-11-26T22:16:00.1035728Z         markdown = {"path": "items[0].body", "rule": "8 行目: textlint/r: m", "fix": "f"}
+2026-11-26T22:16:00.1036441Z         yaml = {"path": "-", "rule": "1 行目: yamllint/comments: m", "fix": "f"}
+2026-11-26T22:16:00.1037061Z         map_ = {"path": "items[0].body", "rule": "4 行目: mdmark/map_invalid: m", "fix": "f"}
+2026-11-26T22:16:00.1037561Z     
+2026-11-26T22:16:00.1037944Z         def _markdown(_text: str, lint: Path) -> list[dict[str, str]]:
+2026-11-26T22:16:00.1038421Z             received.append(lint)
+2026-11-26T22:16:00.1038774Z             return [markdown]
+2026-11-26T22:16:00.1039102Z     
+2026-11-26T22:16:00.1039521Z         def _yaml(_text: str, lint: Path) -> list[dict[str, str]]:
+2026-11-26T22:16:00.1039918Z             received.append(lint)
+2026-11-26T22:16:00.1040708Z             return [yaml]
+2026-11-26T22:16:00.1041035Z     
+2026-11-26T22:16:00.1041444Z         def _map(_text: str) -> list[dict[str, str]]:
+2026-11-26T22:16:00.1041829Z             return [map_]
+2026-11-26T22:16:00.1042122Z     
+2026-11-26T22:16:00.1042547Z >       monkeypatch.setattr(knowledge_checks, "check_markdown_lints", _markdown)
+2026-11-26T22:16:00.1043430Z E       AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'check_markdown_lints'
+2026-11-26T22:16:00.1043964Z 
+2026-11-26T22:16:00.1044374Z /home/runner/work/knowledge/knowledge/tests/unit/scripts/test_knowledge_checks.py:132: AttributeError
+2026-11-26T22:16:00.1044997Z __________________________ test_check_markdown_lints ___________________________
+2026-11-26T22:16:00.1045313Z 
+2026-11-26T22:16:00.1045598Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_check_markdown_lints0')
+2026-11-26T22:16:00.1046351Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x747a32f2a040>
+2026-11-26T22:16:00.1046747Z 
+2026-11-26T22:16:00.1047060Z     def test_check_markdown_lints(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+2026-11-26T22:16:00.1047688Z         """error の違反を元の文書の行で返す（正常系）。"""
+2026-11-26T22:16:00.1048058Z         # 準備
+2026-11-26T22:16:00.1048457Z         _create_lint_clis(tmp_path / "lint", ["markdownlint-cli2", "textlint"])
+2026-11-26T22:16:00.1048971Z         source = PurePosixPath("-.yaml")
+2026-11-26T22:16:00.1049332Z     
+2026-11-26T22:16:00.1049703Z         def _fake(*_args: object) -> list[LintFinding]:
+2026-11-26T22:16:00.1050176Z             return [
+2026-11-26T22:16:00.1050784Z                 LintFinding(source, 3, "items[0].body", "markdownlint", "MD019", "空白が多い", False),
+2026-11-26T22:16:00.1051257Z                 LintFinding(
+2026-11-26T22:16:00.1051590Z                     source,
+2026-11-26T22:16:00.1051936Z                     5,
+2026-11-26T22:16:00.1052293Z                     "items[0].body",
+2026-11-26T22:16:00.1052657Z                     "textlint",
+2026-11-26T22:16:00.1053309Z                     "ja-technical-writing/no-doubled-joshi",
+2026-11-26T22:16:00.1053740Z                     "助詞が重なっています",
+2026-11-26T22:16:00.1054158Z                     False,
+2026-11-26T22:16:00.1054492Z                 ),
+2026-11-26T22:16:00.1054822Z                 LintFinding(
+2026-11-26T22:16:00.1055170Z                     source,
+2026-11-26T22:16:00.1055541Z                     6,
+2026-11-26T22:16:00.1055870Z                     "items[0].body",
+2026-11-26T22:16:00.1056217Z                     "textlint",
+2026-11-26T22:16:00.1056592Z                     "one-sentence-per-line",
+2026-11-26T22:16:00.1057060Z                     "1 行に 2 文があります",
+2026-11-26T22:16:00.1057398Z                     True,
+2026-11-26T22:16:00.1057716Z                 ),
+2026-11-26T22:16:00.1058010Z             ]
+2026-11-26T22:16:00.1058352Z     
+2026-11-26T22:16:00.1058755Z >       monkeypatch.setattr(knowledge_checks, "run_markdown_lints", _fake)
+2026-11-26T22:16:00.1060164Z E       AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'run_markdown_lints'
+2026-11-26T22:16:00.1060798Z 
+2026-11-26T22:16:00.1061036Z tests/unit/scripts/test_knowledge_checks.py:659: AttributeError
+2026-11-26T22:16:00.1061643Z __________________ test_check_markdown_lints_when_no_markdown __________________
+2026-11-26T22:16:00.1062042Z 
+2026-11-26T22:16:00.1062300Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_check_markdown_lints_when0')
+2026-11-26T22:16:00.1062897Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x747a32f28d70>
+2026-11-26T22:16:00.1063217Z 
+2026-11-26T22:16:00.1063450Z     def test_check_markdown_lints_when_no_markdown(
+2026-11-26T22:16:00.1063882Z         tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+2026-11-26T22:16:00.1064256Z     ) -> None:
+2026-11-26T22:16:00.1064713Z         """Markdown の項目が無い（正常系）。"""
+2026-11-26T22:16:00.1065066Z         # 準備
+2026-11-26T22:16:00.1065501Z         text = "id: self\nkind: rule\nname: 文書\ndescription: 説明\n"
+2026-11-26T22:16:00.1066077Z >       monkeypatch.setattr(knowledge_checks, "run_markdown_lints", _fail)
+2026-11-26T22:16:00.1066931Z E       AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'run_markdown_lints'
+2026-11-26T22:16:00.1067522Z 
+2026-11-26T22:16:00.1067753Z tests/unit/scripts/test_knowledge_checks.py:675: AttributeError
+2026-11-26T22:16:00.1068264Z ____________________ test_check_markdown_lints_when_missing ____________________
+2026-11-26T22:16:00.1068590Z 
+2026-11-26T22:16:00.1068890Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_check_markdown_lints_when1')
+2026-11-26T22:16:00.1069474Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x747a32f28f30>
+2026-11-26T22:16:00.1069788Z 
+2026-11-26T22:16:00.1070199Z     def test_check_markdown_lints_when_missing(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+2026-11-26T22:16:00.1070857Z         """markdownlint-cli2 が無い（正常系）。"""
+2026-11-26T22:16:00.1071216Z         # 準備
+2026-11-26T22:16:00.1071551Z         lint_dir = tmp_path / "lint"
+2026-11-26T22:16:00.1072031Z         _create_lint_clis(lint_dir, ["textlint"])
+2026-11-26T22:16:00.1072579Z >       monkeypatch.setattr(knowledge_checks, "run_markdown_lints", _fail)
+2026-11-26T22:16:00.1073364Z E       AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'run_markdown_lints'
+2026-11-26T22:16:00.1073955Z 
+2026-11-26T22:16:00.1074133Z tests/unit/scripts/test_knowledge_checks.py:687: AttributeError
+2026-11-26T22:16:00.1074677Z ____________________ test_check_markdown_lints_when_failed _____________________
+2026-11-26T22:16:00.1074998Z 
+2026-11-26T22:16:00.1075282Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_check_markdown_lints_when2')
+2026-11-26T22:16:00.1075909Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x747a32f29da0>
+2026-11-26T22:16:00.1076243Z 
+2026-11-26T22:16:00.1076626Z     def test_check_markdown_lints_when_failed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+2026-11-26T22:16:00.1077242Z         """CLI が失敗した（正常系）。"""
+2026-11-26T22:16:00.1077596Z         # 準備
+2026-11-26T22:16:00.1078016Z         _create_lint_clis(tmp_path / "lint", ["markdownlint-cli2", "textlint"])
+2026-11-26T22:16:00.1078469Z     
+2026-11-26T22:16:00.1078843Z         def _raise(*_args: object) -> Sequence[LintFinding]:
+2026-11-26T22:16:00.1079367Z             message = "markdownlint-cli2 が終了コード 2 で終わりました: boom"
+2026-11-26T22:16:00.1079801Z             raise LintOutputError(message)
+2026-11-26T22:16:00.1080251Z     
+2026-11-26T22:16:00.1080684Z >       monkeypatch.setattr(knowledge_checks, "run_markdown_lints", _raise)
+2026-11-26T22:16:00.1081482Z E       AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'run_markdown_lints'
+2026-11-26T22:16:00.1082085Z 
+2026-11-26T22:16:00.1082301Z tests/unit/scripts/test_knowledge_checks.py:708: AttributeError
+2026-11-26T22:16:00.1083153Z _____________________________ test_check_yamllint ______________________________
+2026-11-26T22:16:00.1083426Z 
+2026-11-26T22:16:00.1083671Z     def test_check_yamllint() -> None:
+2026-11-26T22:16:00.1084122Z         """error の違反をファイル全体の違反で返す（正常系）。"""
+2026-11-26T22:16:00.1084518Z         # 準備
+2026-11-26T22:16:00.1084872Z         text = "#コメント\n" + _VALID_DOC
+2026-11-26T22:16:00.1085262Z         # 実行
+2026-11-26T22:16:00.1085620Z >       result = knowledge_checks.check_yamllint(text, DEFAULT_LINT_DIR)
+2026-11-26T22:16:00.1086137Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-26T22:16:00.1086686Z E       AttributeError: module 'knowledge_checks' has no attribute 'check_yamllint'. Did you mean: 'check_textlint'?
+2026-11-26T22:16:00.1087127Z 
+2026-11-26T22:16:00.1087329Z tests/unit/scripts/test_knowledge_checks.py:723: AttributeError
+2026-11-26T22:16:00.1087831Z _______________________ test_check_yamllint_when_warning _______________________
+2026-11-26T22:16:00.1088152Z 
+2026-11-26T22:16:00.1088442Z tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_check_yamllint_when_warni0')
+2026-11-26T22:16:00.1088773Z 
+2026-11-26T22:16:00.1089008Z     def test_check_yamllint_when_warning(tmp_path: Path) -> None:
+2026-11-26T22:16:00.1089461Z         """warning の違反を返さない（正常系）。"""
+2026-11-26T22:16:00.1089879Z         # 準備
+2026-11-26T22:16:00.1090285Z         (tmp_path / ".yamllint.yaml").write_text(
+2026-11-26T22:16:00.1090739Z             "extends: default\nrules:\n  comments:\n    level: warning\n"
+2026-11-26T22:16:00.1091213Z             "  document-start: disable\n  line-length: disable\n",
+2026-11-26T22:16:00.1091633Z             encoding="utf-8",
+2026-11-26T22:16:00.1092005Z         )
+2026-11-26T22:16:00.1092330Z         text = "#コメント\n" + _VALID_DOC
+2026-11-26T22:16:00.1092682Z         # 実行
+2026-11-26T22:16:00.1093076Z >       result = knowledge_checks.check_yamllint(text, tmp_path)
+2026-11-26T22:16:00.1093473Z                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-26T22:16:00.1094077Z E       AttributeError: module 'knowledge_checks' has no attribute 'check_yamllint'. Did you mean: 'check_textlint'?
+2026-11-26T22:16:00.1094501Z 
+2026-11-26T22:16:00.1094731Z tests/unit/scripts/test_knowledge_checks.py:740: AttributeError
+2026-11-26T22:16:00.1095245Z _______________________ test_check_yamllint_when_broken ________________________
+2026-11-26T22:16:00.1095516Z 
+2026-11-26T22:16:00.1095770Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x747a32f29b00>
+2026-11-26T22:16:00.1096094Z 
+2026-11-26T22:16:00.1096312Z     def test_check_yamllint_when_broken(monkeypatch: pytest.MonkeyPatch) -> None:
+2026-11-26T22:16:00.1097314Z         """読み込めない YAML（正常系）。"""
+2026-11-26T22:16:00.1097725Z         # 準備
+2026-11-26T22:16:00.1098133Z >       monkeypatch.setattr(knowledge_checks, "run_yamllint", _fail)
+2026-11-26T22:16:00.1098976Z E       AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'run_yamllint'
+2026-11-26T22:16:00.1099671Z 
+2026-11-26T22:16:00.1099948Z tests/unit/scripts/test_knowledge_checks.py:748: AttributeError
+2026-11-26T22:16:00.1100568Z ________________________________ test_check_map ________________________________
+2026-11-26T22:16:00.1100904Z 
+2026-11-26T22:16:00.1101135Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x747a32d6e740>
+2026-11-26T22:16:00.1101499Z 
+2026-11-26T22:16:00.1101759Z     def test_check_map(monkeypatch: pytest.MonkeyPatch) -> None:
+2026-11-26T22:16:00.1102250Z         """map のずれを元の文書の行で返す（正常系）。"""
+2026-11-26T22:16:00.1103158Z         # 準備
+2026-11-26T22:16:00.1103528Z         source = PurePosixPath("-.yaml")
+2026-11-26T22:16:00.1103856Z     
+2026-11-26T22:16:00.1104215Z         def _fake(*_args: object) -> list[LintFinding]:
+2026-11-26T22:16:00.1104819Z             return [LintFinding(source, 4, "items[0].body", "mdmark", "map_invalid", "描けない", False)]
+2026-11-26T22:16:00.1105366Z     
+2026-11-26T22:16:00.1105791Z >       monkeypatch.setattr(knowledge_checks.shutil, "which", lambda _name: "/usr/bin/npx")
+2026-11-26T22:16:00.1106286Z                             ^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-26T22:16:00.1106760Z E       AttributeError: module 'knowledge_checks' has no attribute 'shutil'
+2026-11-26T22:16:00.1107193Z 
+2026-11-26T22:16:00.1107420Z tests/unit/scripts/test_knowledge_checks.py:763: AttributeError
+2026-11-26T22:16:00.1107949Z __________________________ test_check_map_when_no_map __________________________
+2026-11-26T22:16:00.1108265Z 
+2026-11-26T22:16:00.1108494Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x747a32d6da90>
+2026-11-26T22:16:00.1108840Z 
+2026-11-26T22:16:00.1109103Z     def test_check_map_when_no_map(monkeypatch: pytest.MonkeyPatch) -> None:
+2026-11-26T22:16:00.1109623Z         """map を含む項目が無い（正常系）。"""
+2026-11-26T22:16:00.1110008Z         # 準備
+2026-11-26T22:16:00.1110480Z >       monkeypatch.setattr(knowledge_checks.shutil, "which", _fail)
+2026-11-26T22:16:00.1111044Z                             ^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-26T22:16:00.1111531Z E       AttributeError: module 'knowledge_checks' has no attribute 'shutil'
+2026-11-26T22:16:00.1111875Z 
+2026-11-26T22:16:00.1112104Z tests/unit/scripts/test_knowledge_checks.py:776: AttributeError
+2026-11-26T22:16:00.1112702Z _______________________ test_check_map_when_npx_missing ________________________
+2026-11-26T22:16:00.1113060Z 
+2026-11-26T22:16:00.1113285Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x747a32d6eb30>
+2026-11-26T22:16:00.1113621Z 
+2026-11-26T22:16:00.1113900Z     def test_check_map_when_npx_missing(monkeypatch: pytest.MonkeyPatch) -> None:
+2026-11-26T22:16:00.1114441Z         """npx が無い（正常系）。"""
+2026-11-26T22:16:00.1114812Z         # 準備
+2026-11-26T22:16:00.1115278Z >       monkeypatch.setattr(knowledge_checks.shutil, "which", lambda _name: None)
+2026-11-26T22:16:00.1115775Z                             ^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-26T22:16:00.1116238Z E       AttributeError: module 'knowledge_checks' has no attribute 'shutil'
+2026-11-26T22:16:00.1116580Z 
+2026-11-26T22:16:00.1116793Z tests/unit/scripts/test_knowledge_checks.py:787: AttributeError
+2026-11-26T22:16:00.1117361Z __________________________ test_check_map_when_failed __________________________
+2026-11-26T22:16:00.1117657Z 
+2026-11-26T22:16:00.1117919Z monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x747a32d6e120>
+2026-11-26T22:16:00.1118270Z 
+2026-11-26T22:16:00.1118491Z     def test_check_map_when_failed(monkeypatch: pytest.MonkeyPatch) -> None:
+2026-11-26T22:16:00.1119028Z         """mdmark の点検が失敗した（正常系）。"""
+2026-11-26T22:16:00.1119448Z         # 準備
+2026-11-26T22:16:00.1119744Z     
+2026-11-26T22:16:00.1120166Z         def _raise(*_args: object) -> Sequence[LintFinding]:
+2026-11-26T22:16:00.1120732Z             message = "mdmark が終了コード 2 で終わりました: boom"
+2026-11-26T22:16:00.1121124Z             raise MdmarkCheckError(message)
+2026-11-26T22:16:00.1121542Z     
+2026-11-26T22:16:00.1121982Z >       monkeypatch.setattr(knowledge_checks.shutil, "which", lambda _name: "/usr/bin/npx")
+2026-11-26T22:16:00.1122659Z                             ^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-26T22:16:00.1123121Z E       AttributeError: module 'knowledge_checks' has no attribute 'shutil'
+2026-11-26T22:16:00.1123465Z 
+2026-11-26T22:16:00.1123648Z tests/unit/scripts/test_knowledge_checks.py:806: AttributeError
+2026-11-26T22:16:00.1124200Z =========================== short test summary info ============================
+2026-11-26T22:16:00.1125345Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_main - AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'check_markdown_lints'
+2026-11-26T22:16:00.1126907Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_main_when_lint_violations - AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'check_markdown_lints'
+2026-11-26T22:16:00.1128539Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_check_markdown_lints - AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'run_markdown_lints'
+2026-11-26T22:16:00.1130340Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_check_markdown_lints_when_no_markdown - AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'run_markdown_lints'
+2026-11-26T22:16:00.1131996Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_check_markdown_lints_when_missing - AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'run_markdown_lints'
+2026-11-26T22:16:00.1133607Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_check_markdown_lints_when_failed - AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'run_markdown_lints'
+2026-11-26T22:16:00.1135046Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_check_yamllint - AttributeError: module 'knowledge_checks' has no attribute 'check_yamllint'. Did you mean: 'check_textlint'?
+2026-11-26T22:16:00.1136345Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_check_yamllint_when_warning - AttributeError: module 'knowledge_checks' has no attribute 'check_yamllint'. Did you mean: 'check_textlint'?
+2026-11-26T22:16:00.1137758Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_check_yamllint_when_broken - AttributeError: <module 'knowledge_checks' from '/home/runner/work/knowledge/knowledge/scripts/knowledge_checks.py'> has no attribute 'run_yamllint'
+2026-11-26T22:16:00.1138940Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_check_map - AttributeError: module 'knowledge_checks' has no attribute 'shutil'
+2026-11-26T22:16:00.1139913Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_check_map_when_no_map - AttributeError: module 'knowledge_checks' has no attribute 'shutil'
+2026-11-26T22:16:00.1140980Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_check_map_when_npx_missing - AttributeError: module 'knowledge_checks' has no attribute 'shutil'
+2026-11-26T22:16:00.1141995Z FAILED tests/unit/scripts/test_knowledge_checks.py::test_check_map_when_failed - AttributeError: module 'knowledge_checks' has no attribute 'shutil'
+2026-11-26T22:16:00.1142760Z ======================== 13 failed, 312 passed in 3.09s ========================
+2026-11-26T22:16:00.2869112Z Downloading cpython-3.12.16-linux-x86_64-gnu (download) (33.1MiB)
+2026-11-26T22:16:00.8578519Z  Downloaded cpython-3.12.16-linux-x86_64-gnu (download)
+2026-11-26T22:16:01.0137436Z Installed 5 packages in 5ms
+2026-11-26T22:16:01.8926030Z ============================= test session starts ==============================
+2026-11-26T22:16:01.8927110Z platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0
+2026-11-26T22:16:01.8927898Z rootdir: /home/runner/work/knowledge/knowledge
+2026-11-26T22:16:01.8928945Z configfile: pytest.ini
+2026-11-26T22:16:01.8929572Z collected 49 items
+2026-11-26T22:16:01.8929821Z 
+2026-11-26T22:16:01.9183132Z tests/unit/slop-check/test_slop_check.py ............................... [ 63%]
+2026-11-26T22:16:01.9457718Z ..................                                                       [100%]
+2026-11-26T22:16:01.9458140Z 
+2026-11-26T22:16:01.9458641Z ============================== 49 passed in 0.08s ==============================
+2026-11-26T22:16:01.9795893Z ##[error]Process completed with exit code 1.
+exit=1 run=45903634791
