@@ -1577,6 +1577,16 @@ def test_check_markdown_templates_when_generation_fails(tmp_path: Path) -> None:
         check_all.check_markdown_templates(tmp_path, run=run)
 
 
+def test_check_markdown_templates_when_exit_one_without_lines(tmp_path: Path) -> None:
+    """ずれの行を出さずに終了コード 1 で終わる（異常系）。"""
+    # 準備
+    (tmp_path / "docs/template/markdown").mkdir(parents=True)
+    run, _ = _completed(1, err="ModuleNotFoundError: No module named 'dev_docs'")
+    # 実行・検証
+    with pytest.raises(check_all.MarkdownTemplateError, match="ModuleNotFoundError"):
+        check_all.check_markdown_templates(tmp_path, run=run)
+
+
 def test_check_markdown_templates_when_timeout(tmp_path: Path) -> None:
     """打ち切る（異常系）。"""
     # 準備
