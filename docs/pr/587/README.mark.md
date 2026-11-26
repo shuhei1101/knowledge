@@ -1,0 +1,1 @@
+# 書き込みの検査 knowledge-checks で textlint の違反を止める
