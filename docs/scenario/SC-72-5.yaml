@@ -226,7 +226,7 @@ scenarios:
         description: 差し替えない
       - name: 書き込む内容
         description: スキーマと検査のスクリプトの他の検査には合い、項目の `body` の map の範囲の mermaid を map が描けない規約の YAML
-        notes: mdmark の `map_invalid` になる map の範囲
+        notes: 1 つの map の範囲に、Mermaid として解釈できる `flowchart` の mermaid のコードブロックを 2 つ配置する（mdmark の `map_invalid`）
     flow: |-
       <!-- map -->
 
@@ -254,9 +254,11 @@ scenarios:
       - name: Mock
         description: 差し替えない
       - name: 作業場所
-        description: Linux 側の PATH で `npx` が見つからない knowledge の worktree
+        description: knowledge の worktree
       - name: 書き込む内容
         description: map の範囲を項目の `body` に持ち、ほかの違反の無い規約の YAML
+      - name: project-index の起動の環境
+        description: '`npx` を持たない PATH で project-index を起動する。mdmark の CLI（`check --text`）は PATH に残す'
     flow: |-
       <!-- map -->
 
