@@ -488,6 +488,8 @@ flows:
       - name: 標準入力
         description: '`items[0].body` の 1 つの map の範囲に、Mermaid として解釈できる `flowchart` の mermaid のコードブロックを 2 つ持つ文書'
         notes: mdmark の `map_invalid`
+      - name: mdmark の CLI
+        description: PATH の先頭に、`npx -y github:shuhei1101/mdmark#{MDMARK_REF}` を起動する `mdmark` を配置する（ランナーの PATH に mdmark の CLI が無いため）。起動するのは本物の mdmark
     flow: |-
       <!-- map -->
 
