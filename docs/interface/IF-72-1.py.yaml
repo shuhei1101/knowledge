@@ -235,6 +235,34 @@ flows:
       - 標準出力の配列が 1 件で、`path` が `aliases[0]`
       - '`rule` に相手の ID `ai-slop` と `aliases` がある'
     test: test_normal_when_aliases_collide_with_terms
+  - name: 正常系（観点の ID の重複）
+    summary: チェックシートの観点の要素の ID の重複を、後に出た要素の違反にする
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 配信元
+        description: '`project-index.yaml`（`docs/checksheet/*.yaml` の行だけ）を持つ一時フォルダ'
+      - name: 標準入力
+        description: '`kind: checksheet` で、`aspects` に ID `aspect-review-common-01` の要素を 2 つ、ID `aspect-review-common-02` の要素を 1 つ持つ文書'
+        notes: 違反は 1 件
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant D as project-index
+        participant S as 文書の違反の検査
+        D->>S: 標準入力にチェックシートの YAML
+        S->>S: items と aspects のそれぞれで要素の ID の重複を確認する
+        S-->>D: 終了コード 0 と違反の配列
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力の配列が 1 件で、`path` が `aspects[1].id`
+      - 違反の `rule` に `aspects[0]` があり、`rule` の行が文書の中の 2 つ目の要素の `id` の行と一致する
+    test: test_normal_when_aspect_ids_duplicate
 lead: 標準入力の文書 1 件に、スキーマで見られない決まり（項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複）を適用し、違反を project-index の validators の約束で標準出力へ返却する。
 identifier: knowledge-checks
 idempotent: true
@@ -313,4 +341,6 @@ constraints:
       `project-index.yaml` を読み込まず、`project-index.yaml` が無い・読み込めない場合も照合する
   - item: '`id:` の参照'
     constraint: '`[{名前}](id:{文書の ID})` は文書が、`[{名前}](id:{文書の ID}#{項目の ID})` はその文書の項目が実在する。自分を指す参照は標準入力の内容で確認する。コードブロックの中の参照は検査しない'
+  - item: 観点の ID の重複
+    constraint: '`aspects[n].id` を前の要素 `aspects[m].id`（m < n）と比べ、一致したら `aspects[{n}].id` の違反 1 件にする。`rule` には一致した `aspects[{m}]` を記載し、`fix` は「観点の ID を文書の中で一意にする」。`items[].id` とは比べない'
 test_file: tests/integration/scripts/test_knowledge_checks.py

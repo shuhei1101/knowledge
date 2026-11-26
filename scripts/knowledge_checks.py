@@ -307,26 +307,28 @@ def check_alias_duplicates(doc: CommentedMap) -> list[Violation]:
 
 
 def check_duplicate_ids(doc: CommentedMap) -> list[Violation]:
-    """items[].id の重複を、後に出た項目の違反にする。"""
-    # 項目の ID → 最初に出た添字
-    first: dict[str, int] = {}
+    """items[].id と aspects[].id の重複を、それぞれの配列の中で後に出た要素の違反にする。"""
     violations: list[Violation] = []
-    for position, item in _rows(doc, "items"):
-        item_id = _field(item, "id")
-        if not isinstance(item_id, str):
-            continue
-        # 先に出た ID と同じ: 後の項目を違反にする
-        if item_id in first:
-            line = value_line(item, "id")
-            violations.append(
-                {
-                    "path": format_path(["items", position, "id"]),
-                    "rule": f"{line} 行目: 項目の ID `{item_id}` が items[{first[item_id]}] と重複しています",
-                    "fix": "項目の ID を文書の中で一意にする",
-                }
-            )
-        else:
-            first[item_id] = position
+    # 配列のキーと、違反の文言に使う要素の呼び名（items の後に aspects の順で返す）
+    for key, label in (("items", "項目"), ("aspects", "観点")):
+        # 要素の ID → 最初に出た添字（配列ごとに数え直し、items と aspects はまたいで比べない）
+        first: dict[str, int] = {}
+        for position, row in _rows(doc, key):
+            row_id = _field(row, "id")
+            if not isinstance(row_id, str):
+                continue
+            # 先に出た ID と同じ: 後の要素を違反にする
+            if row_id in first:
+                line = value_line(row, "id")
+                violations.append(
+                    {
+                        "path": format_path([key, position, "id"]),
+                        "rule": f"{line} 行目: {label}の ID `{row_id}` が {key}[{first[row_id]}] と重複しています",
+                        "fix": f"{label}の ID を文書の中で一意にする",
+                    }
+                )
+            else:
+                first[row_id] = position
     return violations
 
 

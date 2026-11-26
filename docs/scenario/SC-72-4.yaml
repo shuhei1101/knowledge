@@ -12,6 +12,8 @@ scenarios:
         description: 用語集に別名を持つ用語がある（用語 `A.I.VOICE 2`、別名 `A.I.VOICE2`）
       - name: 配信中の knowledge-memes
         description: 作品 `kusuriya` と、それを `work` で指すネットミーム `kusuriya-dokudesu` がある
+      - name: 観点を持つチェックシート
+        description: '`checksheet-review-common` が観点を 1 件 = 1 要素で持ち、各観点にタグ `target:共通` がある'
     flow: |-
       <!-- map -->
 
@@ -25,6 +27,8 @@ scenarios:
         M-->>E: タグの名前ごとの件数
         E->>M: search_docs に文書の ID
         M-->>E: 文書の本文
+        E->>M: search_docs に種類 review_aspect とタグ target:共通
+        M-->>E: 観点 1 件ずつの名前・説明・タグ
         E->>M: list_match_words に source knowledge
         M-->>E: 用語集の用語と文書の名前・別名
         E->>M: search_docs に term A.I.VOICE2
@@ -45,6 +49,10 @@ scenarios:
       - '`search_docs` の `term` に `A.I.VOICE2` を指定すると、用語 `A.I.VOICE 2` がヒットする'
       - '`source: knowledge` の検索・`group_by: tags` の集計・`list_match_words` に、ネットミームの配信元の作品とネットミームが出ない'
       - '`search_docs` に `source: knowledge-memes` と種類 `meme` を指定すると、`name` が `term` の値、`description` が `context` の値のネットミームがヒットする'
+      - '`search_docs` に種類 `review_aspect` とタグ `target:共通` を指定すると、`checksheet-review-common` の観点が 1 件ずつ文書として返り、各行が `name`・`description`・`tags` を持つ'
+      - 観点の `tags` が `target:`・`process:` のタグの名前の文字列の配列で返る
+      - どの観点も持たないタグ（`target:存在しない種類`）で絞ると、観点が 0 件で返る
+      - 観点を持つページ `checksheet-review-common` を ID で取得すると、引き続きページの本文が返る
     test: test_normal
   - name: 異常シナリオ（作業場所が scope.read の外）
     setup:

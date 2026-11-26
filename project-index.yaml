@@ -4,6 +4,7 @@ name: knowledge
 description: どのプロジェクトでも共通で使用するコーディング規約・テンプレート・判定フローチャート・判定表・チェックシート・使い方と、台本・演出・ゲーム作りなどの創作の知見（ノウハウ）
 instructions: |-
   規約（rule）・ノウハウ（knowhow）・テンプレート（template）・判定フローチャート（flowchart）・判定表（decision-table）・チェックシート（checksheet）・使い方（guide）・変更履歴（changelog）・単語の対応表（word-list）・用語集（terms）は `docs/` の YAML が原本で、種類ごとの行に分かれる。
+  レビューの観点（review_aspect）は、レビューのチェックシート（`checksheet-review-*`）の `aspects` の要素 1 件ずつの文書で、`target:`（成果物の種類）・`process:`（工程）のタグで絞って取得する。
   スキル（skill）は `docs/skill/` の YAML が原本で、書式は `schemas/design/agent_flow.schema.yaml` の `type: skill` で、`steps[]` が工程を持つ。
   本文は `items[]` の各項目が持ち、`[名前](id:{文書の ID}#{項目の ID})` で他の文書・項目を指す。`related[].when` がその文書を読むときを表す。
   YAML の文書の行に当たらないファイル（`skills/`・`scripts/`・`schemas/`・`tests/`・`plugins/slop-check/`・直下・`docs/` の目次）は、各フォルダの `files.yaml` が名前・概要文・タグを持つ。`docs/pr/` は配信しない。
@@ -125,6 +126,14 @@ documents:
     validators: [knowledge-checks]
     converter: knowledge-markdown
     alias_type: doc
+    metadata:
+      tags: tags[].name
+      main_tags: tags[main].name
+  - id: review_aspect
+    title: レビューの観点
+    paths: ["docs/checksheet/checksheet-review-*.yaml"]
+    schema: schemas/checksheet.schema.yaml
+    records: aspects
     metadata:
       tags: tags[].name
       main_tags: tags[main].name
@@ -447,6 +456,10 @@ nav:
           items:
             - auto:
                 document: checksheet
+        - group: レビューの観点
+          items:
+            - auto:
+                document: review_aspect
         - group: 単語の対応表
           items:
             - auto:

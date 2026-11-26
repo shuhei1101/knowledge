@@ -11,7 +11,7 @@ tags:
   - name: action:検査
 status: current
 visibility: internal
-rev: 5
+rev: 6
 items:
   - id: overview
     name: 概要
@@ -27,7 +27,8 @@ items:
       | セクション | 必須or条件 |
       | --- | --- |
       | 冒頭リード（`overview`） | 必須 |
-      | `チェック項目` | 必須 |
+      | `チェック項目` | レビューのチェックシート（`checksheet-review-*`）以外は必須 |
+      | `aspects`（観点） | レビューのチェックシートの場合のみ |
   - id: lead-01
     name: "`冒頭リード`"
     body: |-
@@ -75,3 +76,30 @@ items:
       | 「項目」列 | 文末を `〜していること` / `〜していないこと` に統一し、肯定と否定を区別できるようにする<br>YES / NO で回答できる 1 文<br>決定を含まない（決定するなら [判定フローチャート](id:template-flowchart) / [判定表](id:template-decision-table) を使用する） |
       | 「補足」列 | 追加の説明・実行環境・注意点を 1 行で<br>該当なしなら `-` |
       | 並び順 | 実行順があるなら時系列で並べる<br>独立チェックなら重要度順で並べる |
+  - id: aspects-01
+    name: '`aspects`（観点）'
+    body: |-
+      ### 記述例
+
+      ```yaml
+      aspects:
+        - id: aspect-review-common-01
+          name: 公式ドキュメントとの一致
+          description: 外部ライブラリの挙動に依る記述が、公式ドキュメントの該当箇所と一致していること
+          note: 一致を確認した箇所を指摘の根拠に記載する
+          tags:
+            - name: target:共通
+              main: true
+          visibility: internal
+      ```
+
+      ### 補足
+
+      | 項目 | 内容 |
+      | --- | --- |
+      | 使用するページ | レビューのチェックシート（`checksheet-review-*`）。観点は `チェック項目` の表でなく `aspects` に 1 件 = 1 要素で記載する |
+      | `id` | `aspect-{ファイル名から checksheet- を除いた名前}-{2 桁の番号}` |
+      | `description` | `〜していること` / `〜していないこと` の 1 文 |
+      | `note` | 確認の仕方・指摘の仕方・問わない例外。該当なしなら記載しない |
+      | `tags` | 成果物の種類の `target:{種類}`（種類によらない観点は `target:共通`）を 1 つ以上と、工程に限る観点は `process:{工程名}`。値は AI Monitor の観点（`docs/checksheet/review-aspects-*.yaml`）のタグと同じ語彙にする。ページの成果物の種類のタグだけ `main: true` |
+      | `visibility` | ページの `visibility` と同じ値 |
