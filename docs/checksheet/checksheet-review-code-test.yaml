@@ -18,7 +18,7 @@ tags:
   - name: topic:上限
 status: current
 visibility: internal
-rev: 1
+rev: 2
 related:
   - to: checksheet-review-common
     type: references
@@ -34,29 +34,131 @@ related:
     when: 開発コマンドの追従を確認するとき
 items:
   - id: overview
-    name: "概要"
-    body: |-
-      実装コードとテストコードをレビューするときの観点。
-  - id: check-items-01
-    group: チェック項目
-    name: "チェック項目"
-    body: |-
-      <!-- table: {"kind": "data"} -->
-
-      | 項目 | 補足 |
-      | --- | --- |
-      | テストコードと実装が設計書と合っていること | テストは観点の過不足・粒度、実装は構成要素・物理名・依存方向を確認する（対応関係は規約 [V字モデル](id:dev-v-model) の対応表） |
-      | テストが、実装が壊れたときに失敗するように作られていること | 期待値が無い・常に合格する・実装と同じ計算で期待値を作っているテストを指摘する |
-      | 並行して動く処理（複数セッション・非同期・スレッド）で、競合と取りこぼしが起きないこと | 動かしても見つけにくいので、コードを参照して確認する |
-      | 差分の行だけでなく、変更を含むファイル全体を参照し、全体として分かりにくくなっていないこと | - |
-      | 非機能要件で決めた時点の事前確認が実装にあり、確認で止めた場合のテストがあること | 規約 [事前確認](id:dev-precheck) |
-      | 要素・文書・ファイル・行の数に比例して繰り返す処理を追加する差分に、想定する最大の件数で上限（時間か回数）を超えないことを確認するテストがあること | 最大の件数と上限は設計で決めた値を使用する。小さいデータで結果の正しさだけを確認するテストは該当しない |
-      | ブラウザのスクリプトを `.ts` で記載し、`.js` を手書きしていないこと | `.js` で記載してよいのは [js で記載してよい場合](id:html-core-buildless#script-extension-02) だけ。HTML に直接記載する `<script>` の処理も `.ts` へ分けているかを確認する（[HTML に直接記載する script](id:html-core-buildless#script-extension-04)） |
-      | 実装で呼ぶ外部ライブラリ・外部 API の設計書があること | - |
-      | 値の配置先が判定フローチャート [設定値の置き場所](id:flowchart-config-location) のとおりで、秘匿値が git 管理下にもログにも無いこと | 秘匿値の配置先を変えたら、サンプルと README の配置方法の説明も変わっているかを確認する |
-      | 差分がマニフェスト・ロックファイル・CI 設定・ツール設定・スクリプト・プラグインの定義に触れているとき、開発コマンドのページが追従していること | 差分で変わるコマンドを 1 つずつ判定フローチャート [コマンドの書き先](id:flowchart-command-destination) で判定し、該当するセクションと突き合わせる。記載しないと判定される変更は追従を求めない |
-      | 差分が配布物の入れ方・起動に影響するファイルに触れているとき、利用者の入れ方で入れて起動する単一ユースケースが、影響するユースケースに挙がっていること | 挙がっていなければ影響するユースケースへの追加を求める |
-      | スキーマで作った・追加した項目に `examples` があり、`$ref` 先の例が項目に合わないままスキーマの説明に出ていないこと | - |
-      | 開発コマンドのページに記載されたコマンドに、確認した記録があること | 状態が `済` の行は確認日、`未確認` の行は実行していない理由があるかを確認する。副作用・権限、または規約 [開発時の従量課金APIの実行](id:dev-paid-api-execution) でユーザーへ確認する料金が要らないのに `未確認` の行を指摘する |
-
-      <!-- /table -->
+    name: 概要
+    body: 実装コードとテストコードをレビューするときの観点。
+aspects:
+  - id: aspect-review-code-test-01
+    name: 設計書との一致
+    description: テストコードと実装が設計書と合っていること
+    note: テストは観点の過不足・粒度、実装は構成要素・物理名・依存方向を確認する（対応関係は規約 [V字モデル](id:dev-v-model) の対応表）
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: target:テストコード
+      - name: process:単体テスト作成
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-code-test-02
+    name: 壊れたときに失敗するテスト
+    description: テストが、実装が壊れたときに失敗するように作られていること
+    note: 期待値が無い・常に合格する・実装と同じ計算で期待値を作っているテストを指摘する
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: target:テストコード
+      - name: process:単体テスト作成
+      - name: process:結合テスト作成
+    visibility: internal
+  - id: aspect-review-code-test-03
+    name: 並行して動く処理の競合
+    description: 並行して動く処理（複数セッション・非同期・スレッド）で、競合と取りこぼしが起きないこと
+    note: 動かしても見つけにくいので、コードを参照して確認する
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-code-test-04
+    name: 変更を含むファイル全体
+    description: 差分の行だけでなく、変更を含むファイル全体を参照し、全体として分かりにくくなっていないこと
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: target:テストコード
+      - name: target:手順書
+      - name: target:規約
+      - name: target:テンプレート
+    visibility: internal
+  - id: aspect-review-code-test-05
+    name: 事前確認の実装とテスト
+    description: 非機能要件で決めた時点の事前確認が実装にあり、確認で止めた場合のテストがあること
+    note: 規約 [事前確認](id:dev-precheck)
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: target:テストコード
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-code-test-06
+    name: 繰り返す処理の上限のテスト
+    description: 要素・文書・ファイル・行の数に比例して繰り返す処理を追加する差分に、想定する最大の件数で上限（時間か回数）を超えないことを確認するテストがあること
+    note: 最大の件数と上限は設計で決めた値を使用する。小さいデータで結果の正しさだけを確認するテストは該当しない
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: target:テストコード
+      - name: process:単体テスト作成
+      - name: process:結合テスト作成
+    visibility: internal
+  - id: aspect-review-code-test-07
+    name: ブラウザのスクリプトの拡張子
+    description: ブラウザのスクリプトを `.ts` で記載し、`.js` を手書きしていないこと
+    note: '`.js` で記載してよいのは [js で記載してよい場合](id:html-core-buildless#script-extension-02) だけ。HTML に直接記載する `<script>` の処理も `.ts` へ分けているかを確認する（[HTML に直接記載する script](id:html-core-buildless#script-extension-04)）'
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-code-test-08
+    name: 外部ライブラリ・外部 API の設計書
+    description: 実装で呼ぶ外部ライブラリ・外部 API の設計書があること
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-code-test-09
+    name: 値の配置先と秘匿値
+    description: 値の配置先が判定フローチャート [設定値の置き場所](id:flowchart-config-location) のとおりで、秘匿値が git 管理下にもログにも無いこと
+    note: 秘匿値の配置先を変えたら、サンプルと README の配置方法の説明も変わっているかを確認する
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-code-test-10
+    name: 開発コマンドのページの追従
+    description: 差分がマニフェスト・ロックファイル・CI 設定・ツール設定・スクリプト・プラグインの定義に触れているとき、開発コマンドのページが追従していること
+    note: 差分で変わるコマンドを 1 つずつ判定フローチャート [コマンドの書き先](id:flowchart-command-destination) で判定し、該当するセクションと突き合わせる。記載しないと判定される変更は追従を求めない
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: target:開発コマンド
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-code-test-11
+    name: 入れ方・起動の単一ユースケース
+    description: 差分が配布物の入れ方・起動に影響するファイルに触れているとき、利用者の入れ方で入れて起動する単一ユースケースが、影響するユースケースに挙がっていること
+    note: 挙がっていなければ影響するユースケースへの追加を求める
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-code-test-12
+    name: スキーマの examples
+    description: スキーマで作った・追加した項目に `examples` があり、`$ref` 先の例が項目に合わないままスキーマの説明に出ていないこと
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-code-test-13
+    name: 開発コマンドの確認の記録
+    description: 開発コマンドのページに記載されたコマンドに、確認した記録があること
+    note: 状態が `済` の行は確認日、`未確認` の行は実行していない理由があるかを確認する。副作用・権限、または規約 [開発時の従量課金APIの実行](id:dev-paid-api-execution) でユーザーへ確認する料金が要らないのに `未確認` の行を指摘する
+    tags:
+      - name: target:実装コード
+        main: true
+      - name: target:開発コマンド
+    visibility: internal

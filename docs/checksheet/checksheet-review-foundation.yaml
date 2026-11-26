@@ -16,7 +16,7 @@ tags:
   - name: topic:索引
 status: current
 visibility: internal
-rev: 1
+rev: 2
 related:
   - to: checksheet-review-common
     type: references
@@ -29,19 +29,33 @@ related:
     when: ルール索引の paths の記載方法を確認するとき
 items:
   - id: overview
-    name: "概要"
-    body: |-
-      新規プロジェクトの初期構築で作った成果物をレビューするときの観点。
-  - id: check-items-01
-    group: チェック項目
-    name: "チェック項目"
-    body: |-
-      <!-- table: {"kind": "data"} -->
-
-      | 項目 | 補足 |
-      | --- | --- |
-      | アーキテクチャ図のサブシステム一覧が、要件の機能を全て収容していること | どの機能がどのサブシステムに入るかを対応づけて確認する |
-      | フォルダ構成の設計書がテンプレート [フォルダ構成](id:template-layout) の書式で、規約 [フォルダ構成の切り方とレビュー](id:dev-folder-layout) のレビューの観点に該当しないこと | `.gitignore` が設計書の `gitignore` と一致するかも確認する |
-      | ルール索引の `paths` が、有効にしたいファイルに実際にヒットすること | glob を実ファイルに適用して確認する |
-
-      <!-- /table -->
+    name: 概要
+    body: 新規プロジェクトの初期構築で作った成果物をレビューするときの観点。
+aspects:
+  - id: aspect-review-foundation-01
+    name: サブシステムへの機能の収容
+    description: アーキテクチャ図のサブシステム一覧が、要件の機能を全て収容していること
+    note: どの機能がどのサブシステムに入るかを対応づけて確認する
+    tags:
+      - name: target:アーキテクチャ図
+        main: true
+      - name: process:初期構築
+    visibility: internal
+  - id: aspect-review-foundation-02
+    name: フォルダ構成の設計書
+    description: フォルダ構成の設計書がテンプレート [フォルダ構成](id:template-layout) の書式で、規約 [フォルダ構成の切り方とレビュー](id:dev-folder-layout) のレビューの観点に該当しないこと
+    note: '`.gitignore` が設計書の `gitignore` と一致するかも確認する'
+    tags:
+      - name: target:アーキテクチャ図
+        main: true
+      - name: process:初期構築
+    visibility: internal
+  - id: aspect-review-foundation-03
+    name: ルール索引の paths
+    description: ルール索引の `paths` が、有効にしたいファイルに実際にヒットすること
+    note: glob を実ファイルに適用して確認する
+    tags:
+      - name: target:アーキテクチャ図
+        main: true
+      - name: process:初期構築
+    visibility: internal

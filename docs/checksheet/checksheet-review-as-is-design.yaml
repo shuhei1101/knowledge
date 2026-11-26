@@ -15,27 +15,47 @@ tags:
   - name: topic:設計書
 status: current
 visibility: internal
-rev: 1
+rev: 2
 related:
   - to: checksheet-review-common
     type: references
     when: 成果物の種類によらない共通の観点も確認するとき
 items:
   - id: overview
-    name: "概要"
-    body: |-
-      実装から作成した現状の設計書をレビューするときの観点。
-  - id: check-items-01
-    group: チェック項目
-    name: "チェック項目"
-    body: |-
-      <!-- table: {"kind": "data"} -->
-
-      | 項目 | 補足 |
-      | --- | --- |
-      | 記述が実装コードの該当箇所を根拠に記載されていること | 指した箇所を開いて確認する |
-      | 実装に無い振る舞いを、あるべき姿として記載していないこと | 現状の記載と改善提案を混ぜない |
-      | 実装にあるのに記載されていない分岐・異常系が無いこと | - |
-      | 作成した範囲と作成できなかった範囲が区別して記載されていること | - |
-
-      <!-- /table -->
+    name: 概要
+    body: 実装から作成した現状の設計書をレビューするときの観点。
+aspects:
+  - id: aspect-review-as-is-design-01
+    name: 実装コードの根拠
+    description: 記述が実装コードの該当箇所を根拠に記載されていること
+    note: 指した箇所を開いて確認する
+    tags:
+      - name: target:現状設計書
+        main: true
+      - name: process:リバースエンジニアリング
+    visibility: internal
+  - id: aspect-review-as-is-design-02
+    name: 実装に無い振る舞い
+    description: 実装に無い振る舞いを、あるべき姿として記載していないこと
+    note: 現状の記載と改善提案を混ぜない
+    tags:
+      - name: target:現状設計書
+        main: true
+      - name: process:リバースエンジニアリング
+    visibility: internal
+  - id: aspect-review-as-is-design-03
+    name: 記載漏れの分岐・異常系
+    description: 実装にあるのに記載されていない分岐・異常系が無いこと
+    tags:
+      - name: target:現状設計書
+        main: true
+      - name: process:リバースエンジニアリング
+    visibility: internal
+  - id: aspect-review-as-is-design-04
+    name: 作成した範囲の区別
+    description: 作成した範囲と作成できなかった範囲が区別して記載されていること
+    tags:
+      - name: target:現状設計書
+        main: true
+      - name: process:リバースエンジニアリング
+    visibility: internal

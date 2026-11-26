@@ -15,7 +15,7 @@ tags:
   - name: topic:ユースケース
 status: current
 visibility: internal
-rev: 1
+rev: 2
 related:
   - to: checksheet-review-common
     type: references
@@ -28,23 +28,67 @@ related:
     when: シナリオの粒度を確認するとき
 items:
   - id: overview
-    name: "概要"
-    body: |-
-      単一ユースケースのシナリオをレビューするときの観点。
-  - id: check-items-01
-    group: チェック項目
-    name: "チェック項目"
-    body: |-
-      <!-- table: {"kind": "data"} -->
-
-      | 項目 | 補足 |
-      | --- | --- |
-      | 図がサブシステム境界を participant として記載されていること | 内部モジュールを participant にしていないか |
-      | 異常シナリオが業務的に意味のあるものに絞られていること | 個別 API のバリデーションはインターフェース定義の領分 |
-      | セットアップに分岐を決定的に誘発する値が仕込まれていること | - |
-      | 期待値がテストのアサートにそのまま落ちる粒度になっていること | - |
-      | 粒度が「{対象}を{動詞}する」の 1 動詞句で表せること | 判定フローチャート [シナリオ](id:flowchart-scenario) |
-      | 既存の単一ユースケースがあるのに同じ操作を新規で作っていないこと | 既存シナリオの一覧と突き合わせる |
-      | 他のシナリオで既に確認している重複部分が Mock に置き換えられていること | セットアップの Mock 行で宣言させる |
-
-      <!-- /table -->
+    name: 概要
+    body: 単一ユースケースのシナリオをレビューするときの観点。
+aspects:
+  - id: aspect-review-single-uc-scenario-01
+    name: サブシステム境界の participant
+    description: 図がサブシステム境界を participant として記載されていること
+    note: 内部モジュールを participant にしていないか
+    tags:
+      - name: target:単一 UC シナリオ
+        main: true
+      - name: process:単一ユースケース設計
+    visibility: internal
+  - id: aspect-review-single-uc-scenario-02
+    name: 業務的に意味のある異常シナリオ
+    description: 異常シナリオが業務的に意味のあるものに絞られていること
+    note: 個別 API のバリデーションはインターフェース定義の領分
+    tags:
+      - name: target:単一 UC シナリオ
+        main: true
+      - name: process:単一ユースケース設計
+    visibility: internal
+  - id: aspect-review-single-uc-scenario-03
+    name: 分岐を誘発するセットアップ
+    description: セットアップに分岐を決定的に誘発する値が仕込まれていること
+    tags:
+      - name: target:単一 UC シナリオ
+        main: true
+      - name: process:単一ユースケース設計
+    visibility: internal
+  - id: aspect-review-single-uc-scenario-04
+    name: アサートに落ちる期待値
+    description: 期待値がテストのアサートにそのまま落ちる粒度になっていること
+    tags:
+      - name: target:単一 UC シナリオ
+        main: true
+      - name: process:単一ユースケース設計
+    visibility: internal
+  - id: aspect-review-single-uc-scenario-05
+    name: 1 動詞句の粒度
+    description: 粒度が「{対象}を{動詞}する」の 1 動詞句で表せること
+    note: 判定フローチャート [シナリオ](id:flowchart-scenario)
+    tags:
+      - name: target:単一 UC シナリオ
+        main: true
+      - name: process:単一ユースケース設計
+    visibility: internal
+  - id: aspect-review-single-uc-scenario-06
+    name: 既存の単一ユースケースとの重複
+    description: 既存の単一ユースケースがあるのに同じ操作を新規で作っていないこと
+    note: 既存シナリオの一覧と突き合わせる
+    tags:
+      - name: target:単一 UC シナリオ
+        main: true
+      - name: process:単一ユースケース設計
+    visibility: internal
+  - id: aspect-review-single-uc-scenario-07
+    name: 重複部分の Mock
+    description: 他のシナリオで既に確認している重複部分が Mock に置き換えられていること
+    note: セットアップの Mock 行で宣言させる
+    tags:
+      - name: target:単一 UC シナリオ
+        main: true
+      - name: process:単一ユースケース設計
+    visibility: internal

@@ -7,7 +7,7 @@ aliases:
   - 部品設計のレビュー観点
 status: current
 visibility: internal
-rev: 1
+rev: 2
 related:
   - to: checksheet-review-common
     type: references
@@ -22,13 +22,6 @@ items:
   - id: overview
     name: 概要
     body: 部品設計の設計書をレビューするときの観点。
-  - id: check-items-01
-    group: チェック項目
-    name: チェック項目
-    body: |-
-      | 項目 | 補足 |
-      | --- | --- |
-      | `implementation` がブラウザのスクリプトを指すとき、`.ts`（`.tsx`）のファイルを指し、`.js` を手書きする設計になっていないこと | `.js` で記載してよいのは [js で記載してよい場合](id:html-core-buildless#script-extension-02) だけ。HTML に直接記載する `<script>` の処理も `.ts` へ分けているかを確認する（[HTML に直接記載する script](id:html-core-buildless#script-extension-04)） |
 tags:
   - name: scope:dev
   - name: topic:チェックシート
@@ -37,3 +30,13 @@ tags:
   - name: topic:部品
     main: true
   - name: topic:設計書
+aspects:
+  - id: aspect-review-component-01
+    name: ブラウザのスクリプトの拡張子
+    description: '`implementation` がブラウザのスクリプトを指すとき、`.ts`（`.tsx`）のファイルを指し、`.js` を手書きする設計になっていないこと'
+    note: '`.js` で記載してよいのは [js で記載してよい場合](id:html-core-buildless#script-extension-02) だけ。HTML に直接記載する `<script>` の処理も `.ts` へ分けているかを確認する（[HTML に直接記載する script](id:html-core-buildless#script-extension-04)）'
+    tags:
+      - name: target:部品設計
+        main: true
+      - name: process:部品設計
+    visibility: internal

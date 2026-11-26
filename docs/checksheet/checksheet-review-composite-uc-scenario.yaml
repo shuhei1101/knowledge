@@ -16,7 +16,7 @@ tags:
   - name: topic:ユースケース
 status: current
 visibility: internal
-rev: 1
+rev: 2
 related:
   - to: checksheet-review-common
     type: references
@@ -26,21 +26,50 @@ related:
     when: シナリオの書式を確認するとき
 items:
   - id: overview
-    name: "概要"
-    body: |-
-      複合ユースケースのシナリオをレビューするときの観点。
-  - id: check-items-01
-    group: チェック項目
-    name: "チェック項目"
-    body: |-
-      <!-- table: {"kind": "data"} -->
-
-      | 項目 | 補足 |
-      | --- | --- |
-      | 図が単一ユースケースをノードとして連鎖させ、ユースケースの内部へ踏み込んでいないこと | テンプレート [シナリオ](id:template-scenario) の複合ユースケース |
-      | ノード名とリンク先が単一ユースケースのファイルと 1:1 になっていること | リンクの解決先が実在するかを確認する |
-      | 正常シナリオが一本道で、結末が分かれる分岐を別シナリオへ切り出していること | - |
-      | 期待値がシナリオ終了時点で観測できる値になっていること | 中間地点でしか見られない値は粒度が粗いサイン |
-      | 他のシナリオで既に確認している重複部分が Mock に置き換えられていること | セットアップの Mock 行で宣言させる |
-
-      <!-- /table -->
+    name: 概要
+    body: 複合ユースケースのシナリオをレビューするときの観点。
+aspects:
+  - id: aspect-review-composite-uc-scenario-01
+    name: 単一ユースケースの連鎖
+    description: 図が単一ユースケースをノードとして連鎖させ、ユースケースの内部へ踏み込んでいないこと
+    note: テンプレート [シナリオ](id:template-scenario) の複合ユースケース
+    tags:
+      - name: target:複合 UC シナリオ
+        main: true
+      - name: process:複合ユースケース設計
+    visibility: internal
+  - id: aspect-review-composite-uc-scenario-02
+    name: ノード名とリンク先の対応
+    description: ノード名とリンク先が単一ユースケースのファイルと 1:1 になっていること
+    note: リンクの解決先が実在するかを確認する
+    tags:
+      - name: target:複合 UC シナリオ
+        main: true
+      - name: process:複合ユースケース設計
+    visibility: internal
+  - id: aspect-review-composite-uc-scenario-03
+    name: 一本道の正常シナリオ
+    description: 正常シナリオが一本道で、結末が分かれる分岐を別シナリオへ切り出していること
+    tags:
+      - name: target:複合 UC シナリオ
+        main: true
+      - name: process:複合ユースケース設計
+    visibility: internal
+  - id: aspect-review-composite-uc-scenario-04
+    name: 終了時点で観測できる期待値
+    description: 期待値がシナリオ終了時点で観測できる値になっていること
+    note: 中間地点でしか見られない値は粒度が粗いサイン
+    tags:
+      - name: target:複合 UC シナリオ
+        main: true
+      - name: process:複合ユースケース設計
+    visibility: internal
+  - id: aspect-review-composite-uc-scenario-05
+    name: 重複部分の Mock
+    description: 他のシナリオで既に確認している重複部分が Mock に置き換えられていること
+    note: セットアップの Mock 行で宣言させる
+    tags:
+      - name: target:複合 UC シナリオ
+        main: true
+      - name: process:複合ユースケース設計
+    visibility: internal

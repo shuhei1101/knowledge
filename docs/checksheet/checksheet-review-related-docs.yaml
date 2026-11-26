@@ -15,7 +15,7 @@ tags:
   - name: action:反映
 status: current
 visibility: internal
-rev: 1
+rev: 2
 related:
   - to: checksheet-review-common
     type: references
@@ -25,20 +25,53 @@ related:
     when: 設計変更の影響範囲を洗い出すとき
 items:
   - id: overview
-    name: "概要"
-    body: |-
-      決定を関連ドキュメントへ反映した修正をレビューするときの観点。
-  - id: check-items-01
-    group: チェック項目
-    name: "チェック項目"
-    body: |-
-      <!-- table: {"kind": "data"} -->
-
-      | 項目 | 補足 |
-      | --- | --- |
-      | 反映元の決定内容と、更新後の記述が一致していること | 決定の経緯のコメントと突き合わせる |
-      | 反映先が原本のページになっていること | コピーを修正していないか |
-      | 同じ内容を持つ他のページに反映漏れが無いこと | - |
-      | 反映のついでに関係ない記述を書き換えていないこと | 規約 [既存文章の維持](id:convention-keep-existing-text) |
-
-      <!-- /table -->
+    name: 概要
+    body: 決定を関連ドキュメントへ反映した修正をレビューするときの観点。
+aspects:
+  - id: aspect-review-related-docs-01
+    name: 決定内容との一致
+    description: 反映元の決定内容と、更新後の記述が一致していること
+    note: 決定の経緯のコメントと突き合わせる
+    tags:
+      - name: target:関連ドキュメント
+        main: true
+      - name: target:手順書
+      - name: target:規約
+      - name: target:テンプレート
+      - name: process:ドキュメント修正
+    visibility: internal
+  - id: aspect-review-related-docs-02
+    name: 原本への反映
+    description: 反映先が原本のページになっていること
+    note: コピーを修正していないか
+    tags:
+      - name: target:関連ドキュメント
+        main: true
+      - name: target:手順書
+      - name: target:規約
+      - name: target:テンプレート
+      - name: process:ドキュメント修正
+    visibility: internal
+  - id: aspect-review-related-docs-03
+    name: 同じ内容を持つページの反映漏れ
+    description: 同じ内容を持つ他のページに反映漏れが無いこと
+    tags:
+      - name: target:関連ドキュメント
+        main: true
+      - name: target:手順書
+      - name: target:規約
+      - name: target:テンプレート
+      - name: process:ドキュメント修正
+    visibility: internal
+  - id: aspect-review-related-docs-04
+    name: 関係ない記述の書き換え
+    description: 反映のついでに関係ない記述を書き換えていないこと
+    note: 規約 [既存文章の維持](id:convention-keep-existing-text)
+    tags:
+      - name: target:関連ドキュメント
+        main: true
+      - name: target:手順書
+      - name: target:規約
+      - name: target:テンプレート
+      - name: process:ドキュメント修正
+    visibility: internal
