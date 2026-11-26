@@ -1,0 +1,273 @@
+id: IF-574-1
+visibility: internal
+title: Markdown のテンプレートの生成
+entry:
+  kind: operation
+  value: リポジトリの直下で起動するコマンド（CLI）。開発者の手元と「全ての文書の検査」から呼ぶ
+lead: '`schemas/design/` の設計書の種類のスキーマから、dev-docs の変換で `docs/template/markdown/` の種類ごとの雛形と記載例の Markdown と管理用の YAML を書き出す。'
+identifier: build-markdown-templates
+idempotent: true
+side_effects: '`docs/template/markdown/` の雛形・記載例の Markdown と `files.yaml` のうち、作った内容が今の内容と違うものを書き換え、生成の対象に無い Markdown を削除する。`--check` のときは書き換えない'
+callers:
+  - SC-574-1#scenarios[正常シナリオ]
+  - IF-72-3#constraints[Markdown のテンプレート]
+exclusivity: 制限なし（同じスキーマと dev-docs のコミットからは同じバイト列を書き出す）
+request:
+  - name: cwd
+    type: Path
+    required: true
+    location: argument
+    description: knowledge のリポジトリの直下
+    notes: 作業ディレクトリとして受け取る
+  - name: --check
+    type: bool
+    required: false
+    location: argument
+    default: なし（書き出す）
+    description: 書き出さずに、作った内容と今のファイルを比べる
+response:
+  - name: stdout
+    type: str
+    description: 書き換えた・削除したファイルのパスを 1 行に 1 件、パスの昇順で出す。`--check` のときはずれたファイルを `{ファイルのパス}\t{生成元のスキーマのパス}` で出す。無ければ空
+    example: docs/template/markdown/er.md
+  - name: stderr
+    type: str
+    description: 終了コード 2 のときの理由（原因のファイルのパスを含む）
+  - name: exit_code
+    type: Literal[0, 1, 2]
+    description: 0 = 全てのファイルが作った内容と一致した（書き換えたものを含む）。1 = `--check` でずれたファイルがあった。2 = スキーマ・YAML のテンプレートが読み込めないか変換に失敗し、どのファイルも書き換えなかった
+exceptions:
+  - name: なし（正常終了）
+    condition: 全ての種類の雛形と記載例を作り、違うものを書き出した。`--check` でずれが無かった
+  - name: 終了コード 1
+    condition: '`--check` で、作った内容と違うファイル・無いファイル・生成の対象に無い Markdown があった'
+  - name: 終了コード 2
+    condition: スキーマが無い・YAML として読み込めない、`$ref` を解決できない、種類のスキーマに対応する YAML のテンプレートが無い・読み込めない、dev-docs の変換が例外を送出した
+constraints:
+  - item: 生成の対象
+    constraint: 「設計書のテンプレートの生成」の「生成の対象」と「テンプレートの対応表」と同じ種類のスキーマと、対応する YAML のテンプレートの文書
+  - item: dev-docs の取り込み
+    constraint: スクリプトの依存の宣言（PEP 723）に `dev-docs @ git+https://github.com/shuhei1101/dev-docs@{コミットの SHA}` を 40 桁の SHA で固定し、ロックのファイル（`scripts/build_markdown_templates.py.lock`）と `uv run --frozen --script` で起動する。変換は `dev_docs.features.convert.markdown.schema_to_markdown` だけを呼ぶ
+    notes: dev-docs の変換を修正したら、SHA とロックを上げて生成し直す
+  - item: 出力のパス
+    constraint: 雛形は `docs/template/markdown/{名前}.md`、記載例は `docs/template/markdown/{名前}.example.md`。`{名前}` はテンプレートの ID から先頭の `template-` を除いたもの（`template-er` → `er`）。スキーマが `examples` を持たない種類は記載例を出さない。`examples` が 2 件以上なら最初の 1 件だけを使用する
+  - item: 雛形の文書
+    constraint: |-
+      スキーマの `properties` を「設計書のテンプレートの生成」の「キーの表」と同じ順と `$ref` の解決でたどり、全てのキーに値を入れた文書にする。
+      文字列・数のキーは `{title}`（`title` が無ければ `{キーの名前}`）。
+      `enum` を持つキーは要素を ` / ` でつないだ文字列。
+      真偽のキーは `true / false` の文字列。
+      オブジェクトは子のキーを同じ規則で入れたもの。
+      配列は要素を 1 件だけ持ち、要素が `title` を持たない文字列なら配列のキーの `title` を使用する（`aliases` の要素は `{別名}`）。
+      再帰する `$ref` の先はたどらず、そのキーを入れない
+  - item: 記載例の文書
+    constraint: スキーマのトップの `examples` の最初の要素をそのまま使用する
+  - item: 変換
+    constraint: 雛形・記載例の文書を dev-docs の文書（`kind` はスキーマの `x-kind`、`path` は出力のパス）にし、リンクの引き先を空、Issue の URL を空にして、`$ref` を解決したスキーマと一緒に `schema_to_markdown` へ指定する
+  - item: 変換の後の整形
+    constraint: '行全体が `<!-- dev-docs-table: … -->` の行を削除し、削除で続いた空行を 1 行にまとめる。表・タブなどの mdmark のマーカーは残す。ファイルの末尾は改行 1 つ'
+  - item: 管理用の YAML
+    constraint: |-
+      `docs/template/markdown/files.yaml` の `files[]` に、出力した Markdown 1 つにつき 1 行をパスの昇順で書き出す。
+      `path` は `files.yaml` からの相対パス。
+      `name` は雛形が `テンプレート（Markdown）: {種類の名前}`、記載例が `テンプレート（Markdown）の記載例: {種類の名前}`。`{種類の名前}` は YAML のテンプレートの `name` から先頭の `テンプレート: ` を除いたもの。
+      `description` と `tags`（名前の並び）は YAML のテンプレートの値をコピーし、`aliases` はコピーしない。
+      先頭に `yaml-language-server` の行（`schemas/knowledge-files.schema.yaml` を指す）を配置する
+  - item: 書き出しの順序
+    constraint: 全てのスキーマ・YAML のテンプレートの読み込み、`$ref` の解決、全ての種類の変換を終えてから書き出す。書き出しの前に 1 件でも失敗したら、どのファイルも書き換えない。作った内容が今の内容と同じファイルは書き換えない
+  - item: タイムアウト
+    constraint: 制限なし
+flows:
+  - name: 正常系
+    summary: スキーマが変わった種類の雛形と記載例だけを書き出す
+    setup:
+      - name: Mock
+        description: 差し替えない（固定したコミットの dev-docs を使用する）
+      - name: リポジトリ
+        description: '`schemas/design/` に `er.schema.yaml`・`config.schema.yaml`・`common.schema.yaml`・`index.schema.yaml` を、`docs/template/` に `template-er.yaml`・`template-config.yaml` を持つ一時フォルダ。`docs/template/markdown/` は config の雛形・記載例と `files.yaml` を今のスキーマから生成した状態で、er の雛形・記載例が無い'
+        notes: '`er.schema.yaml` は `enum` のキー・真偽のキー・`title` の無い文字列の配列（`aliases`）・入れ子の配列・トップの `examples` を 1 件持ち、`x-shape: table` のキーを持つ'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant G as Markdown のテンプレートの生成
+        participant F as リポジトリ
+        participant X as dev-docs の変換
+        C->>G: リポジトリの直下で起動する
+        G->>F: schemas/design/ の全てのスキーマと、対応する YAML のテンプレートを読み込む
+        F-->>G: スキーマとテンプレート
+        G->>G: 全ての $ref を解決し、種類ごとに雛形と記載例の文書を組み立てる
+        G->>X: 種類ごとにスキーマと文書を指定する
+        X-->>G: Markdown
+        G->>G: dev-docs-table の行を削除し、files.yaml の行を組み立てる
+        G->>F: 今の内容と違う er.md・er.example.md・files.yaml を書き出す
+        G-->>C: 書き換えたファイルのパスと終了コード 0
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力が `docs/template/markdown/er.example.md`・`docs/template/markdown/er.md`・`docs/template/markdown/files.yaml` の 3 行
+      - '`er.md` に、`enum` のキーの選択肢を ` / ` でつないだ値、真偽のキーの `true / false`、`aliases` の要素の `{別名}` が出て、キーの名前だけのプレースホルダが無い'
+      - '`er.example.md` に `examples` の最初の要素の値が出る'
+      - '`er.md`・`er.example.md` に `<!-- dev-docs-table:` の行が無く、`<!-- table:` のマーカーは残っている'
+      - '`files.yaml` に config と er の雛形・記載例の 4 行がパスの昇順であり、er の行の `description`・`tags` が `template-er.yaml` と同じで `aliases` を持たない'
+      - config の雛形・記載例のバイト列が実行の前と同じ
+      - 続けてもう一度起動すると、標準出力が空で、どのファイルのバイト列も変わらない
+    test: test_normal
+  - name: 正常系（--check でずれを出す・終了コード 1）
+    summary: --check では書き換えずに、ずれたファイルと生成元のスキーマを出す
+    setup:
+      - name: Mock
+        description: 差し替えない（固定したコミットの dev-docs を使用する）
+      - name: リポジトリ
+        description: 正常系の一時フォルダで、er の雛形・記載例が無く、`docs/template/markdown/` に生成の対象に無い `old.md` を配置したもの
+        notes: 引数に `--check`
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant G as Markdown のテンプレートの生成
+        participant F as リポジトリ
+        participant X as dev-docs の変換
+        C->>G: --check を付けて起動する
+        G->>F: 全てのスキーマと YAML のテンプレートを読み込む
+        F-->>G: スキーマとテンプレート
+        G->>X: 種類ごとにスキーマと文書を指定する
+        X-->>G: Markdown
+        G->>F: 今の docs/template/markdown/ を読み込む
+        F-->>G: 今のファイル
+        G-->>C: ずれたファイルと生成元のスキーマと終了コード 1
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 1
+      - 標準出力に `docs/template/markdown/er.md`・`er.example.md`・`files.yaml` が `schemas/design/er.schema.yaml` との組で、`docs/template/markdown/old.md` が生成元の無い行で出る
+      - '`docs/template/markdown/` の全てのファイルのバイト列が実行の前と同じ'
+    test: test_normal_when_check_finds_differences
+  - name: 正常系（生成の対象に無い Markdown を削除する）
+    summary: 対応する種類が無い Markdown を削除し、files.yaml からも行を除く
+    setup:
+      - name: Mock
+        description: 差し替えない（固定したコミットの dev-docs を使用する）
+      - name: リポジトリ
+        description: 全ての種類の雛形・記載例と `files.yaml` が今のスキーマから生成した状態の正常系の一時フォルダに、`docs/template/markdown/old.md` とその `files.yaml` の行を加えたもの
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant G as Markdown のテンプレートの生成
+        participant F as リポジトリ
+        participant X as dev-docs の変換
+        C->>G: リポジトリの直下で起動する
+        G->>F: 全てのスキーマと YAML のテンプレートを読み込む
+        F-->>G: スキーマとテンプレート
+        G->>X: 種類ごとにスキーマと文書を指定する
+        X-->>G: Markdown
+        G->>F: old.md を削除し、files.yaml を書き出す
+        G-->>C: 削除・書き換えたファイルのパスと終了コード 0
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力が `docs/template/markdown/files.yaml`・`docs/template/markdown/old.md` の 2 行
+      - '`old.md` が無く、`files.yaml` に `old.md` の行が無い'
+    test: test_normal_when_stale_markdown_exists
+  - name: 異常系（$ref を解決できない・終了コード 2）
+    summary: 解決できない $ref があれば、どのファイルも書き換えずに終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: 正常系の一時フォルダで、`config.schema.yaml` のキーの `$ref` を `common.schema.yaml#/$defs/無い型` にしたもの
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant G as Markdown のテンプレートの生成
+        participant F as リポジトリ
+        C->>G: リポジトリの直下で起動する
+        G->>F: 全てのスキーマを読み込む
+        F-->>G: スキーマ
+        G->>G: 全ての $ref を解決する
+        G-->>C: 解決できない $ref のパスと終了コード 2
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 2
+      - 標準エラーに `schemas/design/config.schema.yaml` と、解決できない `$ref` の値が出る
+      - '`docs/template/markdown/` の全てのファイルのバイト列が実行の前と同じ'
+    test: test_error_when_ref_unresolvable
+  - name: 異常系（対応する YAML のテンプレートが無い・終了コード 2）
+    summary: 種類のスキーマに対応する YAML のテンプレートが無ければ、どのファイルも書き換えずに終わる
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: リポジトリ
+        description: 正常系の一時フォルダから `template-config.yaml` を削除したもの
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant G as Markdown のテンプレートの生成
+        participant F as リポジトリ
+        C->>G: リポジトリの直下で起動する
+        G->>F: 全てのスキーマと対応する YAML のテンプレートを読み込む
+        F-->>G: template-config.yaml が無い
+        G-->>C: 無いテンプレートの ID とスキーマのパスと終了コード 2
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 2
+      - 標準エラーに `template-config` と `schemas/design/config.schema.yaml` が出る
+      - '`docs/template/markdown/` の全てのファイルのバイト列が実行の前と同じ'
+    test: test_error_when_template_missing
+  - name: 異常系（変換に失敗する・終了コード 2）
+    summary: dev-docs の変換が例外を送出したら、どのファイルも書き換えずに終わる
+    setup:
+      - name: Mock
+        description: dev-docs の `schema_to_markdown` を、config のスキーマで例外を送出するものに差し替える
+      - name: リポジトリ
+        description: 正常系の一時フォルダ
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant C as 呼び出し元
+        participant G as Markdown のテンプレートの生成
+        participant F as リポジトリ
+        participant X as dev-docs の変換
+        C->>G: リポジトリの直下で起動する
+        G->>F: 全てのスキーマと YAML のテンプレートを読み込む
+        F-->>G: スキーマとテンプレート
+        G->>X: 種類ごとにスキーマと文書を指定する
+        X-->>G: config で例外
+        G-->>C: 変換に失敗したスキーマのパスと例外と終了コード 2
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 2
+      - 標準エラーに `schemas/design/config.schema.yaml` と例外の内容が出る
+      - '`docs/template/markdown/` の全てのファイルのバイト列が実行の前と同じ'
+    test: test_error_when_conversion_fails
+refs:
+  - to: IF-201-1
+    type: change_together
+    when: 生成の対象・テンプレートの対応表・キーをたどる順を変えるときに、同じ約束にそろえる。
+test_file: tests/integration/scripts/test_build_markdown_templates.py
