@@ -1,0 +1,359 @@
+id: MOD-574-1
+visibility: internal
+title: 検査と変換のスクリプト / scripts / build_markdown_templates.py
+lead: 手元と「全ての文書の検査」から呼ぶ「Markdown のテンプレートの生成」。設計書の種類のスキーマから dev-docs の変換で雛形と記載例の Markdown と管理用の YAML を作り、書き出すか今のファイルと比べる（IF-574-1）。
+data_models:
+  - name: Output
+    title: 生成するファイル
+    container: scripts/build_markdown_templates.py
+    usecase: 共通
+    summary: 書き出す 1 ファイルの中身と、その生成元のスキーマ
+    description: '`@dataclass(frozen=True, slots=True)`。'
+    properties:
+      - name: path
+        type: PurePosixPath
+        description: リポジトリの直下からのパス
+      - name: content
+        type: str
+        description: 書き出す中身（末尾は改行 1 つ）
+      - name: schema_path
+        type: PurePosixPath
+        description: 生成元のスキーマのリポジトリの直下からのパス。`files.yaml` はずれた行の種類のうちパスの昇順で最初のもの（「ずれの列挙」が決める）
+  - name: TemplateMeta
+    title: YAML のテンプレートのメタデータ
+    container: scripts/build_markdown_templates.py
+    usecase: 共通
+    summary: 管理用の YAML の行へコピーする、YAML のテンプレートの値
+    description: '`@dataclass(frozen=True, slots=True)`。'
+    properties:
+      - name: name
+        type: str
+        description: YAML のテンプレートの `name`
+      - name: description
+        type: str
+        description: YAML のテンプレートの `description`
+      - name: tags
+        type: tuple[str, ...]
+        description: YAML のテンプレートの `tags[].name` の並び
+constants:
+  - name: MARKDOWN_DIR
+    title: Markdown のテンプレートのフォルダ
+    container: scripts/build_markdown_templates.py
+    usecase: 共通
+    summary: リポジトリの直下からのパス
+    value: PurePosixPath("docs/template/markdown")
+  - name: FILES_INDEX
+    title: 管理用の YAML のファイル名
+    container: scripts/build_markdown_templates.py
+    usecase: 共通
+    summary: '`MARKDOWN_DIR` の直下のファイル名'
+    value: '"files.yaml"'
+  - name: COMMAND
+    title: 生成のコマンド
+    container: scripts/build_markdown_templates.py
+    usecase: 共通
+    summary: 「全ての文書の検査」の違反に出す、再生成するコマンド
+    value: '"uv run --frozen --script scripts/build_markdown_templates.py"'
+  - name: TABLE_KEY_LINE
+    title: dev-docs の画面専用のマーカーの行
+    container: scripts/build_markdown_templates.py
+    usecase: 共通
+    summary: 変換の後に削除する行の正規表現
+    value: 're.compile(r"^<!-- dev-docs-table: .+ -->$")'
+functions:
+  - name: main
+    title: Markdown のテンプレートの生成のエントリーポイント
+    kind: 関数
+    container: scripts/build_markdown_templates.py
+    usecase: Markdown のテンプレートの生成
+    role: エントリーポイント
+    scope: public
+    summary: 全ての種類の雛形・記載例・管理用の YAML を作ってから、書き出すか、`--check` ならずれを出す
+    side_effects: '`--check` でないとき、`MARKDOWN_DIR` の作った内容と違うファイルを書き換え、生成の対象に無い Markdown を削除する'
+    args:
+      - name: argv
+        title: 引数
+        type: Sequence[str] | None
+        required: false
+        default: None
+        description: コマンドの引数。`None` は `sys.argv[1:]`。`--check` だけを取る
+    returns:
+      type: int
+      description: 終了コード。`0` = 一致した（書き換えたものを含む）、`1` = `--check` でずれがあったか想定していない例外、`2` = スキーマ・テンプレートが読み込めないか変換に失敗した
+    process: |-
+      1. argparse で引数を読み込み、標準出力を UTF-8 にする
+      2. 作業ディレクトリの設計書のスキーマを読み込み、全ての `$ref` を解決できるかを確認する（設計書のスキーマの読み込み）
+      3. 全ての種類の生成するファイルを作る（生成するファイルの組み立て）
+         - `BuildError` の場合（2・3）、標準エラーへ `str(error)` を出し、どのファイルも書き換えずに `2` を返却する
+      4. 今の `MARKDOWN_DIR` と比べ、ずれたファイルを列挙する（ずれの列挙）
+      5. `--check` のとき、ずれをパスの昇順で `{パス}\t{生成元のスキーマのパス}`（生成の対象に無い Markdown は `{パス}`）の 1 行ずつ出し、ずれがあれば `1`、無ければ `0` を返却する
+      6. `--check` でないとき、ずれたファイルを書き出し・削除し、パスを昇順で 1 行ずつ出して `0` を返却する
+         - 想定していない例外の場合、`traceback.print_exc()` で標準エラーへ出し `1` を返却する
+    unit_tests:
+      - name: test_main
+        case: 正常
+        summary: ずれた種類だけを書き出す
+        condition: '`er`・`config`・`common`・`index` のスキーマと `template-er.yaml`・`template-config.yaml`、config の雛形・記載例だけを持つ `docs/template/markdown/` の一時フォルダを作業ディレクトリにする'
+        mock: dev-docs の変換を、スキーマの `x-kind` と文書のキーを並べた文字列を返却する関数に差し替える
+        expected: '`0` を返却し、標準出力が `er.example.md`・`er.md`・`files.yaml` の 3 行で、config のファイルのバイト列が変わらない'
+      - name: test_main_when_check
+        case: 正常
+        summary: --check でずれを出す
+        condition: '`test_main` の一時フォルダに `old.md` を加え、`--check` を指定する'
+        mock: '`test_main` と同じ'
+        expected: '`1` を返却し、er の 3 行が `\tschemas/design/er.schema.yaml` 付きで、`old.md` がタブを持たない行で出て、どのファイルも変わらない'
+      - name: test_main_when_unchanged
+        case: 正常
+        summary: 2 回目の起動
+        condition: '`test_main` の後にもう一度起動する'
+        mock: '`test_main` と同じ'
+        expected: '`0` を返却し、標準出力が空で、どのファイルのバイト列も変わらない'
+      - name: test_main_when_build_error
+        case: 正常
+        summary: 対応する YAML のテンプレートが無い
+        condition: '`test_main` の一時フォルダから `template-config.yaml` を削除する'
+        mock: '`test_main` と同じ'
+        expected: '`2` を返却し、標準エラーに `template-config` と `schemas/design/config.schema.yaml` が出て、`docs/template/markdown/` のファイルが変わらない'
+    callees:
+      - MOD-201-1#functions[load_schemas]
+      - MOD-574-1#functions[build_outputs]
+      - MOD-574-1#functions[list_differences]
+    refs:
+      - to: IF-574-1
+        type: requires
+        when: '`main` を修正するときに、IF-574-1 の決まりと突き合わせる。'
+  - name: build_outputs
+    title: 生成するファイルの組み立て
+    kind: 関数
+    container: scripts/build_markdown_templates.py
+    usecase: 共通
+    scope: public
+    summary: 全ての種類の雛形・記載例の Markdown と管理用の YAML を、パスの昇順で作る
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: YAML のテンプレートを読み込む起点
+      - name: schemas
+        title: 読み込んだ設計書のスキーマ
+        type: SchemaSet
+        required: true
+        description: 「設計書のテンプレートの生成」の `load_schemas` の戻り値
+      - name: convert
+        title: 変換
+        type: Callable[[str, PurePosixPath, Mapping[str, object], Mapping[str, object]], str]
+        required: false
+        default: render_markdown
+        passing: keyword
+        description: 種類・出力のパス・文書・スキーマから Markdown を作る関数。単体テストで差し替える
+    returns:
+      type: list[Output]
+      description: 生成するファイル（パスの昇順。最後は `files.yaml`）
+    process: |-
+      1. 「設計書のテンプレートの生成」の `TEMPLATE_IDS` に行がある種類のスキーマごとに、`docs/template/{テンプレートの ID}.yaml` を読み込み、メタデータを取り出す（文書の読み込み）
+      2. 種類ごとに、雛形の文書を組み立て（雛形の文書の組み立て）、`convert` で `{名前}.md` を作る。トップの `examples` があれば、最初の要素を `convert` で `{名前}.example.md` にする
+         - `convert` が例外を送出した場合、`BuildError(スキーマのパス, "変換に失敗しました: {例外}")` を送出する
+      3. 作った Markdown の行をパスの昇順に並べ、管理用の YAML を作る（管理用の YAML の組み立て）
+    exceptions:
+      - name: BuildError
+        condition: 対応する YAML のテンプレートが無い・読み込めない
+        message: '`{テンプレートのパス}: テンプレートがありません: {テンプレートの ID}（{スキーマのパス}）`'
+      - name: BuildError
+        condition: '`convert` が例外を送出した'
+        message: '`{スキーマのパス}: 変換に失敗しました: {例外}`'
+    unit_tests:
+      - name: test_build_outputs
+        case: 正常
+        summary: 雛形・記載例・管理用の YAML を作る
+        condition: '`er`（`examples` あり）と `config`（`examples` なし）のスキーマと、対応する YAML のテンプレート'
+        mock: '`convert` を、文書を JSON にした文字列を返却する関数に差し替える'
+        expected: '`config.md`・`er.example.md`・`er.md`・`files.yaml` の 4 件がこの順で、各 `schema_path` が生成元のスキーマ'
+      - name: test_build_outputs_when_template_missing
+        case: 異常
+        summary: 対応する YAML のテンプレートが無い
+        condition: '`template-config.yaml` を持たない'
+        mock: '`test_build_outputs` と同じ'
+        expected: '`BuildError` で、理由に `template-config` と `schemas/design/config.schema.yaml` がある'
+        exception: 対応する YAML のテンプレートが無い
+      - name: test_build_outputs_when_convert_fails
+        case: 異常
+        summary: 変換に失敗する
+        condition: '`test_build_outputs` と同じ'
+        mock: '`convert` を、config で `ValueError` を送出する関数に差し替える'
+        expected: '`BuildError` で、`path` が `schemas/design/config.schema.yaml`'
+        exception: '`convert` が例外を送出した'
+    callees:
+      - MOD-72-2#functions[load_document]
+      - MOD-574-1#functions[build_placeholder]
+      - MOD-574-1#functions[render_markdown]
+      - MOD-574-1#functions[render_files_index]
+    refs:
+      - to: IF-574-1
+        item: constraints[出力のパス]
+        type: requires
+        when: 出力のパスと記載例の有無を変えるときに、IF-574-1 の決まりと突き合わせる。
+  - name: build_placeholder
+    title: 雛形の文書の組み立て
+    kind: 関数
+    container: scripts/build_markdown_templates.py
+    usecase: 共通
+    scope: public
+    summary: スキーマの全てのキーにプレースホルダを入れた文書を作る
+    args:
+      - name: name
+        title: スキーマのファイル名
+        type: str
+        required: true
+        description: '`$ref` を解決する基準の URI'
+      - name: schemas
+        title: 読み込んだ設計書のスキーマ
+        type: SchemaSet
+        required: true
+        description: '`$ref` の解決に使用する登録'
+    returns:
+      type: dict[str, object]
+      description: 雛形の文書
+    process: |-
+      1. スキーマのトップから `properties` を並びの順にたどり、`$ref` は解決した先にキーの側の値を重ねる
+      2. キーごとに値を決める
+         - `enum` を持つ場合、要素を ` / ` でつないだ文字列
+         - 型が `boolean` の場合、`true / false`
+         - 型が `object` か `properties` を持つ場合、子を同じ規則で入れた辞書
+         - 型が `array` の場合、`items` を同じ規則で 1 件だけ入れた配列。`items` が `title` を持たない文字列なら、配列のキーの `title` を使用する
+         - それ以外の場合、`{title}`（`title` が無ければ `{キーの名前}`）
+      3. たどっている途中の親が解決した `$ref` と同じ先を指すキーは入れない
+    unit_tests:
+      - name: test_build_placeholder
+        case: 正常
+        summary: 値の種類ごとのプレースホルダ
+        condition: 文字列・`enum`・真偽・入れ子のオブジェクト・オブジェクトの配列・`title` の無い文字列の配列（`aliases`）・`$ref` のキーを持つスキーマ
+        mock: なし
+        expected: それぞれ `{title}`・`a / b`・`true / false`・子の辞書・要素 1 件の配列・`["{別名}"]`・解決した先の `title` のプレースホルダ
+      - name: test_build_placeholder_when_recursive_ref
+        case: 正常
+        summary: 再帰する $ref
+        condition: '`entries[]` の要素が `#/$defs/entry` で、`entry` が `name` と要素が `#/$defs/entry` の `children[]` を持つ'
+        mock: なし
+        expected: '`entries` の要素が `name` だけを持ち、`children` を持たない'
+    refs:
+      - to: IF-574-1
+        item: constraints[雛形の文書]
+        type: requires
+        when: プレースホルダの規則を変えるときに、IF-574-1 の決まりと突き合わせる。
+  - name: render_markdown
+    title: dev-docs の変換の呼び出し
+    kind: 関数
+    container: scripts/build_markdown_templates.py
+    usecase: 共通
+    role: 境界
+    scope: public
+    summary: 文書 1 件を dev-docs の `schema_to_markdown` で Markdown にし、dev-docs の画面専用の行を削除する
+    args:
+      - name: kind
+        title: 種類
+        type: str
+        required: true
+        description: スキーマの `x-kind`
+      - name: path
+        title: 出力のパス
+        type: PurePosixPath
+        required: true
+        description: dev-docs の文書の `path` にする値
+      - name: data
+        title: 文書
+        type: Mapping[str, object]
+        required: true
+        description: 雛形か記載例の文書
+      - name: schema
+        title: スキーマ
+        type: Mapping[str, object]
+        required: true
+        description: '`$ref` を解決した種類のスキーマ'
+    returns:
+      type: str
+      description: 末尾が改行 1 つの Markdown
+    process: |-
+      1. `IndexedDocument`（`id` は出力のパス、`source_id` は `knowledge`、`metadata` は空、`version` は空文字）と、リンクと Issue の URL を空にした `RenderContext` を作り、`schema_to_markdown` を呼ぶ
+      2. `TABLE_KEY_LINE` に当てはまる行を削除し、続いた空行を 1 行にまとめ、末尾を改行 1 つにする
+    unit_tests:
+      - name: test_render_markdown
+        case: 正常
+        summary: dev-docs-table の行を削除する
+        condition: '`x-shape: table` のキーを持つスキーマと、そのキーに 2 行を持つ文書'
+        mock: なし（固定したコミットの dev-docs）
+        expected: '`<!-- dev-docs-table:` の行が無く、表の行が残り、3 行以上続く空行が無く、末尾が改行 1 つ'
+    refs:
+      - to: LIB-574-1
+        type: requires
+        when: '`schema_to_markdown` の呼び方を変えるときや dev-docs のコミットを上げるときに参照する。'
+  - name: render_files_index
+    title: 管理用の YAML の組み立て
+    kind: 関数
+    container: scripts/build_markdown_templates.py
+    usecase: 共通
+    scope: public
+    summary: 出力した Markdown の行を持つ `files.yaml` の中身を作る
+    args:
+      - name: rows
+        title: 行
+        type: Sequence[tuple[PurePosixPath, str, TemplateMeta]]
+        required: true
+        description: 出力のパス・雛形か記載例か（`template` / `example`）・YAML のテンプレートのメタデータの組（パスの昇順）
+    returns:
+      type: str
+      description: 先頭に `yaml-language-server` の行を持つ YAML
+    process: |-
+      1. 行ごとに `path`（`files.yaml` からの相対パス）・`name`（`テンプレート（Markdown）: {種類の名前}` か `テンプレート（Markdown）の記載例: {種類の名前}`）・`description`・`tags` を作る。`{種類の名前}` はメタデータの `name` から先頭の `テンプレート: ` を除いたもの
+      2. `files` の配列にして YAML にし、先頭に `# yaml-language-server: $schema=../../../schemas/knowledge-files.schema.yaml` を配置する
+    unit_tests:
+      - name: test_render_files_index
+        case: 正常
+        summary: 雛形と記載例の行
+        condition: 'er の雛形と記載例の 2 行（メタデータの `name` が `テンプレート: ER 図`）'
+        mock: なし
+        expected: '`er.md` の `name` が `テンプレート（Markdown）: ER 図`、`er.example.md` の `name` が `テンプレート（Markdown）の記載例: ER 図` で、`description`・`tags` がメタデータと同じで `aliases` を持たず、`schemas/knowledge-files.schema.yaml` の検査に通る'
+    refs:
+      - to: IF-574-1
+        item: constraints[管理用の YAML]
+        type: requires
+        when: 管理用の YAML の行を変えるときに、IF-574-1 の決まりと突き合わせる。
+  - name: list_differences
+    title: ずれの列挙
+    kind: 関数
+    container: scripts/build_markdown_templates.py
+    usecase: 共通
+    scope: public
+    summary: 作ったファイルと今の `MARKDOWN_DIR` を比べ、書き換えるファイルと削除する Markdown を列挙する
+    args:
+      - name: root
+        title: リポジトリの直下
+        type: Path
+        required: true
+        description: '`MARKDOWN_DIR` の起点'
+      - name: outputs
+        title: 生成するファイル
+        type: Sequence[Output]
+        required: true
+        description: 「生成するファイルの組み立て」の戻り値
+    returns:
+      type: tuple[list[Output], list[PurePosixPath]]
+      description: 今の中身と違うか無いファイル（`files.yaml` の `schema_path` はずれた行の種類のうちパスの昇順で最初のもの）と、生成の対象に無い `*.md`（どちらもパスの昇順）
+    unit_tests:
+      - name: test_list_differences
+        case: 正常
+        summary: 違うファイル・無いファイル・対象に無い Markdown
+        condition: 生成するファイル 3 件のうち 1 件が同じ、1 件が違う、1 件が無く、`old.md` がある
+        mock: なし（一時ディレクトリ）
+        expected: 違う・無い 2 件と `old.md` を返却する
+      - name: test_list_differences_when_files_index_differs
+        case: 正常
+        summary: files.yaml の生成元
+        condition: '`files.yaml` の er と module の行だけが違う'
+        mock: なし（一時ディレクトリ）
+        expected: '`files.yaml` の `schema_path` が `schemas/design/er.schema.yaml`'
+    refs:
+      - to: IF-574-1
+        item: response[stdout]
+        type: requires
+        when: ずれの行の生成元の決め方を変えるときに、IF-574-1 の決まりと突き合わせる。
