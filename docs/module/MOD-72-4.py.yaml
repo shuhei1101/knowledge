@@ -581,7 +581,7 @@ functions:
         when: '`check_textlint` を修正するときに、IF-72-1 の「textlint」「textlint が無い・失敗したとき」の決まりと突き合わせる。'
 notes:
   依存: |-
-    PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と、`_lint.py` が import する `yamllint==1.38.0`（LIB-176-3。`check_all.py` と同じバージョン）を記載し、`_common.py`・`_lint.py` を同じフォルダから import する。
+    PEP 723 のメタデータに `ruamel.yaml==0.19.1`（LIB-72-1）と、`_lint.py` が import する `yamllint==1.38.0`（LIB-176-3。`check_all.py` と同じバージョン）を記載し、`uv lock --script scripts/knowledge_checks.py` でロック（`knowledge_checks.py.lock`）を更新して、`_common.py`・`_lint.py` を同じフォルダから import する。
     `slop_check.py`（MOD-148-2）は、`Path(__file__).resolve().parents[1] / "plugins/slop-check/hooks/post-tool-use"` を `sys.path` の先頭に入れてから import する（MOD-148-1 の照合の共有）。
     textlint の検査は `main` だけが呼び、文書の検査（`check_document`）には含めない。全ての文書の検査は `check_document` を文書ごとに呼び、textlint は全ての文書をまとめて 1 回呼ぶため
 test_files:
