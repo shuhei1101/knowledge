@@ -1,0 +1,24 @@
+id: jinja2-template-writing
+kind: rule
+name: Jinja2 の記載方法
+description: Jinja2 で記載した本文を Markdown として描いても行がつながらないように、制御の構文の配置を定め、Jinja2 のテンプレート・プロンプトの本文を記載するときに参照する。
+aliases:
+  - Jinja2
+  - jinja
+  - j2
+  - ジンジャー2
+  - ジンジャ
+status: current
+visibility: internal
+rev: 1
+last_reviewed: '2026-11-26'
+items:
+  - id: control-blank-line-01
+    name: 制御の構文の前後に空行を入れる
+    body: '`{% if %}`・`{% for %}`・`{% endif %}` などの制御の構文（`{% %}`）は、前後の行と空行で分けて記載する。'
+tags:
+  - name: tool:jinja2
+    main: true
+  - name: topic:テンプレート
+  - name: topic:改行
+  - name: action:記載
