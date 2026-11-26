@@ -62,7 +62,11 @@ def test_main(
     (tmp_path / "docs").mkdir()
     (tmp_path / "project-index.yaml").write_text(_EMPTY_CONFIG, encoding="utf-8")
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(knowledge_checks, "check_textlint", lambda _text, _lint_dir: [])
+
+    def _no_textlint(_text: str, _lint_dir: Path) -> list[dict[str, str]]:
+        return []
+
+    monkeypatch.setattr(knowledge_checks, "check_textlint", _no_textlint)
     stdin_factory(_VALID_DOC)
     # 実行
     code = knowledge_checks.main([])
