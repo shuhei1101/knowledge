@@ -1,6 +1,7 @@
 """scripts/knowledge_checks.py の単体テスト。"""
 
 import json
+from pathlib import Path, PurePosixPath
 from typing import TYPE_CHECKING
 
 import knowledge_checks
@@ -16,8 +17,6 @@ from knowledge_checks import (
     check_references,
     normalize_name,
 )
-
-from pathlib import Path, PurePosixPath
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
