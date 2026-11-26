@@ -29,7 +29,7 @@ docs:
     status: todo
   - page: docs/library/LIB-176-3.yaml
     new: false
-    change: yamllint を使用する場所に、`_lint.py` を import する書き込みの検査（knowledge-checks）の依存を加える
+    change: yamllint を使用する場所に、`_lint.py` を import する書き込みの検査（knowledge-checks）の依存と、`uv lock --script scripts/knowledge_checks.py` でのロックを加える
     status: todo
 scope_out:
   - item: 書き込みの検査で markdownlint-cli2・yamllint・mdmark の map の点検も適用する
