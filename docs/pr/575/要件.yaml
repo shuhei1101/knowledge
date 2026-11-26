@@ -22,6 +22,12 @@ scope_out:
   - item: dev-docs の schema_to_markdown の変換の規則の修正
     reason: dev-docs のリポジトリの変更で、knowledge は固定したコミットを取り込むだけ
     plan: none
+  - item: 結合テスト test_check_all.py::test_normal_when_repository_schemas の fail（schemas/design/agent_flow.schema.yaml の description が 2 文を超える）
+    reason: 作業 PR が変えないスキーマの違反で、base ブランチ（develop a19e05a）でも同じ理由で fail する
+    plan: none
+  - item: 全ての文書の検査の docs/knowhow/ の textlint の違反 4 件
+    reason: 作業 PR が変えない文書の違反で、base ブランチにある
+    plan: none
 docs:
   - page: project-index.yaml
     new: false
