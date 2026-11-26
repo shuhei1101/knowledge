@@ -1,0 +1,56 @@
+use_cases:
+  - kind: single
+    scenario: docs/scenario/SC-201-1.yaml
+    impact: changed
+    detail: スキーマから生成するテンプレートに、Markdown の雛形と記載例を加える（新しい単一 UC に分けるかはインターフェース定義設計で決める）
+    depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-72-6.yaml
+    impact: changed
+    detail: Markdown のテンプレートがスキーマから生成した内容とずれていたら違反にする
+    depends_on:
+      - docs/scenario/SC-201-1.yaml
+scope_out:
+  - item: util プラグインのスキル util:md-template-create をスキーマとつなぐ
+    reason: 起点 Issue が対象外と明示している
+    plan: none
+  - item: dev-docs の schema_to_markdown の変換の規則の修正
+    reason: dev-docs のリポジトリの変更で、knowledge は固定したコミットを取り込むだけ
+    plan: none
+docs:
+  - page: project-index.yaml
+    new: false
+    change: Markdown のテンプレートの documents[] の行と、nav の「テンプレート」のグループの auto を加える
+    status: todo
+  - page: docs/layout/LAY-72-1.yaml
+    new: false
+    change: docs/template/markdown/ の配置を加える
+    status: todo
+  - page: docs/architecture/ARCH-72-1.yaml
+    new: false
+    change: 検査と変換のスクリプトが dev-docs の変換をライブラリとして取り込む関係を加える
+    status: todo
+  - page: docs/dev-command/CMD-72-1.yaml
+    new: false
+    change: Markdown のテンプレートの生成のコマンドを加える
+    status: todo
+  - page: docs/test-procedure/TP-72-1.yaml
+    new: false
+    change: 結合の層の実行コマンドに dev-docs の取り込みを加える
+    status: todo
+  - page: docs/library/LIB-574-1.yaml
+    new: true
+    change: dev-docs の schema_to_markdown を取り込む外部ライブラリの設計書を新設する（コミットの固定と上げ方）
+    status: todo
+  - page: docs/template/markdown/files.yaml
+    new: true
+    change: Markdown のテンプレートのメタデータを持つ管理用の YAML を新設する（生成のスクリプトが書き出す）
+    status: todo
+  - page: scripts/files.yaml
+    new: false
+    change: 生成のスクリプトの行を加える（案 A の場合）
+    status: todo
+  - page: tests/files.yaml
+    new: false
+    change: 生成のスクリプトのテストの行を加える
+    status: todo
