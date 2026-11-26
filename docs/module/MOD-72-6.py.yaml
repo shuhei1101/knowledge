@@ -858,7 +858,7 @@ functions:
          - 打ち切った場合（`subprocess.TimeoutExpired`）、`MarkdownTemplateError("Markdown のテンプレートの生成が {秒数} 秒で終わりませんでした")` を送出する
       3. 終了コードで分ける
          - `0` の場合、空を返却する
-         - `1` の場合、標準出力の行ごとに、タブを持つ行は `(パス, 1, "$", "Markdown のテンプレートがスキーマ {生成元} と一致しません。{COMMAND} で再作成してください")`、タブを持たない行は `(パス, 1, "$", "生成の対象に無い Markdown です。{COMMAND} で削除してください")` を追加し、パスの順に返却する（`COMMAND` は「Markdown のテンプレートの生成」の定数）
+         - `1` の場合、標準出力の行ごとに、タブを持つ行は `(パス, 1, "$", "Markdown のテンプレートがスキーマ {生成元} と一致しません。{COMMAND} で再作成してください")`、タブを持たない行は `(パス, 1, "$", "生成の対象に無い Markdown です。{COMMAND} で削除してください")` を追加し、パスの順に返却する（`{COMMAND}` は「Markdown のテンプレートの生成」の `COMMAND` と同じ文字列。dev-docs を依存に持たないため import せず、起動するスクリプト名から組み立てる）
          - それ以外の場合、`MarkdownTemplateError(子プロセスの標準エラー)` を送出する
     exceptions:
       - name: MarkdownTemplateError

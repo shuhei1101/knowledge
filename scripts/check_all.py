@@ -9,7 +9,7 @@
 """project-index.yaml の documents[] が指す全ての文書にスキーマの検査と文書の違反の検査を当て、終了コードで合否を返す。
 
 手元から、リポジトリの直下で起動する。違反は 1 件 1 行で「{ファイルのパス}:{行}: {項目のパス}: {内容}」と出す。
-対応表のコピーが正本と一致するか、設計書のテンプレートがスキーマと一致するかも確かめ、文書に markdownlint-cli2・textlint・yamllint を当てる。
+対応表のコピーが正本と一致するか、設計書と Markdown のテンプレートがスキーマと一致するかも確かめ、文書に markdownlint-cli2・textlint・yamllint を当てる。
 
 Usage:
 # 全ての文書を検査する（違反があれば終了コード 1）
@@ -23,6 +23,7 @@ import importlib.util
 import io
 import re
 import shutil
+import subprocess
 import sys
 import traceback
 from dataclasses import dataclass
@@ -105,6 +106,9 @@ MEMES_DIR = PurePosixPath("memes")
 # JSON Schema 2020-12 のメタスキーマに x-rules・x-bad-examples の形を足したメタスキーマ
 META_SCHEMA_PATH = PurePosixPath("schemas/meta.schema.yaml")
 
+# Markdown のテンプレートのフォルダ
+MARKDOWN_TEMPLATES_DIR = PurePosixPath("docs/template/markdown")
+
 # スキーマのキーワードのうち、値がスキーマではなくデータのもの
 _DATA_KEYWORDS = frozenset({"examples", "enum", "const", "default", "x-bad-examples"})
 
@@ -129,6 +133,16 @@ _RULE_LINE = re.compile(r"^(\d+) 行目: (.*)$", re.DOTALL)
 # 検査の CLI が引けないときに標準エラーへ出す理由
 _CLI_MISSING = "{name} がありません。開発コマンドの『環境構築（クローン直後）』で入れてください"
 
+# Markdown のテンプレートの生成のスクリプト名と、作り直すコマンド
+_MARKDOWN_SCRIPT = "build_markdown_templates.py"
+_MARKDOWN_COMMAND = f"uv run --frozen --script scripts/{_MARKDOWN_SCRIPT}"
+
+# Markdown のテンプレートの生成を打ち切るまでの秒数
+MARKDOWN_TEMPLATES_TIMEOUT_SEC = 180
+
+# 設計書のテンプレートが無い違反の内容の頭
+_TEMPLATE_MISSING = "テンプレートがありません: "
+
 # 終了コード。1 = 違反がある・想定していない例外、2 = 検査を始めなかった
 _EXIT_VIOLATIONS = 1
 _EXIT_NOT_STARTED = 2
@@ -141,6 +155,10 @@ class MetaSchemaError(Exception):
         super().__init__(message)
         # 標準エラーへ出す理由の 1 行
         self.message = message
+
+
+class MarkdownTemplateError(Exception):
+    """Markdown のテンプレートの生成が終了コード 2 で終わった・起動できない・打ち切った。"""
 
 
 @dataclass(frozen=True)
@@ -207,11 +225,17 @@ def main(argv: Sequence[str] | None = None) -> int:
                 print(f"{target.path}:{line}: {path}: {message}")
                 count += 1
         # スキーマが自身の検査を通るかと、対応表のコピーと設計書のテンプレートが正本と一致するか
+        design_schemas = check_design_schemas(root, meta)
+        design_templates = check_design_templates(root)
+        markdown_templates, markdown_error = _check_markdown_templates_after(
+            root, design_schemas, design_templates
+        )
         for file_path, line, path, message in (
-            *check_design_schemas(root, meta),
+            *design_schemas,
             *check_document_schemas(root, meta),
             *check_word_list_copy(root),
-            *check_design_templates(root),
+            *design_templates,
+            *markdown_templates,
             *check_workflows(root, _interface_docs(targets, texts, root)),
         ):
             print(f"{file_path}:{line}: {path}: {message}")
@@ -238,7 +262,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         traceback.print_exc()
         return _EXIT_VIOLATIONS
     else:
-        return _EXIT_VIOLATIONS if count else 0
+        return _exit_code(count, markdown_error)
+
+
+def _exit_code(count: int, markdown_error: MarkdownTemplateError | None) -> int:
+    """違反の数と Markdown のテンプレートを比べられなかった理由から終了コードを決める。"""
+    # 比べられなかった場合、最後の行の後に理由を出して検査を終えられなかったことにする
+    if markdown_error is not None:
+        print(markdown_error, file=sys.stderr)
+        return _EXIT_NOT_STARTED
+    return _EXIT_VIOLATIONS if count else 0
 
 
 def _print_lints(findings: Sequence[LintFinding]) -> int:
@@ -689,7 +722,7 @@ def check_design_templates(root: Path) -> list[tuple[str, int, str, str]]:
         try:
             doc = load_document((root / path).read_text(encoding="utf-8"))
         except OSError, UnicodeDecodeError, DocumentError:
-            results.append((str(path), 1, "$", f"テンプレートがありません: {schema_path}"))
+            results.append((str(path), 1, "$", f"{_TEMPLATE_MISSING}{schema_path}"))
             continue
         try:
             items = build_items(name, schemas)
@@ -706,6 +739,69 @@ def check_design_templates(root: Path) -> list[tuple[str, int, str, str]]:
                 f"テンプレートがスキーマ {schema_path} と一致しません。{COMMAND} で作り直してください",
             )
         )
+    return sorted(results, key=lambda result: result[0])
+
+
+def _check_markdown_templates_after(
+    root: Path,
+    design_schemas: Sequence[tuple[str, int, str, str]],
+    design_templates: Sequence[tuple[str, int, str, str]],
+) -> tuple[list[tuple[str, int, str, str]], MarkdownTemplateError | None]:
+    """設計書のスキーマに違反が無く YAML のテンプレートが揃うときだけ Markdown のテンプレートを比べる。"""
+    if design_schemas or any(row[3].startswith(_TEMPLATE_MISSING) for row in design_templates):
+        return [], None
+    try:
+        return check_markdown_templates(root), None
+    except MarkdownTemplateError as error:
+        # 比べられなかった理由は、全ての違反の行を出した後に出す
+        return [], error
+
+
+def check_markdown_templates(
+    root: Path,
+    *,
+    run: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
+) -> list[tuple[str, int, str, str]]:
+    """Markdown のテンプレートの生成を --check で起動し、ずれを違反にする。"""
+    if not (root / MARKDOWN_TEMPLATES_DIR).is_dir():
+        return []
+    script = Path(__file__).resolve().parent / _MARKDOWN_SCRIPT
+    try:
+        completed = run(
+            ["uv", "run", "--frozen", "--script", str(script), "--check"],
+            cwd=root,
+            timeout=MARKDOWN_TEMPLATES_TIMEOUT_SEC,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=False,
+        )
+    except subprocess.TimeoutExpired as error:
+        msg = f"Markdown のテンプレートの生成が {MARKDOWN_TEMPLATES_TIMEOUT_SEC} 秒で終わりませんでした"
+        raise MarkdownTemplateError(msg) from error
+    except OSError as error:
+        msg = f"Markdown のテンプレートの生成を起動できません: {error}"
+        raise MarkdownTemplateError(msg) from error
+
+    # 0 = ずれが無い、1 = ずれがある、それ以外 = 比べられなかった
+    if completed.returncode == 0:
+        return []
+    if completed.returncode != _EXIT_VIOLATIONS:
+        raise MarkdownTemplateError(completed.stderr.strip())
+    results: list[tuple[str, int, str, str]] = []
+    for line in completed.stdout.splitlines():
+        if not line.strip():
+            continue
+        path, tab, schema = line.partition("\t")
+        # タブを持つ行は中身のずれ、持たない行は生成の対象に無い Markdown
+        if tab:
+            message = (
+                f"Markdown のテンプレートがスキーマ {schema} と一致しません。"
+                f"{_MARKDOWN_COMMAND} で再作成してください"
+            )
+        else:
+            message = f"生成の対象に無い Markdown です。{_MARKDOWN_COMMAND} で削除してください"
+        results.append((path, 1, "$", message))
     return sorted(results, key=lambda result: result[0])
 
 

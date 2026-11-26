@@ -280,7 +280,7 @@ functions:
       type: str
       description: 末尾が改行 1 つの Markdown
     process: |-
-      1. `IndexedDocument`（`id` は出力のパス、`source_id` は `knowledge`、`metadata` は空、`version` は空文字）と、リンクと Issue の URL を空にした `RenderContext` を作り、`schema_to_markdown` を呼ぶ
+      1. `IndexedDocument`（`id` は出力のパス、`source_id` は `knowledge`、`metadata` は `name` に出力のファイル名、`version` は空文字）と、リンクと Issue の URL を空にした `RenderContext` を作り、`schema_to_markdown` を呼ぶ
       2. `TABLE_KEY_LINE` に当てはまる行を削除し、続いた空行を 1 行にまとめ、末尾を改行 1 つにする
     unit_tests:
       - name: test_render_markdown

@@ -92,6 +92,12 @@ documents:
     metadata:
       tags: tags[].name
       main_tags: tags[main].name
+  - id: template-markdown
+    title: テンプレート（Markdown）
+    paths: [docs/template/markdown/files.yaml]
+    schema: schemas/knowledge-files.schema.yaml
+    records: files
+    body_file: path
   - id: flowchart
     title: 判定フローチャート
     paths: ["docs/flowchart/*.yaml"]
@@ -427,6 +433,8 @@ nav:
           items:
             - auto:
                 document: template
+            - auto:
+                document: template-markdown
         - group: 判定フローチャート
           items:
             - auto:

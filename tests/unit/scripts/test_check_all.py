@@ -4,7 +4,7 @@ import re
 import subprocess
 from collections.abc import Callable, Mapping
 from pathlib import Path, PurePosixPath
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import pytest
 
@@ -1502,13 +1502,16 @@ def test_check_document_schemas_when_memes(repo_factory: RepoFactory) -> None:
 
 def _completed(
     code: int, out: str = "", err: str = ""
-) -> tuple[Callable[..., object], list[tuple[tuple[object, ...], dict[str, object]]]]:
+) -> tuple[
+    Callable[..., subprocess.CompletedProcess[str]],
+    list[tuple[tuple[object, ...], dict[str, object]]],
+]:
     """子プロセスの起動の差し替えと、受け取った引数の記録を返却する。"""
     calls: list[tuple[tuple[object, ...], dict[str, object]]] = []
 
     def _run(*args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
         calls.append((args, kwargs))
-        return subprocess.CompletedProcess(args, code, out, err)
+        return subprocess.CompletedProcess(cast("list[str]", args[0]), code, out, err)
 
     return _run, calls
 
@@ -1532,7 +1535,7 @@ def test_check_markdown_templates_when_folder_missing(tmp_path: Path) -> None:
     """docs/template/markdown/ が無い（正常系）。"""
 
     # 準備
-    def _must_not_run(*args: object, **kwargs: object) -> object:
+    def _must_not_run(*args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
         del args, kwargs
         msg = "呼ばれてはいけない"
         raise AssertionError(msg)
@@ -1579,7 +1582,7 @@ def test_check_markdown_templates_when_timeout(tmp_path: Path) -> None:
     # 準備
     (tmp_path / "docs/template/markdown").mkdir(parents=True)
 
-    def _timeout(*args: object, **kwargs: object) -> object:
+    def _timeout(*args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
         del args, kwargs
         raise subprocess.TimeoutExpired(cmd="uv", timeout=180)
 
@@ -1593,7 +1596,7 @@ def test_check_markdown_templates_when_not_started(tmp_path: Path) -> None:
     # 準備
     (tmp_path / "docs/template/markdown").mkdir(parents=True)
 
-    def _missing(*args: object, **kwargs: object) -> object:
+    def _missing(*args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
         del args, kwargs
         msg = "uv"
         raise FileNotFoundError(msg)

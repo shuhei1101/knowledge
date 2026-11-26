@@ -10,8 +10,9 @@ used_in:
   - scripts/build_markdown_templates.py
 upstream: shuhei1101/dev-docs
 verification:
-  state: 未確認
-  detail: 起点 Issue の試作で、dev-docs の develop の worktree の `.venv` から `schema_to_markdown` を呼び、28 種類の雛形と記載例をエラー無く生成できた。固定したコミットを `uv run --frozen --script` の依存の宣言で入れて呼ぶ確認は、実装の工程で行う
+  state: 済
+  detail: 起点 Issue の試作で、dev-docs の develop の worktree の `.venv` から `schema_to_markdown` を呼び、28 種類の雛形と記載例をエラー無く生成できた。worktree で固定したコミットを依存の宣言とロックで入れた `uv run --frozen --script scripts/build_markdown_templates.py` を実行し、`schema_to_markdown` が 28 種類の雛形と記載例の 56 件をエラー無く返却した（約 9 秒）。データに見出しのキーを持たない種類では `metadata` の `name` が要る
+  date: '2026-11-27'
 version:
   current: c07f4e519568f0e93c248aa623adc1ba3e45e8d7
   latest: c07f4e519568f0e93c248aa623adc1ba3e45e8d7
@@ -54,4 +55,5 @@ catalogs:
           - name: '-'
             type: str
             description: 'mdmark の記法の Markdown。表の前に dev-docs の画面専用の `<!-- dev-docs-table: {キー} -->` の行を持つ。末尾は改行 1 つ'
-        verification_state: docs_only
+        verification_state: verified
+        verified_at: '2026-11-27T10:00:00+09:00'

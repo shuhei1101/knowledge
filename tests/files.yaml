@@ -89,6 +89,13 @@ files:
     related:
       - to: scripts/build_pages.py
         type: tests
+  - path: unit/scripts/test_build_markdown_templates.py
+    name: Markdown のテンプレートの生成の単体テスト
+    description: scripts/build_markdown_templates.py の関数をモジュール構成のとおりか確認する。Markdown のテンプレートの生成の実装を変えたときに参照する。
+    tags: [topic:テスト, tool:pytest]
+    related:
+      - to: scripts/build_markdown_templates.py
+        type: tests
   - path: unit/scripts/test_build_templates.py
     name: 設計書のテンプレートの生成の単体テスト
     description: scripts/build_templates.py の関数をモジュール構成のとおりか確認する。設計書のテンプレートの生成の実装を変えたときに参照する。
