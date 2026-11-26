@@ -294,3 +294,7 @@ minimal_guarantee: 違反（スキーマ・文書の違反・Markdown と YAML �
 notes:
   E2E テストの動かし方: 全ての文書の検査のコマンド（`uv run --frozen --script scripts/check_all.py`）を、knowledge のクローンで子プロセスとして起動し、終了コードと標準出力で確認する。lint の CLI が入っていない場合は `--lint-dir` に存在しないフォルダを指定して起動する
 test_file: tests/e2e/単一ユースケース/test_開発者が文書の違反を検査する.py
+refs:
+  - to: SC-574-1
+    type: change_together
+    when: Markdown のテンプレートの生成の --check の出力や終了コードを変えるときに、全ての文書の検査での扱いをそろえるために参照する。

@@ -243,3 +243,7 @@ constraints:
   - item: 生成の検査
     constraint: しない（スキーマの検査は「全ての文書の検査」、テンプレートの文書の検査は `write_docs` と「全ての文書の検査」が担う）
 test_file: tests/integration/scripts/test_build_templates.py
+refs:
+  - to: IF-574-1
+    type: change_together
+    when: 生成の対象・テンプレートの対応表・キーをたどる順を変えるときに、Markdown のテンプレートの生成と同じ約束にそろえる。
