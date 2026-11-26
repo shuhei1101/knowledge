@@ -1,0 +1,1 @@
+# 書き込みの検査 knowledge-checks で markdownlint-cli2・yamllint・mdmark の map の点検の違反も止める
