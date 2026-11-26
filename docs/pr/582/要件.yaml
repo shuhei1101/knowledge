@@ -1,0 +1,17 @@
+docs:
+  - page: docs/knowhow/knowhow-prompt-open-ended-line.yaml
+    new: false
+    change: items[0].body の 1 行の 2 文を別の行に分け、「に」の重なりを解く
+    status: todo
+  - page: docs/knowhow/knowhow-script-skit-open-with-payoff.yaml
+    new: false
+    change: items[0].body の「本題に移った途端に」の「に」の重なりを解く
+    status: todo
+  - page: docs/knowhow/knowhow-script-skit-status-swap.yaml
+    new: false
+    change: items[1].body の手順 3「普段の上下に戻し、本題に入る」の「に」の重なりを解く
+    status: todo
+scope_out:
+  - item: 直コミットの書き込みの検査 knowledge-checks で textlint の違反を止める
+    reason: 要望は既存の違反 4 件の修正で、検査の追加を含まない。この作業 PR がマージされなくても同じ内容で成り立つ
+    plan: '#583'
