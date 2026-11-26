@@ -310,3 +310,97 @@ def test_normal_when_aspect_ids_duplicate(run_script: RunScript, repo_factory: R
     assert [violation["path"] for violation in violations] == ["aspects[1].id"]
     assert "aspects[0]" in violations[0]["rule"]
     assert violations[0]["rule"].startswith("9 行目: ")
+
+
+# scripts/lint/ の node_modules（textlint の本体とルール）
+_LINT_MODULES = Path(__file__).resolve().parents[3] / "scripts/lint/node_modules"
+
+
+def test_normal_when_textlint_violations(run_script: RunScript, repo_factory: RepoFactory) -> None:
+    """Markdown の項目の textlint の error の違反を、元の文書の行の違反で返す（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    before = _hashes(root)
+    stdin = (
+        "id: self\n"
+        "items:\n"
+        "  - id: p\n"
+        "    body: |-\n"
+        "      概要です。\n"
+        "      これはテストのためにここにある文で、助詞が重なるかを確かめるための文です。\n"
+    )
+    # 実行
+    result = run_script("knowledge_checks", root, stdin)
+    # 検証
+    violations = json.loads(result.stdout)
+    assert result.exit_code == 0
+    assert [violation["path"] for violation in violations] == ["items[0].body"]
+    assert violations[0]["rule"].startswith(
+        "6 行目: textlint/ja-technical-writing/no-doubled-joshi: "
+    )
+    assert _hashes(root) == before
+
+
+def test_normal_when_textlint_warning_only(
+    run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
+) -> None:
+    """警告にしたルールの違反は返さず、空の配列を返す（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    # 既定の設定は警告にするルールを持たないため、one-sentence-per-line だけを警告にした lint のフォルダを作る
+    lint_dir = tmp_path / "lint"
+    lint_dir.mkdir()
+    (lint_dir / ".textlintrc.json").write_text(
+        '{"rules": {"one-sentence-per-line": {"severity": "warning"}}}\n', encoding="utf-8"
+    )
+    (lint_dir / "node_modules").symlink_to(_LINT_MODULES)
+    stdin = "id: self\nitems:\n  - id: p\n    body: A です。B です。\n"
+    # 実行
+    result = run_script("knowledge_checks", root, stdin, args=["--lint-dir", str(lint_dir)])
+    # 検証
+    assert result.exit_code == 0
+    assert json.loads(result.stdout) == []
+
+
+def test_normal_when_textlint_missing(
+    run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
+) -> None:
+    """textlint が見つからなければ、path: $ の違反 1 件とほかの検査の違反を返す（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    lint_dir = tmp_path / "lint"
+    lint_dir.mkdir()
+    (lint_dir / ".textlintrc.json").write_text('{"rules": {}}\n', encoding="utf-8")
+    stdin = "id: self\nitems:\n  - id: p\n    body: '[B](id:missing)'\n"
+    # 実行
+    result = run_script("knowledge_checks", root, stdin, args=["--lint-dir", str(lint_dir)])
+    # 検証
+    violations = json.loads(result.stdout)
+    assert result.exit_code == 0
+    assert [violation["path"] for violation in violations] == ["items[0].body", "$"]
+    assert str(lint_dir) in violations[1]["rule"]
+    assert "npm ci --prefix scripts/lint" in violations[1]["fix"]
+
+
+def test_normal_when_textlint_fails(
+    run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
+) -> None:
+    """textlint の終了コードが 0・1 でなければ、path: $ の違反 1 件を返す（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    lint_dir = tmp_path / "lint"
+    bin_dir = lint_dir / "node_modules" / ".bin"
+    bin_dir.mkdir(parents=True)
+    (lint_dir / ".textlintrc.json").write_text('{"rules": {}}\n', encoding="utf-8")
+    textlint = bin_dir / "textlint"
+    textlint.write_text("#!/bin/sh\necho 設定を読めません >&2\nexit 2\n", encoding="utf-8")
+    textlint.chmod(0o700)
+    stdin = "id: self\nitems:\n  - id: p\n    body: 本文です。\n"
+    # 実行
+    result = run_script("knowledge_checks", root, stdin, args=["--lint-dir", str(lint_dir)])
+    # 検証
+    violations = json.loads(result.stdout)
+    assert result.exit_code == 0
+    assert [violation["path"] for violation in violations] == ["$"]
+    assert "終了コード 2" in violations[0]["rule"]
+    assert "設定を読めません" in violations[0]["rule"]
