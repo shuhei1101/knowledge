@@ -23,13 +23,40 @@ docs:
     status: done
     updated_by: planner
     updated_at: '2026-11-26T18:40:14.767992+00:00'
+  - page: docs/rule/ui-layout.yaml
+    new: false
+    change: 落とし穴チェックリストのテキスト・コードに pitfall-text-code-05 を追加し、画面設計の overflow.type の既定（固定の領域は truncate と全文の導線、それ以外は wrap、折り返すと判読できない値だけ scroll）を記載する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:54:57.430370+00:00'
+  - page: docs/rule/testing-core-e2e.yaml
+    new: false
+    change: rules-10 に overflow.unbounded の要素の文字数と、count_limit を持つ要素の max_count の件数と超える件数の場面を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:54:57.430370+00:00'
+  - page: docs/rule/react-devtools-storybook.yaml
+    new: false
+    change: storybook-07 に overflow.unbounded の要素で使用するコンポーネントの文字数と、件数が変わる値を並べるコンポーネントのストーリーを追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:54:57.430370+00:00'
+  - page: docs/checksheet/checksheet-review-implemented-screen.yaml
+    new: false
+    change: 長い値の行の補足に unbounded の文字数を追加し、件数が変わる値の上限と上限を超える件数のスクリーンショットの行を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:54:57.430370+00:00'
+  - page: docs/checksheet/checksheet-review-mock-html.yaml
+    new: false
+    change: 件数が変わる値の上限と上限を超える件数のスクリーンショットの行を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-26T18:54:57.430370+00:00'
 scope_out:
   - item: ai-monitor の手順（『モック作成』・『設計』の画面設計の観点）と規約『モック画面構成』の「データの量の場面」を、追加したキーを参照する形に追随させる
     reason: 'Issue #584 の後続で、ai-monitor のリポジトリの変更。今回追加するキーとメジャーを上げたタグを前提にする'
     plan: to_file
   - item: 配布先（ai-monitor・aituber・mindstella・claude-balancer・shuhdev-gateway・dev-docs・mdmark）の画面設計への overflow の記載
     reason: 各プロジェクトは design-schemas のタグを指しており、メジャーを上げたタグへ参照を上げるときにそのプロジェクトで記載する。設計書の変換は配布先が参照のリビジョンを上げるときに掛けるため、この作業 PR の反映作業にしない
-    plan: none
-  - item: 規約『E2E テスト（Playwright）』・規約『Storybook』・チェックシート『実装した画面のレビュー観点』『モック HTML のレビュー観点』の、件数の上限の値を入れた場面の決まり
-    reason: 'Issue #584 の要望はスキーマのキーと検査で、テスト・レビューの規約の変更を含まない。要るかはレビューで確定する'
     plan: none
