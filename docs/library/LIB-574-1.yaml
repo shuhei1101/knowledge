@@ -16,8 +16,8 @@ version:
   current: c07f4e519568f0e93c248aa623adc1ba3e45e8d7
   latest: c07f4e519568f0e93c248aa623adc1ba3e45e8d7
   checked_on: '2026-11-26'
-  source: '`scripts/build_markdown_templates.py` の依存の宣言（PEP 723）と `scripts/build_markdown_templates.py.lock`'
-  pinning: develop の commit の 40 桁の SHA で固定する（`dev-docs @ git+https://github.com/shuhei1101/dev-docs@{SHA}`）。変換を修正した dev-docs を取り込むときは、SHA を上げてロックを再作成し、Markdown のテンプレートを再生成する
+  source: '`scripts/build_markdown_templates.py` の依存の宣言（PEP 723）と `scripts/build_markdown_templates.py.lock`、テスト実行方法（TP-72-1）の lint・単体・結合の層のコマンドの `--with`、`.github/workflows/test.yml` の「層の全件を回す」のコマンドの `--with`'
+  pinning: develop の commit の 40 桁の SHA で固定する（`dev-docs @ git+https://github.com/shuhei1101/dev-docs@{SHA}`）。変換を修正した dev-docs を取り込むときは、依存の宣言・テスト実行方法の lint・単体・結合の層のコマンド・`test.yml` のコマンドの SHA を同じ値に上げてロックを再作成し、Markdown のテンプレートを再生成する
 license: ライセンスの表記なし（knowledge と同じ所有者の公開リポジトリ）
 official_url: https://github.com/shuhei1101/dev-docs
 selection:
