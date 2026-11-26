@@ -397,7 +397,7 @@ flows:
       - name: 配信元
         description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
       - name: 標準入力
-        description: '`items[0].body` の 2 行目が、`#` の後ろに空白を 2 つ持つ見出しの文書'
+        description: '`items[0].body` が、本文の行・空行・`#` の後ろに空白を 2 つ持つ見出し・空行・本文の行の 5 行の文書'
         notes: '`MD019`。`--lint-dir` を指定しない（`scripts/lint/` の既定の設定）'
     flow: |-
       <!-- map -->
@@ -514,7 +514,7 @@ flows:
     summary: 'map を含む項目があり npx が見つからなければ、`path: $` の違反 1 件とほかの検査の違反を返却する'
     setup:
       - name: Mock
-        description: 子プロセスの環境変数 `PATH` を、`npx` を持たないフォルダだけにする
+        description: '`node` へのシンボリックリンクだけを持ち `npx` を持たないフォルダを、子プロセスの環境変数 `PATH` にする'
       - name: 配信元
         description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
       - name: 標準入力

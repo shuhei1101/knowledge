@@ -258,7 +258,7 @@ scenarios:
       - name: 書き込む内容
         description: map の範囲を項目の `body` に持ち、ほかの違反の無い規約の YAML
       - name: project-index の起動の環境
-        description: '`npx` を持たない PATH で project-index を起動する。mdmark の CLI（`check --text`）は PATH に残す'
+        description: '`npx` を持たず、`node` と mdmark の CLI（`check --text`）を持つ PATH で project-index を起動する'
     flow: |-
       <!-- map -->
 
