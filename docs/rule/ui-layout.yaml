@@ -163,6 +163,7 @@ items:
     name: 長さが変わる値を折り返すか省略するかの既定
     body: |-
       - 画面設計の `overflow.type` は、固定の領域（`fixed_area`）に配置する要素では `truncate` にし、全文を出す導線を付ける（`pitfall-text-code-03`）
+      - タグ・チップ・1 行の見出しのように、1 件ずつを 1 行に収めて並べる値も `truncate` にし、全文を出す導線を付ける
       - それ以外の要素では `wrap` にし、`overflow-wrap: anywhere` で折り返す（`pitfall-text-code-01`）
       - `<pre>` / `<code>` と多列の表のように、折り返すと判読できなくなる値だけを `scroll` にする
   - id: pitfall-table-01
