@@ -9,6 +9,11 @@ use_cases:
     impact: none
     detail: 全ての文書の検査の文章の検査は変わらない。書き込みの検査と同じ設定で検査する元になる
     depends_on: []
+  - kind: single
+    scenario: docs/scenario/SC-536-1.yaml
+    impact: changed
+    detail: 直コミットで書き込むときにも文章の検査を行い、違反があれば develop へコミットせずに違反を返す
+    depends_on: []
 docs:
   - page: docs/library/LIB-176-2.yaml
     new: false
