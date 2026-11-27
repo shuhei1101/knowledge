@@ -37,6 +37,10 @@ status: current
 visibility: internal
 rev: 8
 last_reviewed: '2026-11-10'
+related:
+  - to: flowchart-short-text-overflow
+    type: references
+    when: 短い文言が狭い幅で折り返す・省略されるときの対処を決めるとき
 sources:
   - id: I
     title: pbakaus/impeccable
@@ -191,6 +195,11 @@ items:
       | 長音は語末の -er / -or / -ar / -y に付ける（ユーザー・サーバー・メモリー） | BK |
 
       <!-- /table -->
+  - id: wording-term-format-03
+    group: 文言 > 単語と書式
+    name: 狭い幅で収まらない文言
+    body: |-
+      ヘッダーの文字と、通知・ボタン・ラベル・見出しの短い文言が狭い幅で折り返す・省略されるときは、判定フローチャート [狭い幅の短い文言の対処](id:flowchart-short-text-overflow) で対処を決める。
   - id: wording-operation-01
     group: 文言 > 操作の単語
     name: 操作の単語の案内

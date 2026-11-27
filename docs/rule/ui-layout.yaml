@@ -70,6 +70,9 @@ related:
   - to: ui-operation-accessibility
     type: references
     when: 押す部品の大きさと WCAG 2.2 の達成基準を確認するとき
+  - to: flowchart-short-text-overflow
+    type: references
+    when: 短い固定の文言が狭い幅で折り返す・省略されるときの対処を決めるとき
 items:
   - id: overview
     name: 概要
@@ -166,6 +169,11 @@ items:
       - タグ・チップ・1 行の見出しのように、1 件ずつを 1 行に収めて並べる値も `truncate` にし、全文を出す導線を付ける
       - それ以外の要素では `wrap` にし、`overflow-wrap: anywhere` で折り返す（`pitfall-text-code-01`）
       - `<pre>` / `<code>` と多列の表のように、折り返すと判読できなくなる値だけを `scroll` にする
+  - id: pitfall-text-code-06
+    group: 落とし穴チェックリスト > テキスト・コード
+    name: 短い固定の文言が狭い幅で収まらない
+    body: |-
+      - ヘッダーの文字と、通知・ボタン・ラベル・見出しの短い固定の文言が狭い幅で折り返す・省略されるときは、[狭い幅の短い文言の対処](id:flowchart-short-text-overflow) で対処を決める
   - id: pitfall-table-01
     group: 落とし穴チェックリスト > テーブル
     name: 多列 table の横スクロール

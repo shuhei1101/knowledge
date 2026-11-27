@@ -1,0 +1,140 @@
+id: flowchart-short-text-overflow
+kind: flowchart
+name: 狭い幅の短い文言の対処 判定フローチャート
+description: 狭い幅でヘッダーの文字と画面の短い文言（通知・ボタン・ラベル・見出し）が折り返す・省略されるときに選ぶ対処を判定し、狭い幅の画面を設計・レビューするときに参照する。
+aliases:
+  - 狭い幅の短い文言の対処
+inject_when:
+  field: text
+  op: contains
+  values:
+    - 画面
+    - UI
+    - フロントエンド
+    - tsx
+    - HTML
+    - コンポーネント
+status: current
+visibility: internal
+rev: 1
+related:
+  - to: ui-layout
+    type: references
+    when: 固定の文言のラベル・ボタンを縮めない決まりと、長さが変わる値の折り返し・省略の既定を確認するとき
+  - to: ui-input-wording
+    type: references
+    when: 短くした文言の単語を選ぶとき
+sources:
+  - title: 'Material Design 3: Top app bar'
+    url: https://m3.material.io/components/top-app-bar/guidelines
+    note: 幅が狭くなると操作をアイコンからオーバーフローのメニューへ移し、最もよく使用する操作を最後まで残す
+  - title: 'Carbon Design System: UI shell header'
+    url: https://carbondesignsystem.com/components/UI-shell-header/usage/
+    note: 狭い幅ではヘッダーのリンクとメニューを左のパネル（ハンバーガー）へ移す
+  - title: 'Shopify Polaris: Migrate Truncate'
+    url: https://shopify.dev/docs/apps/build/app-home/migrate-from-polaris-react/truncate
+    note: 指示と操作のラベルを省略しない。省略するときは全文を読み上げられるようにする
+  - title: 'Maersk Design System: Truncation'
+    url: https://designsystem.maersk.com/content/truncation/
+    note: ナビゲーション・見出し・ラベル・エラー・補足・通知を省略しない
+  - title: 'SAP Fiori: Wrapping and Truncating Text'
+    url: https://www.sap.com/design-system/fiori-design-web/v1-151/foundations/writing-and-wording/ux-writing/wrapping-and-truncating-text
+items:
+  - id: overview
+    name: 概要
+    body: 狭い幅でヘッダーの文字と画面の短い文言（通知・ボタン・ラベル・見出し）が折り返す・省略されるときに選ぶ対処を判定し、狭い幅の画面を設計・レビューするときに参照する。
+  - id: short-text-overflow-flow-01
+    group: 狭い幅の短い文言の対処 判定フローチャート
+    name: 判定フロー
+    body: |-
+      <!-- map: {"title": "狭い幅の短い文言の対処"} -->
+
+      ```mermaid
+      flowchart TB
+        start(("狭い幅で短い文言が折り返す・省略される"))
+        q0{"本文・説明文か"}
+        r0(["折り返す（対処しない）"])
+        q1{"ヘッダーの中の文字か"}
+        q2{"アプリ名か"}
+        q3{"アプリのアイコンがあるか"}
+        r1(["アプリのアイコンだけにする"])
+        r2(["アプリ名を短い名前にする"])
+        q11{"ボタンの文言か"}
+        q4{"定着したアイコンで表せる操作か"}
+        r3(["ボタンをアイコンだけにする（読み上げ名は残す）"])
+        q5{"画面の間を移動する操作か"}
+        r4(["ヘッダーの左のメニューの中へしまう"])
+        r5(["優先度の低い順に、右端の「その他」のメニューへ移して減らす"])
+        q6{"件数など変わる値を含むか"}
+        r6(["変わる値を別の場所（一覧の見出し・バッジ）へ移す"])
+        q7{"前後の文脈・アイコンで分かる単語を含むか"}
+        r7(["その単語を落として文字量を減らす"])
+        q8{"主な内容と補足に分けられるか"}
+        r8(["2 つの要素に分け、補足を小さな字にする"])
+        q9{"要素の最大幅を広げる余白があるか"}
+        r9(["要素の幅（通知の最大幅など）を広げる"])
+        q10{"ボタンが横に並んでいるか"}
+        r10(["ボタンを縦に並べ、幅いっぱいにする"])
+        r11(["狭い幅だけ短い別の文言にする"])
+        start --> q0
+        q0 -->|YES| r0
+        q0 -->|NO| q1
+        q1 -->|YES| q2
+        q1 -->|NO| q6
+        q2 -->|YES| q3
+        q2 -->|NO| q11
+        q11 -->|YES| q4
+        q11 -->|NO| q6
+        q3 -->|YES| r1
+        q3 -->|NO| r2
+        q4 -->|YES| r3
+        q4 -->|NO| q5
+        q5 -->|YES| r4
+        q5 -->|NO| r5
+        q6 -->|YES| r6
+        q6 -->|NO| q7
+        q7 -->|YES| r7
+        q7 -->|NO| q8
+        q8 -->|YES| r8
+        q8 -->|NO| q9
+        q9 -->|YES| r9
+        q9 -->|NO| q10
+        q10 -->|YES| r10
+        q10 -->|NO| r11
+      ```
+
+      <!-- map-data: {"version": 1, "notes": {"start": {"annotations": ["short-text-overflow-n1"]}, "r1": {"annotations": ["short-text-overflow-n2"]}, "q4": {"annotations": ["short-text-overflow-n3"]}, "r3": {"annotations": ["short-text-overflow-n2"]}, "r5": {"annotations": ["short-text-overflow-n4"]}, "r7": {"annotations": ["short-text-overflow-n5"]}, "r11": {"annotations": ["short-text-overflow-n6"]}}} -->
+
+      <!-- /map -->
+
+      ※[short-text-overflow-n1]: 省略: ラベル・ボタン・見出し・通知・エラーの短い文言は `text-overflow: ellipsis` で省略しない。
+          このフローチャートの対処で収める。
+          長さが変わる値の省略は [レイアウト](id:ui-layout#pitfall-text-code-05) に従う。
+
+      ※[short-text-overflow-n2]: 読み上げ名: 文字を削除した要素には、削除した文言を `aria-label` とツールチップで残す。
+
+      ※[short-text-overflow-n3]: 定着したアイコン: 検索・設定・閉じる・メニュー・通知・コピーのように、文字が無くても意味が伝わるアイコン。
+
+      ※[short-text-overflow-n4]: 優先度: 画面の主な操作と、よく使用する操作ほど最後まで残す。
+
+      ※[short-text-overflow-n5]: 落とす単語の例: 「1 件のコメントをコピーしました」→「コピーしました」。
+
+      ※[short-text-overflow-n6]: 別の文言: 広い幅の文言と同じ概念の単語にする（[入力と文言](id:ui-input-wording#wording-01)）。
+tags:
+  - name: scope:判定フローチャート
+  - name: topic:判定フローチャート
+  - name: topic:フローチャート
+  - name: topic:文言
+    main: true
+  - name: topic:画面
+  - name: topic:ヘッダー
+  - name: topic:ボタン
+  - name: topic:ラベル
+  - name: topic:見出し
+  - name: topic:アイコン
+  - name: topic:モバイル
+  - name: topic:レスポンシブ
+  - name: topic:テキスト
+  - name: action:通知
+  - name: action:省略
+  - name: action:判定
