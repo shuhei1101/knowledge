@@ -1,0 +1,69 @@
+# 実装の単体テスト（67555d9）
+
+## ランナーでの全件実行（TP-72-1 の単体テスト（バック）の run_runner）
+$ run_url=$(gh workflow run test.yml --ref "$(git branch --show-current)" -f layer=unit | ...) && ... gh run view "$run_id" --log
+﻿2026-11-26T22:17:43.1761721Z ##[group]Run set -o pipefail
+2026-11-26T22:17:43.1762114Z ^[[36;1mset -o pipefail^[[0m
+2026-11-26T22:17:43.1762369Z ^[[36;1mcase "$LAYER" in^[[0m
+2026-11-26T22:17:43.1762632Z ^[[36;1m  unit)^[[0m
+2026-11-26T22:17:43.1763917Z ^[[36;1m    (rc=0; uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 --with "dev-docs @ git+https://github.com/shuhei1101/dev-docs@c07f4e519568f0e93c248aa623adc1ba3e45e8d7" pytest tests/unit || rc=1; uv run --no-project --python 3.12 --with pytest==9.2.0 pytest tests/unit/slop-check || rc=1; exit $rc) 2>&1 | tee test.log^[[0m
+2026-11-26T22:17:43.1765151Z ^[[36;1m    ;;^[[0m
+2026-11-26T22:17:43.1765365Z ^[[36;1m  integration)^[[0m
+2026-11-26T22:17:43.1766242Z ^[[36;1m    uv run --no-project --python 3.14 --with pytest==9.2.0 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 --with yamllint==1.38.0 --with "dev-docs @ git+https://github.com/shuhei1101/dev-docs@c07f4e519568f0e93c248aa623adc1ba3e45e8d7" pytest tests/integration 2>&1 | tee test.log^[[0m
+2026-11-26T22:17:43.1767207Z ^[[36;1m    ;;^[[0m
+2026-11-26T22:17:43.1767405Z ^[[36;1mesac^[[0m
+2026-11-26T22:17:43.1797381Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-26T22:17:43.1797738Z env:
+2026-11-26T22:17:43.1797994Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-11-26T22:17:43.1798503Z   LAYER: unit
+2026-11-26T22:17:43.1798714Z ##[endgroup]
+2026-11-26T22:17:43.9666546Z    Updating https://github.com/shuhei1101/dev-docs (c07f4e519568f0e93c248aa623adc1ba3e45e8d7)
+2026-11-26T22:17:44.0668853Z Downloading pygments (1.2MiB)
+2026-11-26T22:17:44.0682101Z Downloading cryptography (4.5MiB)
+2026-11-26T22:17:44.0686122Z Downloading pydantic-core (2.2MiB)
+2026-11-26T22:17:44.1781232Z  Downloaded pygments
+2026-11-26T22:17:44.1834883Z  Downloaded pydantic-core
+2026-11-26T22:17:44.2154229Z  Downloaded cryptography
+2026-11-26T22:17:47.0947172Z     Updated https://github.com/shuhei1101/dev-docs (c07f4e519568f0e93c248aa623adc1ba3e45e8d7)
+2026-11-26T22:17:47.0948761Z    Building dev-docs @ git+https://github.com/shuhei1101/dev-docs@c07f4e519568f0e93c248aa623adc1ba3e45e8d7
+2026-11-26T22:17:47.5655412Z       Built dev-docs @ git+https://github.com/shuhei1101/dev-docs@c07f4e519568f0e93c248aa623adc1ba3e45e8d7
+2026-11-26T22:17:47.5839054Z Installed 45 packages in 11ms
+2026-11-26T22:17:49.6780678Z ============================= test session starts ==============================
+2026-11-26T22:17:49.6781307Z platform linux -- Python 3.14.4, pytest-9.2.0, pluggy-1.7.0
+2026-11-26T22:17:49.6781816Z rootdir: /home/runner/work/knowledge/knowledge
+2026-11-26T22:17:49.6782185Z configfile: pytest.ini
+2026-11-26T22:17:49.6782572Z plugins: anyio-4.16.0, platformdirs-4.14.5, typeguard-4.4.4
+2026-11-26T22:17:49.6783081Z collected 325 items
+2026-11-26T22:17:49.6783264Z 
+2026-11-26T22:17:49.7883189Z tests/unit/scripts/test_build_markdown_templates.py ..............       [  4%]
+2026-11-26T22:17:49.8731933Z tests/unit/scripts/test_build_pages.py ...................               [ 10%]
+2026-11-26T22:17:49.9837972Z tests/unit/scripts/test_build_templates.py ........................      [ 17%]
+2026-11-26T22:17:49.9942124Z tests/unit/scripts/test_build_word_list.py ....                          [ 18%]
+2026-11-26T22:17:50.8674948Z tests/unit/scripts/test_check_all.py ................................... [ 29%]
+2026-11-26T22:17:51.4573619Z .........................                                                [ 37%]
+2026-11-26T22:17:51.5499421Z tests/unit/scripts/test_common.py ....................                   [ 43%]
+2026-11-26T22:17:51.6063823Z tests/unit/scripts/test_knowledge_checks.py ............................ [ 52%]
+2026-11-26T22:17:51.6338954Z ...........                                                              [ 55%]
+2026-11-26T22:17:51.6696734Z tests/unit/scripts/test_knowledge_markdown.py .......................... [ 63%]
+2026-11-26T22:17:51.6835804Z ...................                                                      [ 69%]
+2026-11-26T22:17:51.8708573Z tests/unit/scripts/test_lint.py .....................                    [ 75%]
+2026-11-26T22:17:51.8888717Z tests/unit/scripts/test_meme_checks.py .........                         [ 78%]
+2026-11-26T22:17:52.0763701Z tests/unit/scripts/test_workflow.py .....................                [ 84%]
+2026-11-26T22:17:52.1010227Z tests/unit/slop-check/test_slop_check.py ............................... [ 94%]
+2026-11-26T22:17:52.1552447Z ..................                                                       [100%]
+2026-11-26T22:17:52.1552910Z 
+2026-11-26T22:17:52.1553092Z ============================= 325 passed in 3.07s ==============================
+2026-11-26T22:17:52.4088619Z Downloading cpython-3.12.16-linux-x86_64-gnu (download) (33.1MiB)
+2026-11-26T22:17:53.1687124Z  Downloaded cpython-3.12.16-linux-x86_64-gnu (download)
+2026-11-26T22:17:53.3280875Z Installed 5 packages in 5ms
+2026-11-26T22:17:54.2198483Z ============================= test session starts ==============================
+2026-11-26T22:17:54.2199289Z platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0
+2026-11-26T22:17:54.2199933Z rootdir: /home/runner/work/knowledge/knowledge
+2026-11-26T22:17:54.2200381Z configfile: pytest.ini
+2026-11-26T22:17:54.2200719Z collected 49 items
+2026-11-26T22:17:54.2200923Z 
+2026-11-26T22:17:54.2451629Z tests/unit/slop-check/test_slop_check.py ............................... [ 63%]
+2026-11-26T22:17:54.2729471Z ..................                                                       [100%]
+2026-11-26T22:17:54.2730068Z 
+2026-11-26T22:17:54.2730377Z ============================== 49 passed in 0.08s ==============================
+exit=0 run=45903830823

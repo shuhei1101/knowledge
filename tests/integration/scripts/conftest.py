@@ -129,8 +129,11 @@ def run_script() -> RunScript:
         args: Sequence[str] = (),
         path_prefix: Path | None = None,
         script_dir: Path = SCRIPTS,
+        path: str | None = None,
     ) -> Completed:
-        path = os.environ.get("PATH", "")
+        # path を指定したときは、子プロセスの PATH をその値だけにする
+        if path is None:
+            path = os.environ.get("PATH", "")
         # 差し替えのコマンドを置いたフォルダは PATH の先頭に置く
         if path_prefix is not None:
             path = os.pathsep.join([str(path_prefix), path])

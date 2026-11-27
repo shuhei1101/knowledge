@@ -2,9 +2,12 @@
 
 import hashlib
 import json
+import shutil
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
+
+from _common import MDMARK_REF
 
 # conftest の fixture の型。子プロセスの結果は conftest の Completed
 type RunScript = Callable[..., Any]
@@ -313,7 +316,14 @@ def test_normal_when_aspect_ids_duplicate(run_script: RunScript, repo_factory: R
 
 
 # scripts/lint/ の node_modules（textlint の本体とルール）
-_LINT_MODULES = Path(__file__).resolve().parents[3] / "scripts/lint/node_modules"
+_LINT_DIR = Path(__file__).resolve().parents[3] / "scripts/lint"
+_LINT_MODULES = _LINT_DIR / "node_modules"
+
+
+def _copy_lint_configs(lint_dir: Path, names: list[str]) -> None:
+    """scripts/lint/ の設定ファイルを、差し替えの lint のフォルダへコピーする。"""
+    for name in names:
+        shutil.copy(_LINT_DIR / name, lint_dir / name)
 
 
 def test_normal_when_textlint_violations(run_script: RunScript, repo_factory: RepoFactory) -> None:
@@ -353,6 +363,9 @@ def test_normal_when_textlint_warning_only(
     (lint_dir / ".textlintrc.json").write_text(
         '{"rules": {"one-sentence-per-line": {"severity": "warning"}}}\n', encoding="utf-8"
     )
+    _copy_lint_configs(
+        lint_dir, [".markdownlint-cli2.jsonc", "no-inline-strong.mjs", ".yamllint.yaml"]
+    )
     (lint_dir / "node_modules").symlink_to(_LINT_MODULES)
     stdin = "id: self\nitems:\n  - id: p\n    body: A です。B です。\n"
     # 実行
@@ -371,6 +384,7 @@ def test_normal_when_textlint_missing(
     lint_dir = tmp_path / "lint"
     lint_dir.mkdir()
     (lint_dir / ".textlintrc.json").write_text('{"rules": {}}\n', encoding="utf-8")
+    _copy_lint_configs(lint_dir, [".yamllint.yaml"])
     stdin = "id: self\nitems:\n  - id: p\n    body: '[B](id:missing)'\n"
     # 実行
     result = run_script("knowledge_checks", root, stdin, args=["--lint-dir", str(lint_dir)])
@@ -378,6 +392,8 @@ def test_normal_when_textlint_missing(
     violations = json.loads(result.stdout)
     assert result.exit_code == 0
     assert [violation["path"] for violation in violations] == ["items[0].body", "$"]
+    assert "markdownlint-cli2" in violations[1]["rule"]
+    assert "textlint" in violations[1]["rule"]
     assert str(lint_dir) in violations[1]["rule"]
     assert "npm ci --prefix scripts/lint" in violations[1]["fix"]
 
@@ -395,6 +411,10 @@ def test_normal_when_textlint_fails(
     textlint = bin_dir / "textlint"
     textlint.write_text("#!/bin/sh\necho 設定を読めません >&2\nexit 2\n", encoding="utf-8")
     textlint.chmod(0o700)
+    markdownlint = bin_dir / "markdownlint-cli2"
+    markdownlint.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+    markdownlint.chmod(0o700)
+    _copy_lint_configs(lint_dir, [".markdownlint-cli2.jsonc", ".yamllint.yaml"])
     stdin = "id: self\nitems:\n  - id: p\n    body: 本文です。\n"
     # 実行
     result = run_script("knowledge_checks", root, stdin, args=["--lint-dir", str(lint_dir)])
@@ -404,3 +424,181 @@ def test_normal_when_textlint_fails(
     assert [violation["path"] for violation in violations] == ["$"]
     assert "終了コード 2" in violations[0]["rule"]
     assert "設定を読めません" in violations[0]["rule"]
+
+
+def test_normal_when_markdownlint_violations(
+    run_script: RunScript, repo_factory: RepoFactory
+) -> None:
+    """Markdown の項目の markdownlint-cli2 の error の違反を元の文書の行の違反で返す（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    stdin = (
+        "id: self\n"
+        "items:\n"
+        "  - id: p\n"
+        "    body: |-\n"
+        "      本文です。\n"
+        "\n"
+        "      ##  見出し\n"
+        "\n"
+        "      本文です。\n"
+    )
+    # 実行
+    result = run_script("knowledge_checks", root, stdin)
+    # 検証
+    violations = json.loads(result.stdout)
+    assert result.exit_code == 0
+    assert [violation["path"] for violation in violations] == ["items[0].body"]
+    assert violations[0]["rule"].startswith("7 行目: markdownlint/MD019: ")
+
+
+def test_normal_when_markdownlint_fails(
+    run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
+) -> None:
+    """markdownlint-cli2 の終了コードが 0・1 でなければ、path: $ の違反 1 件を返す（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    lint_dir = tmp_path / "lint"
+    bin_dir = lint_dir / "node_modules" / ".bin"
+    bin_dir.mkdir(parents=True)
+    markdownlint = bin_dir / "markdownlint-cli2"
+    markdownlint.write_text("#!/bin/sh\necho 設定を読めません >&2\nexit 2\n", encoding="utf-8")
+    markdownlint.chmod(0o700)
+    textlint = bin_dir / "textlint"
+    textlint.write_text("#!/bin/sh\necho '[]'\nexit 0\n", encoding="utf-8")
+    textlint.chmod(0o700)
+    _copy_lint_configs(lint_dir, [".textlintrc.json", ".markdownlint-cli2.jsonc", ".yamllint.yaml"])
+    stdin = "id: self\nitems:\n  - id: p\n    body: 本文です。\n"
+    # 実行
+    result = run_script("knowledge_checks", root, stdin, args=["--lint-dir", str(lint_dir)])
+    # 検証
+    violations = json.loads(result.stdout)
+    assert result.exit_code == 0
+    assert [violation["path"] for violation in violations] == ["$"]
+    assert "markdownlint-cli2" in violations[0]["rule"]
+    assert "終了コード 2" in violations[0]["rule"]
+    assert "設定を読めません" in violations[0]["rule"]
+
+
+def test_normal_when_yamllint_violations(run_script: RunScript, repo_factory: RepoFactory) -> None:
+    """文書の YAML の yamllint の error の違反をファイル全体の違反で返す（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    stdin = "#コメント\nid: self\nitems:\n  - id: p\n    body: 本文です。\n"
+    # 実行
+    result = run_script("knowledge_checks", root, stdin)
+    # 検証
+    violations = json.loads(result.stdout)
+    assert result.exit_code == 0
+    assert [violation["path"] for violation in violations] == ["-"]
+    assert violations[0]["rule"].startswith("1 行目: yamllint/comments: ")
+
+
+# map の範囲に Mermaid として解釈できる flowchart を 2 つ持つ（mdmark の map_invalid）文書
+_MAP_INVALID_DOC = (
+    "id: self\n"
+    "items:\n"
+    "  - id: p\n"
+    "    body: |-\n"
+    "      <!-- map -->\n"
+    "\n"
+    "      ```mermaid\n"
+    "      flowchart LR\n"
+    "        a --> b\n"
+    "      ```\n"
+    "\n"
+    "      ```mermaid\n"
+    "      flowchart LR\n"
+    "        c --> d\n"
+    "      ```\n"
+    "\n"
+    "      <!-- /map -->\n"
+)
+
+# map の範囲に flowchart を 1 つ持つ、ほかの違反の無い文書
+_MAP_DOC = (
+    "id: self\n"
+    "items:\n"
+    "  - id: p\n"
+    "    body: |-\n"
+    "      <!-- map -->\n"
+    "\n"
+    "      ```mermaid\n"
+    "      flowchart LR\n"
+    "        a --> b\n"
+    "      ```\n"
+    "\n"
+    "      <!-- /map -->\n"
+)
+
+
+def _mdmark_shim(folder: Path) -> Path:
+    """MDMARK_REF の mdmark を npx で起動する mdmark を置いたフォルダを返す（ランナーの PATH に mdmark が無いため）。"""
+    folder.mkdir(parents=True)
+    shim = folder / "mdmark"
+    shim.write_text(
+        f'#!/bin/sh\nexec npx -y github:shuhei1101/mdmark#{MDMARK_REF} "$@"\n', encoding="utf-8"
+    )
+    shim.chmod(0o700)
+    return folder
+
+
+def test_normal_when_map_violations(
+    run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
+) -> None:
+    """map を含む項目の mdmark の map のずれを元の文書の行の違反で返す（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    folder = _mdmark_shim(tmp_path / "bin")
+    # 実行
+    result = run_script("knowledge_checks", root, _MAP_INVALID_DOC, path_prefix=folder)
+    # 検証
+    violations = json.loads(result.stdout)
+    assert result.exit_code == 0
+    assert [violation["path"] for violation in violations] == ["items[0].body"]
+    # 行は items[0].body の 1 行目（<!-- map --> の行）
+    assert violations[0]["rule"].startswith("5 行目: mdmark/map_invalid: ")
+
+
+def test_normal_when_mdmark_missing(
+    run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
+) -> None:
+    """map を含む項目があり mdmark の CLI が PATH に無ければ、path: $ の違反 1 件を返す（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    folder = tmp_path / "bin"
+    folder.mkdir()
+    # node（markdownlint-cli2・textlint が使用する）と uv だけを置き、mdmark を置かない
+    for name in ("node", "uv"):
+        found = shutil.which(name)
+        assert found is not None
+        (folder / name).symlink_to(found)
+    # 実行
+    result = run_script("knowledge_checks", root, _MAP_DOC, path=str(folder))
+    # 検証
+    violations = json.loads(result.stdout)
+    assert result.exit_code == 0
+    assert [violation["path"] for violation in violations] == ["$"]
+    assert "mdmark の CLI" in violations[0]["rule"]
+    assert "npm install -g github:shuhei1101/mdmark#develop" in violations[0]["fix"]
+
+
+def test_normal_when_map_check_fails(
+    run_script: RunScript, repo_factory: RepoFactory, tmp_path: Path
+) -> None:
+    """mdmark の終了コードが 0・1 でなければ、path: $ の違反 1 件を返す（正常系）。"""
+    # 準備
+    root = repo_factory({})
+    folder = tmp_path / "bin"
+    folder.mkdir()
+    mdmark = folder / "mdmark"
+    mdmark.write_text("#!/bin/sh\necho 点検できません >&2\nexit 2\n", encoding="utf-8")
+    mdmark.chmod(0o700)
+    # 実行
+    result = run_script("knowledge_checks", root, _MAP_DOC, path_prefix=folder)
+    # 検証
+    violations = json.loads(result.stdout)
+    assert result.exit_code == 0
+    assert [violation["path"] for violation in violations] == ["$"]
+    assert "終了コード 2" in violations[0]["rule"]
+    assert "点検できません" in violations[0]["rule"]

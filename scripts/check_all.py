@@ -75,6 +75,7 @@ from _lint import (
     collect_sources,
     find_lint_clis,
     load_yamllint_config,
+    mdmark_npx_command,
     run_map_check,
     run_markdown_lints,
     run_yamllint,
@@ -248,7 +249,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         count += len(findings) - warnings
         # map の点検は lint の違反を出し終えてから呼び、失敗しても lint の違反は失わない
         try:
-            map_findings = run_map_check(_map_sources(root, targets, texts), npx)
+            map_findings = run_map_check(
+                _map_sources(root, targets, texts), mdmark_npx_command(npx)
+            )
         except MdmarkCheckError as error:
             print(f"mdmark の点検が失敗しました: {error.message}", file=sys.stderr)
             return _EXIT_NOT_STARTED

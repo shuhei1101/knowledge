@@ -304,7 +304,7 @@ flows:
       - name: 配信元
         description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
       - name: lint のフォルダ
-        description: 'textlint の `one-sentence-per-line` だけを `severity: warning` にした `.textlintrc.json` と、`scripts/lint/node_modules` へのシンボリックリンクの `node_modules` を持つ一時フォルダ'
+        description: 'textlint の `one-sentence-per-line` だけを `severity: warning` にした `.textlintrc.json` と、`scripts/lint/` の `.markdownlint-cli2.jsonc`・`no-inline-strong.mjs`・`.yamllint.yaml` のコピーと、`scripts/lint/node_modules` へのシンボリックリンクの `node_modules` を持つ一時フォルダ'
         notes: '`--lint-dir` に指定する（既定の設定に警告にするルールは無い）'
       - name: 標準入力
         description: '`items[0].body` の 1 行に 2 文を持ち、ほかの違反を持たない文書'
@@ -329,14 +329,14 @@ flows:
       - 標準出力が `[]`
     test: test_normal_when_textlint_warning_only
   - name: 正常系（textlint が無い）
-    summary: 'textlint が見つからなければ、`path: $` の違反 1 件とほかの検査の違反を返却する'
+    summary: 'markdownlint-cli2・textlint が見つからなければ、`path: $` の違反 1 件とほかの検査の違反を返却する'
     setup:
       - name: Mock
         description: 差し替えない
       - name: 配信元
         description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
       - name: lint のフォルダ
-        description: '`.textlintrc.json` だけを持ち、`node_modules` を持たない一時フォルダ'
+        description: '`scripts/lint/` の `.textlintrc.json`・`.yamllint.yaml` のコピーだけを持ち、`node_modules` を持たない一時フォルダ'
         notes: '`--lint-dir` に指定する'
       - name: 標準入力
         description: '`items[0].body` に `[B](id:missing)` を持つ文書'
@@ -350,7 +350,7 @@ flows:
         participant S as 文書の違反の検査
         D->>S: 標準入力に文書の YAML
         S->>S: 項目の ID・参照・aliases を確認する
-        S->>S: lint のフォルダに textlint が無い
+        S->>S: lint のフォルダに markdownlint-cli2・textlint が無い
         S-->>D: 終了コード 0 と違反の配列
       ```
 
@@ -358,14 +358,14 @@ flows:
     expected:
       - 終了コードが 0
       - 標準出力の配列が 2 件で、`path` が `items[0].body`（参照切れ）と `$`
-      - '`path: $` の違反の `rule` に textlint が見つからないことと探したフォルダ、`fix` に `npm ci --prefix scripts/lint` が入る'
+      - '`path: $` の違反の `rule` に markdownlint-cli2・textlint が見つからないことと探したフォルダ、`fix` に `npm ci --prefix scripts/lint` が入る'
     test: test_normal_when_textlint_missing
   - name: 正常系（textlint が失敗する）
     summary: 'textlint の終了コードが 0・1 でなければ、`path: $` の違反 1 件を返却する'
     setup:
       - name: Mock
-        description: textlint を、標準エラーに 1 行を出して終了コード 2 で終わるシェルスクリプトに差し替える
-        notes: lint のフォルダの `node_modules/.bin/textlint` に配置し、`--lint-dir` に指定する
+        description: textlint を、標準エラーに 1 行を出して終了コード 2 で終わるシェルスクリプトに差し替える。markdownlint-cli2 は、何も出さずに終了コード 0 で終わるシェルスクリプトに差し替える
+        notes: lint のフォルダの `node_modules/.bin/` に配置し、`scripts/lint/` の `.textlintrc.json`・`.markdownlint-cli2.jsonc`・`.yamllint.yaml` のコピーを同じ lint のフォルダに配置して、`--lint-dir` に指定する
       - name: 配信元
         description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
       - name: 標準入力
@@ -389,17 +389,200 @@ flows:
       - 終了コードが 0
       - 標準出力の配列が 1 件で、`path` が `$`、`rule` に textlint の終了コードと標準エラーの 1 行が入る
     test: test_normal_when_textlint_fails
-lead: 標準入力の文書 1 件に、スキーマで見られない決まり（項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複・Markdown の項目の textlint の違反）を適用し、違反を project-index の validators の約束で標準出力へ返却する。
+  - name: 正常系（markdownlint-cli2 の違反がある）
+    summary: Markdown の項目の markdownlint-cli2 の error の違反を、元の文書の行の違反で返却する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 配信元
+        description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
+      - name: 標準入力
+        description: '`items[0].body` が、本文の行・空行・`#` の後ろに空白を 2 つ持つ見出し・空行・本文の行の 5 行の文書'
+        notes: '`MD019`。`--lint-dir` を指定しない（`scripts/lint/` の既定の設定）'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant D as project-index
+        participant S as 文書の違反の検査
+        participant L as markdownlint-cli2
+        D->>S: 標準入力に文書の YAML
+        S->>S: Markdown の項目を一時の .md に書き出す
+        S->>L: 一時の .md と .markdownlint-cli2.jsonc
+        L-->>S: error の違反の行
+        S->>S: 元の文書の行と項目のパスに対応させる
+        S-->>D: 終了コード 0 と違反の配列
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力の配列が 1 件で、`path` が `items[0].body`
+      - '`rule` が `{行} 行目: markdownlint/MD019: ` で始まり、行が文書の中の見出しの行と一致する'
+    test: test_normal_when_markdownlint_violations
+  - name: 正常系（markdownlint-cli2 が失敗する）
+    summary: 'markdownlint-cli2 の終了コードが 0・1 でなければ、`path: $` の違反 1 件を返却する'
+    setup:
+      - name: Mock
+        description: markdownlint-cli2 を、標準エラーに 1 行を出して終了コード 2 で終わるシェルスクリプトに差し替える。textlint は、`[]` を出して終了コード 0 で終わるシェルスクリプトに差し替える
+        notes: lint のフォルダの `node_modules/.bin/` に配置し、`scripts/lint/` の `.textlintrc.json`・`.markdownlint-cli2.jsonc`・`.yamllint.yaml` のコピーを同じ lint のフォルダに配置して `--lint-dir` に指定する
+      - name: 配信元
+        description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
+      - name: 標準入力
+        description: 違反の無い `items[0].body` を持つ文書
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant D as project-index
+        participant S as 文書の違反の検査
+        participant L as markdownlint-cli2
+        D->>S: 標準入力に文書の YAML
+        S->>L: 一時の .md と .markdownlint-cli2.jsonc
+        L-->>S: 終了コード 2 と標準エラー
+        S-->>D: 終了コード 0 と path $ の違反
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力の配列が 1 件で、`path` が `$`、`rule` に markdownlint-cli2 の終了コードと標準エラーの 1 行が入る
+    test: test_normal_when_markdownlint_fails
+  - name: 正常系（yamllint の違反がある）
+    summary: 文書の YAML の yamllint の error の違反を、ファイル全体の違反で返却する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 配信元
+        description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
+      - name: 標準入力
+        description: 1 行目が `#` の直後に空白の無いコメントで、ほかの違反を持たない文書
+        notes: '`comments`。`--lint-dir` を指定しない'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant D as project-index
+        participant S as 文書の違反の検査
+        D->>S: 標準入力に文書の YAML
+        S->>S: 文書の YAML に .yamllint.yaml の設定で yamllint を適用する
+        S-->>D: 終了コード 0 と違反の配列
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力の配列が 1 件で、`path` が `-`
+      - '`rule` が `1 行目: yamllint/comments: ` で始まる'
+    test: test_normal_when_yamllint_violations
+  - name: 正常系（map の点検のずれがある）
+    summary: map を含む項目の mdmark の map のずれを、元の文書の行の違反で返却する
+    setup:
+      - name: Mock
+        description: 差し替えない
+      - name: 配信元
+        description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
+      - name: 標準入力
+        description: '`items[0].body` の 1 つの map の範囲に、Mermaid として解釈できる `flowchart` の mermaid のコードブロックを 2 つ持つ文書'
+        notes: mdmark の `map_invalid`
+      - name: mdmark の CLI
+        description: PATH の先頭に、`npx -y github:shuhei1101/mdmark#{MDMARK_REF}` を起動する `mdmark` を配置する（ランナーの PATH に mdmark の CLI が無いため）。起動するのは本物の mdmark
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant D as project-index
+        participant S as 文書の違反の検査
+        participant C as mdmark の CLI
+        D->>S: 標準入力に文書の YAML
+        S->>S: map を含む項目をつないだ Markdown を作る
+        S->>C: check --text -（一時のフォルダで）
+        C-->>S: map_invalid の行・ずれ 1 件・終了コード 1
+        S->>S: 元の文書の行と項目のパスに対応させる
+        S-->>D: 終了コード 0 と違反の配列
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力の配列が 1 件で、`path` が `items[0].body`
+      - '`rule` が `{行} 行目: mdmark/map_invalid: ` で始まり、行が `items[0].body` の中の行と一致する'
+    test: test_normal_when_map_violations
+  - name: 正常系（mdmark の CLI が無い）
+    summary: 'map を含む項目があり mdmark の CLI が PATH に見つからなければ、`path: $` の違反 1 件とほかの検査の違反を返却する'
+    setup:
+      - name: Mock
+        description: '`node` へのシンボリックリンクだけを持ち `mdmark` を持たないフォルダを、子プロセスの環境変数 `PATH` にする'
+      - name: 配信元
+        description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
+      - name: 標準入力
+        description: '`items[0].body` に `<!-- map -->` の範囲を持ち、ほかの違反を持たない文書'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant D as project-index
+        participant S as 文書の違反の検査
+        D->>S: 標準入力に文書の YAML
+        S->>S: map を含む項目があり、PATH に mdmark の CLI が無い
+        S-->>D: 終了コード 0 と path $ の違反
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力の配列が 1 件で、`path` が `$`、`rule` に mdmark の CLI が見つからないこと、`fix` に mdmark の CLI を入れることが入る
+    test: test_normal_when_mdmark_missing
+  - name: 正常系（map の点検が失敗する）
+    summary: 'mdmark の終了コードが 0・1 でないか最後の行が `ずれ {件数} 件` でなければ、`path: $` の違反 1 件を返却する'
+    setup:
+      - name: Mock
+        description: '`mdmark` を、標準エラーに 1 行を出して終了コード 2 で終わるシェルスクリプトに差し替える'
+        notes: 子プロセスの環境変数 `PATH` の先頭のフォルダに配置する
+      - name: 配信元
+        description: '`project-index.yaml`（`docs/rule/*.yaml` の行だけ）を持つ一時フォルダ'
+      - name: 標準入力
+        description: '`items[0].body` に `<!-- map -->` の範囲を持ち、ほかの違反を持たない文書'
+    flow: |-
+      <!-- map -->
+
+      ```mermaid
+      sequenceDiagram
+        participant D as project-index
+        participant S as 文書の違反の検査
+        participant C as mdmark の CLI
+        D->>S: 標準入力に文書の YAML
+        S->>C: check --text -
+        C-->>S: 終了コード 2 と標準エラー
+        S-->>D: 終了コード 0 と path $ の違反
+      ```
+
+      <!-- /map -->
+    expected:
+      - 終了コードが 0
+      - 標準出力の配列が 1 件で、`path` が `$`、`rule` に mdmark の終了コードと標準エラーが入る
+    test: test_normal_when_map_check_fails
+lead: 標準入力の文書 1 件に、スキーマで見られない決まり（項目の ID の重複・`id:` の参照と `related` の `to` の実在・`aliases` の衝突・文書の中の `aliases` の重複・Markdown の項目の markdownlint-cli2・textlint の違反・文書の YAML の yamllint の違反・map の点検のずれ）を適用し、違反を project-index の validators の約束で標準出力へ返却する。
 identifier: knowledge-checks
 idempotent: true
-side_effects: 一時フォルダに Markdown の項目の `.md` を書き出し、終えたら削除する（配信元のファイルは書き換えない）
+side_effects: 一時フォルダに Markdown の項目の `.md` を書き出し、map の点検では一時フォルダで mdmark を呼び、終えたら削除する（配信元のファイルは書き換えない）
 callers:
   - SC-72-5#scenarios[正常シナリオ]
   - SC-72-6#scenarios[正常シナリオ]
   - SC-72-5#scenarios[異常シナリオ（本文に textlint の違反がある）]
-  - SC-72-5#scenarios[異常シナリオ（作業ツリーに textlint が無い）]
+  - SC-72-5#scenarios[異常シナリオ（作業ツリーに markdownlint-cli2・textlint が無い）]
+  - SC-72-5#scenarios[異常シナリオ（本文に markdownlint-cli2 の違反がある）]
+  - SC-72-5#scenarios[異常シナリオ（文書の YAML に yamllint の違反がある）]
+  - SC-72-5#scenarios[異常シナリオ（map の図を描けない）]
+  - SC-72-5#scenarios[異常シナリオ（map を含む文書の書き込みで mdmark の CLI が無い）]
   - SC-536-1#scenarios[正常シナリオ]
   - SC-536-1#scenarios[異常シナリオ（本文に textlint の違反がある）]
+  - SC-536-1#scenarios[異常シナリオ（本文に markdownlint-cli2 の違反がある）]
 exclusivity: 制限なし（読み込むだけで、同時に起動されても結果は変わらない）
 request:
   - name: stdin
@@ -420,7 +603,7 @@ request:
     required: false
     default: '`knowledge_checks.py` と同じフォルダの `lint/`'
     location: argument
-    description: textlint の設定（`.textlintrc.json`）と npm の依存（`node_modules/.bin/textlint`）を持つフォルダ
+    description: lint の設定（`.markdownlint-cli2.jsonc`・`.textlintrc.json`・`.yamllint.yaml`）と npm の依存（`node_modules/.bin/markdownlint-cli2`・`node_modules/.bin/textlint`）を持つフォルダ
     notes: project-index の `validators` からは指定せず、書き込む作業ツリーの `scripts/lint/` を使用する。結合テストで設定を差し替えるときに指定する
 response:
   - name: stdout
@@ -428,7 +611,7 @@ response:
     description: 違反の配列の JSON。違反が無ければ `[]`
   - name: stdout[].path
     type: str
-    description: 違反した項目のパス（project-index の項目のパスと同じ記載方法）。文書全体にかかるものは `$`
+    description: 違反した項目のパス（project-index の項目のパスと同じ記載方法）。文書全体にかかるものは `$`。yamllint の違反はファイル全体に適用した lint の `-`
     example: items[3].body
   - name: stdout[].rule
     type: str
@@ -483,6 +666,17 @@ constraints:
   - item: textlint
     constraint: '文書の Markdown の項目（パスの末尾が `body` の文字列）を 1 項目 1 ファイルの一時の `.md` にし、`--lint-dir` の `.textlintrc.json` で textlint を 1 回呼ぶ。`error` で返却した違反を、項目のパスを `path`、元の文書の行と `textlint/{ルール}: {内容}` を `rule` にした違反 1 件にする。`warning` で返却した違反は返却しない。Markdown の項目が無い文書では textlint を呼ばず、textlint があるかも確認しない'
     decided_by: IF-72-3#constraints[lint の設定]
-  - item: textlint が無い・失敗したとき
-    constraint: 'textlint が `--lint-dir` の `node_modules/.bin/` に無いときと、textlint の終了コードが 0・1 でないか出力を読み込めないときは、textlint の違反の代わりに `path: $` の違反 1 件を返却し、書き込みを止める。ほかの検査の違反も並べて返却し、終了コードは 0 にする'
+  - item: markdownlint-cli2
+    constraint: 'textlint と同じ一時の `.md` に、`--lint-dir` の `.markdownlint-cli2.jsonc` で markdownlint-cli2 を 1 回呼ぶ。`error` で返却した違反を、項目のパスを `path`、元の文書の行と `markdownlint/{ルール}: {内容}` を `rule` にした違反 1 件にする。`warning` で返却した違反は返却しない。Markdown の項目が無い文書では markdownlint-cli2 を呼ばず、markdownlint-cli2 があるかも確認しない'
+    decided_by: IF-72-3#constraints[lint の設定]
+  - item: markdownlint-cli2・textlint が無い・失敗したとき
+    constraint: 'markdownlint-cli2・textlint のどちらかが `--lint-dir` の `node_modules/.bin/` に無いときは、どちらも呼ばずに、見つからない CLI を並べた `path: $` の違反 1 件を返却する。どちらかの終了コードが 0・1 でないか出力を読み込めないときは、markdownlint-cli2・textlint の違反の代わりに `path: $` の違反 1 件を返却する。どちらも `fix` は `npm ci --prefix scripts/lint` を実行することにし、ほかの検査の違反も並べて返却し、終了コードは 0 にする'
+  - item: yamllint
+    constraint: '標準入力の文書の YAML 全体に、`--lint-dir` の `.yamllint.yaml` の設定で yamllint を Python のライブラリとして同じプロセスで適用する。`error` の違反を、`path` を `-`、`rule` を `{行} 行目: yamllint/{ルール}: {内容}` にした違反 1 件にする。`warning` の違反は返却しない。YAML として読み込めない文書には適用しない（読み込めない違反 1 件だけを返却する）'
+    decided_by: IF-72-3#constraints[lint の設定]
+  - item: map の点検
+    constraint: '値に `<!-- map -->` を含む文字列の項目（パスの末尾を問わない）を、項目の間に空行 2 行を挟んで 1 つの Markdown につなぎ、`PATH` の `mdmark` の `check --text -` を一時のフォルダで 1 回呼ぶ（project-index の書き込みの点検と同じ CLI。npx で取得しない）。種類が `map_` で始まるずれだけを、項目のパスを `path`、元の文書の行と `mdmark/{種類}: {内容}` を `rule` にした違反 1 件にする。該当する項目が 0 件なら mdmark を呼ばず、mdmark の CLI があるかも確認しない'
+    decided_by: IF-72-3#constraints[map の違反にするずれ]
+  - item: mdmark の CLI が無い・map の点検が失敗したとき
+    constraint: 'map を含む項目があり `PATH` に `mdmark` が無いときは、`fix` を mdmark の CLI を入れることにした `path: $` の違反 1 件を返却する。mdmark の終了コードが 0・1 でないか標準出力の最後の行が `ずれ {件数} 件` でないときは、map のずれの代わりに、mdmark の終了コードと標準エラーを `rule` に入れ、`fix` を PATH の mdmark の CLI が `check --text` を持つかを確認することにした `path: $` の違反 1 件を返却する。どちらもほかの検査の違反も並べて返却し、終了コードは 0 にする'
 test_file: tests/integration/scripts/test_knowledge_checks.py

@@ -1,0 +1,14 @@
+mdmark の CLI の導入:
+  説明: "`write_docs` を受ける project-index のプロセスの PATH に、`check --text` を持つ mdmark の CLI を入れる（`npm install -g github:shuhei1101/mdmark#develop` か、project-index の管理の MCP の `update`）。書き込みの検査が map を含む文書を PATH の mdmark で点検するため、入っていないと map を含む knowledge の文書を書き込めない"
+  タグ: [ユーザーの操作, 導入]
+  実行者: ユーザー
+  時期: マージの前
+  回数: 1 回限り
+  可逆: true
+  疎通確認: null
+  実行: null
+  確認: null
+  切り戻し: null
+  失敗時: 実行者が原因を確かめて依頼元へ返す
+  確認方法: "project-index のプロセスと同じ PATH で `printf 'x\\n' | mdmark check --text -` を実行すると、最後の行に `ずれ 0 件` が出る"
+  状態: skipped
