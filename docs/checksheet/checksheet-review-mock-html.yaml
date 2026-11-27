@@ -119,12 +119,14 @@ aspects:
     visibility: internal
   - id: aspect-review-mock-html-11
     name: スマホ幅の配置
-    description: スマホ幅が PC の配置を縦に並べただけになっていない・情報量が多すぎず不必要に縦長になっていない・固定ヘッダー / フッター / フローティングボタンが中身を隠していないこと
+    description: スマホ幅が PC の配置を縦に並べただけになっていない・情報量が多すぎず不必要に縦長になっていない・固定ヘッダー / フッター / フローティングボタンが中身を隠していない（最後までスクロールした位置でも、最後の要素と操作が隠れていない）こと
     tags:
       - name: target:モック HTML
         main: true
       - name: process:モック作成
+      - name: target:実装した画面
     visibility: internal
+    note: 規約 [レイアウト](id:ui-layout) の「画面の下に固定した要素の後ろの余白」
   - id: aspect-review-mock-html-12
     name: スマホ幅の表
     description: スマホ幅で表の列が細くなりすぎて 1 行が縦に長くなっていない・操作列が見えること
