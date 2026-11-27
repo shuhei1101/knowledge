@@ -236,3 +236,13 @@ aspects:
       - name: target:実装した画面
       - name: process:モック作成
     visibility: internal
+  - id: aspect-review-mock-html-25
+    name: 部品のライブラリーにある部品の自前の実装
+    description: 部品のライブラリー（shadcn/ui 等。対応は規約 [共通コンポーネント規約](id:convention-common-components#shadcn-mapping-02)）にある部品（選択の欄・チェックボックス・スイッチ・コンボボックス等）を、標準の HTML 要素や自前の実装で作っていないこと
+    note: ライブラリーに対応する部品が無いもの（対応表の「自前」）は問わない
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: target:実装した画面
+      - name: process:モック作成
+    visibility: internal
