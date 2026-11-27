@@ -1,0 +1,20 @@
+docs:
+  - page: docs/flowchart/flowchart-short-text-overflow.yaml
+    new: true
+    change: 狭い幅でヘッダーの文字と画面の短い文言（通知・ボタン・ラベル・見出し）が折り返す・省略されるときの対処を判定する判定フローチャートを新設する
+    status: todo
+  - page: docs/rule/ui-layout.yaml
+    new: false
+    change: 短い固定の文言が狭い幅で収まらないときの対処は判定フローチャートで決める旨と、related の行を追加する
+    status: todo
+  - page: docs/rule/ui-input-wording.yaml
+    new: false
+    change: 狭い幅で文言が収まらないときの対処は判定フローチャートで決める旨と、related の行を追加する
+    status: todo
+scope_out:
+  - item: 本文・説明文の折り返しの扱い
+    reason: 要望が対象外（折り返してよいもの）と定めている
+    plan: none
+  - item: ai-monitor の planner『モック作成』『設計』と reviewer の画面の確認の観点から、この判定フローチャートを参照する修正
+    reason: ai-monitor のリポジトリの手順で、shuhei1101/ai-monitor#3851 が扱う
+    plan: shuhei1101/ai-monitor#3851
