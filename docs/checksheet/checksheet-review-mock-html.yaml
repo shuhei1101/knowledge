@@ -226,3 +226,13 @@ aspects:
         main: true
       - name: process:モック作成
     visibility: internal
+  - id: aspect-review-mock-html-24
+    name: 画面で分かることの補足文
+    description: 見出し・ラベル・一覧の行に、画面を確認すれば分かること（件数・既定の値・選択した状態・操作の方法）を重ねて記載した補足の文や括弧書きが無いこと
+    note: '例: 選択肢の並びの上の「n/m 登録」、見出しの横の「3 状態・既定 〇〇」、ラベルの後ろの「（読点で区切る）」。規約 [情報の階層と見た目](id:ui-information-hierarchy#information-hierarchy-01)・[入力と文言](id:ui-input-wording#wording-01)'
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: target:実装した画面
+      - name: process:モック作成
+    visibility: internal
