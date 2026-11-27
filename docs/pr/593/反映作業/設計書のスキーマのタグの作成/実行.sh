@@ -4,7 +4,7 @@ set -eu
 # この PR の変更を表すマーカー（テスト実行方法のスキーマの notes の x-rules に、画面の起動のセクションの決まりがある）
 has_change() {
   F=$(git show "$1:schemas/design/test_procedure.schema.yaml" 2>/dev/null) || return 1
-  printf '%s\n' "$F" | grep -qF -- '実装した画面を作業ブランチの worktree から開く手順を持つプロジェクトは、`画面の起動` のセクションを記載する。' || return 1
+  printf '%s\n' "$F" | grep -qF -- '実装した画面（画面設計の `screen` が指す実装・Storybook の部品 等）を持つプロジェクトは、`画面の起動` のセクションを記載する。' || return 1
   return 0
 }
 
