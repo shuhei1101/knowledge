@@ -1,0 +1,21 @@
+docs:
+  - page: schemas/design/test_procedure.schema.yaml
+    new: false
+    change: トップレベルの notes に、実装した画面（画面設計の `screen` が指す実装・Storybook の部品 等）を持つプロジェクトは `画面の起動` のセクションに画面ごとの起動・閲覧 URL の得方・止め方の表を記載する x-rules と、その表を縮めた examples を追加する
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-27T13:30:51.875854+00:00'
+  - page: docs/template/template-test-procedure.yaml
+    new: false
+    change: スキーマの変更を scripts/build_templates.py で再生成して取り込む
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-27T13:30:51.875854+00:00'
+use_cases: []
+scope_out:
+  - item: layers[].name の enum への `画面の起動` の追加
+    reason: 画面の起動はテストの層ではなく、補足（notes）のセクションで持つ（shuhei1101/ai-monitor#3848 で参照先を notes に統一した）
+    plan: none
+  - item: 配布先の各プロジェクトのテスト実行方法への `画面の起動` の記載
+    reason: '各プロジェクトの作業 PR で記載する（例: shuhei1101/gui-support#81）。knowledge は記載方法だけを持つ'
+    plan: none
