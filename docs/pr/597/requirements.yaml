@@ -1,0 +1,15 @@
+docs:
+  - page: docs/rule/claude-common.yaml
+    new: false
+    change: 認証領域（~/.claude*）の .credentials.json を別の場所へコピーして claude を起動しない決まりと、認証が要る確認は claude-balancer から借りて起動し、認証の要らない確認は認証情報を配置しない一時の認証領域で起動して --debug-file で確認する起動の方法の項目を追加し、description・tags を内容に合わせる
+    status: done
+    updated_by: planner
+    updated_at: '2026-11-27T17:28:02.207107+00:00'
+scope_out:
+  - item: ai-monitor の規約『実行環境の認証情報』から、この規約の具体を参照する修正
+    reason: ai-monitor のリポジトリの規約で、shuhei1101/ai-monitor#3851 が扱う
+    plan: shuhei1101/ai-monitor#3851
+  - item: ai-monitor の連絡ボードの暫定の行の削除
+    reason: ai-monitor の運用で、規約へ記載した後に shuhei1101/ai-monitor#3851 の側で扱う
+    plan: shuhei1101/ai-monitor#3851
+use_cases: []
