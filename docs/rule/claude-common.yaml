@@ -2,7 +2,7 @@
 id: claude-common
 kind: rule
 name: Claude 成果物の共通ルール
-description: SKILL.md・ルール・CLAUDE.md の文章の確認、スクリプトの配置場所、メインエージェント・スキル・カスタムサブエージェントの違いを定め、これらの Claude 成果物を作る・修正するときに参照する。
+description: SKILL.md・ルール・CLAUDE.md の文章の確認、スクリプトの配置場所、メインエージェント・スキル・カスタムサブエージェントの違い、Claude Code を確認のために起動する方法を定め、これらの Claude 成果物を作る・修正するときと、Claude Code を確認のために起動するときに参照する。
 tags:
   - name: scope:claude
   - name: topic:スクリプト
@@ -19,10 +19,13 @@ tags:
   - name: action:呼び出し
   - name: action:定義
   - name: action:配置
+  - name: action:起動
+  - name: action:認証
+  - name: action:ログアウト
 status: current
 visibility: internal
-rev: 5
-last_reviewed: '2026-11-05'
+rev: 6
+last_reviewed: '2026-11-28'
 items:
   - id: concise-writing-01
     group: 簡潔に記載する
@@ -111,3 +114,19 @@ items:
     name: 呼び出し元を本文に記載しない
     body: |-
       - サブエージェント側は呼び出し元を知らないので、呼び出し元のスキル名やフェーズ名を本文に記載しないこと。
+  - id: launch-auth-01
+    group: Claude Code の起動
+    name: 認証情報をコピーして起動しない
+    body: |-
+      - 認証領域（`~/.claude*`）の `.credentials.json` を別の場所へコピーして `claude` を起動しない。
+        コピーした先で token が取り直されると、元の認証領域がログアウトする。
+  - id: launch-auth-02
+    group: Claude Code の起動
+    name: 認証が要る確認の起動
+    body: '- 認証が要る確認は、claude-balancer からアカウントを借りて起動する（`claude-balancer exec --client {名前} -- claude ...`）。'
+  - id: launch-auth-03
+    group: Claude Code の起動
+    name: 認証の要らない確認の起動
+    body: |-
+      - 認証の要らない確認（プラグイン・スキル・フックの読み込み 等）は、認証情報を配置しない一時の認証領域で起動し、`--debug-file` に出力したログで確認する。
+        一時の認証領域は、`CLAUDE_CONFIG_DIR` に空のフォルダを指定して作る。
