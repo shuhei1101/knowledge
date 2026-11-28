@@ -145,6 +145,130 @@ properties:
         then:
           required:
           - overflow
+      - if:
+          properties:
+            kind:
+              not:
+                enum:
+                - input
+                - textarea
+                - select
+                - checkbox
+                - radio
+                - toggle
+          required:
+          - kind
+        then:
+          properties:
+            required: false
+            required_label: false
+            constraints: false
+            hint: false
+            input_example: false
+      - if:
+          properties:
+            kind:
+              not:
+                enum:
+                - input
+                - textarea
+                - select
+          required:
+          - kind
+        then:
+          properties:
+            placeholder: false
+            autocomplete: false
+      - if:
+          properties:
+            kind:
+              not:
+                enum:
+                - input
+                - textarea
+          required:
+          - kind
+        then:
+          properties:
+            min_length: false
+            max_length: false
+            pattern: false
+            charset: false
+            inputmode: false
+            prefix: false
+            suffix: false
+      - if:
+          properties:
+            kind:
+              not:
+                enum:
+                - input
+          required:
+          - kind
+        then:
+          properties:
+            range: false
+      - if:
+          properties:
+            kind:
+              not:
+                enum:
+                - select
+                - radio
+                - checkbox
+          required:
+          - kind
+        then:
+          properties:
+            options: false
+      - if:
+          properties:
+            kind:
+              enum:
+              - select
+              - radio
+          required:
+          - kind
+        then:
+          required:
+          - options
+      - if:
+          properties:
+            kind:
+              not:
+                enum:
+                - table_column
+          required:
+          - kind
+        then:
+          properties:
+            sorting: false
+      - if:
+          properties:
+            kind:
+              enum:
+              - table_column
+          required:
+          - kind
+        then:
+          required:
+          - align
+      - if:
+          properties:
+            kind:
+              enum:
+              - label
+              - heading
+              - image
+              - tooltip
+              - progress
+              - separator
+              - shortcut
+          required:
+          - kind
+        then:
+          properties:
+            pending_state: false
       properties:
         name:
           type: string
@@ -165,9 +289,75 @@ properties:
         kind:
           type: string
           title: 種類
-          description: '`button` / `input` / `select` / `table` / `label` 等。'
+          description: 要素の役割の種類。種類ごとに、記載する欄と記載しない欄を検査で分ける。
           x-used-by:
             - 実装で、要素の HTML の要素と部品を決める。
+            - 検査で、種類ごとに必須の欄と記載しない欄を決める。
+          x-rules:
+            - HTML の要素名（`div`・`a`・`h1`・`p`）ではなく、要素の役割で選ぶ。
+            - '`button`: 押すと操作を始める要素（アイコンだけのボタン・メニューの項目を含む）。'
+            - '`link`: 押すと別の画面・場所へ移る要素。'
+            - '`toggle`: 押すたびにオンとオフを切り替え、切り替えた時点で反映する要素（スイッチ・押した状態を持つボタン）。'
+            - '`input`: 1 行の文字・数値・日付を入力する欄。'
+            - '`textarea`: 複数行の文字を入力する欄。'
+            - '`select`: 選択肢を開いて選ぶ要素（ドロップダウン・コンボボックス）。'
+            - '`checkbox`: 項目ごとにオンとオフを選び、送信で反映する要素。'
+            - '`radio`: 並べた選択肢から 1 つを選ぶ要素（セグメントの切り替えを含む）。'
+            - '`tabs`: 押した見出しの中身に切り替えるタブの並び。'
+            - '`nav`: 画面の間を移るリンクの並び（グローバルナビゲーション・パンくず）。'
+            - '`sidebar`: 画面の端に配置し、開閉できる区画。'
+            - '`pane`: 画面を分けた区画（ヘッダー・フッター・本文・フォーム・パネル）。'
+            - '`splitter`: 区画の境目をドラッグして大きさを変える要素。'
+            - '`drag_handle`: 掴んで項目を並べ替える・区画を動かす要素。'
+            - '`disclosure`: 見出しを押して中身を開閉する区画（アコーディオン・`details`）。'
+            - '`list`: 同じ形の項目を並べる一覧。'
+            - '`tree`: 項目を階層で並べ、階層ごとに開閉する一覧。'
+            - '`board`: 列ごとに項目を並べるボード。'
+            - '`table`: 行と列で値を並べる表。'
+            - '`table_column`: 表の 1 列。'
+            - '`dialog`: 画面の上に重ねて開き、閉じるまで後ろを操作させない区画（モーダル・シート）。'
+            - '`popover`: 要素に添えて開く浮いた区画（メニュー・ポップオーバー）。'
+            - '`tooltip`: ホバー・フォーカスで出す説明。'
+            - '`heading`: 区画の見出し。'
+            - '`label`: 固定の文言か取得した値を出す文字（バッジ・状態の表示を含む）。'
+            - '`image`: 画像・アイコン・図。'
+            - '`alert`: 画面の中に出し続ける通知（エラー・警告・情報のバー）。'
+            - '`toast`: 一時的に出て消える通知。'
+            - '`progress`: 処理中・読み込み中の表示（進捗バー・スピナー・スケルトン）。'
+            - '`separator`: 区切り線。'
+            - '`shortcut`: 見た目を持たず、画面全体で受けるキー操作。'
+          enum:
+          - button
+          - link
+          - toggle
+          - input
+          - textarea
+          - select
+          - checkbox
+          - radio
+          - tabs
+          - nav
+          - sidebar
+          - pane
+          - splitter
+          - drag_handle
+          - disclosure
+          - list
+          - tree
+          - board
+          - table
+          - table_column
+          - dialog
+          - popover
+          - tooltip
+          - heading
+          - label
+          - image
+          - alert
+          - toast
+          - progress
+          - separator
+          - shortcut
         component:
           $ref: common.schema.yaml#/$defs/ref
           title: 部品
@@ -277,6 +467,8 @@ properties:
           description: 入力欄が空のときに出す文言。
           x-used-by:
             - 実装で、入力欄のプレースホルダにする。
+          x-rules:
+            - '`kind` が `input`・`textarea`・`select` の要素だけに記載する。'
         io:
           type: string
           title: 入出力区分
@@ -313,6 +505,8 @@ properties:
           description: 入力が必須なら `true`。
           x-used-by:
             - 実装で、入力を必須にするかを決める。
+          x-rules:
+            - '`kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle` の要素だけに記載する。'
         condition:
           $ref: common.schema.yaml#/$defs/key_condition
         required_label:
@@ -321,12 +515,16 @@ properties:
           description: '`※必須` / `※任意` の出し方。'
           x-used-by:
             - 実装で、必須・任意の表示にする。
+          x-rules:
+            - '`kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle` の要素だけに記載する。'
         constraints:
           type: string
           title: 制限
           description: '`min_length`・`max_length`・`range`・`pattern`・`charset` で表せない入力の制限。'
           x-used-by:
             - 実装で、個別のキーで表せない入力の検証にする。
+          x-rules:
+            - '`kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle` の要素だけに記載する。'
         min_length:
           type: integer
           title: 最小長
@@ -334,6 +532,8 @@ properties:
           x-used-by:
             - 実装で、入力の最小の長さの検証にする。
             - テストで、境界の長さのケースにする。
+          x-rules:
+            - '`kind` が `input`・`textarea` の要素だけに記載する。'
         max_length:
           type: integer
           title: 最大長
@@ -341,12 +541,16 @@ properties:
           x-used-by:
             - 実装で、入力の最大の長さの検証と `maxlength` にする。
             - テストで、境界の長さのケースにする。
+          x-rules:
+            - '`kind` が `input`・`textarea` の要素だけに記載する。'
         range:
           type: object
           title: 値の範囲・刻み
           description: 数値の入力の最小・最大・刻み。
           x-used-by:
             - 実装で、数値の入力の `min`・`max`・`step` にする。
+          x-rules:
+            - '`kind` が `input` の要素だけに記載する。'
           additionalProperties: false
           properties:
             min:
@@ -373,12 +577,16 @@ properties:
           description: 正規表現。
           x-used-by:
             - 実装で、入力の形式の検証にする。
+          x-rules:
+            - '`kind` が `input`・`textarea` の要素だけに記載する。'
         charset:
           type: string
           title: 文字種の扱い
           description: 受け付ける文字と、制限せず変換するか。
           x-used-by:
             - 実装で、受け付ける文字の検証と変換にする。
+          x-rules:
+            - '`kind` が `input`・`textarea` の要素だけに記載する。'
         width:
           type: string
           title: 表示幅
@@ -493,6 +701,8 @@ properties:
           description: 文字揃え（左・中央・右）。
           x-used-by:
             - 実装で、文字揃えにする。
+          x-rules:
+            - '`kind` が `table_column` の要素には必ず記載する。'
           enum:
           - 左
           - 中央
@@ -528,6 +738,7 @@ properties:
             - レビューで、応答を待つ間に続けて操作したときの振る舞いと照合する。
           x-rules:
             - 書き込みを始める要素と、応答を待つ間に操作を止める要素に記載する。
+            - '`kind` が `label`・`heading`・`image`・`tooltip`・`progress`・`separator`・`shortcut` の要素には記載しない。'
           examples:
             - 非活性にし、ボタンの文言の左に回る表示を出す（ボタンの幅は変えない）
         initial_value:
@@ -542,48 +753,64 @@ properties:
           description: ラベルの下に出す説明。
           x-used-by:
             - 実装で、ラベルの下の補助文にする。
+          x-rules:
+            - '`kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle` の要素だけに記載する。'
         autocomplete:
           type: string
           title: 入力の目的
           description: 自動入力の種類（HTML の `autocomplete`）。
           x-used-by:
             - 実装で、入力欄の `autocomplete` にする。
+          x-rules:
+            - '`kind` が `input`・`textarea`・`select` の要素だけに記載する。'
         inputmode:
           type: string
           title: 入力モード
           description: 入力欄の `inputmode`（`numeric`・`email` 等）。
           x-used-by:
             - 実装で、入力欄の `inputmode` にする。
+          x-rules:
+            - '`kind` が `input`・`textarea` の要素だけに記載する。'
         prefix:
           type: string
           title: 接頭辞
           description: 入力欄の前に出す文字列（通貨記号 等）。
           x-used-by:
             - 実装で、入力欄の前に出す文字列にする。
+          x-rules:
+            - '`kind` が `input`・`textarea` の要素だけに記載する。'
         suffix:
           type: string
           title: 接尾辞
           description: 入力欄の後に出す文字列（単位 等）。
           x-used-by:
             - 実装で、入力欄の後に出す文字列にする。
+          x-rules:
+            - '`kind` が `input`・`textarea` の要素だけに記載する。'
         options:
           type: string
           title: 選択肢
           description: 出所・並び・既定・複数選択の可否・排他入力。
           x-used-by:
             - 実装で、選択肢の出所・並び・既定・複数選択にする。
+          x-rules:
+            - '`kind` が `select`・`radio` の要素には必ず記載し、`checkbox` の要素には選択肢を並べるときに記載する。'
         sorting:
           type: string
           title: 並べ替え・絞り込み
           description: 表の列のとき、できるかと既定の並び。
           x-used-by:
             - 実装で、表の列の並べ替え・絞り込みにする。
+          x-rules:
+            - '`kind` が `table_column` の要素だけに記載する。'
         input_example:
           type: string
           title: 入力例
           description: テストで入力する値の具体例。
           x-used-by:
             - テストで、入力する値にする。
+          x-rules:
+            - '`kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle` の要素だけに記載する。'
         source:
           type: string
           title: 取得元
