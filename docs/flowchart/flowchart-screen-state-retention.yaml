@@ -84,7 +84,7 @@ items:
         q7 -->|NO| r8
       ```
 
-      <!-- map-data: {"version": 1, "notes": {"r2": {"annotations": ["screen-state-retention-n1"]}, "r5": {"annotations": ["screen-state-retention-n2"]}, "r6": {"annotations": ["screen-state-retention-n3"]}}} -->
+      <!-- map-data: {"version": 1, "notes": {"r2": {"annotations": ["screen-state-retention-n1"]}, "r5": {"annotations": ["screen-state-retention-n2"]}, "r4": {"annotations": ["screen-state-retention-n4"]}, "r6": {"annotations": ["screen-state-retention-n3", "screen-state-retention-n4"]}, "r7": {"annotations": ["screen-state-retention-n4"]}}} -->
 
       <!-- /map -->
 
@@ -99,6 +99,8 @@ items:
 
       ※[screen-state-retention-n3]: 再度入ったときの復元: URL にも値を持つ状態は URL を優先する。
           sessionStorage の値は URL に値が無いときだけ使用し、使用したら URL に replace で反映する。
+
+      ※[screen-state-retention-n4]: Web Storage のキー: [Web Storage のキーの付け方](id:ui-input-wording#storage-key-01) に従う。
 tags:
   - name: scope:判定フローチャート
   - name: topic:判定フローチャート
