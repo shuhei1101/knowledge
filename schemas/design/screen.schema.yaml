@@ -14,7 +14,106 @@ additionalProperties: false
 required:
 - id
 - title
+- screen_type
+- leave_guard
 - elements
+allOf:
+- if:
+    properties:
+      screen_type:
+        const: list
+    required:
+    - screen_type
+  then:
+    properties:
+      elements:
+        x-used-by:
+          - 検査で、画面の型に要る種類の要素があるかを確認する。
+        contains:
+          properties:
+            kind:
+              x-used-by:
+                - 検査で、画面の型に要る要素の種類にする。
+              enum:
+              - table
+              - list
+              - board
+              - tree
+          required:
+          - kind
+- if:
+    properties:
+      screen_type:
+        enum:
+        - list
+        - detail
+        - edit
+        - settings
+    required:
+    - screen_type
+  then:
+    properties:
+      elements:
+        x-used-by:
+          - 検査で、画面の型に要る種類の要素があるかを確認する。
+        contains:
+          properties:
+            kind:
+              x-used-by:
+                - 検査で、画面の型に要る要素の種類にする。
+              const: heading
+          required:
+          - kind
+- if:
+    properties:
+      screen_type:
+        enum:
+        - edit
+        - settings
+    required:
+    - screen_type
+  then:
+    properties:
+      elements:
+        x-used-by:
+          - 検査で、画面の型に要る種類の要素があるかを確認する。
+        contains:
+          properties:
+            kind:
+              x-used-by:
+                - 検査で、画面の型に要る要素の種類にする。
+              enum:
+              - input
+              - textarea
+              - select
+              - checkbox
+              - radio
+              - toggle
+          required:
+          - kind
+- if:
+    properties:
+      screen_type:
+        const: shell
+    required:
+    - screen_type
+  then:
+    required:
+    - retained_state
+    properties:
+      elements:
+        x-used-by:
+          - 検査で、画面の型に要る種類の要素があるかを確認する。
+        contains:
+          properties:
+            kind:
+              x-used-by:
+                - 検査で、画面の型に要る要素の種類にする。
+              enum:
+              - nav
+              - sidebar
+          required:
+          - kind
 properties:
   id:
     $ref: common.schema.yaml#/$defs/id
@@ -94,6 +193,50 @@ properties:
       pattern: ^(?!tests/).+
     examples:
       - - app/(authenticated)/tasks/new/_components/task-create-form.tsx
+  screen_type:
+    type: string
+    title: 画面の型
+    description: 画面の型。型ごとに、持つべき要素の種類を検査で求める。
+    x-used-by:
+      - 実装で、規約『レイアウト』の `screen-template-01` の画面型の構成にする。
+      - 検査で、型ごとに要る要素の `kind` があるかを確認する。
+    x-rules:
+      - '`list`: 項目を並べて選ぶ一覧の画面。`table`・`list`・`board`・`tree` の要素と `heading` の要素を持つ。'
+      - '`detail`: 1 件を参照する詳細の画面。`heading` の要素を持つ。'
+      - '`edit`: 1 件を作る・編集する画面。`heading` の要素と入力の要素を持つ。'
+      - '`settings`: 設定を変える画面。`heading` の要素と入力の要素を持つ。'
+      - '`shell`: ほかの画面を中に描く共通のレイアウト（ヘッダー・サイドバー・上タブ）。`nav` か `sidebar` の要素を持つ。'
+      - '`other`: どの型にも該当しない画面。'
+      - 一覧の画面の必須の要素（読み込み中・空の表示・ページ送り）は、規約『一覧画面』の `required-elements-01` に従って要素に並べる。
+    enum:
+    - list
+    - detail
+    - edit
+    - settings
+    - shell
+    - other
+  leave_guard:
+    type: string
+    title: 離脱の警告
+    description: 画面を離れるときに警告する条件。
+    x-used-by:
+      - 実装で、画面を離れる操作（画面の移動・タブを閉じる・再読み込み）の前に警告する条件にする。
+      - テストで、警告が出るケースと出ないケースにする。
+    x-rules:
+      - 未保存の入力があるまま画面を離れるときは警告する（規約『入力と文言』の `state-retention-02`）。
+      - 自動保存の画面は、保存に失敗した入力が残るときに警告する（規約『自動保存』の `rules-01`）。
+      - '`none`: 警告しない（入力を持たない画面）。'
+      - '`unsaved`: 未保存の入力があるときに警告する。'
+      - '`autosave_error`: 自動保存に失敗した入力が残るときに警告する。'
+    enum:
+    - none
+    - unsaved
+    - autosave_error
+  retained_state:
+    $ref: common.schema.yaml#/$defs/retained_state
+    description: 画面全体で保持する状態（上タブ（領域）ごとに最後に開いたページ・ページ全体のスクロール位置 等）。要素ごとの状態は要素の `retained_state` に記載する。
+    x-rules:
+      - '`shell` の画面には必ず記載し、上タブ（領域）ごとに最後に開いたページを記載する（規約『入力と文言』の `state-retention-01`）。上タブを持たない `shell` は、`store` を `none` にした行を記載する。'
   elements:
     type: array
     title: 要素一覧
@@ -119,7 +262,7 @@ properties:
       - if:
           properties:
             io:
-              const: 表示
+              const: output
           required:
           - io
           - source
@@ -138,8 +281,8 @@ properties:
           - properties:
               io:
                 enum:
-                - 入力
-                - 入出力
+                - input
+                - input_output
             required:
             - io
         then:
@@ -242,7 +385,10 @@ properties:
           - kind
         then:
           properties:
-            sorting: false
+            sortable: false
+            filterable: false
+            pinnable: false
+            hideable: false
       - if:
           properties:
             kind:
@@ -253,6 +399,265 @@ properties:
         then:
           required:
           - align
+          - sortable
+      - if:
+          properties:
+            kind:
+              const: button
+          required:
+          - kind
+        then:
+          required:
+          - label_display
+          - confirm
+      - if:
+          properties:
+            kind:
+              not:
+                enum:
+                - button
+                - link
+                - toggle
+          required:
+          - kind
+        then:
+          properties:
+            label_display: false
+      - if:
+          properties:
+            label_display:
+              enum:
+              - icon_only
+              - icon_and_text
+          required:
+          - label_display
+        then:
+          required:
+          - icon
+      - if:
+          properties:
+            label_display:
+              const: icon_only
+          required:
+          - label_display
+        then:
+          required:
+          - accessible_name
+          - tooltip
+          properties:
+            label: false
+      - if:
+          properties:
+            kind:
+              enum:
+              - input
+              - textarea
+              - select
+          required:
+          - kind
+        then:
+          properties:
+            icon: false
+      - if:
+          properties:
+            kind:
+              const: toggle
+          required:
+          - kind
+        then:
+          required:
+          - toggle_state
+      - if:
+          properties:
+            kind:
+              not:
+                enum:
+                - toggle
+                - button
+          required:
+          - kind
+        then:
+          properties:
+            toggle_state: false
+      - if:
+          properties:
+            kind:
+              not:
+                enum:
+                - button
+                - link
+                - toggle
+                - drag_handle
+          required:
+          - kind
+        then:
+          properties:
+            confirm: false
+      - if:
+          not:
+            required:
+            - enabled_when
+        then:
+          properties:
+            disabled_reason: false
+      - if:
+          properties:
+            kind:
+              const: button
+          required:
+          - kind
+          - enabled_when
+        then:
+          required:
+          - disabled_reason
+      - if:
+          properties:
+            kind:
+              const: tabs
+          required:
+          - kind
+        then:
+          required:
+          - tabs
+          - retained_state
+        else:
+          properties:
+            tabs: false
+      - if:
+          properties:
+            kind:
+              const: sidebar
+          required:
+          - kind
+        then:
+          required:
+          - pane
+      - if:
+          properties:
+            kind:
+              not:
+                enum:
+                - sidebar
+                - pane
+          required:
+          - kind
+        then:
+          properties:
+            pane: false
+      - if:
+          properties:
+            kind:
+              const: table
+          required:
+          - kind
+        then:
+          required:
+          - table
+        else:
+          properties:
+            table: false
+      - if:
+          properties:
+            kind:
+              enum:
+              - dialog
+              - popover
+          required:
+          - kind
+        then:
+          required:
+          - close
+          - initial_focus
+          - return_focus
+        else:
+          properties:
+            close: false
+            initial_focus: false
+            return_focus: false
+            modal: false
+      - if:
+          properties:
+            kind:
+              const: shortcut
+          required:
+          - kind
+        then:
+          required:
+          - shortcut
+      - if:
+          properties:
+            kind:
+              enum:
+              - label
+              - heading
+              - image
+              - tooltip
+              - progress
+              - separator
+              - table_column
+          required:
+          - kind
+        then:
+          properties:
+            shortcut: false
+            feedback: false
+            history: false
+      - if:
+          properties:
+            kind:
+              enum:
+              - input
+              - textarea
+              - select
+              - checkbox
+              - radio
+              - toggle
+              - tabs
+              - sidebar
+              - pane
+              - disclosure
+              - list
+              - table
+              - tree
+              - board
+          required:
+          - kind
+        then:
+          required:
+          - retained_state
+      - if:
+          properties:
+            kind:
+              enum:
+              - label
+              - heading
+              - image
+              - tooltip
+              - progress
+              - separator
+              - toast
+              - shortcut
+              - link
+              - table_column
+          required:
+          - kind
+        then:
+          properties:
+            retained_state: false
+      - if:
+          properties:
+            kind:
+              not:
+                enum:
+                - alert
+                - toast
+                - label
+                - progress
+          required:
+          - kind
+        then:
+          properties:
+            live: false
       - if:
           properties:
             kind:
@@ -461,6 +866,11 @@ properties:
           description: 画面に固定で出る文字列。
           x-used-by:
             - 実装で、画面に出す文字列にする。
+          x-rules:
+            - 見れば分かるものにラベルを付けない（規約『入力と文言』の `wording-01`）。
+            - 本文の区画に操作の説明文を置かない（規約『情報の階層と見た目』の `information-hierarchy-01`）。
+            - 単語・操作の単語・状態名は、規約『入力と文言』の `wording-term-format-02` に従う。
+            - '`label_display` が `icon_only` の要素には記載しない（文言は `accessible_name` と `tooltip` に記載する）。'
         placeholder:
           type: string
           title: プレースホルダ
@@ -475,10 +885,14 @@ properties:
           description: 表示だけか、入力を受けるかの区分。
           x-used-by:
             - 実装で、表示だけか、入力を受けるかを決める。
+          x-rules:
+            - '`input`: 入力を受けるだけで、取得した値を出さない。'
+            - '`output`: 値を表示するだけで、入力を受けない。'
+            - '`input_output`: 取得した値を出し、入力で変えられる。'
           enum:
-          - 入力
-          - 表示
-          - 入出力
+          - input
+          - output
+          - input_output
         type:
           type: string
           title: 型
@@ -603,8 +1017,8 @@ properties:
             - レビューで、最大の長さの値を入れた画面のスクリーンショットと照合する。
           x-rules:
             - 長さが変わる値を表示する要素に記載し、固定の文言だけの要素には記載しない。
-            - 入力を持たない値を表示する要素（`io` が `表示` で `source` を持つ要素）には必ず記載する。
-            - 固定の領域に配置する要素（`fixed_area` が `true`）で、`source` を持つか `io` が `入力`・`入出力` の要素には必ず記載する。
+            - 入力を持たない値を表示する要素（`io` が `output` で `source` を持つ要素）には必ず記載する。
+            - 固定の領域に配置する要素（`fixed_area` が `true`）で、`source` を持つか `io` が `input`・`input_output` の要素には必ず記載する。
             - '`type` は、規約『レイアウト』の `pitfall-text-code-05`（長さが変わる値を折り返すか省略するかの既定）に従って選ぶ。'
           additionalProperties: false
           required:
@@ -698,15 +1112,15 @@ properties:
         align:
           type: string
           title: 文字揃え
-          description: 文字揃え（左・中央・右）。
+          description: 文字揃え（左 `left`・中央 `center`・右 `right`）。
           x-used-by:
             - 実装で、文字揃えにする。
           x-rules:
             - '`kind` が `table_column` の要素には必ず記載する。'
           enum:
-          - 左
-          - 中央
-          - 右
+          - left
+          - center
+          - right
         tab_order:
           type: integer
           title: タブ順
@@ -725,10 +1139,14 @@ properties:
           description: 画面を開いたときの要素の状態（無効・非表示 等）。
           x-used-by:
             - 実装で、画面を開いたときの要素の状態にする。
+          x-rules:
+            - '`enabled`: 操作できる。'
+            - '`disabled`: 表示するが操作できない。'
+            - '`readonly`: 値を出し、選択・コピーはできるが変えられない。'
           enum:
-          - 活性
-          - 非活性
-          - 読み取り専用
+          - enabled
+          - disabled
+          - readonly
         pending_state:
           type: string
           title: 応答を待つ間の状態
@@ -741,6 +1159,715 @@ properties:
             - '`kind` が `label`・`heading`・`image`・`tooltip`・`progress`・`separator`・`shortcut` の要素には記載しない。'
           examples:
             - 非活性にし、ボタンの文言の左に回る表示を出す（ボタンの幅は変えない）
+        icon:
+          type: string
+          title: アイコン
+          description: 要素に出すアイコンの名前（アイコンのライブラリの名前）。
+          x-used-by:
+            - 実装で、要素に出すアイコンにする。
+            - レビューで、同じ操作に同じアイコンを使用しているかを確認する。
+          x-rules:
+            - 同じ操作には画面をまたいで同じアイコンを使用する（規約『情報の階層と見た目』の `visual-consistency-01`）。
+            - 標準の操作（閉じる・コピー・設定へ移る 等）は既定でアイコンを付ける（規約『ボタンのラベル』の `icon-01`）。
+            - '`kind` が `input`・`textarea`・`select` の要素には記載しない。'
+          examples:
+          - x
+          - copy
+        label_display:
+          type: string
+          title: ラベルの出し方
+          description: アイコンと文字の出し方。
+          x-used-by:
+            - 実装で、アイコンだけ・アイコンと文字・文字だけのどれで出すかにする。
+            - 検査で、アイコンだけのときに読み上げ名とツールチップを必須にする。
+          x-rules:
+            - 規約『ボタンのラベル』の `icon-or-text-01` で選ぶ。
+            - '`icon_only`: アイコンだけを出す。`accessible_name`・`tooltip`・`icon` を記載する。'
+            - '`icon_and_text`: アイコンと文字を出す。`icon` を記載する。'
+            - '`text_only`: 文字だけを出す。'
+            - '`kind` が `button` の要素には必ず記載し、`button`・`link`・`toggle` 以外の要素には記載しない。'
+          enum:
+          - icon_only
+          - icon_and_text
+          - text_only
+        accessible_name:
+          type: string
+          title: 読み上げ名
+          description: スクリーンリーダーが読み上げる要素の名前。
+          x-used-by:
+            - 実装で、要素の `aria-label` にする。
+            - テストで、ロールと名前で要素を探すセレクタにする。
+          x-rules:
+            - '`label_display` が `icon_only` の要素には必ず記載する（規約『操作とアクセシビリティ』の `operation-accessibility-01`）。'
+          examples:
+          - 閉じる
+        tooltip:
+          type: string
+          title: ツールチップ
+          description: ホバー・フォーカスで出す説明の文言。
+          x-used-by:
+            - 実装で、ツールチップの文言にする。
+          x-rules:
+            - '`label_display` が `icon_only` の要素には必ず記載する（規約『ボタンのラベル』の `tooltip-01`）。'
+            - ショートカットを持つ要素は、文言の後ろにキーを出す（規約『キーボード操作』の `discoverability-01`）。
+          examples:
+          - 閉じる（Esc）
+        narrow:
+          type: object
+          title: 狭い幅の出し方
+          description: '`md` 未満の幅で、要素をどう出すか。'
+          x-used-by:
+            - 実装で、狭い幅の要素の出し方にする。
+            - テストで、スマホの幅の場面にする。
+            - レビューで、スマホの幅のスクリーンショットと照合する。
+          x-rules:
+            - 判定フローチャート『狭い幅の短い文言の対処』と、規約『レイアウト』の `responsive-01`〜`responsive-03` で選ぶ。
+            - 狭い幅でも出し方を変えない要素は記載しない。
+          additionalProperties: false
+          required:
+          - action
+          allOf:
+          - if:
+              properties:
+                action:
+                  const: short_label
+              required:
+              - action
+            then:
+              required:
+              - short_label
+            else:
+              properties:
+                short_label: false
+          properties:
+            action:
+              type: string
+              title: 出し方
+              description: 狭い幅での出し方。
+              x-used-by:
+                - 実装で、狭い幅での出し方にする。
+              x-rules:
+                - '`hidden`: 出さない。'
+                - '`icon_only`: アイコンだけにする。'
+                - '`short_label`: 短い別の文言にする。'
+                - '`into_menu`: メニュー（その他の操作）へしまう。'
+                - '`stack`: 縦に並べる。'
+                - '`horizontal_scroll`: 横にスクロールさせる。'
+                - '`collapse_column`: 表の列を畳み、行の詳細に出す。'
+                - '`drawer`: ドロワーにする。'
+              enum:
+              - hidden
+              - icon_only
+              - short_label
+              - into_menu
+              - stack
+              - horizontal_scroll
+              - collapse_column
+              - drawer
+            short_label:
+              type: string
+              title: 短い文言
+              description: '`action` が `short_label` のときに出す文言。'
+              x-used-by:
+                - 実装で、狭い幅で出す文言にする。
+              examples:
+              - 保存
+            priority:
+              type: integer
+              minimum: 1
+              title: 残す順
+              description: 幅が足りないときに残す順（1 が最後まで残る）。
+              x-used-by:
+                - 実装で、幅が足りないときにメニューへしまう順にする。
+        disabled_reason:
+          type: string
+          title: 押せない理由
+          description: '`enabled_when` を満たさないときに、押せない理由を示す文言と出し方。'
+          x-used-by:
+            - 実装で、押せない理由の表示にする。
+            - テストで、押せない状態で理由が出ることを確認する。
+          x-rules:
+            - '`kind` が `button` で `enabled_when` を持つ要素には必ず記載する（規約『入力と文言』の `input-submit-01`）。'
+            - '`enabled_when` を持たない要素には記載しない。'
+          examples:
+          - タスク名を入力すると保存できます（ボタンの下に出す）
+        confirm:
+          type: string
+          title: 取り消しの手段
+          description: 取り返しのつかない操作の前に確認するか、操作の後に取り消せるようにするか。
+          x-used-by:
+            - 実装で、確認のダイアログか、取り消しの通知を出すかにする。
+            - テストで、確認・取り消しのケースにする。
+          x-rules:
+            - 規約『画面設計の原則』の `screen-design-principles-01` で選ぶ。
+            - '`dialog`: 操作の前に確認のダイアログを出す。'
+            - '`undo`: 操作の後に取り消しの手段を出す。'
+            - '`none`: 確認も取り消しもしない（元に戻せる操作）。'
+            - '`kind` が `button` の要素には必ず記載し、`button`・`link`・`toggle`・`drag_handle` 以外の要素には記載しない。'
+          enum:
+          - dialog
+          - undo
+          - none
+        feedback:
+          type: object
+          title: 結果の伝え方
+          description: 操作が成功したとき・失敗したときの伝え方。
+          x-used-by:
+            - 実装で、操作の結果の表示にする。
+            - テストで、成功と失敗の表示を確認する。
+          x-rules:
+            - 結果はアイコンの変化を先に検討する（規約『画面設計の原則』の `screen-design-principles-01`）。
+            - 失敗の伝え方は、規約『入力と文言』の `error-notification-01` に従う。
+          additionalProperties: false
+          properties:
+            success:
+              type: string
+              title: 成功
+              description: 成功したときの表示。
+              x-used-by:
+                - 実装で、成功したときの表示にする。
+              examples:
+              - アイコンを 2 秒だけチェックに変える
+            failure:
+              type: string
+              title: 失敗
+              description: 失敗したときの表示。
+              x-used-by:
+                - 実装で、失敗したときの表示にする。
+              examples:
+              - 画面の上にエラーのバーを出し、入力は残す
+        toggle_state:
+          type: string
+          title: 切り替えの状態
+          description: 押した状態を支援技術へ伝える属性。
+          x-used-by:
+            - 実装で、`aria-pressed`・`aria-expanded`・`aria-checked` のどれを使用するかにする。
+          x-rules:
+            - 状態でラベルを替えず、属性で状態を伝える（規約『操作とアクセシビリティ』の `operation-accessibility-01`）。
+            - '`pressed`: 押した状態を持つボタン。'
+            - '`expanded`: 区画を開閉するボタン。'
+            - '`checked`: スイッチ。'
+            - '`kind` が `toggle` の要素には必ず記載し、`toggle`・`button` 以外の要素には記載しない。'
+          enum:
+          - pressed
+          - expanded
+          - checked
+        live:
+          type: string
+          title: 読み上げの割り込み
+          description: 表示が変わったときに支援技術へ読み上げさせるか。
+          x-used-by:
+            - 実装で、要素の `aria-live` にする。
+          x-rules:
+            - '`polite`: 読み上げ中の内容の後に読み上げる。'
+            - '`assertive`: 割り込んで読み上げる（失敗の通知だけ）。'
+            - '`kind` が `alert`・`toast`・`label`・`progress` の要素だけに記載する。'
+          enum:
+          - polite
+          - assertive
+        history:
+          type: string
+          title: 履歴の扱い
+          description: 操作で URL を変えるときに、履歴に追加するか置き換えるか。
+          x-used-by:
+            - 実装で、ルーターの `push`・`replace` のどちらにするかにする。
+            - テストで、ブラウザの戻るで戻る先を確認する。
+          x-rules:
+            - 絞り込みの確定とオーバーレイを開く操作は `push`、入力中の値の反映は `replace` にする（規約『URL の状態』の `write-02`・`write-03`）。
+            - URL を変えない要素は記載しない。
+          enum:
+          - push
+          - replace
+        resets:
+          type: string
+          title: 一緒に戻す値
+          description: 操作で URL を変えるときに、一緒に初期に戻す値。
+          x-used-by:
+            - 実装で、URL を変えるときに一緒に戻す search の値にする。
+          x-rules:
+            - 絞り込み・並べ替えを変えるときは、ページを 1 に戻す（規約『URL の状態』の `write-03`）。
+          examples:
+          - page を 1 に戻す
+        shortcut:
+          type: object
+          title: ショートカット
+          description: 要素の操作を始めるキーと、キーが効く範囲。
+          x-used-by:
+            - 実装で、キーの割り当てと `aria-keyshortcuts` にする。
+            - テストで、キーで操作できることを確認する。
+          x-rules:
+            - キーの選び方と範囲は、規約『キーボード操作』の `shortcut-design-01`〜`shortcut-design-05` と `shortcut-assignment-01` に従う。
+            - ボタン・メニューの項目にキーを出す（規約『キーボード操作』の `discoverability-01`）。
+            - '`kind` が `shortcut` の要素には必ず記載する。'
+          additionalProperties: false
+          required:
+          - key
+          - scope
+          properties:
+            key:
+              type: string
+              title: キー
+              description: '`aria-keyshortcuts` の書式のキー。'
+              x-used-by:
+                - 実装で、受けるキーと `aria-keyshortcuts` の値にする。
+              examples:
+              - Control+S
+            scope:
+              type: string
+              title: 効く範囲
+              description: キーが効く範囲。
+              x-used-by:
+                - 実装で、キーを受ける要素にする。
+              x-rules:
+                - '`app`: アプリ全体。'
+                - '`screen`: この画面を開いている間。'
+                - '`pane`: その区画にフォーカスがある間。'
+                - '`dialog`: そのダイアログを開いている間。'
+              enum:
+              - app
+              - screen
+              - pane
+              - dialog
+        pane:
+          type: object
+          title: 区画の配置
+          description: サイドバー・補助のペインの配置・幅・開閉・狭い幅での出し方。
+          x-used-by:
+            - 実装で、区画の配置・スプリッター・開閉のボタンにする。
+            - テストで、幅を変える・開閉する・狭い幅で開くケースにする。
+          x-rules:
+            - スプリッターと開閉の決まりは、規約『レイアウト』の `splitter-01` に従う。
+            - 幅と開閉の保持は、要素の `retained_state` に記載する。
+            - '`kind` が `sidebar` の要素には必ず記載し、`sidebar`・`pane` 以外の要素には記載しない。'
+          additionalProperties: false
+          required:
+          - side
+          - narrow
+          allOf:
+          - if:
+              properties:
+                resizable:
+                  const: true
+              required:
+              - resizable
+            then:
+              required:
+              - width
+              properties:
+                width:
+                  x-used-by:
+                    - 検査で、幅を変えられる区画に既定・最小・最大の幅があるかを確認する。
+                  required:
+                  - default
+                  - min
+                  - max
+          - if:
+              properties:
+                collapsible:
+                  const: true
+              required:
+              - collapsible
+            then:
+              required:
+              - default_collapsed
+            else:
+              properties:
+                default_collapsed: false
+          properties:
+            side:
+              type: string
+              title: 配置
+              description: 区画を配置する画面の端。
+              x-used-by:
+                - 実装で、区画を配置する端にする。
+              enum:
+              - left
+              - right
+              - top
+              - bottom
+            width:
+              type: object
+              title: 幅
+              description: 区画の既定・最小・最大の幅（CSS の長さ）。
+              x-used-by:
+                - 実装で、区画の既定の幅とスプリッターで変えられる範囲にする。
+              x-rules:
+                - 最小はペインの主な操作が収まる幅、最大はメインに主な操作が残る幅にする（規約『レイアウト』の `splitter-01`）。
+              additionalProperties: false
+              properties:
+                default:
+                  type: string
+                  title: 既定
+                  description: 開いたときの既定の幅。
+                  x-used-by:
+                    - 実装で、区画の既定の幅にする。
+                  examples:
+                  - 240px
+                min:
+                  type: string
+                  title: 最小
+                  description: スプリッターで狭められる最小の幅。
+                  x-used-by:
+                    - 実装で、区画の最小の幅にする。
+                  examples:
+                  - 180px
+                max:
+                  type: string
+                  title: 最大
+                  description: スプリッターで広げられる最大の幅。
+                  x-used-by:
+                    - 実装で、区画の最大の幅にする。
+                  examples:
+                  - 480px
+            resizable:
+              type: boolean
+              title: 幅を変えられる
+              description: スプリッターで幅を変えられるなら `true`。
+              x-used-by:
+                - 実装で、スプリッターを配置するかにする。
+            collapsible:
+              type: boolean
+              title: 開閉できる
+              description: 開閉のボタンで閉じられるなら `true`。
+              x-used-by:
+                - 実装で、開閉のボタンを配置するかにする。
+            default_collapsed:
+              type: boolean
+              title: 既定で閉じる
+              description: 初めて開いたときに閉じた状態にするなら `true`。
+              x-used-by:
+                - 実装で、保持した開閉が無いときの状態にする。
+            narrow:
+              type: string
+              title: 狭い幅の出し方
+              description: '`md` 未満の幅での区画の出し方。'
+              x-used-by:
+                - 実装で、狭い幅の区画の出し方にする。
+                - テストで、スマホの幅の場面にする。
+              x-rules:
+                - 狭い幅の出し方は、規約『モバイル対応ルール』の `shell-responsibility-02` と規約『画面の分け方』の `structure-transition-01` で選ぶ。
+                - '`drawer`: ボタンで開くドロワーにする。'
+                - '`bottom_sheet`: 下から開くシートにする。'
+                - '`stack_below`: メインの下に並べる。'
+                - '`separate_screen`: 別の画面にする。'
+                - '`hidden`: 出さない。'
+              enum:
+              - drawer
+              - bottom_sheet
+              - stack_below
+              - separate_screen
+              - hidden
+            focus_on_open:
+              type: string
+              title: 開いたときのフォーカス
+              description: 区画を開いたときにフォーカスを移す要素。移さないときは記載しない。
+              x-used-by:
+                - 実装で、区画を開いたときにフォーカスを移す要素にする。
+              x-rules:
+                - フォーカスの移し方は、規約『キーボード操作』の `focus-management-02`・`focus-management-04` に従う。
+              examples:
+              - 選んでいる項目
+        tabs:
+          type: object
+          title: タブ
+          description: タブの並び・切り替えの方式・中身が無いときの扱い。
+          x-used-by:
+            - 実装で、タブの並び・切り替え・件数の表示にする。
+            - テストで、タブを切り替えるケースにする。
+          x-rules:
+            - タブの決まりは、規約『画面の分け方』の `tab-01` と規約『URL の状態』の `tab-01` に従う。
+            - 切り替えで枠の大きさを変えない（規約『表示の安定』の `display-stability-01`）。
+            - 選んだタブの保持は、要素の `retained_state` に記載する。
+            - '`kind` が `tabs` の要素には必ず記載し、ほかの要素には記載しない。'
+          additionalProperties: false
+          required:
+          - items
+          - mode
+          properties:
+            items:
+              type: array
+              title: タブの並び
+              description: タブ 1 つ = 1 要素。
+              x-used-by:
+                - 実装で、タブの並びにする。
+              x-shape: table
+              x-key: label
+              minItems: 1
+              items:
+                type: object
+                additionalProperties: false
+                required:
+                - label
+                - value
+                properties:
+                  label:
+                    type: string
+                    title: 見出し
+                    description: タブに出す文言。
+                    x-used-by:
+                      - 実装で、タブの見出しにする。
+                  value:
+                    type: string
+                    title: 値
+                    description: URL・保持先に記載するタブの値。
+                    x-used-by:
+                      - 実装で、URL の search と保持先に記載する値にする。
+                    examples:
+                    - settings
+                  count_source:
+                    type: string
+                    title: 件数の取得元
+                    description: タブに件数を出すときの取得元（`{インターフェース定義の論理名}.{フィールドのパス}`）。
+                    x-used-by:
+                      - 実装で、タブに出す件数の取得元にする。
+            mode:
+              type: string
+              title: 切り替えの方式
+              description: 画面の中で中身を切り替えるか、別の画面へ移るか。
+              x-used-by:
+                - 実装で、`tablist` にするか `nav` のリンクにするかにする。
+              x-rules:
+                - 画面の中の切り替えと画面の移動を 1 つのタブの並びに混ぜない（規約『画面の分け方』の `tab-01`）。
+                - '`in_screen`: 画面の中で中身を切り替える。'
+                - '`navigation`: 押すと別の画面へ移る。'
+              enum:
+              - in_screen
+              - navigation
+            activation:
+              type: string
+              title: 選ぶ方式
+              description: 矢印キーでフォーカスを移したときに選ぶか（`in_screen` のとき）。
+              x-used-by:
+                - 実装で、タブのキー操作にする。
+              x-rules:
+                - キー操作は、規約『キーボード操作』の `composite-widget-01` に従う。
+                - '`automatic`: フォーカスを移すと選ぶ。'
+                - '`manual`: Enter・Space で選ぶ。'
+              enum:
+              - automatic
+              - manual
+            empty_behavior:
+              type: string
+              title: 中身が無いときの扱い
+              description: タブの中身が 0 件のときの出し方。
+              x-used-by:
+                - 実装で、中身が無いタブの出し方にする。
+              x-rules:
+                - 中身が無くてもタブを隠さず、空の表示を出す（規約『画面の分け方』の `tab-01`）。
+              examples:
+              - タブを残し、件数 0 と空の表示を出す
+        table:
+          type: object
+          title: 表の機能
+          description: 表の並べ替え・絞り込み・選択・行の操作・見出しの固定などの機能。
+          x-used-by:
+            - 実装で、表の機能にする。
+            - テストで、並べ替え・絞り込み・選択のケースにする。
+          x-rules:
+            - 表の機能の決まりは、規約『業務画面のUI要素』の `data-display-01`・`action-01` に従う。
+            - 列ごとの並べ替え・絞り込み・固定・非表示は、`table_column` の要素に記載する。
+            - '`kind` が `table` の要素には必ず記載し、ほかの要素には記載しない。'
+          additionalProperties: false
+          required:
+          - default_sort
+          - selection
+          - sticky_header
+          allOf:
+          - if:
+              properties:
+                selection:
+                  const: multiple
+              required:
+              - selection
+            then:
+              required:
+              - bulk_actions
+          properties:
+            default_sort:
+              type: string
+              title: 既定の並び
+              description: 表を開いたときの並びの列と向き。並べ替えの巡回（既定 → 昇順 → 降順 → 既定）を外すときはその旨も記載する。
+              x-used-by:
+                - 実装で、表を開いたときの並びにする。
+              examples:
+              - 更新日時の降順
+            filter:
+              type: string
+              title: 絞り込み
+              description: 表全体の絞り込みの方法と、絞り込んだ後の件数の出し方。
+              x-used-by:
+                - 実装で、表の絞り込みと件数の表示にする。
+              examples:
+              - タイトルのキーワードで絞り込み、「12 / 40 件」と出す
+            column_visibility:
+              type: boolean
+              title: 列の表示の切り替え
+              description: 利用者が列の表示・非表示と既定に戻す操作を持つなら `true`。
+              x-used-by:
+                - 実装で、列の設定のパネルを配置するかにする。
+            sticky_header:
+              type: boolean
+              title: 見出し行の固定
+              description: 縦にスクロールしても見出し行を残すなら `true`。
+              x-used-by:
+                - 実装で、見出し行を固定するかにする。
+            row_click:
+              type: string
+              title: 行を押したとき
+              description: 行を押したときの動き。
+              x-used-by:
+                - 実装で、行を押したときの動きにする。
+              examples:
+              - 右の詳細パネルにその行を開く
+            row_link:
+              $ref: common.schema.yaml#/$defs/ref
+              title: 行のリンク先
+              description: 行から移る画面の画面設計。新しいタブで開けるリンクにする。
+              x-used-by:
+                - 実装で、行のリンクの移動先にする。
+            selection:
+              type: string
+              title: 行の選択
+              description: 行を選べるか。
+              x-used-by:
+                - 実装で、行の選択のチェックボックスにする。
+              x-rules:
+                - '`none`: 選ばない。'
+                - '`single`: 1 行だけ選ぶ。'
+                - '`multiple`: まとめて選ぶ。`bulk_actions` を記載する。'
+              enum:
+              - none
+              - single
+              - multiple
+            bulk_actions:
+              type: string
+              title: 一括操作
+              description: まとめて選んだ行への操作。
+              x-used-by:
+                - 実装で、選んだ行に出す操作のバーにする。
+              examples:
+              - 削除・状態の変更
+            copy:
+              type: string
+              title: コピー
+              description: セル・行の値をコピーする方法。
+              x-used-by:
+                - 実装で、コピーの操作にする。
+              examples:
+              - セルにホバーするとコピーのボタンを出す
+            grid_navigation:
+              type: boolean
+              title: 矢印キーでのセルの移動
+              description: 矢印キーでセルを移る（`grid` のロール）なら `true`。
+              x-used-by:
+                - 実装で、表のロールとキー操作にする。
+              x-rules:
+                - キー操作は、規約『キーボード操作』の `composite-widget-01` に従う。
+        sortable:
+          type: boolean
+          title: 並べ替え
+          description: 列の見出しで並べ替えられるなら `true`。
+          x-used-by:
+            - 実装で、列の見出しの並べ替えにする。
+          x-rules:
+            - '`kind` が `table_column` の要素には必ず記載し、ほかの要素には記載しない。'
+        filterable:
+          type: boolean
+          title: 絞り込み
+          description: 列の値で絞り込めるなら `true`。
+          x-used-by:
+            - 実装で、列の絞り込みのボタンにする。
+          x-rules:
+            - '`kind` が `table_column` の要素だけに記載する。'
+        pinnable:
+          type: boolean
+          title: 固定
+          description: 横にスクロールしても列を残せるなら `true`。
+          x-used-by:
+            - 実装で、列を固定するボタンにする。
+          x-rules:
+            - '`kind` が `table_column` の要素だけに記載する。'
+        hideable:
+          type: boolean
+          title: 非表示
+          description: 利用者が列を隠せるなら `true`。
+          x-used-by:
+            - 実装で、列の設定のパネルに列を並べるかにする。
+          x-rules:
+            - '`kind` が `table_column` の要素だけに記載する。'
+        close:
+          type: object
+          title: 閉じ方
+          description: ダイアログ・ポップオーバーを外側のクリックと Esc で閉じるか。
+          x-used-by:
+            - 実装で、外側のクリックと Esc の扱いにする。
+            - テストで、閉じる・閉じないケースにする。
+          x-rules:
+            - 規約『表示の安定』の `close-behavior-01` の表で選ぶ。
+            - Esc は一番上の層だけを閉じる（規約『画面の分け方』の `modal-01`）。
+            - '`kind` が `dialog`・`popover` の要素には必ず記載し、ほかの要素には記載しない。'
+          additionalProperties: false
+          required:
+          - outside_click
+          - escape
+          properties:
+            outside_click:
+              type: boolean
+              title: 外側のクリック
+              description: 外側をクリックしたら閉じるなら `true`。
+              x-used-by:
+                - 実装で、外側のクリックで閉じるかにする。
+            escape:
+              type: string
+              title: Esc
+              description: Esc を押したときの扱い。
+              x-used-by:
+                - 実装で、Esc を押したときの扱いにする。
+              x-rules:
+                - '`close`: 閉じる。'
+                - '`confirm`: 確認を挟んでから閉じる（入力を持つダイアログ）。'
+                - '`none`: 閉じない。'
+              enum:
+              - close
+              - confirm
+              - none
+        modal:
+          type: boolean
+          title: 後ろの操作を止める
+          description: 開いている間、後ろの画面を操作させないなら `true`。
+          x-used-by:
+            - 実装で、モーダルにするかにする。
+          x-rules:
+            - '`kind` が `dialog`・`popover` の要素だけに記載する。'
+        initial_focus:
+          type: string
+          title: 開いたときのフォーカス
+          description: 開いたときにフォーカスを移す要素の名前。
+          x-used-by:
+            - 実装で、開いたときにフォーカスを移す要素にする。
+            - テストで、開いた直後のフォーカスを確認する。
+          x-rules:
+            - 規約『キーボード操作』の `focus-management-02` に従う。
+            - '`kind` が `dialog`・`popover` の要素には必ず記載し、ほかの要素には記載しない。'
+          examples:
+          - タイトル入力欄
+        return_focus:
+          type: string
+          title: 閉じた後のフォーカス
+          description: 閉じた後にフォーカスを戻す要素の名前。
+          x-used-by:
+            - 実装で、閉じた後にフォーカスを戻す要素にする。
+            - テストで、閉じた後のフォーカスを確認する。
+          x-rules:
+            - 規約『キーボード操作』の `focus-management-02` に従い、既定は開いた要素にする。
+            - '`kind` が `dialog`・`popover` の要素には必ず記載し、ほかの要素には記載しない。'
+          examples:
+          - 開いた要素
+        retained_state:
+          $ref: common.schema.yaml#/$defs/retained_state
+          x-rules:
+            - 規約『入力と文言』の `retention-design-01` の要素（入力・選択・タブ・開閉するもの・スクロール領域。`kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle`・`tabs`・`sidebar`・`pane`・`disclosure`・`list`・`table`・`tree`・`board` の要素）には必ず記載する。
+            - '`kind` が `label`・`heading`・`image`・`tooltip`・`progress`・`separator`・`toast`・`shortcut`・`link`・`table_column` の要素には記載しない。'
         initial_value:
           type: string
           title: 初期値
@@ -755,6 +1882,7 @@ properties:
             - 実装で、ラベルの下の補助文にする。
           x-rules:
             - '`kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle` の要素だけに記載する。'
+            - 入力の形式・範囲が、ラベルとプレースホルダで伝わらないときだけ記載する（規約『入力と文言』の `wording-01`）。
         autocomplete:
           type: string
           title: 入力の目的
@@ -795,14 +1923,6 @@ properties:
             - 実装で、選択肢の出所・並び・既定・複数選択にする。
           x-rules:
             - '`kind` が `select`・`radio` の要素には必ず記載し、`checkbox` の要素には選択肢を並べるときに記載する。'
-        sorting:
-          type: string
-          title: 並べ替え・絞り込み
-          description: 表の列のとき、できるかと既定の並び。
-          x-used-by:
-            - 実装で、表の列の並べ替え・絞り込みにする。
-          x-rules:
-            - '`kind` が `table_column` の要素だけに記載する。'
         input_example:
           type: string
           title: 入力例
@@ -927,12 +2047,20 @@ examples:
   test_file: tests/integration/task/test_タスク作成画面.py
   impl_files:
   - app/(authenticated)/tasks/new/_components/task-create-form.tsx
+  screen_type: edit
+  leave_guard: unsaved
   elements:
+  - name: 画面の見出し
+    kind: heading
+    position: フォーム本体 > 先頭
+    description: 画面名を出す
+    label: タスクの作成
+    visible_when: 常時
   - name: プロジェクト名
     kind: label
     position: フォーム本体 > 見出しの下
     description: タスクを作るプロジェクトの名前を出す。1 行に収まらないときは省略し、全文をツールチップに出す
-    io: 表示
+    io: output
     type: 文字列
     visible_when: 常時
     overflow:
@@ -943,7 +2071,7 @@ examples:
     kind: label
     position: フォーム本体 > プロジェクト名の下
     description: プロジェクトに付いたタグを横に並べる。1 件のタグが 20 文字を超えたら省略し、全文をツールチップに出す。上限を超えた分は「+3」にまとめ、押すと全てのタグをポップオーバーに出す
-    io: 表示
+    io: output
     type: 文字列の配列
     visible_when: タグが 1 件以上あるとき
     overflow:
@@ -958,7 +2086,7 @@ examples:
     position: サイドバー > プロジェクトの情報
     fixed_area: true
     description: 他の人が記載したプロジェクトの説明を出す。3 行を超えたら省略し、押すと全文をダイアログに出す
-    io: 表示
+    io: output
     type: 文字列
     visible_when: 説明があるとき
     overflow:
@@ -970,24 +2098,35 @@ examples:
     position: フォーム本体
     description: タスク名を入力
     placeholder: '例: 企画書を作る'
-    io: 入力
+    io: input
     type: 文字列
     visible_when: 常時
     required: true
     max_length: 100
     constraints: 100 文字以内
     initial_value: 空（編集時は取得値）
+    retained_state:
+    - what: 入力途中の値
+      store: session_storage
+      key: "todo:v1:task-create:title"
+      save_on: 入力のたび
+      restore_on: 同じタブで画面を開き直したとき
+      reset_when: 保存したとき
     source: タスク詳細取得.task.title
     target: タスク作成.title
   - name: 優先度選択
     kind: select
     position: フォーム本体
     description: 優先度を選択
-    io: 入力
+    io: input
     type: 文字列
     visible_when: 常時
     options: low / medium / high（既定 medium）
     initial_value: medium
+    retained_state:
+    - what: 選んだ優先度
+      store: none
+      reason: 既定の medium から選び直す手間が小さく、入力途中の値と一緒に戻すほどではない
     target: タスク作成.priority
   - name: 優先度のバッジ
     kind: label
@@ -1006,8 +2145,19 @@ examples:
     position: フッター
     description: 入力内容でタスクを作成
     label: 保存
+    label_display: text_only
+    narrow:
+      action: stack
     visible_when: 常時
     enabled_when: 必須項目が入力済みで制限の違反が無いとき
+    disabled_reason: タスク名を入力すると保存できます（ボタンの下に出す）
+    confirm: none
+    feedback:
+      success: タスクの詳細画面へ移り、「タスクを作成しました」の通知を出す
+      failure: フォームの上にエラーのバーを出し、入力は残す
+    shortcut:
+      key: Control+S
+      scope: screen
     pending_state: 非活性にし、ボタンの文言の左に回る表示を出す（ボタンの幅は変えない）
     action_ref: IF-1#
   input_checks:

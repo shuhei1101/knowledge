@@ -72,7 +72,7 @@ aspects:
     visibility: internal
   - id: aspect-review-implemented-screen-05
     name: 入力と選択の保持
-    description: 再読み込み・戻る・別タブでも、入力や選択が失われないこと
+    description: 画面設計の `retained_state`（画面全体と要素ごと）の状態が、記載した `restore_on` の操作（再読み込み・戻る・上タブを移って戻る 等）で戻り、`store` が `none` の状態は戻らないこと
     tags:
       - name: target:実装した画面
         main: true
@@ -179,6 +179,15 @@ aspects:
     name: 画面設計の action の操作
     description: 画面設計の `action` を持つ要素を PC 幅とスマホ幅で全て操作し、記載どおりに動くこと
     note: スマホ幅でだけ出る・隠れる要素は `visible_when` の条件どおりかも確認する
+    tags:
+      - name: target:実装した画面
+        main: true
+      - name: process:実装
+    visibility: internal
+  - id: aspect-review-implemented-screen-18
+    name: 画面設計の振る舞いの欄
+    description: 画面設計の閉じ方（`close`）・開いたときと閉じた後のフォーカス（`initial_focus`・`return_focus`）・押せない理由（`disabled_reason`）・取り消しの手段（`confirm`）・結果の伝え方（`feedback`）・履歴の扱い（`history`）・ショートカット（`shortcut`）・区画の幅と開閉（`pane`）・離脱の警告（`leave_guard`）を持つ要素を全て操作し、記載どおりに動くこと
+    note: アイコンだけの要素（`label_display` が `icon_only`）は、読み上げ名（`accessible_name`）とツールチップが出ることも確認する
     tags:
       - name: target:実装した画面
         main: true
