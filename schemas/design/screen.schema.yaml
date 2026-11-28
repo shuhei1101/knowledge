@@ -27,9 +27,13 @@ allOf:
   then:
     properties:
       elements:
+        x-used-by:
+          - 検査で、画面の型に要る種類の要素があるかを確認する。
         contains:
           properties:
             kind:
+              x-used-by:
+                - 検査で、画面の型に要る要素の種類にする。
               enum:
               - table
               - list
@@ -50,9 +54,13 @@ allOf:
   then:
     properties:
       elements:
+        x-used-by:
+          - 検査で、画面の型に要る種類の要素があるかを確認する。
         contains:
           properties:
             kind:
+              x-used-by:
+                - 検査で、画面の型に要る要素の種類にする。
               const: heading
           required:
           - kind
@@ -67,9 +75,13 @@ allOf:
   then:
     properties:
       elements:
+        x-used-by:
+          - 検査で、画面の型に要る種類の要素があるかを確認する。
         contains:
           properties:
             kind:
+              x-used-by:
+                - 検査で、画面の型に要る要素の種類にする。
               enum:
               - input
               - textarea
@@ -88,9 +100,13 @@ allOf:
   then:
     properties:
       elements:
+        x-used-by:
+          - 検査で、画面の型に要る種類の要素があるかを確認する。
         contains:
           properties:
             kind:
+              x-used-by:
+                - 検査で、画面の型に要る要素の種類にする。
               enum:
               - nav
               - sidebar
@@ -1434,6 +1450,8 @@ properties:
               - width
               properties:
                 width:
+                  x-used-by:
+                    - 検査で、幅を変えられる区画に既定・最小・最大の幅があるかを確認する。
                   required:
                   - default
                   - min
