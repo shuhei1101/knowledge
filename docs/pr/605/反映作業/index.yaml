@@ -5,22 +5,22 @@
   時期: マージの後
   回数: 1 回限り
   可逆: true
-  疎通確認: null
-  実行: null
-  確認: null
-  切り戻し: null
+  疎通確認: 設計書のスキーマのタグの作成/疎通確認.sh
+  実行: 設計書のスキーマのタグの作成/実行.sh
+  確認: 設計書のスキーマのタグの作成/確認.sh
+  切り戻し: 設計書のスキーマのタグの作成/切り戻し.sh
   失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返却する
-  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグがメジャーを上げたバージョンで、その commit の `schemas/design/screen.schema.yaml` が `retained_state` を持つ"
+  確認方法: "`git ls-remote --tags origin 'design-schemas/*'` の最新のタグがメジャーを上げたバージョンで、その commit の `schemas/design/screen.schema.yaml` が画面全体の `leave_guard` を持つ"
   状態: skipped
 各プロジェクトへの書き直しの Issue の起票:
-  説明: タグを作成した後に、監視対象のプロジェクトのうち `docs/screen/`・`docs/component/` に画面設計書・部品設計書を持つものを洗い出し、プロジェクトごとに、作成したタグの新規のスキーマで全ての画面設計書・部品設計書を記載し直し、気づいた設計の漏れ・誤りを実装とテストまで修正する Issue を起票する（aituber は #312・#313・#314 を、記載し直した共通のレイアウトの設計書を元に修正することを含める）。切り戻しは、起票した Issue を not_planned で閉じる
+  説明: タグを作成した後に、監視対象のプロジェクト（knowledge を除く）のうち `docs/screen/`・`docs/component/` に画面設計書・部品設計書を持つプロジェクトへ、作成したタグの新規のスキーマで全ての画面設計書・部品設計書を記載し直し、気づいた設計の漏れ・誤りを実装とテストまで修正する Issue を MCP create_issue（target_project にプロジェクト名）で起票する（aituber は shuhei1101/aituber#312・#313・#314 を、記載し直した共通のレイアウトの設計書を元に修正することを含める）。対象のプロジェクトと設計書は実行スクリプトが出す（dry-run の時点では ai-monitor・aituber・gui-support・voice-paste・mindstella・claude-balancer・dev-docs・shuhdev-gateway・mdmark）。実行スクリプトは起票の内容を出すだけで、起票は planner が MCP で行う。切り戻しは、起票した Issue を not_planned で閉じる
   タグ: [起票, 配布先]
   実行者: planner
   時期: マージの後
   回数: 1 回限り
   可逆: true
-  疎通確認: null
-  実行: null
+  疎通確認: 各プロジェクトへの書き直しの Issue の起票/疎通確認.py
+  実行: 各プロジェクトへの書き直しの Issue の起票/実行.py
   確認: null
   切り戻し: null
   失敗時: 既定の対処を 1 回、2 回連続で失敗したら依頼元へ返却する

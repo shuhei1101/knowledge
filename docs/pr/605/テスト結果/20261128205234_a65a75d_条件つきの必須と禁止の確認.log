@@ -1,0 +1,43 @@
+$ uv run --no-project --python 3.14 --with ruamel.yaml==0.19.1 --with jsonschema==4.26.0 python verify_fields.py .
+| 書き換え | 結果 |
+| --- | --- |
+| 記載例のまま | 違反なし |
+| screen_type を削除する | 'screen_type' is a required property |
+| leave_guard を削除する | 'leave_guard' is a required property |
+| screen_type を list にする（表・一覧の要素なし） | elements が該当する kind の要素を含みません（contains） |
+| screen_type を shell にする（nav・sidebar なし） | elements が該当する kind の要素を含みません（contains） |
+| io を 表示 にする | '表示' is not one of ['input', 'output', 'input_output'] |
+| 保存ボタンから label_display を削除する | 'label_display' is a required property |
+| 保存ボタンから confirm を削除する | 'confirm' is a required property |
+| 保存ボタンから disabled_reason を削除する | 'disabled_reason' is a required property |
+| 保存ボタンを icon_only にする（icon・accessible_name・tooltip なし） | 'accessible_name' is a required property / 'icon' is a required property / 'tooltip' is a required property |
+| 保存ボタンを icon_only にし icon・accessible_name・tooltip を追加する | 違反なし |
+| タスク名入力欄に icon を追加する | False schema does not allow 'x' |
+| タスク名入力欄に label_display を追加する | False schema does not allow 'text_only' |
+| タスク名入力欄から retained_state を削除する | 'retained_state' is a required property |
+| プロジェクト名に retained_state を追加する | False schema does not allow [{'what': 'x', 'store': 'memory'}] |
+| プロジェクト名に confirm を追加する | False schema does not allow 'none' |
+| プロジェクト名に shortcut を追加する | False schema does not allow {'key': 'a', 'scope': 'screen'} |
+| retained_state の store を local_storage にして key を削除する | 'key' is a required property |
+| store が none の保持に key を追加する | False schema does not allow 'x' |
+| store が none の保持から reason を削除する | 'reason' is a required property |
+| 保存ボタンの narrow を short_label にして short_label なし | 'short_label' is a required property |
+| kind が toggle で toggle_state なしの要素を追加する | 'toggle_state' is a required property |
+| kind が tabs で tabs・retained_state なしの要素を追加する | 'retained_state' is a required property / 'tabs' is a required property |
+| kind が sidebar で pane なしの要素を追加する | 'pane' is a required property |
+| sidebar の pane を resizable にして width の min・max なし | 'max' is a required property / 'min' is a required property |
+| kind が label の要素に pane を追加する | False schema does not allow {'side': 'left', 'narrow': 'drawer'} |
+| kind が table で table なしの要素を追加する | 'table' is a required property |
+| table の selection を multiple にして bulk_actions なし | 'bulk_actions' is a required property |
+| kind が table_column で sortable なしの要素を追加する | 'sortable' is a required property |
+| kind が label の要素に sortable を追加する | False schema does not allow True |
+| kind が dialog で close・initial_focus・return_focus なしの要素を追加する | 'close' is a required property / 'initial_focus' is a required property / 'return_focus' is a required property |
+| kind が dialog で close・initial_focus・return_focus ありの要素を追加する | 違反なし |
+| kind が button の要素に close を追加する | False schema does not allow {'outside_click': True, 'escape': 'close'} |
+| kind が shortcut で shortcut なしの要素を追加する | 'shortcut' is a required property |
+| kind が input の要素に live を追加する | False schema does not allow 'polite' |
+| 部品設計の記載例のまま | 違反なし |
+| accessibility を文字列の配列にする | ['x'] is not of type 'object' |
+| label_display に icon_only を持ち accessible_name_arg なし | 'accessible_name_arg' is a required property |
+| 状態の viewport を tablet にする | 'tablet' is not one of ['desktop', 'mobile'] |
+| persisted_state を追加する | 違反なし |
