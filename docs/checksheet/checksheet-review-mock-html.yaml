@@ -248,3 +248,13 @@ aspects:
       - name: target:実装した画面
       - name: process:モック作成
     visibility: internal
+  - id: aspect-review-mock-html-26
+    name: 本文の上の操作の行
+    description: 見出し・タブ・開閉・追加などの本文の上の操作が、ボタン 1 つのために 1 行を使用せず、スマホ幅でも折り返して本文を押し下げていないこと
+    note: 規約 [レイアウト](id:ui-layout) の「本文の上の操作の行」
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: target:実装した画面
+      - name: process:モック作成
+    visibility: internal
