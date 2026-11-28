@@ -98,6 +98,8 @@ allOf:
     required:
     - screen_type
   then:
+    required:
+    - retained_state
     properties:
       elements:
         x-used-by:
@@ -234,7 +236,7 @@ properties:
     $ref: common.schema.yaml#/$defs/retained_state
     description: 画面全体で保持する状態（上タブ（領域）ごとに最後に開いたページ・ページ全体のスクロール位置 等）。要素ごとの状態は要素の `retained_state` に記載する。
     x-rules:
-      - '`shell` の画面は、上タブ（領域）ごとに最後に開いたページを記載する（規約『入力と文言』の `state-retention-01`）。'
+      - '`shell` の画面には必ず記載し、上タブ（領域）ごとに最後に開いたページを記載する（規約『入力と文言』の `state-retention-01`）。上タブを持たない `shell` は、`store` を `none` にした行を記載する。'
   elements:
     type: array
     title: 要素一覧
@@ -442,6 +444,8 @@ properties:
           required:
           - accessible_name
           - tooltip
+          properties:
+            label: false
       - if:
           properties:
             kind:
@@ -610,6 +614,7 @@ properties:
               - toggle
               - tabs
               - sidebar
+              - pane
               - disclosure
               - list
               - table
@@ -865,7 +870,7 @@ properties:
             - 見れば分かるものにラベルを付けない（規約『入力と文言』の `wording-01`）。
             - 本文の区画に操作の説明文を置かない（規約『情報の階層と見た目』の `information-hierarchy-01`）。
             - 単語・操作の単語・状態名は、規約『入力と文言』の `wording-term-format-02` に従う。
-            - アイコンだけのボタン（`label_display` が `icon_only`）は、`label` を記載せず `accessible_name` と `tooltip` に記載する。
+            - '`label_display` が `icon_only` の要素には記載しない（文言は `accessible_name` と `tooltip` に記載する）。'
         placeholder:
           type: string
           title: プレースホルダ
@@ -1861,7 +1866,7 @@ properties:
         retained_state:
           $ref: common.schema.yaml#/$defs/retained_state
           x-rules:
-            - 規約『入力と文言』の `retention-design-01` の要素（入力・選択・タブ・開閉するもの・スクロール領域）には必ず記載する。
+            - 規約『入力と文言』の `retention-design-01` の要素（入力・選択・タブ・開閉するもの・スクロール領域。`kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle`・`tabs`・`sidebar`・`pane`・`disclosure`・`list`・`table`・`tree`・`board` の要素）には必ず記載する。
             - '`kind` が `label`・`heading`・`image`・`tooltip`・`progress`・`separator`・`toast`・`shortcut`・`link`・`table_column` の要素には記載しない。'
         initial_value:
           type: string
