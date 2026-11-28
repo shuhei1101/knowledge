@@ -1,0 +1,33 @@
+docs:
+  - page: schemas/design/screen.schema.yaml
+    new: false
+    change: 要素の `kind` に英語の enum と値ごとの意味を持たせ、要素の `allOf` に `kind` を判別子にした `if` / `then` で、今ある欄（`placeholder`・`hint`・`options`・`range`・`overflow`・`pending_state`・`count_limit`・`align` など）の種類ごとの必須・禁止を追加する。条件を `kind` と該当する欄の `x-rules` に記載し、`examples` を合わせる
+    status: todo
+  - page: schemas/design/component.schema.yaml
+    new: false
+    change: 引数の `type` を enum にし、`choices`・`component`・`default` の要否を `type`・`required` を判別子にした `if` / `then` で指定する。条件を `x-rules` に記載し、`examples` を合わせる
+    status: todo
+  - page: docs/template/template-screen-design.yaml
+    new: false
+    change: '`scripts/build_templates.py` で再生成する'
+    status: todo
+  - page: docs/template/template-component.yaml
+    new: false
+    change: '`scripts/build_templates.py` で再生成する'
+    status: todo
+  - page: docs/template/markdown/screen-design.md
+    new: false
+    change: '`scripts/build_markdown_templates.py` で再生成する（`screen-design.example.md` も同じ）'
+    status: todo
+  - page: docs/template/markdown/component.md
+    new: false
+    change: '`scripts/build_markdown_templates.py` で再生成する（`component.example.md` も同じ）'
+    status: todo
+scope_out:
+  - item: 今のスキーマに無い欄（`label_display`・`accessible_name`・`tooltip`・`icon`・`toggle_state`・`retained_state`・`close` など）の追加と、その欄の種類ごとの必須・禁止
+    reason: '#602 の受付でスコープを移した。この PR の enum と判別子の仕組みを前提にする'
+    plan: '#602'
+  - item: 各プロジェクトの画面設計書・部品設計書の `kind` と欄を、新しい enum と必須・禁止に合わせて直す
+    reason: '配布先が `design-schemas/v*` のタグを上げるときに直す。全プロジェクトへの当てはめは #602 が扱う'
+    plan: '#602'
+use_cases: []
