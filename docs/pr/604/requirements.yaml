@@ -1,0 +1,40 @@
+docs:
+  - page: docs/rule/ui-layout.yaml
+    new: false
+    change: サイドバーと補助のペインは既定でスプリッター（ドラッグとキー操作での幅の変更・最小と最大の幅・変えた幅の保存）と開閉のボタンを持つ項目を追加し、`layout-pattern-01` のサイドバーの行の「左に固定・常に表示」を修正する
+    status: todo
+  - page: docs/rule/convention-common-components.yaml
+    new: false
+    change: '`components-layout-01` のサイドバーの行の観点「開閉可否、幅の固定 / 可変」を、スプリッターと開閉のボタンを持つ既定に合わせて修正する'
+    status: todo
+  - page: docs/rule/ui-keyboard.yaml
+    new: false
+    change: '`composite-widget-02` の部品の表に、分割線（APG の Window Splitter）の行を追加する'
+    status: todo
+  - page: docs/rule/ui-operation-accessibility.yaml
+    new: false
+    change: '`wcag22-01` の 2.5.7 の行から、スプリッターのドラッグの代替の手段（キー操作と開閉のボタン）を示す'
+    status: todo
+  - page: docs/rule/ui-input-wording.yaml
+    new: false
+    change: 上タブ（領域）を押したときに同じブラウザのタブの中で最後に開いたページを開き、無ければ既定のページを開く決まり・サイドバーのスクロール位置・Web Storage のキーの書式・画面設計に保持する状態の記載を必須にする要素の基準を追加する
+    status: todo
+  - page: docs/rule/ui-button-label.yaml
+    new: false
+    change: '`icon-or-text-01` に、標準の操作は既定でアイコンを付け、広い幅はアイコンと文字・狭い幅はアイコンだけにする行を追加する'
+    status: todo
+  - page: docs/flowchart/flowchart-screen-state-retention.yaml
+    new: false
+    change: sessionStorage のキーの結果から、規約『入力と文言』の Web Storage のキーの書式を参照する
+    status: todo
+scope_out:
+  - item: 画面設計・部品設計のスキーマへの保持の欄の追加と、画面設計のレビューでその欄を確かめる観点
+    reason: 要望は規約への決まりの追加で、スキーマの欄は後続の Issue がこの規約を参照して追加する
+    plan: '#602'
+  - item: aituber の管理画面のスプリッター・上タブを戻ったときのページ・アイコンの修正
+    reason: aituber の画面の不具合で、aituber の Issue が扱う
+    plan: none
+  - item: 規約『開発ドキュメントのナビゲーション』（`dev-docs-navigation`）のサイドバーの決まり
+    reason: dev-docs の配信の設定（`nav`）のタブとグループの並べ方を定める規約で、サイドバーの幅・開閉・戻ったときのページを扱わない
+    plan: none
+use_cases: []
