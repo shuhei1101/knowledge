@@ -21,10 +21,10 @@
 <!-- table: {"kind": "data", "columns": {"説明": {"width": {"mode": "nowrap"}}}} -->
 | 名前 | 型 | 必須 | 既定値 | 説明 |
 | --- | --- | --- | --- | --- |
-| key | 文字列 | ✓ |  | 列のキー。並べ替え・絞り込み・固定の対象を指す |
-| label | 文字列 | ✓ |  | 見出しの文字 |
-| numeric | 真偽値 |  | false | 数値の列か。右揃えにする |
-| filterable | 真偽値 |  | false | 絞り込みのボタンを出すか |
+| key | string | ✓ |  | 列のキー。並べ替え・絞り込み・固定の対象を指す |
+| label | string | ✓ |  | 見出しの文字 |
+| numeric | boolean |  | false | 数値の列か。右揃えにする |
+| filterable | boolean |  | false | 絞り込みのボタンを出すか |
 <!-- /table -->
 
 ## イベント

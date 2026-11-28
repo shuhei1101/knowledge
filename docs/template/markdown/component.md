@@ -21,7 +21,7 @@
 <!-- table: {"kind": "data", "columns": {"説明": {"width": {"mode": "nowrap"}}}} -->
 | 名前 | 型 | 必須 | 条件 | 既定値 | 選択肢 | 受ける部品 | 有効になる条件 | 説明 | 状態 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| {名前} | {型} | true / false | {条件} | {既定値} | {選択肢} | {受ける部品} | {有効になる条件} | {説明} | planned / implemented / deprecated / removed |
+| {名前} | string / integer / number / boolean / enum / object / array / function / component | true / false | {条件} | {既定値} | {選択肢} | {受ける部品} | {有効になる条件} | {説明} | planned / implemented / deprecated / removed |
 <!-- /table -->
 
 ## スロット

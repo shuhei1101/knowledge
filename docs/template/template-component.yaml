@@ -43,12 +43,12 @@ items:
       | test_file | 対応テストファイル | string | - | - | pattern: `^(?:tests/.+\|.+\.test\.tsx?)$` | ストーリーを開いて確認する結合テストのファイル（規約『V字モデル』）。 | テストで、ストーリーを開いて確認する結合テストを作るファイルにする。<br>検査で、テストのファイルがあるかを確認する。 | `tests/integration/storybook/test_計画画面の部品.py` / `frontend/src/features/plan/shared/components/status-badge.test.tsx` |
       | args | 引数 | array | - | - | - | 部品が受け取る値。引数 1 つ = 1 要素。 | 実装で、部品の引数とストーリーの `args` にする。<br>画面設計で、部品へ指定する値を決める。<br>生成で、引数の表にする。 | - |
       | args[].name | 名前 | string | 必須 | - | pattern: `^[A-Za-z_][A-Za-z0-9_]*(\[\])?(\.[A-Za-z_][A-Za-z0-9_]*(\[\])?)*$` | 実装の引数の名前。 | 実装で、引数の名前にする。<br>設計で、状態の `args` から引数を指す。 | `status` / `dep.unresolved` / `items[].label` |
-      | args[].type | 型 | string | 必須 | - | - | `文字列` / `整数` / `数値` / `真偽値` / `列挙` / `オブジェクト` / `配列` / `オブジェクトの配列` / `部品`。 | 実装で、引数の型にする。 | `列挙` / `オブジェクトの配列` |
+      | args[].type | 型 | string | 必須 | `string` / `integer` / `number` / `boolean` / `enum` / `object` / `array` / `function` / `component` | - | 引数の値の型。型ごとに、記載する欄と記載しない欄を検査で分ける。 | 実装で、引数の型にする。<br>検査で、型ごとに必須の欄と記載しない欄を決める。 | `enum` / `array` |
       | args[].required | 必須 | boolean | - | - | - | 省けない項目なら `true`。 | 実装で、引数を省けるかを決める。 | - |
       | args[].condition | 条件 | string | - | - | pattern: `^[^\n]+$` | ほかのキーの値でこのキーを持つかが変わるときの条件。`{キー}: {値}` か、そのキーを省略したときの `{キー} なし`。 | 実装で、条件に該当するときだけキーを持たせる検証にする。<br>レビューで、判別のキーで分かれるキーを表で一覧して確認する。 | `type: anime` / `work なし` / `styles[].type: parody` |
       | args[].default | 既定値 | string | - | - | - | 省略したときの値。必須の引数には記載しない。 | 実装で、引数を省いたときの値にする。 | `false` / `なし（件数を出さない）` |
       | args[].choices | 選択肢 | string | - | - | - | 列挙の値と、値の範囲。 | 実装で、列挙の値と範囲の検証にする。 | `todo・paused・doing・done・dropped` / `0 以上` |
-      | args[].component | 受ける部品 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[\]]\|\[(?:[^\[\]]\|\[[^\[\]]*\])*\])*$` | 型が `部品` のとき、受け取れる部品設計（部品設計の `{ID}#`）。 | 実装で、引数に受け取る部品の型にする。 | `CMP-2#` |
+      | args[].component | 受ける部品 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[\]]\|\[(?:[^\[\]]\|\[[^\[\]]*\])*\])*$` | 型が `component` のとき、受け取れる部品設計（部品設計の `{ID}#`）。 | 実装で、引数に受け取る部品の型にする。 | `CMP-2#` |
       | args[].enabled_when | 有効になる条件 | string | - | - | - | 他の引数の値によって意味を持つときの条件。 | 実装で、引数を使用する条件にする。<br>テストで、条件を満たす状態と満たさない状態のストーリーにする。 | `` `filterable` が `true` のとき `` |
       | args[].description | 説明 | string | 必須 | - | - | 引数に指定する値が何を表すか。 | 画面設計で、引数に何を指定するかを決める。 | `行の状態。色とアイコンを決める` |
       | args[].status | 状態 | string | - | `planned` / `implemented` / `deprecated` / `removed` | - | 項目の状態で、`planned`（予定）/ `implemented`（実装済み）/ `deprecated`（非推奨）/ `removed`（廃止）のどれか。記載しなければ実装済みとして扱う。 | 実装で、`planned` の項目を作る対象にし、`deprecated`・`removed` の項目を新規に使用しない。<br>生成で、状態の表示にする。 | - |
@@ -109,8 +109,10 @@ items:
       | story | 日本語の名前は `title` から追加する。 | - | - |
       | test_file | 規約『フォルダ構成』で対象の横に配置する React の結合テストは、対象の横のファイル（`*.test.ts`・`*.test.tsx`）を記載する。 | - | - |
       | args | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 要素に展開する。 | - | - |
+      | args[].type | `string`: 文字列。<br>`integer`: 整数。<br>`number`: 小数を含む数値。<br>`boolean`: 真偽値。<br>`enum`: 決めた値から 1 つを選ぶ値。<br>`object`: キーを持つ値。子は `parent.child` の要素に展開する。<br>`array`: 値の並び。要素の子は `parent[].child` の要素に展開する。<br>`function`: 呼び出す側が渡す関数。<br>`component`: 差し込む部品。 | - | - |
       | args[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
-      | args[].component | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | args[].choices | `type` が `enum` の引数には必ず記載し、`boolean`・`object`・`array`・`function`・`component` の引数には記載しない。 | - | - |
+      | args[].component | `type` が `component` の引数には必ず記載し、ほかの型の引数には記載しない。 | IF-12#flows[0] | リストの項目を番号で指している |
       | args[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
       | states | dev-docs の画面では、その状態で上書きする引数が件数で出る。 | - | - |
       | states[].notes | 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。 | - | - |
@@ -133,20 +135,20 @@ items:
       test_file: tests/integration/storybook/test_計画画面の部品.py
       args:
       - name: key
-        type: 文字列
+        type: string
         required: true
         description: 列のキー。並べ替え・絞り込み・固定の対象を指す
       - name: label
-        type: 文字列
+        type: string
         required: true
         description: 見出しの文字
       - name: numeric
-        type: 真偽値
+        type: boolean
         required: false
         default: 'false'
         description: 数値の列か。右揃えにする
       - name: filterable
-        type: 真偽値
+        type: boolean
         required: false
         default: 'false'
         description: 絞り込みのボタンを出すか
