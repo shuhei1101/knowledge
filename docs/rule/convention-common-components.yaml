@@ -2,7 +2,7 @@
 id: convention-common-components
 kind: rule
 name: 共通コンポーネント規約
-description: プロジェクト初期に画面全体で繰り返し使用する共通コンポーネントを決めるための一覧と決めるべき観点を示し、新規プロジェクトで共通コンポーネントを選ぶときに参照する。
+description: プロジェクト初期に画面全体で繰り返し使用する共通コンポーネントを決めるための一覧と決めるべき観点と、表・ボード・グラフ・図・本文へのコメントを mdmark の部品のカスタム要素で組む決まりを示し、新規プロジェクトで共通コンポーネントを選ぶときと、画面に表・ボード・グラフ・図・コメントを配置するときに参照する。
 tags:
   - name: scope:規約
   - name: topic:部品
@@ -23,10 +23,16 @@ tags:
   - name: action:採用
   - name: action:表示
   - name: action:転記
+  - name: tool:mdmark
+  - name: topic:テーブル
+  - name: topic:グラフ
+  - name: topic:図
+  - name: topic:ビュー
+  - name: topic:コメント
 status: current
 visibility: internal
-rev: 5
-last_reviewed: '2026-11-03'
+rev: 6
+last_reviewed: '2026-11-28'
 items:
   - id: overview
     name: 概要
@@ -118,12 +124,15 @@ items:
       | コンポーネント | 決めるべき観点 |
       | --- | --- |
       | テーブル | 行密度、列ピン留め、ソート方式、選択モード、行クリック挙動 |
+      | ボード | 列に分ける項目、既定の表示（ボード / 表形式）、項目を押したときの挙動 |
       | カード | サイズの統一方法、影の有無、ヘッダ・フッタの有無 |
       | リスト | 区切り線、アバター・アイコン位置、補助情報 |
       | バッジ / タグ | 形状（角丸 / 矩形）、色の使い分けルール |
       | チップ | 削除可否、選択可否、アイコンの有無 |
       | アバター | 形状（円 / 角丸）、サイズ段階、フォールバック |
       | チャート | デフォルトの種類（折れ線 / 棒 / 円）、凡例位置、ホバー時の情報 |
+      | 図 | 図の種類、ノードを押したときの挙動 |
+      | 本文へのコメント | 保存先、編集・削除の可否 |
       | プログレス | バー / 円形、確定 / 不確定、ラベル |
 
       <!-- /table -->
@@ -181,6 +190,7 @@ items:
     name: 対応表の使用方法
     body: |-
       React では、一覧のコンポーネントを shadcn/ui の部品名で採用する。
+      対応表で mdmark のカスタム要素を指すものは、[表・ボード・グラフ・図・コメントは mdmark の部品で組む](id:convention-common-components#mdmark-parts-01) に従う。
       対応する部品が無いもの（自前）は、`shared/components/` に作る。
       「決めるべき観点」のうち、shadcn/ui の既定で決定するものは、プロジェクトで改めて決めない。
   - id: shadcn-mapping-02
@@ -212,12 +222,15 @@ items:
       | 時刻ピッカー | 自前（`<input type="time">`） |
       | スライダー | Slider |
       | ファイルアップロード | 自前 |
-      | テーブル | Table（TanStack Table と組み合わせる） |
+      | テーブル | mdmark の `<mdmark-table>` |
+      | ボード | mdmark の `<mdmark-view>` |
       | カード | Card |
       | リスト | Item |
       | バッジ / タグ・チップ | Badge |
       | アバター | Avatar |
-      | チャート | Chart |
+      | チャート | mdmark の `<mdmark-graph>`・`<mdmark-param-graph>` |
+      | 図 | mdmark の `<mdmark-map>` |
+      | 本文へのコメント | mdmark の `<mdmark-comments>` |
       | プログレス | Progress |
       | アラート（バナー） | Alert |
       | トースト | Sonner |
@@ -237,3 +250,31 @@ items:
       | コードブロック・リッチテキストエディタ・マップ | 自前 |
 
       <!-- /table -->
+  - id: mdmark-parts-01
+    group: mdmark の部品のカスタム要素
+    name: 表・ボード・グラフ・図・コメントは mdmark の部品で組む
+    body: |-
+      単体 HTML・React のどちらでも、次のコンポーネントは mdmark の部品のカスタム要素で組む。
+      使用方法は、メタデータの `sources` の mdmark のガイドに従う。
+
+      <!-- table: {"kind": "data"} -->
+
+      | コンポーネント | カスタム要素 |
+      | --- | --- |
+      | テーブル | `<mdmark-table>` |
+      | ボード（ボード表示と表形式の切り替え） | `<mdmark-view>` |
+      | チャート | `<mdmark-graph>` |
+      | スライダーで値を変えるチャート | `<mdmark-param-graph>` |
+      | 図（構成図・フロー図・シーケンス図・ER 図など） | `<mdmark-map>` |
+      | 本文へのコメント | `<mdmark-comments>` |
+
+      <!-- /table -->
+  - id: mdmark-parts-02
+    group: mdmark の部品のカスタム要素
+    name: 足りない機能は mdmark への追加を相談する
+    body: '- mdmark の部品で足りない機能があるときは、自前で組む前・別のライブラリを採用する前に、mdmark へ機能を追加することを利用者に相談する'
+sources:
+  - title: 'mdmark: 表をカスタム要素で使用する'
+    url: https://github.com/shuhei1101/mdmark/blob/develop/docs/guide/カスタマイズ-表をカスタム要素で使用する.mark.md
+  - title: 'mdmark: 部品をカスタム要素で使用する'
+    url: https://github.com/shuhei1101/mdmark/blob/develop/docs/guide/カスタマイズ-部品をカスタム要素で使用する.mark.md

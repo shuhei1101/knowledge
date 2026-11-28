@@ -18,10 +18,11 @@ tags:
     main: true
   - name: tool:react
   - name: action:採用
+  - name: tool:mdmark
 status: current
 visibility: internal
-rev: 4
-last_reviewed: '2026-10-30'
+rev: 5
+last_reviewed: '2026-11-28'
 items:
   - id: overview
     name: 概要
@@ -44,7 +45,7 @@ items:
       | フォーム | React Hook Form + Zod | [フォーム](id:react-form-component) |
       | API クライアント | orval | TanStack Query のフック・Zod・MSW のモックを生成する（[API クライアント](id:react-data-api-client)） |
       | UI 部品 | shadcn/ui（Base UI バージョン）+ Tailwind v4 | [コンポーネントカタログ](id:react-component-catalog)・[Tailwind](id:react-core-tailwind) |
-      | 表 | TanStack Table v9 | shadcn の data-table のガイドで組む |
+      | 表・ボード・グラフ・図・本文へのコメント | mdmark の部品のカスタム要素 | [共通コンポーネント規約](id:convention-common-components#mdmark-parts-01) |
       | アイコン | lucide-react | 既定のアイコン |
       | ショートカット | `@tanstack/react-hotkeys` | 薄いフックをかぶせて使用する（[ショートカット](id:react-keyboard-shortcut)） |
       | 単体・結合テスト | Vitest | [Unit / Component テスト](id:react-testing-unit) |

@@ -41,10 +41,11 @@ tags:
   - name: action:操作
   - name: action:移動
   - name: action:遷移
+  - name: tool:mdmark
 status: current
 visibility: internal
-rev: 6
-last_reviewed: '2026-10-30'
+rev: 7
+last_reviewed: '2026-11-28'
 related:
   - to: react-keyboard-shortcut
     type: references
@@ -89,9 +90,10 @@ items:
       - 仮想スクロールでは、フォーカス中の項目を描画範囲から除外しない（TanStack Virtual の `rangeExtractor`）。
   - id: table-01
     group: 表
-    name: 表は role="grid" でセル単位に移動する
+    name: 表は <mdmark-table> のキー操作を使用する
     body: |-
-      - 表（TanStack Table）は `role="grid"` にして、セル単位で移動する（APG の data grid）。
+      - 表は `<mdmark-table>` が持つキー操作（行の移動・Enter での行の押下・F2 での編集）を使用し、キー操作を自作しない。
+        `<mdmark-table>` で足りないキー操作は、[足りない機能は mdmark への追加を相談する](id:convention-common-components#mdmark-parts-02) に従う。
   - id: route-01
     group: ルート遷移
     name: ルートが変わったら h1 にフォーカスを移す
