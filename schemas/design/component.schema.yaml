@@ -181,8 +181,8 @@ properties:
             - '`number`: 小数を含む数値。'
             - '`boolean`: 真偽値。'
             - '`enum`: 決めた値から 1 つを選ぶ値。'
-            - '`object`: キーを持つ値。子は `parent.child` の要素に展開する。'
-            - '`array`: 値の並び。要素の子は `parent[].child` の要素に展開する。'
+            - '`object`: キーを持つ値で、子を `parent.child` の要素に展開する。'
+            - '`array`: 値の並びで、要素の子を `parent[].child` の要素に展開する。'
             - '`function`: 呼び出す側が渡す関数。'
             - '`component`: 差し込む部品。'
           enum:

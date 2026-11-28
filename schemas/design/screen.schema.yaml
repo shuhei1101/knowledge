@@ -257,24 +257,13 @@ properties:
           properties:
             kind:
               enum:
-              - table
-              - list
-              - board
-          required:
-          - kind
-        then:
-          required:
-          - count_limit
-      - if:
-          properties:
-            kind:
-              enum:
               - label
               - heading
               - image
               - tooltip
               - progress
               - separator
+              - shortcut
           required:
           - kind
         then:
@@ -319,8 +308,10 @@ properties:
             - '`sidebar`: 画面の端に配置し、開閉できる区画。'
             - '`pane`: 画面を分けた区画（ヘッダー・フッター・本文・フォーム・パネル）。'
             - '`splitter`: 区画の境目をドラッグして大きさを変える要素。'
+            - '`drag_handle`: 掴んで項目を並べ替える・区画を動かす要素。'
             - '`disclosure`: 見出しを押して中身を開閉する区画（アコーディオン・`details`）。'
             - '`list`: 同じ形の項目を並べる一覧。'
+            - '`tree`: 項目を階層で並べ、階層ごとに開閉する一覧。'
             - '`board`: 列ごとに項目を並べるボード。'
             - '`table`: 行と列で値を並べる表。'
             - '`table_column`: 表の 1 列。'
@@ -334,6 +325,7 @@ properties:
             - '`toast`: 一時的に出て消える通知。'
             - '`progress`: 処理中・読み込み中の表示（進捗バー・スピナー・スケルトン）。'
             - '`separator`: 区切り線。'
+            - '`shortcut`: 見た目を持たず、画面全体で受けるキー操作。'
           enum:
           - button
           - link
@@ -348,8 +340,10 @@ properties:
           - sidebar
           - pane
           - splitter
+          - drag_handle
           - disclosure
           - list
+          - tree
           - board
           - table
           - table_column
@@ -363,6 +357,7 @@ properties:
           - toast
           - progress
           - separator
+          - shortcut
         component:
           $ref: common.schema.yaml#/$defs/ref
           title: 部品
@@ -669,7 +664,6 @@ properties:
             - レビューで、上限を超える件数の値を入れた画面のスクリーンショットと照合する。
           x-rules:
             - 並べる値の件数が変わる要素に記載し、件数が固定の要素には記載しない。
-            - '`kind` が `table`・`list`・`board` の要素には必ず記載する。'
           additionalProperties: false
           required:
           - max_count
@@ -744,7 +738,7 @@ properties:
             - レビューで、応答を待つ間に続けて操作したときの振る舞いと照合する。
           x-rules:
             - 書き込みを始める要素と、応答を待つ間に操作を止める要素に記載する。
-            - '`kind` が `label`・`heading`・`image`・`tooltip`・`progress`・`separator` の要素には記載しない。'
+            - '`kind` が `label`・`heading`・`image`・`tooltip`・`progress`・`separator`・`shortcut` の要素には記載しない。'
           examples:
             - 非活性にし、ボタンの文言の左に回る表示を出す（ボタンの幅は変えない）
         initial_value:

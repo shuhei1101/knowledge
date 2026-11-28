@@ -109,7 +109,7 @@ items:
       | story | 日本語の名前は `title` から追加する。 | - | - |
       | test_file | 規約『フォルダ構成』で対象の横に配置する React の結合テストは、対象の横のファイル（`*.test.ts`・`*.test.tsx`）を記載する。 | - | - |
       | args | オブジェクトの子は `parent.child`、配列の要素の子は `parent[].child` で 1 要素に展開する。 | - | - |
-      | args[].type | `string`: 文字列。<br>`integer`: 整数。<br>`number`: 小数を含む数値。<br>`boolean`: 真偽値。<br>`enum`: 決めた値から 1 つを選ぶ値。<br>`object`: キーを持つ値。子は `parent.child` の要素に展開する。<br>`array`: 値の並び。要素の子は `parent[].child` の要素に展開する。<br>`function`: 呼び出す側が渡す関数。<br>`component`: 差し込む部品。 | - | - |
+      | args[].type | `string`: 文字列。<br>`integer`: 整数。<br>`number`: 小数を含む数値。<br>`boolean`: 真偽値。<br>`enum`: 決めた値から 1 つを選ぶ値。<br>`object`: キーを持つ値で、子を `parent.child` の要素に展開する。<br>`array`: 値の並びで、要素の子を `parent[].child` の要素に展開する。<br>`function`: 呼び出す側が渡す関数。<br>`component`: 差し込む部品。 | - | - |
       | args[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | args[].choices | `type` が `enum` の引数には必ず記載し、`boolean`・`object`・`array`・`function`・`component` の引数には記載しない。 | - | - |
       | args[].component | `type` が `component` の引数には必ず記載し、ほかの型の引数には記載しない。 | IF-12#flows[0] | リストの項目を番号で指している |
