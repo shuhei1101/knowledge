@@ -1,0 +1,22 @@
+$ uv run --with jsonschema --with pyyaml --with referencing python verify_kind.py
+| 書き換え | 結果 |
+| --- | --- |
+| 記載例のまま | 違反なし |
+| ラベルの kind を div にする | 'div' is not one of ['button', 'link', 'toggle', 'input', 'textarea', 'select', 'checkbox' |
+| 保存ボタンに placeholder を追加する | False schema does not allow 'x' |
+| 保存ボタンに hint を追加する | False schema does not allow 'x' |
+| 優先度選択に max_length を追加する | False schema does not allow 3 |
+| 優先度選択から options を削除する | 'options' is a required property |
+| ラベルに range を追加する | False schema does not allow {'min': '1'} |
+| ラベルに pending_state を追加する | False schema does not allow 'x' |
+| ラベルに sorting を追加する | False schema does not allow 'x' |
+| kind が table で count_limit なしの要素を追加する | 'count_limit' is a required property |
+| kind が table_column で align なしの要素を追加する | 'align' is a required property |
+| kind が table_column で align・sorting ありの要素を追加する | 違反なし |
+| 部品設計の記載例のまま | 違反なし |
+| 引数の type を 文字列 にする | '文字列' is not one of ['string', 'integer', 'number', 'boolean', 'enum', 'object', 'array',  |
+| type が enum で choices なしの引数を追加する | 'choices' is a required property |
+| type が boolean の引数に choices を追加する | False schema does not allow 'x' |
+| type が string の引数に component を追加する | False schema does not allow 'CMP-2#' |
+| type が component で component なしの引数を追加する | 'component' is a required property |
+| required が true の引数に default を追加する | False schema does not allow 'x' |
