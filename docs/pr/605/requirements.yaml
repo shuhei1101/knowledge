@@ -1,0 +1,52 @@
+docs:
+  - page: schemas/design/screen.schema.yaml
+    new: false
+    change: 'Issue の 12 分類の欄（画面全体の `retained_state`・`panes`・`shortcut`・`leave_guard`・`screen_type`、要素の `icon`・`label_display`・`accessible_name`・`tooltip`・`narrow`・`table`・`tabs`・`close`・`initial_focus`・`return_focus`・`disabled_reason`・`confirm`・`feedback`・`toggle_state`・`history` など）を `properties` に追加し、#600 から移した種類ごとの必須・禁止を `kind` を判別子にした `allOf` の `if` / `then` で指定する。欄の `x-rules` から #601 の規約を参照し、`examples` を合わせる'
+    status: todo
+  - page: schemas/design/component.schema.yaml
+    new: false
+    change: '`persisted_state[]`（画面設計の `retained_state` と同じ形）・`states[].viewport`（desktop・mobile）を追加し、`accessibility` を読み上げ名の要否・アイコンだけの形を持てる構造にする。`examples` を合わせる'
+    status: todo
+  - page: docs/template/template-screen-design.yaml
+    new: false
+    change: '`scripts/build_templates.py` で再生成する'
+    status: todo
+  - page: docs/template/template-component.yaml
+    new: false
+    change: '`scripts/build_templates.py` で再生成する'
+    status: todo
+  - page: docs/template/markdown/screen-design.md
+    new: false
+    change: '`scripts/build_markdown_templates.py` で再生成する（`screen-design.example.md` も同じ）'
+    status: todo
+  - page: docs/template/markdown/component.md
+    new: false
+    change: '`scripts/build_markdown_templates.py` で再生成する（`component.example.md` も同じ）'
+    status: todo
+  - page: docs/checksheet/checksheet-review-mock-html.yaml
+    new: false
+    change: モックが画面設計の新しい欄（保持・ペイン・アイコン・狭い幅・表・タブ・閉じ方・押した後の振る舞い）のとおりかを確かめる観点にする
+    status: todo
+  - page: docs/checksheet/checksheet-review-implemented-screen.yaml
+    new: false
+    change: 実装した画面が画面設計の新しい欄のとおりかを確かめる観点にする（入力と選択の保持は `retained_state` を参照する）
+    status: todo
+  - page: docs/checksheet/checksheet-review-component.yaml
+    new: false
+    change: 部品設計の `persisted_state`・`states[].viewport`・構造化した `accessibility` を確かめる観点にする
+    status: todo
+  - page: docs/rule/ui-input-wording.yaml
+    new: false
+    change: '`retention-design-01`（画面設計に記載する保持）から、記載する欄（`retained_state`）を参照する'
+    status: todo
+scope_out:
+  - item: 各プロジェクトの画面設計書・部品設計書を新しいスキーマで書き直し、気づいた設計の漏れを実装とテストまで直すこと
+    reason: Issue の範囲は各プロジェクトへの起票まで。書き直しは起票先の Issue が扱う（反映作業『各プロジェクトへの書き直しの Issue の起票』で起票する）
+    plan: to_file
+  - item: CSS の落とし穴・トークン・iframe の禁止・対応ブラウザの欄
+    reason: 部品・シェル・lint の側で守るため、画面設計の欄にしない（Issue 本文の判断）
+    plan: none
+  - item: 既存の `io` の enum（入力・表示・入出力）の英語への置き換え
+    reason: 新しい enum と表記が混ざるため、そろえるかは変更方針で決め、そろえない場合はこの行を残す
+    plan: to_file
+use_cases: []
