@@ -457,6 +457,20 @@ properties:
             - レビューで、ストーリーを撮るかを決める。
           examples:
           - false
+        viewport:
+          type: string
+          title: 画面の幅
+          description: ストーリーを描く画面の幅。記載しなければ `desktop`。
+          x-used-by:
+            - 実装で、ストーリーの `globals.viewport` にする。
+            - レビューで、狭い幅の状態のスクリーンショットを照合する。
+          x-rules:
+            - 狭い幅で出し方が変わる部品は、`mobile` の状態を 1 つ以上持つ。
+            - '`desktop`: PC の幅。'
+            - '`mobile`: スマホの幅（`md` 未満）。'
+          enum:
+          - desktop
+          - mobile
         args:
           type: array
           title: 上書きする引数
@@ -523,19 +537,92 @@ properties:
             - 実装で、中の部品へ指定する値と差し込み方にする。
           examples:
           - "停止中の一時停止のアイコン"
+  persisted_state:
+    $ref: common.schema.yaml#/$defs/retained_state
+    title: 部品が保存する状態
+    description: 部品が自分で保存して戻す状態（サイドバーの幅・開閉 等）。使用する画面ではなく部品が保存するものだけを記載する。
+    x-used-by:
+      - 実装で、部品が状態を保存する場所・キーと、保存して戻す契機にする。
+      - テストで、ストーリーを開き直したときに状態が戻るケースにする。
+      - 画面設計で、画面の `retained_state` に重ねて記載しない状態を決める。
+    x-rules:
+      - キーに使用する側ごとの値（領域・項目の ID）が要るときは、その値を受け取る引数を `args` に記載する。
+    x-heading: 部品が保存する状態
   accessibility:
-    type: array
+    type: object
     title: アクセシビリティ
-    description: スクリーンリーダー向けの名前・キー操作・色に頼らない表し方など、部品が守ること。
+    description: 読み上げ名・アイコンだけの形状・キー操作など、部品が守ること。
     x-used-by:
       - 実装で、スクリーンリーダー向けの名前・キー操作・色に頼らない表し方にする。
       - レビューで、アクセシビリティの検出を照合する。
-    examples:
-    - - "状態を色だけで伝えない（`label` を必ず出す）"
     x-heading: アクセシビリティ
-    x-shape: list
-    items:
-      type: string
+    x-shape: attributes
+    additionalProperties: false
+    allOf:
+    - if:
+        properties:
+          label_display:
+            contains:
+              const: icon_only
+        required:
+        - label_display
+      then:
+        required:
+        - accessible_name_arg
+    properties:
+      label_display:
+        type: array
+        title: ラベルの出し方
+        description: 部品が持てるアイコンと文字の出し方。
+        x-used-by:
+          - 実装で、部品が持つ形状（アイコンだけ・アイコンと文字・文字だけ）にする。
+          - 検査で、アイコンだけの形状を持つ部品に読み上げ名の引数を必須にする。
+        x-rules:
+          - 値の意味は、画面設計の `label_display` と同じ。
+          - アイコンも文字も出さない部品は記載しない。
+        uniqueItems: true
+        items:
+          type: string
+          enum:
+          - icon_only
+          - icon_and_text
+          - text_only
+        examples:
+        - - icon_only
+          - icon_and_text
+      accessible_name_arg:
+        type: string
+        title: 読み上げ名の引数
+        description: 読み上げ名（`aria-label`）を受け取る引数の `name`。
+        x-used-by:
+          - 実装で、読み上げ名を要素の `aria-label` へ渡す引数にする。
+          - 画面設計で、要素の `accessible_name` を指定する引数を決める。
+        x-rules:
+          - '`label_display` に `icon_only` を持つ部品には必ず記載する（規約『操作とアクセシビリティ』の `operation-accessibility-01`）。'
+        examples:
+        - label
+      keyboard:
+        type: string
+        title: キー操作
+        description: 部品が受けるキー操作。
+        x-used-by:
+          - 実装で、部品のキー操作にする。
+          - テストで、キーで操作するストーリーにする。
+        x-rules:
+          - 複合部品のキー操作は、規約『キーボード操作』の `composite-widget-01`・`composite-widget-02` に従う。
+        examples:
+        - Enter と Space で押す
+      rules:
+        type: array
+        title: 守ること
+        description: 読み上げ名・アイコン・キー操作のほかに部品が守ること（色に頼らない表し方 等）。
+        x-used-by:
+          - 実装で、部品が守ることにする。
+          - レビューで、アクセシビリティの検出を照合する。
+        items:
+          type: string
+        examples:
+        - - "状態を色だけで伝えない（`label` を必ず出す）"
   refs:
     $ref: common.schema.yaml#/$defs/related
   decisions:
@@ -613,5 +700,10 @@ examples:
     - name: numeric
       value: 'true'
   accessibility:
-  - 絞り込み・固定のボタンは `aria-pressed` で押した状態を伝える
-  - アイコンだけのボタンに `{label} で絞り込む` などのスクリーンリーダー向けの名前を付ける
+    label_display:
+    - icon_only
+    accessible_name_arg: label
+    keyboard: 見出しの文字と、絞り込み・固定のボタンを Tab で移り、Enter と Space で押す
+    rules:
+    - 絞り込み・固定のボタンは `aria-pressed` で押した状態を伝える
+    - アイコンだけのボタンに `{label} で絞り込む` などのスクリーンリーダー向けの名前を付ける

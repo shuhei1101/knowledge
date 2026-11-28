@@ -40,3 +40,11 @@ aspects:
         main: true
       - name: process:部品設計
     visibility: internal
+  - id: aspect-review-component-02
+    name: 保存する状態・画面の幅・アクセシビリティ
+    description: 部品が自分で保存する状態（幅・開閉 等）を `persisted_state` に記載し、狭い幅で出し方が変わる部品は `viewport` が `mobile` の状態を持ち、アイコンだけの形状を持つ部品は `accessibility.accessible_name_arg` が読み上げ名を受け取る引数を指していること
+    tags:
+      - name: target:部品設計
+        main: true
+      - name: process:部品設計
+    visibility: internal

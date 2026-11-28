@@ -258,3 +258,12 @@ aspects:
       - name: target:実装した画面
       - name: process:モック作成
     visibility: internal
+  - id: aspect-review-mock-html-27
+    name: 画面設計の欄のとおりの見た目
+    description: モックが画面設計のラベルの出し方（`label_display`・`icon`・`tooltip`）・狭い幅の出し方（`narrow`・`pane.narrow`）・区画の配置と幅（`pane`）・タブ（`tabs`）・表の機能（`table` と列の `sortable`・`filterable`・`pinnable`・`hideable`）のとおりで、PC 幅とスマホ幅のスクリーンショットで確認してあること
+    note: 画面設計が無い画面は、モックで決めた内容を画面設計の欄に記載できるかで確認する
+    tags:
+      - name: target:モック HTML
+        main: true
+      - name: process:モック作成
+    visibility: internal

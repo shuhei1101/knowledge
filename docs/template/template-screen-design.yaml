@@ -41,6 +41,17 @@ items:
       | lead | 冒頭リード | string | - | - | - | 対象を 1〜3 行で説明する。 | 生成で、ページの冒頭の説明にする。<br>project-index の検索で、文書の概要文にする。 | - |
       | test_file | 対応テストファイル | string | - | - | pattern: `^(?:tests/.+\|.+\.test\.tsx?)$` | 対応する結合テストのファイル（規約『V字モデル』）。 | テストで、画面を開いて確認する結合テストを作るファイルにする。<br>検査で、テストのファイルがあるかを確認する。 | `tests/integration/task/test_タスク作成画面.py` / `frontend/src/features/plan/plan-list/plan-list-screen.test.tsx` |
       | impl_files | 実装のファイル | array | - | - | - | `screen` のほかに、この画面だけが使用する実装のファイル（画面の中の部品・スクリプト・スタイル）の、リポジトリの直下からのパス。 | 実行で、判定フローチャート『結合テストの実行範囲』の Q5 で、変更したファイルが 1 つの画面の実装のファイルかを決める。<br>レビューで、実行範囲の表の R4 の行が `screen` とこの一覧のとおりかを確認する。 | `[app/(authenticated)/tasks/new/_components/task-create-form.tsx]` |
+      | screen_type | 画面の型 | string | 必須 | `list` / `detail` / `edit` / `settings` / `shell` / `other` | - | 画面の型。型ごとに、持つべき要素の種類を検査で求める。 | 実装で、規約『レイアウト』の `screen-template-01` の画面型の構成にする。<br>検査で、型ごとに要る要素の `kind` があるかを確認する。 | - |
+      | leave_guard | 離脱の警告 | string | 必須 | `none` / `unsaved` / `autosave_error` | - | 画面を離れるときに警告する条件。 | 実装で、画面を離れる操作（画面の移動・タブを閉じる・再読み込み）の前に警告する条件にする。<br>テストで、警告が出るケースと出ないケースにする。 | - |
+      | retained_state | 保持する状態 | array | - | - | minItems: `1` | 画面全体で保持する状態（上タブ（領域）ごとに最後に開いたページ・ページ全体のスクロール位置 等）。要素ごとの状態は要素の `retained_state` に記載する。 | 実装で、状態を保存する場所・キーと、保存して戻す契機にする。<br>テストで、移って戻ったとき・再読み込みしたときに状態が戻るケースにする。<br>レビューで、規約『入力と文言』の `retention-design-01` の要素に保持の記載が漏れていないかを確認する。 | - |
+      | retained_state[].what | 保持するもの | string | 必須 | - | - | 保持する状態（入力した値・選んだタブ・開閉・幅・スクロール位置・領域で最後に開いたページ 等）。 | 実装で、保存して戻す値にする。 | `スクロール位置` / `領域で最後に開いたページ` |
+      | retained_state[].store | 保持先 | string | 必須 | `url_path` / `url_query` / `session_storage` / `local_storage` / `cookie` / `router` / `server` / `memory` / `none` | - | 状態を保存する場所。 | 実装で、状態を保存する場所（URL・Web Storage・Cookie・ルーター・サーバー・メモリ）にする。 | - |
+      | retained_state[].key | キー | string | - | - | - | Web Storage・Cookie のキーか、URL の search の名前。 | 実装で、保存と読み込みに使用するキーにする。<br>レビューで、ほかの領域・アプリのキーと重ならないかを確認する。 | `aituber:v1:admin:sidebar:{area}:scroll` / `q` |
+      | retained_state[].save_on | 保存する契機 | string | - | - | - | 状態を保存する操作・タイミング。 | 実装で、状態を保存する契機にする。 | `スクロールが止まったとき` |
+      | retained_state[].restore_on | 戻す契機 | string | - | - | - | 保存した状態を戻す操作・タイミング。 | 実装で、保存した状態を戻す契機にする。<br>テストで、状態が戻ることを確認する操作にする。 | `上タブを移って戻ったときと再読み込みしたとき` |
+      | retained_state[].precedence | 優先する値 | string | - | - | - | 保持先が複数あるときに、どれを優先し、使用した値をどこへ書き戻すか。 | 実装で、値を参照する順と書き戻す先にする。 | `` URL の値を優先し、無ければ sessionStorage の値を使用して URL に `replace` で書き戻す `` |
+      | retained_state[].reset_when | 初期に戻す条件 | string | - | - | - | 保存した状態を捨てて初期の状態に戻す条件。 | 実装で、保存した状態を捨てる条件にする。<br>テストで、初期に戻るケースにする。 | `一覧の絞り込みを変えたとき` |
+      | retained_state[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
       | elements | 要素一覧 | array | 必須 | - | minItems: `1` | 画面の要素 1 つ = 1 要素。 | 実装で、画面の要素にする。<br>生成で、要素一覧の表にする。 | - |
       | elements[].name | 要素 | string | 必須 | - | - | ボタン・入力欄・ラベル・テーブル等の日本語の論理名。 | 生成で、表の行の名前にする。<br>設計で、入力チェックから要素を指す。 | - |
       | elements[].id | 項目 ID | string | - | - | - | 画面の中で一意な識別子。テスト・実装から参照する。 | 実装で、要素の `id`・`data-testid` にする。<br>テストで、要素を探すセレクタにする。 | - |
@@ -57,7 +68,7 @@ items:
       | elements[].description | 説明 | string | 必須 | - | - | 要素の役割（何を表示し、何を受け付けるか）。 | 実装で、要素に表示する値と受け付ける入力を決める。 | - |
       | elements[].label | 表示文言 | string | - | - | - | 画面に固定で出る文字列。 | 実装で、画面に出す文字列にする。 | - |
       | elements[].placeholder | プレースホルダ | string | - | - | - | 入力欄が空のときに出す文言。 | 実装で、入力欄のプレースホルダにする。 | - |
-      | elements[].io | 入出力区分 | string | - | `入力` / `表示` / `入出力` | - | 表示だけか、入力を受けるかの区分。 | 実装で、表示だけか、入力を受けるかを決める。 | - |
+      | elements[].io | 入出力区分 | string | - | `input` / `output` / `input_output` | - | 表示だけか、入力を受けるかの区分。 | 実装で、表示だけか、入力を受けるかを決める。 | - |
       | elements[].type | 型 | string | - | - | - | 値を持つ要素の型（文字列 / 数値 / 日付 / 真偽値 等）。 | 実装で、値の型と入力欄の種類にする。 | - |
       | elements[].visible_when | 表示条件 | string | - | - | - | `常時` か出し分けの条件。 | 実装で、要素を出す条件にする。<br>テストで、出る状態と出ない状態のケースにする。 | - |
       | elements[].enabled_when | 活性条件 | string | - | - | - | 表示はされるが操作できない条件。 | 実装で、要素を操作できる条件にする。<br>テストで、操作できない状態のケースにする。 | - |
@@ -82,11 +93,80 @@ items:
       | elements[].count_limit.max_count | 表示する最大の件数 | integer | 必須 | - | minimum: `1` | `summarize`・`paginate` では一度に表示する値の最大の件数、`wrap` では折り返さずに 1 行に並べる値の最大の件数。 | 実装で、件数でまとめる・読み込みを分ける・折り返す境目の件数にする。<br>テストで、上限の件数と、上限を超える件数（`wrap` では折り返す件数）の値を入れた場面の件数にする。 | - |
       | elements[].count_limit.type | 上限を超えたときの扱い | string | 必須 | `wrap` / `summarize` / `paginate` | - | 上限を超えたときに、折り返して全て出す（`wrap`）・超えた分を件数でまとめる（`summarize`、「+3」と出す）・読み込みを分ける（`paginate`、ページネーション・続きの読み込み）のどれにするか。 | 実装で、上限を超えた分の出し方にする。 | - |
       | elements[].display_format | 表示形式 | string | - | - | - | 日付・時刻・数値の表示の形式と、表示の例。 | 実装で、日付・時刻・数値の書式にする。 | - |
-      | elements[].align | 文字揃え | string | - | `左` / `中央` / `右` | - | 文字揃え（左・中央・右）。 | 実装で、文字揃えにする。 | - |
+      | elements[].align | 文字揃え | string | - | `left` / `center` / `right` | - | 文字揃え（左 `left`・中央 `center`・右 `right`）。 | 実装で、文字揃えにする。 | - |
       | elements[].tab_order | タブ順 | integer | - | - | - | Tab キーで移る順番。 | 実装で、キー操作の順にする。 | - |
       | elements[].autofocus | 初期フォーカス | boolean | - | - | - | 画面を開いたときにフォーカスを設定する要素なら `true`。 | 実装で、画面を開いたときにフォーカスを設定する要素にする。 | - |
-      | elements[].initial_state | 初期状態 | string | - | `活性` / `非活性` / `読み取り専用` | - | 画面を開いたときの要素の状態（無効・非表示 等）。 | 実装で、画面を開いたときの要素の状態にする。 | - |
+      | elements[].initial_state | 初期状態 | string | - | `enabled` / `disabled` / `readonly` | - | 画面を開いたときの要素の状態（無効・非表示 等）。 | 実装で、画面を開いたときの要素の状態にする。 | - |
       | elements[].pending_state | 応答を待つ間の状態 | string | - | - | - | 書き込み（送信・保存・更新・削除）の応答を待つ間の要素の状態と見た目。 | 実装で、書き込みの応答を待つ間の要素の状態と見た目にする。<br>レビューで、応答を待つ間に続けて操作したときの振る舞いと照合する。 | `非活性にし、ボタンの文言の左に回る表示を出す（ボタンの幅は変えない）` |
+      | elements[].icon | アイコン | string | - | - | - | 要素に出すアイコンの名前（アイコンのライブラリの名前）。 | 実装で、要素に出すアイコンにする。<br>レビューで、同じ操作に同じアイコンを使用しているかを確認する。 | `x` / `copy` |
+      | elements[].label_display | ラベルの出し方 | string | - | `icon_only` / `icon_and_text` / `text_only` | - | アイコンと文字の出し方。 | 実装で、アイコンだけ・アイコンと文字・文字だけのどれで出すかにする。<br>検査で、アイコンだけのときに読み上げ名とツールチップを必須にする。 | - |
+      | elements[].accessible_name | 読み上げ名 | string | - | - | - | スクリーンリーダーが読み上げる要素の名前。 | 実装で、要素の `aria-label` にする。<br>テストで、ロールと名前で要素を探すセレクタにする。 | `閉じる` |
+      | elements[].tooltip | ツールチップ | string | - | - | - | ホバー・フォーカスで出す説明の文言。 | 実装で、ツールチップの文言にする。 | `閉じる（Esc）` |
+      | elements[].narrow | 狭い幅の出し方 | object | - | - | - | `md` 未満の幅で、要素をどう出すか。 | 実装で、狭い幅の要素の出し方にする。<br>テストで、スマホの幅の場面にする。<br>レビューで、スマホの幅のスクリーンショットと照合する。 | - |
+      | elements[].narrow.action | 出し方 | string | 必須 | `hidden` / `icon_only` / `short_label` / `into_menu` / `stack` / `horizontal_scroll` / `collapse_column` / `drawer` | - | 狭い幅での出し方。 | 実装で、狭い幅での出し方にする。 | - |
+      | elements[].narrow.short_label | 短い文言 | string | - | - | - | `action` が `short_label` のときに出す文言。 | 実装で、狭い幅で出す文言にする。 | `保存` |
+      | elements[].narrow.priority | 残す順 | integer | - | - | minimum: `1` | 幅が足りないときに残す順（1 が最後まで残る）。 | 実装で、幅が足りないときにメニューへしまう順にする。 | - |
+      | elements[].disabled_reason | 押せない理由 | string | - | - | - | `enabled_when` を満たさないときに、押せない理由を示す文言と出し方。 | 実装で、押せない理由の表示にする。<br>テストで、押せない状態で理由が出ることを確認する。 | `タスク名を入力すると保存できます（ボタンの下に出す）` |
+      | elements[].confirm | 取り消しの手段 | string | - | `dialog` / `undo` / `none` | - | 取り返しのつかない操作の前に確認するか、操作の後に取り消せるようにするか。 | 実装で、確認のダイアログか、取り消しの通知を出すかにする。<br>テストで、確認・取り消しのケースにする。 | - |
+      | elements[].feedback | 結果の伝え方 | object | - | - | - | 操作が成功したとき・失敗したときの伝え方。 | 実装で、操作の結果の表示にする。<br>テストで、成功と失敗の表示を確認する。 | - |
+      | elements[].feedback.success | 成功 | string | - | - | - | 成功したときの表示。 | 実装で、成功したときの表示にする。 | `アイコンを 2 秒だけチェックに変える` |
+      | elements[].feedback.failure | 失敗 | string | - | - | - | 失敗したときの表示。 | 実装で、失敗したときの表示にする。 | `画面の上にエラーのバーを出し、入力は残す` |
+      | elements[].toggle_state | 切り替えの状態 | string | - | `pressed` / `expanded` / `checked` | - | 押した状態を支援技術へ伝える属性。 | 実装で、`aria-pressed`・`aria-expanded`・`aria-checked` のどれを使用するかにする。 | - |
+      | elements[].live | 読み上げの割り込み | string | - | `polite` / `assertive` | - | 表示が変わったときに支援技術へ読み上げさせるか。 | 実装で、要素の `aria-live` にする。 | - |
+      | elements[].history | 履歴の扱い | string | - | `push` / `replace` | - | 操作で URL を変えるときに、履歴に追加するか置き換えるか。 | 実装で、ルーターの `push`・`replace` のどちらにするかにする。<br>テストで、ブラウザの戻るで戻る先を確認する。 | - |
+      | elements[].resets | 一緒に戻す値 | string | - | - | - | 操作で URL を変えるときに、一緒に初期に戻す値。 | 実装で、URL を変えるときに一緒に戻す search の値にする。 | `page を 1 に戻す` |
+      | elements[].shortcut | ショートカット | object | - | - | - | 要素の操作を始めるキーと、キーが効く範囲。 | 実装で、キーの割り当てと `aria-keyshortcuts` にする。<br>テストで、キーで操作できることを確認する。 | - |
+      | elements[].shortcut.key | キー | string | 必須 | - | - | `aria-keyshortcuts` の書式のキー。 | 実装で、受けるキーと `aria-keyshortcuts` の値にする。 | `Control+S` |
+      | elements[].shortcut.scope | 効く範囲 | string | 必須 | `app` / `screen` / `pane` / `dialog` | - | キーが効く範囲。 | 実装で、キーを受ける要素にする。 | - |
+      | elements[].pane | 区画の配置 | object | - | - | - | サイドバー・補助のペインの配置・幅・開閉・狭い幅での出し方。 | 実装で、区画の配置・スプリッター・開閉のボタンにする。<br>テストで、幅を変える・開閉する・狭い幅で開くケースにする。 | - |
+      | elements[].pane.side | 配置 | string | 必須 | `left` / `right` / `top` / `bottom` | - | 区画を配置する画面の端。 | 実装で、区画を配置する端にする。 | - |
+      | elements[].pane.width | 幅 | object | - | - | - | 区画の既定・最小・最大の幅（CSS の長さ）。 | 実装で、区画の既定の幅とスプリッターで変えられる範囲にする。 | - |
+      | elements[].pane.width.default | 既定 | string | - | - | - | 開いたときの既定の幅。 | 実装で、区画の既定の幅にする。 | `240px` |
+      | elements[].pane.width.min | 最小 | string | - | - | - | スプリッターで狭められる最小の幅。 | 実装で、区画の最小の幅にする。 | `180px` |
+      | elements[].pane.width.max | 最大 | string | - | - | - | スプリッターで広げられる最大の幅。 | 実装で、区画の最大の幅にする。 | `480px` |
+      | elements[].pane.resizable | 幅を変えられる | boolean | - | - | - | スプリッターで幅を変えられるなら `true`。 | 実装で、スプリッターを配置するかにする。 | - |
+      | elements[].pane.collapsible | 開閉できる | boolean | - | - | - | 開閉のボタンで閉じられるなら `true`。 | 実装で、開閉のボタンを配置するかにする。 | - |
+      | elements[].pane.default_collapsed | 既定で閉じる | boolean | - | - | - | 初めて開いたときに閉じた状態にするなら `true`。 | 実装で、保持した開閉が無いときの状態にする。 | - |
+      | elements[].pane.narrow | 狭い幅の出し方 | string | 必須 | `drawer` / `bottom_sheet` / `stack_below` / `separate_screen` / `hidden` | - | `md` 未満の幅での区画の出し方。 | 実装で、狭い幅の区画の出し方にする。<br>テストで、スマホの幅の場面にする。 | - |
+      | elements[].pane.focus_on_open | 開いたときのフォーカス | string | - | - | - | 区画を開いたときにフォーカスを移す要素。移さないときは記載しない。 | 実装で、区画を開いたときにフォーカスを移す要素にする。 | `選んでいる項目` |
+      | elements[].tabs | タブ | object | - | - | - | タブの並び・切り替えの方式・中身が無いときの扱い。 | 実装で、タブの並び・切り替え・件数の表示にする。<br>テストで、タブを切り替えるケースにする。 | - |
+      | elements[].tabs.items | タブの並び | array | 必須 | - | minItems: `1` | タブ 1 つ = 1 要素。 | 実装で、タブの並びにする。 | - |
+      | elements[].tabs.items[].label | 見出し | string | 必須 | - | - | タブに出す文言。 | 実装で、タブの見出しにする。 | - |
+      | elements[].tabs.items[].value | 値 | string | 必須 | - | - | URL・保持先に記載するタブの値。 | 実装で、URL の search と保持先に記載する値にする。 | `settings` |
+      | elements[].tabs.items[].count_source | 件数の取得元 | string | - | - | - | タブに件数を出すときの取得元（`{インターフェース定義の論理名}.{フィールドのパス}`）。 | 実装で、タブに出す件数の取得元にする。 | - |
+      | elements[].tabs.mode | 切り替えの方式 | string | 必須 | `in_screen` / `navigation` | - | 画面の中で中身を切り替えるか、別の画面へ移るか。 | 実装で、`tablist` にするか `nav` のリンクにするかにする。 | - |
+      | elements[].tabs.activation | 選ぶ方式 | string | - | `automatic` / `manual` | - | 矢印キーでフォーカスを移したときに選ぶか（`in_screen` のとき）。 | 実装で、タブのキー操作にする。 | - |
+      | elements[].tabs.empty_behavior | 中身が無いときの扱い | string | - | - | - | タブの中身が 0 件のときの出し方。 | 実装で、中身が無いタブの出し方にする。 | `タブを残し、件数 0 と空の表示を出す` |
+      | elements[].table | 表の機能 | object | - | - | - | 表の並べ替え・絞り込み・選択・行の操作・見出しの固定などの機能。 | 実装で、表の機能にする。<br>テストで、並べ替え・絞り込み・選択のケースにする。 | - |
+      | elements[].table.default_sort | 既定の並び | string | 必須 | - | - | 表を開いたときの並びの列と向き。並べ替えの巡回（既定 → 昇順 → 降順 → 既定）を外すときはその旨も記載する。 | 実装で、表を開いたときの並びにする。 | `更新日時の降順` |
+      | elements[].table.filter | 絞り込み | string | - | - | - | 表全体の絞り込みの方法と、絞り込んだ後の件数の出し方。 | 実装で、表の絞り込みと件数の表示にする。 | `タイトルのキーワードで絞り込み、「12 / 40 件」と出す` |
+      | elements[].table.column_visibility | 列の表示の切り替え | boolean | - | - | - | 利用者が列の表示・非表示と既定に戻す操作を持つなら `true`。 | 実装で、列の設定のパネルを配置するかにする。 | - |
+      | elements[].table.sticky_header | 見出し行の固定 | boolean | 必須 | - | - | 縦にスクロールしても見出し行を残すなら `true`。 | 実装で、見出し行を固定するかにする。 | - |
+      | elements[].table.row_click | 行を押したとき | string | - | - | - | 行を押したときの動き。 | 実装で、行を押したときの動きにする。 | `右の詳細パネルにその行を開く` |
+      | elements[].table.row_link | 行のリンク先 | string | - | - | pattern: `^(?:[A-Z]+-\d+(?:-\d+)?)?#(?:[^\s\[\]]\|\[(?:[^\[\]]\|\[[^\[\]]*\])*\])*$` | 行から移る画面の画面設計。新しいタブで開けるリンクにする。 | 実装で、行のリンクの移動先にする。 | `IF-12#flows[正常系]` / `#functions[resolve_base].exceptions` / `CFG-3#` / `#notes[main.py の補足]` / `#functions[main#3]` / `IF-6#request[operations[].fields].description` |
+      | elements[].table.selection | 行の選択 | string | 必須 | `none` / `single` / `multiple` | - | 行を選べるか。 | 実装で、行の選択のチェックボックスにする。 | - |
+      | elements[].table.bulk_actions | 一括操作 | string | - | - | - | まとめて選んだ行への操作。 | 実装で、選んだ行に出す操作のバーにする。 | `削除・状態の変更` |
+      | elements[].table.copy | コピー | string | - | - | - | セル・行の値をコピーする方法。 | 実装で、コピーの操作にする。 | `セルにホバーするとコピーのボタンを出す` |
+      | elements[].table.grid_navigation | 矢印キーでのセルの移動 | boolean | - | - | - | 矢印キーでセルを移る（`grid` のロール）なら `true`。 | 実装で、表のロールとキー操作にする。 | - |
+      | elements[].sortable | 並べ替え | boolean | - | - | - | 列の見出しで並べ替えられるなら `true`。 | 実装で、列の見出しの並べ替えにする。 | - |
+      | elements[].filterable | 絞り込み | boolean | - | - | - | 列の値で絞り込めるなら `true`。 | 実装で、列の絞り込みのボタンにする。 | - |
+      | elements[].pinnable | 固定 | boolean | - | - | - | 横にスクロールしても列を残せるなら `true`。 | 実装で、列を固定するボタンにする。 | - |
+      | elements[].hideable | 非表示 | boolean | - | - | - | 利用者が列を隠せるなら `true`。 | 実装で、列の設定のパネルに列を並べるかにする。 | - |
+      | elements[].close | 閉じ方 | object | - | - | - | ダイアログ・ポップオーバーを外側のクリックと Esc で閉じるか。 | 実装で、外側のクリックと Esc の扱いにする。<br>テストで、閉じる・閉じないケースにする。 | - |
+      | elements[].close.outside_click | 外側のクリック | boolean | 必須 | - | - | 外側をクリックしたら閉じるなら `true`。 | 実装で、外側のクリックで閉じるかにする。 | - |
+      | elements[].close.escape | Esc | string | 必須 | `close` / `confirm` / `none` | - | Esc を押したときの扱い。 | 実装で、Esc を押したときの扱いにする。 | - |
+      | elements[].modal | 後ろの操作を止める | boolean | - | - | - | 開いている間、後ろの画面を操作させないなら `true`。 | 実装で、モーダルにするかにする。 | - |
+      | elements[].initial_focus | 開いたときのフォーカス | string | - | - | - | 開いたときにフォーカスを移す要素の名前。 | 実装で、開いたときにフォーカスを移す要素にする。<br>テストで、開いた直後のフォーカスを確認する。 | `タイトル入力欄` |
+      | elements[].return_focus | 閉じた後のフォーカス | string | - | - | - | 閉じた後にフォーカスを戻す要素の名前。 | 実装で、閉じた後にフォーカスを戻す要素にする。<br>テストで、閉じた後のフォーカスを確認する。 | `開いた要素` |
+      | elements[].retained_state | 保持する状態 | array | - | - | minItems: `1` | 画面を移って戻ったとき・再読み込みしたときに戻す状態。保持するもの 1 つ = 1 要素。 | 実装で、状態を保存する場所・キーと、保存して戻す契機にする。<br>テストで、移って戻ったとき・再読み込みしたときに状態が戻るケースにする。<br>レビューで、規約『入力と文言』の `retention-design-01` の要素に保持の記載が漏れていないかを確認する。 | - |
+      | elements[].retained_state[].what | 保持するもの | string | 必須 | - | - | 保持する状態（入力した値・選んだタブ・開閉・幅・スクロール位置・領域で最後に開いたページ 等）。 | 実装で、保存して戻す値にする。 | `スクロール位置` / `領域で最後に開いたページ` |
+      | elements[].retained_state[].store | 保持先 | string | 必須 | `url_path` / `url_query` / `session_storage` / `local_storage` / `cookie` / `router` / `server` / `memory` / `none` | - | 状態を保存する場所。 | 実装で、状態を保存する場所（URL・Web Storage・Cookie・ルーター・サーバー・メモリ）にする。 | - |
+      | elements[].retained_state[].key | キー | string | - | - | - | Web Storage・Cookie のキーか、URL の search の名前。 | 実装で、保存と読み込みに使用するキーにする。<br>レビューで、ほかの領域・アプリのキーと重ならないかを確認する。 | `aituber:v1:admin:sidebar:{area}:scroll` / `q` |
+      | elements[].retained_state[].save_on | 保存する契機 | string | - | - | - | 状態を保存する操作・タイミング。 | 実装で、状態を保存する契機にする。 | `スクロールが止まったとき` |
+      | elements[].retained_state[].restore_on | 戻す契機 | string | - | - | - | 保存した状態を戻す操作・タイミング。 | 実装で、保存した状態を戻す契機にする。<br>テストで、状態が戻ることを確認する操作にする。 | `上タブを移って戻ったときと再読み込みしたとき` |
+      | elements[].retained_state[].precedence | 優先する値 | string | - | - | - | 保持先が複数あるときに、どれを優先し、使用した値をどこへ書き戻すか。 | 実装で、値を参照する順と書き戻す先にする。 | `` URL の値を優先し、無ければ sessionStorage の値を使用して URL に `replace` で書き戻す `` |
+      | elements[].retained_state[].reset_when | 初期に戻す条件 | string | - | - | - | 保存した状態を捨てて初期の状態に戻す条件。 | 実装で、保存した状態を捨てる条件にする。<br>テストで、初期に戻るケースにする。 | `一覧の絞り込みを変えたとき` |
+      | elements[].retained_state[].reason | 理由 | string | - | - | - | そうしている理由。参照する側の判断が変わるものだけを記載する。 | レビューで、理由が今も成り立つかと、同じ判断を変える変更が無いかを確認する。 | - |
       | elements[].initial_value | 初期値 | string | - | - | - | 表示時点の値（`空` / 取得値 等）。 | 実装で、画面を開いたときの値にする。 | - |
       | elements[].hint | 補助文 | string | - | - | - | ラベルの下に出す説明。 | 実装で、ラベルの下の補助文にする。 | - |
       | elements[].autocomplete | 入力の目的 | string | - | - | - | 自動入力の種類（HTML の `autocomplete`）。 | 実装で、入力欄の `autocomplete` にする。 | - |
@@ -94,7 +174,6 @@ items:
       | elements[].prefix | 接頭辞 | string | - | - | - | 入力欄の前に出す文字列（通貨記号 等）。 | 実装で、入力欄の前に出す文字列にする。 | - |
       | elements[].suffix | 接尾辞 | string | - | - | - | 入力欄の後に出す文字列（単位 等）。 | 実装で、入力欄の後に出す文字列にする。 | - |
       | elements[].options | 選択肢 | string | - | - | - | 出所・並び・既定・複数選択の可否・排他入力。 | 実装で、選択肢の出所・並び・既定・複数選択にする。 | - |
-      | elements[].sorting | 並べ替え・絞り込み | string | - | - | - | 表の列のとき、できるかと既定の並び。 | 実装で、表の列の並べ替え・絞り込みにする。 | - |
       | elements[].input_example | 入力例 | string | - | - | - | テストで入力する値の具体例。 | テストで、入力する値にする。 | - |
       | elements[].source | 取得元 | string | - | - | - | `{インターフェース定義の論理名}.{フィールドのパス}`。 | 実装で、要素に出す値を取るインターフェース定義のフィールドにする。 | - |
       | elements[].target | 送信先 | string | - | - | - | `{インターフェース定義の論理名}.{フィールドのパス}`。変換・合成・除外は括弧書きで添える。 | 実装で、入力した値を送信するインターフェース定義のフィールドにする。 | - |
@@ -139,11 +218,20 @@ items:
       | lead | 初回に記載した内容のまま保ち、後から情報を追加しない（仕様は各項目に記載する）。<br>対象そのものが変わったときだけ書き換える。 | 決済の API。仕様は次のとおり。タイムアウトは 30 秒で、3 回までリトライする。 | 仕様を冒頭リードに記載している。仕様は各項目へ分ける |
       | test_file | 規約『フォルダ構成』で対象の横に配置する React の結合テストは、対象の横のファイル（`*.test.ts`・`*.test.tsx`）を記載する。 | - | - |
       | impl_files | 複数の画面が使用する共通の部品は記載しない。<br>実装を作った・移したときに記載する。 | - | - |
+      | screen_type | `list`: 項目を並べて選ぶ一覧の画面。`table`・`list`・`board`・`tree` の要素と `heading` の要素を持つ。<br>`detail`: 1 件を参照する詳細の画面。`heading` の要素を持つ。<br>`edit`: 1 件を作る・編集する画面。`heading` の要素と入力の要素を持つ。<br>`settings`: 設定を変える画面。`heading` の要素と入力の要素を持つ。<br>`shell`: ほかの画面を中に描く共通のレイアウト（ヘッダー・サイドバー・上タブ）。`nav` か `sidebar` の要素を持つ。<br>`other`: どの型にも該当しない画面。<br>一覧の画面の必須の要素（読み込み中・空の表示・ページ送り）は、規約『一覧画面』の `required-elements-01` に従って要素に並べる。 | - | - |
+      | leave_guard | 未保存の入力があるまま画面を離れるときは警告する（規約『入力と文言』の `state-retention-02`）。<br>自動保存の画面は、保存に失敗した入力が残るときに警告する（規約『自動保存』の `rules-01`）。<br>`none`: 警告しない（入力を持たない画面）。<br>`unsaved`: 未保存の入力があるときに警告する。<br>`autosave_error`: 自動保存に失敗した入力が残るときに警告する。 | - | - |
+      | retained_state | `shell` の画面は、上タブ（領域）ごとに最後に開いたページを記載する（規約『入力と文言』の `state-retention-01`）。 | - | - |
+      | retained_state[].store | `url_path`: URL のパス。<br>`url_query`: URL の search（クエリの値）。<br>`session_storage`: sessionStorage（そのブラウザのタブの中だけ）。<br>`local_storage`: localStorage（端末ごとの好み）。<br>`cookie`: Cookie（最初の描画で要る端末ごとの好み）。<br>`router`: ルーターの機能（履歴の項目ごと）。<br>`server`: サーバー（保存ビュー 等）。<br>`memory`: 画面を開いている間だけのメモリ。<br>`none`: 保持しない。 | - | - |
+      | retained_state[].key | Web Storage・Cookie のキーは、規約『入力と文言』の `storage-key-01` の書式で記載する。 | - | - |
+      | retained_state[].precedence | URL に値があれば URL を優先し、sessionStorage の値を使用したら URL に `replace` で書き戻す（規約『入力と文言』の `state-retention-01`）。 | - | - |
+      | retained_state[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
       | elements | ダイアログの中の要素も並べ、位置の先頭にダイアログ名を記載する。<br>列の表示・非表示は dev-docs の画面の表の列の設定で切り替える。 | - | - |
       | elements[].name | 画面の中で一意にする。 | - | - |
       | elements[].kind | HTML の要素名（`div`・`a`・`h1`・`p`）ではなく、要素の役割で選ぶ。<br>`button`: 押すと操作を始める要素（アイコンだけのボタン・メニューの項目を含む）。<br>`link`: 押すと別の画面・場所へ移る要素。<br>`toggle`: 押すたびにオンとオフを切り替え、切り替えた時点で反映する要素（スイッチ・押した状態を持つボタン）。<br>`input`: 1 行の文字・数値・日付を入力する欄。<br>`textarea`: 複数行の文字を入力する欄。<br>`select`: 選択肢を開いて選ぶ要素（ドロップダウン・コンボボックス）。<br>`checkbox`: 項目ごとにオンとオフを選び、送信で反映する要素。<br>`radio`: 並べた選択肢から 1 つを選ぶ要素（セグメントの切り替えを含む）。<br>`tabs`: 押した見出しの中身に切り替えるタブの並び。<br>`nav`: 画面の間を移るリンクの並び（グローバルナビゲーション・パンくず）。<br>`sidebar`: 画面の端に配置し、開閉できる区画。<br>`pane`: 画面を分けた区画（ヘッダー・フッター・本文・フォーム・パネル）。<br>`splitter`: 区画の境目をドラッグして大きさを変える要素。<br>`drag_handle`: 掴んで項目を並べ替える・区画を動かす要素。<br>`disclosure`: 見出しを押して中身を開閉する区画（アコーディオン・`details`）。<br>`list`: 同じ形の項目を並べる一覧。<br>`tree`: 項目を階層で並べ、階層ごとに開閉する一覧。<br>`board`: 列ごとに項目を並べるボード。<br>`table`: 行と列で値を並べる表。<br>`table_column`: 表の 1 列。<br>`dialog`: 画面の上に重ねて開き、閉じるまで後ろを操作させない区画（モーダル・シート）。<br>`popover`: 要素に添えて開く浮いた区画（メニュー・ポップオーバー）。<br>`tooltip`: ホバー・フォーカスで出す説明。<br>`heading`: 区画の見出し。<br>`label`: 固定の文言か取得した値を出す文字（バッジ・状態の表示を含む）。<br>`image`: 画像・アイコン・図。<br>`alert`: 画面の中に出し続ける通知（エラー・警告・情報のバー）。<br>`toast`: 一時的に出て消える通知。<br>`progress`: 処理中・読み込み中の表示（進捗バー・スピナー・スケルトン）。<br>`separator`: 区切り線。<br>`shortcut`: 見た目を持たず、画面全体で受けるキー操作。 | - | - |
       | elements[].component | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | elements[].label | 見れば分かるものにラベルを付けない（規約『入力と文言』の `wording-01`）。<br>本文の区画に操作の説明文を置かない（規約『情報の階層と見た目』の `information-hierarchy-01`）。<br>単語・操作の単語・状態名は、規約『入力と文言』の `wording-term-format-02` に従う。<br>アイコンだけのボタン（`label_display` が `icon_only`）は、`label` を記載せず `accessible_name` と `tooltip` に記載する。 | - | - |
       | elements[].placeholder | `kind` が `input`・`textarea`・`select` の要素だけに記載する。 | - | - |
+      | elements[].io | `input`: 入力を受けるだけで、取得した値を出さない。<br>`output`: 値を表示するだけで、入力を受けない。<br>`input_output`: 取得した値を出し、入力で変えられる。 | - | - |
       | elements[].required | `kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle` の要素だけに記載する。 | - | - |
       | elements[].condition | 条件があるキーだけに記載する。<br>必須（ER 図は NOT NULL）は、条件に該当するときの扱いを記載する。<br>条件に該当しないときは、キーを持たない（ER 図は NULL にする）。 | - | - |
       | elements[].required_label | `kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle` の要素だけに記載する。 | - | - |
@@ -153,21 +241,62 @@ items:
       | elements[].range | `kind` が `input` の要素だけに記載する。 | - | - |
       | elements[].pattern | `kind` が `input`・`textarea` の要素だけに記載する。 | - | - |
       | elements[].charset | `kind` が `input`・`textarea` の要素だけに記載する。 | - | - |
-      | elements[].overflow | 長さが変わる値を表示する要素に記載し、固定の文言だけの要素には記載しない。<br>入力を持たない値を表示する要素（`io` が `表示` で `source` を持つ要素）には必ず記載する。<br>固定の領域に配置する要素（`fixed_area` が `true`）で、`source` を持つか `io` が `入力`・`入出力` の要素には必ず記載する。<br>`type` は、規約『レイアウト』の `pitfall-text-code-05`（長さが変わる値を折り返すか省略するかの既定）に従って選ぶ。 | - | - |
+      | elements[].overflow | 長さが変わる値を表示する要素に記載し、固定の文言だけの要素には記載しない。<br>入力を持たない値を表示する要素（`io` が `output` で `source` を持つ要素）には必ず記載する。<br>固定の領域に配置する要素（`fixed_area` が `true`）で、`source` を持つか `io` が `input`・`input_output` の要素には必ず記載する。<br>`type` は、規約『レイアウト』の `pitfall-text-code-05`（長さが変わる値を折り返すか省略するかの既定）に従って選ぶ。 | - | - |
       | elements[].overflow.type | `truncate` にする要素は、省略した値の全文を出す方法を `description` に記載する。 | - | - |
       | elements[].overflow.max_length | 入力の最大長（`max_length`）を持たず、`unbounded` が `true` でない要素には記載する。<br>入力を受ける要素で、入力の最大長（`max_length`）と同じ値なら省く。 | - | - |
       | elements[].overflow.unbounded | `true` の要素は、表示する最大の長さ（`max_length`）を記載しない。<br>テストで入れる値の文字数は、同じ画面設計の要素の表示する最大の長さ（`overflow.max_length`、無ければ `max_length`）のうち最大の値の 3 倍にする。<br>同じ画面設計に最大の長さを持つ要素が無いときは、テストで入れる値の文字数を `description` に記載する。 | - | - |
       | elements[].count_limit | 並べる値の件数が変わる要素に記載し、件数が固定の要素には記載しない。 | - | - |
       | elements[].count_limit.type | `summarize` にする要素は、まとめた値の全てを出す方法を `description` に記載する。 | - | - |
       | elements[].align | `kind` が `table_column` の要素には必ず記載する。 | - | - |
+      | elements[].initial_state | `enabled`: 操作できる。<br>`disabled`: 表示するが操作できない。<br>`readonly`: 値を出し、選択・コピーはできるが変えられない。 | - | - |
       | elements[].pending_state | 書き込みを始める要素と、応答を待つ間に操作を止める要素に記載する。<br>`kind` が `label`・`heading`・`image`・`tooltip`・`progress`・`separator`・`shortcut` の要素には記載しない。 | - | - |
-      | elements[].hint | `kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle` の要素だけに記載する。 | - | - |
+      | elements[].icon | 同じ操作には画面をまたいで同じアイコンを使用する（規約『情報の階層と見た目』の `visual-consistency-01`）。<br>標準の操作（閉じる・コピー・設定へ移る 等）は既定でアイコンを付ける（規約『ボタンのラベル』の `icon-01`）。<br>`kind` が `input`・`textarea`・`select` の要素には記載しない。 | - | - |
+      | elements[].label_display | 規約『ボタンのラベル』の `icon-or-text-01` で選ぶ。<br>`icon_only`: アイコンだけを出す。`accessible_name`・`tooltip`・`icon` を記載する。<br>`icon_and_text`: アイコンと文字を出す。`icon` を記載する。<br>`text_only`: 文字だけを出す。<br>`kind` が `button` の要素には必ず記載し、`button`・`link`・`toggle` 以外の要素には記載しない。 | - | - |
+      | elements[].accessible_name | `label_display` が `icon_only` の要素には必ず記載する（規約『操作とアクセシビリティ』の `operation-accessibility-01`）。 | - | - |
+      | elements[].tooltip | `label_display` が `icon_only` の要素には必ず記載する（規約『ボタンのラベル』の `tooltip-01`）。<br>ショートカットを持つ要素は、文言の後ろにキーを出す（規約『キーボード操作』の `discoverability-01`）。 | - | - |
+      | elements[].narrow | 判定フローチャート『狭い幅の短い文言の対処』と、規約『レイアウト』の `responsive-01`〜`responsive-03` で選ぶ。<br>狭い幅でも出し方を変えない要素は記載しない。 | - | - |
+      | elements[].narrow.action | `hidden`: 出さない。<br>`icon_only`: アイコンだけにする。<br>`short_label`: 短い別の文言にする。<br>`into_menu`: メニュー（その他の操作）へしまう。<br>`stack`: 縦に並べる。<br>`horizontal_scroll`: 横にスクロールさせる。<br>`collapse_column`: 表の列を畳み、行の詳細に出す。<br>`drawer`: ドロワーにする。 | - | - |
+      | elements[].disabled_reason | `kind` が `button` で `enabled_when` を持つ要素には必ず記載する（規約『入力と文言』の `input-submit-01`）。<br>`enabled_when` を持たない要素には記載しない。 | - | - |
+      | elements[].confirm | 規約『画面設計の原則』の `screen-design-principles-01` で選ぶ。<br>`dialog`: 操作の前に確認のダイアログを出す。<br>`undo`: 操作の後に取り消しの手段を出す。<br>`none`: 確認も取り消しもしない（元に戻せる操作）。<br>`kind` が `button` の要素には必ず記載し、`button`・`link`・`toggle`・`drag_handle` 以外の要素には記載しない。 | - | - |
+      | elements[].feedback | 結果はアイコンの変化を先に検討する（規約『画面設計の原則』の `screen-design-principles-01`）。<br>失敗の伝え方は、規約『入力と文言』の `error-notification-01` に従う。 | - | - |
+      | elements[].toggle_state | 状態でラベルを替えず、属性で状態を伝える（規約『操作とアクセシビリティ』の `operation-accessibility-01`）。<br>`pressed`: 押した状態を持つボタン。<br>`expanded`: 区画を開閉するボタン。<br>`checked`: スイッチ。<br>`kind` が `toggle` の要素には必ず記載し、`toggle`・`button` 以外の要素には記載しない。 | - | - |
+      | elements[].live | `polite`: 読み上げ中の内容の後に読み上げる。<br>`assertive`: 割り込んで読み上げる（失敗の通知だけ）。<br>`kind` が `alert`・`toast`・`label`・`progress` の要素だけに記載する。 | - | - |
+      | elements[].history | 絞り込みの確定とオーバーレイを開く操作は `push`、入力中の値の反映は `replace` にする（規約『URL の状態』の `write-02`・`write-03`）。<br>URL を変えない要素は記載しない。 | - | - |
+      | elements[].resets | 絞り込み・並べ替えを変えるときは、ページを 1 に戻す（規約『URL の状態』の `write-03`）。 | - | - |
+      | elements[].shortcut | キーの選び方と範囲は、規約『キーボード操作』の `shortcut-design-01`〜`shortcut-design-05` と `shortcut-assignment-01` に従う。<br>ボタン・メニューの項目にキーを出す（規約『キーボード操作』の `discoverability-01`）。<br>`kind` が `shortcut` の要素には必ず記載する。 | - | - |
+      | elements[].shortcut.scope | `app`: アプリ全体。<br>`screen`: この画面を開いている間。<br>`pane`: その区画にフォーカスがある間。<br>`dialog`: そのダイアログを開いている間。 | - | - |
+      | elements[].pane | スプリッターと開閉の決まりは、規約『レイアウト』の `splitter-01` に従う。<br>幅と開閉の保持は、要素の `retained_state` に記載する。<br>`kind` が `sidebar` の要素には必ず記載し、`sidebar`・`pane` 以外の要素には記載しない。 | - | - |
+      | elements[].pane.width | 最小はペインの主な操作が収まる幅、最大はメインに主な操作が残る幅にする（規約『レイアウト』の `splitter-01`）。 | - | - |
+      | elements[].pane.narrow | 狭い幅の出し方は、規約『モバイル対応ルール』の `shell-responsibility-02` と規約『画面の分け方』の `structure-transition-01` で選ぶ。<br>`drawer`: ボタンで開くドロワーにする。<br>`bottom_sheet`: 下から開くシートにする。<br>`stack_below`: メインの下に並べる。<br>`separate_screen`: 別の画面にする。<br>`hidden`: 出さない。 | - | - |
+      | elements[].pane.focus_on_open | フォーカスの移し方は、規約『キーボード操作』の `focus-management-02`・`focus-management-04` に従う。 | - | - |
+      | elements[].tabs | タブの決まりは、規約『画面の分け方』の `tab-01` と規約『URL の状態』の `tab-01` に従う。<br>切り替えで枠の大きさを変えない（規約『表示の安定』の `display-stability-01`）。<br>選んだタブの保持は、要素の `retained_state` に記載する。<br>`kind` が `tabs` の要素には必ず記載し、ほかの要素には記載しない。 | - | - |
+      | elements[].tabs.mode | 画面の中の切り替えと画面の移動を 1 つのタブの並びに混ぜない（規約『画面の分け方』の `tab-01`）。<br>`in_screen`: 画面の中で中身を切り替える。<br>`navigation`: 押すと別の画面へ移る。 | - | - |
+      | elements[].tabs.activation | キー操作は、規約『キーボード操作』の `composite-widget-01` に従う。<br>`automatic`: フォーカスを移すと選ぶ。<br>`manual`: Enter・Space で選ぶ。 | - | - |
+      | elements[].tabs.empty_behavior | 中身が無くてもタブを隠さず、空の表示を出す（規約『画面の分け方』の `tab-01`）。 | - | - |
+      | elements[].table | 表の機能の決まりは、規約『業務画面のUI要素』の `data-display-01`・`action-01` に従う。<br>列ごとの並べ替え・絞り込み・固定・非表示は、`table_column` の要素に記載する。<br>`kind` が `table` の要素には必ず記載し、ほかの要素には記載しない。 | - | - |
+      | elements[].table.row_link | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
+      | elements[].table.selection | `none`: 選ばない。<br>`single`: 1 行だけ選ぶ。<br>`multiple`: まとめて選ぶ。`bulk_actions` を記載する。 | - | - |
+      | elements[].table.grid_navigation | キー操作は、規約『キーボード操作』の `composite-widget-01` に従う。 | - | - |
+      | elements[].sortable | `kind` が `table_column` の要素には必ず記載し、ほかの要素には記載しない。 | - | - |
+      | elements[].filterable | `kind` が `table_column` の要素だけに記載する。 | - | - |
+      | elements[].pinnable | `kind` が `table_column` の要素だけに記載する。 | - | - |
+      | elements[].hideable | `kind` が `table_column` の要素だけに記載する。 | - | - |
+      | elements[].close | 規約『表示の安定』の `close-behavior-01` の表で選ぶ。<br>Esc は一番上の層だけを閉じる（規約『画面の分け方』の `modal-01`）。<br>`kind` が `dialog`・`popover` の要素には必ず記載し、ほかの要素には記載しない。 | - | - |
+      | elements[].close.escape | `close`: 閉じる。<br>`confirm`: 確認を挟んでから閉じる（入力を持つダイアログ）。<br>`none`: 閉じない。 | - | - |
+      | elements[].modal | `kind` が `dialog`・`popover` の要素だけに記載する。 | - | - |
+      | elements[].initial_focus | 規約『キーボード操作』の `focus-management-02` に従う。<br>`kind` が `dialog`・`popover` の要素には必ず記載し、ほかの要素には記載しない。 | - | - |
+      | elements[].return_focus | 規約『キーボード操作』の `focus-management-02` に従い、既定は開いた要素にする。<br>`kind` が `dialog`・`popover` の要素には必ず記載し、ほかの要素には記載しない。 | - | - |
+      | elements[].retained_state | 規約『入力と文言』の `retention-design-01` の要素（入力・選択・タブ・開閉するもの・スクロール領域）には必ず記載する。<br>`kind` が `label`・`heading`・`image`・`tooltip`・`progress`・`separator`・`toast`・`shortcut`・`link`・`table_column` の要素には記載しない。 | - | - |
+      | elements[].retained_state[].store | `url_path`: URL のパス。<br>`url_query`: URL の search（クエリの値）。<br>`session_storage`: sessionStorage（そのブラウザのタブの中だけ）。<br>`local_storage`: localStorage（端末ごとの好み）。<br>`cookie`: Cookie（最初の描画で要る端末ごとの好み）。<br>`router`: ルーターの機能（履歴の項目ごと）。<br>`server`: サーバー（保存ビュー 等）。<br>`memory`: 画面を開いている間だけのメモリ。<br>`none`: 保持しない。 | - | - |
+      | elements[].retained_state[].key | Web Storage・Cookie のキーは、規約『入力と文言』の `storage-key-01` の書式で記載する。 | - | - |
+      | elements[].retained_state[].precedence | URL に値があれば URL を優先し、sessionStorage の値を使用したら URL に `replace` で書き戻す（規約『入力と文言』の `state-retention-01`）。 | - | - |
+      | elements[].retained_state[].reason | 他の設計書を指すときは説明文の中にリンクを記載せず、関連は `refs`（`related_item` の配列）に持つ。 | - | - |
+      | elements[].hint | `kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle` の要素だけに記載する。<br>入力の形式・範囲が、ラベルとプレースホルダで伝わらないときだけ記載する（規約『入力と文言』の `wording-01`）。 | - | - |
       | elements[].autocomplete | `kind` が `input`・`textarea`・`select` の要素だけに記載する。 | - | - |
       | elements[].inputmode | `kind` が `input`・`textarea` の要素だけに記載する。 | - | - |
       | elements[].prefix | `kind` が `input`・`textarea` の要素だけに記載する。 | - | - |
       | elements[].suffix | `kind` が `input`・`textarea` の要素だけに記載する。 | - | - |
       | elements[].options | `kind` が `select`・`radio` の要素には必ず記載し、`checkbox` の要素には選択肢を並べるときに記載する。 | - | - |
-      | elements[].sorting | `kind` が `table_column` の要素だけに記載する。 | - | - |
       | elements[].input_example | `kind` が `input`・`textarea`・`select`・`checkbox`・`radio`・`toggle` の要素だけに記載する。 | - | - |
       | elements[].action_ref | ID は指す設計書の最上位の `id` にする。<br>同じ設計書の中は `#{項目のパス}` だけでよい。<br>リストの項目は、その Schema の `x-key` で宣言したキーの値で `[{値}]` と指す（番号で指さない）。<br>設計書全体を指すときは `#` の後を空にする。<br>辞書のキーも `[{キー}]` で指し、`.` や空白を含むキーも 1 階層になる（`notes[main.py の補足]`）。<br>同じ `x-key` の値の要素の 2 つ目以降は `[{値}#{順番}]` と指す（`functions[main#3]`）。<br>同じ値の要素が無く末尾が `#{整数}` のときだけ、`[...]` の中の `#` を順番として扱う。<br>`[...]` の中の対応の取れた `[` `]` は値の一部として読む（`request[operations[].fields]` は `x-key` の値が `operations[].fields` の要素）。 | IF-12#flows[0] | リストの項目を番号で指している |
       | elements[].refs[].item | 記載方法は参照（`ref`）の `#` より後と同じにする。 | - | - |
@@ -193,12 +322,20 @@ items:
       test_file: tests/integration/task/test_タスク作成画面.py
       impl_files:
       - app/(authenticated)/tasks/new/_components/task-create-form.tsx
+      screen_type: edit
+      leave_guard: unsaved
       elements:
+      - name: 画面の見出し
+        kind: heading
+        position: フォーム本体 > 先頭
+        description: 画面名を出す
+        label: タスクの作成
+        visible_when: 常時
       - name: プロジェクト名
         kind: label
         position: フォーム本体 > 見出しの下
         description: タスクを作るプロジェクトの名前を出す。1 行に収まらないときは省略し、全文をツールチップに出す
-        io: 表示
+        io: output
         type: 文字列
         visible_when: 常時
         overflow:
@@ -209,7 +346,7 @@ items:
         kind: label
         position: フォーム本体 > プロジェクト名の下
         description: プロジェクトに付いたタグを横に並べる。1 件のタグが 20 文字を超えたら省略し、全文をツールチップに出す。上限を超えた分は「+3」にまとめ、押すと全てのタグをポップオーバーに出す
-        io: 表示
+        io: output
         type: 文字列の配列
         visible_when: タグが 1 件以上あるとき
         overflow:
@@ -224,7 +361,7 @@ items:
         position: サイドバー > プロジェクトの情報
         fixed_area: true
         description: 他の人が記載したプロジェクトの説明を出す。3 行を超えたら省略し、押すと全文をダイアログに出す
-        io: 表示
+        io: output
         type: 文字列
         visible_when: 説明があるとき
         overflow:
@@ -236,24 +373,35 @@ items:
         position: フォーム本体
         description: タスク名を入力
         placeholder: '例: 企画書を作る'
-        io: 入力
+        io: input
         type: 文字列
         visible_when: 常時
         required: true
         max_length: 100
         constraints: 100 文字以内
         initial_value: 空（編集時は取得値）
+        retained_state:
+        - what: 入力途中の値
+          store: session_storage
+          key: todo:v1:task-create:title
+          save_on: 入力のたび
+          restore_on: 同じタブで画面を開き直したとき
+          reset_when: 保存したとき
         source: タスク詳細取得.task.title
         target: タスク作成.title
       - name: 優先度選択
         kind: select
         position: フォーム本体
         description: 優先度を選択
-        io: 入力
+        io: input
         type: 文字列
         visible_when: 常時
         options: low / medium / high（既定 medium）
         initial_value: medium
+        retained_state:
+        - what: 選んだ優先度
+          store: none
+          reason: 既定の medium から選び直す手間が小さく、入力途中の値と一緒に戻すほどではない
         target: タスク作成.priority
       - name: 優先度のバッジ
         kind: label
@@ -272,8 +420,19 @@ items:
         position: フッター
         description: 入力内容でタスクを作成
         label: 保存
+        label_display: text_only
+        narrow:
+          action: stack
         visible_when: 常時
         enabled_when: 必須項目が入力済みで制限の違反が無いとき
+        disabled_reason: タスク名を入力すると保存できます（ボタンの下に出す）
+        confirm: none
+        feedback:
+          success: タスクの詳細画面へ移り、「タスクを作成しました」の通知を出す
+          failure: フォームの上にエラーのバーを出し、入力は残す
+        shortcut:
+          key: Control+S
+          scope: screen
         pending_state: 非活性にし、ボタンの文言の左に回る表示を出す（ボタンの幅は変えない）
         action_ref: IF-1#
       input_checks:

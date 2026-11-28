@@ -292,6 +292,140 @@ $defs:
       - 同じ名前のセクションが多くの設計書に出たら、標準の項目へ格上げする候補にする。
     additionalProperties:
       $ref: "#/$defs/markdown"
+  retained_state:
+    type: array
+    title: 保持する状態
+    description: 画面を移って戻ったとき・再読み込みしたときに戻す状態。保持するもの 1 つ = 1 要素。
+    x-used-by:
+      - 実装で、状態を保存する場所・キーと、保存して戻す契機にする。
+      - テストで、移って戻ったとき・再読み込みしたときに状態が戻るケースにする。
+      - レビューで、規約『入力と文言』の `retention-design-01` の要素に保持の記載が漏れていないかを確認する。
+    x-rules:
+      - 保持先は、規約『入力と文言』の `state-retention-01` の表と、判定フローチャート『画面の状態の保持先』で選ぶ。
+      - 保持しないものは、`store` を `none` にした要素で記載する。
+    x-shape: table
+    x-key: what
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+      - what
+      - store
+      allOf:
+      - if:
+          properties:
+            store:
+              enum:
+              - url_query
+              - session_storage
+              - local_storage
+              - cookie
+          required:
+          - store
+        then:
+          required:
+          - key
+      - if:
+          properties:
+            store:
+              const: none
+          required:
+          - store
+        then:
+          properties:
+            key: false
+            save_on: false
+            restore_on: false
+            precedence: false
+          required:
+          - reason
+      properties:
+        what:
+          type: string
+          title: 保持するもの
+          description: 保持する状態（入力した値・選んだタブ・開閉・幅・スクロール位置・領域で最後に開いたページ 等）。
+          x-used-by:
+            - 実装で、保存して戻す値にする。
+          examples:
+          - スクロール位置
+          - 領域で最後に開いたページ
+        store:
+          type: string
+          title: 保持先
+          description: 状態を保存する場所。
+          x-used-by:
+            - 実装で、状態を保存する場所（URL・Web Storage・Cookie・ルーター・サーバー・メモリ）にする。
+          x-rules:
+            - '`url_path`: URL のパス。'
+            - '`url_query`: URL の search（クエリの値）。'
+            - '`session_storage`: sessionStorage（そのブラウザのタブの中だけ）。'
+            - '`local_storage`: localStorage（端末ごとの好み）。'
+            - '`cookie`: Cookie（最初の描画で要る端末ごとの好み）。'
+            - '`router`: ルーターの機能（履歴の項目ごと）。'
+            - '`server`: サーバー（保存ビュー 等）。'
+            - '`memory`: 画面を開いている間だけのメモリ。'
+            - '`none`: 保持しない。'
+          enum:
+          - url_path
+          - url_query
+          - session_storage
+          - local_storage
+          - cookie
+          - router
+          - server
+          - memory
+          - none
+        key:
+          type: string
+          title: キー
+          description: Web Storage・Cookie のキーか、URL の search の名前。
+          x-used-by:
+            - 実装で、保存と読み込みに使用するキーにする。
+            - レビューで、ほかの領域・アプリのキーと重ならないかを確認する。
+          x-rules:
+            - Web Storage・Cookie のキーは、規約『入力と文言』の `storage-key-01` の書式で記載する。
+          examples:
+          - "aituber:v1:admin:sidebar:{area}:scroll"
+          - q
+        save_on:
+          type: string
+          title: 保存する契機
+          description: 状態を保存する操作・タイミング。
+          x-used-by:
+            - 実装で、状態を保存する契機にする。
+          examples:
+          - スクロールが止まったとき
+        restore_on:
+          type: string
+          title: 戻す契機
+          description: 保存した状態を戻す操作・タイミング。
+          x-used-by:
+            - 実装で、保存した状態を戻す契機にする。
+            - テストで、状態が戻ることを確認する操作にする。
+          examples:
+          - 上タブを移って戻ったときと再読み込みしたとき
+        precedence:
+          type: string
+          title: 優先する値
+          description: 保持先が複数あるときに、どれを優先し、使用した値をどこへ書き戻すか。
+          x-used-by:
+            - 実装で、値を参照する順と書き戻す先にする。
+          x-rules:
+            - URL に値があれば URL を優先し、sessionStorage の値を使用したら URL に `replace` で書き戻す（規約『入力と文言』の `state-retention-01`）。
+          examples:
+          - URL の値を優先し、無ければ sessionStorage の値を使用して URL に `replace` で書き戻す
+        reset_when:
+          type: string
+          title: 初期に戻す条件
+          description: 保存した状態を捨てて初期の状態に戻す条件。
+          x-used-by:
+            - 実装で、保存した状態を捨てる条件にする。
+            - テストで、初期に戻るケースにする。
+          examples:
+          - 一覧の絞り込みを変えたとき
+        reason:
+          $ref: "#/$defs/reason"
   map:
     $ref: "#/$defs/markdown"
     title: 図
